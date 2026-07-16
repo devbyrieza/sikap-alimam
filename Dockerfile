@@ -11,8 +11,8 @@ FROM base AS deps
 WORKDIR /app
 
 # Install dependencies based on the preferred package manager
-COPY package.json pnpm-lock.yaml* ./
-RUN pnpm install --frozen-lockfile
+COPY package.json package-lock.json* ./
+RUN npm ci
 
 # 2. Rebuild the source code only when needed
 FROM base AS builder
@@ -34,7 +34,7 @@ ENV NEXTAUTH_SECRET=$NEXTAUTH_SECRET
 
 # Generate Prisma Client
 RUN npx prisma generate
-RUN pnpm run build
+RUN npm run build
 
 # 3. Production image, copy all the files and run next
 FROM base AS runner
