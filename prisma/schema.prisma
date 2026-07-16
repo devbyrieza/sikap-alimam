@@ -1,0 +1,199 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ─── AUTH ───────────────────────────────────────────────────────────────────
+
+model User {
+  id         String   @id @default(uuid()) @db.Uuid
+  email      String   @unique
+  password   String
+  nama       String
+  role       String   @default("guru") // admin | guru | kepala
+  is_active  Boolean  @default(true)
+  created_at DateTime @default(now()) @db.Timestamptz(6)
+
+  asatidz Asatidz?
+
+  @@map("users")
+}
+
+// ─── MASTER DATA ────────────────────────────────────────────────────────────
+
+model Asatidz {
+  id             String   @id @default(uuid()) @db.Uuid
+  user_id        String?  @unique @db.Uuid
+  nama_lengkap   String
+  gelar_depan    String?
+  gelar_belakang String?
+  jabatan        String?
+  jenis          String   @default("guru") // guru | pegawai
+  is_active      Boolean  @default(true)
+  created_at     DateTime @default(now()) @db.Timestamptz(6)
+
+  user     User?             @relation(fields: [user_id], references: [id])
+  jurnal   JurnalMengajar[]
+  presensi PresensiAsatidz[]
+  mengajar AsatidzmMapel[]
+
+  @@map("asatidz")
+}
+
+model Kelas {
+  id        String  @id @default(uuid()) @db.Uuid
+  nama      String  @unique // "7 MTs" | "IL"
+  jenjang   String? // "MTs" | "Islamiyah"
+  is_active Boolean @default(true)
+
+  santri         SantriAktif[]
+  presensi_siswa PresensiSiswa[]
+  jurnal         JurnalMengajar[]
+  nilai          NilaiSantri[]
+  mapel          AsatidzmMapel[]
+  MataPelajaran  MataPelajaran[]
+
+  @@map("kelas")
+}
+
+model MataPelajaran {
+  id        String  @id @default(uuid()) @db.Uuid
+  nama      String
+  kelas_id  String  @db.Uuid
+  is_active Boolean @default(true)
+
+  kelas         Kelas            @relation(fields: [kelas_id], references: [id])
+  asatidz_mapel AsatidzmMapel[]
+  jurnal        JurnalMengajar[]
+  nilai         NilaiSantri[]
+
+  @@unique([nama, kelas_id])
+  @@map("mata_pelajaran")
+}
+
+model AsatidzmMapel {
+  id         String @id @default(uuid()) @db.Uuid
+  asatidz_id String @db.Uuid
+  mapel_id   String @db.Uuid
+  kelas_id   String @db.Uuid
+
+  asatidz Asatidz       @relation(fields: [asatidz_id], references: [id])
+  mapel   MataPelajaran @relation(fields: [mapel_id], references: [id])
+  kelas   Kelas         @relation(fields: [kelas_id], references: [id])
+
+  @@unique([asatidz_id, mapel_id, kelas_id])
+  @@map("asatidz_mapel")
+}
+
+model SantriAktif {
+  id            String   @id @default(uuid()) @db.Uuid
+  nis           String?  @unique
+  nama_lengkap  String
+  kelas_id      String   @db.Uuid
+  jenis_kelamin String?
+  foto_url      String?
+  is_active     Boolean  @default(true)
+  created_at    DateTime @default(now()) @db.Timestamptz(6)
+
+  kelas    Kelas           @relation(fields: [kelas_id], references: [id])
+  presensi PresensiSiswa[]
+  nilai    NilaiSantri[]
+
+  @@map("santri_aktif")
+}
+
+// ─── JURNAL MENGAJAR ────────────────────────────────────────────────────────
+
+model JurnalMengajar {
+  id         String   @id @default(uuid()) @db.Uuid
+  asatidz_id String   @db.Uuid
+  mapel_id   String   @db.Uuid
+  kelas_id   String   @db.Uuid
+  tanggal    DateTime @db.Date
+  jam_ke     String? // "1-2", "3", dll
+  materi     String
+  kegiatan   String
+  catatan    String?
+  created_at DateTime @default(now()) @db.Timestamptz(6)
+
+  asatidz Asatidz       @relation(fields: [asatidz_id], references: [id])
+  mapel   MataPelajaran @relation(fields: [mapel_id], references: [id])
+  kelas   Kelas         @relation(fields: [kelas_id], references: [id])
+
+  @@map("jurnal_mengajar")
+}
+
+// ─── PRESENSI SANTRI ────────────────────────────────────────────────────────
+
+model PresensiSiswa {
+  id         String   @id @default(uuid()) @db.Uuid
+  santri_id  String   @db.Uuid
+  kelas_id   String   @db.Uuid
+  tanggal    DateTime @db.Date
+  status     String // hadir | sakit | izin | alpha
+  keterangan String?
+  created_at DateTime @default(now()) @db.Timestamptz(6)
+
+  santri SantriAktif @relation(fields: [santri_id], references: [id])
+  kelas  Kelas       @relation(fields: [kelas_id], references: [id])
+
+  @@unique([santri_id, tanggal])
+  @@map("presensi_siswa")
+}
+
+// ─── ABSENSI ASATIDZ ────────────────────────────────────────────────────────
+
+model TokenHarian {
+  id         String   @id @default(uuid()) @db.Uuid
+  tanggal    DateTime @unique @db.Date
+  token      String   @unique
+  expires_at DateTime @db.Timestamptz(6)
+  created_at DateTime @default(now()) @db.Timestamptz(6)
+
+  @@map("token_harian")
+}
+
+model PresensiAsatidz {
+  id         String    @id @default(uuid()) @db.Uuid
+  asatidz_id String    @db.Uuid
+  tanggal    DateTime  @db.Date
+  jam_masuk  DateTime? @db.Timestamptz(6)
+  jam_keluar DateTime? @db.Timestamptz(6)
+  status     String    @default("hadir") // hadir | sakit | izin | telat | alpha
+  metode     String    @default("link") // link | manual
+  lat        Float?
+  lng        Float?
+  foto_url   String?
+  keterangan String?
+  created_at DateTime  @default(now()) @db.Timestamptz(6)
+
+  asatidz Asatidz @relation(fields: [asatidz_id], references: [id])
+
+  @@unique([asatidz_id, tanggal])
+  @@map("presensi_asatidz")
+}
+
+// ─── NILAI ──────────────────────────────────────────────────────────────────
+
+model NilaiSantri {
+  id           String   @id @default(uuid()) @db.Uuid
+  santri_id    String   @db.Uuid
+  mapel_id     String   @db.Uuid
+  kelas_id     String   @db.Uuid
+  semester     String // "1" | "2"
+  tahun_ajaran String // "2025/2026"
+  jenis        String // harian | uts | uas | praktik | tugas
+  nilai        Float
+  keterangan   String?
+  created_at   DateTime @default(now()) @db.Timestamptz(6)
+
+  santri SantriAktif   @relation(fields: [santri_id], references: [id])
+  mapel  MataPelajaran @relation(fields: [mapel_id], references: [id])
+  kelas  Kelas         @relation(fields: [kelas_id], references: [id])
+
+  @@map("nilai_santri")
+}
