@@ -33,6 +33,30 @@ export default function TambahJurnalPage() {
   const [kegiatan, setKegiatan] = useState("");
   const [catatan, setCatatan] = useState("");
 
+  // Load draft dari localStorage
+  useEffect(() => {
+    const draft = localStorage.getItem("siakad_jurnal_draft");
+    if (draft) {
+      try {
+        const p = JSON.parse(draft);
+        if (p.kelasId) setKelasId(p.kelasId);
+        if (p.mapelId) setMapelId(p.mapelId);
+        if (p.asatidId) setAsatidId(p.asatidId);
+        if (p.tanggal) setTanggal(p.tanggal);
+        if (p.jamKe) setJamKe(p.jamKe);
+        if (p.materi) setMateri(p.materi);
+        if (p.kegiatan) setKegiatan(p.kegiatan);
+        if (p.catatan) setCatatan(p.catatan);
+      } catch(e) {}
+    }
+  }, []);
+
+  // Save draft otomatis
+  useEffect(() => {
+    const p = { kelasId, mapelId, asatidId, tanggal, jamKe, materi, kegiatan, catatan };
+    localStorage.setItem("siakad_jurnal_draft", JSON.stringify(p));
+  }, [kelasId, mapelId, asatidId, tanggal, jamKe, materi, kegiatan, catatan]);
+
   // Load master data
   useEffect(() => {
     fetch("/api/master")
@@ -101,6 +125,8 @@ export default function TambahJurnalPage() {
         timer: 2000,
         timerProgressBar: true,
       });
+      
+      localStorage.removeItem("siakad_jurnal_draft");
 
       router.push("/jurnal");
     } catch (err: unknown) {
