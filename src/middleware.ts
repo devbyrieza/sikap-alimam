@@ -14,6 +14,7 @@ export async function middleware(req: NextRequest) {
   // Cek apakah API publik
   if (pathname.startsWith("/api/absen")) return NextResponse.next();
   if (pathname.startsWith("/api/auth")) return NextResponse.next();
+  if (pathname.startsWith("/api/setup-db")) return NextResponse.next();
 
   // Untuk semua path lain, cek session
   const session = await getSession();
