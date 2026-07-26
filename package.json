@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "npx prisma generate && next build",
-    "start": "next start",
+    "start": "npx prisma db push --accept-data-loss && npx prisma db execute --file prisma/seed-santri-final.sql --schema prisma/schema.prisma && next start",
     "lint": "biome check",
     "format": "biome format --write",
     "seed": "npx tsx prisma/seed.ts",
