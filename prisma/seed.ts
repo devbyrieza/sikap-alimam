@@ -9,7 +9,8 @@ const ASATIDZ = [
   "Imran Abdillah",
   "Ramdan",
   "Abdil Aziz, S.Pd., B.A.",
-  "Rieza Eka Tomara, S.Kom"
+  "Rieza Eka Tomara, S.Kom",
+  "Muhammad Iqbal, S. Pd"
 ];
 
 const MAPEL_7MTS = [
