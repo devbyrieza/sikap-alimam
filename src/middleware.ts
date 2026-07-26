@@ -15,6 +15,7 @@ export async function middleware(req: NextRequest) {
   if (pathname.startsWith("/api/absen")) return NextResponse.next();
   if (pathname.startsWith("/api/auth")) return NextResponse.next();
   if (pathname.startsWith("/api/setup-db")) return NextResponse.next();
+  if (pathname.startsWith("/api/debug-db")) return NextResponse.next();
 
   // Untuk semua path lain, cek session
   const session = await getSession();
