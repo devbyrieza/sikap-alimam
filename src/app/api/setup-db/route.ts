@@ -1,0 +1,53 @@
+import { NextResponse } from 'next/server';
+import { execSync } from 'child_process';
+import path from 'path';
+import fs from 'fs';
+
+export async function GET() {
+  try {
+    const logs = [];
+    
+    // 1. Jalankan Prisma DB Push
+    try {
+      logs.push("Running prisma db push...");
+      const pushOutput = execSync('npx prisma db push --accept-data-loss', { encoding: 'utf8' });
+      logs.push(pushOutput);
+    } catch (e: any) {
+      logs.push("Error di db push: " + e.message);
+      if (e.stdout) logs.push(e.stdout.toString());
+      if (e.stderr) logs.push(e.stderr.toString());
+    }
+
+    // 2. Jalankan Eksekusi SQL Seed
+    try {
+      logs.push("\nRunning SQL Seed...");
+      
+      // Hapus baris CREATE EXTENSION "pgcrypto" karena sering bikin error permission di server
+      const sqlPath = path.join(process.cwd(), 'prisma', 'seed-santri-final.sql');
+      let sqlContent = fs.readFileSync(sqlPath, 'utf8');
+      if (sqlContent.includes('CREATE EXTENSION')) {
+        sqlContent = sqlContent.replace(/CREATE EXTENSION IF NOT EXISTS "pgcrypto";/g, '');
+        fs.writeFileSync(sqlPath, sqlContent);
+      }
+
+      const seedOutput = execSync('npx prisma db execute --file prisma/seed-santri-final.sql --schema prisma/schema.prisma', { encoding: 'utf8' });
+      logs.push(seedOutput);
+    } catch (e: any) {
+      logs.push("Error di SQL Seed: " + e.message);
+      if (e.stdout) logs.push(e.stdout.toString());
+      if (e.stderr) logs.push(e.stderr.toString());
+    }
+
+    return NextResponse.json({
+      success: true,
+      message: "Proses setup database telah dijalankan. Cek logs di bawah.",
+      logs: logs.join('\n')
+    });
+
+  } catch (error: any) {
+    return NextResponse.json({
+      success: false,
+      error: error.message
+    }, { status: 500 });
+  }
+}
