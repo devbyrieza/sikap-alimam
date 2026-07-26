@@ -4,21 +4,12 @@ import bcrypt from "bcryptjs";
 const prisma = new PrismaClient();
 
 const ASATIDZ = [
-  "Abdil Aziz",
   "Agus Cahyono",
-  "Ade Supiana",
-  "Arifin Syaifullah",
-  "Bachtiar",
-  "Imam Wahyudi",
-  "Imran Fathillah",
-  "Muhammad Iqbal",
+  "Wahyudi Pranata, Lc.",
+  "Imran Abdillah",
   "Ramdan",
-  "Rieza",
-  "Saif",
-  "Teguh",
-  "Thoriq",
-  "Wahab Rajasam",
-  "Wahyudi Pranata",
+  "Abdil Aziz, S.Pd., B.A.",
+  "Rieza Eka Tomara, S.Kom"
 ];
 
 const MAPEL_7MTS = [
