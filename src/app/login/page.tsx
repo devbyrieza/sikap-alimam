@@ -89,7 +89,7 @@ export default function LoginPage() {
             <input
               type="email"
               className="form-control"
-              placeholder="nama@alimam.sch.id"
+              placeholder="nama@pesantren-alimam.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
@@ -173,8 +173,8 @@ export default function LoginPage() {
           <p style={{ fontWeight: 700, marginBottom: 4, color: "#374151" }}>
              Info Login
           </p>
-          <p>Admin: admin@alimam.sch.id</p>
-          <p>Guru: nama.guru@alimam.sch.id</p>
+          <p>Admin: admin@pesantren-alimam.com</p>
+          <p>Guru: nama.guru@pesantren-alimam.com</p>
           <p style={{ marginTop: 4, color: "#9ca3af" }}>
             Hubungi admin jika lupa password
           </p>

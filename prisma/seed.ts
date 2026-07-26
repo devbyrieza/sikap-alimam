@@ -55,12 +55,12 @@ async function main() {
   console.log("🌱 Seeding database SIAKAD Al-Imam...");
 
   // 1. Admin user
-  const adminPass = await bcrypt.hash("admin123", 12);
+  const adminPass = await bcrypt.hash("AdminAlimam2026!", 12);
   const admin = await prisma.user.upsert({
-    where: { email: "admin@alimam.sch.id" },
+    where: { email: "admin@pesantren-alimam.com" },
     update: {},
     create: {
-      email: "admin@alimam.sch.id",
+      email: "admin@pesantren-alimam.com",
       password: adminPass,
       nama: "Administrator",
       role: "admin",
@@ -108,8 +108,8 @@ async function main() {
       .toLowerCase()
       .replace(/\s+/g, ".")
       .replace(/[^a-z.]/g, "");
-    const email = `${slug}@alimam.sch.id`;
-    const pass = await bcrypt.hash("alimam123", 12);
+    const email = `${slug}@pesantren-alimam.com`;
+    const pass = await bcrypt.hash("GuruAlimam2026!", 12);
 
     const user = await prisma.user.upsert({
       where: { email },
@@ -130,8 +130,8 @@ async function main() {
   console.log(`✅ ${ASATIDZ.length} asatidz dengan akun login`);
 
   console.log("\n🎉 Seeding selesai!");
-  console.log("📧 Admin login: admin@alimam.sch.id / admin123");
-  console.log("📧 Guru login : nama.guru@alimam.sch.id / alimam123");
+  console.log("📧 Admin login: admin@pesantren-alimam.com / AdminAlimam2026!");
+  console.log("📧 Guru login : nama.guru@pesantren-alimam.com / alimam123");
 }
 
 main()
