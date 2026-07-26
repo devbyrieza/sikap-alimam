@@ -203,7 +203,7 @@ async function main() {
         data: {
           nis: s.nis || null,
           nama_lengkap: s.nama,
-          kelas_id: s.kelasId,
+          kelas_id: kelasIL.id,
           jenis_kelamin: s.jk,
         },
       });
