@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Swal from "sweetalert2";
-import { BookOpen, ChevronLeft, Loader2, FileText } from "lucide-react";
+import { BookOpen, ChevronLeft, Loader2, FileText, Zap, Clock, Save } from "lucide-react";
 import Link from "next/link";
 
 type Kelas = { id: string; nama: string; jenjang: string | null };
@@ -15,6 +15,33 @@ type MasterData = {
   mapel: Record<string, Mapel[]>;
 };
 
+const NAMA_HARI = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
+const NAMA_BULAN = [
+  "Januari", "Februari", "Maret", "April", "Mei", "Juni",
+  "Juli", "Agustus", "September", "Oktober", "November", "Desember"
+];
+
+const JAM_OPTIONS = ["1", "2", "3", "4", "5", "6", "7", "8", "Khusus"];
+
+const TEMPLATE_MATERI = [
+  { label: "📖 Review Materi Lalu", value: "Review dan pembahasan materi pertemuan sebelumnya" },
+  { label: "📝 Ulangan Harian", value: "Ulangan harian / evaluasi pemahaman materi" },
+  { label: "💬 Diskusi Kelompok", value: "Diskusi kelompok dan presentasi hasil diskusi" },
+  { label: "🔬 Praktik / Demonstrasi", value: "Praktik langsung / demonstrasi materi" },
+  { label: "📚 Materi Baru", value: "Penyampaian materi baru sesuai silabus" },
+  { label: "✍️ Latihan Soal", value: "Pengerjaan latihan soal dan pembahasan" },
+];
+
+function formatTanggalIndo(isoDate: string): string {
+  if (!isoDate) return "";
+  const d = new Date(isoDate + "T00:00:00");
+  const hari = NAMA_HARI[d.getDay()];
+  const tgl = d.getDate();
+  const bln = NAMA_BULAN[d.getMonth()];
+  const thn = d.getFullYear();
+  return `${hari}, ${tgl} ${bln} ${thn}`;
+}
+
 export default function TambahJurnalPage() {
   const router = useRouter();
   const today = new Date().toISOString().split("T")[0];
@@ -22,6 +49,7 @@ export default function TambahJurnalPage() {
   const [master, setMaster] = useState<MasterData | null>(null);
   const [loadingMaster, setLoadingMaster] = useState(true);
   const [submitting, setSubmitting] = useState(false);
+  const [lastSaved, setLastSaved] = useState<string | null>(null);
 
   // Form fields
   const [kelasId, setKelasId] = useState("");
@@ -47,14 +75,20 @@ export default function TambahJurnalPage() {
         if (p.materi) setMateri(p.materi);
         if (p.kegiatan) setKegiatan(p.kegiatan);
         if (p.catatan) setCatatan(p.catatan);
-      } catch(e) {}
+        setLastSaved(p._savedAt || null);
+      } catch (e) { /* ignore */ }
     }
   }, []);
 
-  // Save draft otomatis
+  // Autosave draft ke localStorage
   useEffect(() => {
-    const p = { kelasId, mapelId, asatidId, tanggal, jamKe, materi, kegiatan, catatan };
+    const savedAt = new Date().toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" });
+    const p = { kelasId, mapelId, asatidId, tanggal, jamKe, materi, kegiatan, catatan, _savedAt: savedAt };
     localStorage.setItem("siakad_jurnal_draft", JSON.stringify(p));
+    // Tampilkan info autosave hanya kalau ada perubahan bermakna
+    if (kelasId || materi || kegiatan) {
+      setLastSaved(savedAt);
+    }
   }, [kelasId, mapelId, asatidId, tanggal, jamKe, materi, kegiatan, catatan]);
 
   // Load master data
@@ -81,6 +115,14 @@ export default function TambahJurnalPage() {
   }, [kelasId]);
 
   const mapelList = (kelasId && master?.mapel?.[kelasId]) || [];
+
+  // Template materi: append ke materi (bukan replace)
+  const applyTemplate = (val: string) => {
+    setMateri((prev) => {
+      if (!prev) return val;
+      return prev.trimEnd() + "\n" + val;
+    });
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -125,9 +167,8 @@ export default function TambahJurnalPage() {
         timer: 2000,
         timerProgressBar: true,
       });
-      
-      localStorage.removeItem("siakad_jurnal_draft");
 
+      localStorage.removeItem("siakad_jurnal_draft");
       router.push("/jurnal");
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : "Terjadi kesalahan";
@@ -155,10 +196,17 @@ export default function TambahJurnalPage() {
             <ChevronLeft size={16} />
           </Link>
           <div>
-            <h1>️ Tambah Jurnal Mengajar</h1>
+            <h1>📋 Tambah Jurnal Mengajar</h1>
             <p>Catat kegiatan belajar mengajar hari ini</p>
           </div>
         </div>
+        {/* Autosave indicator */}
+        {lastSaved && (
+          <div style={{ fontSize: 12, color: "var(--text-muted)", display: "flex", alignItems: "center", gap: 5 }}>
+            <Save size={12} style={{ color: "var(--success, #15803d)" }} />
+            <span>Draft disimpan {lastSaved}</span>
+          </div>
+        )}
       </div>
 
       <div style={{ padding: "28px", maxWidth: 720, margin: "0 auto" }}>
@@ -185,6 +233,7 @@ export default function TambahJurnalPage() {
           </div>
         ) : (
           <form onSubmit={handleSubmit}>
+            {/* Card 1: Informasi Mengajar */}
             <div className="card" style={{ marginBottom: 20 }}>
               <p className="card-title">
                 <BookOpen
@@ -193,6 +242,36 @@ export default function TambahJurnalPage() {
                 />
                 Informasi Mengajar
               </p>
+
+              {/* Tanggal + nama hari */}
+              <div className="form-group">
+                <label className="form-label">
+                  Tanggal <span style={{ color: "var(--danger)" }}>*</span>
+                </label>
+                <input
+                  type="date"
+                  className="form-control"
+                  value={tanggal}
+                  onChange={(e) => setTanggal(e.target.value)}
+                  required
+                  style={{ maxWidth: 240 }}
+                />
+                {tanggal && (
+                  <div
+                    style={{
+                      marginTop: 6,
+                      fontSize: 13,
+                      fontWeight: 600,
+                      color: "var(--primary)",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 6,
+                    }}
+                  >
+                    📅 {formatTanggalIndo(tanggal)}
+                  </div>
+                )}
+              </div>
 
               <div
                 style={{
@@ -221,18 +300,24 @@ export default function TambahJurnalPage() {
                   </select>
                 </div>
 
-                {/* Tanggal */}
+                {/* Jam ke- */}
                 <div className="form-group">
-                  <label className="form-label">
-                    Tanggal <span style={{ color: "var(--danger)" }}>*</span>
+                  <label className="form-label" style={{ display: "flex", alignItems: "center", gap: 5 }}>
+                    <Clock size={13} />
+                    Jam ke-
                   </label>
-                  <input
-                    type="date"
+                  <select
                     className="form-control"
-                    value={tanggal}
-                    onChange={(e) => setTanggal(e.target.value)}
-                    required
-                  />
+                    value={jamKe}
+                    onChange={(e) => setJamKe(e.target.value)}
+                  >
+                    <option value="">— Pilih Jam —</option>
+                    {JAM_OPTIONS.map((j) => (
+                      <option key={j} value={j}>
+                        {j === "Khusus" ? "Khusus (luar jadwal)" : `Jam ke-${j}`}
+                      </option>
+                    ))}
+                  </select>
                 </div>
 
                 {/* Kelas */}
@@ -249,8 +334,7 @@ export default function TambahJurnalPage() {
                     <option value="">— Pilih Kelas —</option>
                     {master?.kelas.map((k) => (
                       <option key={k.id} value={k.id}>
-                        {k.nama}
-                        {k.jenjang ? ` (${k.jenjang})` : ""}
+                        {k.nama}{k.jenjang ? ` (${k.jenjang})` : ""}
                       </option>
                     ))}
                   </select>
@@ -289,30 +373,54 @@ export default function TambahJurnalPage() {
                     </p>
                   )}
                 </div>
-
-                {/* Jam ke- */}
-                <div className="form-group" style={{ gridColumn: "1 / -1" }}>
-                  <label className="form-label">Jam ke-</label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    placeholder='Contoh: 1-2, 3, 4-5'
-                    value={jamKe}
-                    onChange={(e) => setJamKe(e.target.value)}
-                    style={{ maxWidth: 200 }}
-                  />
-                </div>
               </div>
             </div>
 
-            {/* Materi & Kegiatan */}
+            {/* Card 2: Isi Jurnal */}
             <div className="card" style={{ marginBottom: 20 }}>
               <p className="card-title"><FileText size={16} className="inline mr-1" /> Isi Jurnal</p>
 
+              {/* Materi Pelajaran */}
               <div className="form-group">
                 <label className="form-label">
                   Materi Pelajaran <span style={{ color: "var(--danger)" }}>*</span>
                 </label>
+
+                {/* Template chips */}
+                <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginBottom: 10 }}>
+                  <span style={{ fontSize: 12, color: "var(--text-muted)", display: "flex", alignItems: "center", gap: 4 }}>
+                    <Zap size={12} /> Template cepat:
+                  </span>
+                  {TEMPLATE_MATERI.map((t) => (
+                    <button
+                      key={t.value}
+                      type="button"
+                      onClick={() => applyTemplate(t.value)}
+                      style={{
+                        padding: "4px 10px",
+                        borderRadius: 99,
+                        border: "1.5px solid var(--border)",
+                        background: "var(--surface)",
+                        fontSize: 12,
+                        color: "var(--text)",
+                        cursor: "pointer",
+                        fontWeight: 500,
+                        transition: "all 0.15s",
+                      }}
+                      onMouseEnter={(e) => {
+                        (e.target as HTMLButtonElement).style.borderColor = "var(--primary)";
+                        (e.target as HTMLButtonElement).style.color = "var(--primary)";
+                      }}
+                      onMouseLeave={(e) => {
+                        (e.target as HTMLButtonElement).style.borderColor = "var(--border)";
+                        (e.target as HTMLButtonElement).style.color = "var(--text)";
+                      }}
+                    >
+                      {t.label}
+                    </button>
+                  ))}
+                </div>
+
                 <textarea
                   className="form-control"
                   rows={3}
@@ -350,7 +458,12 @@ export default function TambahJurnalPage() {
             </div>
 
             {/* Actions */}
-            <div style={{ display: "flex", gap: 10, justifyContent: "flex-end" }}>
+            <div style={{ display: "flex", gap: 10, justifyContent: "flex-end", alignItems: "center" }}>
+              {lastSaved && (
+                <span style={{ fontSize: 11, color: "var(--text-muted)" }}>
+                  💾 Draft tersimpan pukul {lastSaved}
+                </span>
+              )}
               <Link href="/jurnal" className="btn btn-ghost">
                 Batal
               </Link>

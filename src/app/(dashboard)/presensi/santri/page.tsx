@@ -2,7 +2,15 @@
 
 import { useState, useEffect, useCallback } from "react";
 import Swal from "sweetalert2";
-import { ClipboardCheck, Loader2, Save, Users, CheckCircle, BarChart } from "lucide-react";
+import {
+  ClipboardCheck,
+  Loader2,
+  Save,
+  Users,
+  CheckCircle,
+  BarChart,
+  CheckSquare,
+} from "lucide-react";
 
 type Kelas = { id: string; nama: string; jenjang: string | null };
 type SantriPresensi = {
@@ -23,6 +31,18 @@ const STATUS_LABEL: Record<StatusType, string> = {
   izin: "Izin",
   alpha: "Alpha",
 };
+const STATUS_COLOR: Record<StatusType, string> = {
+  hadir: "#15803d",
+  sakit: "#a16207",
+  izin: "#1d4ed8",
+  alpha: "#b91c1c",
+};
+const STATUS_BG: Record<StatusType, string> = {
+  hadir: "rgba(21,128,61,0.10)",
+  sakit: "rgba(161,98,7,0.10)",
+  izin: "rgba(29,78,216,0.10)",
+  alpha: "rgba(185,28,28,0.10)",
+};
 
 export default function PresensiSantriPage() {
   const today = new Date().toISOString().split("T")[0];
@@ -35,6 +55,7 @@ export default function PresensiSantriPage() {
 
   const [santri, setSantri] = useState<SantriPresensi[]>([]);
   const [statusMap, setStatusMap] = useState<Record<string, StatusType>>({});
+  const [keteranganMap, setKeteranganMap] = useState<Record<string, string>>({});
   const [loadingSantri, setLoadingSantri] = useState(false);
   const [saving, setSaving] = useState(false);
 
@@ -64,6 +85,7 @@ export default function PresensiSantriPage() {
     setLoadingSantri(true);
     setSantri([]);
     setStatusMap({});
+    setKeteranganMap({});
 
     try {
       const res = await fetch(
@@ -76,10 +98,13 @@ export default function PresensiSantriPage() {
       setSantri(data);
 
       const map: Record<string, StatusType> = {};
+      const ketMap: Record<string, string> = {};
       data.forEach((s) => {
         map[s.id] = (s.status as StatusType) || "hadir";
+        ketMap[s.id] = s.keterangan || "";
       });
       setStatusMap(map);
+      setKeteranganMap(ketMap);
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : "Gagal memuat data";
       Swal.fire({
@@ -101,6 +126,26 @@ export default function PresensiSantriPage() {
 
   const setStatus = (santriId: string, status: StatusType) => {
     setStatusMap((prev) => ({ ...prev, [santriId]: status }));
+    // Jika pilih hadir, hapus keterangan
+    if (status === "hadir") {
+      setKeteranganMap((prev) => ({ ...prev, [santriId]: "" }));
+    }
+  };
+
+  const setKeterangan = (santriId: string, val: string) => {
+    setKeteranganMap((prev) => ({ ...prev, [santriId]: val }));
+  };
+
+  // Bulk action: hadir semua
+  const hadirSemua = () => {
+    const newMap: Record<string, StatusType> = {};
+    const newKetMap: Record<string, string> = {};
+    santri.forEach((s) => {
+      newMap[s.id] = "hadir";
+      newKetMap[s.id] = "";
+    });
+    setStatusMap(newMap);
+    setKeteranganMap(newKetMap);
   };
 
   // Ringkasan realtime
@@ -113,21 +158,36 @@ export default function PresensiSantriPage() {
     { hadir: 0, sakit: 0, izin: 0, alpha: 0 } as Record<StatusType, number>
   );
 
+  const sudahDiabsen = santri.filter(
+    (s) => statusMap[s.id] !== undefined
+  ).length;
+
   const handleSimpan = async () => {
     if (!selectedKelas || !tanggal || santri.length === 0) return;
+
+    const kelasNamaConfirm = kelasList.find((k) => k.id === selectedKelas)?.nama;
 
     const confirm = await Swal.fire({
       title: "Simpan Presensi?",
       html: `
-        <div style="font-size:14px; color:#6b7280; margin-bottom: 12px">
-          Tanggal: <strong>${tanggal}</strong><br/>
-          Kelas: <strong>${kelasList.find((k) => k.id === selectedKelas)?.nama}</strong>
+        <div style="font-size:13px; color:#6b7280; margin-bottom: 14px; text-align:left; padding: 10px 12px; background: #f9fafb; border-radius: 8px;">
+          📅 Tanggal: <strong>${tanggal}</strong><br/>
+          🏫 Kelas: <strong>${kelasNamaConfirm}</strong><br/>
+          👤 Total Santri: <strong>${santri.length}</strong>
         </div>
-        <div style="display:flex; justify-content:center; gap:16px; font-weight:700; font-size:15px">
-          <span style="color:#15803d">H: ${summary.hadir}</span>
-          <span style="color:#a16207">S: ${summary.sakit}</span>
-          <span style="color:#1d4ed8">I: ${summary.izin}</span>
-          <span style="color:#b91c1c">A: ${summary.alpha}</span>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:4px">
+          <div style="padding:10px; background:rgba(21,128,61,0.08); border-radius:8px; font-weight:700; color:#15803d">
+            ✅ Hadir: ${summary.hadir}
+          </div>
+          <div style="padding:10px; background:rgba(161,98,7,0.08); border-radius:8px; font-weight:700; color:#a16207">
+            🤒 Sakit: ${summary.sakit}
+          </div>
+          <div style="padding:10px; background:rgba(29,78,216,0.08); border-radius:8px; font-weight:700; color:#1d4ed8">
+            📝 Izin: ${summary.izin}
+          </div>
+          <div style="padding:10px; background:rgba(185,28,28,0.08); border-radius:8px; font-weight:700; color:#b91c1c">
+            ❌ Alpha: ${summary.alpha}
+          </div>
         </div>
       `,
       icon: "question",
@@ -145,7 +205,7 @@ export default function PresensiSantriPage() {
       const presensiPayload = santri.map((s) => ({
         santri_id: s.id,
         status: statusMap[s.id] || "hadir",
-        keterangan: null,
+        keterangan: keteranganMap[s.id] || null,
       }));
 
       const res = await fetch("/api/presensi/santri", {
@@ -186,6 +246,7 @@ export default function PresensiSantriPage() {
   };
 
   const kelasNama = kelasList.find((k) => k.id === selectedKelas)?.nama;
+  const progressPct = santri.length > 0 ? Math.round((sudahDiabsen / santri.length) * 100) : 0;
 
   return (
     <div>
@@ -202,7 +263,7 @@ export default function PresensiSantriPage() {
         <div className="card" style={{ marginBottom: 20 }}>
           <p className="card-title">
             <Users size={16} style={{ display: "inline", marginRight: 6, color: "var(--primary)" }} />
-            Pilih Kelas & Tanggal
+            Pilih Kelas &amp; Tanggal
           </p>
           <div
             style={{
@@ -231,8 +292,7 @@ export default function PresensiSantriPage() {
                   <option value="">— Pilih Kelas —</option>
                   {kelasList.map((k) => (
                     <option key={k.id} value={k.id}>
-                      {k.nama}
-                      {k.jenjang ? ` (${k.jenjang})` : ""}
+                      {k.nama}{k.jenjang ? ` (${k.jenjang})` : ""}
                     </option>
                   ))}
                 </select>
@@ -272,81 +332,178 @@ export default function PresensiSantriPage() {
         {/* Step 2: Daftar Santri */}
         {santri.length > 0 && (
           <>
-            {/* Summary Bar */}
+            {/* Progress Indicator */}
             <div
               className="card"
-              style={{
-                marginBottom: 16,
-                padding: "14px 20px",
-                display: "flex",
-                alignItems: "center",
-                gap: 24,
-                flexWrap: "wrap",
-              }}
+              style={{ marginBottom: 16, padding: "16px 20px" }}
             >
-              <div style={{ fontSize: 13, fontWeight: 700, color: "var(--text-muted)" }}>
-                <BarChart size={16} className="inline mr-1" /> Ringkasan — Kelas {kelasNama}
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 10, flexWrap: "wrap", gap: 10 }}>
+                <div style={{ fontSize: 14, fontWeight: 700, color: "var(--text)" }}>
+                  <BarChart size={15} className="inline mr-1" style={{ color: "var(--primary)" }} />
+                  <span style={{ color: "var(--primary)" }}>{sudahDiabsen}</span>
+                  <span style={{ color: "var(--text-muted)", fontWeight: 500 }}> dari {santri.length} santri sudah diabsen</span>
+                </div>
+                <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+                  <span className="badge badge-hadir">Hadir: {summary.hadir}</span>
+                  <span className="badge badge-sakit">Sakit: {summary.sakit}</span>
+                  <span className="badge badge-izin">Izin: {summary.izin}</span>
+                  <span className="badge badge-alpha">Alpha: {summary.alpha}</span>
+                </div>
               </div>
-              <div style={{ display: "flex", gap: 12 }}>
-                <span className="badge badge-hadir">Hadir: {summary.hadir}</span>
-                <span className="badge badge-sakit">Sakit: {summary.sakit}</span>
-                <span className="badge badge-izin">Izin: {summary.izin}</span>
-                <span className="badge badge-alpha">Alpha: {summary.alpha}</span>
+              {/* Progress Bar */}
+              <div style={{ background: "var(--border)", borderRadius: 99, height: 8, overflow: "hidden" }}>
+                <div
+                  style={{
+                    height: "100%",
+                    width: `${progressPct}%`,
+                    background: "linear-gradient(90deg, var(--primary), #c0392b)",
+                    borderRadius: 99,
+                    transition: "width 0.4s ease",
+                  }}
+                />
               </div>
-              <div
-                style={{
-                  marginLeft: "auto",
-                  fontSize: 13,
-                  color: "var(--text-muted)",
-                }}
-              >
-                Total: {santri.length} santri
+              <div style={{ display: "flex", justifyContent: "space-between", marginTop: 4, fontSize: 11, color: "var(--text-muted)" }}>
+                <span>Kelas {kelasNama}</span>
+                <span>{progressPct}% selesai</span>
               </div>
             </div>
 
-            {/* Table */}
-            <div className="table-wrap" style={{ marginBottom: 20 }}>
-              <table>
-                <thead>
-                  <tr>
-                    <th style={{ width: 48 }}>No</th>
-                    <th>Nama Santri</th>
-                    <th style={{ width: 120 }}>NIS</th>
-                    <th>Status Kehadiran</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {santri.map((s, idx) => {
-                    const currentStatus = statusMap[s.id] || "hadir";
-                    return (
-                      <tr key={s.id}>
-                        <td style={{ textAlign: "center", color: "var(--text-muted)", fontWeight: 600 }}>
-                          {idx + 1}
-                        </td>
-                        <td style={{ fontWeight: 600 }}>{s.nama_lengkap}</td>
-                        <td style={{ color: "var(--text-muted)", fontSize: 13 }}>
-                          {s.nis || "—"}
-                        </td>
-                        <td>
-                          <div className="status-toggle">
-                            {STATUS_LIST.map((st) => (
-                              <button
-                                key={st}
-                                type="button"
-                                className={`status-btn${currentStatus === st ? " active" : ""}`}
-                                data-status={st}
-                                onClick={() => setStatus(s.id, st)}
-                              >
-                                {STATUS_LABEL[st]}
-                              </button>
-                            ))}
-                          </div>
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
+            {/* Bulk Action */}
+            <div style={{ marginBottom: 14, display: "flex", gap: 10, alignItems: "center" }}>
+              <button
+                type="button"
+                className="btn btn-secondary btn-sm"
+                onClick={hadirSemua}
+                style={{ fontSize: 13 }}
+              >
+                <CheckSquare size={15} />
+                Hadir Semua
+              </button>
+              <span style={{ fontSize: 12, color: "var(--text-muted)" }}>
+                Klik untuk menandai semua santri sebagai Hadir
+              </span>
+            </div>
+
+            {/* Daftar Kartu Santri (mobile-first) */}
+            <div style={{ display: "flex", flexDirection: "column", gap: 12, marginBottom: 24 }}>
+              {santri.map((s, idx) => {
+                const currentStatus = statusMap[s.id] || "hadir";
+                const needsKet = currentStatus !== "hadir";
+                return (
+                  <div
+                    key={s.id}
+                    className="card"
+                    style={{
+                      padding: "16px 20px",
+                      borderLeft: `4px solid ${STATUS_COLOR[currentStatus]}`,
+                      transition: "border-color 0.2s",
+                    }}
+                  >
+                    {/* Header row */}
+                    <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 12 }}>
+                      {/* Nomor urut */}
+                      <div
+                        style={{
+                          width: 32,
+                          height: 32,
+                          borderRadius: "50%",
+                          background: "var(--border)",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          fontSize: 13,
+                          fontWeight: 700,
+                          color: "var(--text-muted)",
+                          flexShrink: 0,
+                        }}
+                      >
+                        {idx + 1}
+                      </div>
+                      {/* Nama & NIS */}
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <div style={{ fontWeight: 700, fontSize: 15, color: "var(--text)" }}>
+                          {s.nama_lengkap}
+                        </div>
+                        <div style={{ fontSize: 12, color: "var(--text-muted)" }}>
+                          NIS: {s.nis || "—"}
+                        </div>
+                      </div>
+                      {/* Badge status saat ini */}
+                      <div
+                        style={{
+                          padding: "4px 10px",
+                          borderRadius: 99,
+                          fontSize: 12,
+                          fontWeight: 700,
+                          background: STATUS_BG[currentStatus],
+                          color: STATUS_COLOR[currentStatus],
+                        }}
+                      >
+                        {STATUS_LABEL[currentStatus]}
+                      </div>
+                    </div>
+
+                    {/* Status Buttons — besar & mudah diklik di HP */}
+                    <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 8 }}>
+                      {STATUS_LIST.map((st) => {
+                        const isActive = currentStatus === st;
+                        return (
+                          <button
+                            key={st}
+                            type="button"
+                            onClick={() => setStatus(s.id, st)}
+                            style={{
+                              padding: "10px 4px",
+                              borderRadius: 10,
+                              border: `2px solid ${isActive ? STATUS_COLOR[st] : "var(--border)"}`,
+                              background: isActive ? STATUS_BG[st] : "transparent",
+                              color: isActive ? STATUS_COLOR[st] : "var(--text-muted)",
+                              fontWeight: 700,
+                              fontSize: 13,
+                              cursor: "pointer",
+                              transition: "all 0.15s",
+                              minHeight: 44,
+                            }}
+                          >
+                            {STATUS_LABEL[st]}
+                          </button>
+                        );
+                      })}
+                    </div>
+
+                    {/* Keterangan field — muncul jika bukan hadir */}
+                    {needsKet && (
+                      <div style={{ marginTop: 10 }}>
+                        <label
+                          style={{
+                            fontSize: 12,
+                            fontWeight: 600,
+                            color: STATUS_COLOR[currentStatus],
+                            marginBottom: 4,
+                            display: "block",
+                          }}
+                        >
+                          Keterangan {STATUS_LABEL[currentStatus]} (opsional)
+                        </label>
+                        <input
+                          type="text"
+                          className="form-control"
+                          style={{ fontSize: 13 }}
+                          placeholder={
+                            currentStatus === "sakit"
+                              ? "Contoh: demam, dirawat di RS..."
+                              : currentStatus === "izin"
+                              ? "Contoh: keperluan keluarga, acara pesantren..."
+                              : "Contoh: tidak ada keterangan, kabur..."
+                          }
+                          value={keteranganMap[s.id] || ""}
+                          onChange={(e) => setKeterangan(s.id, e.target.value)}
+                        />
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
             </div>
 
             {/* Save Button */}
@@ -373,7 +530,18 @@ export default function PresensiSantriPage() {
           </>
         )}
 
-        {/* Empty state: kelas dipilih tapi santri kosong setelah load */}
+        {/* Loading state */}
+        {loadingSantri && (
+          <div
+            className="card"
+            style={{ textAlign: "center", padding: "48px 24px", color: "var(--text-muted)" }}
+          >
+            <Loader2 size={32} style={{ animation: "spin 1s linear infinite", margin: "0 auto 12px", display: "block", color: "var(--primary)" }} />
+            <p style={{ fontSize: 14 }}>Memuat data santri...</p>
+          </div>
+        )}
+
+        {/* Empty state */}
         {!loadingSantri && selectedKelas && tanggal && santri.length === 0 && !loadingMaster && (
           <div
             className="card"

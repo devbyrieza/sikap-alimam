@@ -29,6 +29,12 @@ const NAV: NavItem[] = [
     icon: <ClipboardCheck size={18} />,
   },
   {
+    href: "/presensi/santri/rekap",
+    label: "Rekap Presensi Santri",
+    icon: <BarChart3 size={18} />,
+    roles: ["admin", "kepala"],
+  },
+  {
     href: "/presensi/asatidz",
     label: "Absensi Asatidz",
     icon: <UserCheck size={18} />,
