@@ -51,6 +51,52 @@ const MAPEL_IL = [
   "Tahsin/Tahfiz Al Quran",
 ];
 
+const SANTRI_MTS = [
+  { nis: "2601070001", nama: "Atqanul Ummah Ahmad", jk: "L" },
+  { nis: "2601070002", nama: "Abdul Aziz Ali", jk: "L" },
+  { nis: "2601070003", nama: "Abdul Hakim", jk: "L" },
+  { nis: "2601070004", nama: "Ahmad Farros Al Barqy", jk: "L" },
+  { nis: "2601070005", nama: "Andi Ibra Faeyza Hasan Alnasr", jk: "L" },
+  { nis: "2601070006", nama: "Azka Panji Kusuma", jk: "L" },
+  { nis: "2601070007", nama: "Fariq Malaibui", jk: "L" },
+  { nis: "2601070008", nama: "Haidar Ayyubi", jk: "L" },
+  { nis: "2601070009", nama: "Khalish", jk: "L" },
+  { nis: "2601070010", nama: "Labibullah El Fatih", jk: "L" },
+  { nis: "2601070011", nama: "M Fazril Alkais", jk: "L" },
+  { nis: "2601070012", nama: "M Naufal Alfaniri", jk: "L" },
+  { nis: "2601070013", nama: "Muhammad Rifqi Hamid", jk: "L" },
+  { nis: "2601070014", nama: "Muh Asrorin Da Silva", jk: "L" },
+  { nis: "2601070015", nama: "Muhammad Hafidz Reo Afelano", jk: "L" },
+  { nis: "2601070016", nama: "Muhammad Yahya Ayyash", jk: "L" },
+  { nis: "2601070017", nama: "Naufal Dzakiy Purnama", jk: "L" },
+  { nis: "2601070018", nama: "Rifqi Arsyad Fadilah", jk: "L" },
+  { nis: "2601070019", nama: "Muhammad Azzam Al Hafiz", jk: "L" },
+];
+
+const SANTRI_IL = [
+  { nis: "2602070001", nama: "Abdullah Rasyid", jk: "L" },
+  { nis: "2602070002", nama: "Abdurrahim Pati Raja", jk: "L" },
+  { nis: "2602070003", nama: "Daffa Muammar Dzaki", jk: "L" },
+  { nis: "2602070004", nama: "Farid", jk: "L" },
+  { nis: "2602070005", nama: "Favian Radi", jk: "L" },
+  { nis: "2602070006", nama: "Fanni Hariri Hamonangan", jk: "L" },
+  { nis: "2602070007", nama: "Fiqri Ramdan Handoko", jk: "L" },
+  { nis: "2602070008", nama: "Hibban Hibaturrahman", jk: "L" },
+  { nis: "2602070009", nama: "Khubaib Abdul Aziz", jk: "L" },
+  { nis: "2602070010", nama: "Ken Alfarezha Haryadi", jk: "L" },
+  { nis: "2602070011", nama: "Lalu Muhamad Rizky Ananda", jk: "L" },
+  { nis: "2602070012", nama: "Miizan Alghifary Dizlilar", jk: "L" },
+  { nis: "2602070013", nama: "Muhammad Hafidz Abdurrahman", jk: "L" },
+  { nis: "2602070014", nama: "Muhammad Khoirul Azzam", jk: "L" },
+  { nis: "2602070015", nama: "Muhammad Rasyid Ridho", jk: "L" },
+  { nis: "2602070016", nama: "Muhammad Rizky", jk: "L" },
+  { nis: "2602070017", nama: "Nurcahya Eka Putra", jk: "L" },
+  { nis: "2602070018", nama: "Panji Ahmad", jk: "L" },
+  { nis: "2602070020", nama: "Syeh Al Bani Irsyad Amrulloh", jk: "L" },
+  { nis: "2602070021", nama: "Wahyu Hidayat", jk: "L" },
+  { nis: "2602070022", nama: "Zakaria Reynaldo", jk: "L" },
+];
+
 async function main() {
   console.log("🌱 Seeding database SIAKAD Al-Imam...");
 
@@ -128,6 +174,42 @@ async function main() {
     });
   }
   console.log(`✅ ${ASATIDZ.length} asatidz dengan akun login`);
+
+  // 6. Santri MTs
+  for (const s of SANTRI_MTS) {
+    const existing = await prisma.santriAktif.findFirst({
+      where: { nama_lengkap: s.nama },
+    });
+    if (!existing) {
+      await prisma.santriAktif.create({
+        data: {
+          nis: s.nis || null,
+          nama_lengkap: s.nama,
+          kelas_id: kelas7.id,
+          jenis_kelamin: s.jk,
+        },
+      });
+    }
+  }
+  console.log(`✅ ${SANTRI_MTS.length} santri MTs`);
+
+  // 7. Santri IL
+  for (const s of SANTRI_IL) {
+    const existing = await prisma.santriAktif.findFirst({
+      where: { nama_lengkap: s.nama },
+    });
+    if (!existing) {
+      await prisma.santriAktif.create({
+        data: {
+          nis: s.nis || null,
+          nama_lengkap: s.nama,
+          kelas_id: s.kelasId,
+          jenis_kelamin: s.jk,
+        },
+      });
+    }
+  }
+  console.log(`✅ ${SANTRI_IL.length} santri IL`);
 
   console.log("\n🎉 Seeding selesai!");
   console.log("📧 Admin login: admin@pesantren-alimam.com / AdminAlimam2026!");

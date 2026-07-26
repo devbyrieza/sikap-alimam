@@ -18,26 +18,6 @@ export async function GET() {
       if (e.stderr) logs.push(e.stderr.toString());
     }
 
-    // 2. Jalankan Eksekusi SQL Seed
-    try {
-      logs.push("\nRunning SQL Seed...");
-      
-      // Hapus baris CREATE EXTENSION "pgcrypto" karena sering bikin error permission di server
-      const sqlPath = path.join(process.cwd(), 'prisma', 'seed-santri-final.sql');
-      let sqlContent = fs.readFileSync(sqlPath, 'utf8');
-      if (sqlContent.includes('CREATE EXTENSION')) {
-        sqlContent = sqlContent.replace(/CREATE EXTENSION IF NOT EXISTS "pgcrypto";/g, '');
-        fs.writeFileSync(sqlPath, sqlContent);
-      }
-
-      const seedOutput = execSync('npx prisma db execute --file prisma/seed-santri-final.sql --schema prisma/schema.prisma', { encoding: 'utf8' });
-      logs.push(seedOutput);
-    } catch (e: any) {
-      logs.push("Error di SQL Seed: " + e.message);
-      if (e.stdout) logs.push(e.stdout.toString());
-      if (e.stderr) logs.push(e.stderr.toString());
-    }
-
     // 3. Jalankan TS Seed untuk membuat User Admin & Guru
     try {
       logs.push("\nRunning TS Seed (Membuat akun Admin & Guru)...");
