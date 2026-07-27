@@ -23,7 +23,14 @@ async function getJurnal() {
 }
 
 export default async function JurnalPage() {
-  const jurnal = await getJurnal();
+  const [jurnal, kelasData, asatidzData] = await Promise.all([
+    getJurnal(),
+    prisma.kelas.findMany({ select: { nama: true }, orderBy: { nama: 'asc' } }),
+    prisma.asatidz.findMany({ select: { nama_lengkap: true }, orderBy: { nama_lengkap: 'asc' } })
+  ]);
+
+  const kelasList = kelasData.map(k => k.nama);
+  const asatidzList = asatidzData.map(a => a.nama_lengkap);
 
   // Serialize for client component
   const jurnalSerialized = jurnal.map((j) => ({
@@ -54,7 +61,11 @@ export default async function JurnalPage() {
 
       {/* Content */}
       <div style={{ padding: "24px 28px" }}>
-        <JurnalClientFilter data={jurnalSerialized} />
+        <JurnalClientFilter 
+          data={jurnalSerialized} 
+          kelasList={kelasList}
+          asatidzList={asatidzList}
+        />
       </div>
     </div>
   );

@@ -25,18 +25,27 @@ function formatTanggal(iso: string) {
   });
 }
 
-export default function JurnalClientFilter({ data }: { data: JurnalRow[] }) {
+export default function JurnalClientFilter({ 
+  data,
+  kelasList = [],
+  asatidzList = []
+}: { 
+  data: JurnalRow[];
+  kelasList?: string[];
+  asatidzList?: string[];
+}) {
   const today = new Date().toISOString().split("T")[0];
   const [filterTanggal, setFilterTanggal] = useState("");
   const [filterKelas, setFilterKelas] = useState("");
   const [filterAsatidz, setFilterAsatidz] = useState("");
 
-  const kelasList = useMemo(() => {
+  // Jika server memberikan props, gunakan itu. Jika tidak, fallback ke deriving dari data
+  const finalKelasList = kelasList.length > 0 ? kelasList : useMemo(() => {
     const set = new Set(data.map((j) => j.kelas));
     return Array.from(set).sort();
   }, [data]);
 
-  const asatidList = useMemo(() => {
+  const finalAsatidzList = asatidzList.length > 0 ? asatidzList : useMemo(() => {
     const set = new Set(data.map((j) => j.asatidz));
     return Array.from(set).sort();
   }, [data]);
@@ -81,7 +90,7 @@ export default function JurnalClientFilter({ data }: { data: JurnalRow[] }) {
             onChange={(e) => setFilterKelas(e.target.value)}
           >
             <option value="">Semua Kelas</option>
-            {kelasList.map((k) => (
+            {finalKelasList.map((k) => (
               <option key={k} value={k}>
                 {k}
               </option>
@@ -96,7 +105,7 @@ export default function JurnalClientFilter({ data }: { data: JurnalRow[] }) {
             onChange={(e) => setFilterAsatidz(e.target.value)}
           >
             <option value="">Semua Asatidz</option>
-            {asatidList.map((a) => (
+            {finalAsatidzList.map((a) => (
               <option key={a} value={a}>
                 {a}
               </option>
