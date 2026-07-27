@@ -65,9 +65,9 @@ export async function GET(req: NextRequest) {
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { asatidz_id, tanggal, data } = body;
+    const { pegawai_id, tanggal, data } = body;
 
-    if (!asatidz_id || !tanggal || !data || !Array.isArray(data)) {
+    if (!pegawai_id || !tanggal || !data || !Array.isArray(data)) {
       return NextResponse.json(
         { success: false, message: "Data tidak lengkap" },
         { status: 400 }
@@ -97,7 +97,7 @@ export async function POST(req: NextRequest) {
           return prisma.capaianTahfidz.create({
             data: {
               santri_id: item.santri_id,
-              asatidz_id: asatidz_id,
+              pegawai_id: pegawai_id,
               tanggal: targetDate,
               jenis: item.jenis,
               surat: item.surat,

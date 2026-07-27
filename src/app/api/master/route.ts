@@ -4,18 +4,16 @@ import { prisma } from "@/lib/prisma";
 export async function GET() {
   try {
     const [kelas, asatidz, allMapel] = await Promise.all([
-      prisma.kelas.findMany({
-        where: { is_active: true },
+      prisma.kelas.findMany({ where: { is_active: true },
         orderBy: { nama: "asc" },
         select: { id: true, nama: true, jenjang: true },
       }),
-      prisma.asatidz.findMany({
-        where: { is_active: true },
+      prisma.pegawai.findMany({
+        where: { kategori_pegawai: { contains: "GURU" } },
         orderBy: { nama_lengkap: "asc" },
         select: { id: true, nama_lengkap: true, jabatan: true },
       }),
-      prisma.mataPelajaran.findMany({
-        where: { is_active: true },
+      prisma.mataPelajaran.findMany({ where: { is_active: true },
         orderBy: { nama: "asc" },
         select: { id: true, nama: true, kelas_id: true },
       }),

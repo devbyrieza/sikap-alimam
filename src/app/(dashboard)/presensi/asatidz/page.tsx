@@ -5,7 +5,7 @@ export const dynamic = 'force-dynamic';
 
 export type PresensiItem = {
   id: string;
-  asatidz_id: string;
+  pegawai_id: string;
   tanggal: Date;
   jam_masuk: Date | null;
   jam_keluar: Date | null;
@@ -15,7 +15,7 @@ export type PresensiItem = {
   lng: number | null;
   foto_url: string | null;
   keterangan: string | null;
-  asatidz: { id: string; nama_lengkap: string; jabatan: string | null };
+  pegawai: { id: string; nama_lengkap: string; jabatan: string | null };
 };
 
 export default async function PresensiAsatidz_Page() {
@@ -26,16 +26,16 @@ export default async function PresensiAsatidz_Page() {
   const presensi = await prisma.presensiAsatidz.findMany({
     where: { tanggal: today },
     include: {
-      asatidz: { select: { id: true, nama_lengkap: true, jabatan: true } },
+      pegawai: { select: { id: true, nama_lengkap: true, jabatan: true } },
     },
     orderBy: { jam_masuk: 'asc' },
   });
 
   // Asatidz yang belum absen
-  const sudahAbsen = presensi.map((p) => p.asatidz_id);
-  const belumAbsen = await prisma.asatidz.findMany({
+  const sudahAbsen = presensi.map((p) => p.pegawai_id);
+  const belumAbsen = await prisma.pegawai.findMany({
     where: {
-      is_active: true,
+      kategori_pegawai: { contains: "GURU" },
       id: sudahAbsen.length > 0 ? { notIn: sudahAbsen } : undefined,
     },
     select: { id: true, nama_lengkap: true, jabatan: true },
@@ -48,8 +48,9 @@ export default async function PresensiAsatidz_Page() {
   });
 
   // Semua asatidz untuk modal input manual
-  const allAsatidz = await prisma.asatidz.findMany({
-    where: { is_active: true },
+  const allAsatidz = await prisma.pegawai.findMany({
+    where: {
+      kategori_pegawai: { contains: "GURU" } },
     select: { id: true, nama_lengkap: true },
     orderBy: { nama_lengkap: 'asc' },
   });

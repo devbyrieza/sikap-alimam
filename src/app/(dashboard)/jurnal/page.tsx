@@ -14,7 +14,7 @@ async function getJurnal() {
   const jurnal = await prisma.jurnalMengajar.findMany({
     orderBy: { tanggal: "desc" },
     include: {
-      asatidz: { select: { id: true, nama_lengkap: true } },
+      pegawai: { select: { id: true, nama_lengkap: true } },
       mapel: { select: { id: true, nama: true } },
       kelas: { select: { id: true, nama: true } },
     },
@@ -26,7 +26,7 @@ export default async function JurnalPage() {
   const [jurnal, kelasData, asatidzData] = await Promise.all([
     getJurnal(),
     prisma.kelas.findMany({ select: { nama: true }, orderBy: { nama: 'asc' } }),
-    prisma.asatidz.findMany({ select: { nama_lengkap: true }, orderBy: { nama_lengkap: 'asc' } })
+    prisma.pegawai.findMany({ where: { kategori_pegawai: { contains: "GURU" } }, select: { nama_lengkap: true }, orderBy: { nama_lengkap: "asc" } })
   ]);
 
   const kelasList = kelasData.map(k => k.nama);
@@ -36,7 +36,7 @@ export default async function JurnalPage() {
   const jurnalSerialized = jurnal.map((j) => ({
     id: j.id,
     tanggal: j.tanggal.toISOString().split("T")[0],
-    asatidz: j.asatidz.nama_lengkap,
+    asatidz: j.pegawai.nama_lengkap,
     mapel: j.mapel.nama,
     kelas: j.kelas.nama,
     jam_ke: j.jam_ke ?? "-",

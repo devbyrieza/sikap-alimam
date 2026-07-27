@@ -31,7 +31,7 @@ export default async function DashboardPage() {
     jurnalHariIni,
     hadirAsatidz,
   ] = await Promise.all([
-    prisma.asatidz.count({ where: { is_active: true } }),
+    prisma.pegawai.count({ where: { kategori_pegawai: { contains: "GURU" } } }),
     prisma.santriAktif.count({ where: { is_active: true } }),
     prisma.jurnalMengajar.count({
       where: { tanggal: new Date(todayStr) },
@@ -49,7 +49,7 @@ export default async function DashboardPage() {
     take: 5,
     orderBy: { created_at: "desc" },
     include: {
-      asatidz: { select: { nama_lengkap: true } },
+      pegawai: { select: { nama_lengkap: true } },
       mapel: { select: { nama: true } },
       kelas: { select: { nama: true } },
     },
@@ -58,7 +58,7 @@ export default async function DashboardPage() {
   // Absensi hari ini
   const absenHariIni = await prisma.presensiAsatidz.findMany({
     where: { tanggal: new Date(todayStr) },
-    include: { asatidz: { select: { nama_lengkap: true } } },
+    include: { pegawai: { select: { nama_lengkap: true } } },
     orderBy: { jam_masuk: "desc" },
     take: 8,
   });
@@ -289,7 +289,7 @@ export default async function DashboardPage() {
                         marginTop: 2,
                       }}
                     >
-                      {j.asatidz.nama_lengkap} &nbsp;·&nbsp;{" "}
+                      {j.pegawai.nama_lengkap} &nbsp;·&nbsp;{" "}
                       {j.tanggal.toLocaleDateString("id-ID", {
                         day: "numeric",
                         month: "short",
@@ -365,7 +365,7 @@ export default async function DashboardPage() {
                     }}
                   >
                     <div style={{ fontSize: 13, fontWeight: 600 }}>
-                      {a.asatidz.nama_lengkap}
+                      {a.pegawai.nama_lengkap}
                     </div>
                     <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
                       {a.jam_masuk && (

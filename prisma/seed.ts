@@ -141,7 +141,7 @@ async function main() {
 
   // 5. Asatidz
   for (const nama of ASATIDZ) {
-    // Buat user login untuk tiap asatidz
+    // Buat user login untuk tiap pegawai
     const slug = nama
       .toLowerCase()
       .replace(/\s+/g, ".")
@@ -155,17 +155,18 @@ async function main() {
       create: { email, password: pass, nama, role: "guru" },
     });
 
-    await prisma.asatidz.upsert({
+    await prisma.pegawai.upsert({
       where: { user_id: user.id },
       update: {},
       create: {
         user_id: user.id,
         nama_lengkap: nama,
-        jenis: "guru",
+        jabatan: "Guru Bahasa Arab",
+        kategori_pegawai: "GURU",
       },
     });
   }
-  console.log(`✅ ${ASATIDZ.length} asatidz dengan akun login`);
+  console.log(`✅ ${ASATIDZ.length} pegawai dengan akun login`);
 
   // 6. Santri MTs
   for (const s of SANTRI_MTS) {

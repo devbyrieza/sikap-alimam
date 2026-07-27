@@ -25,13 +25,11 @@ export async function GET(req: NextRequest) {
   }
 
   // Ambil daftar asatidz aktif
-  const asatidz = await prisma.asatidz.findMany({
-    where: { is_active: true },
+  const asatidz = await prisma.pegawai.findMany({
+    where: { kategori_pegawai: { contains: "GURU" } },
     select: {
       id: true,
       nama_lengkap: true,
-      gelar_depan: true,
-      gelar_belakang: true,
       jabatan: true,
     },
     orderBy: { nama_lengkap: 'asc' },
@@ -63,9 +61,9 @@ export async function POST(req: NextRequest) {
   }
 
   const body = await req.json();
-  const { asatidz_id, lat, lng, foto_url } = body;
+  const { pegawai_id, lat, lng, foto_url } = body;
 
-  if (!asatidz_id) {
+  if (!pegawai_id) {
     return NextResponse.json({ error: 'Pilih nama asatidz terlebih dahulu' }, { status: 400 });
   }
 
@@ -80,7 +78,7 @@ export async function POST(req: NextRequest) {
 
   // Cek duplikasi
   const existing = await prisma.presensiAsatidz.findUnique({
-    where: { asatidz_id_tanggal: { asatidz_id, tanggal } },
+    where: { pegawai_id_tanggal: { pegawai_id, tanggal } },
   });
 
   if (existing) {
@@ -90,7 +88,7 @@ export async function POST(req: NextRequest) {
   // Simpan presensi
   const presensi = await prisma.presensiAsatidz.create({
     data: {
-      asatidz_id,
+      pegawai_id,
       tanggal,
       jam_masuk: jamMasuk,
       status,
@@ -100,13 +98,13 @@ export async function POST(req: NextRequest) {
       foto_url: foto_url ?? null,
     },
     include: {
-      asatidz: { select: { nama_lengkap: true } },
+      pegawai: { select: { nama_lengkap: true } },
     },
   });
 
   return NextResponse.json({
     success: true,
-    nama: presensi.asatidz.nama_lengkap,
+    nama: presensi.pegawai.nama_lengkap,
     jam_masuk: presensi.jam_masuk,
     status: presensi.status,
   });

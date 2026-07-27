@@ -382,9 +382,9 @@ export default function PresensiAsatidz({
                     <tr key={p.id}>
                       <td style={{ color: '#9ca3af', fontWeight: 600, width: 48 }}>{i + 1}</td>
                       <td>
-                        <div style={{ fontWeight: 700 }}>{p.asatidz.nama_lengkap}</div>
-                        {p.asatidz.jabatan && (
-                          <div style={{ fontSize: 12, color: '#9ca3af' }}>{p.asatidz.jabatan}</div>
+                        <div style={{ fontWeight: 700 }}>{p.pegawai.nama_lengkap}</div>
+                        {p.pegawai.jabatan && (
+                          <div style={{ fontSize: 12, color: '#9ca3af' }}>{p.pegawai.jabatan}</div>
                         )}
                       </td>
                       <td style={{ fontWeight: 700 }}>{formatJam(p.jam_masuk)}</td>

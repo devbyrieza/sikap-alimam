@@ -19,7 +19,7 @@ export async function GET(req: NextRequest) {
   const presensi = await prisma.presensiAsatidz.findMany({
     where: { tanggal },
     include: {
-      asatidz: {
+      pegawai: {
         select: { id: true, nama_lengkap: true, jabatan: true },
       },
     },
@@ -27,10 +27,10 @@ export async function GET(req: NextRequest) {
   });
 
   // Asatidz yang belum absen
-  const sudahAbsen = presensi.map((p) => p.asatidz_id);
-  const belumAbsen = await prisma.asatidz.findMany({
+  const sudahAbsen = presensi.map((p) => p.pegawai_id);
+  const belumAbsen = await prisma.pegawai.findMany({
     where: {
-      is_active: true,
+      kategori_pegawai: { contains: "GURU" },
       id: sudahAbsen.length > 0 ? { notIn: sudahAbsen } : undefined,
     },
     select: { id: true, nama_lengkap: true, jabatan: true },
@@ -49,14 +49,14 @@ export async function POST(req: NextRequest) {
 
   const body = await req.json();
   const {
-    asatidz_id,
+    pegawai_id,
     tanggal: tanggalStr,
     status,
     keterangan,
     jam_masuk: jamStr,
   } = body;
 
-  if (!asatidz_id || !tanggalStr || !status) {
+  if (!pegawai_id || !tanggalStr || !status) {
     return NextResponse.json({ error: 'Data tidak lengkap' }, { status: 400 });
   }
 
@@ -65,7 +65,7 @@ export async function POST(req: NextRequest) {
   const jam_masuk = jamStr ? new Date(jamStr) : new Date();
 
   const presensi = await prisma.presensiAsatidz.upsert({
-    where: { asatidz_id_tanggal: { asatidz_id, tanggal } },
+    where: { pegawai_id_tanggal: { pegawai_id, tanggal } },
     update: {
       status,
       keterangan: keterangan ?? null,
@@ -73,7 +73,7 @@ export async function POST(req: NextRequest) {
       metode: 'manual',
     },
     create: {
-      asatidz_id,
+      pegawai_id,
       tanggal,
       jam_masuk,
       status,
@@ -81,7 +81,7 @@ export async function POST(req: NextRequest) {
       keterangan: keterangan ?? null,
     },
     include: {
-      asatidz: { select: { nama_lengkap: true } },
+      pegawai: { select: { nama_lengkap: true } },
     },
   });
 

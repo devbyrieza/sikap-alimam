@@ -19,7 +19,7 @@ export async function GET(req: NextRequest) {
       where,
       orderBy: { tanggal: "desc" },
       include: {
-        asatidz: { select: { id: true, nama_lengkap: true } },
+        pegawai: { select: { id: true, nama_lengkap: true } },
         mapel: { select: { id: true, nama: true } },
         kelas: { select: { id: true, nama: true } },
       },
@@ -35,15 +35,15 @@ export async function GET(req: NextRequest) {
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { asatidz_id, mapel_id, kelas_id, tanggal, jam_ke, materi, kegiatan, catatan } = body;
+    const { pegawai_id, mapel_id, kelas_id, tanggal, jam_ke, materi, kegiatan, catatan } = body;
 
-    if (!asatidz_id || !mapel_id || !kelas_id || !tanggal || !materi || !kegiatan) {
+    if (!pegawai_id || !mapel_id || !kelas_id || !tanggal || !materi || !kegiatan) {
       return NextResponse.json({ error: "Field wajib tidak lengkap" }, { status: 400 });
     }
 
     const jurnal = await prisma.jurnalMengajar.create({
       data: {
-        asatidz_id,
+        pegawai_id,
         mapel_id,
         kelas_id,
         tanggal: new Date(tanggal),

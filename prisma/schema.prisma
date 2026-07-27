@@ -18,23 +18,34 @@ model User {
   is_active  Boolean  @default(true)
   created_at DateTime @default(now()) @db.Timestamptz(6)
 
-  asatidz Asatidz?
+  pegawai Pegawai?
 
   @@map("users")
 }
 
 // ─── MASTER DATA ────────────────────────────────────────────────────────────
 
-model Asatidz {
-  id             String   @id @default(uuid()) @db.Uuid
-  user_id        String?  @unique @db.Uuid
-  nama_lengkap   String
-  gelar_depan    String?
-  gelar_belakang String?
-  jabatan        String?
-  jenis          String   @default("guru") // guru | pegawai
-  is_active      Boolean  @default(true)
-  created_at     DateTime @default(now()) @db.Timestamptz(6)
+model Pegawai {
+  id                  String    @id @default(uuid()) @db.Uuid
+  nik                 String?   @unique
+  nama_lengkap        String
+  jenis_kelamin       String?
+  tempat_lahir        String?
+  tanggal_lahir       DateTime? @db.Date
+  no_hp               String?
+  email               String?
+  alamat              String?
+  kategori_pegawai    String    @default("PEGAWAI_UMUM") // ASATIDZ, PEGAWAI_UMUM, MUSYRIF
+  unit_kerja          String?
+  divisi              String?
+  jabatan             String?
+  mata_pelajaran      String?
+  pendidikan_terakhir String?
+  status_pernikahan   String?
+  foto_url            String?
+  created_at          DateTime  @default(now()) @db.Timestamptz(6)
+  updated_at          DateTime  @default(now()) @db.Timestamptz(6)
+  user_id             String?   @unique @db.Uuid
 
   user            User?             @relation(fields: [user_id], references: [id])
   jurnal          JurnalMengajar[]
@@ -42,7 +53,7 @@ model Asatidz {
   mengajar        AsatidzmMapel[]
   capaian_tahfidz CapaianTahfidz[]
 
-  @@map("asatidz")
+  @@map("pegawai")
 }
 
 model Kelas {
@@ -79,15 +90,15 @@ model MataPelajaran {
 
 model AsatidzmMapel {
   id         String @id @default(uuid()) @db.Uuid
-  asatidz_id String @db.Uuid
+  pegawai_id String @db.Uuid
   mapel_id   String @db.Uuid
   kelas_id   String @db.Uuid
 
-  asatidz Asatidz       @relation(fields: [asatidz_id], references: [id])
+  pegawai Pegawai @relation(fields: [pegawai_id], references: [id])
   mapel   MataPelajaran @relation(fields: [mapel_id], references: [id])
   kelas   Kelas         @relation(fields: [kelas_id], references: [id])
 
-  @@unique([asatidz_id, mapel_id, kelas_id])
+  @@unique([pegawai_id, mapel_id, kelas_id])
   @@map("asatidz_mapel")
 }
 
@@ -113,7 +124,7 @@ model SantriAktif {
 
 model JurnalMengajar {
   id         String   @id @default(uuid()) @db.Uuid
-  asatidz_id String   @db.Uuid
+  pegawai_id String @db.Uuid
   mapel_id   String   @db.Uuid
   kelas_id   String   @db.Uuid
   tanggal    DateTime @db.Date
@@ -123,7 +134,7 @@ model JurnalMengajar {
   catatan    String?
   created_at DateTime @default(now()) @db.Timestamptz(6)
 
-  asatidz Asatidz       @relation(fields: [asatidz_id], references: [id])
+  pegawai Pegawai @relation(fields: [pegawai_id], references: [id])
   mapel   MataPelajaran @relation(fields: [mapel_id], references: [id])
   kelas   Kelas         @relation(fields: [kelas_id], references: [id])
 
@@ -162,7 +173,7 @@ model TokenHarian {
 
 model PresensiAsatidz {
   id         String    @id @default(uuid()) @db.Uuid
-  asatidz_id String    @db.Uuid
+  pegawai_id String @db.Uuid
   tanggal    DateTime  @db.Date
   jam_masuk  DateTime? @db.Timestamptz(6)
   jam_keluar DateTime? @db.Timestamptz(6)
@@ -174,9 +185,9 @@ model PresensiAsatidz {
   keterangan String?
   created_at DateTime  @default(now()) @db.Timestamptz(6)
 
-  asatidz Asatidz @relation(fields: [asatidz_id], references: [id])
+  pegawai Pegawai @relation(fields: [pegawai_id], references: [id])
 
-  @@unique([asatidz_id, tanggal])
+  @@unique([pegawai_id, tanggal])
   @@map("presensi_asatidz")
 }
 
@@ -206,7 +217,7 @@ model NilaiSantri {
 model CapaianTahfidz {
   id         String   @id @default(uuid()) @db.Uuid
   santri_id  String   @db.Uuid
-  asatidz_id String   @db.Uuid // Musyrif/Guru pengampu tahfidz
+  pegawai_id String @db.Uuid // Musyrif/Guru pengampu tahfidz
   tanggal    DateTime @db.Date
   jenis      String // ziyadah | murojaah_harian | murojaah_pekanan | ujian_pekanan | ujian_juz
   surat      String
@@ -217,7 +228,7 @@ model CapaianTahfidz {
   created_at DateTime @default(now()) @db.Timestamptz(6)
 
   santri  SantriAktif @relation(fields: [santri_id], references: [id])
-  asatidz Asatidz     @relation(fields: [asatidz_id], references: [id])
+  pegawai Pegawai @relation(fields: [pegawai_id], references: [id])
 
   @@map("capaian_tahfidz")
 }
