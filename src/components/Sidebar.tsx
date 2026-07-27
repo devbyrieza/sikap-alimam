@@ -62,7 +62,14 @@ export default function Sidebar({ user }: SidebarProps) {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const isActive = (href: string) => {
-    if (href === "/dashboard") return pathname === "/dashboard";
+    if (pathname === href) return true;
+    if (href === "/dashboard") return false;
+    
+    // Mencegah menu "Presensi Santri" menyala saat berada di "Rekap Presensi Santri"
+    if (href === "/presensi/santri" && pathname.startsWith("/presensi/santri/rekap")) {
+      return false;
+    }
+    
     return pathname.startsWith(href);
   };
 
