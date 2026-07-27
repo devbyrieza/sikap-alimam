@@ -36,10 +36,11 @@ model Asatidz {
   is_active      Boolean  @default(true)
   created_at     DateTime @default(now()) @db.Timestamptz(6)
 
-  user     User?             @relation(fields: [user_id], references: [id])
-  jurnal   JurnalMengajar[]
-  presensi PresensiAsatidz[]
-  mengajar AsatidzmMapel[]
+  user            User?             @relation(fields: [user_id], references: [id])
+  jurnal          JurnalMengajar[]
+  presensi        PresensiAsatidz[]
+  mengajar        AsatidzmMapel[]
+  capaian_tahfidz CapaianTahfidz[]
 
   @@map("asatidz")
 }
@@ -63,6 +64,7 @@ model Kelas {
 model MataPelajaran {
   id        String  @id @default(uuid()) @db.Uuid
   nama      String
+  kategori  String  @default("umum") // "agama" | "umum"
   kelas_id  String  @db.Uuid
   is_active Boolean @default(true)
 
@@ -99,9 +101,10 @@ model SantriAktif {
   is_active     Boolean  @default(true)
   created_at    DateTime @default(now()) @db.Timestamptz(6)
 
-  kelas    Kelas           @relation(fields: [kelas_id], references: [id])
-  presensi PresensiSiswa[]
-  nilai    NilaiSantri[]
+  kelas           Kelas            @relation(fields: [kelas_id], references: [id])
+  presensi        PresensiSiswa[]
+  nilai           NilaiSantri[]
+  capaian_tahfidz CapaianTahfidz[]
 
   @@map("santri_aktif")
 }
@@ -186,7 +189,7 @@ model NilaiSantri {
   kelas_id     String   @db.Uuid
   semester     String // "1" | "2"
   tahun_ajaran String // "2025/2026"
-  jenis        String // harian | uts | uas | praktik | tugas
+  jenis        String // harian | kompetensi | sikap | pts | pas
   nilai        Float
   keterangan   String?
   created_at   DateTime @default(now()) @db.Timestamptz(6)
@@ -196,4 +199,25 @@ model NilaiSantri {
   kelas  Kelas         @relation(fields: [kelas_id], references: [id])
 
   @@map("nilai_santri")
+}
+
+// ─── TAHFIDZ ────────────────────────────────────────────────────────────────
+
+model CapaianTahfidz {
+  id         String   @id @default(uuid()) @db.Uuid
+  santri_id  String   @db.Uuid
+  asatidz_id String   @db.Uuid // Musyrif/Guru pengampu tahfidz
+  tanggal    DateTime @db.Date
+  jenis      String // ziyadah | murojaah_harian | murojaah_pekanan | ujian_pekanan | ujian_juz
+  surat      String
+  halaman    String?
+  ayat       String?
+  nilai      Float? // Opsional: Jika ujian, bisa diisi nilai angkanya
+  keterangan String?
+  created_at DateTime @default(now()) @db.Timestamptz(6)
+
+  santri  SantriAktif @relation(fields: [santri_id], references: [id])
+  asatidz Asatidz     @relation(fields: [asatidz_id], references: [id])
+
+  @@map("capaian_tahfidz")
 }
