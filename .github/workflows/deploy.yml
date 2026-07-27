@@ -2,15 +2,15 @@ name: Build and Deploy to GHCR
 
 on:
   push:
-    branches: [ "master" ]
-  workflow_dispatch:
+    branches:
+      - master
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}
+  IMAGE_NAME: devbyrieza/siakad-alimam
 
 jobs:
-  build-and-push-image:
+  build-and-push:
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -20,44 +20,27 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Log in to the Container registry
+      - name: Log in to GitHub Container Registry
         uses: docker/login-action@v3
         with:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Extract metadata (tags, labels) for Docker
-        id: meta
-        uses: docker/metadata-action@v5
-        with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-          tags: |
-            type=raw,value=latest
-            type=sha
+          password: ${{ secrets.GH_PAT }}
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:
           context: .
           push: true
-          no-cache: true
-          provenance: false
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
-          build-args: |
-            DATABASE_URL=postgresql://dummy:dummy@localhost:5432/dummy
-            NEXT_PUBLIC_API_URL=https://pesantren-alimam.com
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.ref_name }}
 
-      - name: Trigger Coolify Deployment
-        if: success()
+      - name: Trigger Coolify Deploy
+        env:
+          COOLIFY_WEBHOOK: ${{ secrets.COOLIFY_WEBHOOK }}
         run: |
-          if [ -n "${{ secrets.COOLIFY_WEBHOOK }}" ] && [ -n "${{ secrets.COOLIFY_TOKEN }}" ]; then
-            echo "🚀 Triggering Coolify deployment..."
-            curl -s -A "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36" --max-time 30 -X GET "${{ secrets.COOLIFY_WEBHOOK }}" -H "Authorization: Bearer ${{ secrets.COOLIFY_TOKEN }}" || echo "⚠️ Coolify webhook timed out or failed, but build succeeded."
-          elif [ -n "${{ secrets.COOLIFY_WEBHOOK }}" ]; then
-            echo "🚀 Triggering Coolify deployment without token (fallback)..."
-            curl -s -A "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36" --max-time 30 -X GET "${{ secrets.COOLIFY_WEBHOOK }}" || echo "⚠️ Coolify webhook timed out or failed, but build succeeded."
+          if [ -n "$COOLIFY_WEBHOOK" ]; then
+            echo "Triggering Coolify deployment..."
+            curl -s -X GET "$COOLIFY_WEBHOOK"
           else
-            echo "⚠️ COOLIFY_WEBHOOK secret not found. To auto-deploy, add it to GitHub Secrets."
+            echo "No COOLIFY_WEBHOOK secret found. Skipping automatic deployment."
           fi
