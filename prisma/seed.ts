@@ -6,7 +6,7 @@ const prisma = new PrismaClient();
 const ASATIDZ = [
   "Agus Cahyono",
   "Wahyudi Pranata, Lc.",
-  "Imran Abdillah",
+  "Imron Abdillah",
   "Ramdan",
   "Abdil Aziz, S.Pd., B.A.",
   "Rieza Eka Tomara, S.Kom",
