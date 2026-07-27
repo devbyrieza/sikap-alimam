@@ -32,12 +32,12 @@ export async function GET(req: NextRequest) {
     // Map presensi ke santri_id
     const presensiMap = new Map(presensiAda.map((p) => [p.santri_id, p]));
 
-    // Gabungkan santri dengan status presensi (default hadir jika belum ada)
+    // Gabungkan santri dengan status presensi (biarkan null jika belum diabsen)
     const result = santri.map((s) => {
       const p = presensiMap.get(s.id);
       return {
         ...s,
-        status: p?.status ?? "hadir",
+        status: p?.status ?? null,
         keterangan: p?.keterangan ?? null,
         presensi_id: p?.id ?? null,
       };

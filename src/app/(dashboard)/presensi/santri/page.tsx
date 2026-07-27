@@ -100,8 +100,12 @@ export default function PresensiSantriPage() {
       const map: Record<string, StatusType> = {};
       const ketMap: Record<string, string> = {};
       data.forEach((s) => {
-        map[s.id] = (s.status as StatusType) || "hadir";
-        ketMap[s.id] = s.keterangan || "";
+        if (s.status) {
+          map[s.id] = s.status as StatusType;
+        }
+        if (s.keterangan) {
+          ketMap[s.id] = s.keterangan;
+        }
       });
       setStatusMap(map);
       setKeteranganMap(ketMap);
@@ -151,8 +155,10 @@ export default function PresensiSantriPage() {
   // Ringkasan realtime
   const summary = santri.reduce(
     (acc, s) => {
-      const st = statusMap[s.id] || "hadir";
-      acc[st as StatusType] = (acc[st as StatusType] || 0) + 1;
+      const st = statusMap[s.id];
+      if (st) {
+        acc[st as StatusType] = (acc[st as StatusType] || 0) + 1;
+      }
       return acc;
     },
     { hadir: 0, sakit: 0, izin: 0, alpha: 0 } as Record<StatusType, number>
@@ -164,6 +170,18 @@ export default function PresensiSantriPage() {
 
   const handleSimpan = async () => {
     if (!selectedKelas || !tanggal || santri.length === 0) return;
+
+    if (sudahDiabsen < santri.length) {
+      const confirmAll = await Swal.fire({
+        icon: "warning",
+        title: "Ada santri belum diabsen",
+        text: `Masih ada ${santri.length - sudahDiabsen} santri yang belum diabsen. Simpan sebagai Hadir secara otomatis?`,
+        showCancelButton: true,
+        confirmButtonText: "Ya, Simpan Hadir",
+        cancelButtonText: "Batal",
+      });
+      if (!confirmAll.isConfirmed) return;
+    }
 
     const kelasNamaConfirm = kelasList.find((k) => k.id === selectedKelas)?.nama;
 
@@ -387,15 +405,15 @@ export default function PresensiSantriPage() {
             {/* Daftar Kartu Santri (mobile-first) */}
             <div style={{ display: "flex", flexDirection: "column", gap: 12, marginBottom: 24 }}>
               {santri.map((s, idx) => {
-                const currentStatus = statusMap[s.id] || "hadir";
-                const needsKet = currentStatus !== "hadir";
+                const currentStatus = statusMap[s.id];
+                const needsKet = currentStatus && currentStatus !== "hadir";
                 return (
                   <div
                     key={s.id}
                     className="card"
                     style={{
                       padding: "16px 20px",
-                      borderLeft: `4px solid ${STATUS_COLOR[currentStatus]}`,
+                      borderLeft: `4px solid ${currentStatus ? STATUS_COLOR[currentStatus] : "#cbd5e1"}`,
                       transition: "border-color 0.2s",
                     }}
                   >
@@ -435,11 +453,11 @@ export default function PresensiSantriPage() {
                           borderRadius: 99,
                           fontSize: 12,
                           fontWeight: 700,
-                          background: STATUS_BG[currentStatus],
-                          color: STATUS_COLOR[currentStatus],
+                          background: currentStatus ? STATUS_BG[currentStatus] : "#f1f5f9",
+                          color: currentStatus ? STATUS_COLOR[currentStatus] : "#64748b",
                         }}
                       >
-                        {STATUS_LABEL[currentStatus]}
+                        {currentStatus ? STATUS_LABEL[currentStatus] : "Belum Diabsen"}
                       </div>
                     </div>
 
