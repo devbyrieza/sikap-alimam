@@ -96,7 +96,7 @@ export default function Sidebar({ user }: SidebarProps) {
             <GraduationCap size={22} color="#3d0a0a" />
           </div>
           <div>
-            <h1>SIAKAD</h1>
+            <h1>SIKAP</h1>
             <p>Al-Imam Al-Islami</p>
           </div>
         </div>
@@ -210,7 +210,7 @@ export default function Sidebar({ user }: SidebarProps) {
         <span
           style={{ color: "white", fontWeight: 800, fontSize: 16 }}
         >
-          SIAKAD
+          SIKAP
         </span>
         <button
           onClick={() => setMobileOpen(!mobileOpen)}

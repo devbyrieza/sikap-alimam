@@ -4,9 +4,9 @@ import "./globals.css";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "SIAKAD — Al-Imam Al-Islami",
+  title: "SIKAP — Al-Imam Al-Islami",
   description:
-    "Sistem Informasi Akademik Pesantren Al-Imam Al-Islami. Jurnal mengajar, presensi santri, absensi asatidz, dan input nilai.",
+    "Sistem Informasi Akademik dan Pengasuhan Pesantren Al-Imam Al-Islami. Jurnal mengajar, presensi santri, absensi asatidz, dan input nilai.",
 };
 
 export default function RootLayout({

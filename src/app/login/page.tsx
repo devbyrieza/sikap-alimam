@@ -69,7 +69,7 @@ export default function LoginPage() {
           <div className="icon">
             <BookOpen size={32} color="white" />
           </div>
-          <h1>SIAKAD</h1>
+          <h1>SIKAP</h1>
           <p>Pesantren Al-Imam Al-Islami</p>
           <p
             style={{
@@ -156,7 +156,7 @@ export default function LoginPage() {
             style={{ width: "100%", justifyContent: "center", marginTop: 4 }}
           >
             {loading ? <Loader2 size={16} className="spinner" style={{ animation: "spin 0.7s linear infinite" }} /> : null}
-            {loading ? "Masuk..." : "Masuk ke SIAKAD"}
+            {loading ? "Masuk..." : "Masuk ke SIKAP"}
           </button>
         </form>
 
