@@ -50,7 +50,7 @@ const NAV: NavItem[] = [
     icon: <BarChart3 size={18} />,
   },
   {
-    href: "/admin/asatidz",
+    href: "/master/guru",
     label: "Data Asatidz",
     icon: <Users size={18} />,
     roles: ["admin", "kepala"],
