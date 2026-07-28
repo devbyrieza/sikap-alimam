@@ -7,6 +7,7 @@ import Swal from "sweetalert2";
 const formatName = (str: string) => {
   if (!str) return "-";
   return str.split(' ').map(word => {
+    if (word.includes('.')) return word; // Biarkan singkatan gelar (misal B.A, S.Pd)
     // Jika semua huruf kapital (misal dari database) atau semua huruf kecil (wahyudi), kita format menjadi Title Case
     if (word === word.toUpperCase() || word === word.toLowerCase()) {
       return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
