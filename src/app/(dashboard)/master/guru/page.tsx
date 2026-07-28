@@ -145,52 +145,66 @@ export default function MasterGuruPage() {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {guru.map((g) => (
-            <div key={g.id} className="bg-white/80 backdrop-blur-md rounded-3xl p-6 shadow-sm border border-slate-100/80 flex flex-col justify-between hover:shadow-md hover:border-emerald-200 transition-all duration-300 group min-h-[290px]">
-              <div>
-                {/* Header: Avatar & Name */}
-                <div className="flex items-start gap-4 mb-4">
-                  <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-emerald-600 to-teal-500 text-white flex items-center justify-center font-extrabold text-2xl shadow-md shadow-emerald-500/10 shrink-0">
-                    {g.nama_lengkap.charAt(0)}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <h3 className="font-extrabold text-slate-800 text-base leading-snug tracking-tight line-clamp-2 group-hover:text-emerald-700 transition-colors" title={g.nama_lengkap}>
-                      {g.nama_lengkap}
-                    </h3>
-                    <p className="text-[10px] font-mono text-slate-400 mt-1.5 inline-block bg-slate-50 px-2 py-0.5 rounded border border-slate-100">
+            <div 
+              key={g.id} 
+              className="group bg-white rounded-[2rem] p-5 shadow-sm border border-slate-100 hover:border-emerald-200 hover:shadow-xl hover:shadow-emerald-900/5 transition-all duration-300 relative flex flex-col gap-5 overflow-hidden"
+            >
+              {/* Decorative Background Blob */}
+              <div className="absolute -top-10 -right-10 w-32 h-32 bg-gradient-to-br from-emerald-100/40 to-teal-50/10 rounded-full blur-2xl -z-10 group-hover:scale-150 transition-transform duration-500"></div>
+
+              {/* Header: Avatar, Name & Mapel */}
+              <div className="flex items-start gap-4">
+                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-emerald-600 to-teal-500 text-white flex items-center justify-center font-black text-2xl shadow-lg shadow-emerald-500/20 shrink-0 transform group-hover:scale-105 transition-transform duration-300">
+                  {g.nama_lengkap.charAt(0).toUpperCase()}
+                </div>
+                <div className="flex-1 min-w-0 flex flex-col gap-1.5">
+                  <h3 
+                    className="font-bold text-slate-800 text-[15px] leading-tight group-hover:text-emerald-700 transition-colors" 
+                    title={g.nama_lengkap}
+                  >
+                    {g.nama_lengkap}
+                  </h3>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className="text-[10px] font-bold tracking-wider uppercase text-slate-400 bg-slate-50 px-2 py-0.5 rounded-md border border-slate-100">
                       {g.nik || "GURU-NO-ID"}
-                    </p>
+                    </span>
+                    {g.mata_pelajaran && (
+                      <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-100 px-2 py-0.5 rounded-md inline-flex items-center gap-1">
+                        <BookOpen size={10} />
+                        {g.mata_pelajaran}
+                      </span>
+                    )}
                   </div>
                 </div>
-
-                {/* Mapel / Mengajar */}
-                {g.mata_pelajaran && (
-                  <div className="inline-flex items-center gap-1.5 text-xs text-emerald-700 bg-emerald-50/80 border border-emerald-100/50 px-2.5 py-1 rounded-xl font-bold shadow-sm shadow-emerald-500/5 mt-1">
-                    <BookOpen size={13} className="text-emerald-600" />
-                    <span>{g.mata_pelajaran}</span>
-                  </div>
-                )}
               </div>
 
-              {/* Contact Info & Footer */}
-              <div className="mt-4 space-y-4">
-                <div className="space-y-2 pt-4 border-t border-slate-100">
-                  <div className="flex items-center gap-3 text-slate-600 hover:text-slate-900 transition-colors">
-                    <div className="w-7 h-7 bg-slate-50 border border-slate-100 rounded-lg flex items-center justify-center text-slate-400 group-hover:text-emerald-600 group-hover:bg-emerald-50 transition-colors shrink-0">
-                      <Phone size={13} />
+              {/* Divider */}
+              <div className="w-full h-px bg-gradient-to-r from-slate-100 via-slate-200 to-transparent"></div>
+
+              {/* Contact Info & Actions */}
+              <div className="flex items-end justify-between gap-4 mt-auto">
+                <div className="space-y-2.5 flex-1 min-w-0">
+                  <div className="flex items-center gap-2.5 text-slate-500 group-hover:text-slate-700 transition-colors">
+                    <div className="w-6 h-6 bg-slate-50 rounded-lg flex items-center justify-center shrink-0">
+                      <Phone size={12} className="text-slate-400 group-hover:text-emerald-500 transition-colors" />
                     </div>
                     <span className="text-xs font-semibold truncate">{g.no_hp || "Belum ada No. HP"}</span>
                   </div>
-                  <div className="flex items-center gap-3 text-slate-600 hover:text-slate-900 transition-colors">
-                    <div className="w-7 h-7 bg-slate-50 border border-slate-100 rounded-lg flex items-center justify-center text-slate-400 group-hover:text-emerald-600 group-hover:bg-emerald-50 transition-colors shrink-0">
-                      <Mail size={13} />
+                  <div className="flex items-center gap-2.5 text-slate-500 group-hover:text-slate-700 transition-colors">
+                    <div className="w-6 h-6 bg-slate-50 rounded-lg flex items-center justify-center shrink-0">
+                      <Mail size={12} className="text-slate-400 group-hover:text-emerald-500 transition-colors" />
                     </div>
                     <span className="text-xs font-semibold truncate">{g.email || "Belum ada Email"}</span>
                   </div>
                 </div>
 
-                <div className="pt-3 border-t border-slate-100/50 flex justify-end gap-2">
-                  <button className="p-2 bg-amber-50 hover:bg-amber-100 text-amber-700 rounded-xl transition-all shadow-sm cursor-pointer" title="Edit Data"><Edit2 size={14} /></button>
-                  <button className="p-2 bg-red-50 hover:bg-red-100 text-red-700 rounded-xl transition-all shadow-sm cursor-pointer" title="Hapus Data"><Trash2 size={14} /></button>
+                <div className="flex flex-col gap-1.5 shrink-0">
+                  <button className="p-2.5 bg-slate-50 hover:bg-amber-50 text-slate-400 hover:text-amber-600 rounded-xl transition-all shadow-sm hover:shadow-md cursor-pointer group/btn" title="Edit Data">
+                    <Edit2 size={14} className="group-hover/btn:scale-110 transition-transform" />
+                  </button>
+                  <button className="p-2.5 bg-slate-50 hover:bg-red-50 text-slate-400 hover:text-red-600 rounded-xl transition-all shadow-sm hover:shadow-md cursor-pointer group/btn" title="Hapus Data">
+                    <Trash2 size={14} className="group-hover/btn:scale-110 transition-transform" />
+                  </button>
                 </div>
               </div>
             </div>
