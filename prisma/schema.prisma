@@ -14,11 +14,12 @@ model User {
   email      String   @unique
   password   String
   nama       String
-  role       String   @default("guru") // admin | guru | kepala
+  role       String   @default("guru") // ADMIN_SUPER | ADMIN_KEUANGAN | MUDIR | KEPALA_SEKOLAH | KASI_PENGASUHAN | KASI_ASRAMA | KASI_KEDISIPLINAN | KASI_KURIKULUM | GURU | MUSYRIF | WALI_SANTRI
   is_active  Boolean  @default(true)
   created_at DateTime @default(now()) @db.Timestamptz(6)
 
-  pegawai Pegawai?
+  pegawai   Pegawai?
+  orang_tua OrangTuaSantri[]
 
   @@map("users")
 }
@@ -52,6 +53,7 @@ model Pegawai {
   presensi        PresensiAsatidz[]
   mengajar        AsatidzmMapel[]
   capaian_tahfidz CapaianTahfidz[]
+  ibadah_adab     IbadahAdabSantri[]
 
   @@map("pegawai")
 }
@@ -116,6 +118,8 @@ model SantriAktif {
   presensi        PresensiSiswa[]
   nilai           NilaiSantri[]
   capaian_tahfidz CapaianTahfidz[]
+  orang_tua       OrangTuaSantri[]
+  ibadah_adab     IbadahAdabSantri[]
 
   @@map("santri_aktif")
 }
@@ -231,4 +235,53 @@ model CapaianTahfidz {
   pegawai Pegawai @relation(fields: [pegawai_id], references: [id])
 
   @@map("capaian_tahfidz")
+}
+
+// ─── WALI SANTRI ────────────────────────────────────────────────────────────
+
+model OrangTuaSantri {
+  id        String @id @default(uuid()) @db.Uuid
+  user_id   String @db.Uuid
+  santri_id String @db.Uuid
+
+  user   User        @relation(fields: [user_id], references: [id])
+  santri SantriAktif @relation(fields: [santri_id], references: [id])
+
+  @@unique([user_id, santri_id])
+  @@map("orangtua_santri")
+}
+
+// ─── BINA PRIBADI ISLAMI (BPI) ──────────────────────────────────────────────
+
+model IbadahAdabSantri {
+  id         String   @id @default(uuid()) @db.Uuid
+  santri_id  String   @db.Uuid
+  pegawai_id String   @db.Uuid // Musyrif yang mengisi
+  tanggal    DateTime @db.Date
+
+  // Sholat Wajib (Berjamaah, Munfarid, Terlambat, Bolong, Udzur)
+  shubuh   String @default("Berjamaah")
+  dzuhur   String @default("Berjamaah")
+  ashar    String @default("Berjamaah")
+  maghrib  String @default("Berjamaah")
+  isya     String @default("Berjamaah")
+
+  // Amalan Sunnah
+  tahajjud   Boolean @default(false)
+  dhuha      Boolean @default(false)
+  shaum      Boolean @default(false)
+  almatsurat Boolean @default(false)
+
+  // Adab
+  adab_kamar String? // A, B, C, D
+  adab_masjid String?
+  catatan  String?
+
+  created_at DateTime @default(now()) @db.Timestamptz(6)
+
+  santri  SantriAktif @relation(fields: [santri_id], references: [id])
+  pegawai Pegawai @relation(fields: [pegawai_id], references: [id])
+
+  @@unique([santri_id, tanggal])
+  @@map("ibadah_adab_santri")
 }
