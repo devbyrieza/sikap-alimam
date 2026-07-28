@@ -31,7 +31,7 @@ async function main() {
 
     // Query dinamis berdasarkan skema (office.pegawai di prod, public.pegawai di lokal)
     const queryStr = `
-      SELECT id, nik, nama_lengkap, jenis_kelamin, tempat_lahir, tanggal_lahir, no_hp, email, alamat, kategori_pegawai 
+      SELECT id, nik, nama_lengkap, jenis_kelamin, tempat_lahir, tanggal_lahir, no_hp, email, alamat, kategori_pegawai, mata_pelajaran 
       FROM ${schema}.pegawai 
       WHERE kategori_pegawai = 'ASATIDZ' 
          OR kategori_pegawai = 'GURU' 
@@ -92,6 +92,7 @@ async function main() {
             no_hp: guru.no_hp,
             email: guru.email,
             alamat: guru.alamat,
+            mata_pelajaran: guru.mata_pelajaran,
             kategori_pegawai: 'ASATIDZ' // Normalisasi
           },
           create: {
@@ -104,9 +105,63 @@ async function main() {
             no_hp: guru.no_hp,
             email: guru.email,
             alamat: guru.alamat,
+            mata_pelajaran: guru.mata_pelajaran,
             kategori_pegawai: 'ASATIDZ'
           }
         });
+
+        // Auto-mapping ke AsatidzmMapel jika ada mata_pelajaran
+        if (guru.mata_pelajaran) {
+          // Normalisasi nama mapel agar cocok dengan data SIKAP
+          let searchName = guru.mata_pelajaran;
+          const lowerMapel = guru.mata_pelajaran.toLowerCase();
+          if (lowerMapel.includes("qur'an") || lowerMapel.includes("tahfidz") || lowerMapel.includes("tahfizh")) {
+            searchName = "Tahfizh";
+          } else if (lowerMapel === "fiqih" || lowerMapel === "fiqh") {
+            searchName = "Fiqh";
+          } else if (lowerMapel === "aqidah" || lowerMapel === "akidah") {
+            searchName = "Akidah";
+          } else if (lowerMapel === "hadits" || lowerMapel === "hadis") {
+            searchName = "Hadis";
+          } else if (lowerMapel === "tarikh" || lowerMapel.includes("siroh")) {
+            searchName = "Siroh";
+          } else if (lowerMapel === "ipa") {
+            searchName = "IPA";
+          }
+
+          // Cari mapel di SIKAP yang namanya mengandung nilai dari SIMPEG (case-insensitive)
+          const matchedMapel = await prisma.mataPelajaran.findFirst({
+            where: {
+              nama: {
+                contains: searchName,
+                mode: 'insensitive'
+              }
+            }
+          });
+
+          if (matchedMapel) {
+            // Ambil semua kelas di SIKAP
+            const allKelas = await prisma.kelas.findMany();
+            for (const k of allKelas) {
+              await prisma.asatidzmMapel.upsert({
+                where: {
+                  pegawai_id_mapel_id_kelas_id: {
+                    pegawai_id: guru.id,
+                    mapel_id: matchedMapel.id,
+                    kelas_id: k.id
+                  }
+                },
+                update: {},
+                create: {
+                  pegawai_id: guru.id,
+                  mapel_id: matchedMapel.id,
+                  kelas_id: k.id
+                }
+              });
+            }
+          }
+        }
+
         updatedCount++;
       } catch (err: any) {
         if (err.code === 'P2002') {

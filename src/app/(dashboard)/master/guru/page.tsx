@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Users, Plus, Trash2, Edit2, Save, Mail, Phone, RefreshCw } from "lucide-react";
+import { Users, Plus, Trash2, Edit2, Save, Mail, Phone, RefreshCw, BookOpen } from "lucide-react";
 import Swal from "sweetalert2";
 
 export default function MasterGuruPage() {
@@ -159,6 +159,14 @@ export default function MasterGuruPage() {
               </div>
               
               <div className="space-y-2 mt-auto">
+                {g.mata_pelajaran && (
+                  <div className="flex items-center gap-2 text-sm text-gray-600 mb-1">
+                    <BookOpen size={14} className="text-emerald-600" />
+                    <span className="font-semibold text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded-lg text-xs">
+                      {g.mata_pelajaran}
+                    </span>
+                  </div>
+                )}
                 <div className="flex items-center gap-2 text-sm text-gray-600">
                   <Phone size={14} className="text-gray-400" />
                   {g.no_hp || "Belum ada No. HP"}
