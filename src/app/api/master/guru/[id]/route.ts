@@ -1,0 +1,43 @@
+import { NextRequest, NextResponse } from "next/server";
+import { PrismaClient } from "@prisma/client";
+
+const prisma = new PrismaClient();
+
+// Delete Guru
+export async function DELETE(
+  req: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  try {
+    const id = params.id;
+    await prisma.pegawai.delete({
+      where: { id },
+    });
+    return NextResponse.json({ success: true, message: "Guru berhasil dihapus" });
+  } catch (error) {
+    console.error("Error deleting guru:", error);
+    return NextResponse.json({ error: "Gagal menghapus data" }, { status: 500 });
+  }
+}
+
+// Update Guru
+export async function PUT(
+  req: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  try {
+    const id = params.id;
+    const body = await req.json();
+    const { nik, nama_lengkap, no_hp, email } = body;
+
+    const updatedGuru = await prisma.pegawai.update({
+      where: { id },
+      data: { nik, nama_lengkap, no_hp, email },
+    });
+
+    return NextResponse.json(updatedGuru);
+  } catch (error) {
+    console.error("Error updating guru:", error);
+    return NextResponse.json({ error: "Gagal memperbarui data" }, { status: 500 });
+  }
+}

@@ -23,6 +23,7 @@ export default function MasterGuruPage() {
 
   // Form State
   const [isAdding, setIsAdding] = useState(false);
+  const [editingId, setEditingId] = useState<string | null>(null);
   const [form, setForm] = useState({ nik: "", nama_lengkap: "", no_hp: "", email: "" });
 
   const fetchGuru = async () => {
@@ -76,24 +77,77 @@ export default function MasterGuruPage() {
     }
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!form.nama_lengkap) {
       Swal.fire("Error", "Nama lengkap wajib diisi", "error");
       return;
     }
 
-    const newEntry = {
-      id: Date.now().toString(),
-      nik: form.nik || `GURU-${Date.now()}`,
-      nama_lengkap: form.nama_lengkap,
-      no_hp: form.no_hp,
-      email: form.email,
-    };
+    try {
+      if (editingId) {
+        const res = await fetch(`/api/master/guru/${editingId}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(form)
+        });
+        if (res.ok) {
+          Swal.fire("Berhasil", "Data Guru berhasil diperbarui", "success");
+        } else {
+          Swal.fire("Gagal", "Gagal memperbarui data", "error");
+        }
+      } else {
+        const res = await fetch("/api/master/guru", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(form)
+        });
+        if (res.ok) {
+          Swal.fire("Berhasil", "Data Guru berhasil ditambahkan", "success");
+        } else {
+          Swal.fire("Gagal", "NIK atau Email sudah terdaftar", "error");
+        }
+      }
+      setIsAdding(false);
+      setEditingId(null);
+      setForm({ nik: "", nama_lengkap: "", no_hp: "", email: "" });
+      fetchGuru();
+    } catch (err) {
+      Swal.fire("Gagal", "Terjadi kesalahan server", "error");
+    }
+  };
 
-    setGuru([...guru, newEntry]);
-    setIsAdding(false);
-    setForm({ nik: "", nama_lengkap: "", no_hp: "", email: "" });
-    Swal.fire("Berhasil", "Data Guru berhasil ditambahkan", "success");
+  const handleEdit = (g: any) => {
+    setForm({ nik: g.nik || "", nama_lengkap: g.nama_lengkap || "", no_hp: g.no_hp || "", email: g.email || "" });
+    setEditingId(g.id);
+    setIsAdding(true);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleDelete = async (id: string, name: string) => {
+    const confirm = await Swal.fire({
+      title: "Hapus Data?",
+      text: `Anda yakin ingin menghapus ${name}?`,
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Ya, hapus!",
+      cancelButtonText: "Batal"
+    });
+
+    if (confirm.isConfirmed) {
+      try {
+        const res = await fetch(`/api/master/guru/${id}`, { method: "DELETE" });
+        if (res.ok) {
+          Swal.fire("Terhapus!", "Data guru telah dihapus.", "success");
+          fetchGuru();
+        } else {
+          Swal.fire("Gagal", "Gagal menghapus data", "error");
+        }
+      } catch (err) {
+        Swal.fire("Gagal", "Terjadi kesalahan server", "error");
+      }
+    }
   };
 
   return (
@@ -115,8 +169,14 @@ export default function MasterGuruPage() {
             Sync dari SIMPEG
           </button>
           <button 
-            onClick={() => setIsAdding(!isAdding)}
-            className="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-2.5 rounded-xl font-semibold shadow-md flex items-center gap-2 transition-all"
+            onClick={() => {
+              setIsAdding(!isAdding);
+              if (isAdding) {
+                setEditingId(null);
+                setForm({ nik: "", nama_lengkap: "", no_hp: "", email: "" });
+              }
+            }}
+            className="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-2.5 rounded-xl font-semibold shadow-md flex items-center gap-2 transition-all cursor-pointer"
           >
             {isAdding ? "Batal" : <><Plus size={18} /> Tambah Guru Baru</>}
           </button>
@@ -125,7 +185,9 @@ export default function MasterGuruPage() {
 
       {isAdding && (
         <div className="bg-white rounded-3xl p-6 border border-emerald-200 shadow-md mb-6 animate-in fade-in slide-in-from-top-4">
-          <h3 className="font-bold text-lg text-gray-800 mb-4 border-b pb-2">Form Pendaftaran Asatidz Baru</h3>
+          <h3 className="font-bold text-lg text-gray-800 mb-4 border-b pb-2">
+            {editingId ? "Form Edit Data Asatidz" : "Form Pendaftaran Asatidz Baru"}
+          </h3>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">NIK / Kode Identitas</label>
@@ -211,10 +273,10 @@ export default function MasterGuruPage() {
                 </div>
 
                 <div className="flex flex-col gap-1.5 shrink-0">
-                  <button className="p-2.5 bg-slate-50 hover:bg-amber-50 text-slate-400 hover:text-amber-600 rounded-xl transition-all shadow-sm hover:shadow-md cursor-pointer group/btn" title="Edit Data">
+                  <button onClick={() => handleEdit(g)} className="p-2.5 bg-slate-50 hover:bg-amber-50 text-slate-400 hover:text-amber-600 rounded-xl transition-all shadow-sm hover:shadow-md cursor-pointer group/btn" title="Edit Data">
                     <Edit2 size={14} className="group-hover/btn:scale-110 transition-transform" />
                   </button>
-                  <button className="p-2.5 bg-slate-50 hover:bg-red-50 text-slate-400 hover:text-red-600 rounded-xl transition-all shadow-sm hover:shadow-md cursor-pointer group/btn" title="Hapus Data">
+                  <button onClick={() => handleDelete(g.id, g.nama_lengkap)} className="p-2.5 bg-slate-50 hover:bg-red-50 text-slate-400 hover:text-red-600 rounded-xl transition-all shadow-sm hover:shadow-md cursor-pointer group/btn" title="Hapus Data">
                     <Trash2 size={14} className="group-hover/btn:scale-110 transition-transform" />
                   </button>
                 </div>
