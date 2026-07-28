@@ -3,11 +3,23 @@ import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
-// URL database SIMPEG di server Coolify (produksi)
-const SIMPEG_DB_URL = "postgresql://user_office:password_rahasia_office123@ucso0wo8gg8owc880w8sco44:5432/postgres?schema=office";
+// URL database SIMPEG Fallback (Jika env tidak diset)
+const FALLBACK_DB_URL = "postgresql://postgres:nhzYTBmfqk8RUhOoYHmvkbzoN2OhN@127.0.0.1:5433/ppdb_alimam?schema=public";
 
 async function main() {
-  console.log("Memulai sinkronisasi data Guru dari SIMPEG (Produksi)...");
+  const SIMPEG_DB_URL = process.env.SIMPEG_DATABASE_URL || FALLBACK_DB_URL;
+  console.log("Memulai sinkronisasi data Guru dari SIMPEG...");
+  
+  // Parse skema secara dinamis dari URL koneksi
+  let schema = "public";
+  try {
+    const urlObj = new URL(SIMPEG_DB_URL);
+    schema = urlObj.searchParams.get("schema") || "public";
+  } catch (e) {
+    console.warn("Gagal mengekstrak nama skema dari URL, default ke 'public'.");
+  }
+
+  console.log(`Menghubungkan ke DB SIMPEG dengan skema: '${schema}'`);
 
   const pgClient = new Client({
     connectionString: SIMPEG_DB_URL,
@@ -17,16 +29,17 @@ async function main() {
     await pgClient.connect();
     console.log("Berhasil terhubung ke database SIMPEG.");
 
-    // Ambil data dari SIMPEG (tabel office.pegawai)
-    const res = await pgClient.query(`
+    // Query dinamis berdasarkan skema (office.pegawai di prod, public.pegawai di lokal)
+    const queryStr = `
       SELECT id, nik, nama_lengkap, jenis_kelamin, tempat_lahir, tanggal_lahir, no_hp, email, alamat, kategori_pegawai 
-      FROM office.pegawai 
+      FROM ${schema}.pegawai 
       WHERE kategori_pegawai = 'ASATIDZ' 
          OR kategori_pegawai = 'GURU' 
          OR kategori_pegawai = 'Guru'
          OR kategori_pegawai ILIKE '%guru%'
-    `);
-    
+    `;
+
+    const res = await pgClient.query(queryStr);
     const simpegGuruList = res.rows;
     console.log(`Ditemukan ${simpegGuruList.length} data Guru (ASATIDZ/GURU) di SIMPEG.`);
 
