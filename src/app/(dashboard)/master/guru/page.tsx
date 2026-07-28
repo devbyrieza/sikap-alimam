@@ -4,6 +4,17 @@ import React, { useState, useEffect } from "react";
 import { Users, Plus, Trash2, Edit2, Save, Mail, Phone, RefreshCw, BookOpen } from "lucide-react";
 import Swal from "sweetalert2";
 
+const formatName = (str: string) => {
+  if (!str) return "-";
+  return str.split(' ').map(word => {
+    // Jika semua huruf kapital (misal dari database) atau semua huruf kecil (wahyudi), kita format menjadi Title Case
+    if (word === word.toUpperCase() || word === word.toLowerCase()) {
+      return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+    }
+    return word;
+  }).join(' ');
+};
+
 export default function MasterGuruPage() {
   const [guru, setGuru] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
@@ -147,7 +158,7 @@ export default function MasterGuruPage() {
           {guru.map((g) => (
             <div 
               key={g.id} 
-              className="group bg-white rounded-[2rem] p-5 shadow-sm border border-slate-100 hover:border-emerald-200 hover:shadow-xl hover:shadow-emerald-900/5 transition-all duration-300 relative flex flex-col gap-5 overflow-hidden"
+              className="group bg-white rounded-3xl p-6 shadow-sm border border-slate-100 hover:border-emerald-200 hover:shadow-xl hover:shadow-emerald-900/5 transition-all duration-300 relative flex flex-col gap-4 overflow-hidden"
             >
               {/* Decorative Background Blob */}
               <div className="absolute -top-10 -right-10 w-32 h-32 bg-gradient-to-br from-emerald-100/40 to-teal-50/10 rounded-full blur-2xl -z-10 group-hover:scale-150 transition-transform duration-500"></div>
@@ -155,14 +166,14 @@ export default function MasterGuruPage() {
               {/* Header: Avatar, Name & Mapel */}
               <div className="flex items-start gap-4">
                 <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-emerald-600 to-teal-500 text-white flex items-center justify-center font-black text-2xl shadow-lg shadow-emerald-500/20 shrink-0 transform group-hover:scale-105 transition-transform duration-300">
-                  {g.nama_lengkap.charAt(0).toUpperCase()}
+                  {formatName(g.nama_lengkap).charAt(0).toUpperCase()}
                 </div>
-                <div className="flex-1 min-w-0 flex flex-col gap-1.5">
+                <div className="flex-1 min-w-0 flex flex-col gap-2">
                   <h3 
                     className="font-bold text-slate-800 text-[15px] leading-tight group-hover:text-emerald-700 transition-colors" 
-                    title={g.nama_lengkap}
+                    title={formatName(g.nama_lengkap)}
                   >
-                    {g.nama_lengkap}
+                    {formatName(g.nama_lengkap)}
                   </h3>
                   <div className="flex flex-wrap items-center gap-2">
                     <span className="text-[10px] font-bold tracking-wider uppercase text-slate-400 bg-slate-50 px-2 py-0.5 rounded-md border border-slate-100">
