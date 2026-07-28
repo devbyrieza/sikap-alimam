@@ -40,6 +40,11 @@ const NAV: NavItem[] = [
     icon: <UserCheck size={18} />,
   },
   {
+    href: "/tahfidz/mutabaah",
+    label: "Mutabaah Tahfidz",
+    icon: <BookOpen size={18} />,
+  },
+  {
     href: "/nilai",
     label: "Input Nilai",
     icon: <BarChart3 size={18} />,

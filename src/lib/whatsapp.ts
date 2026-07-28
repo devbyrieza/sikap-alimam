@@ -1,51 +1,108 @@
 /**
- * Service Integration untuk WhatsApp Gateway
- * Mendukung pengiriman notifikasi otomatis ke Wali Santri.
- * Bisa disambungkan dengan Fonnte, Watsap.id, atau provider lain.
+ * Service Integration untuk WhatsApp Gateway menggunakan Wablas API
+ * Diadaptasi dari project alandalus-alimam
  */
 
-interface WaPayload {
+export interface WablasResponse {
+  status: boolean;
+  message: string;
+  data?: any;
+}
+
+export interface WaPayload {
   target: string; // Nomor WA tujuan (misal: "08123456789")
   message: string;
 }
 
-export async function sendWhatsAppMessage({ target, message }: WaPayload) {
-  // TODO: Implementasikan dengan API Key provider yang dipilih Yayasan.
-  // Contoh menggunakan Fonnte:
-  /*
-  const FONNTE_TOKEN = process.env.FONNTE_TOKEN;
-  
-  if (!FONNTE_TOKEN) {
-    console.warn("FONNTE_TOKEN is not set. WhatsApp message not sent.");
-    return false;
+// Configuration
+const WABLAS_DOMAIN = process.env.WABLAS_DOMAIN || "";
+const WABLAS_TOKEN = process.env.WABLAS_TOKEN || "";
+const WABLAS_SECRET_KEY = process.env.WABLAS_SECRET_KEY || "";
+
+/**
+ * Format phone number to international format
+ * Input: 081234567890 or +6281234567890
+ * Output: 6281234567890
+ */
+function formatPhoneNumber(phone: string): string {
+  let cleaned = phone.replace(/\D/g, "");
+  if (cleaned.startsWith("0")) {
+    cleaned = "62" + cleaned.substring(1);
+  }
+  if (!cleaned.startsWith("62")) {
+    cleaned = "62" + cleaned;
+  }
+  return cleaned;
+}
+
+/**
+ * Send a simple text message via Wablas
+ */
+export async function sendWhatsAppMessage({
+  target,
+  message,
+}: WaPayload): Promise<WablasResponse> {
+  if (!WABLAS_DOMAIN || !WABLAS_TOKEN) {
+    console.warn("⚠️ Wablas credentials not configured in .env");
+    // Fallback mock for development if credentials are not set
+    console.log(`[MOCK WA TO: ${target}]\n${message}\n------------------------`);
+    return { status: true, message: "Mock message sent (Wablas not configured)" };
   }
 
   try {
-    const res = await fetch("https://api.fonnte.com/send", {
+    const formattedPhone = formatPhoneNumber(target);
+
+    // Ensure domain has protocol
+    const domain = WABLAS_DOMAIN.startsWith("http")
+      ? WABLAS_DOMAIN
+      : `https://${WABLAS_DOMAIN}`;
+
+    // Wablas API - POST with Authorization header: token.secret_key
+    const url = `${domain}/api/send-message`;
+
+    // Build Authorization header with token and secret key
+    const authToken = WABLAS_SECRET_KEY
+      ? `${WABLAS_TOKEN}.${WABLAS_SECRET_KEY}`
+      : WABLAS_TOKEN;
+
+    const formData = new URLSearchParams();
+    formData.append("phone", formattedPhone);
+    formData.append("message", message);
+
+    console.log(`📡 Sending Wablas to ${formattedPhone}`);
+
+    const response = await fetch(url, {
       method: "POST",
       headers: {
-        Authorization: FONNTE_TOKEN,
+        Authorization: authToken,
+        "Content-Type": "application/x-www-form-urlencoded",
       },
-      body: new URLSearchParams({
-        target,
-        message,
-        countryCode: "62", // Default Indonesia
-      }),
+      body: formData.toString(),
     });
 
-    const data = await res.json();
-    return data.status === true;
-  } catch (error) {
-    console.error("Failed to send WA message:", error);
-    return false;
-  }
-  */
+    const rawText = await response.text();
+    let data;
+    try {
+      data = JSON.parse(rawText);
+    } catch (e) {
+      console.error("❌ Wablas Non-JSON Response:", rawText);
+      return {
+        status: false,
+        message: `Wablas Error: ${response.status} ${response.statusText}`,
+      };
+    }
 
-  // Mock implementation for development
-  console.log(`[MOCK WA TO: ${target}]\n${message}\n------------------------`);
-  
-  // Simulasi delay jaringan
-  await new Promise((resolve) => setTimeout(resolve, 1000));
-  
-  return true; // Asumsikan berhasil
+    if (!response.ok || !data.status) {
+      console.error("❌ Wablas API Error:", data);
+      return {
+        status: false,
+        message: data.message || `Wablas Failed: ${response.status}`,
+      };
+    }
+
+    return { status: true, message: "Message sent successfully", data };
+  } catch (error: any) {
+    console.error("❌ Wablas Network Error:", error);
+    return { status: false, message: `Network Error: ${error.message}` };
+  }
 }

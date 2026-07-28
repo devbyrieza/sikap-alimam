@@ -99,10 +99,22 @@ export default function WaliDashboard() {
                     </div>
                   </div>
                 ) : (
-                  <button className="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-3 rounded-2xl font-semibold transition-all shadow-md shadow-emerald-600/20 group">
-                    Lihat Rapor Terpadu
-                    <ChevronRight size={18} className="group-hover:translate-x-1 transition-transform" />
-                  </button>
+                  <div className="flex flex-col gap-2">
+                    <a 
+                      href={`/wali/rapor?santri_id=${anak.id}`}
+                      className="flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-2.5 rounded-2xl font-semibold transition-all shadow-md shadow-emerald-600/20 group"
+                    >
+                      Lihat Rapor Ringkas
+                      <ChevronRight size={18} className="group-hover:translate-x-1 transition-transform" />
+                    </a>
+                    <a 
+                      href={`/rapor/print/${anak.id}`}
+                      target="_blank"
+                      className="flex items-center justify-center gap-2 bg-white border border-emerald-600 text-emerald-700 hover:bg-emerald-50 px-6 py-2.5 rounded-2xl font-semibold transition-all"
+                    >
+                      🖨️ Cetak Rapor Asli (PDF)
+                    </a>
+                  </div>
                 )}
               </div>
 

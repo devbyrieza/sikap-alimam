@@ -33,6 +33,14 @@ export default function RaporWaliPage() {
           ],
           ibadah: [
             { id: "1", tanggal: "2026-07-28", shubuh: "Berjamaah", tahajjud: true }
+          ],
+          akademik: [
+            { id: "1", mapel: "Nahwu", guru: "Ust. Agus Ma'mun, S.Pd.I., Lc.", na: 70.45, kkm: 63 },
+            { id: "2", mapel: "Tauhid", guru: "Ust. Virnanda Adi Saputra, S.Pd.I.", na: 92.5, kkm: 60 },
+            { id: "3", mapel: "Tahfizh Al-Qur'an", guru: "Ustdh. Aisyah Na`im Qibtiyah, Lc", na: 93.03, kkm: 60 },
+            { id: "4", mapel: "Tahsin dan Tajwid", guru: "Ustdh. Aisyah Na`im Qibtiyah, Lc", na: 93.53, kkm: 60 },
+            { id: "5", mapel: "Tadrib Lughowi", guru: "Ustdh. Jamila Jafar Marie", na: 82.2, kkm: 65 },
+            { id: "6", mapel: "Ta'bir", guru: "Ustdh. Jamila Jafar Marie", na: 90.6, kkm: 60 },
           ]
         }
       });
@@ -134,6 +142,42 @@ export default function RaporWaliPage() {
         </div>
 
         {/* Detailed Sections */}
+        
+        {/* Card Style Akademik (Sesuai Referensi Gambar HP) */}
+        <div className="bg-white rounded-3xl p-8 border border-gray-100 shadow-sm mb-8">
+          <div className="flex items-center gap-3 mb-6">
+            <BookOpen className="text-emerald-600" />
+            <h2 className="text-xl font-bold text-gray-800">Detail Nilai Semester 1</h2>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {data.detail.akademik.map((item: any, index: number) => (
+              <div key={item.id} className="bg-gray-50 rounded-2xl p-4 flex justify-between items-center border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
+                <div className="flex gap-4 items-center">
+                  <div className="w-8 h-8 rounded-lg bg-white border border-gray-200 flex items-center justify-center font-bold text-gray-600 shrink-0">
+                    {index + 1}.
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-gray-800 text-lg leading-tight">{item.mapel}</h3>
+                    <p className="text-sm text-gray-500 mt-1">{item.guru}</p>
+                  </div>
+                </div>
+                
+                <div className="flex gap-2 shrink-0">
+                  <div className="flex flex-col items-center justify-center border-2 border-emerald-500 rounded-xl px-4 py-1.5 bg-emerald-50/50">
+                    <span className="text-[10px] font-bold text-emerald-700 mb-0.5">NA</span>
+                    <span className="font-bold text-emerald-600 text-lg leading-none">{item.na}</span>
+                  </div>
+                  <div className="flex flex-col items-center justify-center border border-gray-200 rounded-xl px-4 py-1.5 bg-white">
+                    <span className="text-[10px] font-bold text-gray-500 mb-0.5">KKM</span>
+                    <span className="font-bold text-gray-700 text-lg leading-none">{item.kkm}</span>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Tahfidz Section */}
           <div className="bg-white rounded-3xl p-8 border border-gray-100 shadow-sm">

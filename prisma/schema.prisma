@@ -54,6 +54,7 @@ model Pegawai {
   mengajar        AsatidzmMapel[]
   capaian_tahfidz CapaianTahfidz[]
   ibadah_adab     IbadahAdabSantri[]
+  jadwal          JadwalPelajaran[]
 
   @@map("pegawai")
 }
@@ -70,6 +71,7 @@ model Kelas {
   nilai          NilaiSantri[]
   mapel          AsatidzmMapel[]
   MataPelajaran  MataPelajaran[]
+  jadwal         JadwalPelajaran[]
 
   @@map("kelas")
 }
@@ -77,7 +79,8 @@ model Kelas {
 model MataPelajaran {
   id        String  @id @default(uuid()) @db.Uuid
   nama      String
-  kategori  String  @default("umum") // "agama" | "umum"
+  nama_arab String? // "التوحيد", "التفسير", dsb
+  kategori  String  @default("umum") // "syariah" | "bahasa" | "umum"
   kelas_id  String  @db.Uuid
   is_active Boolean @default(true)
 
@@ -85,6 +88,7 @@ model MataPelajaran {
   asatidz_mapel AsatidzmMapel[]
   jurnal        JurnalMengajar[]
   nilai         NilaiSantri[]
+  jadwal        JadwalPelajaran[]
 
   @@unique([nama, kelas_id])
   @@map("mata_pelajaran")
@@ -229,6 +233,13 @@ model CapaianTahfidz {
   ayat       String?
   nilai      Float? // Opsional: Jika ujian, bisa diisi nilai angkanya
   keterangan String?
+  
+  // Field Tambahan Rentang Surat/Ayat
+  surat_dari String?
+  ayat_dari  String?
+  surat_ke   String?
+  ayat_ke    String?
+  
   created_at DateTime @default(now()) @db.Timestamptz(6)
 
   santri  SantriAktif @relation(fields: [santri_id], references: [id])
@@ -284,4 +295,927 @@ model IbadahAdabSantri {
 
   @@unique([santri_id, tanggal])
   @@map("ibadah_adab_santri")
+}
+
+// ─── JADWAL PELAJARAN ───────────────────────────────────────────────────────
+
+model JadwalPelajaran {
+  id            String   @id @default(uuid()) @db.Uuid
+  hari          String   // "Senin", "Selasa", dll
+  jam_ke        Int      // 1, 2, 3...
+  waktu_mulai   String   // "07:00"
+  waktu_selesai String   // "07:40"
+  kelas_id      String   @db.Uuid
+  pegawai_id    String   @db.Uuid
+  mapel_id      String   @db.Uuid
+  tipe_pekan    String   @default("semua") // "semua" | "ganjil" | "genap"
+  created_at    DateTime @default(now()) @db.Timestamptz(6)
+
+  kelas   Kelas         @relation(fields: [kelas_id], references: [id])
+  pegawai Pegawai       @relation(fields: [pegawai_id], references: [id])
+  mapel   MataPelajaran @relation(fields: [mapel_id], references: [id])
+
+  @@map("jadwal_pelajaran")
+}
+
+// ─── MASTER SESI WAKTU ──────────────────────────────────────────────────────
+
+model MasterSesiWaktu {
+  id            String   @id @default(uuid()) @db.Uuid
+  jam_ke        Int      @unique
+  waktu_mulai   String   // format "HH:mm", misal "07:00"
+  waktu_selesai String   // format "HH:mm", misal "07:40"
+  durasi_menit  Int      @default(40)
+  is_active     Boolean  @default(true)
+  created_at    DateTime @default(now()) @db.Timestamptz(6)
+
+  @@map("master_sesi_waktu")
+}
+
+// ─── MERGED FROM SIMPEG: Profile ────────────────────────────────
+model Profile {
+  id                     String                @id @default(uuid()) @db.Uuid
+  role                   String                @default("pendaftar")
+  secondary_roles        String[]              @default([])
+  full_name              String
+  jenis_kelamin          String?
+  email                  String?
+  phone                  String
+  google_meet_link       String?
+  created_at             DateTime              @default(now()) @db.Timestamptz(6)
+  updated_at             DateTime              @default(now()) @db.Timestamptz(6)
+  password_hash          String?
+  kesehatan_verified     DataKesehatan[]       @relation("KesehatanVerifiedBy")
+  dokumen_verified       Dokumen[]             @relation("DokumenVerifiedBy")
+  sessions_created       ExamSession[]         @relation("SessionCreatedBy")
+  hasil_seleksi_admin    HasilSeleksi[]        @relation("HasilSeleksiBy")
+  jadwal_penguji_ortu    JadwalUjian[]         @relation("PengujiOrtu")
+  jadwal_penguji_quran   JadwalUjian[]         @relation("PengujiQuran")
+  jadwal_penguji_santri  JadwalUjian[]         @relation("PengujiSantri")
+  jadwal_penguji_hafalan JadwalUjian[]         @relation("PengujiHafalan")
+  jadwal_penguji_arab    JadwalUjian[]         @relation("PengujiArab")
+  ketersediaan           KetersediaanPenguji[] @relation("KetersediaanPenguji")
+  nilai_input_ortu       NilaiUjian[]          @relation("NilaiInputByOrtu")
+  nilai_input_quran      NilaiUjian[]          @relation("NilaiInputByQuran")
+  nilai_input_santri     NilaiUjian[]          @relation("NilaiInputBySantri")
+  nilai_input_hafalan    NilaiUjian[]          @relation("NilaiInputByHafalan")
+  nilai_input_arab       NilaiUjian[]          @relation("NilaiInputByArab")
+  pembayaran_verified    Pembayaran[]          @relation("PembayaranVerifiedBy")
+  pendaftar              Pendaftar[]
+  beasiswa_approved      PengajuanBeasiswa[]   @relation("BeasiswaApprovedBy")
+  pengumuman_published   Pengumuman[]          @relation("PengumumanPublishedBy")
+  reservasi_approved     ReservasiPSB[]        @relation("ReservasiApprovedBy")
+  TransaksiDompet        TransaksiDompet[]
+  PerizinanSantri        PerizinanSantri[]
+  surat_keluar           SuratKeluar[]     @relation("SuratDibuatOleh")
+
+  @@map("profiles")
+}
+
+// ─── MERGED FROM SIMPEG: TahunAjaran ────────────────────────────────
+model TahunAjaran {
+  id                        String              @id @default(uuid()) @db.Uuid
+  tahun_mulai               Int
+  tahun_selesai             Int
+  nama                      String
+  is_active                 Boolean             @default(false)
+  tanggal_buka_pendaftaran  DateTime            @db.Date
+  tanggal_tutup_pendaftaran DateTime            @db.Date
+  biaya_pendaftaran         Decimal             @default(200000.00) @db.Decimal
+  link_tes_tertulis         String?
+  deskripsi_tes_tertulis    String?
+  created_at                DateTime            @default(now()) @db.Timestamptz(6)
+  updated_at                DateTime            @default(now()) @db.Timestamptz(6)
+  hasil_seleksi             HasilSeleksi[]
+  jadwal_ujian              JadwalUjian[]
+  pembayaran                Pembayaran[]
+  pendaftar                 Pendaftar[]
+  pengajuan_beasiswa        PengajuanBeasiswa[]
+  pengumuman                Pengumuman[]
+  reservasi                 ReservasiPSB[]
+  kalender                  KalenderAkademik[]
+
+  @@map("tahun_ajaran")
+}
+
+// ─── MERGED FROM SIMPEG: Pendaftar ────────────────────────────────
+model Pendaftar {
+  id                             String                 @id @default(uuid()) @db.Uuid
+  user_id                        String?                @db.Uuid
+  tahun_ajaran_id                String                 @db.Uuid
+  nomor_pendaftaran              String                 @unique
+  nik                            String
+  nama_lengkap                   String
+  jenis_kelamin                  String
+  jenjang                        String
+  tempat_lahir                   String?
+  tanggal_lahir                  DateTime?              @db.Date
+  alamat                         String?
+  rt                             String?
+  rw                             String?
+  kelurahan                      String?
+  kecamatan                      String?
+  kabupaten                      String?
+  provinsi                       String?
+  kode_pos                       String?
+  no_hp                          String?
+  email                          String?
+  asal_sekolah                   String?
+  npsn                           String?
+  alamat_sekolah                 String?
+  tahun_lulus                    Int?
+  nisn                           String?
+  golongan_darah                 String?
+  anak_ke                        Int?
+  jumlah_saudara                 Int?
+  hobi                           String?
+  cita_cita                      String?
+  sumber_informasi               String?
+  jumlah_hafalan                 String?
+  tipe_pendaftaran               String                 @default("BARU")
+  kelas_masuk                    Int?
+  asal_institusi                 String?
+  nomor_induk_lama               String?
+  catatan_pindahan               String?
+  status_pendaftaran             String                 @default("draft")
+  data_lengkap                   Json?
+  created_at                     DateTime               @default(now()) @db.Timestamptz(6)
+  updated_at                     DateTime               @default(now()) @db.Timestamptz(6)
+  verifikasi_channel             String?                @default("whatsapp_manual") @db.VarChar(20)
+  kode_verifikasi                String?                @db.VarChar(6)
+  waktu_kirim_kode               DateTime?              @db.Timestamptz(6)
+  waktu_verifikasi_kode          DateTime?              @db.Timestamptz(6)
+  verifikasi_status              String?                @default("pending") @db.VarChar(20)
+  notifikasi_whatsapp_id         String?                @db.VarChar(100)
+  notifikasi_sms_id              String?                @db.VarChar(100)
+  notif_belum_jadwal_terkirim    Boolean                @default(false)
+  notif_hasil_tes_terkirim       Boolean                @default(false)
+  notif_jadwal_tersedia_terkirim Boolean                @default(false)
+  deleted_at                     DateTime?              @db.Timestamptz(6)
+  deleted_by                     String?                @db.Uuid
+  asrama                         DataAsrama?
+  kesehatan                      DataKesehatan?
+  DataPerubahanRequest           DataPerubahanRequest[]
+  prestasi                       DataPrestasi[]
+  rapor                          DataRapor[]
+  dokumen                        Dokumen[]
+  hasil_seleksi                  HasilSeleksi?
+  jadwal_reminders               JadwalNotifReminder[]
+  jadwal_ujian                   JadwalUjian[]
+  nilai_ujian                    NilaiUjian[]
+  orang_tua                      OrangTua?
+  pembayaran                     Pembayaran[]
+  tahun_ajaran                   TahunAjaran            @relation(fields: [tahun_ajaran_id], references: [id])
+  user                           Profile?               @relation(fields: [user_id], references: [id])
+  pengajuan_beasiswa             PengajuanBeasiswa?
+  pengumuman                     Pengumuman?
+  ukuran_seragam_baju            String?
+  ukuran_seragam_celana          String?
+  ukuran_seragam_almamater       String?
+  reservasi                      ReservasiPSB[]
+  whatsapp_logs                  WhatsappLog[]
+  DompetSantri                   DompetSantri?
+  PerizinanSantri                PerizinanSantri[]
+
+  @@map("pendaftar")
+}
+
+// ─── MERGED FROM SIMPEG: OrangTua ────────────────────────────────
+model OrangTua {
+  id                     String    @id @default(uuid()) @db.Uuid
+  pendaftar_id           String    @unique @db.Uuid
+  nama_ayah              String?
+  nik_ayah               String?
+  tempat_lahir_ayah      String?
+  tanggal_lahir_ayah     DateTime? @db.Date
+  pendidikan_ayah        String?
+  pekerjaan_ayah         String?
+  penghasilan_ayah       String?
+  no_hp_ayah             String?
+  status_ayah            String?
+  status_pernikahan_ayah String?
+  alamat_ayah            String?
+  email_ayah             String?
+  nama_ibu               String?
+  nik_ibu                String?
+  tempat_lahir_ibu       String?
+  tanggal_lahir_ibu      DateTime? @db.Date
+  pendidikan_ibu         String?
+  pekerjaan_ibu          String?
+  penghasilan_ibu        String?
+  no_hp_ibu              String?
+  status_ibu             String?
+  status_pernikahan_ibu  String?
+  alamat_ibu             String?
+  email_ibu              String?
+  nama_wali              String?
+  nik_wali               String?
+  tempat_lahir_wali      String?
+  tanggal_lahir_wali     DateTime? @db.Date
+  pendidikan_wali        String?
+  pekerjaan_wali         String?
+  penghasilan_wali       String?
+  no_hp_wali             String?
+  alamat_wali            String?
+  rt_wali                String?
+  rw_wali                String?
+  kelurahan_wali         String?
+  kecamatan_wali         String?
+  kabupaten_wali         String?
+  provinsi_wali          String?
+  kode_pos_wali          String?
+  hubungan_wali          String?
+  created_at             DateTime  @default(now()) @db.Timestamptz(6)
+  updated_at             DateTime  @default(now()) @db.Timestamptz(6)
+  pendaftar              Pendaftar @relation(fields: [pendaftar_id], references: [id], onDelete: Cascade)
+
+  @@map("orang_tua")
+}
+
+// ─── MERGED FROM SIMPEG: Dokumen ────────────────────────────────
+model Dokumen {
+  id            String    @id @default(uuid()) @db.Uuid
+  pendaftar_id  String    @db.Uuid
+  jenis_dokumen String
+  file_name     String
+  file_path     String
+  file_size     Int?
+  file_type     String?
+  is_verified   Boolean   @default(false)
+  verified_by   String?   @db.Uuid
+  verified_at   DateTime? @db.Timestamptz(6)
+  catatan       String?
+  created_at    DateTime  @default(now()) @db.Timestamptz(6)
+  updated_at    DateTime  @default(now()) @db.Timestamptz(6)
+  pendaftar     Pendaftar @relation(fields: [pendaftar_id], references: [id], onDelete: Cascade)
+  verifier      Profile?  @relation("DokumenVerifiedBy", fields: [verified_by], references: [id])
+
+  @@map("dokumen")
+}
+
+// ─── MERGED FROM SIMPEG: Pembayaran ────────────────────────────────
+model Pembayaran {
+  id                          String          @id @default(uuid()) @db.Uuid
+  pendaftar_id                String          @db.Uuid
+  tahun_ajaran_id             String          @db.Uuid
+  metode_pembayaran           String
+  jumlah                      Decimal         @db.Decimal
+  midtrans_order_id           String?
+  midtrans_transaction_id     String?
+  midtrans_transaction_status String?
+  midtrans_payment_type       String?
+  midtrans_response_json      Json?
+  bukti_transfer_path         String?
+  bukti_transfer_filename     String?
+  status_pembayaran           String          @default("pending")
+  verified_by                 String?         @db.Uuid
+  verified_at                 DateTime?       @db.Timestamptz(6)
+  catatan_verifikasi          String?
+  keringanan_reason           String?
+  expired_at                  DateTime?       @db.Timestamptz(6)
+  created_at                  DateTime        @default(now()) @db.Timestamptz(6)
+  updated_at                  DateTime        @default(now()) @db.Timestamptz(6)
+  cicilan_ke                  Int?
+  jenis_pembayaran            JenisPembayaran @default(PENDAFTARAN)
+  tipe_cicilan                TipeCicilan     @default(LUNAS)
+  tipe_spp                    TipeSPP?
+  total_tagihan               Decimal?        @db.Decimal
+  pendaftar                   Pendaftar       @relation(fields: [pendaftar_id], references: [id], onDelete: Cascade)
+  tahun_ajaran                TahunAjaran     @relation(fields: [tahun_ajaran_id], references: [id])
+  verifier                    Profile?        @relation("PembayaranVerifiedBy", fields: [verified_by], references: [id])
+
+  @@map("pembayaran")
+}
+
+// ─── MERGED FROM SIMPEG: JadwalUjian ────────────────────────────────
+model JadwalUjian {
+  id                          String                @id @default(uuid()) @db.Uuid
+  tahun_ajaran_id             String                @db.Uuid
+  pendaftar_id                String                @db.Uuid
+  tanggal_ujian               DateTime              @db.Date
+  metode_ujian                String                @default("offline")
+  google_meet_link            String?
+  google_meet_password        String?
+  waktu_mulai_santri          DateTime              @db.Time(6)
+  waktu_selesai_santri        DateTime              @db.Time(6)
+  tempat_santri               String
+  ruangan_santri              String?
+  penguji_santri_id           String?               @db.Uuid
+  status_santri               String?               @default("scheduled")
+  waktu_mulai_ortu            DateTime              @db.Time(6)
+  waktu_selesai_ortu          DateTime              @db.Time(6)
+  tempat_ortu                 String
+  ruangan_ortu                String?
+  penguji_ortu_id             String?               @db.Uuid
+  status_ortu                 String?               @default("scheduled")
+  catatan                     String?
+  created_at                  DateTime              @default(now()) @db.Timestamptz(6)
+  updated_at                  DateTime              @default(now()) @db.Timestamptz(6)
+  exam_session_id             String?               @db.Uuid
+  online_test_link            String?
+  penguji_quran_id            String?               @db.Uuid
+  status_online_test          String?               @default("pending")
+  status_quran                String?               @default("scheduled")
+  zoom_link_ortu              String?
+  zoom_link_quran             String?
+  zoom_link_santri            String?
+  notif_interviewer_terkirim  Boolean               @default(false)
+  notif_h1_pendaftar_terkirim Boolean               @default(false)
+  notif_h1_penguji_terkirim   Boolean               @default(false)
+  notif_reminders             JadwalNotifReminder[]
+  exam_session                ExamSession?          @relation(fields: [exam_session_id], references: [id])
+  pendaftar                   Pendaftar             @relation(fields: [pendaftar_id], references: [id], onDelete: Cascade)
+  penguji_ortu                Profile?              @relation("PengujiOrtu", fields: [penguji_ortu_id], references: [id])
+  penguji_quran               Profile?              @relation("PengujiQuran", fields: [penguji_quran_id], references: [id])
+  penguji_santri              Profile?              @relation("PengujiSantri", fields: [penguji_santri_id], references: [id])
+  waktu_mulai_hafalan         DateTime?             @db.Time(6)
+  waktu_selesai_hafalan       DateTime?             @db.Time(6)
+  tempat_hafalan              String?
+  ruangan_hafalan             String?
+  penguji_hafalan_id          String?               @db.Uuid
+  status_hafalan              String?               @default("scheduled")
+  zoom_link_hafalan           String?
+
+  waktu_mulai_arab   DateTime? @db.Time(6)
+  waktu_selesai_arab DateTime? @db.Time(6)
+  tempat_arab        String?
+  ruangan_arab       String?
+  penguji_arab_id    String?   @db.Uuid
+  status_arab        String?   @default("scheduled")
+  zoom_link_arab     String?
+
+  penguji_hafalan Profile?     @relation("PengujiHafalan", fields: [penguji_hafalan_id], references: [id])
+  penguji_arab    Profile?     @relation("PengujiArab", fields: [penguji_arab_id], references: [id])
+  tahun_ajaran    TahunAjaran  @relation(fields: [tahun_ajaran_id], references: [id])
+  nilai_ujian     NilaiUjian[]
+
+  @@map("jadwal_ujian")
+}
+
+// ─── MERGED FROM SIMPEG: ExamSession ────────────────────────────────
+model ExamSession {
+  id           String        @id @default(uuid()) @db.Uuid
+  title        String?
+  start_time   DateTime      @db.Timestamptz(6)
+  end_time     DateTime      @db.Timestamptz(6)
+  quota        Int           @default(10)
+  booked_count Int           @default(0)
+  location     String?
+  notes        String?
+  is_active    Boolean       @default(true)
+  created_by   String?       @db.Uuid
+  created_at   DateTime      @default(now()) @db.Timestamptz(6)
+  updated_at   DateTime      @default(now()) @db.Timestamptz(6)
+  creator      Profile?      @relation("SessionCreatedBy", fields: [created_by], references: [id])
+  bookings     JadwalUjian[]
+
+  @@map("exam_sessions")
+}
+
+// ─── MERGED FROM SIMPEG: NilaiUjian ────────────────────────────────
+model NilaiUjian {
+  id                       String    @id @default(uuid()) @db.Uuid
+  jadwal_ujian_id          String?   @db.Uuid
+  pendaftar_id             String    @db.Uuid
+  nilai_tes_tertulis       Json?
+  nilai_tes_tertulis_total Decimal?  @db.Decimal
+  catatan_tes_tertulis     String?
+  nilai_wawancara_santri   Decimal?  @db.Decimal
+  nilai_tes_quran          Decimal?  @db.Decimal
+  nilai_santri_total       Decimal?  @db.Decimal
+  catatan_santri           String?
+  input_by_santri          String?   @db.Uuid
+  input_at_santri          DateTime? @db.Timestamptz(6)
+  nilai_wawancara_ortu     Decimal?  @db.Decimal
+  catatan_ortu             String?
+  input_by_ortu            String?   @db.Uuid
+  input_at_ortu            DateTime? @db.Timestamptz(6)
+  nilai_total              Decimal?  @db.Decimal
+  catatan_umum             String?
+  created_at               DateTime  @default(now()) @db.Timestamptz(6)
+  updated_at               DateTime  @default(now()) @db.Timestamptz(6)
+  input_at_quran           DateTime? @db.Timestamptz(6)
+  input_by_quran           String?   @db.Uuid
+  catatan_quran            String?
+  catatan_kelulusan        String?
+  detail_akademik          Json?
+  detail_kepribadian       Json?
+  detail_kesiapan          Json?
+  detail_quran             Json?
+  detail_wawancara         Json?
+  detail_cawalsan          Json?
+  score_akademik           Float?
+  score_kepribadian        Float?
+  score_kesiapan           Float?
+  score_quran              Float?
+  score_wawancara          Float?
+  status_kelulusan         String?
+  total_score              Float?
+  input_by_ortu_profile    Profile?  @relation("NilaiInputByOrtu", fields: [input_by_ortu], references: [id])
+  input_by_quran_profile   Profile?  @relation("NilaiInputByQuran", fields: [input_by_quran], references: [id])
+  input_by_santri_profile  Profile?  @relation("NilaiInputBySantri", fields: [input_by_santri], references: [id])
+  nilai_hafalan_total      Decimal?  @db.Decimal
+  catatan_hafalan          String?
+  detail_hafalan           Json?
+  input_by_hafalan         String?   @db.Uuid
+  input_at_hafalan         DateTime? @db.Timestamptz(6)
+  score_hafalan            Float?
+
+  nilai_arab_total Decimal?  @db.Decimal
+  catatan_arab     String?
+  detail_arab      Json?
+  input_by_arab    String?   @db.Uuid
+  input_at_arab    DateTime? @db.Timestamptz(6)
+  score_arab       Float?
+
+  input_by_hafalan_profile Profile?     @relation("NilaiInputByHafalan", fields: [input_by_hafalan], references: [id])
+  input_by_arab_profile    Profile?     @relation("NilaiInputByArab", fields: [input_by_arab], references: [id])
+  jadwal_ujian             JadwalUjian? @relation(fields: [jadwal_ujian_id], references: [id])
+  pendaftar                Pendaftar    @relation(fields: [pendaftar_id], references: [id], onDelete: Cascade)
+
+  @@map("nilai_ujian")
+}
+
+// ─── MERGED FROM SIMPEG: Pengumuman ────────────────────────────────
+model Pengumuman {
+  id                    String      @id @default(uuid()) @db.Uuid
+  pendaftar_id          String      @unique @db.Uuid
+  tahun_ajaran_id       String      @db.Uuid
+  status_kelulusan      String
+  ranking               Int?
+  catatan               String?
+  surat_pengumuman_path String?
+  is_published          Boolean     @default(false)
+  published_at          DateTime?   @db.Timestamptz(6)
+  published_by          String?     @db.Uuid
+  created_at            DateTime    @default(now()) @db.Timestamptz(6)
+  updated_at            DateTime    @default(now()) @db.Timestamptz(6)
+  google_form_link      String?
+  surat_keputusan_url   String?
+  wa_blast_sent         Boolean     @default(false)
+  wa_blast_sent_at      DateTime?   @db.Timestamptz(6)
+  pendaftar             Pendaftar   @relation(fields: [pendaftar_id], references: [id], onDelete: Cascade)
+  publisher             Profile?    @relation("PengumumanPublishedBy", fields: [published_by], references: [id])
+  tahun_ajaran          TahunAjaran @relation(fields: [tahun_ajaran_id], references: [id])
+
+  @@map("pengumuman")
+}
+
+// ─── MERGED FROM SIMPEG: HasilSeleksi ────────────────────────────────
+model HasilSeleksi {
+  id                   String        @id @default(uuid()) @db.Uuid
+  pendaftar_id         String        @unique @db.Uuid
+  tahun_ajaran_id      String        @db.Uuid
+  status_seleksi       StatusSeleksi
+  nilai_akhir          Decimal?      @db.Decimal
+  catatan_admin        String?
+  google_form_link     String?
+  surat_keputusan_path String?
+  ditentukan_oleh      String?       @db.Uuid
+  ditentukan_pada      DateTime?     @db.Timestamptz(6)
+  created_at           DateTime      @default(now()) @db.Timestamptz(6)
+  updated_at           DateTime      @default(now()) @db.Timestamptz(6)
+  admin                Profile?      @relation("HasilSeleksiBy", fields: [ditentukan_oleh], references: [id])
+  pendaftar            Pendaftar     @relation(fields: [pendaftar_id], references: [id], onDelete: Cascade)
+  tahun_ajaran         TahunAjaran   @relation(fields: [tahun_ajaran_id], references: [id])
+
+  @@map("hasil_seleksi")
+}
+
+// ─── MERGED FROM SIMPEG: KetersediaanPenguji ────────────────────────────────
+model KetersediaanPenguji {
+  id            String   @id @default(uuid()) @db.Uuid
+  penguji_id    String   @db.Uuid
+  tanggal       DateTime @db.Date
+  waktu_mulai   DateTime @db.Time(6)
+  waktu_selesai DateTime @db.Time(6)
+  jenis_ujian   String
+  is_available  Boolean  @default(true)
+  catatan       String?
+  created_at    DateTime @default(now()) @db.Timestamptz(6)
+  updated_at    DateTime @default(now()) @db.Timestamptz(6)
+  penguji       Profile  @relation("KetersediaanPenguji", fields: [penguji_id], references: [id])
+
+  @@map("ketersediaan_penguji")
+}
+
+// ─── MERGED FROM SIMPEG: DataRapor ────────────────────────────────
+model DataRapor {
+  id               String    @id @default(uuid()) @db.Uuid
+  pendaftar_id     String    @db.Uuid
+  semester         Int
+  pai              Decimal?  @db.Decimal(5, 2)
+  pkn              Decimal?  @db.Decimal(5, 2)
+  bahasa_indonesia Decimal?  @db.Decimal(5, 2)
+  bahasa_arab      Decimal?  @db.Decimal(5, 2)
+  bahasa_inggris   Decimal?  @db.Decimal(5, 2)
+  matematika       Decimal?  @db.Decimal(5, 2)
+  ipa              Decimal?  @db.Decimal(5, 2)
+  ips              Decimal?  @db.Decimal(5, 2)
+  seni_budaya      Decimal?  @db.Decimal(5, 2)
+  pjok             Decimal?  @db.Decimal(5, 2)
+  prakarya         Decimal?  @db.Decimal(5, 2)
+  rata_rata        Decimal?  @db.Decimal(5, 2)
+  created_at       DateTime  @default(now()) @db.Timestamptz(6)
+  updated_at       DateTime  @default(now()) @db.Timestamptz(6)
+  pendaftar        Pendaftar @relation(fields: [pendaftar_id], references: [id], onDelete: Cascade)
+
+  @@unique([pendaftar_id, semester])
+  @@map("data_rapor")
+}
+
+// ─── MERGED FROM SIMPEG: DataPrestasi ────────────────────────────────
+model DataPrestasi {
+  id                   String    @id @default(uuid()) @db.Uuid
+  pendaftar_id         String    @db.Uuid
+  jenis_prestasi       String
+  tingkat              String
+  nama_prestasi        String
+  penyelenggara        String?
+  tahun                Int
+  juara                String?
+  file_sertifikat_path String?
+  created_at           DateTime  @default(now()) @db.Timestamptz(6)
+  updated_at           DateTime  @default(now()) @db.Timestamptz(6)
+  pendaftar            Pendaftar @relation(fields: [pendaftar_id], references: [id], onDelete: Cascade)
+
+  @@map("data_prestasi")
+}
+
+// ─── MERGED FROM SIMPEG: DataKesehatan ────────────────────────────────
+model DataKesehatan {
+  id               String    @id @default(uuid()) @db.Uuid
+  pendaftar_id     String    @unique @db.Uuid
+  tinggi_badan     Int?
+  berat_badan      Decimal?  @db.Decimal(5, 2)
+  riwayat_penyakit String?
+  penyakit_kronis  String?
+  alergi           String?
+  disabilitas      String?
+  hbsag_result     String?
+  hbsag_test_date  DateTime? @db.Date
+  status_imunisasi String?
+  is_verified      Boolean   @default(false)
+  verified_by      String?   @db.Uuid
+  verified_at      DateTime? @db.Timestamptz(6)
+  catatan_petugas  String?
+  created_at       DateTime  @default(now()) @db.Timestamptz(6)
+  updated_at       DateTime  @default(now()) @db.Timestamptz(6)
+  pendaftar        Pendaftar @relation(fields: [pendaftar_id], references: [id], onDelete: Cascade)
+  verifier         Profile?  @relation("KesehatanVerifiedBy", fields: [verified_by], references: [id])
+
+  @@map("data_kesehatan")
+}
+
+// ─── MERGED FROM SIMPEG: DataAsrama ────────────────────────────────
+model DataAsrama {
+  id                       String    @id @default(uuid()) @db.Uuid
+  pendaftar_id             String    @unique @db.Uuid
+  pilihan_asrama           Boolean   @default(true)
+  bersedia_cabang          Boolean   @default(false)
+  pilihan_cabang           String?
+  preferensi_teman_sekamar String?
+  created_at               DateTime  @default(now()) @db.Timestamptz(6)
+  updated_at               DateTime  @default(now()) @db.Timestamptz(6)
+  pendaftar                Pendaftar @relation(fields: [pendaftar_id], references: [id], onDelete: Cascade)
+
+  @@map("data_asrama")
+}
+
+// ─── MERGED FROM SIMPEG: ReservasiPSB ────────────────────────────────
+model ReservasiPSB {
+  id                 String      @id @default(uuid()) @db.Uuid
+  pendaftar_id       String      @db.Uuid
+  tahun_ajaran_id    String      @db.Uuid
+  tanggal_kedatangan DateTime    @db.Date
+  jumlah_penginap    Int         @default(0)
+  data_penginap      Json?
+  status             String      @default("pending")
+  catatan            String?
+  approved_by        String?     @db.Uuid
+  approved_at        DateTime?   @db.Timestamptz(6)
+  catatan_approval   String?
+  created_at         DateTime    @default(now()) @db.Timestamptz(6)
+  updated_at         DateTime    @default(now()) @db.Timestamptz(6)
+  approver           Profile?    @relation("ReservasiApprovedBy", fields: [approved_by], references: [id])
+  pendaftar          Pendaftar   @relation(fields: [pendaftar_id], references: [id], onDelete: Cascade)
+  tahun_ajaran       TahunAjaran @relation(fields: [tahun_ajaran_id], references: [id], onDelete: Cascade)
+
+  @@map("reservasi_psb")
+}
+
+// ─── MERGED FROM SIMPEG: DataPerubahanRequest ────────────────────────────────
+model DataPerubahanRequest {
+  id           String    @id @default(uuid()) @db.Uuid
+  pendaftar_id String    @db.Uuid
+  status       String    @default("pending")
+  reason       String?
+  admin_note   String?
+  requested_at DateTime  @default(now()) @db.Timestamptz(6)
+  approved_at  DateTime? @db.Timestamptz(6)
+  submitted_at DateTime? @db.Timestamptz(6)
+  completed_at DateTime? @db.Timestamptz(6)
+  created_at   DateTime  @default(now()) @db.Timestamptz(6)
+  updated_at   DateTime  @default(now()) @db.Timestamptz(6)
+  pendaftar    Pendaftar @relation(fields: [pendaftar_id], references: [id], onDelete: Cascade)
+
+  @@index([pendaftar_id])
+  @@map("data_perubahan_request")
+}
+
+// ─── MERGED FROM SIMPEG: OtpVerification ────────────────────────────────
+model OtpVerification {
+  id                String    @id @default(uuid()) @db.Uuid
+  phone             String
+  otp_hash          String
+  expires_at        DateTime  @db.Timestamptz(6)
+  attempts          Int       @default(0)
+  verified_at       DateTime? @db.Timestamptz(6)
+  otp_channel       String?
+  created_at        DateTime  @default(now()) @db.Timestamptz(6)
+  sent_at           DateTime? @db.Timestamptz(6)
+  status            String?   @default("pending")
+  registration_data Json?
+
+  @@map("otp_verifications")
+}
+
+// ─── MERGED FROM SIMPEG: PendingSms ────────────────────────────────
+model PendingSms {
+  id         String   @id @default(uuid()) @db.Uuid
+  phone      String
+  otp        String
+  nama       String?
+  status     String   @default("pending")
+  created_at DateTime @default(now()) @db.Timestamptz(6)
+  updated_at DateTime @default(now()) @db.Timestamptz(6)
+
+  @@map("pending_sms")
+}
+
+// ─── MERGED FROM SIMPEG: WhatsappLog ────────────────────────────────
+model WhatsappLog {
+  id              String     @id @default(uuid()) @db.Uuid
+  pendaftar_id    String?    @db.Uuid
+  phone           String
+  jenis_notif     String
+  status          String     @default("pending")
+  response_data   String?
+  attempt_count   Int        @default(0)
+  max_attempts    Int        @default(3)
+  scheduled_at    DateTime   @default(now()) @db.Timestamptz(6)
+  sent_at         DateTime?  @db.Timestamptz(6)
+  failed_at       DateTime?  @db.Timestamptz(6)
+  error_message   String?
+  message_content String?
+  created_at      DateTime   @default(now()) @db.Timestamptz(6)
+  updated_at      DateTime   @default(now()) @db.Timestamptz(6)
+  pendaftar       Pendaftar? @relation(fields: [pendaftar_id], references: [id])
+
+  @@index([status, scheduled_at])
+  @@index([pendaftar_id, jenis_notif])
+  @@index([phone])
+  @@map("whatsapp_log")
+}
+
+// ─── MERGED FROM SIMPEG: WhatsappCooldown ────────────────────────────────
+model WhatsappCooldown {
+  id             String    @id @default("global")
+  last_sent_at   DateTime? @db.Timestamptz(6)
+  sent_count_10m Int       @default(0)
+  cooldown_until DateTime? @db.Timestamptz(6)
+  hourly_count   Int       @default(0)
+  hourly_reset   DateTime? @db.Timestamptz(6)
+  updated_at     DateTime  @default(now()) @db.Timestamptz(6)
+
+  @@map("whatsapp_cooldown")
+}
+
+// ─── MERGED FROM SIMPEG: JadwalNotifReminder ────────────────────────────────
+model JadwalNotifReminder {
+  id              String      @id @default(uuid()) @db.Uuid
+  jadwal_ujian_id String      @db.Uuid
+  pendaftar_id    String      @db.Uuid
+  reminder_sent   Boolean     @default(false)
+  sent_at         DateTime?   @db.Timestamptz(6)
+  created_at      DateTime    @default(now()) @db.Timestamptz(6)
+  jadwal_ujian    JadwalUjian @relation(fields: [jadwal_ujian_id], references: [id], onDelete: Cascade)
+  pendaftar       Pendaftar   @relation(fields: [pendaftar_id], references: [id], onDelete: Cascade)
+
+  @@unique([jadwal_ujian_id, pendaftar_id])
+  @@map("jadwal_notif_reminder")
+}
+
+// ─── MERGED FROM SIMPEG: PendaftarBackup ────────────────────────────────
+model PendaftarBackup {
+  id                String    @id @default(uuid()) @db.Uuid
+  pendaftar_id      String    @db.Uuid
+  nomor_pendaftaran String
+  nama_lengkap      String
+  backup_data       Json
+  deleted_by        String?   @db.Uuid
+  deleted_by_name   String?
+  deleted_at        DateTime  @default(now()) @db.Timestamptz(6)
+  restored_at       DateTime? @db.Timestamptz(6)
+  restored_by       String?   @db.Uuid
+  created_at        DateTime  @default(now()) @db.Timestamptz(6)
+
+  @@map("pendaftar_backup")
+}
+
+// ─── MERGED FROM SIMPEG: JenisPembayaran ────────────────────────────────
+enum JenisPembayaran {
+  PENDAFTARAN
+  DAFTAR_ULANG
+  SPP
+  TOPUP_DOMPET
+}
+
+// ─── MERGED FROM SIMPEG: TipeCicilan ────────────────────────────────
+enum TipeCicilan {
+  LUNAS
+  CICIL_50_LEBIH
+  CICIL_DIBAWAH_50
+  CICILAN
+}
+
+// ─── MERGED FROM SIMPEG: TipeSPP ────────────────────────────────
+enum TipeSPP {
+  BULANAN
+  TAHUNAN
+}
+
+// ─── MERGED FROM SIMPEG: StatusSeleksi ────────────────────────────────
+enum StatusSeleksi {
+  DITERIMA
+  CADANGAN
+  DITOLAK
+}
+
+// ─── MERGED FROM SIMPEG: PengajuanBeasiswa ────────────────────────────────
+model PengajuanBeasiswa {
+  id                  String   @id @default(uuid()) @db.Uuid
+  pendaftar_id        String   @unique @db.Uuid
+  tahun_ajaran_id     String   @db.Uuid
+  jenis_pengajuan     String // "BEASISWA_PRESTASI" | "KERINGANAN_BIAYA"
+  alasan_pengajuan    String?  @db.Text
+  nominal_kesanggupan Decimal? @db.Decimal
+
+  file_sktm_path        String?
+  file_slip_gaji_path   String?
+  file_ktp_path         String?   // KTP Ayah (untuk Beasiswa)
+  file_ktp_ibu_path     String?   // KTP Ibu (untuk Beasiswa)
+  file_prestasi_path    String?   // Bukti prestasi (Beasiswa) / Surat Permohonan (Keringanan)
+  file_permohonan_path  String?   // Surat Permohonan Keringanan (field dedicated)
+  diajukan_oleh_id    String? @db.Uuid
+  diajukan_oleh_role  String?
+
+  status String @default("PENDING") // "PENDING" | "DISETUJUI" | "DITOLAK"
+
+  disetujui_oleh      String?   @db.Uuid
+  disetujui_pada      DateTime? @db.Timestamptz(6)
+  catatan_keputusan   String?   @db.Text
+  tipe_potongan       String? // "NOMINAL" | "PERSENTASE"
+  nominal_potongan    Decimal?  @db.Decimal
+  persentase_potongan Decimal?  @db.Decimal(5, 2)
+
+  created_at DateTime @default(now()) @db.Timestamptz(6)
+  updated_at DateTime @default(now()) @db.Timestamptz(6)
+
+  pendaftar    Pendaftar   @relation(fields: [pendaftar_id], references: [id], onDelete: Cascade)
+  tahun_ajaran TahunAjaran @relation(fields: [tahun_ajaran_id], references: [id])
+  approver     Profile?    @relation("BeasiswaApprovedBy", fields: [disetujui_oleh], references: [id])
+
+  @@map("pengajuan_beasiswa")
+}
+
+// ─── MERGED FROM SIMPEG: DompetSantri ────────────────────────────────
+model DompetSantri {
+  id             String   @id @default(uuid()) @db.Uuid
+  pendaftar_id   String   @unique @db.Uuid // Relasi ke pendaftar/santri
+  qr_code_string String   @unique // String unik yang ada di QR Card
+  saldo          Decimal  @default(0) @db.Decimal(12, 2)
+  status               String    @default("AKTIF") // AKTIF, BLOKIR, HILANG
+  pin                  String?
+  batas_jajan_harian   Decimal   @default(25000) @db.Decimal(12, 2)
+  batas_maksimal_saldo Decimal   @default(2000000) @db.Decimal(12, 2)
+  is_limit_terbuka     Boolean   @default(false)
+  limit_terbuka_sampai DateTime? @db.Timestamptz(6)
+  created_at           DateTime  @default(now()) @db.Timestamptz(6)
+  updated_at           DateTime  @default(now()) @db.Timestamptz(6)
+
+  transaksi TransaksiDompet[]
+  pendaftar Pendaftar         @relation(fields: [pendaftar_id], references: [id])
+
+  @@map("dompet_santri")
+}
+
+// ─── MERGED FROM SIMPEG: TransaksiDompet ────────────────────────────────
+model TransaksiDompet {
+  id              String   @id @default(uuid()) @db.Uuid
+  dompet_id       String   @db.Uuid
+  jenis_transaksi String // "TOPUP", "JAJAN_KANTIN", "JAJAN_KOPERASI", "TARIK_TUNAI"
+  nominal         Decimal  @db.Decimal(12, 2)
+  saldo_akhir     Decimal  @db.Decimal(12, 2) // Snapshot saldo setelah transaksi
+  keterangan      String?
+  kasir_id        String?  @db.Uuid // Admin/Kasir yang memproses
+  created_at      DateTime @default(now()) @db.Timestamptz(6)
+
+  dompet DompetSantri @relation(fields: [dompet_id], references: [id])
+  kasir  Profile?     @relation(fields: [kasir_id], references: [id])
+
+  @@map("transaksi_dompet")
+}
+
+// ─── MERGED FROM SIMPEG: PerizinanSantri ────────────────────────────────
+model PerizinanSantri {
+  id              String    @id @default(uuid()) @db.Uuid
+  pendaftar_id    String    @db.Uuid
+  jenis_izin      String // "PULANG", "KELUAR_PONDOK", "SAKIT"
+  alasan          String
+  waktu_keluar    DateTime  @default(now()) @db.Timestamptz(6)
+  batas_kembali   DateTime? @db.Timestamptz(6)
+  waktu_kembali   DateTime? @db.Timestamptz(6)
+  status          String    @default("DI_LUAR") // "DI_LUAR", "SUDAH_KEMBALI", "TERLAMBAT"
+  pemberi_izin_id String    @db.Uuid
+
+  pendaftar    Pendaftar @relation(fields: [pendaftar_id], references: [id])
+  pemberi_izin Profile   @relation(fields: [pemberi_izin_id], references: [id])
+
+  @@map("perizinan_santri")
+}
+
+// ─── MERGED FROM SIMPEG: JenisSurat ────────────────────────────────
+enum JenisSurat {
+  UND  // Undangan
+  PMB  // Pemberitahuan / Edaran
+  PENG // Pengumuman
+  SK   // Surat Keputusan
+  KET  // Surat Keterangan
+  ST   // Surat Tugas
+}
+
+// ─── MERGED FROM SIMPEG: KodeDivisi ────────────────────────────────
+enum KodeDivisi {
+  TU   // Tata Usaha
+  KS   // Kesantrian / Pengasuhan
+  AK   // Akademik / Kurikulum
+  KU   // Keuangan
+  PSB  // Panitia Penerimaan Santri Baru
+}
+
+// ─── MERGED FROM SIMPEG: StatusSurat ────────────────────────────────
+enum StatusSurat {
+  DRAFT
+  PUBLISHED
+}
+
+// ─── MERGED FROM SIMPEG: SuratKeluar ────────────────────────────────
+model SuratKeluar {
+  id              String      @id @default(uuid()) @db.Uuid
+  nomor_urut      Int         // Nomor urut dalam satu tahun ajaran (reset tiap Juli)
+  nomor_surat     String      @unique // Format: 001/UND/TU/PP-AI/VI/2026
+  jenis_surat     JenisSurat
+  kode_divisi     KodeDivisi
+  judul           String
+  perihal         String
+  isi_singkat     String?     @db.Text
+  tanggal_surat   DateTime    @db.Date
+  bulan_romawi    String      // I, II, III, IV, V, VI, VII, VIII, IX, X, XI, XII
+  tahun           Int
+  tahun_ajaran    String      // e.g. "2026/2027"
+  status          StatusSurat @default(DRAFT)
+  file_path       String?     // URL ke file PDF (Supabase Storage / local)
+  file_name       String?
+  penerima        String?     // Ditujukan kepada (opsional)
+  dibuat_oleh     String?     @db.Uuid
+  published_at    DateTime?   @db.Timestamptz(6)
+  created_at      DateTime    @default(now()) @db.Timestamptz(6)
+  updated_at      DateTime    @default(now()) @db.Timestamptz(6)
+
+  pembuat         Profile?    @relation("SuratDibuatOleh", fields: [dibuat_oleh], references: [id])
+
+  @@index([tahun_ajaran, nomor_urut])
+  @@index([status, tanggal_surat])
+  @@map("surat_keluar")
+}
+
+// ─── MERGED FROM SIMPEG: KalenderAkademik ────────────────────────────────
+model KalenderAkademik {
+  id              String      @id @default(uuid()) @db.Uuid
+  tahun_ajaran_id String      @db.Uuid
+  nama_kegiatan   String
+  tanggal_mulai   DateTime    @db.Date
+  tanggal_selesai DateTime    @db.Date
+  kategori        String      @default("AKADEMIK") // "AKADEMIK", "LIBUR", "PSB", "ASRAMA", "KEUANGAN", dll
+  deskripsi       String?     @db.Text
+  is_libur        Boolean     @default(false)
+  warna_label     String?     @default("blue")
+  created_at      DateTime    @default(now()) @db.Timestamptz(6)
+  updated_at      DateTime    @default(now()) @db.Timestamptz(6)
+
+  tahun_ajaran    TahunAjaran @relation(fields: [tahun_ajaran_id], references: [id], onDelete: Cascade)
+
+  @@index([tanggal_mulai, tanggal_selesai])
+  @@map("kalender_akademik")
 }
