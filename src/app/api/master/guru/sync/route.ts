@@ -7,11 +7,15 @@ import path from "path";
 const prisma = new PrismaClient();
 
 export async function POST(req: NextRequest) {
-  const SIMPEG_DB_URL = process.env.SIMPEG_DATABASE_URL;
+  let SIMPEG_DB_URL = process.env.SIMPEG_DATABASE_URL;
 
   if (!SIMPEG_DB_URL) {
-    // Fallback lokal jika env SIMPEG_DATABASE_URL tidak diset
-    return handleLocalFallback("Env SIMPEG_DATABASE_URL tidak dikonfigurasi.");
+    if (process.env.NODE_ENV === "production") {
+      SIMPEG_DB_URL = "postgresql://user_office:password_rahasia_office123@ucso0wo8gg8owc880w8sco44:5432/postgres?schema=office";
+    } else {
+      // Fallback lokal jika env SIMPEG_DATABASE_URL tidak diset
+      return handleLocalFallback("Env SIMPEG_DATABASE_URL tidak dikonfigurasi.");
+    }
   }
 
   console.log("Memulai sinkronisasi via API SIKAP...");
