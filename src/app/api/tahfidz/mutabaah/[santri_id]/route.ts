@@ -6,9 +6,9 @@ const prisma = new PrismaClient();
 // Ambil riwayat lengkap Tahfidz per santri
 export async function GET(
   req: NextRequest,
-  { params }: { params: { santri_id: string } }
+  { params }: { params: Promise<{ santri_id: string }> }
 ) {
-  const { santri_id } = params;
+  const { santri_id } = await params;
 
   try {
     const records = await prisma.capaianTahfidz.findMany({
