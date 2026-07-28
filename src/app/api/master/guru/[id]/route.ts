@@ -6,10 +6,10 @@ const prisma = new PrismaClient();
 // Delete Guru
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const id = params.id;
+    const { id } = await params;
     await prisma.pegawai.delete({
       where: { id },
     });
@@ -23,10 +23,10 @@ export async function DELETE(
 // Update Guru
 export async function PUT(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const id = params.id;
+    const { id } = await params;
     const body = await req.json();
     const { nik, nama_lengkap, no_hp, email } = body;
 
