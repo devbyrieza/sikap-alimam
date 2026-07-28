@@ -15,6 +15,16 @@ export async function POST(req: NextRequest) {
   }
 
   console.log("Memulai sinkronisasi via API SIKAP...");
+  
+  // Parse skema secara dinamis dari URL koneksi
+  let schema = "public";
+  try {
+    const urlObj = new URL(SIMPEG_DB_URL);
+    schema = urlObj.searchParams.get("schema") || "public";
+  } catch (e) {
+    console.warn("Gagal mengekstrak nama skema dari URL, default ke 'public'.");
+  }
+
   const pgClient = new Client({
     connectionString: SIMPEG_DB_URL,
     connectionTimeoutMillis: 5000, // Timeout cepat untuk lokal dev
@@ -25,7 +35,7 @@ export async function POST(req: NextRequest) {
     
     const res = await pgClient.query(`
       SELECT id, nik, nama_lengkap, jenis_kelamin, tempat_lahir, tanggal_lahir, no_hp, email, alamat, kategori_pegawai 
-      FROM office.pegawai 
+      FROM ${schema}.pegawai 
       WHERE kategori_pegawai = 'ASATIDZ' 
          OR kategori_pegawai = 'GURU' 
          OR kategori_pegawai = 'Guru'
