@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Lock, KeyRound, CheckCircle, Loader2 } from "lucide-react";
-import toast from "react-hot-toast";
+import Swal from "sweetalert2";
 
 export default function ProfilePage() {
   const [oldPassword, setOldPassword] = useState("");
@@ -13,11 +13,11 @@ export default function ProfilePage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (newPassword !== confirmPassword) {
-      toast.error("Password baru dan konfirmasi tidak cocok!");
+      Swal.fire({ icon: "error", title: "Gagal", text: "Password baru dan konfirmasi tidak cocok!" });
       return;
     }
     if (newPassword.length < 6) {
-      toast.error("Password baru minimal 6 karakter!");
+      Swal.fire({ icon: "warning", title: "Peringatan", text: "Password baru minimal 6 karakter!" });
       return;
     }
 
@@ -31,15 +31,15 @@ export default function ProfilePage() {
       const data = await res.json();
       
       if (!res.ok) {
-        toast.error(data.error || "Gagal mengganti password");
+        Swal.fire({ icon: "error", title: "Gagal", text: data.error || "Gagal mengganti password" });
       } else {
-        toast.success("Password berhasil diganti!");
+        Swal.fire({ icon: "success", title: "Berhasil", text: "Password berhasil diganti!" });
         setOldPassword("");
         setNewPassword("");
         setConfirmPassword("");
       }
     } catch (error) {
-      toast.error("Terjadi kesalahan jaringan");
+      Swal.fire({ icon: "error", title: "Error", text: "Terjadi kesalahan jaringan" });
     } finally {
       setLoading(false);
     }
