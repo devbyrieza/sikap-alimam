@@ -71,7 +71,7 @@ export default function LoginPage() {
           </div>
           <h1>SIKAP</h1>
           <p style={{ fontWeight: 600, fontSize: 12, color: "var(--primary)", marginTop: 4 }}>
-            Sistem Informasi Kependidikan dan Akademik Pesantren
+            Sistem Informasi Kependidikan, Akademik, dan Pengasuhan
           </p>
           <p style={{ marginTop: 2 }}>Pesantren Al-Imam Al-Islami</p>
           <p
