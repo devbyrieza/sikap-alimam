@@ -274,13 +274,7 @@ export default function TambahJurnalPage() {
                 )}
               </div>
 
-              <div
-                style={{
-                  display: "grid",
-                  gridTemplateColumns: "1fr 1fr",
-                  gap: "0 20px",
-                }}
-              >
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-x-5 gap-y-0">
                 {/* Asatidz */}
                 <div className="form-group">
                   <label className="form-label">

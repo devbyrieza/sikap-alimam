@@ -335,7 +335,7 @@ export default function InputNilaiPage() {
               Parameter Penilaian
             </p>
 
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="form-group">
                 <label className="form-label">Kelas / Halaqah</label>
                 <select
@@ -376,7 +376,7 @@ export default function InputNilaiPage() {
               </div>
             </div>
 
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="form-group" style={{ marginBottom: 0 }}>
                 <label className="form-label">Semester</label>
                 <select

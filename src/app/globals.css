@@ -78,7 +78,10 @@ body {
 @media (max-width: 768px) {
   .app-sidebar { transform: translateX(-100%); }
   .app-sidebar.open { transform: translateX(0); }
-  .app-content { margin-left: 0; }
+  .app-content { 
+    margin-left: 0; 
+    padding-top: 56px; /* Offset for the mobile header */
+  }
 }
 
 /* ── Sidebar Internals ────────────────────────────────────────────────────── */
@@ -148,6 +151,7 @@ body {
   align-items: center;
   justify-content: space-between;
   gap: 16px;
+  flex-wrap: wrap;
 }
 .page-header h1 {
   font-size: 22px;
