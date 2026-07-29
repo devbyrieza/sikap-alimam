@@ -118,12 +118,16 @@ export default function TambahJurnalPage() {
 
   const mapelList = (kelasId && master?.mapel?.[kelasId]) || [];
 
-  // Template materi: append ke materi (bukan replace)
   const applyTemplate = (val: string) => {
     setMateri((prev) => {
       if (!prev) return val;
       return prev.trimEnd() + "\n" + val;
     });
+  };
+
+  const handleTextareaResize = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    e.target.style.height = "auto";
+    e.target.style.height = `${e.target.scrollHeight}px`;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -427,7 +431,11 @@ export default function TambahJurnalPage() {
                   rows={3}
                   placeholder="Tuliskan topik jurnal hari ini..."
                   value={materi}
-                  onChange={(e) => setMateri(e.target.value)}
+                  onChange={(e) => {
+                    setMateri(e.target.value);
+                    handleTextareaResize(e);
+                  }}
+                  style={{ minHeight: "80px" }}
                   required
                 />
               </div>
@@ -441,7 +449,11 @@ export default function TambahJurnalPage() {
                   rows={3}
                   placeholder="Tuliskan learning outcome atau tujuan pembelajaran yang ingin dicapai..."
                   value={learningOutcome}
-                  onChange={(e) => setLearningOutcome(e.target.value)}
+                  onChange={(e) => {
+                    setLearningOutcome(e.target.value);
+                    handleTextareaResize(e);
+                  }}
+                  style={{ minHeight: "80px" }}
                   required
                 />
               </div>
@@ -455,7 +467,11 @@ export default function TambahJurnalPage() {
                   rows={4}
                   placeholder="Deskripsikan strategi untuk mencapai target/tujuan pembelajaran..."
                   value={kegiatan}
-                  onChange={(e) => setKegiatan(e.target.value)}
+                  onChange={(e) => {
+                    setKegiatan(e.target.value);
+                    handleTextareaResize(e);
+                  }}
+                  style={{ minHeight: "100px" }}
                   required
                 />
               </div>
@@ -467,7 +483,11 @@ export default function TambahJurnalPage() {
                   rows={3}
                   placeholder="Catatan tambahan, kendala, atau evaluasi..."
                   value={catatan}
-                  onChange={(e) => setCatatan(e.target.value)}
+                  onChange={(e) => {
+                    setCatatan(e.target.value);
+                    handleTextareaResize(e);
+                  }}
+                  style={{ minHeight: "80px" }}
                 />
               </div>
             </div>
