@@ -85,6 +85,10 @@ export async function POST() {
     });
   } catch (error: any) {
     console.error("Migration Error:", error);
-    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+    return NextResponse.json({ 
+      success: false, 
+      error: error.message,
+      stack: error.stack
+    }, { status: 500 });
   }
 }
