@@ -21,14 +21,14 @@ const SANTRI_MTS = [
 
 export async function GET() {
   try {
-    let kelas7 = await prisma.kelas.findFirst({ where: { nama_kelas: "7 MTs" }});
+    let kelas7 = await prisma.kelas.findFirst({ where: { nama: "7 MTs" }});
     if (!kelas7) {
-      kelas7 = await prisma.kelas.create({ data: { tingkat: "7", nama_kelas: "7 MTs", jenjang: "MTS", wali_kelas_id: null }});
+      kelas7 = await prisma.kelas.create({ data: { nama: "7 MTs", jenjang: "MTS" }});
     }
 
-    let kelasIL = await prisma.kelas.findFirst({ where: { nama_kelas: "I'dad Lughowy" }});
+    let kelasIL = await prisma.kelas.findFirst({ where: { nama: "I'dad Lughowy" }});
     if (!kelasIL) {
-      kelasIL = await prisma.kelas.create({ data: { tingkat: "10", nama_kelas: "I'dad Lughowy", jenjang: "MA", wali_kelas_id: null }});
+      kelasIL = await prisma.kelas.create({ data: { nama: "I'dad Lughowy", jenjang: "MA" }});
     }
 
     for (const m of MAPEL_7MTS) {
