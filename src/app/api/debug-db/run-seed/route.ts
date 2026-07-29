@@ -31,28 +31,25 @@ export async function GET() {
       kelasIL = await prisma.kelas.create({ data: { nama: "I'dad Lughowy", jenjang: "MA" }});
     }
 
-    for (const m of MAPEL_7MTS) {
-      await prisma.mataPelajaran.create({
-        data: { nama: m, kelas_id: kelas7.id, kategori: "umum" }
-      });
-    }
+    const mapel7Data = MAPEL_7MTS.map(m => ({ nama: m, kelas_id: kelas7!.id, kategori: "umum" }));
+    const mapelILData = MAPEL_IL.map(m => ({ nama: m, kelas_id: kelasIL!.id, kategori: "umum" }));
     
-    for (const m of MAPEL_IL) {
-      await prisma.mataPelajaran.create({
-        data: { nama: m, kelas_id: kelasIL.id, kategori: "umum" }
-      });
-    }
+    await prisma.mataPelajaran.createMany({
+      data: [...mapel7Data, ...mapelILData],
+      skipDuplicates: true,
+    });
 
-    for (const s of SANTRI_MTS) {
-      await prisma.santriAktif.create({
-        data: {
-          nis: s.nis || null,
-          nama_lengkap: s.nama,
-          kelas_id: kelas7.id,
-          jenis_kelamin: s.jk,
-        }
-      });
-    }
+    const santriData = SANTRI_MTS.map(s => ({
+      nis: s.nis || null,
+      nama_lengkap: s.nama,
+      kelas_id: kelas7!.id,
+      jenis_kelamin: s.jk,
+    }));
+
+    await prisma.santriAktif.createMany({
+      data: santriData,
+      skipDuplicates: true,
+    });
 
     return NextResponse.json({ success: true, message: "Mapel, Kelas, and Santri seeded!" });
   } catch (err: any) {
