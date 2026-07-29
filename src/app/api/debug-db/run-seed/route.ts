@@ -25,11 +25,17 @@ export async function GET() {
       { nama: "7 MTs", jenjang: "MTS" },
       { nama: "8 MTs", jenjang: "MTS" },
       { nama: "9 MTs", jenjang: "MTS" },
-      { nama: "I'dad Lughowy", jenjang: "MA" },
+      { nama: "IL", jenjang: "IL" },
       { nama: "10 MA", jenjang: "MA" },
       { nama: "11 MA", jenjang: "MA" },
       { nama: "12 MA", jenjang: "MA" },
     ];
+
+    // FIX EXISTING DATA
+    await prisma.kelas.updateMany({
+      where: { nama: "I'dad Lughowy" },
+      data: { nama: "IL", jenjang: "IL" }
+    });
 
     for (const k of KELAS_LIST) {
       const existing = await prisma.kelas.findFirst({ where: { nama: k.nama }});
@@ -39,7 +45,7 @@ export async function GET() {
     }
 
     const kelas7 = await prisma.kelas.findFirst({ where: { nama: "7 MTs" }});
-    const kelasIL = await prisma.kelas.findFirst({ where: { nama: "I'dad Lughowy" }});
+    const kelasIL = await prisma.kelas.findFirst({ where: { nama: "IL" }});
 
     const mapel7Data = MAPEL_7MTS.map(m => ({ nama: m, kelas_id: kelas7!.id, kategori: "umum" }));
     const mapelILData = MAPEL_IL.map(m => ({ nama: m, kelas_id: kelasIL!.id, kategori: "umum" }));
