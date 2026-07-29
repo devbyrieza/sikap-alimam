@@ -332,14 +332,7 @@ export default function PresensiSantriPage() {
             <Users size={16} style={{ display: "inline", marginRight: 6, color: "var(--primary)" }} />
             Pilih Kelas &amp; Tanggal
           </p>
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "1fr 1fr auto",
-              gap: 16,
-              alignItems: "flex-end",
-            }}
-          >
+          <div className="grid grid-cols-1 md:grid-cols-[1fr_1fr_auto] gap-4 items-end">
             <div className="form-group" style={{ marginBottom: 0 }}>
               <label className="form-label">Kelas</label>
               {loadingMaster ? (
