@@ -169,6 +169,7 @@ export default function TambahJurnalPage() {
       });
 
       localStorage.removeItem("siakad_jurnal_draft");
+      localStorage.removeItem("sikap_pending_jurnal_date");
       router.push("/jurnal");
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : "Terjadi kesalahan";

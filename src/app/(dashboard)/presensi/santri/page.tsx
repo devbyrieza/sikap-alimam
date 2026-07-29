@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import { useRouter } from "next/navigation";
 import Swal from "sweetalert2";
 import {
   ClipboardCheck,
@@ -45,10 +46,21 @@ const STATUS_BG: Record<StatusType, string> = {
 };
 
 export default function PresensiSantriPage() {
+  const router = useRouter();
   const today = new Date().toISOString().split("T")[0];
 
   const [kelasList, setKelasList] = useState<Kelas[]>([]);
   const [loadingMaster, setLoadingMaster] = useState(true);
+  const [jurnalBlocker, setJurnalBlocker] = useState(false);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const pendingDate = localStorage.getItem("sikap_pending_jurnal_date");
+      if (pendingDate === today) {
+        setJurnalBlocker(true);
+      }
+    }
+  }, [today]);
 
   const [selectedKelas, setSelectedKelas] = useState("");
   const [tanggal, setTanggal] = useState(today);
@@ -102,6 +114,8 @@ export default function PresensiSantriPage() {
       data.forEach((s) => {
         if (s.status) {
           map[s.id] = s.status as StatusType;
+        } else {
+          map[s.id] = "hadir";
         }
         if (s.keterangan) {
           ketMap[s.id] = s.keterangan;
@@ -171,17 +185,7 @@ export default function PresensiSantriPage() {
   const handleSimpan = async () => {
     if (!selectedKelas || !tanggal || santri.length === 0) return;
 
-    if (sudahDiabsen < santri.length) {
-      const confirmAll = await Swal.fire({
-        icon: "warning",
-        title: "Ada santri belum diabsen",
-        text: `Masih ada ${santri.length - sudahDiabsen} santri yang belum diabsen. Simpan sebagai Hadir secara otomatis?`,
-        showCancelButton: true,
-        confirmButtonText: "Ya, Simpan Hadir",
-        cancelButtonText: "Batal",
-      });
-      if (!confirmAll.isConfirmed) return;
-    }
+    // (Confirmation alert for missing attendance removed because default is now Hadir)
 
     const kelasNamaConfirm = kelasList.find((k) => k.id === selectedKelas)?.nama;
 
@@ -250,6 +254,29 @@ export default function PresensiSantriPage() {
         icon: "success",
         title: `Presensi ${json.count} santri berhasil disimpan!`,
       });
+
+      // 1. Set localStorage blocker
+      localStorage.setItem("sikap_pending_jurnal_date", tanggal);
+
+      // 2. Suggest to fill journal
+      setTimeout(() => {
+        Swal.fire({
+          title: 'Presensi Selesai',
+          text: 'Jangan lupa untuk segera mengisi Jurnal Mengajar Anda hari ini.',
+          icon: 'info',
+          showCancelButton: true,
+          confirmButtonColor: "var(--primary)",
+          confirmButtonText: 'Isi Jurnal Sekarang',
+          cancelButtonText: 'Nanti'
+        }).then((result) => {
+          if (result.isConfirmed) {
+            router.push("/jurnal");
+          } else {
+            // They chose later, so we lock them if they refresh
+            setJurnalBlocker(true);
+          }
+        });
+      }, 1000);
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : "Terjadi kesalahan";
       Swal.fire({
@@ -265,6 +292,28 @@ export default function PresensiSantriPage() {
 
   const kelasNama = kelasList.find((k) => k.id === selectedKelas)?.nama;
   const progressPct = santri.length > 0 ? Math.round((sudahDiabsen / santri.length) * 100) : 0;
+
+  if (jurnalBlocker) {
+    return (
+      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", minHeight: "70vh", padding: 24, textAlign: "center" }}>
+        <div style={{ width: 80, height: 80, backgroundColor: "rgba(220, 38, 38, 0.1)", color: "#dc2626", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 20 }}>
+          <CheckSquare size={40} />
+        </div>
+        <h2 style={{ fontSize: 24, fontWeight: 800, color: "var(--text)", marginBottom: 12 }}>Akses Terkunci</h2>
+        <p style={{ color: "var(--text-muted)", maxWidth: 450, marginBottom: 24, lineHeight: 1.6 }}>
+          Anda baru saja mengambil absensi kelas, namun belum menyetorkan <b>Jurnal Mengajar</b>. 
+          Harap lengkapi jurnal kelas sebelumnya agar bisa mengakses presensi kelas selanjutnya.
+        </p>
+        <button 
+          onClick={() => router.push("/jurnal")}
+          className="btn btn-primary"
+          style={{ padding: "12px 24px", fontSize: 15, fontWeight: 700 }}
+        >
+          Menuju Halaman Jurnal
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div>
