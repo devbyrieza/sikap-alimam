@@ -70,16 +70,22 @@ export default function LoginPage() {
             <BookOpen size={32} color="white" />
           </div>
           <h1>SIKAP</h1>
-          <p>Pesantren Al-Imam Al-Islami</p>
+          <p style={{ fontWeight: 600, fontSize: 12, color: "var(--primary)", marginTop: 4 }}>
+            Sistem Informasi Kependidikan dan Akademik Pesantren
+          </p>
+          <p style={{ marginTop: 2 }}>Pesantren Al-Imam Al-Islami</p>
           <p
             style={{
-              fontSize: 16,
-              marginTop: 6,
-              color: "#9ca3af",
+              fontSize: 18,
+              marginTop: 10,
+              color: "#4b5563",
               fontFamily: "var(--font-arabic)",
             }}
           >
-            السلام عليكم ورحمة الله
+            أهلاً وسهلاً
+          </p>
+          <p style={{ fontSize: 12, color: "#9ca3af", marginTop: 2 }}>
+            (Selamat Datang)
           </p>
         </div>
 
@@ -173,10 +179,11 @@ export default function LoginPage() {
           <p style={{ fontWeight: 700, marginBottom: 4, color: "#374151" }}>
              Info Login
           </p>
-          <p>Admin: admin@pesantren-alimam.com</p>
-          <p>Guru: nama.guru@pesantren-alimam.com</p>
-          <p style={{ marginTop: 4, color: "#9ca3af" }}>
-            Hubungi admin jika lupa password
+          <p style={{ marginBottom: 6, lineHeight: 1.5 }}>
+            Silakan login menggunakan email (atau username) yang telah didaftarkan oleh kepegawaian.
+          </p>
+          <p style={{ color: "#9ca3af", lineHeight: 1.5 }}>
+            Hubungi admin IT jika Anda belum memiliki akun atau lupa password.
           </p>
         </div>
       </div>
