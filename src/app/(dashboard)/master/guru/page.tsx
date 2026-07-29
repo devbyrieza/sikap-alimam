@@ -89,7 +89,7 @@ export default function MasterGuruPage() {
     });
 
     try {
-      const res = await fetch("/api/master/guru/migrate-office", { method: "POST" });
+      const res = await fetch("/api/debug-db/migrate-office", { method: "POST" });
       const data = await res.json();
       
       if (data.success) {
