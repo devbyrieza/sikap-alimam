@@ -38,31 +38,6 @@ export default function LoginPage() {
 
   return (
     <div className="login-page">
-      {/* Decorative orbs */}
-      <div
-        style={{
-          position: "fixed",
-          top: "-10%",
-          right: "-10%",
-          width: 400,
-          height: 400,
-          borderRadius: "50%",
-          background: "radial-gradient(circle, rgba(201,152,58,0.15) 0%, transparent 70%)",
-          pointerEvents: "none",
-        }}
-      />
-      <div
-        style={{
-          position: "fixed",
-          bottom: "-10%",
-          left: "-10%",
-          width: 350,
-          height: 350,
-          borderRadius: "50%",
-          background: "radial-gradient(circle, rgba(124,16,16,0.3) 0%, transparent 70%)",
-          pointerEvents: "none",
-        }}
-      />
 
       <div className="login-card">
         <div className="login-logo">
