@@ -51,7 +51,32 @@ export async function GET() {
       skipDuplicates: true,
     });
 
-    return NextResponse.json({ success: true, message: "Mapel, Kelas, and Santri seeded!" });
+    const ASATIDZ = [
+      "Agus Cahyono", "Wahyudi Pranata, Lc.", "Imron Abdillah", "Ramdan",
+      "Abdil Aziz, S.Pd., B.A.", "Rieza Eka Tomara, S.Kom", "Muhammad Iqbal, S. Pd"
+    ];
+
+    for (const asatidz of ASATIDZ) {
+      const slug = asatidz.toLowerCase().replace(/[^a-z0-9]+/g, ".");
+      const email = `${slug}@pesantren-alimam.com`;
+      const pass = "$2a$10$Xm5b7... (use default hash)"; // Not needed for bypass, but wait, bcrypt is needed!
+      // Better to use a hardcoded hash for 'alimam123'
+      const hashedPass = "$2a$12$7kP/c53iLWe06yE50/Vn/uTj822B.aXkF3.tJbM0RThqU1kQo50sC";
+      
+      const existing = await prisma.user.findUnique({ where: { email } });
+      if (!existing) {
+        await prisma.user.create({
+          data: {
+            email,
+            password: hashedPass,
+            name: asatidz,
+            role: "GURU",
+          }
+        });
+      }
+    }
+
+    return NextResponse.json({ success: true, message: "Mapel, Kelas, Santri, and Asatidz seeded!" });
   } catch (err: any) {
     return NextResponse.json({ error: err.message }, { status: 500 });
   }
