@@ -3,10 +3,15 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
-// Ambil semua Mapel
-export async function GET() {
+export async function GET(req: NextRequest) {
   try {
+    const { searchParams } = new URL(req.url);
+    const kelas_id = searchParams.get("kelas_id");
+
+    const whereClause = kelas_id ? { kelas_id } : {};
+
     const mapel = await prisma.mataPelajaran.findMany({
+      where: whereClause,
       include: {
         kelas: true,
       },
@@ -15,7 +20,7 @@ export async function GET() {
         { nama: 'asc' }
       ],
     });
-    return NextResponse.json(mapel);
+    return NextResponse.json({ mapel });
   } catch (error) {
     console.error("Error fetching mapel:", error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
