@@ -193,22 +193,22 @@ export default function PresensiSantriPage() {
       title: "Simpan Presensi?",
       html: `
         <div style="font-size:13px; color:#6b7280; margin-bottom: 14px; text-align:left; padding: 10px 12px; background: #f9fafb; border-radius: 8px;">
-          📅 Tanggal: <strong>${tanggal}</strong><br/>
-          🏫 Kelas: <strong>${kelasNamaConfirm}</strong><br/>
-          👤 Total Santri: <strong>${santri.length}</strong>
+          Tanggal: <strong>${tanggal}</strong><br/>
+          Kelas: <strong>${kelasNamaConfirm}</strong><br/>
+          Total Santri: <strong>${santri.length}</strong>
         </div>
         <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:4px">
           <div style="padding:10px; background:rgba(21,128,61,0.08); border-radius:8px; font-weight:700; color:#15803d">
-            ✅ Hadir: ${summary.hadir}
+            Hadir: ${summary.hadir}
           </div>
           <div style="padding:10px; background:rgba(161,98,7,0.08); border-radius:8px; font-weight:700; color:#a16207">
-            🤒 Sakit: ${summary.sakit}
+            Sakit: ${summary.sakit}
           </div>
           <div style="padding:10px; background:rgba(29,78,216,0.08); border-radius:8px; font-weight:700; color:#1d4ed8">
-            📝 Izin: ${summary.izin}
+            Izin: ${summary.izin}
           </div>
           <div style="padding:10px; background:rgba(185,28,28,0.08); border-radius:8px; font-weight:700; color:#b91c1c">
-            ❌ Alpha: ${summary.alpha}
+            Alpha: ${summary.alpha}
           </div>
         </div>
       `,

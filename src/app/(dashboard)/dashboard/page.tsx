@@ -66,21 +66,13 @@ export default async function DashboardPage() {
   const pctHadir =
     totalAsatidz > 0 ? Math.round((hadirAsatidz / totalAsatidz) * 100) : 0;
 
-  const greeting = () => {
-    const h = today.getHours();
-    if (h < 11) return "Selamat Pagi";
-    if (h < 15) return "Selamat Siang";
-    if (h < 18) return "Selamat Sore";
-    return "Selamat Malam";
-  };
-
   return (
     <div>
       {/* Page Header */}
       <div className="page-header">
         <div>
           <h1>
-            {greeting()}, {session?.nama?.split(" ")[0]} <Hand size={16} className="inline mr-1" />
+            Ahlan wa Sahlan, {session?.nama?.split(" ")[0]} <Hand size={16} className="inline mr-1" />
           </h1>
           <p>
             <Calendar size={13} style={{ display: "inline", marginRight: 4 }} />
@@ -135,7 +127,7 @@ export default async function DashboardPage() {
                   marginTop: 2,
                 }}
               >
-                {pctHadir}% Asatidz hadir
+                {pctHadir}% Guru hadir
               </div>
             </div>
           </div>
@@ -184,7 +176,7 @@ export default async function DashboardPage() {
               <TrendingUp size={24} />
             </div>
             <div>
-              <div className="stat-label">Total Asatidz</div>
+              <div className="stat-label">Total Guru</div>
               <div className="stat-value">{totalAsatidz}</div>
               <div
                 style={{ fontSize: 12, color: "var(--text-muted)", marginTop: 2 }}
@@ -209,7 +201,7 @@ export default async function DashboardPage() {
             </Link>
             <Link href="/presensi/asatidz" className="btn btn-ghost">
               <UserCheck size={16} />
-              Absensi Asatidz
+              Absensi Guru
             </Link>
             <Link href="/nilai" className="btn btn-ghost">
               <BarChart3 size={16} />

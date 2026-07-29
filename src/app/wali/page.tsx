@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { User, Lock, ChevronRight, GraduationCap, CalendarDays } from "lucide-react";
+import { User, Lock, ChevronRight, GraduationCap, CalendarDays, Printer } from "lucide-react";
 import { cekStatusSpp } from "@/lib/keuangan";
 
 interface Anak {
@@ -112,7 +112,7 @@ export default function WaliDashboard() {
                       target="_blank"
                       className="flex items-center justify-center gap-2 bg-white border border-emerald-600 text-emerald-700 hover:bg-emerald-50 px-6 py-2.5 rounded-2xl font-semibold transition-all"
                     >
-                      🖨️ Cetak Rapor Asli (PDF)
+                      <Printer size={16} /> Cetak Rapor Asli (PDF)
                     </a>
                   </div>
                 )}

@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Swal from "sweetalert2";
-import { BookOpen, ChevronLeft, Loader2, FileText, Zap, Clock, Save } from "lucide-react";
+import { BookOpen, ChevronLeft, Loader2, FileText, Zap, Clock, Save, Calendar, MessageSquare, Microscope, BookMarked, Edit3 } from "lucide-react";
 import Link from "next/link";
 
 type Kelas = { id: string; nama: string; jenjang: string | null };
@@ -24,12 +24,12 @@ const NAMA_BULAN = [
 const JAM_OPTIONS = ["1", "2", "3", "4", "5", "6", "7", "8", "Khusus"];
 
 const TEMPLATE_MATERI = [
-  { label: "📖 Review Materi Lalu", value: "Review dan pembahasan materi pertemuan sebelumnya" },
-  { label: "📝 Ulangan Harian", value: "Ulangan harian / evaluasi pemahaman materi" },
-  { label: "💬 Diskusi Kelompok", value: "Diskusi kelompok dan presentasi hasil diskusi" },
-  { label: "🔬 Praktik / Demonstrasi", value: "Praktik langsung / demonstrasi materi" },
-  { label: "📚 Materi Baru", value: "Penyampaian materi baru sesuai silabus" },
-  { label: "✍️ Latihan Soal", value: "Pengerjaan latihan soal dan pembahasan" },
+  { label: "Review Materi Lalu", value: "Review dan pembahasan materi pertemuan sebelumnya", icon: <BookOpen size={14} /> },
+  { label: "Ulangan Harian", value: "Ulangan harian / evaluasi pemahaman materi", icon: <FileText size={14} /> },
+  { label: "Diskusi Kelompok", value: "Diskusi kelompok dan presentasi hasil diskusi", icon: <MessageSquare size={14} /> },
+  { label: "Praktik / Demonstrasi", value: "Praktik langsung / demonstrasi materi", icon: <Microscope size={14} /> },
+  { label: "Materi Baru", value: "Penyampaian materi baru sesuai silabus", icon: <BookMarked size={14} /> },
+  { label: "Latihan Soal", value: "Pengerjaan latihan soal dan pembahasan", icon: <Edit3 size={14} /> },
 ];
 
 function formatTanggalIndo(isoDate: string): string {
@@ -197,7 +197,7 @@ export default function TambahJurnalPage() {
             <ChevronLeft size={16} />
           </Link>
           <div>
-            <h1>📋 Tambah Jurnal Mengajar</h1>
+            <h1 style={{ display: "flex", alignItems: "center", gap: 8 }}><BookMarked size={20} /> Tambah Jurnal Mengajar</h1>
             <p>Catat kegiatan belajar mengajar hari ini</p>
           </div>
         </div>
@@ -269,7 +269,7 @@ export default function TambahJurnalPage() {
                       gap: 6,
                     }}
                   >
-                    📅 {formatTanggalIndo(tanggal)}
+                    <Calendar size={14} /> {formatTanggalIndo(tanggal)}
                   </div>
                 )}
               </div>
@@ -278,7 +278,7 @@ export default function TambahJurnalPage() {
                 {/* Asatidz */}
                 <div className="form-group">
                   <label className="form-label">
-                    Asatidz <span style={{ color: "var(--danger)" }}>*</span>
+                    Guru <span style={{ color: "var(--danger)" }}>*</span>
                   </label>
                   <select
                     className="form-control"
@@ -286,7 +286,7 @@ export default function TambahJurnalPage() {
                     onChange={(e) => setAsatidId(e.target.value)}
                     required
                   >
-                    <option value="">— Pilih Asatidz —</option>
+                    <option value="">— Pilih Guru —</option>
                     {master?.asatidz.map((a) => (
                       <option key={a.id} value={a.id}>
                         {a.nama_lengkap}
@@ -401,17 +401,20 @@ export default function TambahJurnalPage() {
                         cursor: "pointer",
                         fontWeight: 500,
                         transition: "all 0.15s",
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 6
                       }}
                       onMouseEnter={(e) => {
-                        (e.target as HTMLButtonElement).style.borderColor = "var(--primary)";
-                        (e.target as HTMLButtonElement).style.color = "var(--primary)";
+                        (e.currentTarget as HTMLButtonElement).style.borderColor = "var(--primary)";
+                        (e.currentTarget as HTMLButtonElement).style.color = "var(--primary)";
                       }}
                       onMouseLeave={(e) => {
-                        (e.target as HTMLButtonElement).style.borderColor = "var(--border)";
-                        (e.target as HTMLButtonElement).style.color = "var(--text)";
+                        (e.currentTarget as HTMLButtonElement).style.borderColor = "var(--border)";
+                        (e.currentTarget as HTMLButtonElement).style.color = "var(--text)";
                       }}
                     >
-                      {t.label}
+                      {t.icon} <span>{t.label}</span>
                     </button>
                   ))}
                 </div>
@@ -455,8 +458,8 @@ export default function TambahJurnalPage() {
             {/* Actions */}
             <div style={{ display: "flex", gap: 10, justifyContent: "flex-end", alignItems: "center" }}>
               {lastSaved && (
-                <span style={{ fontSize: 11, color: "var(--text-muted)" }}>
-                  💾 Draft tersimpan pukul {lastSaved}
+                <span style={{ fontSize: 11, color: "var(--text-muted)", display: "flex", alignItems: "center", gap: 4 }}>
+                  <Save size={11} /> Draft tersimpan pukul {lastSaved}
                 </span>
               )}
               <Link href="/jurnal" className="btn btn-ghost">

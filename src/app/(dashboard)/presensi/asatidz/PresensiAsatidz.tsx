@@ -156,7 +156,7 @@ export default function PresensiAsatidz({
       {/* Page Header */}
       <div className="page-header">
         <div>
-          <h1>Presensi Asatidz</h1>
+          <h1>Presensi Guru</h1>
           <p>Rekap kehadiran · {todayStr}</p>
         </div>
         <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
@@ -533,7 +533,7 @@ export default function PresensiAsatidz({
             </div>
 
             <div className="form-group">
-              <label className="form-label">Nama Asatidz</label>
+              <label className="form-label">Nama Guru</label>
               <select
                 className="form-control"
                 value={manualForm.asatidz_id}

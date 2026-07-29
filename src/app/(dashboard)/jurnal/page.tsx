@@ -7,7 +7,7 @@ export const dynamic = "force-dynamic";
 
 export const metadata = {
   title: "Jurnal Mengajar — SIAKAD Al-Imam",
-  description: "Daftar jurnal mengajar asatidz Pesantren Al-Imam Al-Islami",
+  description: "Daftar jurnal mengajar guru Pesantren Al-Imam Al-Islami",
 };
 
 async function getJurnal() {

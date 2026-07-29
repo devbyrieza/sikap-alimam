@@ -9,6 +9,7 @@ import {
   Users,
   CheckCircle,
   BookOpen,
+  Lightbulb
 } from "lucide-react";
 
 interface Kelas {
@@ -438,8 +439,8 @@ export default function InputNilaiPage() {
                 </div>
               </div>
               
-              <div style={{ fontSize: 12, color: "var(--text-muted)", background: "#f8fafc", padding: "4px 10px", borderRadius: 99 }}>
-                💡 Draft Autosave Aktif
+              <div style={{ fontSize: 12, color: "var(--text-muted)", background: "#f8fafc", padding: "4px 10px", borderRadius: 99, display: "flex", alignItems: "center", gap: 4 }}>
+                <Lightbulb size={12} style={{ color: "var(--warning)" }} /> Draft Autosave Aktif
               </div>
             </div>
 

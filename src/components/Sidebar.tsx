@@ -36,7 +36,7 @@ const NAV: NavItem[] = [
   },
   {
     href: "/presensi/asatidz",
-    label: "Absensi Asatidz",
+    label: "Absensi Guru",
     icon: <UserCheck size={18} />,
   },
   {
@@ -51,7 +51,7 @@ const NAV: NavItem[] = [
   },
   {
     href: "/master/guru",
-    label: "Data Asatidz",
+    label: "Data Guru",
     icon: <Users size={18} />,
     roles: ["admin", "kepala"],
   },

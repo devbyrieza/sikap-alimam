@@ -98,13 +98,13 @@ export default function JurnalClientFilter({
           </select>
         </div>
         <div className="form-group" style={{ marginBottom: 0, minWidth: 200 }}>
-          <label className="form-label">Filter Asatidz</label>
+          <label className="form-label">Filter Guru</label>
           <select
             className="form-control"
             value={filterAsatidz}
             onChange={(e) => setFilterAsatidz(e.target.value)}
           >
-            <option value="">Semua Asatidz</option>
+            <option value="">Semua Guru</option>
             {finalAsatidzList.map((a) => (
               <option key={a} value={a}>
                 {a}
@@ -143,7 +143,7 @@ export default function JurnalClientFilter({
           <thead>
             <tr>
               <th>Tanggal</th>
-              <th>Asatidz</th>
+              <th>Guru</th>
               <th>Mata Pelajaran</th>
               <th>Kelas</th>
               <th>Jam ke-</th>

@@ -183,7 +183,7 @@ export default function MasterGuruPage() {
       <div className="flex justify-between items-center mb-6">
         <div>
           <h1 className="text-3xl font-bold text-gray-800 flex items-center gap-2">
-            <Users className="text-emerald-600" size={32} /> Master Data Asatidz
+            <Users className="text-emerald-600" size={32} /> Master Data Guru
           </h1>
           <p className="text-gray-500 mt-1">Registrasi dan kelola staf pengajar (Guru/Musyrif) di Pesantren Al-Imam.</p>
         </div>
@@ -222,7 +222,7 @@ export default function MasterGuruPage() {
       {isAdding && (
         <div className="bg-white rounded-3xl p-6 border border-emerald-200 shadow-md mb-6 animate-in fade-in slide-in-from-top-4">
           <h3 className="font-bold text-lg text-gray-800 mb-4 border-b pb-2">
-            {editingId ? "Form Edit Data Asatidz" : "Form Pendaftaran Asatidz Baru"}
+            {editingId ? "Form Edit Data Guru" : "Form Pendaftaran Guru Baru"}
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             <div>
@@ -251,7 +251,7 @@ export default function MasterGuruPage() {
       )}
 
       {loading ? (
-        <div className="text-center py-10">Memuat data asatidz...</div>
+        <div className="text-center py-10">Memuat data guru...</div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {guru.map((g) => (

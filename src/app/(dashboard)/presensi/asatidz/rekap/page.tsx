@@ -116,7 +116,7 @@ export default function RekapBulananPage() {
     <>
       <div className="page-header">
         <div>
-          <h1>Rekap Presensi Asatidz</h1>
+          <h1>Rekap Presensi Guru</h1>
           <p>
             Kalender kehadiran bulanan · {BULAN_NAMA[bulan]} {tahun}
           </p>
@@ -249,7 +249,7 @@ export default function RekapBulananPage() {
                         zIndex: 1,
                       }}
                     >
-                      Nama Asatidz
+                      Nama Guru
                     </th>
                     {days.map((d) => (
                       <th
