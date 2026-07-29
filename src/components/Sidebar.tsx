@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { BookOpen, LayoutDashboard, BookMarked, ClipboardCheck, UserCheck, BarChart3, LogOut, Menu, X, GraduationCap, Users } from "lucide-react";
+import { BookOpen, LayoutDashboard, BookMarked, ClipboardCheck, UserCheck, BarChart3, LogOut, Menu, X, GraduationCap, Users, Settings } from "lucide-react";
 import { useState } from "react";
 
 interface NavItem {
@@ -183,19 +183,37 @@ export default function Sidebar({ user }: SidebarProps) {
             </p>
           </div>
         </div>
-        <button
-          onClick={handleLogout}
-          className="btn btn-ghost btn-sm"
-          style={{
-            width: "100%",
-            justifyContent: "center",
-            color: "rgba(255,255,255,0.55)",
-            borderColor: "rgba(255,255,255,0.15)",
-          }}
-        >
-          <LogOut size={14} />
-          Keluar
-        </button>
+        <div style={{ display: "flex", gap: "8px", width: "100%" }}>
+          <Link
+            href="/profile"
+            className="btn btn-ghost btn-sm"
+            onClick={() => setMobileOpen(false)}
+            style={{
+              flex: 1,
+              justifyContent: "center",
+              color: "rgba(255,255,255,0.7)",
+              borderColor: "rgba(255,255,255,0.15)",
+              padding: "8px 0"
+            }}
+          >
+            <Settings size={14} />
+            Profil
+          </Link>
+          <button
+            onClick={handleLogout}
+            className="btn btn-ghost btn-sm"
+            style={{
+              flex: 1,
+              justifyContent: "center",
+              color: "rgba(255,255,255,0.7)",
+              borderColor: "rgba(255,255,255,0.15)",
+              padding: "8px 0"
+            }}
+          >
+            <LogOut size={14} />
+            Keluar
+          </button>
+        </div>
       </div>
     </>
   );
