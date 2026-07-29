@@ -19,8 +19,8 @@ export async function GET() {
     // 2. Injeksi Pegawai (agar muncul di dropdown Asatidz)
     await prisma.pegawai.upsert({
       where: { user_id: userRieza.id },
-      update: { kategori_pegawai: 'ASATIDZ' },
-      create: { user_id: userRieza.id, nama_lengkap: 'Rieza Eka Tomara', jabatan: 'Guru', kategori_pegawai: 'ASATIDZ' }
+      update: { kategori_pegawai: 'GURU' },
+      create: { user_id: userRieza.id, nama_lengkap: 'Rieza Eka Tomara', jabatan: 'Guru', kategori_pegawai: 'GURU' }
     });
 
     // 3. Injeksi Kelas (agar muncul di dropdown Kelas)
