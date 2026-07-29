@@ -23,14 +23,7 @@ const NAMA_BULAN = [
 
 const JAM_OPTIONS = ["1", "2", "3", "4", "5", "6", "7", "8", "Khusus"];
 
-const TEMPLATE_MATERI = [
-  { label: "Review Materi Lalu", value: "Review dan pembahasan materi pertemuan sebelumnya", icon: <BookOpen size={14} /> },
-  { label: "Ulangan Harian", value: "Ulangan harian / evaluasi pemahaman materi", icon: <FileText size={14} /> },
-  { label: "Diskusi Kelompok", value: "Diskusi kelompok dan presentasi hasil diskusi", icon: <MessageSquare size={14} /> },
-  { label: "Praktik / Demonstrasi", value: "Praktik langsung / demonstrasi materi", icon: <Microscope size={14} /> },
-  { label: "Materi Baru", value: "Penyampaian materi baru sesuai silabus", icon: <BookMarked size={14} /> },
-  { label: "Latihan Soal", value: "Pengerjaan latihan soal dan pembahasan", icon: <Edit3 size={14} /> },
-];
+
 
 function formatTanggalIndo(isoDate: string): string {
   if (!isoDate) return "";
@@ -118,12 +111,7 @@ export default function TambahJurnalPage() {
 
   const mapelList = (kelasId && master?.mapel?.[kelasId]) || [];
 
-  const applyTemplate = (val: string) => {
-    setMateri((prev) => {
-      if (!prev) return val;
-      return prev.trimEnd() + "\n" + val;
-    });
-  };
+
 
   const handleTextareaResize = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     e.target.style.height = "auto";
@@ -388,43 +376,7 @@ export default function TambahJurnalPage() {
                   Topik Jurnal <span style={{ color: "var(--danger)" }}>*</span>
                 </label>
 
-                {/* Template chips */}
-                <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginBottom: 10 }}>
-                  <span style={{ fontSize: 12, color: "var(--text-muted)", display: "flex", alignItems: "center", gap: 4 }}>
-                    <Zap size={12} /> Template cepat:
-                  </span>
-                  {TEMPLATE_MATERI.map((t) => (
-                    <button
-                      key={t.value}
-                      type="button"
-                      onClick={() => applyTemplate(t.value)}
-                      style={{
-                        padding: "4px 10px",
-                        borderRadius: 99,
-                        border: "1.5px solid var(--border)",
-                        background: "var(--surface)",
-                        fontSize: 12,
-                        color: "var(--text)",
-                        cursor: "pointer",
-                        fontWeight: 500,
-                        transition: "all 0.15s",
-                        display: "flex",
-                        alignItems: "center",
-                        gap: 6
-                      }}
-                      onMouseEnter={(e) => {
-                        (e.currentTarget as HTMLButtonElement).style.borderColor = "var(--primary)";
-                        (e.currentTarget as HTMLButtonElement).style.color = "var(--primary)";
-                      }}
-                      onMouseLeave={(e) => {
-                        (e.currentTarget as HTMLButtonElement).style.borderColor = "var(--border)";
-                        (e.currentTarget as HTMLButtonElement).style.color = "var(--text)";
-                      }}
-                    >
-                      {t.icon} <span>{t.label}</span>
-                    </button>
-                  ))}
-                </div>
+
 
                 <textarea
                   className="form-control"
