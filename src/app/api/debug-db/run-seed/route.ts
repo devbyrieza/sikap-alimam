@@ -21,15 +21,25 @@ const SANTRI_MTS = [
 
 export async function GET() {
   try {
-    let kelas7 = await prisma.kelas.findFirst({ where: { nama: "7 MTs" }});
-    if (!kelas7) {
-      kelas7 = await prisma.kelas.create({ data: { nama: "7 MTs", jenjang: "MTS" }});
+    const KELAS_LIST = [
+      { nama: "7 MTs", jenjang: "MTS" },
+      { nama: "8 MTs", jenjang: "MTS" },
+      { nama: "9 MTs", jenjang: "MTS" },
+      { nama: "I'dad Lughowy", jenjang: "MA" },
+      { nama: "10 MA", jenjang: "MA" },
+      { nama: "11 MA", jenjang: "MA" },
+      { nama: "12 MA", jenjang: "MA" },
+    ];
+
+    for (const k of KELAS_LIST) {
+      const existing = await prisma.kelas.findFirst({ where: { nama: k.nama }});
+      if (!existing) {
+        await prisma.kelas.create({ data: k });
+      }
     }
 
-    let kelasIL = await prisma.kelas.findFirst({ where: { nama: "I'dad Lughowy" }});
-    if (!kelasIL) {
-      kelasIL = await prisma.kelas.create({ data: { nama: "I'dad Lughowy", jenjang: "MA" }});
-    }
+    const kelas7 = await prisma.kelas.findFirst({ where: { nama: "7 MTs" }});
+    const kelasIL = await prisma.kelas.findFirst({ where: { nama: "I'dad Lughowy" }});
 
     const mapel7Data = MAPEL_7MTS.map(m => ({ nama: m, kelas_id: kelas7!.id, kategori: "umum" }));
     const mapelILData = MAPEL_IL.map(m => ({ nama: m, kelas_id: kelasIL!.id, kategori: "umum" }));

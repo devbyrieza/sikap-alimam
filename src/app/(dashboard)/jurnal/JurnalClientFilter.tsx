@@ -147,7 +147,7 @@ export default function JurnalClientFilter({
               <th>Mata Pelajaran</th>
               <th>Kelas</th>
               <th>Jam ke-</th>
-              <th>Materi</th>
+              <th>Topik Jurnal</th>
             </tr>
           </thead>
           <tbody>

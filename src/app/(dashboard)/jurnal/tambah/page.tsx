@@ -58,6 +58,7 @@ export default function TambahJurnalPage() {
   const [tanggal, setTanggal] = useState(today);
   const [jamKe, setJamKe] = useState("");
   const [materi, setMateri] = useState("");
+  const [learningOutcome, setLearningOutcome] = useState("");
   const [kegiatan, setKegiatan] = useState("");
   const [catatan, setCatatan] = useState("");
 
@@ -73,6 +74,7 @@ export default function TambahJurnalPage() {
         if (p.tanggal) setTanggal(p.tanggal);
         if (p.jamKe) setJamKe(p.jamKe);
         if (p.materi) setMateri(p.materi);
+        if (p.learningOutcome) setLearningOutcome(p.learningOutcome);
         if (p.kegiatan) setKegiatan(p.kegiatan);
         if (p.catatan) setCatatan(p.catatan);
         setLastSaved(p._savedAt || null);
@@ -83,13 +85,13 @@ export default function TambahJurnalPage() {
   // Autosave draft ke localStorage
   useEffect(() => {
     const savedAt = new Date().toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" });
-    const p = { kelasId, mapelId, asatidId, tanggal, jamKe, materi, kegiatan, catatan, _savedAt: savedAt };
+    const p = { kelasId, mapelId, asatidId, tanggal, jamKe, materi, learningOutcome, kegiatan, catatan, _savedAt: savedAt };
     localStorage.setItem("siakad_jurnal_draft", JSON.stringify(p));
     // Tampilkan info autosave hanya kalau ada perubahan bermakna
-    if (kelasId || materi || kegiatan) {
+    if (kelasId || materi || learningOutcome || kegiatan) {
       setLastSaved(savedAt);
     }
-  }, [kelasId, mapelId, asatidId, tanggal, jamKe, materi, kegiatan, catatan]);
+  }, [kelasId, mapelId, asatidId, tanggal, jamKe, materi, learningOutcome, kegiatan, catatan]);
 
   // Load master data
   useEffect(() => {
@@ -149,6 +151,7 @@ export default function TambahJurnalPage() {
           tanggal,
           jam_ke: jamKe || null,
           materi,
+          learning_outcome: learningOutcome || null,
           kegiatan,
           catatan: catatan || null,
         }),
@@ -375,10 +378,10 @@ export default function TambahJurnalPage() {
             <div className="card" style={{ marginBottom: 20 }}>
               <p className="card-title"><FileText size={16} className="inline mr-1" /> Isi Jurnal</p>
 
-              {/* Materi Pelajaran */}
+              {/* Topik Jurnal */}
               <div className="form-group">
                 <label className="form-label">
-                  Materi Pelajaran <span style={{ color: "var(--danger)" }}>*</span>
+                  Topik Jurnal <span style={{ color: "var(--danger)" }}>*</span>
                 </label>
 
                 {/* Template chips */}
@@ -422,7 +425,7 @@ export default function TambahJurnalPage() {
                 <textarea
                   className="form-control"
                   rows={3}
-                  placeholder="Tuliskan materi yang diajarkan hari ini..."
+                  placeholder="Tuliskan topik jurnal hari ini..."
                   value={materi}
                   onChange={(e) => setMateri(e.target.value)}
                   required
@@ -431,12 +434,26 @@ export default function TambahJurnalPage() {
 
               <div className="form-group">
                 <label className="form-label">
-                  Kegiatan Pembelajaran <span style={{ color: "var(--danger)" }}>*</span>
+                  Learning Outcome (LO) / Tujuan Pembelajaran <span style={{ color: "var(--danger)" }}>*</span>
+                </label>
+                <textarea
+                  className="form-control"
+                  rows={3}
+                  placeholder="Tuliskan learning outcome atau tujuan pembelajaran yang ingin dicapai..."
+                  value={learningOutcome}
+                  onChange={(e) => setLearningOutcome(e.target.value)}
+                  required
+                />
+              </div>
+
+              <div className="form-group">
+                <label className="form-label">
+                  Strategi Pembelajaran <span style={{ color: "var(--danger)" }}>*</span>
                 </label>
                 <textarea
                   className="form-control"
                   rows={4}
-                  placeholder="Deskripsikan kegiatan pembelajaran yang dilakukan (metode, aktivitas, dll)..."
+                  placeholder="Deskripsikan strategi untuk mencapai target/tujuan pembelajaran..."
                   value={kegiatan}
                   onChange={(e) => setKegiatan(e.target.value)}
                   required
@@ -444,7 +461,7 @@ export default function TambahJurnalPage() {
               </div>
 
               <div className="form-group" style={{ marginBottom: 0 }}>
-                <label className="form-label">Catatan (Opsional)</label>
+                <label className="form-label">Catatan Lainnya (Opsional)</label>
                 <textarea
                   className="form-control"
                   rows={3}

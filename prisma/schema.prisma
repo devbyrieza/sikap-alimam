@@ -136,11 +136,12 @@ model JurnalMengajar {
   mapel_id   String   @db.Uuid
   kelas_id   String   @db.Uuid
   tanggal    DateTime @db.Date
-  jam_ke     String? // "1-2", "3", dll
-  materi     String
-  kegiatan   String
-  catatan    String?
-  created_at DateTime @default(now()) @db.Timestamptz(6)
+  jam_ke           String? // "1-2", "3", dll
+  materi           String
+  learning_outcome String? // LO / Tujuan Pembelajaran
+  kegiatan         String
+  catatan          String?
+  created_at       DateTime @default(now()) @db.Timestamptz(6)
 
   pegawai Pegawai @relation(fields: [pegawai_id], references: [id])
   mapel   MataPelajaran @relation(fields: [mapel_id], references: [id])
