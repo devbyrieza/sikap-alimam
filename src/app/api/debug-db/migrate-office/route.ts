@@ -57,7 +57,6 @@ export async function POST() {
           unit_kerja: oldP.unit_kerja,
           divisi: oldP.divisi,
           mata_pelajaran: oldP.mata_pelajaran,
-          is_active: oldP.is_active,
           foto_url: oldP.foto_url,
         },
         create: {
@@ -69,7 +68,6 @@ export async function POST() {
           unit_kerja: oldP.unit_kerja,
           divisi: oldP.divisi,
           mata_pelajaran: oldP.mata_pelajaran,
-          is_active: oldP.is_active,
           foto_url: oldP.foto_url,
           created_at: oldP.created_at,
           updated_at: oldP.updated_at,
