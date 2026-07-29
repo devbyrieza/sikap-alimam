@@ -1,0 +1,1 @@
+INSERT INTO "User" (id, email, password, nama, role, is_active, created_at, updated_at) VALUES (gen_random_uuid(), 'admin@pesantren-alimam.com', '$2b$10$.mwj/3z7MWut6TzUJ5Mz0e9UuaLIp68XNdu7us2vkcg645F2EZYuq', 'Administrator', 'admin', true, NOW(), NOW()) ON CONFLICT (email) DO UPDATE SET password = EXCLUDED.password;

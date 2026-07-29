@@ -41,7 +41,6 @@ export async function POST() {
           role: oldU.role,
           is_active: oldU.is_active,
           created_at: oldU.created_at,
-          updated_at: oldU.updated_at,
         }
       });
     }
