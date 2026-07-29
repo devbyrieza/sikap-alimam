@@ -69,7 +69,7 @@ export async function GET() {
           data: {
             email,
             password: hashedPass,
-            name: asatidz,
+            nama: asatidz,
             role: "GURU",
           }
         });
