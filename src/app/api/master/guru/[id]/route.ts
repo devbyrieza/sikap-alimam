@@ -28,11 +28,11 @@ export async function PUT(
   try {
     const { id } = await params;
     const body = await req.json();
-    const { nik, nama_lengkap, no_hp, email } = body;
+    const { nik, nama_lengkap, no_hp, email, mata_pelajaran } = body;
 
     const updatedGuru = await prisma.pegawai.update({
       where: { id },
-      data: { nik, nama_lengkap, no_hp, email },
+      data: { nik, nama_lengkap, no_hp, email, mata_pelajaran: mata_pelajaran || null },
     });
 
     return NextResponse.json(updatedGuru);

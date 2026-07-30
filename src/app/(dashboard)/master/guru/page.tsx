@@ -24,7 +24,7 @@ export default function MasterGuruPage() {
   // Form State
   const [isAdding, setIsAdding] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
-  const [form, setForm] = useState({ nik: "", nama_lengkap: "", no_hp: "", email: "" });
+  const [form, setForm] = useState({ nik: "", nama_lengkap: "", no_hp: "", email: "", mata_pelajaran: "" });
 
   const fetchGuru = async () => {
     setLoading(true);
@@ -111,7 +111,7 @@ export default function MasterGuruPage() {
       }
       setIsAdding(false);
       setEditingId(null);
-      setForm({ nik: "", nama_lengkap: "", no_hp: "", email: "" });
+      setForm({ nik: "", nama_lengkap: "", no_hp: "", email: "", mata_pelajaran: "" });
       fetchGuru();
     } catch (err) {
       Swal.fire("Gagal", "Terjadi kesalahan server", "error");
@@ -119,7 +119,7 @@ export default function MasterGuruPage() {
   };
 
   const handleEdit = (g: any) => {
-    setForm({ nik: g.nik || "", nama_lengkap: g.nama_lengkap || "", no_hp: g.no_hp || "", email: g.email || "" });
+    setForm({ nik: g.nik || "", nama_lengkap: g.nama_lengkap || "", no_hp: g.no_hp || "", email: g.email || "", mata_pelajaran: g.mata_pelajaran || "" });
     setEditingId(g.id);
     setIsAdding(true);
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -175,7 +175,7 @@ export default function MasterGuruPage() {
               setIsAdding(!isAdding);
               if (isAdding) {
                 setEditingId(null);
-                setForm({ nik: "", nama_lengkap: "", no_hp: "", email: "" });
+                setForm({ nik: "", nama_lengkap: "", no_hp: "", email: "", mata_pelajaran: "" });
               }
             }}
             className="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-2.5 rounded-xl font-semibold shadow-md flex items-center gap-2 transition-all cursor-pointer"
@@ -190,7 +190,7 @@ export default function MasterGuruPage() {
           <h3 className="font-bold text-lg text-gray-800 mb-4 border-b pb-2">
             {editingId ? "Form Edit Data Guru" : "Form Pendaftaran Guru Baru"}
           </h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">NIK / Kode Identitas</label>
               <input type="text" value={form.nik} onChange={(e) => setForm({...form, nik: e.target.value})} className="w-full rounded-xl border-gray-300 focus:border-emerald-500 focus:ring-emerald-500" placeholder="Kosongkan = Auto Generate" />
@@ -206,6 +206,10 @@ export default function MasterGuruPage() {
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Email Aktif</label>
               <input type="email" value={form.email} onChange={(e) => setForm({...form, email: e.target.value})} className="w-full rounded-xl border-gray-300 focus:border-emerald-500 focus:ring-emerald-500" placeholder="fulan@contoh.com" />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Mata Pelajaran (Opsional)</label>
+              <input type="text" value={form.mata_pelajaran} onChange={(e) => setForm({...form, mata_pelajaran: e.target.value})} className="w-full rounded-xl border-gray-300 focus:border-emerald-500 focus:ring-emerald-500" placeholder="Contoh: Fiqh, Akidah" />
             </div>
           </div>
           <div className="mt-4 flex justify-end">

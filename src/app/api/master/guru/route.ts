@@ -23,7 +23,7 @@ export async function GET() {
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { nik, nama_lengkap, no_hp, email } = body;
+    const { nik, nama_lengkap, no_hp, email, mata_pelajaran } = body;
 
     const newGuru = await prisma.pegawai.create({
       data: {
@@ -31,6 +31,7 @@ export async function POST(req: NextRequest) {
         nama_lengkap,
         no_hp,
         email,
+        mata_pelajaran: mata_pelajaran || null,
         kategori_pegawai: 'ASATIDZ',
       },
     });
