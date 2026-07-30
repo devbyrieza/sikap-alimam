@@ -150,49 +150,87 @@ async function executeSync(simpegGuruList: any[]) {
 
       // Auto-mapping ke AsatidzmMapel jika ada mata_pelajaran
       if (guru.mata_pelajaran) {
-        // Normalisasi nama mapel agar cocok dengan data SIKAP
-        let searchName = guru.mata_pelajaran;
-        const lowerMapel = guru.mata_pelajaran.toLowerCase();
-        if (lowerMapel.includes("qur'an") || lowerMapel.includes("tahfidz") || lowerMapel.includes("tahfizh")) {
-          searchName = "Tahfizh";
-        } else if (lowerMapel === "fiqih" || lowerMapel === "fiqh") {
-          searchName = "Fiqh";
-        } else if (lowerMapel === "aqidah" || lowerMapel === "akidah") {
-          searchName = "Akidah";
-        } else if (lowerMapel === "hadits" || lowerMapel === "hadis") {
-          searchName = "Hadis";
-        } else if (lowerMapel === "tarikh" || lowerMapel.includes("siroh")) {
-          searchName = "Siroh";
-        } else if (lowerMapel === "ipa") {
-          searchName = "IPA";
-        }
+        const segments = (guru.mata_pelajaran as string)
+          .split(",")
+          .map((s) => s.trim())
+          .filter((s) => s);
 
-        const matchedMapel = await prisma.mataPelajaran.findFirst({
-          where: {
+        for (const segment of segments) {
+          const match = segment.match(/^\[(.*?)\]\s*(.*)$/);
+          let rawKelas = "";
+          let rawMapel = "";
+
+          if (match) {
+            rawKelas = match[1].trim();
+            rawMapel = match[2].trim();
+          } else {
+            rawMapel = segment;
+          }
+
+          // 1. Cari Kelas di SIKAP
+          let dbKelas = null;
+          if (rawKelas) {
+            dbKelas = await prisma.kelas.findFirst({
+              where: {
+                nama: {
+                  equals: rawKelas,
+                  mode: "insensitive",
+                },
+              },
+            });
+          }
+
+          // 2. Normalisasi & Cari Mapel di SIKAP
+          let searchName = rawMapel;
+          const lowerMapel = rawMapel.toLowerCase();
+          if (
+            lowerMapel.includes("qur'an") ||
+            lowerMapel.includes("tahfidz") ||
+            lowerMapel.includes("tahfizh")
+          ) {
+            searchName = "Tah"; // Mencakup "Tahsin/Tahfidz Al-Quran"
+          } else if (lowerMapel === "fiqih" || lowerMapel === "fiqh") {
+            searchName = "Fiqh";
+          } else if (lowerMapel === "aqidah" || lowerMapel === "akidah") {
+            searchName = "Akidah";
+          } else if (lowerMapel === "hadits" || lowerMapel === "hadis") {
+            searchName = "Hadis";
+          } else if (lowerMapel === "tarikh" || lowerMapel.includes("siroh")) {
+            searchName = "Siroh";
+          } else if (lowerMapel === "ipa") {
+            searchName = "IPA";
+          }
+
+          const mapelFilter: any = {
             nama: {
               contains: searchName,
-              mode: 'insensitive'
-            }
-          }
-        });
+              mode: "insensitive",
+            },
+          };
 
-        if (matchedMapel) {
-          const allKelas = await prisma.kelas.findMany();
-          for (const k of allKelas) {
+          if (dbKelas) {
+            mapelFilter.kelas_id = dbKelas.id;
+          }
+
+          const matchedMapel = await prisma.mataPelajaran.findFirst({
+            where: mapelFilter,
+          });
+
+          if (matchedMapel) {
             await prisma.asatidzmMapel.upsert({
               where: {
                 pegawai_id_mapel_id_kelas_id: {
                   pegawai_id: guru.id,
                   mapel_id: matchedMapel.id,
-                  kelas_id: k.id
-                }
+                  kelas_id: matchedMapel.kelas_id,
+                },
               },
               update: {},
               create: {
                 pegawai_id: guru.id,
                 mapel_id: matchedMapel.id,
-                kelas_id: k.id
-              }
+                kelas_id: matchedMapel.kelas_id,
+              },
             });
           }
         }
