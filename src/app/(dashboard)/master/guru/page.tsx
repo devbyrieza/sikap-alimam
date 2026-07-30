@@ -77,33 +77,7 @@ export default function MasterGuruPage() {
     }
   };
 
-  const handleMigrateOld = async () => {
-    setIsSyncing(true);
-    Swal.fire({
-      title: "Menarik Data Lama...",
-      text: "Menyalin 9 guru dari database lama (schema=office)...",
-      allowOutsideClick: false,
-      didOpen: () => {
-        Swal.showLoading();
-      }
-    });
 
-    try {
-      const res = await fetch("/api/debug-db/migrate-office", { method: "POST" });
-      const data = await res.json();
-      
-      if (data.success) {
-        await fetchGuru();
-        Swal.fire("Berhasil", data.message, "success");
-      } else {
-        Swal.fire("Gagal", data.error || "Gagal menarik data lama.", "error");
-      }
-    } catch (err: any) {
-      Swal.fire("Gagal", "Terjadi kesalahan saat memanggil API.", "error");
-    } finally {
-      setIsSyncing(false);
-    }
-  };
 
   const handleSave = async () => {
     if (!form.nama_lengkap) {
@@ -194,15 +168,7 @@ export default function MasterGuruPage() {
             className="bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white px-5 py-2.5 rounded-xl font-semibold shadow-md flex items-center gap-2 transition-all cursor-pointer"
           >
             <RefreshCw size={16} className={isSyncing ? "animate-spin" : ""} />
-            Sync (Lokal)
-          </button>
-          <button 
-            onClick={handleMigrateOld}
-            disabled={isSyncing}
-            className="bg-orange-600 hover:bg-orange-700 text-white px-5 py-2.5 rounded-xl font-semibold shadow-md flex items-center gap-2 transition-all cursor-pointer"
-          >
-            <RefreshCw size={16} className={isSyncing ? "animate-spin" : ""} />
-            Tarik Data SIMPEG Lama
+            Sync Data SIMPEG
           </button>
           <button 
             onClick={() => {
