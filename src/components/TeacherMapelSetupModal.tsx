@@ -68,8 +68,8 @@ const formatDateForInput = (dateStr?: string | Date | null) => {
   } catch { return ""; }
 };
 
-const inputCls = "w-full px-4 py-2.5 bg-white border border-slate-200 rounded-2xl text-sm text-slate-800 font-medium outline-none transition-all focus:border-[#3b0a0a] focus:ring-2 focus:ring-[#3b0a0a]/10 placeholder:text-slate-400 hover:border-slate-300";
-const labelCls = "block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5";
+const inputCls = "form-control";
+const labelCls = "form-label";
 
 export default function TeacherMapelSetupModal({
   initialPegawai = null,
@@ -363,7 +363,7 @@ export default function TeacherMapelSetupModal({
             </div>
 
             {/* ═══ BODY ═══ */}
-            <div className="flex-1 overflow-y-auto" style={{ padding: "1.5rem 2rem", display: "flex", flexDirection: "column", gap: "1.25rem" }}>
+            <div style={{ flex: 1, overflowY: "auto", padding: "1.5rem 2rem", display: "flex", flexDirection: "column", gap: "1.25rem" }}>
 
               {/* Mandatory banner */}
               {isForced && (
@@ -459,7 +459,7 @@ export default function TeacherMapelSetupModal({
                         <Camera size={12} style={{ color: "#3b0a0a" }} />
                         {formData.foto_url ? "Ganti Foto" : "Upload Foto"}
                       </motion.button>
-                      <input ref={fotoInputRef} type="file" accept="image/*" className="hidden" onChange={handleUploadFoto} />
+                      <input ref={fotoInputRef} type="file" accept="image/*" style={{ display: "none" }} onChange={handleUploadFoto} />
                       {formData.foto_url && (
                         <button
                           type="button"
