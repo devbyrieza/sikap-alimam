@@ -348,33 +348,33 @@ export default function MapelSelector({ value, onChange }: MapelSelectorProps) {
   return (
     <div className="space-y-4 text-left">
       {/* STEP 1: PILIH JENJANG */}
-      <div className="bg-slate-50 border border-slate-200 rounded-2xl p-4 space-y-2.5">
-        <div className="flex items-center justify-between">
-          <label className="text-xs font-black text-slate-800 uppercase tracking-wider flex items-center gap-2">
-            <span className="w-5 h-5 rounded-full bg-red-800 text-white text-[11px] font-black flex items-center justify-center">
+      <div style={{ background: "#f8fafc", border: "1px solid #e2e8f0", borderRadius: "1rem", padding: "1rem", display: "flex", flexDirection: "column", gap: "0.75rem" }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+          <label style={{ fontSize: "0.75rem", fontWeight: 900, color: "#1e293b", textTransform: "uppercase", letterSpacing: "0.05em", display: "flex", alignItems: "center", gap: 8 }}>
+            <span style={{ width: 22, height: 22, borderRadius: "50%", background: "#9b1b22", color: "white", fontSize: 11, display: "flex", alignItems: "center", justifyContent: "center" }}>
               1
             </span>
             <span>Pilih Jenjang Mengajar (Bisa Lebih Dari 1):</span>
           </label>
 
-          <div className="flex items-center gap-2">
+          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
             {items.length > 0 && (
               <button
                 type="button"
                 onClick={handleResetAll}
-                className="text-xs text-red-600 hover:text-red-700 font-bold flex items-center gap-1 bg-red-50 hover:bg-red-100 border border-red-200 px-2.5 py-0.5 rounded-lg transition-all cursor-pointer"
+                style={{ fontSize: 11, color: "#dc2626", fontWeight: 700, display: "flex", alignItems: "center", gap: 4, background: "#fef2f2", border: "1px solid #fecaca", padding: "3px 10px", borderRadius: "8px", cursor: "pointer" }}
               >
-                <RotateCcw className="w-3 h-3" />
+                <RotateCcw size={12} />
                 <span>Kosongkan Mapel</span>
               </button>
             )}
-            <span className="text-xs font-bold text-red-800 bg-red-50 border border-red-200 px-2.5 py-0.5 rounded-full">
+            <span style={{ fontSize: 11, fontWeight: 700, color: "#9b1b22", background: "#fef2f2", border: "1px solid #fecaca", padding: "3px 10px", borderRadius: "999px" }}>
               {items.length} total mapel dipilih
             </span>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "0.75rem" }}>
           {JENJANG_DEFINITIONS.map((j) => {
             const isChecked = selectedJenjangs.includes(j.id);
             const count = countPerJenjang[j.id] || 0;
@@ -384,30 +384,33 @@ export default function MapelSelector({ value, onChange }: MapelSelectorProps) {
                 key={j.id}
                 type="button"
                 onClick={() => toggleJenjang(j.id)}
-                className={`p-3 rounded-xl border text-left transition-all flex items-start gap-3 relative cursor-pointer ${
-                  isChecked
-                    ? "bg-white border-red-800 shadow-md ring-2 ring-red-800/20"
-                    : "bg-white/70 border-slate-200 hover:border-slate-300 hover:bg-white text-slate-600"
-                }`}
+                style={{
+                  padding: "12px", borderRadius: "0.75rem", textAlign: "left", display: "flex", alignItems: "flex-start", gap: 12, cursor: "pointer", transition: "all 0.2s",
+                  background: isChecked ? "white" : "rgba(255,255,255,0.6)",
+                  border: `1.5px solid ${isChecked ? "#9b1b22" : "#e2e8f0"}`,
+                  boxShadow: isChecked ? "0 4px 12px rgba(155,27,34,0.15)" : "none"
+                }}
               >
-                <div className={`w-5 h-5 rounded-lg flex items-center justify-center shrink-0 mt-0.5 transition-all ${
-                  isChecked ? "bg-red-800 text-white shadow-sm" : "border border-slate-300 bg-slate-50"
-                }`}>
-                  {isChecked && <Check className="w-3.5 h-3.5 stroke-[3]" />}
+                <div style={{
+                  width: 20, height: 20, borderRadius: "6px", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, marginTop: 2,
+                  background: isChecked ? "#9b1b22" : "#f1f5f9",
+                  border: isChecked ? "none" : "1px solid #cbd5e1"
+                }}>
+                  {isChecked && <Check size={14} style={{ color: "white", strokeWidth: 3 }} />}
                 </div>
 
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-1.5 justify-between">
-                    <span className={`text-xs font-black truncate ${isChecked ? "text-red-950" : "text-slate-700"}`}>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 6 }}>
+                    <span style={{ fontSize: 12, fontWeight: 900, color: isChecked ? "#450a0a" : "#334155", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
                       {j.label}
                     </span>
                     {count > 0 && (
-                      <span className="bg-red-800 text-white text-[9px] font-extrabold px-2 py-0.2 rounded-full shrink-0">
+                      <span style={{ background: "#9b1b22", color: "white", fontSize: 10, fontWeight: 800, padding: "2px 8px", borderRadius: "999px", flexShrink: 0 }}>
                         {count} mapel
                       </span>
                     )}
                   </div>
-                  <p className="text-[10px] text-slate-400 leading-snug mt-0.5 truncate">
+                  <p style={{ fontSize: 10, color: "#94a3b8", marginTop: 2, lineHeight: 1.4, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
                     {j.desc}
                   </p>
                 </div>
@@ -433,30 +436,30 @@ export default function MapelSelector({ value, onChange }: MapelSelectorProps) {
                 key={jenjangId}
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="bg-white border-2 border-slate-200 rounded-2xl p-4 sm:p-5 space-y-4 shadow-sm"
+                style={{ background: "white", border: "1.5px solid #e2e8f0", borderRadius: "1.25rem", padding: "1.25rem", display: "flex", flexDirection: "column", gap: "1rem", boxShadow: "0 2px 8px rgba(0,0,0,0.03)" }}
               >
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-slate-100 gap-2">
-                  <div className="flex items-center gap-2">
-                    <div className="w-7 h-7 rounded-xl bg-red-100 text-red-800 font-black text-xs flex items-center justify-center">
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", paddingBottom: "0.75rem", borderBottom: "1px solid #f1f5f9" }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                    <div style={{ width: 32, height: 32, borderRadius: "0.5rem", background: "#fef2f2", color: "#9b1b22", fontSize: 11, fontWeight: 900, display: "flex", alignItems: "center", justifyContent: "center" }}>
                       {jenjangId}
                     </div>
                     <div>
-                      <h4 className="text-sm font-black text-slate-800">
+                      <h4 style={{ fontSize: "0.875rem", fontWeight: 900, color: "#1e293b", margin: 0 }}>
                         Pengaturan Mapel Jenjang {jenjangDef.label}
                       </h4>
-                      <p className="text-[11px] text-slate-400">{jenjangDef.desc}</p>
+                      <p style={{ fontSize: "0.7rem", color: "#94a3b8", margin: 0 }}>{jenjangDef.desc}</p>
                     </div>
                   </div>
 
-                  <span className="text-xs font-bold text-slate-600 bg-slate-100 px-2.5 py-1 rounded-lg">
+                  <span style={{ fontSize: 11, fontWeight: 700, color: "#475569", background: "#f1f5f9", padding: "4px 10px", borderRadius: "8px" }}>
                     {countPerJenjang[jenjangId] || 0} mapel aktif
                   </span>
                 </div>
 
                 {/* Centang Kelas */}
-                <div className="space-y-2 bg-slate-50/80 p-3.5 rounded-xl border border-slate-200">
-                  <div className="flex items-center justify-between">
-                    <label className="text-xs font-bold text-slate-700 uppercase tracking-wider">
+                <div style={{ background: "rgba(248,250,252,0.8)", padding: "0.875rem", borderRadius: "0.75rem", border: "1px solid #e2e8f0", display: "flex", flexDirection: "column", gap: 12 }}>
+                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                    <label style={{ fontSize: 11, fontWeight: 700, color: "#334155", textTransform: "uppercase", letterSpacing: "0.05em" }}>
                       Centang Kelas Mengajar di Jenjang [{jenjangId}]:
                     </label>
 
@@ -464,15 +467,15 @@ export default function MapelSelector({ value, onChange }: MapelSelectorProps) {
                       <button
                         type="button"
                         onClick={() => setShowOtherClasses((prev) => ({ ...prev, [jenjangId]: !prev[jenjangId] }))}
-                        className="text-[11px] text-red-800 font-semibold hover:underline flex items-center gap-0.5 cursor-pointer"
+                        style={{ fontSize: 11, color: "#9b1b22", fontWeight: 700, display: "flex", alignItems: "center", gap: 2, cursor: "pointer", background: "none", border: "none" }}
                       >
                         {showOtherClasses[jenjangId] ? "Sembunyikan Kelas Lain" : "Tampilkan Kelas Lain"}
-                        <ChevronDown className={`w-3.5 h-3.5 transition-transform ${showOtherClasses[jenjangId] ? "rotate-180" : ""}`} />
+                        <ChevronDown size={14} style={{ transform: showOtherClasses[jenjangId] ? "rotate(180deg)" : "none", transition: "transform 0.2s" }} />
                       </button>
                     )}
                   </div>
 
-                  <div className="flex flex-wrap gap-2">
+                  <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
                     {jenjangDef.classes
                       .filter((c) => c.isPrimary || showOtherClasses[jenjangId] || jenjangId === "MA")
                       .map((c) => {
@@ -484,18 +487,29 @@ export default function MapelSelector({ value, onChange }: MapelSelectorProps) {
                             key={c.id}
                             type="button"
                             onClick={() => toggleClass(c.id)}
-                            className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-2 border cursor-pointer ${
-                              isClassChecked
-                                ? "bg-red-800 text-white border-red-800 shadow-sm"
-                                : "bg-white text-slate-700 border-slate-300 hover:border-red-700"
-                            }`}
+                            style={{
+                              padding: "6px 12px", borderRadius: "0.75rem", fontSize: 12, fontWeight: 700, display: "flex", alignItems: "center", gap: 8, cursor: "pointer", transition: "all 0.2s",
+                              background: isClassChecked ? "#9b1b22" : "white",
+                              color: isClassChecked ? "white" : "#334155",
+                              border: `1px solid ${isClassChecked ? "#9b1b22" : "#cbd5e1"}`,
+                              boxShadow: isClassChecked ? "0 2px 8px rgba(155,27,34,0.2)" : "none"
+                            }}
                           >
-                            <div className={`w-4 h-4 rounded flex items-center justify-center ${isClassChecked ? "bg-white text-red-800" : "border border-slate-400 bg-slate-50"}`}>
-                              {isClassChecked && <Check className="w-3 h-3 stroke-[3]" />}
+                            <div style={{
+                              width: 16, height: 16, borderRadius: 4, display: "flex", alignItems: "center", justifyContent: "center",
+                              background: isClassChecked ? "white" : "#f1f5f9",
+                              color: isClassChecked ? "#9b1b22" : "transparent",
+                              border: isClassChecked ? "none" : "1px solid #94a3b8"
+                            }}>
+                              {isClassChecked && <Check size={12} style={{ strokeWidth: 3 }} />}
                             </div>
                             <span>{c.label}</span>
                             {classCount > 0 && (
-                              <span className={`text-[9px] px-1.5 py-0.2 rounded-full font-black ${isClassChecked ? "bg-white text-red-950" : "bg-red-100 text-red-800"}`}>
+                              <span style={{
+                                fontSize: 9, padding: "2px 6px", borderRadius: "999px", fontWeight: 900,
+                                background: isClassChecked ? "white" : "#fef2f2",
+                                color: isClassChecked ? "#450a0a" : "#9b1b22"
+                              }}>
                                 {classCount} mapel
                               </span>
                             )}
@@ -506,20 +520,20 @@ export default function MapelSelector({ value, onChange }: MapelSelectorProps) {
                 </div>
 
                 {/* Mapel List per Kelas */}
-                <div className="space-y-4">
+                <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
                   {jenjangDef.classes
                     .filter((c) => selectedClasses.includes(c.id))
                     .map((c) => {
                       const mapelGroups = MAPEL_PER_KELAS[c.id] || MAPEL_PER_KELAS["7 MTs"] || [];
 
                       return (
-                        <div key={c.id} className="p-4 bg-slate-50/50 rounded-2xl border border-slate-200 space-y-3.5 shadow-sm">
-                          <div className="flex items-center justify-between pb-2 border-b border-slate-200">
-                            <span className="text-xs font-black text-slate-800 uppercase tracking-wider flex items-center gap-1.5">
-                              <BookOpen className="w-4 h-4 text-red-800" />
+                        <div key={c.id} style={{ background: "rgba(248,250,252,0.5)", border: "1px solid #e2e8f0", borderRadius: "1rem", padding: "1rem", display: "flex", flexDirection: "column", gap: 14 }}>
+                          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", paddingBottom: "0.5rem", borderBottom: "1px solid #e2e8f0" }}>
+                            <span style={{ fontSize: 11, fontWeight: 900, color: "#1e293b", textTransform: "uppercase", letterSpacing: "0.05em", display: "flex", alignItems: "center", gap: 6 }}>
+                              <BookOpen size={14} style={{ color: "#9b1b22" }} />
                               <span>Pilihan Mata Pelajaran [{c.label}]:</span>
                             </span>
-                            <span className="text-xs font-bold text-red-800 bg-red-50 border border-red-200 px-2.5 py-0.5 rounded-full">
+                            <span style={{ fontSize: 11, fontWeight: 700, color: "#9b1b22", background: "#fef2f2", padding: "3px 10px", borderRadius: "999px", border: "1px solid #fecaca" }}>
                               {countPerKelas[c.id] || 0} mapel dipilih
                             </span>
                           </div>
@@ -530,7 +544,7 @@ export default function MapelSelector({ value, onChange }: MapelSelectorProps) {
                                 <span className="text-[11px] font-extrabold text-slate-500 uppercase tracking-wider block">
                                   📌 {group.kategori}
                                 </span>
-                                <div className="flex flex-wrap gap-1.5">
+                                <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
                                   {group.items.map((m) => {
                                     const isSelected = items.some(
                                       (it) => it.jenjang === c.id && it.nama.toLowerCase() === m.toLowerCase()
@@ -541,14 +555,20 @@ export default function MapelSelector({ value, onChange }: MapelSelectorProps) {
                                         key={m}
                                         type="button"
                                         onClick={() => toggleMapel(c.id, m)}
-                                        className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 border cursor-pointer ${
-                                          isSelected
-                                            ? "bg-red-800 text-white border-red-800 shadow-sm ring-2 ring-red-800/20"
-                                            : "bg-white hover:bg-red-50 hover:text-red-950 hover:border-red-300 border-slate-300 text-slate-700"
-                                        }`}
+                                        style={{
+                                          padding: "6px 12px", borderRadius: "0.75rem", fontSize: 12, fontWeight: 700, display: "flex", alignItems: "center", gap: 6, cursor: "pointer", transition: "all 0.2s",
+                                          background: isSelected ? "#9b1b22" : "white",
+                                          color: isSelected ? "white" : "#334155",
+                                          border: `1px solid ${isSelected ? "#9b1b22" : "#cbd5e1"}`,
+                                          boxShadow: isSelected ? "0 2px 8px rgba(155,27,34,0.2)" : "none"
+                                        }}
                                       >
-                                        <div className={`w-3.5 h-3.5 rounded flex items-center justify-center ${isSelected ? "bg-white text-red-800" : "border border-slate-300 bg-slate-50"}`}>
-                                          {isSelected && <Check className="w-2.5 h-2.5 stroke-[3]" />}
+                                        <div style={{
+                                          width: 14, height: 14, borderRadius: 4, display: "flex", alignItems: "center", justifyContent: "center",
+                                          background: isSelected ? "white" : "#f1f5f9",
+                                          border: isSelected ? "none" : "1px solid #94a3b8"
+                                        }}>
+                                          {isSelected && <Check size={10} style={{ color: "#9b1b22", strokeWidth: 3 }} />}
                                         </div>
                                         <span>{m}</span>
                                       </button>
@@ -560,8 +580,8 @@ export default function MapelSelector({ value, onChange }: MapelSelectorProps) {
                           </div>
 
                           {/* Custom Input */}
-                          <div className="pt-2 border-t border-slate-200 flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
-                            <span className="text-[11px] text-slate-400 font-semibold whitespace-nowrap">
+                          <div style={{ paddingTop: "0.5rem", borderTop: "1px solid #e2e8f0", display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
+                            <span style={{ fontSize: 11, color: "#94a3b8", fontWeight: 700, whiteSpace: "nowrap" }}>
                               Mapel Tambahan / Kustom:
                             </span>
                             <input
@@ -575,15 +595,15 @@ export default function MapelSelector({ value, onChange }: MapelSelectorProps) {
                                 }
                               }}
                               placeholder={`Ketik nama mapel kustom untuk ${c.id}...`}
-                              className="px-3 py-1.5 bg-white border border-slate-300 rounded-xl text-xs outline-none focus:ring-2 focus:ring-red-800/20 flex-1"
+                              style={{ padding: "6px 12px", background: "white", border: "1px solid #cbd5e1", borderRadius: "0.75rem", fontSize: 12, outline: "none", flex: 1, minWidth: 200 }}
                             />
                             <button
                               type="button"
                               onClick={() => handleAddCustomMapel(c.id)}
                               disabled={!(customInputs[c.id] || "").trim()}
-                              className="px-3.5 py-1.5 bg-slate-800 hover:bg-slate-900 disabled:opacity-40 text-white rounded-xl text-xs font-bold flex items-center justify-center gap-1 transition-all shrink-0 cursor-pointer"
+                              style={{ padding: "6px 14px", background: !(customInputs[c.id] || "").trim() ? "#94a3b8" : "#1e293b", color: "white", borderRadius: "0.75rem", fontSize: 12, fontWeight: 700, display: "flex", alignItems: "center", justifyContent: "center", gap: 4, cursor: !(customInputs[c.id] || "").trim() ? "not-allowed" : "pointer", transition: "all 0.2s" }}
                             >
-                              <Plus className="w-3.5 h-3.5" />
+                              <Plus size={14} />
                               <span>Tambah</span>
                             </button>
                           </div>
@@ -598,17 +618,17 @@ export default function MapelSelector({ value, onChange }: MapelSelectorProps) {
       )}
 
       {/* RANGKUMAN MAPEL */}
-      <div className="bg-slate-50 border border-slate-200 rounded-2xl p-4 space-y-2.5">
-        <div className="flex items-center justify-between">
-          <span className="text-xs font-black text-slate-700 uppercase tracking-wider flex items-center gap-1.5">
-            <CheckCircle2 className="w-4 h-4 text-red-800" />
+      <div style={{ background: "#f8fafc", border: "1px solid #e2e8f0", borderRadius: "1rem", padding: "1rem", display: "flex", flexDirection: "column", gap: "0.75rem" }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+          <span style={{ fontSize: 12, fontWeight: 900, color: "#334155", textTransform: "uppercase", letterSpacing: "0.05em", display: "flex", alignItems: "center", gap: 6 }}>
+            <CheckCircle2 size={16} style={{ color: "#9b1b22" }} />
             <span>Rangkuman Mapel Ditugaskan ({items.length} Mapel):</span>
           </span>
           {items.length > 0 && (
             <button
               type="button"
               onClick={handleResetAll}
-              className="text-xs text-red-500 hover:underline font-bold cursor-pointer"
+              style={{ fontSize: 11, color: "#ef4444", fontWeight: 700, cursor: "pointer", background: "none", border: "none", textDecoration: "underline" }}
             >
               Hapus Semua
             </button>
@@ -616,7 +636,7 @@ export default function MapelSelector({ value, onChange }: MapelSelectorProps) {
         </div>
 
         {items.length === 0 ? (
-          <p className="text-xs text-slate-400 italic">Belum ada mata pelajaran yang dipilih.</p>
+          <p style={{ fontSize: 12, color: "#94a3b8", fontStyle: "italic", margin: 0 }}>Belum ada mata pelajaran yang dipilih.</p>
         ) : (
           <div className="space-y-2">
             {items.some((i) => i.jenjang === "7 MTs") && (
