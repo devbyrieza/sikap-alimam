@@ -24,12 +24,13 @@ export async function POST(req: NextRequest) {
       include: { pegawai: { select: { id: true, nama_lengkap: true } } },
     });
 
-    // Jika tidak ditemukan via User email, coba cari di tabel Pegawai (via NIK, HP, atau Email)
+    // Jika tidak ditemukan via User email, coba cari di tabel Pegawai (via NIK, NIP, HP, atau Email)
     if (!user) {
       const pegawai = await prisma.pegawai.findFirst({
         where: {
           OR: [
             { nik: identifier },
+            { nip: identifier },
             { no_hp: identifier },
             { email: { equals: identifier, mode: "insensitive" } },
           ],

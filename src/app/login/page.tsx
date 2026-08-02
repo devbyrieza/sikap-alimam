@@ -65,12 +65,15 @@ export default function LoginPage() {
         </div>
 
         <form onSubmit={handleSubmit}>
-          <div className="form-group">
-            <label className="form-label">Email / NIK / No. WhatsApp</label>
+          <div style={{ marginBottom: 16 }}>
+            <label style={{ display: "block", marginBottom: 6, fontSize: 13, fontWeight: 600, color: "#111827" }}>
+              Email / NIP
+            </label>
             <input
               type="text"
-              className="form-control"
-              placeholder="nama@pesantren-alimam.com atau NIK / No. WA"
+              name="email"
+              className="input-field"
+              placeholder="nama@pesantren-alimam.com atau NIP"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
@@ -155,7 +158,7 @@ export default function LoginPage() {
              Info Login
           </p>
           <p style={{ marginBottom: 6, lineHeight: 1.5 }}>
-            Silakan login menggunakan <b>Email Login</b>, <b>NIK</b>, atau <b>No. WhatsApp</b> Anda yang telah diisi saat melengkapi data profil.
+            Silakan login menggunakan <b>Email Login</b> atau <b>Nomor Induk Pegawai (NIP)</b> Anda.
           </p>
           <p style={{ color: "#9ca3af", lineHeight: 1.5 }}>
             Hubungi Kasi IT jika Anda belum memiliki akun atau lupa password.

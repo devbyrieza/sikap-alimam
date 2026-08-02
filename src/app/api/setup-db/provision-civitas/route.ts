@@ -62,6 +62,29 @@ export async function GET() {
         });
       }
 
+      // Generate NIP (Nomor Induk Pegawai) if not exist
+      let nipPegawai = pegawai.nip;
+      if (!nipPegawai) {
+        // Simple NIP format: 26 + 3 random digits, e.g., 26101
+        // To be safe, we just use a 5-digit sequence logic based on current loop index or a random number
+        const randomDigits = Math.floor(100 + Math.random() * 900); // 100 to 999
+        nipPegawai = `26${randomDigits}`; // e.g. 26101, 26999
+        
+        try {
+          await prisma.pegawai.update({
+            where: { id: pegawai.id },
+            data: { nip: nipPegawai }
+          });
+        } catch(e) {
+          // In case of unique constraint violation (very rare), just try again with another number
+          nipPegawai = `26${Math.floor(100 + Math.random() * 900)}`;
+          await prisma.pegawai.update({
+            where: { id: pegawai.id },
+            data: { nip: nipPegawai }
+          });
+        }
+      }
+
       // 2. Upsert User Account di SIKAP
       const user = await prisma.user.upsert({
         where: { email: targetEmail },
