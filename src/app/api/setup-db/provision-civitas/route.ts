@@ -117,6 +117,7 @@ export async function GET() {
         isMultiRole: isMultiRole,
         jabatan: jabatanKhusus || pegawai.jabatan,
         pegawaiId: pegawai.id,
+        nipPegawai: nipPegawai,
       });
     }
 
