@@ -187,13 +187,14 @@ export default function Sidebar({ user }: SidebarProps) {
             <p
               style={{
                 fontSize: 11,
-                color: "rgba(255,255,255,0.45)",
+                color: user.role?.toUpperCase().includes("ADMIN") ? "#fde047" : "rgba(255,255,255,0.6)",
+                fontWeight: user.role?.toUpperCase().includes("ADMIN") ? 700 : 500,
                 overflow: "hidden",
                 textOverflow: "ellipsis",
                 whiteSpace: "nowrap",
               }}
             >
-              {user.role}
+              {user.role?.toUpperCase().includes("ADMIN") ? "Admin Super & Guru" : (user.role?.toUpperCase() === "GURU" ? "Guru Pengajar" : user.role)}
             </p>
           </div>
         </div>

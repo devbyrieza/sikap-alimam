@@ -66,11 +66,11 @@ export default function LoginPage() {
 
         <form onSubmit={handleSubmit}>
           <div className="form-group">
-            <label className="form-label">Email</label>
+            <label className="form-label">Email / NIK / No. WhatsApp</label>
             <input
-              type="email"
+              type="text"
               className="form-control"
-              placeholder="nama@pesantren-alimam.com"
+              placeholder="nama@pesantren-alimam.com atau NIK / No. WA"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
