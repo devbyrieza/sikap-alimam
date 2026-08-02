@@ -6,7 +6,7 @@ import {
   BookOpen, Sparkles, CheckCircle2, AlertTriangle, ShieldCheck,
   Save, Loader2, Edit3, X, Camera, Trash2, Users, FileText,
   Award, Phone, Mail, MapPin, Calendar, Heart, Check, Briefcase,
-  GraduationCap, User2
+  GraduationCap, User2, LogOut
 } from "lucide-react";
 import MapelSelector from "@/components/MapelSelector";
 import Swal from "sweetalert2";
@@ -83,6 +83,7 @@ export default function TeacherMapelSetupModal({
   const [isForced, setIsForced] = useState(needsSetup);
   const [isSaving, setIsSaving] = useState(false);
   const [uploadingFoto, setUploadingFoto] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
   const fotoInputRef = useRef<HTMLInputElement>(null);
 
   const isInitialGuru =
@@ -192,6 +193,37 @@ export default function TeacherMapelSetupModal({
     } catch {
       Swal.fire({ toast: true, position: "top-end", icon: "error", title: "Gagal terhubung ke server.", showConfirmButton: false, timer: 2500 });
     } finally { setUploadingFoto(false); }
+  };
+
+  // Logout: save draft first so data is preserved when user returns
+  const handleLogout = async () => {
+    const confirm = await Swal.fire({
+      icon: "question",
+      title: "<span style='color:#3b0a0a;font-weight:800'>Keluar dari SIKAP?</span>",
+      html: `
+        <div style='color:#64748b;font-size:.875rem;text-align:left;margin-top:4px'>
+          <p>Data yang <b>sudah Anda isi</b> pada form ini akan <b style='color:#16a34a'>tetap tersimpan</b> sebagai draft.</p>
+          <p style='margin-top:6px'>Saat Anda login kembali, data yang sudah terisi sebelumnya tidak perlu diisi ulang — Anda hanya melengkapi yang kosong.</p>
+        </div>
+      `,
+      confirmButtonText: "Ya, Logout Sekarang",
+      cancelButtonText: "Batal, Lanjut Isi Data",
+      showCancelButton: true,
+      confirmButtonColor: "#7f1d1d",
+      cancelButtonColor: "#1e293b",
+      reverseButtons: true,
+    });
+    if (!confirm.isConfirmed) return;
+
+    // Save current draft explicitly so it persists across sessions
+    try { localStorage.setItem(DRAFT_KEY, JSON.stringify(formData)); } catch { /* ignore */ }
+
+    setIsLoggingOut(true);
+    try {
+      await fetch("/api/auth/logout", { method: "POST" });
+    } catch { /* ignore */ } finally {
+      window.location.href = "/login";
+    }
   };
 
   const handleSave = async () => {
@@ -744,16 +776,44 @@ export default function TeacherMapelSetupModal({
                   Batal
                 </button>
               ) : (
-                <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                  <div style={{
-                    width: 28, height: 28, borderRadius: "0.625rem",
-                    background: "#fef3c7", display: "flex", alignItems: "center", justifyContent: "center",
-                  }}>
-                    <ShieldCheck size={14} style={{ color: "#d97706" }} />
+                <div style={{ display: "flex", flexDirection: "column", gap: 8, alignItems: "flex-start" }}>
+                  {/* Logout button */}
+                  <motion.button
+                    type="button"
+                    onClick={handleLogout}
+                    disabled={isLoggingOut || isSaving}
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.97 }}
+                    style={{
+                      display: "flex", alignItems: "center", gap: 7,
+                      padding: "9px 18px", borderRadius: "0.875rem",
+                      background: "white",
+                      border: "1.5px solid #fca5a5",
+                      color: "#b91c1c",
+                      fontSize: 12, fontWeight: 700,
+                      cursor: "pointer",
+                      boxShadow: "0 1px 4px rgba(239,68,68,0.08)",
+                      opacity: (isLoggingOut || isSaving) ? 0.6 : 1,
+                    }}
+                  >
+                    {isLoggingOut
+                      ? <Loader2 size={13} className="animate-spin" />
+                      : <LogOut size={13} />
+                    }
+                    <span>{isLoggingOut ? "Keluar..." : "Logout dulu"}</span>
+                  </motion.button>
+                  {/* Info hint */}
+                  <div style={{ display: "flex", alignItems: "center", gap: 5 }}>
+                    <div style={{
+                      width: 22, height: 22, borderRadius: "0.5rem", flexShrink: 0,
+                      background: "#fef3c7", display: "flex", alignItems: "center", justifyContent: "center",
+                    }}>
+                      <ShieldCheck size={12} style={{ color: "#d97706" }} />
+                    </div>
+                    <span style={{ fontSize: 11, color: "#a8a29e", fontWeight: 500, lineHeight: 1.4 }}>
+                      Data yang sudah diisi akan tersimpan otomatis
+                    </span>
                   </div>
-                  <span style={{ fontSize: 12, color: "#78716c", fontWeight: 600 }}>
-                    Wajib dilengkapi sebelum menggunakan SIKAP
-                  </span>
                 </div>
               )}
 
