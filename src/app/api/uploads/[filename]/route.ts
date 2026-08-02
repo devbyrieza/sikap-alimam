@@ -9,24 +9,17 @@ export async function GET(
   try {
     const { filename } = await params;
 
-    // Resolve upload directory candidates
-    const candidateDirs = process.env.NODE_ENV === "production"
-      ? ["/app/storage_data/uploads"]
-      : [
-          path.join(process.cwd(), "storage_data", "uploads"),
-          path.join(process.cwd(), "..", "simpeg-alimam", "storage_data", "uploads"),
-        ];
+    const uploadDir = process.env.NODE_ENV === "production"
+      ? "/app/storage_data/uploads"
+      : path.join(process.cwd(), "storage_data", "uploads");
 
+    const filePath = path.join(uploadDir, filename);
     let foundFilePath: string | null = null;
-    for (const dir of candidateDirs) {
-      const p = path.join(dir, filename);
-      try {
-        await access(p);
-        foundFilePath = p;
-        break;
-      } catch {
-        // Try next candidate
-      }
+    try {
+      await access(filePath);
+      foundFilePath = filePath;
+    } catch {
+      // Not found in primary folder
     }
 
     if (!foundFilePath) {

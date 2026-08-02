@@ -9,7 +9,6 @@ import {
 } from "lucide-react";
 import MapelSelector from "@/components/MapelSelector";
 import Swal from "sweetalert2";
-import toast from "react-hot-toast";
 
 interface PegawaiProfile {
   id?: string;
@@ -199,7 +198,7 @@ export default function TeacherMapelSetupModal({
     setCustomKategoriInput("");
   };
 
-  // Upload Foto Handler
+// Upload Foto Handler
   const handleUploadFoto = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -216,7 +215,6 @@ export default function TeacherMapelSetupModal({
     }
 
     setUploadingFoto(true);
-    const loadingToast = toast.loading("Mengunggah foto profil...");
     try {
       const fd = new FormData();
       fd.append("foto", file);
@@ -228,12 +226,16 @@ export default function TeacherMapelSetupModal({
       if (res.ok) {
         const resData = await res.json();
         setFormData((prev) => ({ ...prev, foto_url: resData.url }));
-        toast.dismiss(loadingToast);
-        toast.success("Foto profil berhasil diunggah!", {
-          style: { borderRadius: "16px", background: "#1e293b", color: "#fff", fontWeight: "bold", fontSize: "13px" },
+        Swal.fire({
+          toast: true,
+          position: "top-end",
+          icon: "success",
+          title: "Foto profil berhasil diunggah!",
+          showConfirmButton: false,
+          timer: 3000,
+          customClass: { popup: "rounded-2xl shadow-xl" },
         });
       } else {
-        toast.dismiss(loadingToast);
         Swal.fire({
           icon: "error",
           title: "Gagal Mengunggah Foto",
@@ -243,8 +245,14 @@ export default function TeacherMapelSetupModal({
       }
     } catch (err) {
       console.error(err);
-      toast.dismiss(loadingToast);
-      toast.error("Gagal terhubung ke server upload.");
+      Swal.fire({
+        toast: true,
+        position: "top-end",
+        icon: "error",
+        title: "Gagal terhubung ke server upload.",
+        showConfirmButton: false,
+        timer: 3000,
+      });
     } finally {
       setUploadingFoto(false);
     }

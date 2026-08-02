@@ -255,7 +255,6 @@ export default function Sidebar({ user }: SidebarProps) {
             </button>
           </div>
         </div>
-      </div>
     </>
   );
 
