@@ -197,36 +197,64 @@ export default function Sidebar({ user }: SidebarProps) {
             </p>
           </div>
         </div>
-        <div style={{ display: "flex", gap: "8px", width: "100%" }}>
-          <Link
-            href="/profile"
-            className="btn btn-ghost btn-sm"
-            onClick={() => setMobileOpen(false)}
-            style={{
-              flex: 1,
-              justifyContent: "center",
-              color: "rgba(255,255,255,0.7)",
-              borderColor: "rgba(255,255,255,0.15)",
-              padding: "8px 0"
-            }}
-          >
-            <Settings size={14} />
-            Profil
-          </Link>
+        <div style={{ display: "flex", gap: "6px", width: "100%", flexDirection: "column" }}>
           <button
-            onClick={handleLogout}
+            type="button"
+            onClick={() => {
+              setMobileOpen(false);
+              window.dispatchEvent(new CustomEvent("open-teacher-mapel-modal"));
+            }}
             className="btn btn-ghost btn-sm"
             style={{
-              flex: 1,
+              width: "100%",
               justifyContent: "center",
-              color: "rgba(255,255,255,0.7)",
-              borderColor: "rgba(255,255,255,0.15)",
-              padding: "8px 0"
+              color: "#fbbf24",
+              background: "rgba(251, 191, 36, 0.1)",
+              borderColor: "rgba(251, 191, 36, 0.3)",
+              padding: "7px 0",
+              fontSize: "11px",
+              fontWeight: 700,
+              cursor: "pointer"
             }}
           >
-            <LogOut size={14} />
-            Keluar
+            <BookOpen size={13} style={{ marginRight: 4 }} />
+            Atur Mapel Mengajar
           </button>
+          
+          <div style={{ display: "flex", gap: "6px", width: "100%" }}>
+            <Link
+              href="/profile"
+              className="btn btn-ghost btn-sm"
+              onClick={() => setMobileOpen(false)}
+              style={{
+                flex: 1,
+                justifyContent: "center",
+                color: "rgba(255,255,255,0.7)",
+                borderColor: "rgba(255,255,255,0.15)",
+                padding: "7px 0",
+                fontSize: "11px"
+              }}
+            >
+              <Settings size={13} />
+              Profil
+            </Link>
+            <button
+              onClick={handleLogout}
+              className="btn btn-ghost btn-sm"
+              style={{
+                flex: 1,
+                justifyContent: "center",
+                color: "rgba(255,255,255,0.7)",
+                borderColor: "rgba(255,255,255,0.15)",
+                padding: "7px 0",
+                fontSize: "11px",
+                cursor: "pointer"
+              }}
+            >
+              <LogOut size={13} />
+              Keluar
+            </button>
+          </div>
         </div>
       </div>
     </>
