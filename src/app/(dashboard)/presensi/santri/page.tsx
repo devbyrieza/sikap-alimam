@@ -381,11 +381,18 @@ export default function PresensiSantriPage() {
                   <option value="">— Pilih Kelas —</option>
                   {kelasList
                     .filter(k => k.jenjang === selectedJenjang)
-                    .map((k) => (
-                    <option key={k.id} value={k.id}>
-                      {k.nama}
-                    </option>
-                  ))}
+                    .map((k) => {
+                      // Remove jenjang text from class name if it exists (e.g. "7 MTs" -> "7")
+                      const displayName = selectedJenjang
+                        ? k.nama.replace(new RegExp(`\\s*${selectedJenjang}\\s*`, "i"), "").trim()
+                        : k.nama;
+
+                      return (
+                        <option key={k.id} value={k.id}>
+                          {displayName || k.nama}
+                        </option>
+                      );
+                    })}
                 </select>
               )}
             </div>
