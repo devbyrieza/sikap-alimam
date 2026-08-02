@@ -155,10 +155,10 @@ export default function LoginPage() {
              Info Login
           </p>
           <p style={{ marginBottom: 6, lineHeight: 1.5 }}>
-            Silakan login menggunakan email (atau username) yang telah didaftarkan oleh kepegawaian.
+            Silakan login menggunakan <b>Email Login</b>, <b>NIK</b>, atau <b>No. WhatsApp</b> Anda yang telah diisi saat melengkapi data profil.
           </p>
           <p style={{ color: "#9ca3af", lineHeight: 1.5 }}>
-            Hubungi admin IT jika Anda belum memiliki akun atau lupa password.
+            Hubungi Kasi IT jika Anda belum memiliki akun atau lupa password.
           </p>
         </div>
       </div>

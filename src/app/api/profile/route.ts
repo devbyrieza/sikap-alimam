@@ -168,6 +168,21 @@ export async function POST(req: NextRequest) {
       await syncAsatidzMapel(savedPegawai.id, savedPegawai.mata_pelajaran);
     }
 
+    // Update User login email
+    const newEmail = email?.trim();
+    if (newEmail && session.userId && newEmail !== session.email) {
+      // Periksa apakah email baru sudah dipakai user lain
+      const existingUserEmail = await prisma.user.findUnique({
+        where: { email: newEmail.toLowerCase() }
+      });
+      if (!existingUserEmail || existingUserEmail.id === session.userId) {
+        await prisma.user.update({
+          where: { id: session.userId },
+          data: { email: newEmail.toLowerCase() }
+        });
+      }
+    }
+
     return NextResponse.json({
       success: true,
       message: "Data profil civitas berhasil disimpan!",

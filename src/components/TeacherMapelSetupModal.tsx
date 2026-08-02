@@ -230,6 +230,9 @@ export default function TeacherMapelSetupModal({
     if (!formData.nama_lengkap.trim()) {
       Swal.fire({ icon: "warning", title: "Nama Lengkap wajib diisi", confirmButtonColor: "#3b0a0a" }); return;
     }
+    if (!formData.email?.trim()) {
+      Swal.fire({ icon: "warning", title: "Email Login wajib diisi", text: "Email ini akan digunakan untuk login Anda selanjutnya.", confirmButtonColor: "#3b0a0a" }); return;
+    }
     if (!formData.no_hp.trim()) {
       Swal.fire({ icon: "warning", title: "No. WhatsApp / HP wajib diisi", confirmButtonColor: "#3b0a0a" }); return;
     }
