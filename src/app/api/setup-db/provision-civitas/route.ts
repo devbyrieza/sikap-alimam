@@ -9,250 +9,99 @@ export async function GET() {
     const adminPasswordHash = await bcrypt.hash('AdminAlimam2026!', 10);
     const guruPasswordHash = await bcrypt.hash('GuruAlimam2026!', 10);
 
-    // Daftar Lengkap Civitas & Akun Guru / Multi-Role
-    const civitasAccounts = [
-      // ══════════════════════════════════════════════════════════════
-      // 1. MULTIUSER (ADMIN SUPER & GURU)
-      // ══════════════════════════════════════════════════════════════
-      {
-        nama_lengkap: 'Rieza Eka Tomara, S.Kom',
-        email: 'riezaekatomara@gmail.com',
-        alias_email: 'rieza@pesantren-alimam.com',
-        nik: '1609010706970003',
-        kategori_pegawai: 'STAF, GURU',
-        jabatan: 'Staff IT & Pengajar',
-        role: 'ADMIN_SUPER',
-        passwordHash: adminPasswordHash,
-        isMultiRole: true,
-      },
-      {
-        nama_lengkap: 'Abdil Aziz, S.Pd, B.A',
-        email: 'abdilaziz@pesantren-alimam.com',
-        alias_email: 'abdil.aziz@pesantren-alimam.com',
-        nik: '3322183101990002',
-        kategori_pegawai: 'GURU',
-        jabatan: 'Kasi Kurikulum & Pengajar',
-        role: 'ADMIN_SUPER',
-        passwordHash: adminPasswordHash,
-        isMultiRole: true,
-      },
-      {
-        nama_lengkap: 'Wahab Rajasam, M.Pd',
-        email: 'wahabrajasam@pesantren-alimam.com',
-        alias_email: 'wahab.rajasam@pesantren-alimam.com',
-        nik: null,
-        kategori_pegawai: 'GURU, PIMPINAN',
-        jabatan: 'Mudir Pesantren & Pengajar',
-        role: 'ADMIN_SUPER',
-        passwordHash: adminPasswordHash,
-        isMultiRole: true,
-      },
-
-      // ══════════════════════════════════════════════════════════════
-      // 2. CIVITAS BERKATEGORI GURU (AKUN GURU)
-      // ══════════════════════════════════════════════════════════════
-      {
-        nama_lengkap: 'Hardiansyah',
-        email: 'hardiansyah@pesantren-alimam.com',
-        nik: null,
-        kategori_pegawai: 'GURU',
-        jabatan: 'Guru',
-        role: 'GURU',
-        passwordHash: guruPasswordHash,
-        isMultiRole: false,
-      },
-      {
-        nama_lengkap: 'Muhammad Maulana Rizki',
-        email: 'maulanarizki@pesantren-alimam.com',
-        nik: null,
-        kategori_pegawai: 'GURU',
-        jabatan: 'Guru',
-        role: 'GURU',
-        passwordHash: guruPasswordHash,
-        isMultiRole: false,
-      },
-      {
-        nama_lengkap: 'Teguh Hudaya, Lc, M.M',
-        email: 'teguhhudaya@pesantren-alimam.com',
-        nik: null,
-        kategori_pegawai: 'GURU, STAF',
-        jabatan: 'Guru & Staf',
-        role: 'GURU',
-        passwordHash: guruPasswordHash,
-        isMultiRole: false,
-      },
-      {
-        nama_lengkap: 'Ade Supyana S. Pd. I',
-        email: 'adesupyana@pesantren-alimam.com',
-        nik: '3202082102690001',
-        kategori_pegawai: 'GURU',
-        jabatan: 'Guru',
-        role: 'GURU',
-        passwordHash: guruPasswordHash,
-        isMultiRole: false,
-      },
-      {
-        nama_lengkap: 'Arifin Saefullah, A.Ma, Dpl, Lc, M.M, M.Pd',
-        email: 'arifinsaefullah@pesantren-alimam.com',
-        nik: '3511110204810005',
-        kategori_pegawai: 'GURU',
-        jabatan: 'Guru',
-        role: 'GURU',
-        passwordHash: guruPasswordHash,
-        isMultiRole: false,
-      },
-      {
-        nama_lengkap: 'Muhammad Thoriq Ibn Ziyad, Lc, M.Ag',
-        email: 'thoriqziyad@pesantren-alimam.com',
-        nik: '3202290106940002',
-        kategori_pegawai: 'GURU',
-        jabatan: 'Guru',
-        role: 'GURU',
-        passwordHash: guruPasswordHash,
-        isMultiRole: false,
-      },
-      {
-        nama_lengkap: 'Agus Cahyono',
-        email: 'aguscahyono@pesantren-alimam.com',
-        nik: '6408012910950001',
-        kategori_pegawai: 'GURU, MUSYRIF',
-        jabatan: 'Guru & Musyrif',
-        role: 'GURU',
-        passwordHash: guruPasswordHash,
-        isMultiRole: false,
-      },
-      {
-        nama_lengkap: 'Wahyudi Pranata, Lc',
-        email: 'wahyudipranata@pesantren-alimam.com',
-        nik: '1901072302950001',
-        kategori_pegawai: 'GURU',
-        jabatan: 'Guru',
-        role: 'GURU',
-        passwordHash: guruPasswordHash,
-        isMultiRole: false,
-      },
-      {
-        nama_lengkap: 'Imron Abdillah',
-        email: 'imronabdillah@pesantren-alimam.com',
-        nik: '3301022411900005',
-        kategori_pegawai: 'GURU, MUSYRIF',
-        jabatan: 'Guru & Musyrif',
-        role: 'GURU',
-        passwordHash: guruPasswordHash,
-        isMultiRole: false,
-      },
-      {
-        nama_lengkap: 'Ramdan',
-        email: 'ramdan@pesantren-alimam.com',
-        nik: '3202091101990007',
-        kategori_pegawai: 'GURU, STAF',
-        jabatan: 'Guru & Staf',
-        role: 'GURU',
-        passwordHash: guruPasswordHash,
-        isMultiRole: false,
-      },
-      {
-        nama_lengkap: 'Muhammad Iqbal, S.Pd',
-        email: 'muhammadiqbal@pesantren-alimam.com',
-        nik: '3211051605920001',
-        kategori_pegawai: 'MUSYRIF, GURU',
-        jabatan: 'Musyrif & Guru',
-        role: 'GURU',
-        passwordHash: guruPasswordHash,
-        isMultiRole: false,
-      },
-    ];
+    // 1. Ambil semua data pegawai dengan kategori mengandung "GURU" atau "ASATIDZ" (case-insensitive)
+    const semuaGuru = await prisma.pegawai.findMany({
+      where: {
+        OR: [
+          { kategori_pegawai: { contains: 'GURU', mode: 'insensitive' } },
+          { kategori_pegawai: { contains: 'ASATIDZ', mode: 'insensitive' } }
+        ]
+      }
+    });
 
     const results = [];
 
-    for (const item of civitasAccounts) {
-      // 1. Upsert User Account di SIKAP
-      const user = await prisma.user.upsert({
-        where: { email: item.email.toLowerCase().trim() },
-        update: {
-          nama: item.nama_lengkap,
-          role: item.role,
-          password: item.passwordHash,
-          is_active: true,
-        },
-        create: {
-          email: item.email.toLowerCase().trim(),
-          nama: item.nama_lengkap,
-          role: item.role,
-          password: item.passwordHash,
-          is_active: true,
-        },
-      });
+    for (const pegawai of semuaGuru) {
+      const namaUpper = pegawai.nama_lengkap.toUpperCase();
+      
+      // Deteksi Multi-Role Admin Super
+      const isRieza = namaUpper.includes('RIEZA EKA TOMARA');
+      const isAbdilAziz = namaUpper.includes('ABDIL AZIZ');
+      const isWahab = namaUpper.includes('WAHAB RAJASAM');
+      
+      const isMultiRole = isRieza || isAbdilAziz || isWahab;
+      const role = isMultiRole ? 'ADMIN_SUPER' : 'GURU';
+      const passwordHash = isMultiRole ? adminPasswordHash : guruPasswordHash;
+      
+      // Tentukan Jabatan Khusus
+      let jabatanKhusus = pegawai.jabatan;
+      if (isRieza) jabatanKhusus = 'Kasi IT & Pengajar';
+      if (isAbdilAziz) jabatanKhusus = 'Kasi Kurikulum & Pengajar';
+      if (isWahab) jabatanKhusus = 'Mudir Pesantren & Pengajar';
 
-      // Jika ada alias email, buat/update juga
-      if (item.alias_email) {
-        await prisma.user.upsert({
-          where: { email: item.alias_email.toLowerCase().trim() },
-          update: {
-            nama: item.nama_lengkap,
-            role: item.role,
-            password: item.passwordHash,
-            is_active: true,
-          },
-          create: {
-            email: item.alias_email.toLowerCase().trim(),
-            nama: item.nama_lengkap,
-            role: item.role,
-            password: item.passwordHash,
-            is_active: true,
-          },
+      // Update jabatan pegawai jika perlu
+      if (isMultiRole && pegawai.jabatan !== jabatanKhusus) {
+        await prisma.pegawai.update({
+          where: { id: pegawai.id },
+          data: { jabatan: jabatanKhusus }
         });
       }
 
-      // 2. Link ke Pegawai
-      // Cari data pegawai yang ada berdasarkan user_id, nik, atau nama_lengkap
-      let pegawai = await prisma.pegawai.findFirst({
-        where: {
-          OR: [
-            { user_id: user.id },
-            item.nik ? { nik: item.nik } : undefined,
-            { nama_lengkap: { contains: item.nama_lengkap.split(',')[0].trim(), mode: 'insensitive' } },
-          ].filter(Boolean) as any,
+      // Tentukan Email (Gunakan yang ada di database, jika kosong baru buat email default)
+      let targetEmail = pegawai.email?.toLowerCase().trim();
+      
+      if (!targetEmail || targetEmail === '') {
+        // Buat email default: namadepan@pesantren-alimam.com
+        const namaDepan = pegawai.nama_lengkap.split(/[\s,]+/)[0].toLowerCase().replace(/[^a-z0-9]/g, '');
+        targetEmail = `${namaDepan}@pesantren-alimam.com`;
+        
+        // Update pegawai agar punya email ini
+        await prisma.pegawai.update({
+          where: { id: pegawai.id },
+          data: { email: targetEmail }
+        });
+      }
+
+      // 2. Upsert User Account di SIKAP
+      const user = await prisma.user.upsert({
+        where: { email: targetEmail },
+        update: {
+          nama: pegawai.nama_lengkap,
+          role: role,
+          password: passwordHash,
+          is_active: true,
+        },
+        create: {
+          email: targetEmail,
+          nama: pegawai.nama_lengkap,
+          role: role,
+          password: passwordHash,
+          is_active: true,
         },
       });
 
-      if (pegawai) {
-        pegawai = await prisma.pegawai.update({
+      // 3. Link ke Pegawai
+      if (!pegawai.user_id || pegawai.user_id !== user.id) {
+        await prisma.pegawai.update({
           where: { id: pegawai.id },
-          data: {
-            user_id: user.id,
-            email: item.email,
-            nama_lengkap: item.nama_lengkap,
-            nik: item.nik || pegawai.nik,
-            kategori_pegawai: item.kategori_pegawai,
-            jabatan: item.jabatan || pegawai.jabatan,
-          },
-        });
-      } else {
-        pegawai = await prisma.pegawai.create({
-          data: {
-            user_id: user.id,
-            nama_lengkap: item.nama_lengkap,
-            email: item.email,
-            nik: item.nik || null,
-            kategori_pegawai: item.kategori_pegawai,
-            jabatan: item.jabatan,
-          },
+          data: { user_id: user.id }
         });
       }
 
       results.push({
-        nama: item.nama_lengkap,
-        email: item.email,
-        role: item.role,
-        isMultiRole: item.isMultiRole,
+        nama: pegawai.nama_lengkap,
+        email_digunakan: targetEmail,
+        email_asli_db: pegawai.email,
+        role: role,
+        isMultiRole: isMultiRole,
+        jabatan: jabatanKhusus || pegawai.jabatan,
         pegawaiId: pegawai.id,
       });
     }
 
     return NextResponse.json({
       success: true,
-      message: 'Berhasil membuat dan mengonfigurasi seluruh akun Civitas Guru dan Multiuser Admin Super!',
+      message: 'Berhasil membuat dan mengonfigurasi seluruh akun Civitas Guru (Dinamis dari Database)!',
       total: results.length,
       data: results,
     });
