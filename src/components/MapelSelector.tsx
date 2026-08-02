@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import { Plus, X, BookOpen, Check, ChevronDown, Trash2, CheckCircle2, RotateCcw } from "lucide-react";
 import { motion } from "framer-motion";
 
@@ -193,7 +193,15 @@ export default function MapelSelector({ value, onChange }: MapelSelectorProps) {
   const [customInputs, setCustomInputs] = useState<Record<string, string>>({});
   const [showOtherClasses, setShowOtherClasses] = useState<Record<string, boolean>>({});
 
+  // Ref to track locally emitted values so incoming prop changes from parent don't wipe active tabs
+  const lastEmittedValueRef = useRef<string | null>(null);
+
   useEffect(() => {
+    if (lastEmittedValueRef.current !== null && lastEmittedValueRef.current === value) {
+      return;
+    }
+    lastEmittedValueRef.current = value;
+
     if (!value) {
       setItems([]);
       return;
@@ -227,16 +235,17 @@ export default function MapelSelector({ value, onChange }: MapelSelectorProps) {
     setItems(parsedItems);
 
     if (detectedJenjangs.size > 0) {
-      setSelectedJenjangs(Array.from(detectedJenjangs));
+      setSelectedJenjangs((prev) => Array.from(new Set([...prev, ...Array.from(detectedJenjangs)])));
     }
     if (detectedClasses.size > 0) {
-      setSelectedClasses(Array.from(detectedClasses));
+      setSelectedClasses((prev) => Array.from(new Set([...prev, ...Array.from(detectedClasses)])));
     }
   }, [value]);
 
   const updateValue = (newItems: MapelItem[]) => {
     setItems(newItems);
     const strValue = newItems.map((item) => `[${item.jenjang}] ${item.nama}`).join(", ");
+    lastEmittedValueRef.current = strValue;
     onChange(strValue);
   };
 
