@@ -7,9 +7,28 @@ export default function FilterNilaiPage() {
   const [kelas, setKelas] = useState("");
   const [mapel, setMapel] = useState("");
   const [santri, setSantri] = useState("");
+  const [kelasList, setKelasList] = useState<{ id: string; nama: string }[]>([]);
+  const [mapelList, setMapelList] = useState<{ id: string; nama: string; kategori?: string }[]>([]);
   
   const [data, setData] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    fetch("/api/master")
+      .then((res) => res.json())
+      .then((resData) => {
+        if (resData.kelas) setKelasList(resData.kelas);
+        if (resData.mapel) {
+          // Flatten all mapel
+          const allM: any[] = [];
+          Object.values(resData.mapel).forEach((arr: any) => {
+            if (Array.isArray(arr)) allM.push(...arr);
+          });
+          setMapelList(allM);
+        }
+      })
+      .catch(console.error);
+  }, []);
 
   const handleFilter = async () => {
     setLoading(true);
@@ -26,7 +45,7 @@ export default function FilterNilaiPage() {
           {
             id: "1",
             santri: { nama_lengkap: "Ahmad Zaki", nis: "2026001" },
-            kelas: { nama: "7A MTs" },
+            kelas: { nama: "7 MTs" },
             mapel: { nama: "Matematika", kategori: "umum" },
             nilai: 85,
             keterangan: "Lulus"
@@ -34,7 +53,7 @@ export default function FilterNilaiPage() {
           {
             id: "2",
             santri: { nama_lengkap: "Ahmad Zaki", nis: "2026001" },
-            kelas: { nama: "7A MTs" },
+            kelas: { nama: "7 MTs" },
             mapel: { nama: "Tauhid", kategori: "syariah" },
             nilai: 92,
             keterangan: "Mumtaz"
@@ -60,16 +79,22 @@ export default function FilterNilaiPage() {
           <label className="block text-sm font-medium text-gray-700 mb-1">Filter Kelas</label>
           <select value={kelas} onChange={(e) => setKelas(e.target.value)} className="w-full rounded-xl border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
             <option value="">Semua Kelas</option>
-            <option value="kelas-1">7A MTs</option>
-            <option value="kelas-2">7B MTs</option>
+            {kelasList.map((k) => (
+              <option key={k.id} value={k.id}>
+                {k.nama}
+              </option>
+            ))}
           </select>
         </div>
         <div className="flex-1 min-w-[200px]">
           <label className="block text-sm font-medium text-gray-700 mb-1">Filter Mapel</label>
           <select value={mapel} onChange={(e) => setMapel(e.target.value)} className="w-full rounded-xl border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
             <option value="">Semua Mata Pelajaran</option>
-            <option value="mapel-1">Tauhid (Syariah)</option>
-            <option value="mapel-2">Matematika (Umum)</option>
+            {mapelList.map((m, idx) => (
+              <option key={`${m.id}-${idx}`} value={m.id}>
+                {m.nama}
+              </option>
+            ))}
           </select>
         </div>
         <div className="flex-1 min-w-[200px]">

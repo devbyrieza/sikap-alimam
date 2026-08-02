@@ -1,14 +1,22 @@
 "use client";
 
-import { useState, useMemo } from "react";
-import { BookOpen } from "lucide-react";
+import { useState, useMemo, useEffect } from "react";
+import { BookOpen, Filter, Calendar, User, GraduationCap, RotateCcw } from "lucide-react";
+import { getJenjangFromKelas, JenjangType } from "@/lib/kelas";
 
-type JurnalRow = {
+export type KelasObject = {
+  id?: string;
+  nama: string;
+  jenjang?: string | null;
+};
+
+export type JurnalRow = {
   id: string;
   tanggal: string;
   asatidz: string;
   mapel: string;
   kelas: string;
+  kelas_jenjang?: string | null;
   jam_ke: string;
   materi: string;
   kegiatan: string;
@@ -25,39 +33,113 @@ function formatTanggal(iso: string) {
   });
 }
 
-export default function JurnalClientFilter({ 
+export default function JurnalClientFilter({
   data,
   kelasList = [],
-  asatidzList = []
-}: { 
+  asatidzList = [],
+}: {
   data: JurnalRow[];
-  kelasList?: string[];
+  kelasList?: (string | KelasObject)[];
   asatidzList?: string[];
 }) {
-  const today = new Date().toISOString().split("T")[0];
   const [filterTanggal, setFilterTanggal] = useState("");
+  const [filterJenjang, setFilterJenjang] = useState<string>("");
   const [filterKelas, setFilterKelas] = useState("");
   const [filterAsatidz, setFilterAsatidz] = useState("");
 
-  // Jika server memberikan props, gunakan itu. Jika tidak, fallback ke deriving dari data
-  const finalKelasList = kelasList.length > 0 ? kelasList : useMemo(() => {
+  // Normalisasi kelasList menjadi objek terstandar
+  const normalizedKelasList = useMemo<KelasObject[]>(() => {
+    if (kelasList.length > 0) {
+      return kelasList.map((k) => {
+        if (typeof k === "string") {
+          return { nama: k, jenjang: getJenjangFromKelas(k) };
+        }
+        return {
+          id: k.id,
+          nama: k.nama,
+          jenjang: k.jenjang || getJenjangFromKelas(k.nama, k.jenjang),
+        };
+      });
+    }
+
+    // Derive dari data jika tidak ada props
     const set = new Set(data.map((j) => j.kelas));
-    return Array.from(set).sort();
-  }, [data]);
+    return Array.from(set).map((nama) => ({
+      nama,
+      jenjang: getJenjangFromKelas(nama),
+    }));
+  }, [kelasList, data]);
 
-  const finalAsatidzList = asatidzList.length > 0 ? asatidzList : useMemo(() => {
-    const set = new Set(data.map((j) => j.asatidz));
-    return Array.from(set).sort();
-  }, [data]);
+  // Daftar Kelas yang disaring berdasarkan Jenjang terpilih (Cascading Filter)
+  const availableClasses = useMemo(() => {
+    if (!filterJenjang) {
+      return normalizedKelasList;
+    }
+    return normalizedKelasList.filter((k) => {
+      const jenjang = getJenjangFromKelas(k.nama, k.jenjang);
+      return jenjang === filterJenjang;
+    });
+  }, [normalizedKelasList, filterJenjang]);
 
+  // Saat Jenjang berganti, jika kelas terpilih tidak valid di jenjang baru, reset kelas
+  const handleJenjangChange = (newJenjang: string) => {
+    setFilterJenjang(newJenjang);
+    if (!newJenjang) return;
+
+    // Cek apakah kelas saat ini masih ada di jenjang baru
+    const isValid = normalizedKelasList.some((k) => {
+      return k.nama === filterKelas && getJenjangFromKelas(k.nama, k.jenjang) === newJenjang;
+    });
+
+    if (!isValid) {
+      setFilterKelas("");
+    }
+  };
+
+  // Normalisasi Daftar Guru
+  const finalAsatidzList = useMemo(() => {
+    const set = new Set<string>();
+    asatidzList.forEach((a) => {
+      if (a && a.trim()) set.add(a.trim());
+    });
+    data.forEach((j) => {
+      if (j.asatidz && j.asatidz.trim() && j.asatidz !== "-") {
+        set.add(j.asatidz.trim());
+      }
+    });
+    return Array.from(set).sort((a, b) => a.localeCompare(b, "id"));
+  }, [asatidzList, data]);
+
+  // Saring data jurnal
   const filtered = useMemo(() => {
     return data.filter((j) => {
+      // 1. Filter Tanggal
       if (filterTanggal && j.tanggal !== filterTanggal) return false;
+
+      // 2. Filter Jenjang
+      if (filterJenjang) {
+        const itemJenjang = getJenjangFromKelas(j.kelas, j.kelas_jenjang);
+        if (itemJenjang !== filterJenjang) return false;
+      }
+
+      // 3. Filter Kelas
       if (filterKelas && j.kelas !== filterKelas) return false;
+
+      // 4. Filter Guru / Asatidz
       if (filterAsatidz && j.asatidz !== filterAsatidz) return false;
+
       return true;
     });
-  }, [data, filterTanggal, filterKelas, filterAsatidz]);
+  }, [data, filterTanggal, filterJenjang, filterKelas, filterAsatidz]);
+
+  const handleReset = () => {
+    setFilterTanggal("");
+    setFilterJenjang("");
+    setFilterKelas("");
+    setFilterAsatidz("");
+  };
+
+  const isFiltered = Boolean(filterTanggal || filterJenjang || filterKelas || filterAsatidz);
 
   return (
     <div>
@@ -67,14 +149,20 @@ export default function JurnalClientFilter({
         style={{
           marginBottom: 20,
           display: "flex",
-          gap: 12,
+          gap: 14,
           flexWrap: "wrap",
           alignItems: "flex-end",
-          padding: "16px 20px",
+          padding: "18px 22px",
+          borderRadius: 16,
+          background: "#ffffff",
+          boxShadow: "0 2px 8px rgba(0,0,0,0.04)",
         }}
       >
-        <div className="form-group" style={{ marginBottom: 0, minWidth: 180 }}>
-          <label className="form-label">Filter Tanggal</label>
+        {/* 1. Filter Tanggal */}
+        <div className="form-group" style={{ marginBottom: 0, minWidth: 160, flex: "1 1 150px" }}>
+          <label className="form-label" style={{ fontWeight: 600, fontSize: 13, display: "flex", alignItems: "center", gap: 6 }}>
+            <Calendar size={14} color="var(--primary)" /> Filter Tanggal
+          </label>
           <input
             type="date"
             className="form-control"
@@ -82,23 +170,58 @@ export default function JurnalClientFilter({
             onChange={(e) => setFilterTanggal(e.target.value)}
           />
         </div>
-        <div className="form-group" style={{ marginBottom: 0, minWidth: 160 }}>
-          <label className="form-label">Filter Kelas</label>
+
+        {/* 2. Filter Jenjang (MTs, IL, MA) */}
+        <div className="form-group" style={{ marginBottom: 0, minWidth: 160, flex: "1 1 150px" }}>
+          <label className="form-label" style={{ fontWeight: 600, fontSize: 13, display: "flex", alignItems: "center", gap: 6 }}>
+            <GraduationCap size={14} color="var(--primary)" /> Filter Jenjang
+          </label>
+          <select
+            className="form-control"
+            value={filterJenjang}
+            onChange={(e) => handleJenjangChange(e.target.value)}
+            style={{ fontWeight: filterJenjang ? 700 : 400 }}
+          >
+            <option value="">Semua Jenjang</option>
+            <option value="MTs">MTs (Madrasah Tsanawiyah)</option>
+            <option value="IL">IL (I'dad Lughowy)</option>
+            <option value="MA">MA (Madrasah Aliyah)</option>
+          </select>
+        </div>
+
+        {/* 3. Filter Kelas (Mengikuti Jenjang) */}
+        <div className="form-group" style={{ marginBottom: 0, minWidth: 170, flex: "1 1 160px" }}>
+          <label className="form-label" style={{ fontWeight: 600, fontSize: 13, display: "flex", alignItems: "center", gap: 6 }}>
+            <BookOpen size={14} color="var(--primary)" /> Filter Kelas
+          </label>
           <select
             className="form-control"
             value={filterKelas}
             onChange={(e) => setFilterKelas(e.target.value)}
+            disabled={availableClasses.length === 0 && filterJenjang === "MA"}
           >
-            <option value="">Semua Kelas</option>
-            {finalKelasList.map((k) => (
-              <option key={k} value={k}>
-                {k}
+            <option value="">
+              {filterJenjang ? `Semua Kelas di ${filterJenjang}` : "Semua Kelas"}
+            </option>
+            {availableClasses.length === 0 && filterJenjang === "MA" ? (
+              <option value="" disabled>
+                (Belum ada kelas aktif MA)
               </option>
-            ))}
+            ) : (
+              availableClasses.map((k) => (
+                <option key={k.nama} value={k.nama}>
+                  {k.nama}
+                </option>
+              ))
+            )}
           </select>
         </div>
-        <div className="form-group" style={{ marginBottom: 0, minWidth: 200 }}>
-          <label className="form-label">Filter Guru</label>
+
+        {/* 4. Filter Guru / Asatidz (SIMPEG) */}
+        <div className="form-group" style={{ marginBottom: 0, minWidth: 200, flex: "1 1 200px" }}>
+          <label className="form-label" style={{ fontWeight: 600, fontSize: 13, display: "flex", alignItems: "center", gap: 6 }}>
+            <User size={14} color="var(--primary)" /> Filter Guru
+          </label>
           <select
             className="form-control"
             value={filterAsatidz}
@@ -112,23 +235,30 @@ export default function JurnalClientFilter({
             ))}
           </select>
         </div>
-        {(filterTanggal || filterKelas || filterAsatidz) && (
+
+        {/* Reset Button */}
+        {isFiltered && (
           <button
             className="btn btn-ghost btn-sm"
-            style={{ marginBottom: 0 }}
-            onClick={() => {
-              setFilterTanggal("");
-              setFilterKelas("");
-              setFilterAsatidz("");
+            style={{
+              marginBottom: 0,
+              display: "flex",
+              alignItems: "center",
+              gap: 6,
+              color: "#dc2626",
             }}
+            onClick={handleReset}
           >
+            <RotateCcw size={14} />
             Reset Filter
           </button>
         )}
+
         <div
           style={{
             marginLeft: "auto",
             fontSize: 13,
+            fontWeight: 600,
             color: "var(--text-muted)",
             alignSelf: "center",
           }}
@@ -137,17 +267,17 @@ export default function JurnalClientFilter({
         </div>
       </div>
 
-      {/* Table */}
-      <div className="table-wrap">
+      {/* Table Jurnal Mengajar */}
+      <div className="table-wrap" style={{ borderRadius: 16, overflow: "hidden", background: "#fff", boxShadow: "0 2px 8px rgba(0,0,0,0.04)" }}>
         <table>
           <thead>
             <tr>
               <th>Tanggal</th>
-              <th>Guru</th>
+              <th>Guru Pengampu</th>
               <th>Mata Pelajaran</th>
-              <th>Kelas</th>
-              <th>Jam ke-</th>
-              <th>Topik Jurnal</th>
+              <th style={{ textAlign: "center" }}>Jenjang & Kelas</th>
+              <th style={{ width: 80, textAlign: "center" }}>Jam ke-</th>
+              <th>Topik Jurnal & Materi</th>
             </tr>
           </thead>
           <tbody>
@@ -157,74 +287,101 @@ export default function JurnalClientFilter({
                   colSpan={6}
                   style={{
                     textAlign: "center",
-                    padding: "40px 0",
+                    padding: "48px 0",
                     color: "var(--text-muted)",
                   }}
                 >
                   <BookOpen
-                    size={32}
-                    style={{ marginBottom: 8, opacity: 0.3, display: "block", margin: "0 auto 8px" }}
+                    size={36}
+                    style={{ marginBottom: 10, opacity: 0.35, display: "block", margin: "0 auto 10px" }}
                   />
-                  Belum ada jurnal yang ditemukan
+                  <div style={{ fontWeight: 600, fontSize: 15 }}>Belum ada jurnal yang sesuai dengan filter</div>
+                  <div style={{ fontSize: 13, marginTop: 4 }}>Coba ubah filter tanggal, jenjang, kelas, atau guru pengampu di atas.</div>
                 </td>
               </tr>
             ) : (
-              filtered.map((j) => (
-                <tr key={j.id}>
-                  <td>
-                    <span
-                      style={{
-                        fontWeight: 600,
-                        fontSize: 13,
-                        color: "var(--primary)",
-                      }}
-                    >
-                      {formatTanggal(j.tanggal)}
-                    </span>
-                  </td>
-                  <td style={{ fontWeight: 600 }}>{j.asatidz}</td>
-                  <td>{j.mapel}</td>
-                  <td>
-                    <span
-                      className="badge"
-                      style={{
-                        background: "var(--secondary-pale)",
-                        color: "var(--primary)",
-                        border: "1px solid var(--secondary)",
-                      }}
-                    >
-                      {j.kelas}
-                    </span>
-                  </td>
-                  <td style={{ textAlign: "center" }}>
-                    {j.jam_ke !== "-" ? (
+              filtered.map((j) => {
+                const jenjang = getJenjangFromKelas(j.kelas, j.kelas_jenjang);
+
+                return (
+                  <tr key={j.id}>
+                    <td>
                       <span
                         style={{
-                          background: "#f3f4f6",
-                          padding: "2px 8px",
-                          borderRadius: 6,
+                          fontWeight: 700,
                           fontSize: 13,
-                          fontWeight: 600,
+                          color: "var(--primary)",
                         }}
                       >
-                        {j.jam_ke}
+                        {formatTanggal(j.tanggal)}
                       </span>
-                    ) : (
-                      <span style={{ color: "var(--text-muted)" }}>—</span>
-                    )}
-                  </td>
-                  <td
-                    style={{
-                      maxWidth: 280,
-                      overflow: "hidden",
-                      textOverflow: "ellipsis",
-                      whiteSpace: "nowrap",
-                    }}
-                  >
-                    {j.materi}
-                  </td>
-                </tr>
-              ))
+                    </td>
+                    <td style={{ fontWeight: 700, color: "var(--text-main)" }}>
+                      {j.asatidz}
+                    </td>
+                    <td>
+                      <span style={{ fontWeight: 600 }}>{j.mapel}</span>
+                    </td>
+                    <td style={{ textAlign: "center" }}>
+                      <div style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
+                        <span
+                          style={{
+                            fontSize: 11,
+                            fontWeight: 800,
+                            padding: "2px 6px",
+                            borderRadius: 6,
+                            background: jenjang === "MTs" ? "#e0f2fe" : jenjang === "IL" ? "#fef3c7" : "#dcfce7",
+                            color: jenjang === "MTs" ? "#0369a1" : jenjang === "IL" ? "#b45309" : "#15803d",
+                          }}
+                        >
+                          {jenjang}
+                        </span>
+                        <span
+                          className="badge"
+                          style={{
+                            background: "var(--secondary-pale)",
+                            color: "var(--primary)",
+                            border: "1px solid var(--secondary)",
+                            fontWeight: 700,
+                          }}
+                        >
+                          {j.kelas}
+                        </span>
+                      </div>
+                    </td>
+                    <td style={{ textAlign: "center" }}>
+                      {j.jam_ke !== "-" ? (
+                        <span
+                          style={{
+                            background: "#f3f4f6",
+                            padding: "3px 10px",
+                            borderRadius: 8,
+                            fontSize: 13,
+                            fontWeight: 700,
+                            color: "#374151",
+                          }}
+                        >
+                          {j.jam_ke}
+                        </span>
+                      ) : (
+                        <span style={{ color: "var(--text-muted)" }}>—</span>
+                      )}
+                    </td>
+                    <td
+                      style={{
+                        maxWidth: 320,
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                        whiteSpace: "nowrap",
+                        color: "#4b5563",
+                      }}
+                      title={j.materi}
+                    >
+                      {j.materi}
+                    </td>
+                  </tr>
+                );
+              })
             )}
           </tbody>
         </table>

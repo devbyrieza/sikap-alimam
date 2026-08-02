@@ -1,21 +1,36 @@
 import { NextRequest, NextResponse } from "next/server";
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "@/lib/prisma";
 
-const prisma = new PrismaClient();
-
-// Ambil semua data Guru (Pegawai Kategori ASATIDZ)
+// Ambil semua data Guru (Pegawai Kategori ASATIDZ / GURU dari SIMPEG)
 export async function GET() {
   try {
-    const guru = await prisma.pegawai.findMany({
+    let guru = await prisma.pegawai.findMany({
       where: {
-        kategori_pegawai: 'ASATIDZ'
+        OR: [
+          { kategori_pegawai: { in: ["ASATIDZ", "GURU", "Guru", "asatidz", "guru", "PENGAJAR"] } },
+          { kategori_pegawai: { contains: "ASATIDZ", mode: "insensitive" } },
+          { kategori_pegawai: { contains: "GURU", mode: "insensitive" } },
+          { jabatan: { contains: "Guru", mode: "insensitive" } },
+          { jabatan: { contains: "Pengajar", mode: "insensitive" } },
+          { jabatan: { contains: "Asatidz", mode: "insensitive" } },
+          { jabatan: { contains: "Ustadz", mode: "insensitive" } },
+          { mata_pelajaran: { not: null } },
+        ],
       },
-      orderBy: { nama_lengkap: 'asc' },
+      orderBy: { nama_lengkap: "asc" },
     });
+
+    // Fallback: jika belum terfilter, ambil semua pegawai
+    if (guru.length === 0) {
+      guru = await prisma.pegawai.findMany({
+        orderBy: { nama_lengkap: "asc" },
+      });
+    }
+
     return NextResponse.json(guru);
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error fetching guru:", error);
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    return NextResponse.json({ error: "Gagal mengambil data guru", details: error.message }, { status: 500 });
   }
 }
 
@@ -25,23 +40,27 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     const { nik, nama_lengkap, no_hp, email, mata_pelajaran } = body;
 
+    if (!nama_lengkap || !nama_lengkap.trim()) {
+      return NextResponse.json({ error: "Nama lengkap wajib diisi" }, { status: 400 });
+    }
+
     const newGuru = await prisma.pegawai.create({
       data: {
         nik: nik || `GURU-${Date.now()}`,
-        nama_lengkap,
-        no_hp,
-        email,
+        nama_lengkap: nama_lengkap.trim(),
+        no_hp: no_hp || null,
+        email: email || null,
         mata_pelajaran: mata_pelajaran || null,
-        kategori_pegawai: 'ASATIDZ',
+        kategori_pegawai: "ASATIDZ",
       },
     });
 
     return NextResponse.json(newGuru, { status: 201 });
   } catch (error: any) {
     console.error("Error creating guru:", error);
-    if (error.code === 'P2002') {
+    if (error.code === "P2002") {
       return NextResponse.json({ error: "NIK atau Email sudah terdaftar." }, { status: 400 });
     }
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    return NextResponse.json({ error: "Internal server error", details: error.message }, { status: 500 });
   }
 }

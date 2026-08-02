@@ -31,11 +31,22 @@ export default async function PresensiAsatidz_Page() {
     orderBy: { jam_masuk: 'asc' },
   });
 
+  const guruWhere = {
+    OR: [
+      { kategori_pegawai: { in: ["ASATIDZ", "GURU", "Guru", "asatidz", "guru", "PENGAJAR"] } },
+      { kategori_pegawai: { contains: "ASATIDZ", mode: "insensitive" as const } },
+      { kategori_pegawai: { contains: "GURU", mode: "insensitive" as const } },
+      { jabatan: { contains: "Guru", mode: "insensitive" as const } },
+      { jabatan: { contains: "Pengajar", mode: "insensitive" as const } },
+      { mata_pelajaran: { not: null } },
+    ],
+  };
+
   // Asatidz yang belum absen
   const sudahAbsen = presensi.map((p) => p.pegawai_id);
-  const belumAbsen = await prisma.pegawai.findMany({
+  let belumAbsen = await prisma.pegawai.findMany({
     where: {
-      kategori_pegawai: { contains: "GURU" },
+      ...guruWhere,
       id: sudahAbsen.length > 0 ? { notIn: sudahAbsen } : undefined,
     },
     select: { id: true, nama_lengkap: true, jabatan: true },
@@ -48,12 +59,19 @@ export default async function PresensiAsatidz_Page() {
   });
 
   // Semua asatidz untuk modal input manual
-  const allAsatidz = await prisma.pegawai.findMany({
-    where: {
-      kategori_pegawai: { contains: "GURU" } },
+  let allAsatidz = await prisma.pegawai.findMany({
+    where: guruWhere,
     select: { id: true, nama_lengkap: true },
     orderBy: { nama_lengkap: 'asc' },
   });
+
+  if (allAsatidz.length === 0) {
+    allAsatidz = await prisma.pegawai.findMany({
+      select: { id: true, nama_lengkap: true },
+      orderBy: { nama_lengkap: 'asc' },
+    });
+    belumAbsen = allAsatidz.filter(a => !sudahAbsen.includes(a.id)).map(a => ({ ...a, jabatan: null }));
+  }
 
   return (
     <PresensiAsatidz

@@ -32,12 +32,13 @@ const NAV: NavItem[] = [
     href: "/presensi/santri/rekap",
     label: "Rekap Presensi Santri",
     icon: <BarChart3 size={18} />,
-    roles: ["admin", "kepala"],
+    roles: ["admin", "admin_super", "ADMIN_SUPER", "mudir", "MUDIR", "kepala", "KEPALA_SEKOLAH"],
   },
   {
     href: "/presensi/asatidz",
     label: "Absensi Guru",
     icon: <UserCheck size={18} />,
+    roles: ["admin", "admin_super", "ADMIN_SUPER", "mudir", "MUDIR"],
   },
   {
     href: "/tahfidz/mutabaah",
@@ -50,10 +51,22 @@ const NAV: NavItem[] = [
     icon: <BarChart3 size={18} />,
   },
   {
+    href: "/master/kelas",
+    label: "Data Kelas",
+    icon: <GraduationCap size={18} />,
+    roles: ["admin", "admin_super", "ADMIN_SUPER", "mudir", "MUDIR", "kepala", "KEPALA_SEKOLAH"],
+  },
+  {
+    href: "/master/mapel",
+    label: "Data Mapel",
+    icon: <BookOpen size={18} />,
+    roles: ["admin", "admin_super", "ADMIN_SUPER", "mudir", "MUDIR", "kepala", "KEPALA_SEKOLAH"],
+  },
+  {
     href: "/master/guru",
     label: "Data Guru",
     icon: <Users size={18} />,
-    roles: ["admin", "kepala"],
+    roles: ["admin", "admin_super", "ADMIN_SUPER", "mudir", "MUDIR", "kepala", "KEPALA_SEKOLAH"],
   },
 ];
 
@@ -78,8 +91,9 @@ export default function Sidebar({ user }: SidebarProps) {
     return pathname.startsWith(href);
   };
 
+  const userRole = (user?.role || "").toLowerCase().trim();
   const visibleNav = NAV.filter(
-    (item) => !item.roles || item.roles.includes(user.role)
+    (item) => !item.roles || item.roles.some((r) => r.toLowerCase() === userRole)
   );
 
   async function handleLogout() {

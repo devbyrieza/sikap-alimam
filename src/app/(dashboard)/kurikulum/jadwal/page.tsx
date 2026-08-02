@@ -8,6 +8,16 @@ export default function KurikulumJadwalPage() {
   const [tipePekan, setTipePekan] = useState("ganjil");
   const [loading, setLoading] = useState(false);
   const [jadwalList, setJadwalList] = useState<any[]>([]);
+  const [kelasList, setKelasList] = useState<{ id: string; nama: string }[]>([]);
+
+  useEffect(() => {
+    fetch("/api/master/kelas")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.kelas) setKelasList(data.kelas);
+      })
+      .catch(console.error);
+  }, []);
 
   useEffect(() => {
     // Simulasi Fetch API `/api/kurikulum/jadwal?tipe_pekan=${tipePekan}`
@@ -41,8 +51,11 @@ export default function KurikulumJadwalPage() {
           <label className="block text-sm font-medium text-gray-700 mb-1">Pilih Kelas</label>
           <select value={kelas} onChange={(e) => setKelas(e.target.value)} className="w-full rounded-xl border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 bg-gray-50">
             <option value="all">-- Semua Kelas --</option>
-            <option value="7">7 MTs</option>
-            <option value="IL">I'dad Lughowy</option>
+            {kelasList.map((k) => (
+              <option key={k.id} value={k.id}>
+                {k.nama}
+              </option>
+            ))}
           </select>
         </div>
         

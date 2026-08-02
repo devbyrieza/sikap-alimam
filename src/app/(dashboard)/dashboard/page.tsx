@@ -31,7 +31,17 @@ export default async function DashboardPage() {
     jurnalHariIni,
     hadirAsatidz,
   ] = await Promise.all([
-    prisma.pegawai.count({ where: { kategori_pegawai: { contains: "GURU" } } }),
+    prisma.pegawai.count({
+      where: {
+        OR: [
+          { kategori_pegawai: { in: ["ASATIDZ", "GURU", "Guru", "asatidz", "guru", "PENGAJAR"] } },
+          { kategori_pegawai: { contains: "ASATIDZ", mode: "insensitive" } },
+          { kategori_pegawai: { contains: "GURU", mode: "insensitive" } },
+          { jabatan: { contains: "Guru", mode: "insensitive" } },
+          { jabatan: { contains: "Pengajar", mode: "insensitive" } },
+        ],
+      },
+    }),
     prisma.santriAktif.count({ where: { is_active: true } }),
     prisma.jurnalMengajar.count({
       where: { tanggal: new Date(todayStr) },

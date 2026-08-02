@@ -2,8 +2,22 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { getSession } from '@/lib/auth';
 
-// GET: list presensi by tanggal (default hari ini)
+// GET: list presensi by tanggal (hanya Admin Super dan Mudir)
 export async function GET(req: NextRequest) {
+  const session = await getSession();
+  if (!session) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
+  const role = (session.role || "").toLowerCase();
+  const allowedRoles = ["admin", "admin_super", "mudir"];
+  if (!allowedRoles.includes(role)) {
+    return NextResponse.json(
+      { error: 'Forbidden: Hanya Admin Super dan Mudir yang memiliki akses melihat absensi guru' },
+      { status: 403 }
+    );
+  }
+
   const { searchParams } = new URL(req.url);
   const tanggalStr = searchParams.get('tanggal');
 
@@ -28,23 +42,46 @@ export async function GET(req: NextRequest) {
 
   // Asatidz yang belum absen
   const sudahAbsen = presensi.map((p) => p.pegawai_id);
-  const belumAbsen = await prisma.pegawai.findMany({
+  let belumAbsen = await prisma.pegawai.findMany({
     where: {
-      kategori_pegawai: { contains: "GURU" },
+      OR: [
+        { kategori_pegawai: { in: ["ASATIDZ", "GURU", "Guru", "asatidz", "guru", "PENGAJAR"] } },
+        { kategori_pegawai: { contains: "ASATIDZ", mode: "insensitive" } },
+        { kategori_pegawai: { contains: "GURU", mode: "insensitive" } },
+        { jabatan: { contains: "Guru", mode: "insensitive" } },
+        { jabatan: { contains: "Pengajar", mode: "insensitive" } },
+        { mata_pelajaran: { not: null } },
+      ],
       id: sudahAbsen.length > 0 ? { notIn: sudahAbsen } : undefined,
     },
     select: { id: true, nama_lengkap: true, jabatan: true },
     orderBy: { nama_lengkap: 'asc' },
   });
 
+  if (belumAbsen.length === 0 && presensi.length === 0) {
+    belumAbsen = await prisma.pegawai.findMany({
+      select: { id: true, nama_lengkap: true, jabatan: true },
+      orderBy: { nama_lengkap: 'asc' },
+    });
+  }
+
   return NextResponse.json({ presensi, belumAbsen, tanggal });
 }
 
-// POST: input manual oleh admin
+// POST: input manual oleh admin / mudir
 export async function POST(req: NextRequest) {
   const session = await getSession();
   if (!session) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
+  const role = (session.role || "").toLowerCase();
+  const allowedRoles = ["admin", "admin_super", "mudir"];
+  if (!allowedRoles.includes(role)) {
+    return NextResponse.json(
+      { error: 'Forbidden: Hanya Admin Super dan Mudir yang memiliki akses input absensi guru' },
+      { status: 403 }
+    );
   }
 
   const body = await req.json();

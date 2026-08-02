@@ -25,8 +25,17 @@ export async function GET(req: NextRequest) {
   }
 
   // Ambil daftar asatidz aktif
-  const asatidz = await prisma.pegawai.findMany({
-    where: { kategori_pegawai: { contains: "GURU" } },
+  let asatidz = await prisma.pegawai.findMany({
+    where: {
+      OR: [
+        { kategori_pegawai: { in: ["ASATIDZ", "GURU", "Guru", "asatidz", "guru", "PENGAJAR"] } },
+        { kategori_pegawai: { contains: "ASATIDZ", mode: "insensitive" } },
+        { kategori_pegawai: { contains: "GURU", mode: "insensitive" } },
+        { jabatan: { contains: "Guru", mode: "insensitive" } },
+        { jabatan: { contains: "Pengajar", mode: "insensitive" } },
+        { mata_pelajaran: { not: null } },
+      ],
+    },
     select: {
       id: true,
       nama_lengkap: true,
@@ -34,6 +43,17 @@ export async function GET(req: NextRequest) {
     },
     orderBy: { nama_lengkap: 'asc' },
   });
+
+  if (asatidz.length === 0) {
+    asatidz = await prisma.pegawai.findMany({
+      select: {
+        id: true,
+        nama_lengkap: true,
+        jabatan: true,
+      },
+      orderBy: { nama_lengkap: 'asc' },
+    });
+  }
 
   return NextResponse.json({
     valid: true,
