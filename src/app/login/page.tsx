@@ -67,13 +67,13 @@ export default function LoginPage() {
         <form onSubmit={handleSubmit}>
           <div style={{ marginBottom: 16 }}>
             <label style={{ display: "block", marginBottom: 6, fontSize: 13, fontWeight: 600, color: "#111827" }}>
-              Email / User ID / No. WA
+              User ID / Email / No. WA
             </label>
             <input
               type="text"
               name="email"
               className="input-field"
-              placeholder="nama@pesantren-alimam.com atau User ID / No. WA"
+              placeholder="User ID / nama@pesantren-alimam.com / No. WA"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
@@ -158,7 +158,7 @@ export default function LoginPage() {
              Info Login
           </p>
           <p style={{ marginBottom: 6, lineHeight: 1.5 }}>
-            Silakan login menggunakan <b>Email Login</b> atau <b>User ID Khusus</b> Anda.
+            Silakan login menggunakan <b>User ID</b>, <b>Email</b>, atau <b>No. WhatsApp</b> Anda.
           </p>
           <p style={{ color: "#9ca3af", lineHeight: 1.5 }}>
             Hubungi Kasi IT jika Anda belum memiliki akun atau lupa password.
