@@ -27,12 +27,43 @@ export default async function JurnalPage() {
   // 1. Fetch Jurnal
   const jurnal = await getJurnal();
 
-  // 2. Fetch Kelas Aktif
+  // 2. Fetch Kelas Aktif (Saat ini hanya 7 MTs dan IL, plus kelas yang ditambahkan Admin Super)
   const rawKelas = await prisma.kelas.findMany({
     where: { is_active: true },
     select: { id: true, nama: true, jenjang: true },
   });
-  const kelasList = sortKelas(rawKelas);
+
+  // Normalisasi & eliminasi duplikasi / placeholder yang belum berjalan
+  const seenKelas = new Set<string>();
+  const normalizedKelasList: { id: string; nama: string; jenjang: string | null }[] = [];
+
+  for (const k of rawKelas) {
+    let name = k.nama.trim();
+    // Standarisasi I'dad Lughowy ke IL
+    if (name === "I'dad Lughowy" || name === "I'dad" || name === "Idad Lughowy") {
+      name = "IL";
+    }
+
+    // Filter placeholder kelas yang belum dibuka saat ini (8 MTs, 9 MTs, 10 MA, 11 MA, 12 MA)
+    if (["8 MTs", "9 MTs", "10 MA", "11 MA", "12 MA"].includes(name)) {
+      continue;
+    }
+
+    if (!seenKelas.has(name)) {
+      seenKelas.add(name);
+      normalizedKelasList.push({ ...k, nama: name });
+    }
+  }
+
+  // Pastikan kelas 7 MTs dan IL selalu ada dalam daftar master
+  if (!seenKelas.has("7 MTs")) {
+    normalizedKelasList.push({ id: "kelas-7-mts", nama: "7 MTs", jenjang: "MTs" });
+  }
+  if (!seenKelas.has("IL")) {
+    normalizedKelasList.push({ id: "kelas-il", nama: "IL", jenjang: "Islamiyah" });
+  }
+
+  const kelasList = sortKelas(normalizedKelasList);
 
   // 3. Fetch Data Guru (ASATIDZ / GURU dari SIMPEG)
   let asatidzData = await prisma.pegawai.findMany({
@@ -83,19 +114,26 @@ export default async function JurnalPage() {
   });
   const asatidzList = Array.from(asatidzSet).sort((a, b) => a.localeCompare(b, "id"));
 
-  // Serialize Jurnal for Client Component
-  const jurnalSerialized = jurnal.map((j) => ({
-    id: j.id,
-    tanggal: j.tanggal.toISOString().split("T")[0],
-    asatidz: j.pegawai?.nama_lengkap || "-",
-    mapel: j.mapel?.nama || "-",
-    kelas: j.kelas?.nama || "-",
-    kelas_jenjang: j.kelas?.jenjang || null,
-    jam_ke: j.jam_ke ?? "-",
-    materi: j.materi,
-    kegiatan: j.kegiatan,
-    catatan: j.catatan ?? "",
-  }));
+  // Serialize Jurnal for Client Component (Normalisasi nama kelas I'dad Lughowy -> IL)
+  const jurnalSerialized = jurnal.map((j) => {
+    let kelasNama = j.kelas?.nama || "-";
+    if (kelasNama === "I'dad Lughowy" || kelasNama === "I'dad" || kelasNama === "Idad Lughowy") {
+      kelasNama = "IL";
+    }
+
+    return {
+      id: j.id,
+      tanggal: j.tanggal.toISOString().split("T")[0],
+      asatidz: j.pegawai?.nama_lengkap || "-",
+      mapel: j.mapel?.nama || "-",
+      kelas: kelasNama,
+      kelas_jenjang: j.kelas?.jenjang || null,
+      jam_ke: j.jam_ke ?? "-",
+      materi: j.materi,
+      kegiatan: j.kegiatan,
+      catatan: j.catatan ?? "",
+    };
+  });
 
   return (
     <div>

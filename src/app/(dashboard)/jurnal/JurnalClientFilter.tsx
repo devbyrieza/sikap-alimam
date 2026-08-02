@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, useMemo, useEffect } from "react";
-import { BookOpen, Filter, Calendar, User, GraduationCap, RotateCcw } from "lucide-react";
-import { getJenjangFromKelas, JenjangType } from "@/lib/kelas";
+import { useState, useMemo } from "react";
+import { BookOpen, Calendar, User, GraduationCap, RotateCcw } from "lucide-react";
+import { getJenjangFromKelas } from "@/lib/kelas";
 
 export type KelasObject = {
   id?: string;
@@ -47,33 +47,54 @@ export default function JurnalClientFilter({
   const [filterKelas, setFilterKelas] = useState("");
   const [filterAsatidz, setFilterAsatidz] = useState("");
 
-  // Normalisasi kelasList menjadi objek terstandar
+  // Normalisasi kelasList menjadi objek terstandar (hanya kelas aktif: 7 MTs dan IL)
   const normalizedKelasList = useMemo<KelasObject[]>(() => {
+    const list: KelasObject[] = [];
+    const seen = new Set<string>();
+
     if (kelasList.length > 0) {
-      return kelasList.map((k) => {
-        if (typeof k === "string") {
-          return { nama: k, jenjang: getJenjangFromKelas(k) };
+      for (const k of kelasList) {
+        let name = typeof k === "string" ? k.trim() : k.nama.trim();
+        if (name === "I'dad Lughowy" || name === "I'dad" || name === "Idad Lughowy") {
+          name = "IL";
         }
-        return {
-          id: k.id,
-          nama: k.nama,
-          jenjang: k.jenjang || getJenjangFromKelas(k.nama, k.jenjang),
-        };
+        // Jangan tampilkan placeholder yang belum berjalan
+        if (["8 MTs", "9 MTs", "10 MA", "11 MA", "12 MA"].includes(name)) {
+          continue;
+        }
+        if (!seen.has(name)) {
+          seen.add(name);
+          list.push({
+            id: typeof k === "string" ? name : k.id,
+            nama: name,
+            jenjang: typeof k === "string" ? getJenjangFromKelas(name) : (k.jenjang || getJenjangFromKelas(name, k.jenjang)),
+          });
+        }
+      }
+    } else {
+      // Fallback dari data jika tidak ada props
+      const set = new Set(data.map((j) => {
+        let n = j.kelas.trim();
+        if (n === "I'dad Lughowy" || n === "I'dad") n = "IL";
+        return n;
+      }));
+      set.forEach((nama) => {
+        if (!["8 MTs", "9 MTs", "10 MA", "11 MA", "12 MA"].includes(nama)) {
+          list.push({
+            nama,
+            jenjang: getJenjangFromKelas(nama),
+          });
+        }
       });
     }
 
-    // Derive dari data jika tidak ada props
-    const set = new Set(data.map((j) => j.kelas));
-    return Array.from(set).map((nama) => ({
-      nama,
-      jenjang: getJenjangFromKelas(nama),
-    }));
+    return list;
   }, [kelasList, data]);
 
-  // Daftar Kelas yang disaring berdasarkan Jenjang terpilih (Cascading Filter)
+  // Daftar Kelas yang disaring HANYA jika Jenjang sudah dipilih
   const availableClasses = useMemo(() => {
     if (!filterJenjang) {
-      return normalizedKelasList;
+      return [];
     }
     return normalizedKelasList.filter((k) => {
       const jenjang = getJenjangFromKelas(k.nama, k.jenjang);
@@ -81,22 +102,13 @@ export default function JurnalClientFilter({
     });
   }, [normalizedKelasList, filterJenjang]);
 
-  // Saat Jenjang berganti, jika kelas terpilih tidak valid di jenjang baru, reset kelas
+  // Saat Jenjang berganti, reset pilihan kelas
   const handleJenjangChange = (newJenjang: string) => {
     setFilterJenjang(newJenjang);
-    if (!newJenjang) return;
-
-    // Cek apakah kelas saat ini masih ada di jenjang baru
-    const isValid = normalizedKelasList.some((k) => {
-      return k.nama === filterKelas && getJenjangFromKelas(k.nama, k.jenjang) === newJenjang;
-    });
-
-    if (!isValid) {
-      setFilterKelas("");
-    }
+    setFilterKelas("");
   };
 
-  // Normalisasi Daftar Guru
+  // Normalisasi Daftar Guru dari SIMPEG + Jurnal
   const finalAsatidzList = useMemo(() => {
     const set = new Set<string>();
     asatidzList.forEach((a) => {
@@ -171,8 +183,8 @@ export default function JurnalClientFilter({
           />
         </div>
 
-        {/* 2. Filter Jenjang (MTs, IL, MA) */}
-        <div className="form-group" style={{ marginBottom: 0, minWidth: 160, flex: "1 1 150px" }}>
+        {/* 2. Filter Jenjang (Wajib dipilih sebelum filter kelas aktif) */}
+        <div className="form-group" style={{ marginBottom: 0, minWidth: 170, flex: "1 1 160px" }}>
           <label className="form-label" style={{ fontWeight: 600, fontSize: 13, display: "flex", alignItems: "center", gap: 6 }}>
             <GraduationCap size={14} color="var(--primary)" /> Filter Jenjang
           </label>
@@ -180,7 +192,10 @@ export default function JurnalClientFilter({
             className="form-control"
             value={filterJenjang}
             onChange={(e) => handleJenjangChange(e.target.value)}
-            style={{ fontWeight: filterJenjang ? 700 : 400 }}
+            style={{
+              fontWeight: filterJenjang ? 700 : 400,
+              borderColor: filterJenjang ? "var(--primary)" : undefined,
+            }}
           >
             <option value="">Semua Jenjang</option>
             <option value="MTs">MTs (Madrasah Tsanawiyah)</option>
@@ -189,8 +204,8 @@ export default function JurnalClientFilter({
           </select>
         </div>
 
-        {/* 3. Filter Kelas (Mengikuti Jenjang) */}
-        <div className="form-group" style={{ marginBottom: 0, minWidth: 170, flex: "1 1 160px" }}>
+        {/* 3. Filter Kelas (Hanya aktif jika Jenjang telah dipilih) */}
+        <div className="form-group" style={{ marginBottom: 0, minWidth: 180, flex: "1 1 170px" }}>
           <label className="form-label" style={{ fontWeight: 600, fontSize: 13, display: "flex", alignItems: "center", gap: 6 }}>
             <BookOpen size={14} color="var(--primary)" /> Filter Kelas
           </label>
@@ -198,21 +213,26 @@ export default function JurnalClientFilter({
             className="form-control"
             value={filterKelas}
             onChange={(e) => setFilterKelas(e.target.value)}
-            disabled={availableClasses.length === 0 && filterJenjang === "MA"}
+            disabled={!filterJenjang || (availableClasses.length === 0 && filterJenjang === "MA")}
+            style={{
+              background: !filterJenjang ? "#f9fafb" : "#ffffff",
+              cursor: !filterJenjang ? "not-allowed" : "pointer",
+              color: !filterJenjang ? "#9ca3af" : undefined,
+            }}
           >
-            <option value="">
-              {filterJenjang ? `Semua Kelas di ${filterJenjang}` : "Semua Kelas"}
-            </option>
-            {availableClasses.length === 0 && filterJenjang === "MA" ? (
-              <option value="" disabled>
-                (Belum ada kelas aktif MA)
-              </option>
+            {!filterJenjang ? (
+              <option value="">— Pilih Jenjang Dahulu —</option>
+            ) : availableClasses.length === 0 && filterJenjang === "MA" ? (
+              <option value="">(Belum ada kelas aktif MA)</option>
             ) : (
-              availableClasses.map((k) => (
-                <option key={k.nama} value={k.nama}>
-                  {k.nama}
-                </option>
-              ))
+              <>
+                <option value="">Semua Kelas di {filterJenjang}</option>
+                {availableClasses.map((k) => (
+                  <option key={k.nama} value={k.nama}>
+                    {k.nama}
+                  </option>
+                ))}
+              </>
             )}
           </select>
         </div>

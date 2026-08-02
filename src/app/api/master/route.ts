@@ -32,6 +32,31 @@ export async function GET() {
       }),
     ]);
 
+    // Normalisasi kelas (hanya 7 MTs dan IL yang aktif saat ini)
+    const seenKelas = new Set<string>();
+    const normalizedKelas: { id: string; nama: string; jenjang: string | null }[] = [];
+
+    for (const k of rawKelas) {
+      let name = k.nama.trim();
+      if (name === "I'dad Lughowy" || name === "I'dad" || name === "Idad Lughowy") {
+        name = "IL";
+      }
+      if (["8 MTs", "9 MTs", "10 MA", "11 MA", "12 MA"].includes(name)) {
+        continue;
+      }
+      if (!seenKelas.has(name)) {
+        seenKelas.add(name);
+        normalizedKelas.push({ ...k, nama: name });
+      }
+    }
+
+    if (!seenKelas.has("7 MTs")) {
+      normalizedKelas.push({ id: "kelas-7-mts", nama: "7 MTs", jenjang: "MTs" });
+    }
+    if (!seenKelas.has("IL")) {
+      normalizedKelas.push({ id: "kelas-il", nama: "IL", jenjang: "Islamiyah" });
+    }
+
     // Fallback jika belum terfilter spesifik, ambil semua pegawai
     let asatidz = rawAsatidz;
     if (asatidz.length === 0) {
@@ -41,7 +66,7 @@ export async function GET() {
       });
     }
 
-    const kelas = sortKelas(rawKelas);
+    const kelas = sortKelas(normalizedKelas);
 
     // Group mapel by kelas_id
     const mapelByKelas: Record<string, { id: string; nama: string; kategori: string }[]> = {};
