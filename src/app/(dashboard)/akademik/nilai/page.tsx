@@ -1,14 +1,14 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import { Search, Filter, Printer, Download } from "lucide-react";
+import React, { useState, useEffect, useMemo } from "react";
+import { Search, Filter, Printer, Download, BookOpen, GraduationCap } from "lucide-react";
 
 export default function FilterNilaiPage() {
   const [kelas, setKelas] = useState("");
   const [mapel, setMapel] = useState("");
   const [santri, setSantri] = useState("");
-  const [kelasList, setKelasList] = useState<{ id: string; nama: string }[]>([]);
-  const [mapelList, setMapelList] = useState<{ id: string; nama: string; kategori?: string }[]>([]);
+  const [kelasList, setKelasList] = useState<{ id: string; nama: string; jenjang?: string }[]>([]);
+  const [mapelByKelas, setMapelByKelas] = useState<Record<string, { id: string; nama: string; kategori?: string }[]>>({});
   
   const [data, setData] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
@@ -18,17 +18,37 @@ export default function FilterNilaiPage() {
       .then((res) => res.json())
       .then((resData) => {
         if (resData.kelas) setKelasList(resData.kelas);
-        if (resData.mapel) {
-          // Flatten all mapel
-          const allM: any[] = [];
-          Object.values(resData.mapel).forEach((arr: any) => {
-            if (Array.isArray(arr)) allM.push(...arr);
-          });
-          setMapelList(allM);
-        }
+        if (resData.mapel) setMapelByKelas(resData.mapel);
       })
       .catch(console.error);
   }, []);
+
+  // Filter mapel list strictly based on selected kelas
+  const availableMapelList = useMemo(() => {
+    if (kelas && mapelByKelas[kelas]) {
+      return mapelByKelas[kelas];
+    }
+    // Jika tidak ada kelas dipilih, kumpulkan semua mapel unik
+    const allM: { id: string; nama: string; kategori?: string }[] = [];
+    const seen = new Set<string>();
+    Object.values(mapelByKelas).forEach((arr) => {
+      if (Array.isArray(arr)) {
+        arr.forEach((m) => {
+          if (!seen.has(m.nama)) {
+            seen.add(m.nama);
+            allM.push(m);
+          }
+        });
+      }
+    });
+    return allM;
+  }, [kelas, mapelByKelas]);
+
+  // Reset mapel jika kelas berganti
+  const handleKelasChange = (newKelasId: string) => {
+    setKelas(newKelasId);
+    setMapel("");
+  };
 
   const handleFilter = async () => {
     setLoading(true);
@@ -38,8 +58,7 @@ export default function FilterNilaiPage() {
       if (mapel) params.append("mapel_id", mapel);
       if (santri) params.append("santri_id", santri);
 
-      // In real app, fetch from `/api/akademik/filter?${params.toString()}`
-      // For now, mock data
+      // Mock / query filter
       setTimeout(() => {
         setData([
           {
@@ -48,19 +67,19 @@ export default function FilterNilaiPage() {
             kelas: { nama: "7 MTs" },
             mapel: { nama: "Matematika", kategori: "umum" },
             nilai: 85,
-            keterangan: "Lulus"
+            keterangan: "Lulus",
           },
           {
             id: "2",
             santri: { nama_lengkap: "Ahmad Zaki", nis: "2026001" },
             kelas: { nama: "7 MTs" },
-            mapel: { nama: "Tauhid", kategori: "syariah" },
+            mapel: { nama: "Akidah", kategori: "syariah" },
             nilai: 92,
-            keterangan: "Mumtaz"
-          }
+            keterangan: "Mumtaz",
+          },
         ]);
         setLoading(false);
-      }, 1000);
+      }, 600);
     } catch (error) {
       console.error(error);
       setLoading(false);
@@ -71,43 +90,59 @@ export default function FilterNilaiPage() {
     <div className="p-6 max-w-7xl mx-auto space-y-6">
       <div className="bg-gradient-to-r from-blue-700 to-indigo-800 rounded-3xl p-8 text-white shadow-xl shadow-blue-900/20">
         <h1 className="text-3xl font-bold mb-2">Pusat Data Nilai Akademik</h1>
-        <p className="text-blue-100">Filter, pantau, dan unduh data nilai santri secara spesifik.</p>
+        <p className="text-blue-100">Filter, pantau, dan unduh data nilai santri per jenjang dan mata pelajaran.</p>
       </div>
 
       <div className="bg-white rounded-3xl p-6 shadow-sm border border-gray-100 flex flex-wrap gap-4 items-end">
+        {/* 1. Filter Kelas */}
         <div className="flex-1 min-w-[200px]">
-          <label className="block text-sm font-medium text-gray-700 mb-1">Filter Kelas</label>
-          <select value={kelas} onChange={(e) => setKelas(e.target.value)} className="w-full rounded-xl border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+          <label className="block text-sm font-semibold text-gray-700 mb-1">Pilih Kelas</label>
+          <select
+            value={kelas}
+            onChange={(e) => handleKelasChange(e.target.value)}
+            className="w-full rounded-xl border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 bg-gray-50 py-2.5 text-sm"
+          >
             <option value="">Semua Kelas</option>
             {kelasList.map((k) => (
               <option key={k.id} value={k.id}>
-                {k.nama}
+                {k.nama} {k.jenjang ? `(${k.jenjang})` : ""}
               </option>
             ))}
           </select>
         </div>
-        <div className="flex-1 min-w-[200px]">
-          <label className="block text-sm font-medium text-gray-700 mb-1">Filter Mapel</label>
-          <select value={mapel} onChange={(e) => setMapel(e.target.value)} className="w-full rounded-xl border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
-            <option value="">Semua Mata Pelajaran</option>
-            {mapelList.map((m, idx) => (
+
+        {/* 2. Filter Mapel (Menyesuaikan dengan kelas) */}
+        <div className="flex-1 min-w-[220px]">
+          <label className="block text-sm font-semibold text-gray-700 mb-1">
+            Filter Mata Pelajaran {kelas ? "(Sesuai Kelas)" : ""}
+          </label>
+          <select
+            value={mapel}
+            onChange={(e) => setMapel(e.target.value)}
+            className="w-full rounded-xl border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 bg-gray-50 py-2.5 text-sm"
+          >
+            <option value="">{kelas ? `Semua Mapel di Kelas Ini` : "Semua Mata Pelajaran"}</option>
+            {availableMapelList.map((m, idx) => (
               <option key={`${m.id}-${idx}`} value={m.id}>
                 {m.nama}
               </option>
             ))}
           </select>
         </div>
+
+        {/* 3. Cari Santri */}
         <div className="flex-1 min-w-[200px]">
-          <label className="block text-sm font-medium text-gray-700 mb-1">Cari Santri (NIS/Nama)</label>
+          <label className="block text-sm font-semibold text-gray-700 mb-1">Cari Santri (NIS / Nama)</label>
           <input 
             type="text" 
             placeholder="Ketik nama santri..." 
             value={santri} 
             onChange={(e) => setSantri(e.target.value)}
-            className="w-full rounded-xl border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+            className="w-full rounded-xl border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 bg-gray-50 py-2 text-sm"
           />
         </div>
-        <button onClick={handleFilter} className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-2.5 rounded-xl font-medium transition-all shadow-md flex items-center gap-2">
+
+        <button onClick={handleFilter} className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-2.5 rounded-xl font-bold transition-all shadow-md flex items-center gap-2">
           <Filter size={18} />
           Terapkan Filter
         </button>
@@ -129,43 +164,38 @@ export default function FilterNilaiPage() {
               </div>
             </div>
             <div className="overflow-x-auto">
-              <table className="min-w-full divide-y divide-gray-200">
+              <table className="min-w-full divide-y divide-gray-200 text-sm">
                 <thead className="bg-gray-50">
                   <tr>
                     <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Santri</th>
                     <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Kelas</th>
                     <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Mata Pelajaran</th>
                     <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Nilai</th>
-                    <th className="px-6 py-3 text-center text-xs font-semibold text-gray-500 uppercase tracking-wider">Aksi</th>
+                    <th className="px-6 py-3 text-center text-xs font-semibold text-gray-500 uppercase tracking-wider">Keterangan</th>
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
-                  {data.map((row) => (
-                    <tr key={row.id} className="hover:bg-gray-50">
+                  {data.map((item) => (
+                    <tr key={item.id} className="hover:bg-gray-50">
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="font-medium text-gray-900">{row.santri.nama_lengkap}</div>
-                        <div className="text-xs text-gray-500">{row.santri.nis}</div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-gray-600">{row.kelas.nama}</td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-gray-900">{row.mapel.nama}</div>
-                        <div className="text-xs text-blue-600 font-medium uppercase">{row.mapel.kategori}</div>
+                        <div className="font-bold text-gray-900">{item.santri.nama_lengkap}</div>
+                        <div className="text-xs text-gray-500 font-mono">NIS: {item.santri.nis}</div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <span className={`px-3 py-1 inline-flex text-sm leading-5 font-semibold rounded-full ${
-                          row.nilai >= 80 ? 'bg-green-100 text-green-800' : 'bg-amber-100 text-amber-800'
-                        }`}>
-                          {row.nilai}
+                        <span className="px-2.5 py-1 text-xs font-bold rounded-lg bg-blue-50 text-blue-700 border border-blue-200">
+                          {item.kelas.nama}
                         </span>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-center text-sm font-medium">
-                        <a 
-                          href={`/rapor/print/${row.id}`} 
-                          target="_blank"
-                          className="text-blue-600 hover:text-blue-900 flex items-center justify-center gap-1"
-                        >
-                          <Printer size={16} /> Cetak Rapor
-                        </a>
+                      <td className="px-6 py-4 whitespace-nowrap font-medium text-gray-800">
+                        {item.mapel.nama}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap font-mono font-bold text-blue-600">
+                        {item.nilai}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-center">
+                        <span className="px-3 py-1 text-xs font-bold rounded-full bg-emerald-100 text-emerald-800">
+                          {item.keterangan}
+                        </span>
                       </td>
                     </tr>
                   ))}

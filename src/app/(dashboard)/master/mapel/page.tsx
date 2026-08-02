@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useMemo } from "react";
-import { BookOpen, Plus, Trash2, Edit2, Save, X, Filter, Sparkles, Layers, Tag } from "lucide-react";
+import { BookOpen, Plus, Trash2, Edit2, Save, X, Filter, Sparkles, Layers, Tag, RefreshCw, CheckCircle2 } from "lucide-react";
 import Swal from "sweetalert2";
 
 interface KelasItem {
@@ -24,9 +24,10 @@ export default function MasterMapelPage() {
   const [mapel, setMapel] = useState<MapelItem[]>([]);
   const [kelasList, setKelasList] = useState<KelasItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [syncing, setSyncing] = useState(false);
 
   // Filter State
-  const [filterKelasId, setFilterKelasId] = useState("");
+  const [activeKelasTab, setActiveKelasTab] = useState<string>("all"); // "all" | "7 MTs" | "IL"
   const [filterKategori, setFilterKategori] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -60,6 +61,40 @@ export default function MasterMapelPage() {
   useEffect(() => {
     fetchData();
   }, []);
+
+  const handleSyncKurikulum = async () => {
+    const confirm = await Swal.fire({
+      title: "Sinkronkan Kurikulum Ust Aziz?",
+      text: "Sistem akan memastikan seluruh mapel standar Kelas 7 MTs dan Kelas IL terdaftar dan aktif secara terpisah di database.",
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonColor: "#b45309",
+      cancelButtonColor: "#6b7280",
+      confirmButtonText: "Ya, Sinkronkan Sekarang",
+      cancelButtonText: "Batal",
+    });
+
+    if (!confirm.isConfirmed) return;
+
+    setSyncing(true);
+    try {
+      const res = await fetch("/api/setup-db/cleanup-kelas");
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Gagal sinkronisasi");
+
+      await Swal.fire({
+        icon: "success",
+        title: "Sinkronisasi Berhasil!",
+        text: "Kurikulum resmi Ustadz Aziz untuk 7 MTs dan IL berhasil disinkronkan ke database.",
+        confirmButtonColor: "#b45309",
+      });
+      fetchData();
+    } catch (err: any) {
+      Swal.fire("Gagal", err.message, "error");
+    } finally {
+      setSyncing(false);
+    }
+  };
 
   const handleAdd = async () => {
     if (!form.nama.trim() || !form.kelas_id) {
@@ -200,55 +235,31 @@ export default function MasterMapelPage() {
     switch (kategori) {
       case "syariah":
         return (
-          <span
-            style={{
-              background: "#dcfce7",
-              color: "#15803d",
-              padding: "4px 10px",
-              borderRadius: 20,
-              fontSize: 12,
-              fontWeight: 700,
-            }}
-          >
+          <span className="px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 border border-emerald-200">
             Ilmu Syari'ah
           </span>
         );
       case "bahasa":
         return (
-          <span
-            style={{
-              background: "#fef3c7",
-              color: "#b45309",
-              padding: "4px 10px",
-              borderRadius: 20,
-              fontSize: 12,
-              fontWeight: 700,
-            }}
-          >
+          <span className="px-2.5 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-800 border border-amber-200">
             Bahasa Arab
           </span>
         );
       default:
         return (
-          <span
-            style={{
-              background: "#dbeafe",
-              color: "#1d4ed8",
-              padding: "4px 10px",
-              borderRadius: 20,
-              fontSize: 12,
-              fontWeight: 700,
-            }}
-          >
+          <span className="px-2.5 py-1 rounded-full text-xs font-bold bg-blue-100 text-blue-800 border border-blue-200">
             Ilmu Umum
           </span>
         );
     }
   };
 
+  // Filter mapel list based on active tab, category, and search query
   const filteredMapel = useMemo(() => {
     return mapel.filter((m) => {
-      if (filterKelasId && m.kelas_id !== filterKelasId) return false;
+      const kelasName = m.kelas?.nama || "";
+      if (activeKelasTab === "7 MTs" && kelasName !== "7 MTs") return false;
+      if (activeKelasTab === "IL" && kelasName !== "IL" && kelasName !== "I'dad Lughowy") return false;
       if (filterKategori && m.kategori !== filterKategori) return false;
       if (searchQuery) {
         const q = searchQuery.toLowerCase();
@@ -258,106 +269,137 @@ export default function MasterMapelPage() {
       }
       return true;
     });
-  }, [mapel, filterKelasId, filterKategori, searchQuery]);
+  }, [mapel, activeKelasTab, filterKategori, searchQuery]);
+
+  // Statistics
+  const count7MTs = mapel.filter((m) => m.kelas?.nama === "7 MTs").length;
+  const countIL = mapel.filter((m) => m.kelas?.nama === "IL" || m.kelas?.nama === "I'dad Lughowy").length;
 
   return (
-    <div style={{ padding: "24px 28px" }} className="space-y-6">
+    <div className="p-6 max-w-7xl mx-auto space-y-6">
       {/* Header Banner */}
-      <div
-        className="card"
-        style={{
-          background: "linear-gradient(135deg, #b45309, #78350f)",
-          color: "white",
-          padding: "28px 32px",
-          borderRadius: 20,
-          boxShadow: "0 12px 30px rgba(180, 83, 9, 0.25)",
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          flexWrap: "wrap",
-          gap: 16,
-        }}
-      >
+      <div className="bg-gradient-to-r from-amber-800 via-amber-700 to-yellow-900 rounded-3xl p-8 text-white shadow-xl shadow-amber-900/20 flex flex-wrap justify-between items-center gap-4">
         <div>
-          <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 6 }}>
-            <BookOpen size={28} color="#fde68a" />
-            <h1 style={{ fontSize: 24, fontWeight: 800, margin: 0, color: "white" }}>
-              Master Mata Pelajaran (Mapel)
+          <div className="flex items-center gap-3 mb-2">
+            <BookOpen size={30} className="text-amber-300" />
+            <h1 className="text-2xl sm:text-3xl font-extrabold">
+              Master Mata Pelajaran Terpisah (7 MTs &amp; IL)
             </h1>
           </div>
-          <p style={{ margin: 0, color: "rgba(255, 255, 255, 0.85)", fontSize: 14 }}>
-            Kelola kurikulum, pengelompokan mapel (Syariah, Bahasa, Umum), nama cetak rapor Arab, dan distribusi kelas.
+          <p className="text-amber-100 text-sm max-w-2xl">
+            Pemisahan kurikulum resmi (Revisi 31 Juli 2026 - Ust. Aziz). Kelola mata pelajaran khusus Kelas 7 MTs dan Kelas IL secara independen.
           </p>
         </div>
 
-        <button
-          onClick={() => {
-            setIsAdding(!isAdding);
-            setEditingId(null);
-          }}
-          className="btn"
-          style={{
-            background: "white",
-            color: "#78350f",
-            fontWeight: 700,
-            padding: "10px 20px",
-            borderRadius: 12,
-            boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
-            display: "flex",
-            alignItems: "center",
-            gap: 8,
-          }}
-        >
-          {isAdding ? <X size={18} /> : <Plus size={18} />}
-          {isAdding ? "Tutup Form" : "Tambah Mapel Baru"}
-        </button>
+        <div className="flex items-center gap-3">
+          <button
+            onClick={handleSyncKurikulum}
+            disabled={syncing}
+            className="bg-amber-900/60 hover:bg-amber-900/90 text-amber-100 border border-amber-400/30 font-bold px-4 py-2.5 rounded-xl shadow-sm flex items-center gap-2 text-xs sm:text-sm transition-all"
+            title="Sinkronkan daftar mapel dengan standar kurikulum resmi Ust Aziz"
+          >
+            <RefreshCw size={16} className={syncing ? "animate-spin" : ""} />
+            {syncing ? "Sinkronisasi..." : "Sinkron Kurikulum Ust Aziz"}
+          </button>
+
+          <button
+            onClick={() => {
+              setIsAdding(!isAdding);
+              setEditingId(null);
+            }}
+            className="bg-white hover:bg-amber-50 text-amber-900 font-extrabold px-5 py-2.5 rounded-xl shadow-md flex items-center gap-2 text-xs sm:text-sm transition-all"
+          >
+            {isAdding ? <X size={18} /> : <Plus size={18} />}
+            {isAdding ? "Tutup Form" : "Tambah Mapel"}
+          </button>
+        </div>
+      </div>
+
+      {/* Tabs Pemisahan Kelas */}
+      <div className="flex flex-wrap items-center justify-between gap-3 bg-white p-2.5 rounded-2xl border border-slate-200 shadow-sm">
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={() => setActiveKelasTab("all")}
+            className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 ${
+              activeKelasTab === "all"
+                ? "bg-slate-800 text-white shadow-sm"
+                : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+            }`}
+          >
+            <span>Semua Kelas</span>
+            <span className="bg-white/20 text-current px-1.5 py-0.5 rounded-full text-[10px]">
+              {mapel.length}
+            </span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setActiveKelasTab("7 MTs")}
+            className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 ${
+              activeKelasTab === "7 MTs"
+                ? "bg-sky-700 text-white shadow-sm"
+                : "bg-sky-50 text-sky-800 hover:bg-sky-100"
+            }`}
+          >
+            <span>📚 Khusus 7 MTs</span>
+            <span className="bg-white/20 text-current px-1.5 py-0.5 rounded-full text-[10px]">
+              {count7MTs}
+            </span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setActiveKelasTab("IL")}
+            className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 ${
+              activeKelasTab === "IL"
+                ? "bg-amber-700 text-white shadow-sm"
+                : "bg-amber-50 text-amber-800 hover:bg-amber-100"
+            }`}
+          >
+            <span>📖 Khusus IL (I&apos;dad Lughowy)</span>
+            <span className="bg-white/20 text-current px-1.5 py-0.5 rounded-full text-[10px]">
+              {countIL}
+            </span>
+          </button>
+        </div>
+
+        <div className="text-xs text-slate-500 font-semibold px-2">
+          Menampilkan {filteredMapel.length} mata pelajaran
+        </div>
       </div>
 
       {/* Form Tambah Mapel */}
       {isAdding && (
-        <div
-          className="card"
-          style={{
-            padding: "24px 28px",
-            borderRadius: 16,
-            border: "2px solid #fde68a",
-            background: "#fffdf5",
-          }}
-        >
-          <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 16 }}>
-            <Sparkles size={20} color="#b45309" />
-            <h3 style={{ fontSize: 16, fontWeight: 700, margin: 0, color: "#78350f" }}>
+        <div className="bg-amber-50/70 border-2 border-amber-300 p-6 rounded-2xl shadow-sm space-y-4">
+          <div className="flex items-center gap-2">
+            <Sparkles size={20} className="text-amber-700" />
+            <h3 className="text-base font-bold text-amber-900">
               Pendaftaran Mata Pelajaran Baru (Admin Super)
             </h3>
           </div>
 
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
-              gap: 16,
-            }}
-          >
-            <div className="form-group" style={{ marginBottom: 0 }}>
-              <label className="form-label" style={{ fontWeight: 600 }}>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+            <div>
+              <label className="block text-xs font-bold text-slate-700 mb-1">
                 Nama Mata Pelajaran *
               </label>
               <input
                 type="text"
-                className="form-control"
-                placeholder="Contoh: Fiqh, Nahwu, Matematika"
+                className="w-full px-3 py-2 border border-slate-300 rounded-xl bg-white text-sm focus:ring-2 focus:ring-amber-500/30 outline-none"
+                placeholder="Contoh: Fiqh, Nahwu, IPA"
                 value={form.nama}
                 onChange={(e) => setForm({ ...form, nama: e.target.value })}
               />
             </div>
 
-            <div className="form-group" style={{ marginBottom: 0 }}>
-              <label className="form-label" style={{ fontWeight: 600 }}>
+            <div>
+              <label className="block text-xs font-bold text-slate-700 mb-1">
                 Nama Arab (Untuk Cetak Rapor)
               </label>
               <input
                 type="text"
-                className="form-control font-arabic text-lg"
+                className="w-full px-3 py-2 border border-slate-300 rounded-xl bg-white text-sm focus:ring-2 focus:ring-amber-500/30 outline-none font-arabic text-right"
                 dir="rtl"
                 placeholder="الفقه"
                 value={form.nama_arab}
@@ -365,12 +407,12 @@ export default function MasterMapelPage() {
               />
             </div>
 
-            <div className="form-group" style={{ marginBottom: 0 }}>
-              <label className="form-label" style={{ fontWeight: 600 }}>
+            <div>
+              <label className="block text-xs font-bold text-slate-700 mb-1">
                 Kelompok / Kategori *
               </label>
               <select
-                className="form-control"
+                className="w-full px-3 py-2 border border-slate-300 rounded-xl bg-white text-sm focus:ring-2 focus:ring-amber-500/30 outline-none cursor-pointer"
                 value={form.kategori}
                 onChange={(e) => setForm({ ...form, kategori: e.target.value })}
               >
@@ -380,30 +422,30 @@ export default function MasterMapelPage() {
               </select>
             </div>
 
-            <div className="form-group" style={{ marginBottom: 0 }}>
-              <label className="form-label" style={{ fontWeight: 600 }}>
+            <div>
+              <label className="block text-xs font-bold text-slate-700 mb-1">
                 Tingkat Kelas Pengampu *
               </label>
               <select
-                className="form-control"
+                className="w-full px-3 py-2 border border-slate-300 rounded-xl bg-white text-sm focus:ring-2 focus:ring-amber-500/30 outline-none cursor-pointer"
                 value={form.kelas_id}
                 onChange={(e) => setForm({ ...form, kelas_id: e.target.value })}
               >
                 <option value="">-- Pilih Kelas --</option>
                 {kelasList.map((k) => (
                   <option key={k.id} value={k.id}>
-                    {k.nama}
+                    {k.nama} {k.jenjang ? `(${k.jenjang})` : ""}
                   </option>
                 ))}
               </select>
             </div>
           </div>
 
-          <div style={{ display: "flex", justifyContent: "flex-end", gap: 8, marginTop: 16 }}>
+          <div className="flex justify-end gap-3 pt-2">
             <button
               type="button"
               onClick={() => setIsAdding(false)}
-              className="btn btn-ghost"
+              className="px-4 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-200 transition-colors"
             >
               Batal
             </button>
@@ -411,15 +453,7 @@ export default function MasterMapelPage() {
               type="button"
               onClick={handleAdd}
               disabled={submitting}
-              className="btn"
-              style={{
-                background: "#b45309",
-                color: "white",
-                fontWeight: 600,
-                display: "flex",
-                alignItems: "center",
-                gap: 8,
-              }}
+              className="bg-amber-700 hover:bg-amber-800 text-white font-bold px-5 py-2 rounded-xl text-xs flex items-center gap-1.5 shadow-sm transition-all disabled:opacity-50"
             >
               <Save size={16} />
               {submitting ? "Menyimpan..." : "Simpan Mata Pelajaran"}
@@ -429,47 +463,22 @@ export default function MasterMapelPage() {
       )}
 
       {/* Filter Bar */}
-      <div
-        className="card"
-        style={{
-          display: "flex",
-          gap: 12,
-          flexWrap: "wrap",
-          alignItems: "flex-end",
-          padding: "16px 20px",
-        }}
-      >
-        <div className="form-group" style={{ marginBottom: 0, minWidth: 200, flex: 1 }}>
-          <label className="form-label">Cari Nama Mapel</label>
+      <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex flex-wrap gap-4 items-end">
+        <div className="flex-1 min-w-[200px]">
+          <label className="block text-xs font-bold text-slate-700 mb-1">Cari Nama Mapel</label>
           <input
             type="text"
-            className="form-control"
+            className="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm outline-none focus:ring-2 focus:ring-amber-500/30"
             placeholder="Ketik nama mapel / Arab..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
         </div>
 
-        <div className="form-group" style={{ marginBottom: 0, minWidth: 180 }}>
-          <label className="form-label">Filter Kelas</label>
+        <div className="min-w-[180px]">
+          <label className="block text-xs font-bold text-slate-700 mb-1">Filter Kategori</label>
           <select
-            className="form-control"
-            value={filterKelasId}
-            onChange={(e) => setFilterKelasId(e.target.value)}
-          >
-            <option value="">Semua Kelas</option>
-            {kelasList.map((k) => (
-              <option key={k.id} value={k.id}>
-                {k.nama}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <div className="form-group" style={{ marginBottom: 0, minWidth: 180 }}>
-          <label className="form-label">Filter Kategori</label>
-          <select
-            className="form-control"
+            className="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm outline-none focus:ring-2 focus:ring-amber-500/30 bg-white cursor-pointer"
             value={filterKategori}
             onChange={(e) => setFilterKategori(e.target.value)}
           >
@@ -480,105 +489,92 @@ export default function MasterMapelPage() {
           </select>
         </div>
 
-        {(searchQuery || filterKelasId || filterKategori) && (
+        {(searchQuery || filterKategori || activeKelasTab !== "all") && (
           <button
-            className="btn btn-ghost btn-sm"
-            style={{ marginBottom: 0 }}
             onClick={() => {
               setSearchQuery("");
-              setFilterKelasId("");
               setFilterKategori("");
+              setActiveKelasTab("all");
             }}
+            className="px-3 py-2 text-xs font-semibold text-slate-500 hover:text-slate-800"
           >
             Reset Filter
           </button>
         )}
-
-        <div
-          style={{
-            marginLeft: "auto",
-            fontSize: 13,
-            color: "var(--text-muted)",
-            alignSelf: "center",
-          }}
-        >
-          {filteredMapel.length} mata pelajaran ditampilkan
-        </div>
       </div>
 
       {/* Table */}
-      <div className="card" style={{ padding: 0, overflow: "hidden", borderRadius: 16 }}>
+      <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
         {loading ? (
-          <div style={{ padding: 40, textAlign: "center", color: "var(--text-muted)" }}>
+          <div className="p-12 text-center text-slate-400">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-amber-600 mx-auto mb-3"></div>
             Memuat data mata pelajaran...
           </div>
         ) : filteredMapel.length === 0 ? (
-          <div style={{ padding: 40, textAlign: "center", color: "var(--text-muted)" }}>
-            Tidak ada data mata pelajaran yang sesuai filter.
+          <div className="p-12 text-center text-slate-400 text-sm">
+            Tidak ada data mata pelajaran yang sesuai dengan filter.
           </div>
         ) : (
-          <div className="table-wrap">
-            <table>
-              <thead>
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm text-left">
+              <thead className="bg-slate-50 text-slate-600 font-semibold uppercase text-xs border-b border-slate-200">
                 <tr>
-                  <th style={{ width: 50, textAlign: "center" }}>No</th>
-                  <th>Mata Pelajaran</th>
-                  <th style={{ textAlign: "right" }}>Nama Arab (Rapor)</th>
-                  <th style={{ textAlign: "center" }}>Kelompok / Kategori</th>
-                  <th style={{ textAlign: "center" }}>Tingkat Kelas</th>
-                  <th style={{ textAlign: "right" }}>Aksi</th>
+                  <th className="px-5 py-4 w-12 text-center">No</th>
+                  <th className="px-5 py-4">Mata Pelajaran</th>
+                  <th className="px-5 py-4 text-right">Nama Arab (Rapor)</th>
+                  <th className="px-5 py-4 text-center">Kelompok / Kategori</th>
+                  <th className="px-5 py-4 text-center">Tingkat Kelas</th>
+                  <th className="px-5 py-4 text-right">Aksi</th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody className="divide-y divide-slate-100">
                 {filteredMapel.map((m, idx) => {
                   const isEditing = editingId === m.id;
+                  const is7MTs = m.kelas?.nama === "7 MTs";
 
                   return (
-                    <tr key={m.id} style={{ background: isEditing ? "#fffbf0" : undefined }}>
-                      <td style={{ textAlign: "center", fontWeight: 600, color: "var(--text-muted)" }}>
+                    <tr key={m.id} className={`hover:bg-amber-50/30 transition-colors ${isEditing ? "bg-amber-50/60" : ""}`}>
+                      <td className="px-5 py-4 text-center font-bold text-slate-400">
                         {idx + 1}
                       </td>
 
-                      <td>
+                      <td className="px-5 py-4">
                         {isEditing ? (
                           <input
                             type="text"
-                            className="form-control"
+                            className="w-full px-2.5 py-1.5 border border-slate-300 rounded-lg text-sm"
                             value={editForm.nama}
                             onChange={(e) => setEditForm({ ...editForm, nama: e.target.value })}
-                            style={{ padding: "6px 10px", fontSize: 14 }}
                           />
                         ) : (
-                          <span style={{ fontWeight: 700, fontSize: 14, color: "var(--text-main)" }}>
+                          <span className="font-bold text-slate-800">
                             {m.nama}
                           </span>
                         )}
                       </td>
 
-                      <td style={{ textAlign: "right" }}>
+                      <td className="px-5 py-4 text-right">
                         {isEditing ? (
                           <input
                             type="text"
                             dir="rtl"
-                            className="form-control font-arabic"
+                            className="w-full px-2.5 py-1.5 border border-slate-300 rounded-lg text-sm font-arabic text-right"
                             value={editForm.nama_arab}
                             onChange={(e) => setEditForm({ ...editForm, nama_arab: e.target.value })}
-                            style={{ padding: "6px 10px", fontSize: 15 }}
                           />
                         ) : (
-                          <span className="font-arabic" style={{ fontSize: 16, color: "#92400e", fontWeight: 600 }}>
+                          <span className="font-arabic text-base text-amber-900 font-semibold">
                             {m.nama_arab || "-"}
                           </span>
                         )}
                       </td>
 
-                      <td style={{ textAlign: "center" }}>
+                      <td className="px-5 py-4 text-center">
                         {isEditing ? (
                           <select
-                            className="form-control"
+                            className="px-2.5 py-1.5 border border-slate-300 rounded-lg text-xs bg-white"
                             value={editForm.kategori}
                             onChange={(e) => setEditForm({ ...editForm, kategori: e.target.value })}
-                            style={{ padding: "6px 10px", fontSize: 13 }}
                           >
                             <option value="syariah">Ilmu Syari'ah</option>
                             <option value="bahasa">Ilmu Bahasa Arab</option>
@@ -589,13 +585,12 @@ export default function MasterMapelPage() {
                         )}
                       </td>
 
-                      <td style={{ textAlign: "center" }}>
+                      <td className="px-5 py-4 text-center">
                         {isEditing ? (
                           <select
-                            className="form-control"
+                            className="px-2.5 py-1.5 border border-slate-300 rounded-lg text-xs bg-white"
                             value={editForm.kelas_id}
                             onChange={(e) => setEditForm({ ...editForm, kelas_id: e.target.value })}
-                            style={{ padding: "6px 10px", fontSize: 13 }}
                           >
                             {kelasList.map((k) => (
                               <option key={k.id} value={k.id}>
@@ -605,56 +600,49 @@ export default function MasterMapelPage() {
                           </select>
                         ) : (
                           <span
-                            style={{
-                              background: "rgba(124, 16, 16, 0.08)",
-                              color: "var(--primary-dark)",
-                              padding: "3px 12px",
-                              borderRadius: 20,
-                              fontSize: 12,
-                              fontWeight: 700,
-                            }}
+                            className={`px-3 py-1 rounded-full text-xs font-black border ${
+                              is7MTs
+                                ? "bg-sky-100 text-sky-800 border-sky-300"
+                                : "bg-amber-100 text-amber-800 border-amber-300"
+                            }`}
                           >
                             {m.kelas?.nama || "-"}
                           </span>
                         )}
                       </td>
 
-                      <td style={{ textAlign: "right" }}>
+                      <td className="px-5 py-4 text-right">
                         {isEditing ? (
-                          <div style={{ display: "inline-flex", gap: 6 }}>
+                          <div className="inline-flex gap-1.5">
                             <button
                               onClick={() => handleSaveEdit(m.id)}
                               disabled={submitting}
-                              className="btn btn-primary btn-sm"
-                              style={{ padding: "6px 12px" }}
+                              className="px-3 py-1.5 bg-amber-700 text-white rounded-lg text-xs font-bold hover:bg-amber-800 flex items-center gap-1 shadow-sm"
                             >
                               <Save size={14} /> Simpan
                             </button>
                             <button
                               onClick={() => setEditingId(null)}
-                              className="btn btn-ghost btn-sm"
-                              style={{ padding: "6px 10px" }}
+                              className="px-2.5 py-1.5 text-slate-500 hover:text-slate-700 text-xs font-semibold"
                             >
                               Batal
                             </button>
                           </div>
                         ) : (
-                          <div style={{ display: "inline-flex", gap: 6 }}>
+                          <div className="inline-flex gap-1">
                             <button
                               onClick={() => handleStartEdit(m)}
-                              className="btn btn-ghost btn-sm"
-                              title="Edit Mata Pelajaran"
-                              style={{ padding: "6px 10px" }}
+                              className="p-1.5 text-slate-400 hover:text-amber-700 hover:bg-amber-50 rounded-lg transition-colors"
+                              title="Edit Mapel"
                             >
-                              <Edit2 size={14} />
+                              <Edit2 size={16} />
                             </button>
                             <button
                               onClick={() => handleDelete(m)}
-                              className="btn btn-ghost btn-sm"
-                              title="Hapus Mata Pelajaran"
-                              style={{ padding: "6px 10px", color: "#dc2626" }}
+                              className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                              title="Hapus Mapel"
                             >
-                              <Trash2 size={14} />
+                              <Trash2 size={16} />
                             </button>
                           </div>
                         )}
