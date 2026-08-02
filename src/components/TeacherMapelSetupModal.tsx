@@ -122,8 +122,18 @@ export default function TeacherMapelSetupModal({
         const saved = localStorage.getItem(DRAFT_KEY);
         if (saved) {
           const parsed = JSON.parse(saved);
-          if (parsed && typeof parsed === "object") setFormData(prev => ({ ...prev, ...parsed }));
-        }
+          if (parsed && typeof parsed === "object") {
+            setFormData(prev => {
+              const merged = { ...prev };
+              // Hanya ambil draft jika nilainya ada (truthy), agar draft kosong tidak menimpa data asli dari database
+              for (const key in parsed) {
+                if (parsed[key] !== "" && parsed[key] !== null && parsed[key] !== undefined) {
+                  merged[key as keyof typeof prev] = parsed[key];
+                }
+              }
+              return merged;
+            });
+          }
       } catch { /* ignore */ }
     }
   }, [needsSetup]);
