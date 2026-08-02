@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getSession } from "@/lib/auth";
+import { syncAsatidzMapel } from "@/lib/syncAsatidzMapel";
 
 export async function GET() {
   try {
@@ -162,12 +163,9 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    // Sync user table nama if changed
-    if (session.userId) {
-      await prisma.user.update({
-        where: { id: session.userId },
-        data: { nama: nama_lengkap.trim() },
-      }).catch((e) => console.warn("Failed to update user.nama:", e));
+    // Synchronize relational asatidz_mapel if teacher
+    if (savedPegawai.id) {
+      await syncAsatidzMapel(savedPegawai.id, savedPegawai.mata_pelajaran);
     }
 
     return NextResponse.json({

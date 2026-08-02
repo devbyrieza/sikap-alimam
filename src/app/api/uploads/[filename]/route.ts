@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { readFile } from "fs/promises";
+import { readFile, access } from "fs/promises";
 import path from "path";
 
 export async function GET(
@@ -9,12 +9,31 @@ export async function GET(
   try {
     const { filename } = await params;
 
-    const uploadDir = process.env.NODE_ENV === "production"
-      ? "/app/storage_data/uploads"
-      : path.join(process.cwd(), "storage_data", "uploads");
+    // Resolve upload directory candidates
+    const candidateDirs = process.env.NODE_ENV === "production"
+      ? ["/app/storage_data/uploads"]
+      : [
+          path.join(process.cwd(), "storage_data", "uploads"),
+          path.join(process.cwd(), "..", "simpeg-alimam", "storage_data", "uploads"),
+        ];
 
-    const filePath = path.join(uploadDir, filename);
-    const fileBuffer = await readFile(filePath);
+    let foundFilePath: string | null = null;
+    for (const dir of candidateDirs) {
+      const p = path.join(dir, filename);
+      try {
+        await access(p);
+        foundFilePath = p;
+        break;
+      } catch {
+        // Try next candidate
+      }
+    }
+
+    if (!foundFilePath) {
+      return NextResponse.json({ error: "File tidak ditemukan" }, { status: 404 });
+    }
+
+    const fileBuffer = await readFile(foundFilePath);
 
     const ext = path.extname(filename).toLowerCase();
     let contentType = "image/png";
