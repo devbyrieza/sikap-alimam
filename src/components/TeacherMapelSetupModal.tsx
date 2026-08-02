@@ -134,6 +134,7 @@ export default function TeacherMapelSetupModal({
               return merged;
             });
           }
+        }
       } catch { /* ignore */ }
     }
   }, [needsSetup]);
