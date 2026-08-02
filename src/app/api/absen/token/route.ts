@@ -36,8 +36,14 @@ export async function GET() {
 export async function POST(req: NextRequest) {
   void req; // unused but required signature
   const session = await getSession();
-  if (!session || session.role !== 'admin') {
+  if (!session) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
+  const role = (session.role || '').toLowerCase().trim();
+  const allowedRoles = ['admin', 'admin_super', 'mudir'];
+  if (!allowedRoles.includes(role)) {
+    return NextResponse.json({ error: 'Forbidden: Hanya Admin Super dan Mudir yang berhak generate token' }, { status: 403 });
   }
 
   const today = new Date();

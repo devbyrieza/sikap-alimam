@@ -1,4 +1,6 @@
 import { prisma } from '@/lib/prisma';
+import { getSession } from '@/lib/auth';
+import { redirect } from 'next/navigation';
 import PresensiAsatidz from './PresensiAsatidz';
 
 export const dynamic = 'force-dynamic';
@@ -19,6 +21,17 @@ export type PresensiItem = {
 };
 
 export default async function PresensiAsatidz_Page() {
+  const session = await getSession();
+  if (!session) {
+    redirect('/login');
+  }
+
+  const userRole = (session.role || '').toLowerCase().trim();
+  const allowedRoles = ['admin', 'admin_super', 'mudir'];
+  if (!allowedRoles.includes(userRole)) {
+    redirect('/dashboard');
+  }
+
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
