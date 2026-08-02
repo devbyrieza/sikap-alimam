@@ -62,13 +62,12 @@ export async function GET() {
         });
       }
 
-      // Generate NIP (Nomor Induk Pegawai) if not exist
+      // Generate NIP (Nomor Induk Pegawai) if not exist or too short
       let nipPegawai = pegawai.nip;
-      if (!nipPegawai) {
-        // Simple NIP format: 26 + 3 random digits, e.g., 26101
-        // To be safe, we just use a 5-digit sequence logic based on current loop index or a random number
-        const randomDigits = Math.floor(100 + Math.random() * 900); // 100 to 999
-        nipPegawai = `26${randomDigits}`; // e.g. 26101, 26999
+      if (!nipPegawai || nipPegawai.length < 10) {
+        // Format NIP 10 Digit: 2026 (Tahun) + 08 (Bulan) + 4 digit random (e.g. 2026081234)
+        const randomDigits = Math.floor(1000 + Math.random() * 9000); // 1000 to 9999
+        nipPegawai = `202608${randomDigits}`; 
         
         try {
           await prisma.pegawai.update({
@@ -76,8 +75,7 @@ export async function GET() {
             data: { nip: nipPegawai }
           });
         } catch(e) {
-          // In case of unique constraint violation (very rare), just try again with another number
-          nipPegawai = `26${Math.floor(100 + Math.random() * 900)}`;
+          nipPegawai = `202608${Math.floor(1000 + Math.random() * 9000)}`;
           await prisma.pegawai.update({
             where: { id: pegawai.id },
             data: { nip: nipPegawai }
