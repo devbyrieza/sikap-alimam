@@ -62,6 +62,7 @@ export default function PresensiSantriPage() {
     }
   }, [today]);
 
+  const [selectedJenjang, setSelectedJenjang] = useState("");
   const [selectedKelas, setSelectedKelas] = useState("");
   const [tanggal, setTanggal] = useState(today);
 
@@ -332,7 +333,34 @@ export default function PresensiSantriPage() {
             <Users size={16} style={{ display: "inline", marginRight: 6, color: "var(--primary)" }} />
             Pilih Kelas &amp; Tanggal
           </p>
-          <div className="grid grid-cols-1 md:grid-cols-[1fr_1fr_auto] gap-4 items-end">
+          <div className="grid grid-cols-1 md:grid-cols-[1fr_1fr_1fr_auto] gap-4 items-end">
+            <div className="form-group" style={{ marginBottom: 0 }}>
+              <label className="form-label">Jenjang</label>
+              {loadingMaster ? (
+                <div
+                  className="form-control"
+                  style={{ color: "var(--text-muted)", display: "flex", alignItems: "center", gap: 8 }}
+                >
+                  <Loader2 size={14} style={{ animation: "spin 1s linear infinite" }} />
+                  Memuat...
+                </div>
+              ) : (
+                <select
+                  className="form-control"
+                  value={selectedJenjang}
+                  onChange={(e) => {
+                    setSelectedJenjang(e.target.value);
+                    setSelectedKelas("");
+                  }}
+                >
+                  <option value="">— Pilih Jenjang —</option>
+                  {Array.from(new Set(kelasList.map(k => k.jenjang).filter(Boolean))).sort().map(j => (
+                    <option key={j as string} value={j as string}>{j}</option>
+                  ))}
+                </select>
+              )}
+            </div>
+
             <div className="form-group" style={{ marginBottom: 0 }}>
               <label className="form-label">Kelas</label>
               {loadingMaster ? (
@@ -348,11 +376,14 @@ export default function PresensiSantriPage() {
                   className="form-control"
                   value={selectedKelas}
                   onChange={(e) => setSelectedKelas(e.target.value)}
+                  disabled={!selectedJenjang}
                 >
                   <option value="">— Pilih Kelas —</option>
-                  {kelasList.map((k) => (
+                  {kelasList
+                    .filter(k => k.jenjang === selectedJenjang)
+                    .map((k) => (
                     <option key={k.id} value={k.id}>
-                      {k.nama}{k.jenjang ? ` (${k.jenjang})` : ""}
+                      {k.nama}
                     </option>
                   ))}
                 </select>
