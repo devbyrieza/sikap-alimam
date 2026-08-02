@@ -197,7 +197,6 @@ export default function Sidebar({ user }: SidebarProps) {
             </p>
           </div>
         </div>
-        <div style={{ display: "flex", gap: "6px", width: "100%", flexDirection: "column" }}>
           <button
             type="button"
             onClick={() => {
@@ -209,7 +208,7 @@ export default function Sidebar({ user }: SidebarProps) {
               width: "100%",
               justifyContent: "center",
               color: "#fbbf24",
-              background: "rgba(251, 191, 36, 0.1)",
+              background: "rgba(251, 191, 36, 0.12)",
               borderColor: "rgba(251, 191, 36, 0.3)",
               padding: "7px 0",
               fontSize: "11px",
@@ -218,7 +217,7 @@ export default function Sidebar({ user }: SidebarProps) {
             }}
           >
             <BookOpen size={13} style={{ marginRight: 4 }} />
-            Atur Mapel Mengajar
+            Atur Profil &amp; Mapel
           </button>
           
           <div style={{ display: "flex", gap: "6px", width: "100%" }}>

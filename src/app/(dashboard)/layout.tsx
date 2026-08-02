@@ -13,32 +13,57 @@ export default async function DashboardLayout({
   if (!session) redirect("/login");
 
   const userRole = (session.role || "").toLowerCase().trim();
-  // Role pengajar / guru
-  const isGuru = userRole.includes("guru") || userRole.includes("asatidz") || userRole.includes("pengajar") || userRole === "user";
+  const isWaliSantri = userRole.includes("wali") || userRole.includes("orang_tua");
 
   let pegawai = null;
-  if (session.asatidz_id) {
-    pegawai = await prisma.pegawai.findUnique({
-      where: { id: session.asatidz_id },
-      select: { id: true, nama_lengkap: true, mata_pelajaran: true, kategori_pegawai: true },
-    });
+  if (!isWaliSantri) {
+    if (session.asatidz_id) {
+      pegawai = await prisma.pegawai.findUnique({
+        where: { id: session.asatidz_id },
+      });
+    }
+
+    if (!pegawai && session.userId) {
+      pegawai = await prisma.pegawai.findFirst({
+        where: {
+          OR: [
+            { user_id: session.userId },
+            { email: session.email },
+            { nama_lengkap: { equals: session.nama, mode: "insensitive" } },
+          ],
+        },
+      });
+    }
   }
 
-  if (!pegawai && session.userId) {
-    pegawai = await prisma.pegawai.findFirst({
-      where: {
-        OR: [
-          { user_id: session.userId },
-          { email: session.email },
-          { nama_lengkap: { equals: session.nama, mode: "insensitive" } },
-        ],
-      },
-      select: { id: true, nama_lengkap: true, mata_pelajaran: true, kategori_pegawai: true },
-    });
-  }
+  // Check completeness for Civitas & Teachers
+  const missingFields: string[] = [];
+  let needsSetup = false;
 
-  const hasMapel = Boolean(pegawai?.mata_pelajaran && pegawai.mata_pelajaran.trim().length > 0);
-  const needsSetup = isGuru && !hasMapel;
+  if (!isWaliSantri) {
+    const isGuru = userRole.includes("guru") || 
+      userRole.includes("asatidz") || 
+      userRole.includes("pengajar") || 
+      userRole === "user" ||
+      (pegawai?.kategori_pegawai || "").toUpperCase().includes("GURU") ||
+      (pegawai?.kategori_pegawai || "").toUpperCase().includes("ASATIDZ");
+
+    if (!pegawai) {
+      needsSetup = true;
+      missingFields.push("Profil Civitas Belum Terdaftar");
+    } else {
+      if (!pegawai.nama_lengkap || !pegawai.nama_lengkap.trim()) missingFields.push("Nama Lengkap");
+      if (!pegawai.no_hp || !pegawai.no_hp.trim()) missingFields.push("No. WhatsApp / HP");
+      if (!pegawai.jenis_kelamin) missingFields.push("Jenis Kelamin");
+      if (isGuru && (!pegawai.mata_pelajaran || !pegawai.mata_pelajaran.trim())) {
+        missingFields.push("Penugasan Mata Pelajaran");
+      }
+
+      if (missingFields.length > 0) {
+        needsSetup = true;
+      }
+    }
+  }
 
   return (
     <div className="app-layout">
@@ -47,13 +72,35 @@ export default async function DashboardLayout({
         {children}
       </main>
 
-      {/* Onboarding / Penugasan Mapel Interceptor Modal */}
-      <TeacherMapelSetupModal
-        initialMapel={pegawai?.mata_pelajaran || ""}
-        needsSetup={needsSetup}
-        userName={session.nama}
-        userRole={session.role}
-      />
+      {/* Onboarding & Lengkapi Data Civitas Interceptor Modal */}
+      {!isWaliSantri && (
+        <TeacherMapelSetupModal
+          initialPegawai={pegawai ? {
+            id: pegawai.id,
+            nama_lengkap: pegawai.nama_lengkap,
+            nik: pegawai.nik,
+            jenis_kelamin: pegawai.jenis_kelamin,
+            tempat_lahir: pegawai.tempat_lahir,
+            tanggal_lahir: pegawai.tanggal_lahir,
+            no_hp: pegawai.no_hp,
+            email: pegawai.email,
+            alamat: pegawai.alamat,
+            kategori_pegawai: pegawai.kategori_pegawai,
+            unit_kerja: pegawai.unit_kerja,
+            divisi: pegawai.divisi,
+            jabatan: pegawai.jabatan,
+            mata_pelajaran: pegawai.mata_pelajaran,
+            pendidikan_terakhir: pegawai.pendidikan_terakhir,
+            status_pernikahan: pegawai.status_pernikahan,
+            foto_url: pegawai.foto_url,
+          } : null}
+          initialMapel={pegawai?.mata_pelajaran || ""}
+          needsSetup={needsSetup}
+          missingFields={missingFields}
+          userName={session.nama}
+          userRole={session.role}
+        />
+      )}
     </div>
   );
 }
