@@ -17,14 +17,17 @@ export async function createSession(payload: SessionPayload) {
   const token = await new SignJWT(payload)
     .setProtectedHeader({ alg: "HS256" })
     .setIssuedAt()
-    .setExpirationTime("8h")
+    .setExpirationTime("90d")
     .sign(SECRET);
 
+  const maxAge = 60 * 60 * 24 * 90; // 90 hari — sesi tetap aktif walau browser ditutup
   const cookieStore = await cookies();
   cookieStore.set("siakad_session", token, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
-    maxAge: 60 * 60 * 8, // 8 jam
+    sameSite: "lax",
+    maxAge,
+    expires: new Date(Date.now() + maxAge * 1000),
     path: "/",
   });
 
