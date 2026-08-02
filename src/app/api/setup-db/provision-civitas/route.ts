@@ -62,9 +62,9 @@ export async function GET() {
         });
       }
 
-      // Generate NIP (Nomor Induk Pegawai) if not exist or too short
+      // Generate NIP (User ID) if not exist
       let nipPegawai = pegawai.nip;
-      if (!nipPegawai || nipPegawai.length < 10) {
+      if (!nipPegawai) {
         // Format NIP 10 Digit: 2026 (Tahun) + 08 (Bulan) + 4 digit random (e.g. 2026081234)
         const randomDigits = Math.floor(1000 + Math.random() * 9000); // 1000 to 9999
         nipPegawai = `202608${randomDigits}`; 
