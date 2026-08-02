@@ -45,7 +45,7 @@ export async function POST(req: NextRequest) {
 
     if (!user || !user.is_active) {
       return NextResponse.json(
-        { error: "Email/NIK/No HP atau password salah" },
+        { error: "User ID / Email / No. WA atau password salah" },
         { status: 401 }
       );
     }
@@ -53,7 +53,7 @@ export async function POST(req: NextRequest) {
     const valid = await bcrypt.compare(password, user.password);
     if (!valid) {
       return NextResponse.json(
-        { error: "Email/NIK/No HP atau password salah" },
+        { error: "User ID / Email / No. WA atau password salah" },
         { status: 401 }
       );
     }
