@@ -269,7 +269,7 @@ export default function TeacherMapelSetupModal({
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           className="fixed inset-0 z-[99999] flex items-center justify-center p-2 sm:p-4"
-          style={{ background: "rgba(2,6,23,0.82)", backdropFilter: "blur(14px)" }}
+          style={{ background: "rgba(15,23,42,0.45)", backdropFilter: "blur(14px)" }}
         >
           <motion.div
             initial={{ opacity: 0, scale: 0.92, y: 32 }}
@@ -287,7 +287,7 @@ export default function TeacherMapelSetupModal({
             <div
               className="relative overflow-hidden shrink-0"
               style={{
-                background: "linear-gradient(135deg, #1a0505 0%, #3b0a0a 40%, #6b1111 70%, #8b1a1a 100%)",
+                background: "linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%)",
                 padding: "1.5rem 2rem",
               }}
             >
@@ -821,7 +821,7 @@ export default function TeacherMapelSetupModal({
                 whileTap={{ scale: 0.98 }}
                 style={{
                   padding: "11px 28px", borderRadius: "0.875rem",
-                  background: "linear-gradient(135deg, #3b0a0a 0%, #6b1111 50%, #8b1a1a 100%)",
+                  background: "linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%)",
                   color: "white", fontSize: 13, fontWeight: 800,
                   display: "flex", alignItems: "center", gap: 8,
                   border: "none", cursor: "pointer",
