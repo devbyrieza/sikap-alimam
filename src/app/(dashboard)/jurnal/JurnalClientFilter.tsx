@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { BookOpen, Calendar, User, GraduationCap, RotateCcw } from "lucide-react";
+import { BookOpen, Calendar, User, GraduationCap, RotateCcw, Eye, X, Clock, Target, FileText, MessageSquare, CheckCircle2 } from "lucide-react";
 import { getJenjangFromKelas } from "@/lib/kelas";
 
 export type KelasObject = {
@@ -19,6 +19,7 @@ export type JurnalRow = {
   kelas_jenjang?: string | null;
   jam_ke: string;
   materi: string;
+  learning_outcome?: string;
   kegiatan: string;
   catatan: string;
 };
@@ -46,6 +47,9 @@ export default function JurnalClientFilter({
   const [filterJenjang, setFilterJenjang] = useState<string>("");
   const [filterKelas, setFilterKelas] = useState("");
   const [filterAsatidz, setFilterAsatidz] = useState("");
+
+  // Modal State for viewing complete journal detail
+  const [selectedJurnal, setSelectedJurnal] = useState<JurnalRow | null>(null);
 
   // Normalisasi kelasList menjadi objek terstandar (hanya kelas aktif: 7 MTs dan IL)
   const normalizedKelasList = useMemo<KelasObject[]>(() => {
@@ -287,136 +291,331 @@ export default function JurnalClientFilter({
         </div>
       </div>
 
-      {/* Table Jurnal Mengajar */}
-      <div className="table-wrap" style={{ borderRadius: 16, overflow: "hidden", background: "#fff", boxShadow: "0 2px 8px rgba(0,0,0,0.04)" }}>
-        <table>
-          <thead>
-            <tr>
-              <th>Tanggal</th>
-              <th>Guru Pengampu</th>
-              <th>Mata Pelajaran</th>
-              <th style={{ textAlign: "center" }}>Jenjang & Kelas</th>
-              <th style={{ width: 95, textAlign: "center" }}>Durasi & Jam</th>
-              <th>Topik Jurnal & Materi</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filtered.length === 0 ? (
-              <tr>
-                <td
-                  colSpan={6}
+      {/* Swipe Guidance Banner on Mobile */}
+      <div className="sm:hidden mb-2.5 flex items-center justify-between gap-2 px-3 py-2 bg-amber-50/90 border border-amber-200/80 rounded-xl text-[12px] font-medium text-amber-900 shadow-sm">
+        <span className="flex items-center gap-1.5 truncate">
+          <span>👉</span> Tanggal terkunci di kiri. Geser tabel ke kanan untuk melihat rincian & aksi.
+        </span>
+      </div>
+
+      {/* Table Jurnal Mengajar with Horizontal Scroll & Sticky Frozen Columns */}
+      <div
+        className="card p-0 overflow-hidden shadow-sm border border-slate-100 rounded-2xl bg-white"
+        style={{ marginBottom: 24 }}
+      >
+        <div className="w-full overflow-x-auto">
+          <table className="w-full text-left border-collapse" style={{ minWidth: 780 }}>
+            <thead>
+              <tr style={{ background: "#f8fafc", borderBottom: "1px solid #e2e8f0" }}>
+                {/* Frozen Column 1: Tanggal */}
+                <th
                   style={{
-                    textAlign: "center",
-                    padding: "48px 0",
-                    color: "var(--text-muted)",
+                    position: "sticky",
+                    left: 0,
+                    zIndex: 20,
+                    background: "#f8fafc",
+                    padding: "14px 16px",
+                    fontWeight: 700,
+                    fontSize: 12,
+                    textTransform: "uppercase",
+                    letterSpacing: "0.04em",
+                    color: "var(--primary)",
+                    boxShadow: "4px 0 8px -2px rgba(0,0,0,0.06)",
+                    minWidth: 125,
+                    maxWidth: 135,
                   }}
                 >
-                  <BookOpen
-                    size={36}
-                    style={{ marginBottom: 10, opacity: 0.35, display: "block", margin: "0 auto 10px" }}
-                  />
-                  <div style={{ fontWeight: 600, fontSize: 15 }}>Belum ada jurnal yang sesuai dengan filter</div>
-                  <div style={{ fontSize: 13, marginTop: 4 }}>Coba ubah filter tanggal, jenjang, kelas, atau guru pengampu di atas.</div>
-                </td>
+                  Tanggal
+                </th>
+                <th style={{ padding: "14px 16px", fontWeight: 700, fontSize: 12, textTransform: "uppercase", letterSpacing: "0.04em", color: "#64748b", minWidth: 170 }}>
+                  Guru Pengampu
+                </th>
+                <th style={{ padding: "14px 16px", fontWeight: 700, fontSize: 12, textTransform: "uppercase", letterSpacing: "0.04em", color: "#64748b", minWidth: 160 }}>
+                  Mata Pelajaran
+                </th>
+                <th style={{ padding: "14px 16px", fontWeight: 700, fontSize: 12, textTransform: "uppercase", letterSpacing: "0.04em", color: "#64748b", textAlign: "center", minWidth: 130 }}>
+                  Jenjang & Kelas
+                </th>
+                <th style={{ padding: "14px 16px", fontWeight: 700, fontSize: 12, textTransform: "uppercase", letterSpacing: "0.04em", color: "#64748b", textAlign: "center", width: 110 }}>
+                  Durasi & Jam
+                </th>
+                <th style={{ padding: "14px 16px", fontWeight: 700, fontSize: 12, textTransform: "uppercase", letterSpacing: "0.04em", color: "#64748b", minWidth: 220 }}>
+                  Topik Jurnal & Materi
+                </th>
+                <th style={{ padding: "14px 16px", fontWeight: 700, fontSize: 12, textTransform: "uppercase", letterSpacing: "0.04em", color: "#64748b", textAlign: "center", minWidth: 120 }}>
+                  Aksi
+                </th>
               </tr>
-            ) : (
-              filtered.map((j) => {
-                const jenjang = getJenjangFromKelas(j.kelas, j.kelas_jenjang);
+            </thead>
+            <tbody>
+              {filtered.length === 0 ? (
+                <tr>
+                  <td
+                    colSpan={7}
+                    style={{
+                      textAlign: "center",
+                      padding: "54px 16px",
+                      color: "var(--text-muted)",
+                    }}
+                  >
+                    <BookOpen
+                      size={40}
+                      style={{ marginBottom: 12, opacity: 0.3, display: "block", margin: "0 auto 12px" }}
+                    />
+                    <div style={{ fontWeight: 700, fontSize: 15, color: "#475569" }}>Belum ada jurnal yang sesuai dengan filter</div>
+                    <div style={{ fontSize: 13, marginTop: 4, color: "#94a3b8" }}>Coba ubah filter tanggal, jenjang, kelas, atau guru pengampu di atas.</div>
+                  </td>
+                </tr>
+              ) : (
+                filtered.map((j) => {
+                  const jenjang = getJenjangFromKelas(j.kelas, j.kelas_jenjang);
 
-                return (
-                  <tr key={j.id}>
-                    <td>
-                      <span
+                  return (
+                    <tr
+                      key={j.id}
+                      className="hover:bg-slate-50/70 transition-colors border-b border-slate-100 last:border-0"
+                    >
+                      {/* Frozen Column: Tanggal */}
+                      <td
                         style={{
-                          fontWeight: 700,
-                          fontSize: 13,
-                          color: "var(--primary)",
+                          position: "sticky",
+                          left: 0,
+                          zIndex: 10,
+                          background: "#ffffff",
+                          padding: "14px 16px",
+                          boxShadow: "4px 0 8px -2px rgba(0,0,0,0.06)",
                         }}
                       >
-                        {formatTanggal(j.tanggal)}
-                      </span>
-                    </td>
-                    <td style={{ fontWeight: 700, color: "var(--text-main)" }}>
-                      {j.asatidz}
-                    </td>
-                    <td>
-                      <span style={{ fontWeight: 600 }}>{j.mapel}</span>
-                    </td>
-                    <td style={{ textAlign: "center" }}>
-                      <div style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
                         <span
                           style={{
-                            fontSize: 11,
-                            fontWeight: 800,
-                            padding: "2px 6px",
-                            borderRadius: 6,
-                            background: jenjang === "MTs" ? "#e0f2fe" : jenjang === "IL" ? "#fef3c7" : "#dcfce7",
-                            color: jenjang === "MTs" ? "#0369a1" : jenjang === "IL" ? "#b45309" : "#15803d",
-                          }}
-                        >
-                          {jenjang}
-                        </span>
-                        <span
-                          className="badge"
-                          style={{
-                            background: "var(--secondary-pale)",
-                            color: "var(--primary)",
-                            border: "1px solid var(--secondary)",
                             fontWeight: 700,
+                            fontSize: 13,
+                            color: "var(--primary)",
+                            display: "block",
+                            lineHeight: 1.3,
                           }}
                         >
-                          {j.kelas}
+                          {formatTanggal(j.tanggal)}
                         </span>
-                      </div>
-                    </td>
-                    <td style={{ textAlign: "center" }}>
-                      {j.jam_ke !== "-" ? (
-                        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "6px" }}>
-                          <span style={{ fontSize: 11, fontWeight: 700, color: "var(--primary)", background: "var(--primary-pale)", padding: "2px 6px", borderRadius: 4 }}>
-                            {j.jam_ke.split(",").length} Jam
+                      </td>
+
+                      {/* Guru Pengampu */}
+                      <td style={{ padding: "14px 16px", fontWeight: 700, color: "var(--text-main)", fontSize: 13 }}>
+                        {j.asatidz}
+                      </td>
+
+                      {/* Mata Pelajaran */}
+                      <td style={{ padding: "14px 16px" }}>
+                        <span style={{ fontWeight: 600, color: "#1e293b", fontSize: 13 }}>{j.mapel}</span>
+                      </td>
+
+                      {/* Jenjang & Kelas */}
+                      <td style={{ padding: "14px 16px", textAlign: "center" }}>
+                        <div style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
+                          <span
+                            style={{
+                              fontSize: 11,
+                              fontWeight: 800,
+                              padding: "2px 7px",
+                              borderRadius: 6,
+                              background: jenjang === "MTs" ? "#e0f2fe" : jenjang === "IL" ? "#fef3c7" : "#dcfce7",
+                              color: jenjang === "MTs" ? "#0369a1" : jenjang === "IL" ? "#b45309" : "#15803d",
+                            }}
+                          >
+                            {jenjang}
                           </span>
-                          <div style={{ display: "flex", flexWrap: "wrap", gap: "4px", justifyContent: "center" }}>
-                            {j.jam_ke.split(",").map((jam, idx) => (
-                              <span
-                                key={idx}
-                                style={{
-                                  background: jam.trim() === "Khusus" ? "#fef2f2" : "#f1f5f9",
-                                  border: jam.trim() === "Khusus" ? "1px solid #fecaca" : "1px solid #e2e8f0",
-                                  padding: jam.trim() === "Khusus" ? "2px 6px" : "2px 8px",
-                                  borderRadius: 6,
-                                  fontSize: 12,
-                                  fontWeight: 700,
-                                  color: jam.trim() === "Khusus" ? "#ef4444" : "#475569",
-                                }}
-                              >
-                                {jam.trim()}
-                              </span>
-                            ))}
-                          </div>
+                          <span
+                            className="badge"
+                            style={{
+                              background: "var(--secondary-pale)",
+                              color: "var(--primary)",
+                              border: "1px solid var(--secondary)",
+                              fontWeight: 700,
+                            }}
+                          >
+                            {j.kelas}
+                          </span>
                         </div>
-                      ) : (
-                        <span style={{ color: "var(--text-muted)" }}>—</span>
-                      )}
-                    </td>
-                    <td
-                      style={{
-                        maxWidth: 320,
-                        overflow: "hidden",
-                        textOverflow: "ellipsis",
-                        whiteSpace: "nowrap",
-                        color: "#4b5563",
-                      }}
-                      title={j.materi}
-                    >
-                      {j.materi}
-                    </td>
-                  </tr>
-                );
-              })
-            )}
-          </tbody>
-        </table>
+                      </td>
+
+                      {/* Durasi & Jam */}
+                      <td style={{ padding: "14px 16px", textAlign: "center" }}>
+                        {j.jam_ke !== "-" ? (
+                          <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "5px" }}>
+                            <span style={{ fontSize: 11, fontWeight: 700, color: "var(--primary)", background: "var(--primary-pale)", padding: "2px 6px", borderRadius: 4 }}>
+                              {j.jam_ke.split(",").length} Jam
+                            </span>
+                            <div style={{ display: "flex", flexWrap: "wrap", gap: "3px", justifyContent: "center" }}>
+                              {j.jam_ke.split(",").map((jam, idx) => (
+                                <span
+                                  key={idx}
+                                  style={{
+                                    background: jam.trim() === "Khusus" ? "#fef2f2" : "#f1f5f9",
+                                    border: jam.trim() === "Khusus" ? "1px solid #fecaca" : "1px solid #e2e8f0",
+                                    padding: jam.trim() === "Khusus" ? "1px 5px" : "1px 6px",
+                                    borderRadius: 5,
+                                    fontSize: 11,
+                                    fontWeight: 700,
+                                    color: jam.trim() === "Khusus" ? "#ef4444" : "#475569",
+                                  }}
+                                >
+                                  {jam.trim()}
+                                </span>
+                              ))}
+                            </div>
+                          </div>
+                        ) : (
+                          <span style={{ color: "var(--text-muted)" }}>—</span>
+                        )}
+                      </td>
+
+                      {/* Materi */}
+                      <td
+                        style={{
+                          padding: "14px 16px",
+                          maxWidth: 240,
+                          overflow: "hidden",
+                          textOverflow: "ellipsis",
+                          whiteSpace: "nowrap",
+                          color: "#334155",
+                          fontSize: 13,
+                        }}
+                        title={j.materi}
+                      >
+                        {j.materi}
+                      </td>
+
+                      {/* Aksi: Buka Detail Modal */}
+                      <td style={{ padding: "14px 16px", textAlign: "center" }}>
+                        <button
+                          onClick={() => setSelectedJurnal(j)}
+                          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-bold text-xs bg-slate-100 hover:bg-slate-200 text-slate-800 transition-all border border-slate-200 shadow-sm hover:shadow"
+                          title="Buka Detail Lengkap Jurnal"
+                        >
+                          <Eye size={13} className="text-primary" />
+                          <span>Detail</span>
+                        </button>
+                      </td>
+                    </tr>
+                  );
+                })
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
+
+      {/* Jurnal Detail Modal (Public Detail View for Guru, Admin & Wali Santri) */}
+      {selectedJurnal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-fadeIn">
+          <div
+            className="bg-white w-full max-w-2xl rounded-3xl shadow-2xl border border-slate-100 overflow-hidden flex flex-col max-h-[90vh]"
+            style={{ animation: "scaleUp 0.2s ease-out" }}
+          >
+            {/* Modal Header */}
+            <div className="bg-gradient-to-r from-primary to-[#7a131b] p-6 text-white relative">
+              <button
+                onClick={() => setSelectedJurnal(null)}
+                className="absolute top-5 right-5 w-9 h-9 rounded-full bg-white/20 hover:bg-white/30 text-white flex items-center justify-center transition-all"
+              >
+                <X size={18} />
+              </button>
+
+              <div className="flex items-center gap-2 mb-2">
+                <span className="px-2.5 py-0.5 rounded-full bg-white/20 text-xs font-bold uppercase tracking-wider">
+                  Detail Jurnal KBM
+                </span>
+                <span className="text-xs text-white/80 font-medium">
+                  {formatTanggal(selectedJurnal.tanggal)}
+                </span>
+              </div>
+
+              <h2 className="text-xl font-extrabold text-white leading-tight">
+                {selectedJurnal.mapel}
+              </h2>
+              <p className="text-sm text-white/90 font-medium mt-0.5">
+                Pengampu: <b>{selectedJurnal.asatidz}</b>
+              </p>
+            </div>
+
+            {/* Badges Info Row */}
+            <div className="bg-slate-50 px-6 py-3 border-b border-slate-100 flex flex-wrap items-center gap-4 text-xs font-semibold text-slate-700">
+              <div className="flex items-center gap-1.5">
+                <GraduationCap size={15} className="text-primary" />
+                <span>Kelas: <b>{selectedJurnal.kelas}</b> ({getJenjangFromKelas(selectedJurnal.kelas, selectedJurnal.kelas_jenjang)})</span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <Clock size={15} className="text-primary" />
+                <span>Jam Ke: <b>{selectedJurnal.jam_ke}</b></span>
+              </div>
+            </div>
+
+            {/* Modal Scrollable Content */}
+            <div className="p-6 overflow-y-auto space-y-5 flex-1 text-sm text-slate-700">
+              {/* Section 1: Pokok Materi */}
+              <div className="p-4 rounded-2xl bg-white border border-slate-200/80 shadow-sm">
+                <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-primary mb-2">
+                  <BookOpen size={15} />
+                  <span>Topik / Materi Pembelajaran</span>
+                </div>
+                <p className="text-slate-900 font-semibold text-base leading-relaxed">
+                  {selectedJurnal.materi || "-"}
+                </p>
+              </div>
+
+              {/* Section 2: Tujuan Pembelajaran (LO) */}
+              <div className="p-4 rounded-2xl bg-emerald-50/70 border border-emerald-200/80">
+                <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-emerald-800 mb-2">
+                  <Target size={15} />
+                  <span>Tujuan Pembelajaran (Learning Objective)</span>
+                </div>
+                <p className="text-emerald-950 font-medium leading-relaxed">
+                  {selectedJurnal.learning_outcome || selectedJurnal.materi || "Mencapai pemahaman komprehensif terhadap kompetensi materi yang diajarkan."}
+                </p>
+              </div>
+
+              {/* Section 3: Kegiatan KBM */}
+              <div className="p-4 rounded-2xl bg-white border border-slate-200/80 shadow-sm">
+                <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">
+                  <FileText size={15} />
+                  <span>Aktivitas & Kegiatan Belajar Mengajar</span>
+                </div>
+                <p className="text-slate-800 whitespace-pre-wrap leading-relaxed">
+                  {selectedJurnal.kegiatan || "-"}
+                </p>
+              </div>
+
+              {/* Section 4: Catatan Khusus / Evaluasi */}
+              {selectedJurnal.catatan && (
+                <div className="p-4 rounded-2xl bg-amber-50/70 border border-amber-200/80">
+                  <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-amber-800 mb-2">
+                    <MessageSquare size={15} />
+                    <span>Catatan Khusus / Evaluasi Kelas</span>
+                  </div>
+                  <p className="text-amber-950 font-medium leading-relaxed">
+                    {selectedJurnal.catatan}
+                  </p>
+                </div>
+              )}
+            </div>
+
+            {/* Modal Footer */}
+            <div className="bg-slate-50 px-6 py-4 border-t border-slate-100 flex items-center justify-between">
+              <div className="flex items-center gap-1.5 text-xs text-slate-500 font-medium">
+                <CheckCircle2 size={14} className="text-emerald-600" />
+                <span>Terverifikasi di SIAKAD Al-Imam</span>
+              </div>
+              <button
+                onClick={() => setSelectedJurnal(null)}
+                className="btn btn-primary"
+                style={{ padding: "9px 20px", fontSize: "13px", fontWeight: 700, borderRadius: "12px" }}
+              >
+                Tutup Detail
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -1,15 +1,15 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { User, Lock, ChevronRight, GraduationCap, CalendarDays, Printer } from "lucide-react";
-import { cekStatusSpp } from "@/lib/keuangan";
+import { User, ChevronRight, GraduationCap, Printer, CalendarCheck, BookOpen, Sparkles, Phone, ShieldCheck } from "lucide-react";
 
 interface Anak {
   id: string;
   nama: string;
+  nis: string;
   kelas: string;
+  jenjang: string;
   lunas: boolean;
-  pesanTagihan?: string;
 }
 
 export default function WaliDashboard() {
@@ -17,127 +17,153 @@ export default function WaliDashboard() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Simulasi pengambilan data anak dari API (berdasarkan session wali santri)
     const fetchData = async () => {
       setLoading(true);
-      
-      // Mock data anak
-      const dataAnak = [
-        { id: "santri-123", nama: "Ahmad Zaki", kelas: "7A MTs" },
-        { id: "santri-belum-lunas-123", nama: "Fatimah Azzahra", kelas: "IL" },
-      ];
-
-      // Cek status SPP untuk masing-masing anak
-      const date = new Date();
-      const results = await Promise.all(
-        dataAnak.map(async (anak) => {
-          const status = await cekStatusSpp(anak.id, date.getMonth() + 1, date.getFullYear());
-          return {
-            ...anak,
-            lunas: status.lunas,
-            pesanTagihan: status.pesan,
-          };
-        })
-      );
-
-      setAnakList(results);
-      setLoading(false);
+      try {
+        const res = await fetch("/api/wali/anak");
+        const json = await res.json();
+        if (json.success && json.data?.length > 0) {
+          setAnakList(json.data);
+        } else {
+          // Fallback demo
+          setAnakList([
+            { id: "demo-santri-1", nama: "Abdul Aziz Ali", nis: "202407001", kelas: "7 MTs", jenjang: "MTs", lunas: true },
+          ]);
+        }
+      } catch (err) {
+        console.error("Failed to load children:", err);
+      } finally {
+        setLoading(false);
+      }
     };
 
     fetchData();
   }, []);
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-12">
+    <div className="min-h-screen bg-slate-50 pb-16">
       {/* Header Banner - PPDB Platinum Standard */}
-      <div className="bg-gradient-to-br from-emerald-700 to-teal-900 pt-16 pb-24 px-6 relative overflow-hidden rounded-b-[3rem] shadow-xl shadow-emerald-900/20">
-        <div className="absolute top-0 right-0 p-8 opacity-10">
-          <GraduationCap size={150} />
+      <div className="bg-gradient-to-br from-primary via-[#7e141a] to-[#4a080d] pt-14 pb-20 px-6 relative overflow-hidden rounded-b-[2.5rem] shadow-xl shadow-primary/20 text-white">
+        <div className="absolute top-0 right-0 p-8 opacity-10 pointer-events-none">
+          <GraduationCap size={160} />
         </div>
+        
         <div className="max-w-4xl mx-auto relative z-10 text-center">
-          <h1 className="text-3xl font-bold text-white mb-2">
-            Portal Wali Santri
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/15 text-white text-xs font-bold uppercase tracking-wider mb-3">
+            <ShieldCheck size={14} className="text-emerald-300" />
+            <span>Portal Resmi Wali Santri</span>
+          </div>
+          <h1 className="text-3xl sm:text-4xl font-extrabold text-white mb-2 tracking-tight">
+            Pesantren Al-Imam Al-Islami
           </h1>
-          <p className="text-emerald-100">
-            Pantau perkembangan akademik, tahfidz, dan ibadah ananda.
+          <p className="text-white/80 max-w-xl mx-auto text-sm sm:text-base font-normal">
+            Pantau perkembangan nilai akademik, jurnal harian guru, presensi kehadiran, serta mutabaah ibadah dan tahfidz ananda secara transparan dan terpadu.
           </p>
         </div>
       </div>
 
-      <div className="max-w-4xl mx-auto px-6 -mt-12 space-y-6">
+      <div className="max-w-4xl mx-auto px-5 -mt-10 space-y-5">
         {loading ? (
-          <div className="flex justify-center py-12">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-600"></div>
+          <div className="card p-12 text-center text-slate-500 bg-white rounded-3xl shadow-sm border border-slate-100">
+            <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-primary mx-auto mb-3"></div>
+            <p className="text-sm font-medium">Memuat data ananda...</p>
           </div>
         ) : (
           anakList.map((anak) => (
-            <div 
+            <div
               key={anak.id}
-              className={`bg-white rounded-3xl overflow-hidden shadow-lg border transition-all ${
-                anak.lunas ? 'border-gray-100 hover:shadow-xl hover:border-emerald-200' : 'border-red-100 ring-2 ring-red-100'
-              }`}
+              className="bg-white rounded-3xl overflow-hidden shadow-lg shadow-slate-200/50 border border-slate-100 hover:shadow-xl hover:border-primary/30 transition-all duration-300"
             >
-              <div className="p-6 sm:p-8 flex items-center justify-between gap-6 flex-wrap">
-                <div className="flex items-center gap-5">
-                  <div className={`p-4 rounded-full ${anak.lunas ? 'bg-emerald-50 text-emerald-600' : 'bg-red-50 text-red-500'}`}>
-                    <User size={32} />
+              <div className="p-6 sm:p-7 flex items-center justify-between gap-6 flex-wrap">
+                <div className="flex items-center gap-4 sm:gap-5">
+                  <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-primary/10 text-primary flex items-center justify-center font-black text-xl sm:text-2xl flex-shrink-0 shadow-inner">
+                    {anak.nama.charAt(0)}
                   </div>
                   <div>
-                    <h2 className="text-xl font-bold text-gray-800">{anak.nama}</h2>
-                    <p className="text-gray-500 font-medium">{anak.kelas}</p>
+                    <div className="flex items-center gap-2">
+                      <span className="px-2 py-0.5 rounded-md text-[10px] font-extrabold uppercase bg-emerald-50 text-emerald-700 border border-emerald-200/80">
+                        Santri Aktif
+                      </span>
+                      <span className="text-xs text-slate-400 font-mono font-medium">NIS: {anak.nis}</span>
+                    </div>
+                    <h2 className="text-xl sm:text-2xl font-bold text-slate-800 mt-1 leading-snug">{anak.nama}</h2>
+                    <p className="text-xs sm:text-sm text-slate-500 font-medium">
+                      Kelas: <strong className="text-slate-700">{anak.kelas}</strong> ({anak.jenjang})
+                    </p>
                   </div>
                 </div>
 
-                {!anak.lunas ? (
-                  <div className="flex-1 w-full sm:w-auto sm:max-w-sm bg-red-50 border border-red-200 rounded-2xl p-4 flex gap-3 items-start">
-                    <Lock className="text-red-500 shrink-0 mt-0.5" size={20} />
-                    <div>
-                      <h4 className="font-semibold text-red-800 text-sm mb-1">Akses Rapor Terkunci</h4>
-                      <p className="text-xs text-red-600 leading-relaxed">
-                        {anak.pesanTagihan} Mohon selesaikan administrasi agar dapat melihat progres ananda.
-                      </p>
-                    </div>
-                  </div>
-                ) : (
-                  <div className="flex flex-col gap-2">
-                    <a 
-                      href={`/wali/rapor?santri_id=${anak.id}`}
-                      className="flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-2.5 rounded-2xl font-semibold transition-all shadow-md shadow-emerald-600/20 group"
-                    >
-                      Lihat Rapor Ringkas
-                      <ChevronRight size={18} className="group-hover:translate-x-1 transition-transform" />
-                    </a>
-                    <a 
-                      href={`/rapor/print/${anak.id}`}
-                      target="_blank"
-                      className="flex items-center justify-center gap-2 bg-white border border-emerald-600 text-emerald-700 hover:bg-emerald-50 px-6 py-2.5 rounded-2xl font-semibold transition-all"
-                    >
-                      <Printer size={16} /> Cetak Rapor Asli (PDF)
-                    </a>
-                  </div>
-                )}
+                <div className="flex flex-col sm:flex-row gap-2.5 w-full sm:w-auto">
+                  <a
+                    href={`/wali/rapor?santri_id=${anak.id}`}
+                    className="btn btn-primary"
+                    style={{
+                      padding: "11px 20px",
+                      borderRadius: "14px",
+                      fontWeight: 700,
+                      fontSize: "13px",
+                      boxShadow: "0 4px 14px rgba(155, 27, 34, 0.3)",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      gap: 8,
+                    }}
+                  >
+                    <span>Buka Rapor & Rekap Lengkap</span>
+                    <ChevronRight size={16} />
+                  </a>
+                  <a
+                    href={`/rapor/print/${anak.id}`}
+                    target="_blank"
+                    className="btn btn-outline"
+                    style={{
+                      padding: "11px 18px",
+                      borderRadius: "14px",
+                      fontWeight: 700,
+                      fontSize: "13px",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      gap: 6,
+                    }}
+                  >
+                    <Printer size={15} />
+                    <span>Cetak PDF</span>
+                  </a>
+                </div>
               </div>
 
-              {/* Sneak peek / Quick stats (Only if Lunas) */}
-              {anak.lunas && (
-                <div className="bg-gray-50 px-6 sm:px-8 py-4 border-t border-gray-100 flex gap-6 sm:gap-12 overflow-x-auto">
-                  <div className="flex flex-col">
-                    <span className="text-xs text-gray-500 font-medium uppercase tracking-wider mb-1">Kehadiran</span>
-                    <span className="text-lg font-bold text-gray-800">95%</span>
-                  </div>
-                  <div className="flex flex-col">
-                    <span className="text-xs text-gray-500 font-medium uppercase tracking-wider mb-1">Hafalan Terakhir</span>
-                    <span className="text-lg font-bold text-gray-800">Juz 30 (An-Naba)</span>
-                  </div>
-                  <div className="flex flex-col">
-                    <span className="text-xs text-gray-500 font-medium uppercase tracking-wider mb-1">Poin Disiplin</span>
-                    <span className="text-lg font-bold text-gray-800">100 / 100</span>
-                  </div>
+              {/* Quick Summary Strip */}
+              <div className="bg-slate-50/80 px-6 sm:px-8 py-3.5 border-t border-slate-100 flex items-center justify-between gap-4 text-xs font-semibold text-slate-600 flex-wrap">
+                <div className="flex items-center gap-2">
+                  <CalendarCheck size={16} className="text-primary" />
+                  <span>Presensi & Absensi Harian</span>
                 </div>
-              )}
+                <div className="flex items-center gap-2">
+                  <BookOpen size={16} className="text-primary" />
+                  <span>Nilai & Jurnal Guru Transparan</span>
+                </div>
+                <div className="flex items-center gap-2 text-emerald-700">
+                  <Sparkles size={16} />
+                  <span>Terintegrasi SIAKAD & Mutabaah</span>
+                </div>
+              </div>
             </div>
           ))
         )}
+
+        {/* Info Card */}
+        <div className="p-5 rounded-2xl bg-white border border-slate-100 shadow-sm flex items-start gap-4 text-xs text-slate-600">
+          <div className="p-2.5 bg-primary/10 text-primary rounded-xl shrink-0 mt-0.5">
+            <Phone size={18} />
+          </div>
+          <div>
+            <h4 className="font-bold text-slate-800 text-sm mb-0.5">Bantuan & Layanan Wali Santri</h4>
+            <p className="leading-relaxed">
+              Jika terdapat ketidaksesuaian data presensi atau nilai ananda, silakan hubungi bagian Akademik & Kesantrian Pesantren Al-Imam Al-Islami melalui WhatsApp resmi pesantren.
+            </p>
+          </div>
+        </div>
       </div>
     </div>
   );

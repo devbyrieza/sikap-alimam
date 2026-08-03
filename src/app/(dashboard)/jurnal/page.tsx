@@ -151,6 +151,7 @@ export default async function JurnalPage() {
       kelas_jenjang: j.kelas?.jenjang || null,
       jam_ke: j.jam_ke ?? "-",
       materi: j.materi,
+      learning_outcome: j.learning_outcome ?? "",
       kegiatan: j.kegiatan,
       catatan: j.catatan ?? "",
     };

@@ -56,16 +56,6 @@ export default function PresensiSantriPage() {
 
   const [kelasList, setKelasList] = useState<Kelas[]>([]);
   const [loadingMaster, setLoadingMaster] = useState(true);
-  const [jurnalBlocker, setJurnalBlocker] = useState(false);
-
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      const pendingDate = localStorage.getItem("sikap_pending_jurnal_date");
-      if (pendingDate === today) {
-        setJurnalBlocker(true);
-      }
-    }
-  }, [today]);
 
   const [selectedJenjang, setSelectedJenjang] = useState("");
   const [selectedKelas, setSelectedKelas] = useState("");
@@ -249,40 +239,13 @@ export default function PresensiSantriPage() {
       const json = await res.json();
       if (!res.ok) throw new Error(json.error || "Gagal menyimpan");
 
-      const Toast = Swal.mixin({
-        toast: true,
-        position: "top-end",
-        showConfirmButton: false,
-        timer: 3000,
-        timerProgressBar: true,
-      });
-      Toast.fire({
+      Swal.fire({
         icon: "success",
-        title: `Presensi ${json.count} santri berhasil disimpan!`,
+        title: "Presensi Berhasil Disimpan!",
+        text: `Data presensi ${json.count} santri telah berhasil tersimpan ke sistem.`,
+        confirmButtonColor: "var(--primary)",
+        confirmButtonText: "Selesai",
       });
-
-      // 1. Set localStorage blocker
-      localStorage.setItem("sikap_pending_jurnal_date", tanggal);
-
-      // 2. Suggest to fill journal
-      setTimeout(() => {
-        Swal.fire({
-          title: 'Presensi Selesai',
-          text: 'Jangan lupa untuk segera mengisi Jurnal Mengajar Anda hari ini.',
-          icon: 'info',
-          showCancelButton: true,
-          confirmButtonColor: "var(--primary)",
-          confirmButtonText: 'Isi Jurnal Sekarang',
-          cancelButtonText: 'Nanti'
-        }).then((result) => {
-          if (result.isConfirmed) {
-            router.push("/jurnal");
-          } else {
-            // They chose later, so we lock them if they refresh
-            setJurnalBlocker(true);
-          }
-        });
-      }, 1000);
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : "Terjadi kesalahan";
       Swal.fire({
@@ -298,28 +261,6 @@ export default function PresensiSantriPage() {
 
   const kelasNama = kelasList.find((k) => k.id === selectedKelas)?.nama;
   const progressPct = santri.length > 0 ? Math.round((sudahDiabsen / santri.length) * 100) : 0;
-
-  if (jurnalBlocker) {
-    return (
-      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", minHeight: "70vh", padding: 24, textAlign: "center" }}>
-        <div style={{ width: 80, height: 80, backgroundColor: "rgba(220, 38, 38, 0.1)", color: "#dc2626", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 20 }}>
-          <CheckSquare size={40} />
-        </div>
-        <h2 style={{ fontSize: 24, fontWeight: 800, color: "var(--text)", marginBottom: 12 }}>Akses Terkunci</h2>
-        <p style={{ color: "var(--text-muted)", maxWidth: 450, marginBottom: 24, lineHeight: 1.6 }}>
-          Anda baru saja mengambil absensi kelas, namun belum menyetorkan <b>Jurnal Mengajar</b>. 
-          Harap lengkapi jurnal kelas sebelumnya agar bisa mengakses presensi kelas selanjutnya.
-        </p>
-        <button 
-          onClick={() => router.push("/jurnal")}
-          className="btn btn-primary"
-          style={{ padding: "12px 24px", fontSize: 15, fontWeight: 700 }}
-        >
-          Menuju Halaman Jurnal
-        </button>
-      </div>
-    );
-  }
 
   return (
     <div className="w-full">
@@ -643,11 +584,8 @@ export default function PresensiSantriPage() {
               })}
             </div>
 
-            {/* Bottom spacer for mobile so floating action bar never covers the last santri */}
-            <div className="h-28 sm:hidden" />
-
-            {/* Save Button (Desktop) */}
-            <div className="hidden sm:flex justify-end mt-4">
+            {/* Desktop Save Button */}
+            <div className="hidden sm:flex justify-end mt-6">
               <button
                 className="btn btn-primary"
                 onClick={handleSimpan}
@@ -668,29 +606,39 @@ export default function PresensiSantriPage() {
               </button>
             </div>
 
+            {/* Bottom spacer for mobile so floating action bar never covers the last santri */}
+            <div className="h-36 sm:hidden" />
+
             {/* Mobile Sticky Action Bar */}
             <div
-              className="sm:hidden fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md border-t border-slate-200/80 shadow-[0_-8px_30px_rgba(0,0,0,0.12)] z-30 flex items-center justify-between gap-3 px-4 pt-3"
-              style={{ paddingBottom: "max(14px, env(safe-area-inset-bottom))" }}
+              className="sm:hidden fixed bottom-0 left-0 right-0 z-40 flex items-center justify-between gap-3 px-4 py-3"
+              style={{
+                background: "#ffffff",
+                borderTop: "1px solid #e2e8f0",
+                boxShadow: "0 -10px 30px rgba(0,0,0,0.12)",
+                paddingBottom: "max(14px, env(safe-area-inset-bottom))",
+              }}
             >
-              <div className="min-w-0">
-                <div className="flex items-center gap-1.5">
-                  <span className="inline-block w-2 h-2 rounded-full bg-emerald-500 animate-pulse flex-shrink-0" />
-                  <p className="text-xs font-bold text-slate-800 leading-tight truncate">
-                    {sudahDiabsen}/{santri.length} Santri Diabsen
-                  </p>
+              <div className="min-w-0 flex flex-col justify-center">
+                <div className="inline-flex items-center gap-1.5 bg-slate-100 px-2.5 py-1 rounded-full border border-slate-200/80">
+                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse flex-shrink-0" />
+                  <span className="text-[11px] font-bold text-slate-800 leading-none">
+                    {sudahDiabsen}/{santri.length} Santri
+                  </span>
                 </div>
-                <p className="text-[11px] text-slate-500 font-medium mt-0.5">{progressPct}% Selesai</p>
+                <p className="text-[10px] text-slate-500 font-semibold mt-1 ml-1 leading-none">{progressPct}% Terabsen</p>
               </div>
+
               <button
-                className="btn btn-primary flex-1 max-w-[190px]"
+                className="btn btn-primary flex-1 max-w-[200px]"
                 onClick={handleSimpan}
                 disabled={saving}
                 style={{
                   justifyContent: "center",
-                  padding: "11px 16px",
-                  fontWeight: 700,
+                  padding: "12px 18px",
+                  fontWeight: 800,
                   fontSize: "13px",
+                  borderRadius: "14px",
                   boxShadow: "0 4px 14px rgba(155, 27, 34, 0.35)",
                 }}
               >
@@ -701,7 +649,7 @@ export default function PresensiSantriPage() {
                   </>
                 ) : (
                   <>
-                    <Save size={15} />
+                    <Save size={16} />
                     Simpan Presensi
                   </>
                 )}

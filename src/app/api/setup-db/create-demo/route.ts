@@ -72,16 +72,51 @@ export async function GET() {
       await prisma.pegawai.update({ where: { id: pegawaiPresentasi.id }, data: dataPegawaiPresentasi });
     }
 
+    // === 3. Akun Demo Wali Santri ===
+    const emailWali = 'wali.santri@pesantren-alimam.com';
+    const passwordWali = 'wali123';
+    const passwordHashWali = await bcrypt.hash(passwordWali, 10);
+    const namaWali = 'Bpk. H. Rahmat Hidayat (Wali Santri)';
+
+    const userWali = await prisma.user.upsert({
+      where: { email: emailWali },
+      update: { password: passwordHashWali, nama: namaWali, role: 'WALI', is_active: true },
+      create: { email: emailWali, password: passwordHashWali, nama: namaWali, role: 'WALI', is_active: true }
+    });
+
+    // Cari santri aktif pertama untuk dihubungkan ke wali
+    const firstSantri = await prisma.santriAktif.findFirst({
+      where: { is_active: true },
+      orderBy: { nama_lengkap: 'asc' },
+    });
+
+    if (firstSantri) {
+      await prisma.orangTuaSantri.upsert({
+        where: {
+          user_id_santri_id: {
+            user_id: userWali.id,
+            santri_id: firstSantri.id,
+          },
+        },
+        update: {},
+        create: {
+          user_id: userWali.id,
+          santri_id: firstSantri.id,
+        },
+      });
+    }
+
     return NextResponse.json({
       success: true,
-      message: 'Dua Akun Demo (Pribadi & Presentasi) berhasil disiapkan.',
+      message: 'Semua Akun Demo (Guru Pribadi, Guru Presentasi, dan Wali Santri) berhasil disiapkan.',
       data: [
-        { email: emailPribadi, password: passwordPribadi },
-        { email: emailPresentasi, password: passwordPresentasi }
+        { role: 'GURU (Pribadi)', email: emailPribadi, password: passwordPribadi },
+        { role: 'GURU (Resmi/Presentasi)', email: emailPresentasi, password: passwordPresentasi },
+        { role: 'WALI SANTRI', email: emailWali, password: passwordWali, linked_santri: firstSantri?.nama_lengkap || null }
       ]
     });
   } catch (error: any) {
-    console.error('Failed to create demo guru:', error);
+    console.error('Failed to create demo users:', error);
     return NextResponse.json({ success: false, error: error.message }, { status: 500 });
   }
 }
