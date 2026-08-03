@@ -70,16 +70,19 @@ model Pegawai {
   capaian_tahfidz CapaianTahfidz[]
   ibadah_adab     IbadahAdabSantri[]
   jadwal          JadwalPelajaran[]
+  kelas_wali      Kelas[]           @relation("WaliKelas")
 
   @@map("pegawai")
 }
 
 model Kelas {
-  id        String  @id @default(uuid()) @db.Uuid
-  nama      String  @unique // "7 MTs" | "IL"
-  jenjang   String? // "MTs" | "Islamiyah"
-  is_active Boolean @default(true)
+  id            String   @id @default(uuid()) @db.Uuid
+  nama          String   @unique // "7 MTs" | "IL"
+  jenjang       String?  // "MTs" | "Islamiyah"
+  is_active     Boolean  @default(true)
+  wali_kelas_id String?  @db.Uuid
 
+  wali_kelas     Pegawai?          @relation("WaliKelas", fields: [wali_kelas_id], references: [id])
   santri         SantriAktif[]
   presensi_siswa PresensiSiswa[]
   jurnal         JurnalMengajar[]

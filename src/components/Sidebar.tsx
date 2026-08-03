@@ -59,6 +59,12 @@ const NAV: NavItem[] = [
     roles: ["guru", "GURU", "wali_kelas", "WALI_KELAS", "admin_wali_kelas", "ADMIN_WALI_KELAS", "admin_super", "ADMIN_SUPER"],
   },
   {
+    href: "/wali-kelas",
+    label: "Hub Wali Kelas",
+    icon: <Users size={18} />,
+    roles: ["wali_kelas", "WALI_KELAS", "admin_super", "ADMIN_SUPER"],
+  },
+  {
     href: "/tahfidz/mutabaah",
     label: "Mutabaah Tahfidz",
     icon: <BookOpen size={18} />,

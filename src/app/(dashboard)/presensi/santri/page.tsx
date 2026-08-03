@@ -378,7 +378,7 @@ export default function PresensiSantriPage() {
             >
               <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 10, flexWrap: "wrap", gap: 10 }}>
                 <div style={{ fontSize: 14, fontWeight: 700, color: "var(--text)" }}>
-                  <BarChart size={15} className="inline mr-1" style={{ color: "var(--primary)" }} />
+                  <BarChart3 size={15} className="inline mr-1" style={{ color: "var(--primary)" }} />
                   <span style={{ color: "var(--primary)" }}>{sudahDiabsen}</span>
                   <span style={{ color: "var(--text-muted)", fontWeight: 500 }}> dari {santri.length} santri sudah diabsen</span>
                 </div>
