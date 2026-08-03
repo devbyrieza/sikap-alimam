@@ -472,81 +472,130 @@ export default function PresensiSantriPage() {
               </span>
             </div>
 
-            {/* Daftar Kartu Santri (mobile-first) */}
-            <div style={{ display: "flex", flexDirection: "column", gap: 12, marginBottom: 24 }}>
+            {/* Card list santri */}
+            <div className="space-y-3 pb-28 sm:pb-4">
               {santri.map((s, idx) => {
-                const currentStatus = statusMap[s.id];
-                const needsKet = currentStatus && currentStatus !== "hadir";
+                const currentStatus = statusMap[s.id] || "hadir";
+                const needsKet = currentStatus !== "hadir";
+
                 return (
                   <div
                     key={s.id}
-                    className="card"
+                    className="card santri-attendance-card"
                     style={{
-                      padding: "16px 20px",
-                      borderLeft: `4px solid ${currentStatus ? STATUS_COLOR[currentStatus] : "#cbd5e1"}`,
-                      transition: "border-color 0.2s",
+                      padding: "14px 16px",
+                      borderLeft: `4px solid ${
+                        currentStatus === "hadir"
+                          ? "#15803d"
+                          : currentStatus === "sakit"
+                          ? "#d97706"
+                          : currentStatus === "izin"
+                          ? "#0284c7"
+                          : currentStatus === "alpha"
+                          ? "#b91c1c"
+                          : "#e2e8f0"
+                      }`,
                     }}
                   >
-                    {/* Header row */}
-                    <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 12 }}>
-                      {/* Nomor urut */}
+                    {/* Baris Atas: Nomor, Nama, NIS, Badge */}
+                    <div
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "space-between",
+                        marginBottom: 10,
+                        gap: 8,
+                      }}
+                    >
                       <div
                         style={{
-                          width: 32,
-                          height: 32,
-                          borderRadius: "50%",
-                          background: "var(--border)",
                           display: "flex",
                           alignItems: "center",
-                          justifyContent: "center",
-                          fontSize: 13,
-                          fontWeight: 700,
-                          color: "var(--text-muted)",
-                          flexShrink: 0,
+                          gap: 10,
+                          minWidth: 0,
                         }}
                       >
-                        {idx + 1}
-                      </div>
-                      {/* Nama & NIS */}
-                      <div style={{ flex: 1, minWidth: 0 }}>
-                        <div style={{ fontWeight: 700, fontSize: 15, color: "var(--text)" }}>
-                          {s.nama_lengkap}
+                        <span
+                          style={{
+                            display: "inline-flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            width: 26,
+                            height: 26,
+                            borderRadius: "50%",
+                            background: "var(--surface-100, #f1f5f9)",
+                            color: "var(--text-muted)",
+                            fontSize: 11,
+                            fontWeight: 700,
+                            flexShrink: 0,
+                          }}
+                        >
+                          {idx + 1}
+                        </span>
+                        <div style={{ minWidth: 0 }}>
+                          <p
+                            style={{
+                              fontSize: 14,
+                              fontWeight: 700,
+                              color: "var(--primary-dark)",
+                              margin: 0,
+                              lineHeight: 1.3,
+                              overflow: "hidden",
+                              textOverflow: "ellipsis",
+                              whiteSpace: "nowrap",
+                            }}
+                          >
+                            {s.nama_lengkap}
+                          </p>
+                          <p
+                            style={{
+                              fontSize: 11,
+                              color: "var(--text-muted)",
+                              margin: 0,
+                            }}
+                          >
+                            NIS: {s.nis || "-"}
+                          </p>
                         </div>
-                        <div style={{ fontSize: 12, color: "var(--text-muted)" }}>
-                          NIS: {s.nis || "—"}
-                        </div>
                       </div>
+
                       {/* Badge status saat ini */}
-                      <div
-                        style={{
-                          padding: "4px 10px",
-                          borderRadius: 99,
-                          fontSize: 12,
-                          fontWeight: 700,
-                          background: currentStatus ? STATUS_BG[currentStatus] : "#f1f5f9",
-                          color: currentStatus ? STATUS_COLOR[currentStatus] : "#64748b",
-                        }}
+                      <span
+                        className={`badge badge-${currentStatus}`}
+                        style={{ flexShrink: 0, fontSize: 11, padding: "3px 10px" }}
                       >
-                        {currentStatus ? STATUS_LABEL[currentStatus] : "Belum Diabsen"}
-                      </div>
+                        {STATUS_LABEL[currentStatus]}
+                      </span>
                     </div>
 
-                    {/* Status Buttons — besar & mudah diklik di HP */}
-                    <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 8 }}>
+                    {/* Tombol Status 4 Pilihan */}
+                    <div
+                      style={{
+                        display: "grid",
+                        gridTemplateColumns: "repeat(4, 1fr)",
+                        gap: 6,
+                      }}
+                    >
                       {STATUS_LIST.map((st) => {
-                        const isActive = currentStatus === st;
+                        const isSelected = currentStatus === st;
                         return (
                           <button
                             key={st}
                             type="button"
                             onClick={() => setStatus(s.id, st)}
                             style={{
-                              padding: "10px 4px",
-                              borderRadius: 10,
-                              border: `2px solid ${isActive ? STATUS_COLOR[st] : "var(--border)"}`,
-                              background: isActive ? STATUS_BG[st] : "transparent",
-                              color: isActive ? STATUS_COLOR[st] : "var(--text-muted)",
-                              fontWeight: 700,
+                              padding: "9px 4px",
+                              borderRadius: 8,
+                              border: isSelected
+                                ? `2px solid ${STATUS_COLOR[st]}`
+                                : "1px solid var(--border)",
+                              background: isSelected
+                                ? STATUS_BG[st]
+                                : "var(--surface)",
+                              color: isSelected
+                                ? STATUS_COLOR[st]
+                                : "var(--text-muted)",
+                              fontWeight: isSelected ? 700 : 500,
                               fontSize: 13,
                               cursor: "pointer",
                               transition: "all 0.15s",
@@ -597,14 +646,14 @@ export default function PresensiSantriPage() {
             {/* Save Button (Desktop) */}
             <div className="hidden sm:flex justify-end mt-4">
               <button
-                className="btn btn-secondary"
+                className="btn btn-primary"
                 onClick={handleSimpan}
                 disabled={saving}
                 style={{ minWidth: 180, padding: "12px 24px", fontSize: 14, fontWeight: 700 }}
               >
                 {saving ? (
                   <>
-                    <span className="spinner" style={{ borderTopColor: "var(--primary-dark)" }} />
+                    <span className="spinner" />
                     Menyimpan...
                   </>
                 ) : (
@@ -617,20 +666,42 @@ export default function PresensiSantriPage() {
             </div>
 
             {/* Mobile Sticky Action Bar */}
-            <div className="sm:hidden fixed bottom-0 left-0 right-0 p-3 bg-white/95 backdrop-blur-md border-t border-slate-200 shadow-2xl z-30 flex items-center justify-between gap-3">
+            <div
+              className="sm:hidden fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md border-t border-slate-200/80 shadow-[0_-8px_30px_rgba(0,0,0,0.12)] z-30 flex items-center justify-between gap-3 px-4 pt-3"
+              style={{ paddingBottom: "max(14px, env(safe-area-inset-bottom))" }}
+            >
               <div className="min-w-0">
-                <p className="text-xs font-bold text-slate-800 leading-tight truncate">
-                  {sudahDiabsen}/{santri.length} Santri Diabsen
-                </p>
-                <p className="text-[11px] text-slate-500">{progressPct}% Selesai</p>
+                <div className="flex items-center gap-1.5">
+                  <span className="inline-block w-2 h-2 rounded-full bg-emerald-500 animate-pulse flex-shrink-0" />
+                  <p className="text-xs font-bold text-slate-800 leading-tight truncate">
+                    {sudahDiabsen}/{santri.length} Santri Diabsen
+                  </p>
+                </div>
+                <p className="text-[11px] text-slate-500 font-medium mt-0.5">{progressPct}% Selesai</p>
               </div>
               <button
-                className="btn btn-secondary flex-1 max-w-[200px]"
+                className="btn btn-primary flex-1 max-w-[190px]"
                 onClick={handleSimpan}
                 disabled={saving}
-                style={{ justifyContent: "center", padding: "10px 16px", fontWeight: 700 }}
+                style={{
+                  justifyContent: "center",
+                  padding: "11px 16px",
+                  fontWeight: 700,
+                  fontSize: "13px",
+                  boxShadow: "0 4px 14px rgba(155, 27, 34, 0.35)",
+                }}
               >
-                {saving ? "Menyimpan..." : "Simpan Presensi"}
+                {saving ? (
+                  <>
+                    <span className="spinner" style={{ width: 14, height: 14, borderWidth: 2 }} />
+                    Menyimpan...
+                  </>
+                ) : (
+                  <>
+                    <Save size={15} />
+                    Simpan Presensi
+                  </>
+                )}
               </button>
             </div>
           </>

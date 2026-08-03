@@ -651,7 +651,7 @@ export default function InputNilaiPage() {
             </div>
 
             {/* Save Button (Desktop) */}
-            <div className="hidden sm:flex justify-end">
+            <div className="hidden sm:flex justify-end pb-4">
               <button
                 className="btn btn-primary"
                 onClick={handleSimpan}
@@ -673,20 +673,39 @@ export default function InputNilaiPage() {
             </div>
 
             {/* Mobile Sticky Action Bar */}
-            <div className="sm:hidden fixed bottom-0 left-0 right-0 p-3 bg-white/95 backdrop-blur-md border-t border-slate-200 shadow-2xl z-30 flex items-center justify-between gap-3">
+            <div
+              className="sm:hidden fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md border-t border-slate-200/80 shadow-[0_-8px_30px_rgba(0,0,0,0.12)] z-30 flex items-center justify-between gap-3 px-4 pt-3"
+              style={{ paddingBottom: "max(14px, env(safe-area-inset-bottom))" }}
+            >
               <div className="min-w-0">
                 <p className="text-xs font-bold text-slate-800 leading-tight truncate">
-                  {santriList.length} Santri
+                  {santriList.length} Santri Terdaftar
                 </p>
-                <p className="text-[11px] text-slate-500 truncate">{selectedMapelNama}</p>
+                <p className="text-[11px] text-slate-500 font-medium truncate mt-0.5">{selectedMapelNama}</p>
               </div>
               <button
-                className="btn btn-primary flex-1 max-w-[200px]"
+                className="btn btn-primary flex-1 max-w-[190px]"
                 onClick={handleSimpan}
                 disabled={saving || loadingSantri}
-                style={{ justifyContent: "center", padding: "10px 16px", fontWeight: 700 }}
+                style={{
+                  justifyContent: "center",
+                  padding: "11px 16px",
+                  fontWeight: 700,
+                  fontSize: "13px",
+                  boxShadow: "0 4px 14px rgba(155, 27, 34, 0.35)",
+                }}
               >
-                {saving ? "Menyimpan..." : "Simpan Nilai"}
+                {saving ? (
+                  <>
+                    <span className="spinner" style={{ width: 14, height: 14, borderWidth: 2 }} />
+                    Menyimpan...
+                  </>
+                ) : (
+                  <>
+                    <Save size={15} />
+                    Simpan Nilai
+                  </>
+                )}
               </button>
             </div>
           </>
