@@ -67,7 +67,7 @@ export default async function DashboardLayout({
 
   return (
     <div className="app-layout">
-      <Sidebar user={{ nama: session.nama, role: session.role, email: session.email }} />
+      <Sidebar user={{ nama: session.nama, role: session.role, email: session.email, originalRole: session.originalRole }} />
       <main className="app-content">
         {children}
       </main>

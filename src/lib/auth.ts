@@ -10,6 +10,7 @@ export interface SessionPayload extends JWTPayload {
   email: string;
   nama: string;
   role: string;
+  originalRole?: string;
   asatidz_id?: string;
 }
 

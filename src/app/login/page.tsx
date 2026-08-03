@@ -12,6 +12,10 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
+  // Role Selection State
+  const [requireRoleSelection, setRequireRoleSelection] = useState(false);
+  const [availableRoles, setAvailableRoles] = useState<string[]>([]);
+
   // Forgot Password State
   const [showForgotModal, setShowForgotModal] = useState(false);
   const [forgotInput, setForgotInput] = useState("");
@@ -57,6 +61,34 @@ export default function LoginPage() {
         setError(json.error || "Login gagal");
         return;
       }
+      if (json.requireRoleSelection) {
+        setRequireRoleSelection(true);
+        setAvailableRoles(json.availableRoles);
+        return;
+      }
+      router.push("/dashboard");
+      router.refresh();
+    } catch {
+      setError("Terjadi kesalahan. Coba lagi.");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function handleRoleSelect(role: string) {
+    setError("");
+    setLoading(true);
+    try {
+      const res = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password, selectedRole: role }),
+      });
+      const json = await res.json();
+      if (!res.ok) {
+        setError(json.error || "Login gagal");
+        return;
+      }
       router.push("/dashboard");
       router.refresh();
     } catch {
@@ -94,7 +126,43 @@ export default function LoginPage() {
           </p>
         </div>
 
-        <form onSubmit={handleSubmit}>
+        {requireRoleSelection ? (
+          <div>
+            <p style={{ textAlign: "center", marginBottom: 20, fontSize: 14, color: "#4b5563" }}>
+              Akun Anda memiliki akses ganda. Silakan pilih hak akses yang ingin digunakan saat ini:
+            </p>
+            <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+              {availableRoles.map(role => (
+                <button
+                  key={role}
+                  onClick={() => handleRoleSelect(role)}
+                  disabled={loading}
+                  className="btn btn-primary"
+                  style={{ width: "100%", padding: "12px", background: role === 'ADMIN_SUPER' ? 'var(--primary)' : 'var(--secondary)' }}
+                >
+                  {loading ? <Loader2 className="spin" size={18} /> : `Masuk sebagai ${role === 'ADMIN_SUPER' ? 'Admin Super' : 'Guru'}`}
+                </button>
+              ))}
+            </div>
+            {error && (
+              <div className="alert-error" style={{ marginTop: 16 }}>
+                <AlertTriangle size={16} />
+                <span>{error}</span>
+              </div>
+            )}
+            <button
+              onClick={() => {
+                setRequireRoleSelection(false);
+                setPassword("");
+              }}
+              className="btn btn-ghost"
+              style={{ width: "100%", marginTop: 16, fontSize: 13, color: "#6b7280" }}
+            >
+              Kembali
+            </button>
+          </div>
+        ) : (
+          <form onSubmit={handleSubmit}>
           <div className="form-group" style={{ marginBottom: 16 }}>
             <label className="form-label">User ID / Email / No. WA</label>
             <input
@@ -174,12 +242,12 @@ export default function LoginPage() {
             type="submit"
             className="btn btn-primary"
             disabled={loading}
-            style={{ width: "100%", justifyContent: "center", marginTop: 4 }}
+            style={{ width: "100%", padding: "12px", marginTop: 8 }}
           >
-            {loading ? <Loader2 size={16} className="spinner" style={{ animation: "spin 0.7s linear infinite" }} /> : null}
-            {loading ? "Masuk..." : "Masuk ke SIKAP"}
+            {loading ? <Loader2 className="spin" size={18} /> : "Masuk ke Sistem"}
           </button>
         </form>
+        )}
 
         <div
           style={{

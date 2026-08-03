@@ -22,11 +22,13 @@ const NAV: NavItem[] = [
     href: "/jurnal",
     label: "Jurnal Mengajar",
     icon: <BookMarked size={18} />,
+    roles: ["guru"],
   },
   {
     href: "/presensi/santri",
     label: "Presensi Santri",
     icon: <ClipboardCheck size={18} />,
+    roles: ["guru"],
   },
   {
     href: "/presensi/santri/rekap",
@@ -44,11 +46,13 @@ const NAV: NavItem[] = [
     href: "/tahfidz/mutabaah",
     label: "Mutabaah Tahfidz",
     icon: <BookOpen size={18} />,
+    roles: ["guru", "musyrif"],
   },
   {
     href: "/nilai",
     label: "Input Nilai",
     icon: <BarChart3 size={18} />,
+    roles: ["guru"],
   },
   {
     href: "/master/kelas",
@@ -71,7 +75,7 @@ const NAV: NavItem[] = [
 ];
 
 interface SidebarProps {
-  user: { nama: string; role: string; email: string };
+  user: { nama: string; role: string; email: string; originalRole?: string };
 }
 
 export default function Sidebar({ user }: SidebarProps) {
@@ -100,6 +104,25 @@ export default function Sidebar({ user }: SidebarProps) {
     await fetch("/api/auth/logout", { method: "POST" });
     router.push("/login");
     router.refresh();
+  }
+
+  async function handleSwitchRole() {
+    const targetRole = user.role === "ADMIN_SUPER" ? "GURU" : "ADMIN_SUPER";
+    try {
+      const res = await fetch("/api/auth/switch-role", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ targetRole }),
+      });
+      if (res.ok) {
+        router.push("/dashboard");
+        router.refresh();
+      } else {
+        alert("Gagal mengganti role");
+      }
+    } catch {
+      alert("Terjadi kesalahan");
+    }
   }
 
   const SidebarContent = () => (
@@ -159,14 +182,14 @@ export default function Sidebar({ user }: SidebarProps) {
               width: 36,
               height: 36,
               borderRadius: "50%",
-              background: "rgba(255,255,255,0.12)",
+              background: "var(--primary-pale)",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
               flexShrink: 0,
               fontSize: 14,
               fontWeight: 700,
-              color: "white",
+              color: "var(--primary)",
             }}
           >
             {user.nama.charAt(0).toUpperCase()}
@@ -176,7 +199,7 @@ export default function Sidebar({ user }: SidebarProps) {
               style={{
                 fontSize: 13,
                 fontWeight: 700,
-                color: "white",
+                color: "var(--primary-dark)",
                 overflow: "hidden",
                 textOverflow: "ellipsis",
                 whiteSpace: "nowrap",
@@ -187,7 +210,7 @@ export default function Sidebar({ user }: SidebarProps) {
             <p
               style={{
                 fontSize: 11,
-                color: user.role?.toUpperCase().includes("ADMIN") ? "#fde047" : "rgba(255,255,255,0.6)",
+                color: user.role?.toUpperCase().includes("ADMIN") ? "var(--primary)" : "var(--text-muted)",
                 fontWeight: user.role?.toUpperCase().includes("ADMIN") ? 700 : 500,
                 overflow: "hidden",
                 textOverflow: "ellipsis",
@@ -198,6 +221,30 @@ export default function Sidebar({ user }: SidebarProps) {
             </p>
           </div>
         </div>
+          
+          {user.originalRole === "ADMIN_SUPER" && (
+            <button
+              type="button"
+              onClick={handleSwitchRole}
+              className="btn btn-ghost btn-sm"
+              style={{
+                width: "100%",
+                justifyContent: "center",
+                color: "var(--primary)",
+                background: "var(--primary-pale)",
+                borderColor: "rgba(155, 27, 34, 0.2)",
+                padding: "7px 0",
+                fontSize: "11px",
+                fontWeight: 700,
+                cursor: "pointer",
+                marginBottom: 6
+              }}
+            >
+              <UserCheck size={13} style={{ marginRight: 4 }} />
+              Ganti ke Mode {user.role === "ADMIN_SUPER" ? "Guru" : "Admin"}
+            </button>
+          )}
+
           <button
             type="button"
             onClick={() => {
@@ -229,8 +276,9 @@ export default function Sidebar({ user }: SidebarProps) {
               style={{
                 flex: 1,
                 justifyContent: "center",
-                color: "rgba(255,255,255,0.7)",
-                borderColor: "rgba(255,255,255,0.15)",
+                color: "var(--text-muted)",
+                background: "#f8fafc",
+                borderColor: "var(--border)",
                 padding: "7px 0",
                 fontSize: "11px"
               }}
@@ -244,8 +292,9 @@ export default function Sidebar({ user }: SidebarProps) {
               style={{
                 flex: 1,
                 justifyContent: "center",
-                color: "rgba(255,255,255,0.7)",
-                borderColor: "rgba(255,255,255,0.15)",
+                color: "#ef4444",
+                background: "#fef2f2",
+                borderColor: "#fee2e2",
                 padding: "7px 0",
                 fontSize: "11px",
                 cursor: "pointer"

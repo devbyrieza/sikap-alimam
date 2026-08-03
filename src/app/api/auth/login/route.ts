@@ -5,7 +5,7 @@ import bcrypt from "bcryptjs";
 
 export async function POST(req: NextRequest) {
   try {
-    const { email, password } = await req.json();
+    const { email, password, selectedRole } = await req.json();
 
     if (!email || !password) {
       return NextResponse.json(
@@ -75,15 +75,27 @@ export async function POST(req: NextRequest) {
       }
     }
 
+    // Role Selection Logic
+    if (user.role === 'ADMIN_SUPER' && !selectedRole) {
+      return NextResponse.json({
+        success: true,
+        requireRoleSelection: true,
+        availableRoles: ['ADMIN_SUPER', 'GURU']
+      });
+    }
+
+    const finalRole = selectedRole && user.role === 'ADMIN_SUPER' ? selectedRole : user.role;
+
     await createSession({
       userId: user.id,
       email: user.email,
       nama: user.nama,
-      role: user.role,
+      role: finalRole,
+      originalRole: user.role,
       asatidz_id: asatidzId,
     });
 
-    return NextResponse.json({ success: true, role: user.role, nama: user.nama });
+    return NextResponse.json({ success: true, role: finalRole, nama: user.nama });
   } catch (err) {
     console.error("Login error:", err);
     return NextResponse.json(
