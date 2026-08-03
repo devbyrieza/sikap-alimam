@@ -113,8 +113,9 @@ export default function LoginPage() {
           <p style={{ marginTop: 2 }}>Pesantren Al-Imam Al-Islami</p>
           <p
             style={{
-              fontSize: 18,
-              marginTop: 10,
+              fontSize: 24,
+              fontWeight: 700,
+              marginTop: 14,
               color: "#4b5563",
               fontFamily: "var(--font-arabic)",
             }}
@@ -164,7 +165,7 @@ export default function LoginPage() {
         ) : (
           <form onSubmit={handleSubmit}>
           <div className="form-group" style={{ marginBottom: 16 }}>
-            <label className="form-label">User ID / Email / No. WA</label>
+            <label className="form-label" style={{ fontSize: 13, fontWeight: 700, marginBottom: 8, color: "var(--text-main)" }}>User ID / Email / No. WA</label>
             <input
               type="text"
               name="email"
@@ -178,7 +179,7 @@ export default function LoginPage() {
           </div>
 
           <div className="form-group">
-            <label className="form-label">Password</label>
+            <label className="form-label" style={{ fontSize: 13, fontWeight: 700, marginBottom: 8, color: "var(--text-main)" }}>Password</label>
             <div style={{ position: "relative" }}>
               <input
                 type={showPass ? "text" : "password"}
