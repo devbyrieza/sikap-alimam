@@ -457,23 +457,6 @@ export default function PresensiSantriPage() {
                           minWidth: 0,
                         }}
                       >
-                        <span
-                          style={{
-                            display: "inline-flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            width: 26,
-                            height: 26,
-                            borderRadius: "50%",
-                            background: "var(--surface-100, #f1f5f9)",
-                            color: "var(--text-muted)",
-                            fontSize: 11,
-                            fontWeight: 700,
-                            flexShrink: 0,
-                          }}
-                        >
-                          {idx + 1}
-                        </span>
                         <div style={{ minWidth: 0 }}>
                           <p
                             style={{

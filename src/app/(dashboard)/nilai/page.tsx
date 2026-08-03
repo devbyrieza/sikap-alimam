@@ -523,7 +523,7 @@ export default function InputNilaiPage() {
                   const isLulus = nilaiAkhir ? Number(nilaiAkhir) >= 80 : true;
 
                   return (
-                    <div key={`mobile-${s.id}`} className="bg-white rounded-3xl border border-slate-200/80 shadow-sm p-5 overflow-hidden flex flex-col gap-4 relative">
+                    <div key={`mobile-${s.id}`} className="bg-white rounded-3xl border border-slate-200/80 shadow-sm overflow-hidden flex flex-col gap-4 relative" style={{ padding: "24px" }}>
                       
                       {/* Nilai Akhir Badge (Absolute to avoid squishing the name) */}
                       <div className="absolute top-5 right-5">
@@ -534,7 +534,7 @@ export default function InputNilaiPage() {
                       </div>
 
                       <div className="border-b border-slate-100 pb-4 pr-16">
-                        <div className="font-extrabold text-slate-800 text-base leading-snug mb-1">{idx + 1}. {s.nama_lengkap}</div>
+                        <div className="font-extrabold text-slate-800 text-base leading-snug mb-1">{s.nama_lengkap}</div>
                         <div className="text-xs text-slate-500 font-medium bg-slate-50 inline-block px-2 py-0.5 rounded-md border border-slate-100">NIS: {s.nis || "—"}</div>
                       </div>
 
@@ -582,7 +582,7 @@ export default function InputNilaiPage() {
                     <tr style={{ background: "#f8fafc", borderBottom: "1px solid var(--border)", fontSize: 13, color: "var(--text-muted)" }}>
                       {/* Sticky Index */}
                       <th style={{ position: "sticky", left: 0, zIndex: 25, background: "#f8fafc", padding: "12px 8px", textAlign: "center", width: 40, borderBottom: "1px solid var(--border)" }}>
-                        #
+                        No
                       </th>
                       {/* Sticky Nama Santri */}
                       <th style={{ position: "sticky", left: 40, zIndex: 25, background: "#f8fafc", padding: "12px 12px", textAlign: "left", minWidth: 160, maxWidth: 200, borderBottom: "1px solid var(--border)", borderRight: "1px solid #e2e8f0", boxShadow: "4px 0 6px -2px rgba(0,0,0,0.05)" }}>
