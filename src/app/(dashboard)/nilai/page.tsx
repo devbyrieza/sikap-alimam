@@ -523,33 +523,49 @@ export default function InputNilaiPage() {
                   const isLulus = nilaiAkhir ? Number(nilaiAkhir) >= 80 : true;
 
                   return (
-                    <div key={`mobile-${s.id}`} className="bg-white rounded-2xl border border-slate-200/80 shadow-sm p-4 overflow-hidden">
-                      <div className="flex justify-between items-start mb-4 border-b border-slate-100 pb-3">
-                        <div>
-                          <div className="font-bold text-slate-800 text-sm leading-tight mb-0.5">{idx + 1}. {s.nama_lengkap}</div>
-                          <div className="text-[11px] text-slate-500 font-medium">NIS: {s.nis || "—"}</div>
-                        </div>
-                        <div className={`shrink-0 px-2.5 py-1.5 rounded-xl text-xs font-bold border flex flex-col items-center justify-center min-w-[50px] ${nilaiAkhir ? (isLulus ? 'bg-green-50 text-green-700 border-green-200' : 'bg-red-50 text-red-700 border-red-200') : 'bg-slate-50 text-slate-400 border-slate-200'}`}>
-                          <span style={{ fontSize: 9, opacity: 0.7, marginBottom: 1 }}>AKHIR</span>
-                          <span style={{ fontSize: 13 }}>{nilaiAkhir ? nilaiAkhir : "-"}</span>
+                    <div key={`mobile-${s.id}`} className="bg-white rounded-3xl border border-slate-200/80 shadow-sm p-5 overflow-hidden flex flex-col gap-4 relative">
+                      
+                      {/* Nilai Akhir Badge (Absolute to avoid squishing the name) */}
+                      <div className="absolute top-5 right-5">
+                        <div className={`px-3 py-2 rounded-xl text-xs font-black border flex flex-col items-center justify-center min-w-[54px] shadow-sm ${nilaiAkhir ? (isLulus ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-rose-50 text-rose-700 border-rose-200') : 'bg-slate-50 text-slate-400 border-slate-200'}`}>
+                          <span style={{ fontSize: 9, opacity: 0.8, marginBottom: 2, letterSpacing: '0.05em' }}>AKHIR</span>
+                          <span style={{ fontSize: 14 }}>{nilaiAkhir ? nilaiAkhir : "-"}</span>
                         </div>
                       </div>
-                      <div className="grid grid-cols-4 gap-2.5">
+
+                      <div className="border-b border-slate-100 pb-4 pr-16">
+                        <div className="font-extrabold text-slate-800 text-base leading-snug mb-1">{idx + 1}. {s.nama_lengkap}</div>
+                        <div className="text-xs text-slate-500 font-medium bg-slate-50 inline-block px-2 py-0.5 rounded-md border border-slate-100">NIS: {s.nis || "—"}</div>
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-x-4 gap-y-5">
                         <div className="flex flex-col">
-                          <label className="text-[10px] font-bold text-slate-500 text-center mb-1.5">Harian<br/><span className="text-[8px] text-primary/70">(30%)</span></label>
-                          <input type="number" inputMode="decimal" className="form-control" style={{ textAlign: "center", fontSize: 14, fontWeight: 700, padding: "8px 4px", height: 44, borderRadius: 12 }} placeholder="-" value={data.harian} onChange={(e) => handleInputChange(s.id, "harian", e.target.value)} />
+                          <label className="text-[11px] font-bold text-slate-600 mb-1.5 flex items-center justify-between">
+                            <span>Harian</span>
+                            <span className="text-[9px] text-[#9b1b22] bg-[#9b1b22]/10 px-1.5 py-0.5 rounded">(30%)</span>
+                          </label>
+                          <input type="number" inputMode="decimal" className="form-control" style={{ textAlign: "left", fontSize: 15, fontWeight: 800, padding: "10px 14px", height: 46, borderRadius: 14, background: "#f8fafc", border: "1px solid #e2e8f0" }} placeholder="-" value={data.harian} onChange={(e) => handleInputChange(s.id, "harian", e.target.value)} />
                         </div>
                         <div className="flex flex-col">
-                          <label className="text-[10px] font-bold text-slate-500 text-center mb-1.5">Komp.<br/><span className="text-[8px] text-primary/70">(20%)</span></label>
-                          <input type="number" inputMode="decimal" className="form-control" style={{ textAlign: "center", fontSize: 14, fontWeight: 700, padding: "8px 4px", height: 44, borderRadius: 12 }} placeholder="-" value={data.kompetensi} onChange={(e) => handleInputChange(s.id, "kompetensi", e.target.value)} />
+                          <label className="text-[11px] font-bold text-slate-600 mb-1.5 flex items-center justify-between">
+                            <span>Komp.</span>
+                            <span className="text-[9px] text-[#9b1b22] bg-[#9b1b22]/10 px-1.5 py-0.5 rounded">(20%)</span>
+                          </label>
+                          <input type="number" inputMode="decimal" className="form-control" style={{ textAlign: "left", fontSize: 15, fontWeight: 800, padding: "10px 14px", height: 46, borderRadius: 14, background: "#f8fafc", border: "1px solid #e2e8f0" }} placeholder="-" value={data.kompetensi} onChange={(e) => handleInputChange(s.id, "kompetensi", e.target.value)} />
                         </div>
                         <div className="flex flex-col">
-                          <label className="text-[10px] font-bold text-slate-500 text-center mb-1.5">Sikap<br/><span className="text-[8px] text-primary/70">(10%)</span></label>
-                          <input type="number" inputMode="decimal" className="form-control" style={{ textAlign: "center", fontSize: 14, fontWeight: 700, padding: "8px 4px", height: 44, borderRadius: 12 }} placeholder="-" value={data.sikap} onChange={(e) => handleInputChange(s.id, "sikap", e.target.value)} />
+                          <label className="text-[11px] font-bold text-slate-600 mb-1.5 flex items-center justify-between">
+                            <span>Sikap</span>
+                            <span className="text-[9px] text-[#9b1b22] bg-[#9b1b22]/10 px-1.5 py-0.5 rounded">(10%)</span>
+                          </label>
+                          <input type="number" inputMode="decimal" className="form-control" style={{ textAlign: "left", fontSize: 15, fontWeight: 800, padding: "10px 14px", height: 46, borderRadius: 14, background: "#f8fafc", border: "1px solid #e2e8f0" }} placeholder="-" value={data.sikap} onChange={(e) => handleInputChange(s.id, "sikap", e.target.value)} />
                         </div>
                         <div className="flex flex-col">
-                          <label className="text-[10px] font-bold text-slate-500 text-center mb-1.5">{periode}<br/><span className="text-[8px] text-primary/70">(40%)</span></label>
-                          <input type="number" inputMode="decimal" className="form-control" style={{ textAlign: "center", fontSize: 14, fontWeight: 700, padding: "8px 4px", height: 44, borderRadius: 12 }} placeholder="-" value={data.ujian} onChange={(e) => handleInputChange(s.id, "ujian", e.target.value)} />
+                          <label className="text-[11px] font-bold text-slate-600 mb-1.5 flex items-center justify-between">
+                            <span className="truncate max-w-[60px]">{periode}</span>
+                            <span className="text-[9px] text-[#9b1b22] bg-[#9b1b22]/10 px-1.5 py-0.5 rounded shrink-0">(40%)</span>
+                          </label>
+                          <input type="number" inputMode="decimal" className="form-control" style={{ textAlign: "left", fontSize: 15, fontWeight: 800, padding: "10px 14px", height: 46, borderRadius: 14, background: "#f8fafc", border: "1px solid #e2e8f0" }} placeholder="-" value={data.ujian} onChange={(e) => handleInputChange(s.id, "ujian", e.target.value)} />
                         </div>
                       </div>
                     </div>
