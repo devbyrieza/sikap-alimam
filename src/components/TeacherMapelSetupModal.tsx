@@ -208,24 +208,6 @@ export default function TeacherMapelSetupModal({
 
   // Logout: save draft first so data is preserved when user returns
   const handleLogout = async () => {
-    const confirm = await Swal.fire({
-      icon: "question",
-      title: "<span style='color:#3b0a0a;font-weight:800'>Keluar dari SIKAP?</span>",
-      html: `
-        <div style='color:#64748b;font-size:.875rem;text-align:left;margin-top:4px'>
-          <p>Data yang <b>sudah Anda isi</b> pada form ini akan <b style='color:#16a34a'>tetap tersimpan</b> sebagai draft.</p>
-          <p style='margin-top:6px'>Saat Anda login kembali, data yang sudah terisi sebelumnya tidak perlu diisi ulang — Anda hanya melengkapi yang kosong.</p>
-        </div>
-      `,
-      confirmButtonText: "Ya, Logout Sekarang",
-      cancelButtonText: "Batal, Lanjut Isi Data",
-      showCancelButton: true,
-      confirmButtonColor: "#7f1d1d",
-      cancelButtonColor: "#1e293b",
-      reverseButtons: true,
-    });
-    if (!confirm.isConfirmed) return;
-
     // Save current draft explicitly so it persists across sessions
     try { localStorage.setItem(DRAFT_KEY, JSON.stringify(formData)); } catch { /* ignore */ }
 
