@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { sortKelas } from "@/lib/kelas";
+import { normalizeKelasList } from "@/lib/kelas";
 
 // GET: Ambil daftar kelas (bisa semua atau hanya yang aktif)
 export async function GET(req: NextRequest) {
@@ -20,7 +20,7 @@ export async function GET(req: NextRequest) {
       },
     });
 
-    const kelas = sortKelas(rawKelas);
+    const kelas = normalizeKelasList(rawKelas);
 
     return NextResponse.json({ kelas, success: true });
   } catch (err: any) {

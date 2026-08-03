@@ -45,6 +45,7 @@ export default function TambahJurnalPage() {
   const [lastSaved, setLastSaved] = useState<string | null>(null);
 
   // Form fields
+  const [jenjangFilter, setJenjangFilter] = useState("");
   const [kelasId, setKelasId] = useState("");
   const [mapelId, setMapelId] = useState("");
   const [asatidId, setAsatidId] = useState("");
@@ -112,9 +113,22 @@ export default function TambahJurnalPage() {
     setMapelId("");
   }, [kelasId]);
 
+  // Filter kelas when jenjang changes
+  const filteredKelasList = useMemo(() => {
+    const list = master?.kelas || [];
+    if (!jenjangFilter) return list;
+    return list.filter((k) => k.jenjang === jenjangFilter);
+  }, [jenjangFilter, master?.kelas]);
+
+  // Auto reset kelasId if no longer valid
+  useEffect(() => {
+    if (kelasId) {
+      const exists = filteredKelasList.find((k) => k.id === kelasId);
+      if (!exists) setKelasId("");
+    }
+  }, [filteredKelasList, kelasId]);
+
   const mapelList = (kelasId && master?.mapel?.[kelasId]) || [];
-
-
 
   const handleTextareaResize = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     e.target.style.height = "auto";
@@ -362,6 +376,23 @@ export default function TambahJurnalPage() {
                   </div>
                 </div>
 
+                {/* Jenjang */}
+                <div className="form-group">
+                  <label className="form-label">
+                    Jenjang <span style={{ color: "var(--danger)" }}>*</span>
+                  </label>
+                  <select
+                    className="form-control"
+                    value={jenjangFilter}
+                    onChange={(e) => setJenjangFilter(e.target.value)}
+                  >
+                    <option value="">— Semua Jenjang —</option>
+                    <option value="MTs">MTs</option>
+                    <option value="MA">MA</option>
+                    <option value="IL">IL (I'dad Lughowy)</option>
+                  </select>
+                </div>
+
                 {/* Kelas */}
                 <div className="form-group">
                   <label className="form-label">
@@ -372,11 +403,12 @@ export default function TambahJurnalPage() {
                     value={kelasId}
                     onChange={(e) => setKelasId(e.target.value)}
                     required
+                    disabled={jenjangFilter !== "" && filteredKelasList.length === 0}
                   >
                     <option value="">— Pilih Kelas —</option>
-                    {master?.kelas.map((k) => (
+                    {filteredKelasList.map((k) => (
                       <option key={k.id} value={k.id}>
-                        {k.nama}{k.jenjang ? ` (${k.jenjang})` : ""}
+                        {k.nama}
                       </option>
                     ))}
                   </select>

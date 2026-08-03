@@ -43,12 +43,14 @@ const TAHUN_AJARAN_LIST = ["2024/2025", "2025/2026", "2026/2027"];
 
 export default function InputNilaiPage() {
   const [step, setStep] = useState(1);
+  const [jenjangFilter, setJenjangFilter] = useState("");
   const [kelas_id, setKelasId] = useState("");
   const [mapel_id, setMapelId] = useState("");
   const [semester, setSemester] = useState("1");
   const [tahun_ajaran, setTahunAjaran] = useState("2025/2026");
 
   const [kelasList, setKelasList] = useState<Kelas[]>([]);
+  const [filteredKelasList, setFilteredKelasList] = useState<Kelas[]>([]);
   const [mapelList, setMapelList] = useState<MapelItem[]>([]);
   const [santriList, setSantriList] = useState<Santri[]>([]);
   
@@ -64,10 +66,27 @@ export default function InputNilaiPage() {
   useEffect(() => {
     fetch("/api/master/kelas")
       .then((r) => r.json())
-      .then((d) => setKelasList(d.kelas || []))
+      .then((d) => {
+        setKelasList(d.kelas || []);
+        setFilteredKelasList(d.kelas || []);
+      })
       .catch(() => {})
       .finally(() => setLoadingKelas(false));
   }, []);
+
+  // Filter kelas when jenjang changes
+  useEffect(() => {
+    if (!jenjangFilter) {
+      setFilteredKelasList(kelasList);
+    } else {
+      setFilteredKelasList(kelasList.filter(k => k.jenjang === jenjangFilter));
+    }
+    // Auto reset kelas_id if it's no longer in the list
+    if (kelas_id) {
+      const exists = kelasList.find(k => k.id === kelas_id && (!jenjangFilter || k.jenjang === jenjangFilter));
+      if (!exists) setKelasId("");
+    }
+  }, [jenjangFilter, kelasList]);
 
   // Fetch mapel saat kelas berubah
   useEffect(() => {
@@ -338,22 +357,39 @@ export default function InputNilaiPage() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="form-group">
+                <label className="form-label">Jenjang</label>
+                <select
+                  className="form-control"
+                  value={jenjangFilter}
+                  onChange={(e) => setJenjangFilter(e.target.value)}
+                  disabled={loadingKelas}
+                >
+                  <option value="">— Semua Jenjang —</option>
+                  <option value="MTs">MTs</option>
+                  <option value="MA">MA</option>
+                  <option value="IL">IL (I'dad Lughowy)</option>
+                </select>
+              </div>
+
+              <div className="form-group">
                 <label className="form-label">Kelas / Halaqah</label>
                 <select
                   className="form-control"
                   value={kelas_id}
                   onChange={(e) => setKelasId(e.target.value)}
-                  disabled={loadingKelas}
+                  disabled={loadingKelas || (jenjangFilter !== "" && filteredKelasList.length === 0)}
                 >
                   <option value="">— Pilih Kelas —</option>
-                  {kelasList.map((k) => (
+                  {filteredKelasList.map((k) => (
                     <option key={k.id} value={k.id}>
-                      {k.nama} {k.jenjang ? `(${k.jenjang})` : ""}
+                      {k.nama}
                     </option>
                   ))}
                 </select>
               </div>
+            </div>
 
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
               <div className="form-group">
                 <label className="form-label">Mata Pelajaran</label>
                 <select

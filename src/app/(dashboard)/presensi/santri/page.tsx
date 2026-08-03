@@ -358,14 +358,10 @@ export default function PresensiSantriPage() {
                     setSelectedKelas("");
                   }}
                 >
-                  <option value="">— Pilih Jenjang —</option>
-                  {Array.from(new Set(kelasList.map(k => k.jenjang).filter(Boolean))).sort().map(j => {
-                    const jenjangStr = j as string;
-                    const label = jenjangStr === "Islamiyah" ? "IL" : jenjangStr;
-                    return (
-                      <option key={jenjangStr} value={jenjangStr}>{label}</option>
-                    );
-                  })}
+                  <option value="">— Semua Jenjang —</option>
+                  <option value="MTs">MTs</option>
+                  <option value="MA">MA</option>
+                  <option value="IL">IL (I'dad Lughowy)</option>
                 </select>
               )}
             </div>
@@ -390,18 +386,11 @@ export default function PresensiSantriPage() {
                   <option value="">— Pilih Kelas —</option>
                   {kelasList
                     .filter(k => k.jenjang === selectedJenjang)
-                    .map((k) => {
-                      // Remove jenjang text from class name if it exists (e.g. "7 MTs" -> "7")
-                      const displayName = selectedJenjang
-                        ? k.nama.replace(new RegExp(`\\s*${selectedJenjang}\\s*`, "i"), "").trim()
-                        : k.nama;
-
-                      return (
-                        <option key={k.id} value={k.id}>
-                          {displayName || k.nama}
-                        </option>
-                      );
-                    })}
+                    .map((k) => (
+                      <option key={k.id} value={k.id}>
+                        {k.nama}
+                      </option>
+                    ))}
                 </select>
               )}
             </div>

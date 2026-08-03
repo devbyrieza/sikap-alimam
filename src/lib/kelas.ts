@@ -102,3 +102,39 @@ export function sortKelasNames(names: string[]): string[] {
     return a.localeCompare(b, "id", { numeric: true, sensitivity: "base" });
   });
 }
+
+export function normalizeKelasList<T extends { id: string, nama: string, jenjang?: string | null, _count?: { santri: number } }>(kelasList: T[]): T[] {
+  const map = new Map<string, T>();
+  
+  for (const k of kelasList) {
+    let rawName = k.nama || "";
+    let jenjang = getJenjangFromKelas(rawName, k.jenjang);
+    
+    // Normalize nama: remove "(MTs)", "(MA)", "(Islamiyah)", etc if present
+    let cleanName = rawName.replace(/\s*\([^)]*\)/g, "").trim();
+    // Strip redundant " MTs", " MA" at the end of the class name
+    cleanName = cleanName.replace(/\s*(MTs|MA|IL)$/i, "").trim();
+
+    // Specific normalize for IL
+    if (jenjang === "IL" || cleanName.toUpperCase().includes("I'DAD") || cleanName.toUpperCase().includes("IDAD")) {
+      cleanName = "IL";
+      jenjang = "IL";
+    }
+
+    const key = `${jenjang}-${cleanName}`.toLowerCase();
+    
+    if (map.has(key)) {
+      const existing = map.get(key)!;
+      // Prefer the one with more santri
+      const existCount = existing._count?.santri || 0;
+      const newCount = k._count?.santri || 0;
+      if (newCount > existCount) {
+        map.set(key, { ...k, nama: cleanName, jenjang });
+      }
+    } else {
+      map.set(key, { ...k, nama: cleanName, jenjang });
+    }
+  }
+
+  return sortKelas(Array.from(map.values()));
+}
