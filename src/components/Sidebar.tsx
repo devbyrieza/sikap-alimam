@@ -34,7 +34,7 @@ const NAV: NavItem[] = [
     href: "/presensi/asatidz",
     label: "Absensi Guru",
     icon: <UserCheck size={18} />,
-    roles: ["admin", "admin_super", "ADMIN_SUPER", "mudir", "MUDIR"],
+    roles: ["guru", "admin", "admin_super", "ADMIN_SUPER", "mudir", "MUDIR"],
   },
   {
     href: "/tahfidz/mutabaah",
