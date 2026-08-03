@@ -388,8 +388,8 @@ export default function TambahJurnalPage() {
                   >
                     <option value="">— Semua Jenjang —</option>
                     <option value="MTs">MTs</option>
+                    <option value="IL">IL</option>
                     <option value="MA">MA</option>
-                    <option value="IL">IL (I'dad Lughowy)</option>
                   </select>
                 </div>
 
