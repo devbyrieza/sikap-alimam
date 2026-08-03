@@ -316,6 +316,7 @@ export default function TambahJurnalPage() {
                   <div className="flex flex-wrap gap-2">
                     {JAM_OPTIONS.map((j) => {
                       const isSelected = jamKe.includes(j);
+                      const isSubuh = j === "1" || j === "2";
                       return (
                         <button
                           key={j}
@@ -327,23 +328,34 @@ export default function TambahJurnalPage() {
                               setJamKe([...jamKe, j]);
                             }
                           }}
-                          className={`relative flex items-center justify-center transition-all ${
-                            j === "Khusus" ? "px-4 py-2" : "w-10 h-10"
-                          } text-sm font-bold rounded-xl border-2 ${
+                          className={`relative flex flex-col items-center justify-center transition-all ${
+                            j === "Khusus" ? "px-4 py-2" : "w-11 h-11"
+                          } font-bold rounded-xl border-2 ${
                             isSelected 
                               ? "bg-emerald-50 text-emerald-700 border-emerald-500 shadow-sm" 
                               : "bg-white text-slate-500 border-slate-200 hover:border-emerald-300 hover:bg-slate-50"
                           }`}
                         >
                           {isSelected && j !== "Khusus" && (
-                            <div className="absolute -top-1.5 -right-1.5 bg-emerald-500 text-white rounded-full p-0.5 shadow-sm">
+                            <div className="absolute -top-1.5 -right-1.5 bg-emerald-500 text-white rounded-full p-0.5 shadow-sm z-10">
                               <Check size={10} strokeWidth={4} />
                             </div>
                           )}
                           {isSelected && j === "Khusus" && (
-                            <Check size={14} strokeWidth={3} className="mr-1.5" />
+                            <div className="flex items-center">
+                              <Check size={14} strokeWidth={3} className="mr-1.5" />
+                              <span className="text-sm">{j}</span>
+                            </div>
                           )}
-                          {j}
+                          {!isSelected && j === "Khusus" && <span className="text-sm">{j}</span>}
+                          
+                          {/* For numbers, add small label if Subuh */}
+                          {j !== "Khusus" && (
+                            <>
+                              <span className={isSubuh ? "text-[13px] leading-none mt-1" : "text-sm"}>{j}</span>
+                              {isSubuh && <span className="text-[8px] font-normal text-slate-400 leading-tight">Subuh</span>}
+                            </>
+                          )}
                         </button>
                       );
                     })}
