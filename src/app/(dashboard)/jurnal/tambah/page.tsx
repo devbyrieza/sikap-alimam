@@ -21,7 +21,7 @@ const NAMA_BULAN = [
   "Juli", "Agustus", "September", "Oktober", "November", "Desember"
 ];
 
-const JAM_OPTIONS = ["1", "2", "3", "4", "5", "6", "7", "8", "Khusus"];
+const JAM_OPTIONS = ["3", "4", "5", "6", "7", "8", "9", "Khusus"];
 
 
 
@@ -392,9 +392,9 @@ export default function TambahJurnalPage() {
                     <div>
                       <label className="form-label" style={{ display: "flex", alignItems: "center", gap: 5, margin: 0, marginBottom: "4px" }}>
                         <Clock size={13} />
-                        Jam ke-
+                        Jam ke- (KBM Kelas)
                       </label>
-                      <p className="text-[11px] text-slate-500 font-medium">Klik angka jam (bisa lebih dari satu)</p>
+                      <p className="text-[11px] text-slate-500 font-medium">Mulai jam ke-3 (07.00 WIB) setelah Halaqah Tahfidz</p>
                     </div>
                     {jamKe.length > 0 && (
                       <span className="text-xs font-semibold bg-emerald-100 text-emerald-800 px-2.5 py-1 rounded-full whitespace-nowrap">
@@ -405,7 +405,7 @@ export default function TambahJurnalPage() {
                   <div className="flex flex-wrap gap-2">
                     {JAM_OPTIONS.map((j) => {
                       const isSelected = jamKe.includes(j);
-                      const isSubuh = j === "1" || j === "2";
+                      const isPagiAwal = j === "3";
                       return (
                         <button
                           key={j}
@@ -438,11 +438,11 @@ export default function TambahJurnalPage() {
                           )}
                           {!isSelected && j === "Khusus" && <span className="text-sm">{j}</span>}
                           
-                          {/* For numbers, add small label if Subuh */}
+                          {/* For numbers, add small 07.00 label if jam ke-3 */}
                           {j !== "Khusus" && (
                             <>
-                              <span className={isSubuh ? "text-[13px] leading-none mt-1" : "text-sm"}>{j}</span>
-                              {isSubuh && <span className="text-[8px] font-normal text-slate-400 leading-tight">Subuh</span>}
+                              <span className={isPagiAwal ? "text-[13px] leading-none mt-1" : "text-sm"}>{j}</span>
+                              {isPagiAwal && <span className="text-[8px] font-semibold text-emerald-600 leading-tight">07.00</span>}
                             </>
                           )}
                         </button>

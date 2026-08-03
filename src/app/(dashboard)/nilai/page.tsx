@@ -395,7 +395,7 @@ export default function InputNilaiPage() {
               </div>
 
               <div className="form-group">
-                <label className="form-label">Kelas / Halaqah</label>
+                <label className="form-label">Kelas</label>
                 <select
                   className="form-control"
                   value={kelas_id}
