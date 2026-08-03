@@ -139,8 +139,30 @@ model SantriAktif {
   capaian_tahfidz CapaianTahfidz[]
   orang_tua       OrangTuaSantri[]
   ibadah_adab     IbadahAdabSantri[]
+  pembayaran_spp  PembayaranSPP[]
 
   @@map("santri_aktif")
+}
+
+// ─── KEUANGAN & PEMBAYARAN SPP ─────────────────────────────────────────────
+
+model PembayaranSPP {
+  id            String    @id @default(uuid()) @db.Uuid
+  santri_id     String    @db.Uuid
+  bulan         Int       // 1 - 12 (Januari - Desember)
+  tahun         Int       // 2025, 2026, dst.
+  nominal       Float     @default(1500000)
+  status        String    @default("belum_lunas") // "lunas" | "belum_lunas"
+  tanggal_bayar DateTime? @db.Timestamptz(6)
+  metode_bayar  String?   @default("transfer") // "transfer" | "tunai"
+  catatan       String?
+  created_at    DateTime  @default(now()) @db.Timestamptz(6)
+  updated_at    DateTime  @default(now()) @db.Timestamptz(6)
+
+  santri        SantriAktif @relation(fields: [santri_id], references: [id], onDelete: Cascade)
+
+  @@unique([santri_id, bulan, tahun])
+  @@map("pembayaran_spp")
 }
 
 // ─── JURNAL MENGAJAR ────────────────────────────────────────────────────────

@@ -25,6 +25,11 @@ import {
   User,
   MessageSquare,
   Sparkles,
+  Lock,
+  CreditCard,
+  PhoneCall,
+  ShieldCheck,
+  AlertTriangle,
 } from "lucide-react";
 import Swal from "sweetalert2";
 
@@ -262,6 +267,19 @@ export default function RaporWaliPage() {
                     {santri.kelas} ({santri.jenjang || "MTs"})
                   </span>
                   <span className="text-white/80 font-mono text-xs">NIS: {santri.nis}</span>
+                  {data?.spp?.lunas ? (
+                    <span className="px-2.5 py-0.5 rounded-full bg-emerald-500/30 text-emerald-200 border border-emerald-400/40 text-[11px] font-extrabold flex items-center gap-1">
+                      <CheckCircle2 size={12} /> SPP {data.spp.namaBulan} Lunas
+                    </span>
+                  ) : data?.spp?.isGracePeriod ? (
+                    <span className="px-2.5 py-0.5 rounded-full bg-amber-500/30 text-amber-200 border border-amber-400/40 text-[11px] font-extrabold flex items-center gap-1">
+                      <Clock size={12} /> SPP: Batas Bayar Tgl 10
+                    </span>
+                  ) : (
+                    <span className="px-2.5 py-0.5 rounded-full bg-rose-500/40 text-rose-200 border border-rose-400/50 text-[11px] font-extrabold animate-pulse flex items-center gap-1">
+                      <Lock size={12} /> Akses Terkunci (SPP)
+                    </span>
+                  )}
                 </div>
                 <h1 className="text-2xl sm:text-3xl font-extrabold text-white leading-tight">
                   {santri.nama}
@@ -292,8 +310,115 @@ export default function RaporWaliPage() {
           </div>
         </div>
 
-        {/* Tab Navigation Menu */}
-        <div className="flex items-center gap-2 overflow-x-auto pb-1 border-b border-slate-200 text-sm font-bold">
+        {/* JIKA SPP TERKUNCI (Lewat Tgl 10 & Belum Bayar) -> Render Lock Screen */}
+        {data?.spp?.lunas === false ? (
+          <div className="bg-white rounded-3xl border border-rose-200/80 p-8 sm:p-12 shadow-xl text-center space-y-6 max-w-3xl mx-auto">
+            <div className="w-20 h-20 rounded-3xl bg-rose-50 border border-rose-200 text-rose-600 flex items-center justify-center mx-auto shadow-inner">
+              <Lock size={38} className="animate-bounce" />
+            </div>
+
+            <div className="space-y-2">
+              <span className="px-3 py-1 rounded-full bg-rose-100 text-rose-800 font-extrabold text-xs tracking-wider uppercase inline-block">
+                Akses Terkunci Sementara
+              </span>
+              <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900">
+                Penyelesaian Administrasi SPP Santri
+              </h2>
+              <p className="text-slate-600 text-sm max-w-xl mx-auto leading-relaxed">
+                Afwan, batas akhir pembayaran SPP bulanan ananda adalah <strong>tanggal 10 setiap bulannya</strong>. 
+                Akses rincian nilai, rekap presensi, dan jurnal harian guru saat ini terkunci sementara hingga pembayaran terverifikasi oleh Admin Keuangan.
+              </p>
+            </div>
+
+            {/* Kotak Rincian Tagihan */}
+            <div className="bg-slate-50 rounded-2xl border border-slate-200 p-5 max-w-lg mx-auto text-left space-y-3 text-xs">
+              <div className="flex justify-between items-center py-1 border-b border-slate-200/60">
+                <span className="text-slate-500 font-medium">Bulan Tagihan</span>
+                <span className="font-bold text-slate-800">{data.spp.namaBulan} {data.spp.tahun}</span>
+              </div>
+              <div className="flex justify-between items-center py-1 border-b border-slate-200/60">
+                <span className="text-slate-500 font-medium">Nominal Tagihan</span>
+                <span className="font-extrabold text-rose-700 text-sm">
+                  {new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", maximumFractionDigits: 0 }).format(data.spp.nominal || 1500000)}
+                </span>
+              </div>
+              <div className="flex justify-between items-center py-1 border-b border-slate-200/60">
+                <span className="text-slate-500 font-medium">Batas Waktu (Jatuh Tempo)</span>
+                <span className="font-bold text-slate-800">{data.spp.jatuhTempo}</span>
+              </div>
+              <div className="flex justify-between items-center py-1">
+                <span className="text-slate-500 font-medium">Rekening Pembayaran Resmi</span>
+                <span className="font-bold text-emerald-800">BSI 7711-2233-44 (a.n Yayasan Al-Imam)</span>
+              </div>
+            </div>
+
+            {/* Tombol Tindakan */}
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
+              <a
+                href={`https://wa.me/6281234567890?text=${encodeURIComponent(
+                  `Assalamu'alaikum Admin Keuangan Pesantren Al-Imam, saya wali santri dari ${santri.nama} (${santri.kelas}) ingin mengonfirmasi pembayaran SPP bulan ${data.spp.namaBulan} ${data.spp.tahun}. Mohon verifikasi agar akses akun kami dapat terbuka kembali. Syukron.`
+                )}`}
+                target="_blank"
+                rel="noreferrer"
+                className="btn btn-primary w-full sm:w-auto"
+                style={{
+                  padding: "12px 24px",
+                  borderRadius: "16px",
+                  fontWeight: 800,
+                  fontSize: "14px",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: 8,
+                }}
+              >
+                <PhoneCall size={16} />
+                <span>Konfirmasi ke Admin Keuangan (WhatsApp)</span>
+              </a>
+              <a
+                href="/wali"
+                className="btn btn-outline w-full sm:w-auto"
+                style={{
+                  padding: "12px 20px",
+                  borderRadius: "16px",
+                  fontWeight: 700,
+                  fontSize: "14px",
+                }}
+              >
+                Kembali ke Menu Utama
+              </a>
+            </div>
+
+            <p className="text-[11px] text-slate-400">
+              *Setelah Admin Keuangan mencentang lunas, seluruh isi akun dan rapor ananda akan langsung terbuka otomatis secara instan.
+            </p>
+          </div>
+        ) : (
+          <>
+            {/* Grace Period Notification Banner (Tgl 1-10) */}
+            {data?.spp?.isGracePeriod && (
+              <div className="bg-amber-50 border border-amber-200/90 rounded-2xl p-4 flex items-center justify-between gap-4 text-xs">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 rounded-xl bg-amber-500 text-white shrink-0">
+                    <Clock size={16} />
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-amber-950">Masa Pembayaran SPP Bulan {data.spp.namaBulan}</h4>
+                    <p className="text-amber-800/90 mt-0.5">
+                      Batas akhir pembayaran SPP adalah tanggal <strong>10 {data.spp.namaBulan}</strong>. Seluruh akses laporan santri tetap terbuka selama periode ini.
+                    </p>
+                  </div>
+                </div>
+                <div className="hidden sm:block text-right shrink-0">
+                  <span className="px-3 py-1 rounded-lg bg-amber-200/70 text-amber-900 font-bold">
+                    Masa Tenggang
+                  </span>
+                </div>
+              </div>
+            )}
+
+            {/* Tab Navigation Menu */}
+            <div className="flex items-center gap-2 overflow-x-auto pb-1 border-b border-slate-200 text-sm font-bold">
           <button
             onClick={() => setActiveTab("ringkasan")}
             className={`px-4 py-2.5 rounded-xl transition-all flex items-center gap-2 whitespace-nowrap ${
@@ -853,7 +978,9 @@ export default function RaporWaliPage() {
             </div>
           </div>
         )}
-      </div>
+      </>
+    )}
+  </div>
 
       {/* PUBLIC JURNAL DETAIL MODAL */}
       {selectedJurnal && (

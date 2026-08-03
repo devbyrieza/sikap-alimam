@@ -80,11 +80,20 @@ export default function WaliDashboard() {
                     {anak.nama.charAt(0)}
                   </div>
                   <div>
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 flex-wrap">
                       <span className="px-2 py-0.5 rounded-md text-[10px] font-extrabold uppercase bg-emerald-50 text-emerald-700 border border-emerald-200/80">
                         Santri Aktif
                       </span>
                       <span className="text-xs text-slate-400 font-mono font-medium">NIS: {anak.nis}</span>
+                      {anak.lunas ? (
+                        <span className="px-2 py-0.5 rounded-md text-[10px] font-bold bg-emerald-100 text-emerald-800">
+                          ✓ SPP Lunas
+                        </span>
+                      ) : (
+                        <span className="px-2 py-0.5 rounded-md text-[10px] font-bold bg-rose-100 text-rose-800 animate-pulse flex items-center gap-1">
+                          🔒 Akses Terkunci (SPP)
+                        </span>
+                      )}
                     </div>
                     <h2 className="text-xl sm:text-2xl font-bold text-slate-800 mt-1 leading-snug">{anak.nama}</h2>
                     <p className="text-xs sm:text-sm text-slate-500 font-medium">
@@ -96,40 +105,42 @@ export default function WaliDashboard() {
                 <div className="flex flex-col sm:flex-row gap-2.5 w-full sm:w-auto">
                   <a
                     href={`/wali/rapor?santri_id=${anak.id}`}
-                    className="btn btn-primary"
+                    className={`btn ${anak.lunas ? "btn-primary" : "bg-rose-600 hover:bg-rose-700 text-white"}`}
                     style={{
                       padding: "11px 20px",
                       borderRadius: "14px",
                       fontWeight: 700,
                       fontSize: "13px",
-                      boxShadow: "0 4px 14px rgba(155, 27, 34, 0.3)",
+                      boxShadow: anak.lunas ? "0 4px 14px rgba(155, 27, 34, 0.3)" : "0 4px 14px rgba(225, 29, 72, 0.3)",
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "center",
                       gap: 8,
                     }}
                   >
-                    <span>Buka Rapor & Rekap Lengkap</span>
+                    <span>{anak.lunas ? "Buka Rapor & Rekap Lengkap" : "🔒 Lihat Status Tagihan SPP"}</span>
                     <ChevronRight size={16} />
                   </a>
-                  <a
-                    href={`/rapor/print/${anak.id}`}
-                    target="_blank"
-                    className="btn btn-outline"
-                    style={{
-                      padding: "11px 18px",
-                      borderRadius: "14px",
-                      fontWeight: 700,
-                      fontSize: "13px",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      gap: 6,
-                    }}
-                  >
-                    <Printer size={15} />
-                    <span>Cetak PDF</span>
-                  </a>
+                  {anak.lunas && (
+                    <a
+                      href={`/rapor/print/${anak.id}`}
+                      target="_blank"
+                      className="btn btn-outline"
+                      style={{
+                        padding: "11px 18px",
+                        borderRadius: "14px",
+                        fontWeight: 700,
+                        fontSize: "13px",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        gap: 6,
+                      }}
+                    >
+                      <Printer size={15} />
+                      <span>Cetak PDF</span>
+                    </a>
+                  )}
                 </div>
               </div>
 

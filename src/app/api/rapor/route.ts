@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { cekStatusSpp } from "@/lib/keuangan";
 
 export async function GET(req: NextRequest) {
   const searchParams = req.nextUrl.searchParams;
@@ -137,6 +138,7 @@ export async function GET(req: NextRequest) {
       if (i.shubuh === "Berjamaah") shubuhJamaah++;
     });
     const persentaseShubuh = ibadah.length > 0 ? Math.round((shubuhJamaah / ibadah.length) * 100) : 100;
+    const sppInfo = await cekStatusSpp(santri.id);
 
     return NextResponse.json({
       santri: {
@@ -147,6 +149,7 @@ export async function GET(req: NextRequest) {
         jenjang: santri.kelas.jenjang,
         foto_url: santri.foto_url,
       },
+      spp: sppInfo,
       ringkasan: {
         persentaseKehadiran,
         totalHari,

@@ -2,7 +2,23 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { BookOpen, LayoutDashboard, BookMarked, ClipboardCheck, UserCheck, BarChart3, LogOut, Menu, X, GraduationCap, Users, Settings, Database } from "lucide-react";
+import { 
+  BookOpen, 
+  LayoutDashboard, 
+  BookMarked, 
+  ClipboardCheck, 
+  UserCheck, 
+  BarChart3, 
+  LogOut, 
+  Menu, 
+  X, 
+  GraduationCap, 
+  Users, 
+  Settings, 
+  Database,
+  CreditCard,
+  HeartHandshake
+} from "lucide-react";
 import { useState } from "react";
 
 interface NavItem {
@@ -19,34 +35,40 @@ const NAV: NavItem[] = [
     icon: <LayoutDashboard size={18} />,
   },
   {
+    href: "/keuangan",
+    label: "SPP & Keuangan",
+    icon: <CreditCard size={18} />,
+    roles: ["admin_super", "ADMIN_SUPER", "mudir", "MUDIR", "admin_keuangan", "ADMIN_KEUANGAN"],
+  },
+  {
     href: "/presensi/santri",
     label: "Presensi Santri",
     icon: <ClipboardCheck size={18} />,
-    roles: ["guru", "admin", "admin_super", "ADMIN_SUPER", "mudir", "MUDIR", "kepala", "KEPALA_SEKOLAH"],
+    roles: ["guru", "GURU", "wali_kelas", "WALI_KELAS", "admin_wali_kelas", "ADMIN_WALI_KELAS", "admin", "admin_super", "ADMIN_SUPER", "mudir", "MUDIR", "kepala", "KEPALA_SEKOLAH"],
   },
   {
     href: "/jurnal",
     label: "Jurnal Mengajar",
     icon: <BookMarked size={18} />,
-    roles: ["guru"],
+    roles: ["guru", "GURU", "admin_super", "ADMIN_SUPER"],
   },
   {
     href: "/nilai",
     label: "Input Nilai",
     icon: <BarChart3 size={18} />,
-    roles: ["guru"],
+    roles: ["guru", "GURU", "wali_kelas", "WALI_KELAS", "admin_wali_kelas", "ADMIN_WALI_KELAS", "admin_super", "ADMIN_SUPER"],
   },
   {
     href: "/tahfidz/mutabaah",
     label: "Mutabaah Tahfidz",
     icon: <BookOpen size={18} />,
-    roles: ["guru", "musyrif"],
+    roles: ["guru", "GURU", "musyrif", "MUSYRIF", "wali_kelas", "WALI_KELAS", "admin_wali_kelas", "ADMIN_WALI_KELAS", "admin_super", "ADMIN_SUPER"],
   },
   {
     href: "/presensi/asatidz",
     label: "Absensi Guru",
     icon: <UserCheck size={18} />,
-    roles: ["guru", "admin", "admin_super", "ADMIN_SUPER", "mudir", "MUDIR"],
+    roles: ["guru", "GURU", "admin", "admin_super", "ADMIN_SUPER", "mudir", "MUDIR"],
   },
   {
     href: "/master",

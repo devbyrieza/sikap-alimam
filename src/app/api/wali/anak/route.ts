@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { cekStatusSpp } from "@/lib/keuangan";
 
 export async function GET() {
   try {
@@ -8,18 +9,24 @@ export async function GET() {
       where: { is_active: true },
       include: { kelas: true },
       orderBy: { nama_lengkap: "asc" },
-      take: 5,
+      take: 10,
     });
 
-    const data = santriList.map((s) => ({
-      id: s.id,
-      nama: s.nama_lengkap,
-      nis: s.nis,
-      kelas: s.kelas?.nama || "Kelas 7 MTs",
-      jenjang: s.kelas?.jenjang || "MTs",
-      foto_url: s.foto_url,
-      lunas: true, // Kemudahan akses bagi wali santri
-    }));
+    const data = await Promise.all(
+      santriList.map(async (s) => {
+        const sppInfo = await cekStatusSpp(s.id);
+        return {
+          id: s.id,
+          nama: s.nama_lengkap,
+          nis: s.nis,
+          kelas: s.kelas?.nama || "Kelas 7 MTs",
+          jenjang: s.kelas?.jenjang || "MTs",
+          foto_url: s.foto_url,
+          spp: sppInfo,
+          lunas: sppInfo.lunas,
+        };
+      })
+    );
 
     return NextResponse.json({ success: true, data });
   } catch (error: any) {
