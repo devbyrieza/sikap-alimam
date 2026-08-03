@@ -116,26 +116,6 @@ export default function RekapPresensiSantriPage() {
 
   return (
     <div>
-      {/* Page Header */}
-      <div className="page-header">
-        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-          <Link href="/presensi/santri" className="btn btn-ghost btn-sm" style={{ padding: "6px 10px" }}>
-            <ChevronLeft size={16} />
-          </Link>
-          <div>
-            <h1>
-              <Table2 size={16} className="inline mr-1" />
-              Rekap Presensi Santri
-            </h1>
-            <p>
-              {selectedKelas && kelasNama
-                ? `Kelas ${kelasNama} · `
-                : ""}
-              {BULAN_NAMA[bulan]} {tahun}
-            </p>
-          </div>
-        </div>
-      </div>
 
       <div style={{ padding: "24px 28px", display: "flex", flexDirection: "column", gap: 20 }}>
         {/* Filter */}

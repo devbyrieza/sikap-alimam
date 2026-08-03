@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { BookOpen, LayoutDashboard, BookMarked, ClipboardCheck, UserCheck, BarChart3, LogOut, Menu, X, GraduationCap, Users, Settings } from "lucide-react";
+import { BookOpen, LayoutDashboard, BookMarked, ClipboardCheck, UserCheck, BarChart3, LogOut, Menu, X, GraduationCap, Users, Settings, Database } from "lucide-react";
 import { useState } from "react";
 
 interface NavItem {
@@ -28,13 +28,7 @@ const NAV: NavItem[] = [
     href: "/presensi/santri",
     label: "Presensi Santri",
     icon: <ClipboardCheck size={18} />,
-    roles: ["guru"],
-  },
-  {
-    href: "/presensi/santri/rekap",
-    label: "Rekap Presensi Santri",
-    icon: <BarChart3 size={18} />,
-    roles: ["admin", "admin_super", "ADMIN_SUPER", "mudir", "MUDIR", "kepala", "KEPALA_SEKOLAH"],
+    roles: ["guru", "admin", "admin_super", "ADMIN_SUPER", "mudir", "MUDIR", "kepala", "KEPALA_SEKOLAH"],
   },
   {
     href: "/presensi/asatidz",
@@ -55,23 +49,12 @@ const NAV: NavItem[] = [
     roles: ["guru"],
   },
   {
-    href: "/master/kelas",
-    label: "Data Kelas",
-    icon: <GraduationCap size={18} />,
+    href: "/master",
+    label: "Master Data",
+    icon: <Database size={18} />,
     roles: ["admin", "admin_super", "ADMIN_SUPER", "mudir", "MUDIR", "kepala", "KEPALA_SEKOLAH"],
   },
-  {
-    href: "/master/mapel",
-    label: "Data Mapel",
-    icon: <BookOpen size={18} />,
-    roles: ["admin", "admin_super", "ADMIN_SUPER", "mudir", "MUDIR", "kepala", "KEPALA_SEKOLAH"],
-  },
-  {
-    href: "/master/guru",
-    label: "Data Guru",
-    icon: <Users size={18} />,
-    roles: ["admin", "admin_super", "ADMIN_SUPER", "mudir", "MUDIR", "kepala", "KEPALA_SEKOLAH"],
-  },
+
 ];
 
 interface SidebarProps {
@@ -86,11 +69,6 @@ export default function Sidebar({ user }: SidebarProps) {
   const isActive = (href: string) => {
     if (pathname === href) return true;
     if (href === "/dashboard") return false;
-    
-    // Mencegah menu "Presensi Santri" menyala saat berada di "Rekap Presensi Santri"
-    if (href === "/presensi/santri" && pathname.startsWith("/presensi/santri/rekap")) {
-      return false;
-    }
     
     return pathname.startsWith(href);
   };

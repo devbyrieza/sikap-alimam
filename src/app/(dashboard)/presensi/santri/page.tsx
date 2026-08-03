@@ -323,13 +323,6 @@ export default function PresensiSantriPage() {
 
   return (
     <div>
-      {/* Page Header */}
-      <div className="page-header">
-        <div>
-          <h1><CheckCircle size={16} className="inline mr-1" /> Presensi Santri</h1>
-          <p>Input kehadiran santri per kelas per tanggal</p>
-        </div>
-      </div>
 
       <div style={{ padding: "24px 28px" }}>
         {/* Step 1: Pilih Kelas & Tanggal */}
