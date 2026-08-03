@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { sortKelas } from "@/lib/kelas";
 
+export const dynamic = "force-dynamic";
+
 export async function GET() {
   try {
     const [rawKelas, rawAsatidz, allMapel] = await Promise.all([
