@@ -49,7 +49,7 @@ export default function TambahJurnalPage() {
   const [mapelId, setMapelId] = useState("");
   const [asatidId, setAsatidId] = useState("");
   const [tanggal, setTanggal] = useState(today);
-  const [jamKe, setJamKe] = useState("");
+  const [jamKe, setJamKe] = useState<string[]>([]);
   const [materi, setMateri] = useState("");
   const [learningOutcome, setLearningOutcome] = useState("");
   const [kegiatan, setKegiatan] = useState("");
@@ -65,7 +65,10 @@ export default function TambahJurnalPage() {
         if (p.mapelId) setMapelId(p.mapelId);
         if (p.asatidId) setAsatidId(p.asatidId);
         if (p.tanggal) setTanggal(p.tanggal);
-        if (p.jamKe) setJamKe(p.jamKe);
+        if (p.jamKe) {
+          if (Array.isArray(p.jamKe)) setJamKe(p.jamKe);
+          else if (typeof p.jamKe === "string") setJamKe(p.jamKe.split(",").map((s: string) => s.trim()));
+        }
         if (p.materi) setMateri(p.materi);
         if (p.learningOutcome) setLearningOutcome(p.learningOutcome);
         if (p.kegiatan) setKegiatan(p.kegiatan);
@@ -141,7 +144,11 @@ export default function TambahJurnalPage() {
           mapel_id: mapelId,
           kelas_id: kelasId,
           tanggal,
-          jam_ke: jamKe || null,
+          jam_ke: jamKe.length > 0 ? jamKe.sort((a, b) => {
+            if (a === "Khusus") return 1;
+            if (b === "Khusus") return -1;
+            return parseInt(a) - parseInt(b);
+          }).join(", ") : null,
           materi,
           learning_outcome: learningOutcome || null,
           kegiatan,
@@ -292,22 +299,42 @@ export default function TambahJurnalPage() {
 
                 {/* Jam ke- */}
                 <div className="form-group">
-                  <label className="form-label" style={{ display: "flex", alignItems: "center", gap: 5 }}>
-                    <Clock size={13} />
-                    Jam ke-
-                  </label>
-                  <select
-                    className="form-control"
-                    value={jamKe}
-                    onChange={(e) => setJamKe(e.target.value)}
-                  >
-                    <option value="">— Pilih Jam —</option>
-                    {JAM_OPTIONS.map((j) => (
-                      <option key={j} value={j}>
-                        {j === "Khusus" ? "Khusus (luar jadwal)" : `Jam ke-${j}`}
-                      </option>
-                    ))}
-                  </select>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "6px" }}>
+                    <label className="form-label" style={{ display: "flex", alignItems: "center", gap: 5, margin: 0 }}>
+                      <Clock size={13} />
+                      Jam ke-
+                    </label>
+                    {jamKe.length > 0 && (
+                      <span className="text-xs font-semibold bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full">
+                        Durasi: {jamKe.length} Jam
+                      </span>
+                    )}
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    {JAM_OPTIONS.map((j) => {
+                      const isSelected = jamKe.includes(j);
+                      return (
+                        <button
+                          key={j}
+                          type="button"
+                          onClick={() => {
+                            if (isSelected) {
+                              setJamKe(jamKe.filter(k => k !== j));
+                            } else {
+                              setJamKe([...jamKe, j]);
+                            }
+                          }}
+                          className={`px-3 py-1.5 text-sm font-medium rounded-lg border transition-all ${
+                            isSelected 
+                              ? "bg-emerald-600 text-white border-emerald-600 shadow-md" 
+                              : "bg-white text-slate-600 border-slate-200 hover:border-emerald-300 hover:bg-emerald-50"
+                          }`}
+                        >
+                          {j}
+                        </button>
+                      );
+                    })}
+                  </div>
                 </div>
 
                 {/* Kelas */}
