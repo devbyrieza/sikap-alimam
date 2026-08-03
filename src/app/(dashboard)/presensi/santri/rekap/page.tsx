@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
+import ModuleTabs from "@/components/ModuleTabs";
 import { ChevronLeft, Loader2, Users, Table2, AlertTriangle, PieChart, ArrowRight } from "lucide-react";
 
 type Kelas = { id: string; nama: string; jenjang: string | null };
@@ -117,6 +118,13 @@ export default function RekapPresensiSantriPage() {
   return (
     <div>
       <div className="p-3.5 sm:p-6 md:p-7 max-w-7xl mx-auto w-full flex flex-col gap-5">
+        <ModuleTabs
+          tabs={[
+            { label: "📝 Input Presensi", href: "/presensi/santri", exact: true },
+            { label: "📊 Lihat Rekap", href: "/presensi/santri/rekap", exact: true },
+            { label: "👤 Riwayat per Santri", href: "/presensi/santri/riwayat", exact: true },
+          ]}
+        />
         {/* Filter */}
         <div className="card">
           <p className="card-title">

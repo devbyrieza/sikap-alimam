@@ -11,6 +11,7 @@ import {
   BookOpen,
   Lightbulb
 } from "lucide-react";
+import ModuleTabs from "@/components/ModuleTabs";
 
 interface Kelas {
   id: string;
@@ -356,6 +357,12 @@ export default function InputNilaiPage() {
       </div>
 
       <div className="p-3.5 sm:p-6 md:p-7 max-w-7xl mx-auto w-full flex flex-col gap-5 pb-28 sm:pb-10">
+        <ModuleTabs
+          tabs={[
+            { label: "📝 Input Nilai", href: "/nilai", exact: true },
+            { label: "📊 Laporan Nilai", href: "/nilai/rekap", exact: true },
+          ]}
+        />
         {/* ── STEP 1: Pilih Parameter ─────────────────────────────────── */}
         {step === 1 && (
           <div className="card" style={{ maxWidth: 640 }}>

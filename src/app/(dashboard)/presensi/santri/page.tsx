@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Swal from "sweetalert2";
+import ModuleTabs from "@/components/ModuleTabs";
 import {
   ClipboardCheck,
   Loader2,
@@ -266,6 +267,13 @@ export default function PresensiSantriPage() {
   return (
     <div className="w-full">
       <div className="p-3.5 sm:p-6 md:p-7 max-w-6xl mx-auto w-full pb-28 sm:pb-12">
+        <ModuleTabs
+          tabs={[
+            { label: "📝 Input Presensi", href: "/presensi/santri", exact: true },
+            { label: "📊 Lihat Rekap", href: "/presensi/santri/rekap", exact: true },
+            { label: "👤 Riwayat per Santri", href: "/presensi/santri/riwayat", exact: true },
+          ]}
+        />
         {/* Step 1: Pilih Kelas & Tanggal */}
         <div className="card" style={{ marginBottom: 20 }}>
           <p className="card-title">

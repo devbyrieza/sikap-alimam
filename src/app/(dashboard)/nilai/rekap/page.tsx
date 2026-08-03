@@ -1,7 +1,8 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, FileText, Loader2, ArrowLeft } from "lucide-react";
+import ModuleTabs from "@/components/ModuleTabs";
 
 interface Kelas {
   id: string;
@@ -136,8 +137,13 @@ export default function RekapNilaiPage() {
           <p>Ringkasan nilai per mata pelajaran</p>
         </div>
       </div>
-
       <div className="p-3.5 sm:p-6 md:p-7 max-w-7xl mx-auto w-full flex flex-col gap-5">
+        <ModuleTabs
+          tabs={[
+            { label: "📝 Input Nilai", href: "/nilai", exact: true },
+            { label: "📊 Laporan Nilai", href: "/nilai/rekap", exact: true },
+          ]}
+        />
         {/* Filter */}
         <div className="card">
           <div className="card-title">Filter Rekap</div>
