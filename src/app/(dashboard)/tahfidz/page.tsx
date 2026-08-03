@@ -9,6 +9,7 @@ import {
   Users,
   CheckCircle,
   BookOpen,
+  Lightbulb,
 } from "lucide-react";
 
 type Kelas = { id: string; nama: string; jenjang: string | null };
@@ -364,8 +365,8 @@ export default function TahfidzPage() {
                 <span style={{ color: "var(--primary)" }}>{sudahSetor}</span>
                 <span style={{ color: "var(--text-muted)", fontWeight: 500 }}> dari {santri.length} santri sudah disetor</span>
               </div>
-              <div style={{ fontSize: 12, color: "var(--text-muted)", background: "#f8fafc", padding: "4px 10px", borderRadius: 99 }}>
-                💡 Autosave Aktif
+              <div style={{ fontSize: 12, color: "var(--text-muted)", background: "#f8fafc", padding: "4px 10px", borderRadius: 99, display: "flex", alignItems: "center", gap: 4 }}>
+                <Lightbulb size={12} className="text-amber-500" /> Autosave Aktif
               </div>
             </div>
 

@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useMemo } from "react";
-import { BookOpen, Plus, Trash2, Edit2, Save, X, Filter, Sparkles, Layers, Tag, RefreshCw, CheckCircle2 } from "lucide-react";
+import { BookOpen, Plus, Trash2, Edit2, Save, X, Filter, Sparkles, Layers, Tag, RefreshCw, CheckCircle2, Book } from "lucide-react";
 import Swal from "sweetalert2";
 
 interface KelasItem {
@@ -342,7 +342,7 @@ export default function MasterMapelPage() {
                 : "bg-sky-50 text-sky-800 hover:bg-sky-100"
             }`}
           >
-            <span>📚 Khusus 7 MTs</span>
+            <span className="flex items-center gap-1"><Book size={14} /> Khusus 7 MTs</span>
             <span className="bg-white/20 text-current px-1.5 py-0.5 rounded-full text-[10px]">
               {count7MTs}
             </span>
@@ -357,7 +357,7 @@ export default function MasterMapelPage() {
                 : "bg-amber-50 text-amber-800 hover:bg-amber-100"
             }`}
           >
-            <span>📖 Khusus IL (I&apos;dad Lughowy)</span>
+            <span className="flex items-center gap-1"><BookOpen size={14} /> Khusus IL (I&apos;dad Lughowy)</span>
             <span className="bg-white/20 text-current px-1.5 py-0.5 rounded-full text-[10px]">
               {countIL}
             </span>

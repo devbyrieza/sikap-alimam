@@ -233,13 +233,14 @@ export default function Sidebar({ user }: SidebarProps) {
             style={{
               width: "100%",
               justifyContent: "center",
-              color: "#fbbf24",
-              background: "rgba(251, 191, 36, 0.12)",
-              borderColor: "rgba(251, 191, 36, 0.3)",
+              color: "var(--primary-dark)",
+              background: "var(--surface-50)",
+              borderColor: "var(--border)",
               padding: "7px 0",
               fontSize: "11px",
               fontWeight: 700,
-              cursor: "pointer"
+              cursor: "pointer",
+              transition: "all 0.2s ease"
             }}
           >
             <BookOpen size={13} style={{ marginRight: 4 }} />

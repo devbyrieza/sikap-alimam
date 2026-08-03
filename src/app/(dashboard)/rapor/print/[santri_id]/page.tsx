@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useSearchParams } from "next/navigation";
 import Head from "next/head";
+import { Printer } from "lucide-react";
 
 export default function CetakRaporPage() {
   const params = useParams();
@@ -87,7 +88,7 @@ export default function CetakRaporPage() {
           onClick={() => window.print()}
           className="no-print fixed bottom-8 right-8 bg-emerald-600 text-white px-6 py-3 rounded-full shadow-2xl font-bold flex items-center gap-2 hover:bg-emerald-700 transition"
         >
-          🖨️ Cetak Rapor
+          <Printer size={18} /> Cetak Rapor
         </button>
 
         {/* Kop Surat */}

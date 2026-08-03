@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useMemo, useRef } from "react";
-import { Plus, X, BookOpen, Check, ChevronDown, Trash2, CheckCircle2, RotateCcw } from "lucide-react";
+import { Plus, X, BookOpen, Check, ChevronDown, Trash2, CheckCircle2, RotateCcw, Bookmark, Book } from "lucide-react";
 import { motion } from "framer-motion";
 
 // Definisi Mapel Resmi Ust Aziz (Revisi 31 Juli 2026) per Jenjang & Kelas
@@ -542,7 +542,7 @@ export default function MapelSelector({ value, onChange }: MapelSelectorProps) {
                             {mapelGroups.map((group) => (
                               <div key={group.kategori} className="space-y-1.5">
                                 <span className="text-[11px] font-extrabold text-slate-500 uppercase tracking-wider block">
-                                  📌 {group.kategori}
+                                  <span className="flex items-center gap-1.5"><Bookmark size={12} /> {group.kategori}</span>
                                 </span>
                                 <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
                                   {group.items.map((m) => {
@@ -641,8 +641,8 @@ export default function MapelSelector({ value, onChange }: MapelSelectorProps) {
           <div className="space-y-2">
             {items.some((i) => i.jenjang === "7 MTs") && (
               <div className="p-2.5 bg-sky-50 rounded-xl border border-sky-200">
-                <span className="text-[10px] font-extrabold text-sky-900 uppercase tracking-wider block mb-1.5">
-                  📚 Jenjang MTs (Kelas 7 MTs):
+                <span className="text-[10px] font-extrabold text-sky-900 uppercase tracking-wider mb-1.5 flex items-center gap-1.5">
+                  <Book size={12} /> Jenjang MTs (Kelas 7 MTs):
                 </span>
                 <div className="flex flex-wrap gap-1.5">
                   {items.map((item, index) => {
@@ -670,8 +670,8 @@ export default function MapelSelector({ value, onChange }: MapelSelectorProps) {
 
             {items.some((i) => i.jenjang === "IL") && (
               <div className="p-2.5 bg-amber-50 rounded-xl border border-amber-200">
-                <span className="text-[10px] font-extrabold text-amber-900 uppercase tracking-wider block mb-1.5">
-                  📖 Jenjang IL (Kelas I&apos;dad Lughowy):
+                <span className="text-[10px] font-extrabold text-amber-900 uppercase tracking-wider mb-1.5 flex items-center gap-1.5">
+                  <BookOpen size={12} /> Jenjang IL (Kelas I&apos;dad Lughowy):
                 </span>
                 <div className="flex flex-wrap gap-1.5">
                   {items.map((item, index) => {
@@ -699,8 +699,8 @@ export default function MapelSelector({ value, onChange }: MapelSelectorProps) {
 
             {items.some((i) => i.jenjang !== "7 MTs" && i.jenjang !== "IL") && (
               <div className="p-2.5 bg-purple-50 rounded-xl border border-purple-200">
-                <span className="text-[10px] font-extrabold text-purple-900 uppercase tracking-wider block mb-1.5">
-                  📌 Kelas Lainnya:
+                <span className="text-[10px] font-extrabold text-purple-900 uppercase tracking-wider mb-1.5 flex items-center gap-1.5">
+                  <Bookmark size={12} /> Kelas Lainnya:
                 </span>
                 <div className="flex flex-wrap gap-1.5">
                   {items.map((item, index) => {

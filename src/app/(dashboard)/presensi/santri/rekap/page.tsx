@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
-import { ChevronLeft, Loader2, Users, Table2 } from "lucide-react";
+import { ChevronLeft, Loader2, Users, Table2, AlertTriangle, PieChart } from "lucide-react";
 
 type Kelas = { id: string; nama: string; jenjang: string | null };
 
@@ -335,8 +335,8 @@ export default function RekapPresensiSantriPage() {
 
           {/* Error */}
           {error && (
-            <div style={{ textAlign: "center", padding: 32, color: "#b91c1c", fontSize: 14 }}>
-              ⚠️ {error}
+            <div style={{ textAlign: "center", padding: 32, color: "#b91c1c", fontSize: 14, display: "flex", alignItems: "center", justifyContent: "center", gap: 6 }}>
+              <AlertTriangle size={18} /> {error}
             </div>
           )}
 
@@ -430,7 +430,7 @@ export default function RekapPresensiSantriPage() {
         {/* Summary Card */}
         {!loading && !error && selectedKelas && rekapData && !('summary' in rekapData) && (rekapData as RekapData).santri.length > 0 && (
           <div className="card" style={{ padding: "16px 20px" }}>
-            <p className="card-title" style={{ marginBottom: 12 }}>📊 Ringkasan Kehadiran Kelas {kelasNama}</p>
+            <p className="card-title" style={{ marginBottom: 12, display: "flex", alignItems: "center", gap: 6 }}><PieChart size={16} className="text-primary" /> Ringkasan Kehadiran Kelas {kelasNama}</p>
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(120px, 1fr))", gap: 12 }}>
               {[
                 { label: "Total Hadir", key: "H", color: "#15803d", bg: "#dcfce7" },
