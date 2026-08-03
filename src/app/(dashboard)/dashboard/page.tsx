@@ -3,6 +3,9 @@ import { prisma } from "@/lib/prisma";
 import { BookMarked, ClipboardCheck, UserCheck, BarChart3, TrendingUp, Calendar, Clock, Hand, Zap, BookOpen } from "lucide-react";
 import Link from "next/link";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 function formatTanggal(date: Date) {
   return date.toLocaleDateString("id-ID", {
     weekday: "long",
