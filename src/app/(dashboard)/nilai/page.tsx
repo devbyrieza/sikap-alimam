@@ -665,12 +665,20 @@ export default function InputNilaiPage() {
             </div>
 
             {/* Save Button (Desktop) */}
-            <div className="hidden sm:flex justify-end pb-4">
+            {/* Actions (Standard: Batal & Simpan matching Jurnal page) */}
+            <div style={{ display: "flex", gap: 10, justifyContent: "flex-end", alignItems: "center", marginTop: 20 }}>
               <button
+                type="button"
+                onClick={() => setStep(1)}
+                className="btn btn-ghost"
+              >
+                Batal
+              </button>
+              <button
+                type="button"
                 className="btn btn-primary"
                 onClick={handleSimpan}
                 disabled={saving || loadingSantri}
-                style={{ minWidth: 180, padding: "12px 24px", fontSize: 14, fontWeight: 700 }}
               >
                 {saving ? (
                   <>
@@ -679,60 +687,8 @@ export default function InputNilaiPage() {
                   </>
                 ) : (
                   <>
-                    <Save size={18} />
-                    Simpan Semua Nilai
-                  </>
-                )}
-              </button>
-            </div>
-
-            {/* Bottom spacer for mobile so floating bar never covers the last santri */}
-            <div className="h-36 sm:hidden" />
-
-            {/* Mobile Sticky Action Bar */}
-            <div
-              className="sm:hidden fixed bottom-0 left-0 right-0 z-40 flex items-center justify-between gap-3 px-4 py-3"
-              style={{
-                background: "#ffffff",
-                borderTop: "1px solid #e2e8f0",
-                boxShadow: "0 -10px 30px rgba(0,0,0,0.12)",
-                paddingBottom: "max(14px, env(safe-area-inset-bottom))",
-              }}
-            >
-              <div className="min-w-0 flex flex-col justify-center">
-                <div className="inline-flex items-center gap-1.5 bg-slate-100 px-2.5 py-1 rounded-full border border-slate-200/80">
-                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse flex-shrink-0" />
-                  <span className="text-[11px] font-bold text-slate-800 leading-none truncate max-w-[130px]">
-                    {santriList.length} Santri
-                  </span>
-                </div>
-                <p className="text-[10px] text-slate-500 font-semibold mt-1 ml-1 leading-none truncate max-w-[130px]">
-                  {selectedMapelNama}
-                </p>
-              </div>
-
-              <button
-                className="btn btn-primary flex-1 max-w-[200px]"
-                onClick={handleSimpan}
-                disabled={saving || loadingSantri}
-                style={{
-                  justifyContent: "center",
-                  padding: "12px 18px",
-                  fontWeight: 800,
-                  fontSize: "13px",
-                  borderRadius: "14px",
-                  boxShadow: "0 4px 14px rgba(155, 27, 34, 0.35)",
-                }}
-              >
-                {saving ? (
-                  <>
-                    <span className="spinner" style={{ width: 14, height: 14, borderWidth: 2 }} />
-                    Menyimpan...
-                  </>
-                ) : (
-                  <>
                     <Save size={16} />
-                    Simpan Nilai
+                    Simpan Semua Nilai
                   </>
                 )}
               </button>
