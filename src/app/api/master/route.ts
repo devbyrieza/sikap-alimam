@@ -15,6 +15,14 @@ const formatName = (str: string) => {
   }).join(' ');
 };
 
+const normalizeMapelName = (name: string) => {
+  let normalized = name.replace(/^\[.*?\]\s*/, ""); // Hapus awalan seperti "[7 MTs] "
+  if (normalized === "Tahsin/Tahfidz Al-Quran") {
+    normalized = "Tahsin Al-Qur'an";
+  }
+  return normalized;
+};
+
 export async function GET() {
   try {
     const [rawKelas, rawAsatidz, allMapel] = await Promise.all([
@@ -92,7 +100,11 @@ export async function GET() {
       if (!mapelByKelas[m.kelas_id]) {
         mapelByKelas[m.kelas_id] = [];
       }
-      mapelByKelas[m.kelas_id].push({ id: m.id, nama: m.nama, kategori: m.kategori });
+      mapelByKelas[m.kelas_id].push({ 
+        id: m.id, 
+        nama: normalizeMapelName(m.nama), 
+        kategori: m.kategori 
+      });
     }
 
     return NextResponse.json({ kelas, asatidz: formattedAsatidz, mapel: mapelByKelas });

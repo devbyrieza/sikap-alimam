@@ -17,6 +17,14 @@ const formatName = (str: string) => {
   }).join(' ');
 };
 
+const normalizeMapelName = (name: string) => {
+  let normalized = name.replace(/^\[.*?\]\s*/, ""); // Hapus awalan seperti "[7 MTs] "
+  if (normalized === "Tahsin/Tahfidz Al-Quran") {
+    normalized = "Tahsin Al-Qur'an";
+  }
+  return normalized;
+};
+
 export const metadata = {
   title: "Jurnal Mengajar — SIAKAD Al-Imam",
   description: "Daftar jurnal mengajar guru Pesantren Al-Imam Al-Islami",
@@ -136,7 +144,7 @@ export default async function JurnalPage() {
       id: j.id,
       tanggal: j.tanggal.toISOString().split("T")[0],
       asatidz: j.pegawai?.nama_lengkap ? formatName(j.pegawai.nama_lengkap.trim()) : "-",
-      mapel: j.mapel?.nama || "-",
+      mapel: j.mapel?.nama ? normalizeMapelName(j.mapel.nama) : "-",
       kelas: kelasNama,
       kelas_jenjang: j.kelas?.jenjang || null,
       jam_ke: j.jam_ke ?? "-",
