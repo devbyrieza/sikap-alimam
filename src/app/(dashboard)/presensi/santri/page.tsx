@@ -354,9 +354,13 @@ export default function PresensiSantriPage() {
                   }}
                 >
                   <option value="">— Pilih Jenjang —</option>
-                  {Array.from(new Set(kelasList.map(k => k.jenjang).filter(Boolean))).sort().map(j => (
-                    <option key={j as string} value={j as string}>{j}</option>
-                  ))}
+                  {Array.from(new Set(kelasList.map(k => k.jenjang).filter(Boolean))).sort().map(j => {
+                    const jenjangStr = j as string;
+                    const label = jenjangStr === "Islamiyah" ? "IL" : jenjangStr;
+                    return (
+                      <option key={jenjangStr} value={jenjangStr}>{label}</option>
+                    );
+                  })}
                 </select>
               )}
             </div>
