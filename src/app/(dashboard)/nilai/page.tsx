@@ -37,7 +37,7 @@ interface CapaianNilai {
   ujian: string; // Menyimpan nilai ujian sesuai periode aktif (PTS/PAS)
 }
 
-const SEMESTER_LIST = ["1", "2"];
+const SEMESTER_LIST = ["Ganjil", "Genap"];
 const TAHUN_AJARAN_LIST = ["2026/2027", "2027/2028"];
 
 export default function InputNilaiPage() {
@@ -45,7 +45,7 @@ export default function InputNilaiPage() {
   const [jenjangFilter, setJenjangFilter] = useState("");
   const [kelas_id, setKelasId] = useState("");
   const [mapel_id, setMapelId] = useState("");
-  const [semester, setSemester] = useState("1");
+  const [semester, setSemester] = useState("Ganjil");
   const [tahun_ajaran, setTahunAjaran] = useState("2026/2027");
   const [periode, setPeriode] = useState("PTS"); // PTS | PAS
 
