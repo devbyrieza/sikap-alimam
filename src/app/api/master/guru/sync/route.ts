@@ -119,34 +119,36 @@ async function executeSync(simpegGuruList: any[]) {
   let updatedCount = 0;
   for (const guru of simpegGuruList) {
     try {
-      await prisma.pegawai.upsert({
-        where: { id: guru.id },
-        update: {
-          nik: guru.nik,
-          nama_lengkap: guru.nama_lengkap,
-          jenis_kelamin: guru.jenis_kelamin,
-          tempat_lahir: guru.tempat_lahir,
-          tanggal_lahir: guru.tanggal_lahir ? new Date(guru.tanggal_lahir) : null,
-          no_hp: guru.no_hp,
-          email: guru.email,
-          alamat: guru.alamat,
-          mata_pelajaran: guru.mata_pelajaran,
-          kategori_pegawai: 'ASATIDZ'
-        },
-        create: {
-          id: guru.id,
-          nik: guru.nik || `GURU-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
-          nama_lengkap: guru.nama_lengkap,
-          jenis_kelamin: guru.jenis_kelamin,
-          tempat_lahir: guru.tempat_lahir,
-          tanggal_lahir: guru.tanggal_lahir ? new Date(guru.tanggal_lahir) : null,
-          no_hp: guru.no_hp,
-          email: guru.email,
-          alamat: guru.alamat,
-          mata_pelajaran: guru.mata_pelajaran,
-          kategori_pegawai: 'ASATIDZ'
-        }
-      });
+        let validNik = guru.nik && guru.nik.trim() !== "" && guru.nik.trim() !== "-" ? guru.nik.trim() : null;
+
+        await prisma.pegawai.upsert({
+          where: { id: guru.id },
+          update: {
+            nik: validNik,
+            nama_lengkap: guru.nama_lengkap,
+            jenis_kelamin: guru.jenis_kelamin,
+            tempat_lahir: guru.tempat_lahir,
+            tanggal_lahir: guru.tanggal_lahir ? new Date(guru.tanggal_lahir) : null,
+            no_hp: guru.no_hp,
+            email: guru.email,
+            alamat: guru.alamat,
+            mata_pelajaran: guru.mata_pelajaran,
+            kategori_pegawai: 'ASATIDZ'
+          },
+          create: {
+            id: guru.id,
+            nik: validNik || `GURU-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
+            nama_lengkap: guru.nama_lengkap,
+            jenis_kelamin: guru.jenis_kelamin,
+            tempat_lahir: guru.tempat_lahir,
+            tanggal_lahir: guru.tanggal_lahir ? new Date(guru.tanggal_lahir) : null,
+            no_hp: guru.no_hp,
+            email: guru.email,
+            alamat: guru.alamat,
+            mata_pelajaran: guru.mata_pelajaran,
+            kategori_pegawai: 'ASATIDZ'
+          }
+        });
 
       // Auto-mapping ke AsatidzmMapel jika ada mata_pelajaran
       if (guru.mata_pelajaran) {
