@@ -140,7 +140,7 @@ export default function TambahJurnalPage() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          asatidz_id: asatidId,
+          pegawai_id: asatidId,
           mapel_id: mapelId,
           kelas_id: kelasId,
           tanggal,
