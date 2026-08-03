@@ -643,6 +643,9 @@ export default function PresensiSantriPage() {
               })}
             </div>
 
+            {/* Bottom spacer for mobile so floating action bar never covers the last santri */}
+            <div className="h-28 sm:hidden" />
+
             {/* Save Button (Desktop) */}
             <div className="hidden sm:flex justify-end mt-4">
               <button

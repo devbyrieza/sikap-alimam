@@ -105,25 +105,40 @@ export default function Sidebar({ user }: SidebarProps) {
   const SidebarContent = () => (
     <>
       {/* Logo */}
-      <div className="sidebar-logo" style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10 }}>
+      <div
+        className="sidebar-logo"
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          gap: 10,
+          paddingTop: "max(18px, env(safe-area-inset-top))",
+          paddingBottom: "16px",
+          paddingLeft: "18px",
+          paddingRight: "14px",
+          background: "#ffffff",
+          borderBottom: "1px solid var(--border)",
+        }}
+      >
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
           <div
             style={{
-              width: 40,
-              height: 40,
+              width: 38,
+              height: 38,
               borderRadius: 10,
               background: "linear-gradient(135deg, var(--secondary), var(--secondary-light))",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
               flexShrink: 0,
+              boxShadow: "0 2px 6px rgba(217, 119, 6, 0.2)",
             }}
           >
             <GraduationCap size={22} color="#3d0a0a" />
           </div>
           <div>
-            <h1>SIKAP</h1>
-            <p>Al-Imam Al-Islami</p>
+            <h1 style={{ margin: 0, fontSize: "16px", fontWeight: 800, color: "var(--primary-dark)", letterSpacing: "-0.02em", lineHeight: 1.2 }}>SIKAP</h1>
+            <p style={{ margin: 0, fontSize: "10px", color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.08em", fontWeight: 600, marginTop: "2px" }}>Al-Imam Al-Islami</p>
           </div>
         </div>
 
@@ -135,7 +150,7 @@ export default function Sidebar({ user }: SidebarProps) {
           style={{
             background: "#f1f5f9",
             border: "none",
-            color: "var(--text-muted)",
+            color: "var(--text-main)",
             width: 32,
             height: 32,
             borderRadius: 8,
@@ -144,6 +159,7 @@ export default function Sidebar({ user }: SidebarProps) {
             alignItems: "center",
             justifyContent: "center",
             flexShrink: 0,
+            transition: "all 0.15s ease",
           }}
           aria-label="Tutup Menu"
         >
@@ -353,7 +369,7 @@ export default function Sidebar({ user }: SidebarProps) {
         <SidebarContent />
       </aside>
 
-      {/* Mobile sidebar overlay */}
+      {/* Mobile sidebar overlay & drawer */}
       {mobileOpen && (
         <>
           <div
@@ -361,20 +377,26 @@ export default function Sidebar({ user }: SidebarProps) {
             style={{
               position: "fixed",
               inset: 0,
-              background: "rgba(0,0,0,0.6)",
-              backdropFilter: "blur(4px)",
-              zIndex: 998,
+              background: "rgba(15, 23, 42, 0.65)",
+              backdropFilter: "blur(6px)",
+              WebkitBackdropFilter: "blur(6px)",
+              zIndex: 1000,
             }}
           />
           <aside
             className="app-sidebar"
             style={{
+              position: "fixed",
+              top: 0,
+              bottom: 0,
+              left: 0,
+              height: "100dvh",
               transform: "translateX(0)",
-              zIndex: 999,
-              width: "280px",
-              maxWidth: "85vw",
+              zIndex: 1001,
+              width: "290px",
+              maxWidth: "86vw",
               background: "#ffffff",
-              boxShadow: "8px 0 36px rgba(0,0,0,0.3)",
+              boxShadow: "10px 0 40px rgba(0,0,0,0.35)",
               display: "flex",
               flexDirection: "column",
             }}

@@ -341,53 +341,60 @@ export default function RekapPresensiSantriPage() {
 
           {/* Table data */}
           {!loading && !error && selectedKelas && rekapData && !('summary' in rekapData) && (
-            <div className="table-wrap" style={{ border: "none", borderRadius: 0 }}>
-              <table style={{ fontSize: 12 }}>
-                <thead>
-                  <tr>
-                    <th style={{ width: 36, textAlign: "center", position: "sticky", left: 0, background: "#f8f7f4", zIndex: 2 }}>
-                      No
-                    </th>
-                    <th style={{ minWidth: 180, position: "sticky", left: 36, background: "#f8f7f4", zIndex: 2 }}>
-                      Nama Santri
-                    </th>
-                    {days.map((d) => (
-                      <th key={d} style={{ textAlign: "center", minWidth: 30, padding: "8px 3px" }}>
-                        {d}
-                      </th>
-                    ))}
-                    <th style={{ textAlign: "center", minWidth: 36, color: "#15803d", fontWeight: 800 }}>H</th>
-                    <th style={{ textAlign: "center", minWidth: 36, color: "#a16207", fontWeight: 800 }}>S</th>
-                    <th style={{ textAlign: "center", minWidth: 36, color: "#1d4ed8", fontWeight: 800 }}>I</th>
-                    <th style={{ textAlign: "center", minWidth: 36, color: "#b91c1c", fontWeight: 800 }}>A</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {(rekapData as RekapData).santri.length === 0 ? (
+            <>
+              {/* Mobile scroll hint */}
+              <div className="sm:hidden text-xs text-slate-700 bg-amber-50/95 border-b border-amber-200/80 px-4 py-2.5 flex items-center gap-2 font-medium">
+                <span className="text-base">👉</span>
+                <span><strong>Nama santri terkunci di kiri.</strong> Geser ke kanan untuk melihat tanggal 1-{days.length}.</span>
+              </div>
+
+              <div className="table-wrap" style={{ border: "none", borderRadius: 0, overflowX: "auto", WebkitOverflowScrolling: "touch" }}>
+                <table style={{ fontSize: 12, borderCollapse: "separate", borderSpacing: 0 }}>
+                  <thead>
                     <tr>
-                      <td
-                        colSpan={days.length + 6}
-                        style={{ textAlign: "center", padding: 32, color: "var(--text-muted)" }}
-                      >
-                        Tidak ada data santri untuk kelas ini pada {BULAN_NAMA[bulan]} {tahun}
-                      </td>
+                      <th style={{ width: 36, textAlign: "center", position: "sticky", left: 0, background: "#f8f7f4", zIndex: 2, borderBottom: "1px solid #e5e7eb" }}>
+                        No
+                      </th>
+                      <th style={{ minWidth: 170, maxWidth: 220, position: "sticky", left: 36, background: "#f8f7f4", zIndex: 2, borderBottom: "1px solid #e5e7eb", borderRight: "1px solid #e5e7eb", boxShadow: "4px 0 6px -2px rgba(0,0,0,0.06)" }}>
+                        Nama Santri
+                      </th>
+                      {days.map((d) => (
+                        <th key={d} style={{ textAlign: "center", minWidth: 30, padding: "8px 3px", borderBottom: "1px solid #e5e7eb" }}>
+                          {d}
+                        </th>
+                      ))}
+                      <th style={{ textAlign: "center", minWidth: 36, color: "#15803d", fontWeight: 800, borderBottom: "1px solid #e5e7eb" }}>H</th>
+                      <th style={{ textAlign: "center", minWidth: 36, color: "#a16207", fontWeight: 800, borderBottom: "1px solid #e5e7eb" }}>S</th>
+                      <th style={{ textAlign: "center", minWidth: 36, color: "#1d4ed8", fontWeight: 800, borderBottom: "1px solid #e5e7eb" }}>I</th>
+                      <th style={{ textAlign: "center", minWidth: 36, color: "#b91c1c", fontWeight: 800, borderBottom: "1px solid #e5e7eb" }}>A</th>
                     </tr>
-                  ) : (
-                    (rekapData as RekapData).santri.map((s, idx) => {
-                      const summary = getSummary(s.id);
-                      return (
-                        <tr key={s.id}>
-                          <td style={{ textAlign: "center", color: "var(--text-muted)", fontWeight: 600, position: "sticky", left: 0, background: "white", zIndex: 1 }}>
-                            {idx + 1}
-                          </td>
-                          <td style={{ fontWeight: 600, position: "sticky", left: 36, background: "white", zIndex: 1, whiteSpace: "nowrap" }}>
-                            {s.nama_lengkap}
-                            {s.nis && (
-                              <span style={{ display: "block", fontSize: 11, color: "var(--text-muted)", fontWeight: 400 }}>
-                                {s.nis}
-                              </span>
-                            )}
-                          </td>
+                  </thead>
+                  <tbody>
+                    {(rekapData as RekapData).santri.length === 0 ? (
+                      <tr>
+                        <td
+                          colSpan={days.length + 6}
+                          style={{ textAlign: "center", padding: 32, color: "var(--text-muted)" }}
+                        >
+                          Tidak ada data santri untuk kelas ini pada {BULAN_NAMA[bulan]} {tahun}
+                        </td>
+                      </tr>
+                    ) : (
+                      (rekapData as RekapData).santri.map((s, idx) => {
+                        const summary = getSummary(s.id);
+                        return (
+                          <tr key={s.id} className="hover:bg-slate-50/60">
+                            <td style={{ textAlign: "center", color: "var(--text-muted)", fontWeight: 600, position: "sticky", left: 0, background: "white", zIndex: 1, borderBottom: "1px solid #f1f5f9" }}>
+                              {idx + 1}
+                            </td>
+                            <td style={{ fontWeight: 600, position: "sticky", left: 36, background: "white", zIndex: 1, borderRight: "1px solid #e5e7eb", borderBottom: "1px solid #f1f5f9", boxShadow: "4px 0 6px -2px rgba(0,0,0,0.06)" }}>
+                              <div className="truncate">{s.nama_lengkap}</div>
+                              {s.nis && (
+                                <span style={{ display: "block", fontSize: 11, color: "var(--text-muted)", fontWeight: 400 }}>
+                                  {s.nis}
+                                </span>
+                              )}
+                            </td>
                           {days.map((d) => {
                             const status = getStatus(s.id, d);
                             const sc = status ? STATUS_COLORS[status] : null;
@@ -422,7 +429,8 @@ export default function RekapPresensiSantriPage() {
                   )}
                 </tbody>
               </table>
-            </div>
+              </div>
+            </>
           )}
         </div>
 

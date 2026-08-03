@@ -497,57 +497,64 @@ export default function InputNilaiPage() {
                   Kelas {selectedKelasNama}
                 </div>
               </div>
-              
               <div style={{ fontSize: 12, color: "var(--text-muted)", background: "#f8fafc", padding: "4px 10px", borderRadius: 99, display: "flex", alignItems: "center", gap: 4 }}>
                 <Lightbulb size={12} style={{ color: "var(--warning)" }} /> Draft Autosave Aktif
               </div>
             </div>
 
-            <div className="sm:hidden text-xs text-slate-600 bg-amber-50/90 border border-amber-200/80 px-3 py-2 rounded-xl flex items-center gap-2 font-medium">
-              <span>👉</span>
-              <span>Geser tabel ke samping untuk mengisi nilai per komponen</span>
+            <div className="sm:hidden text-xs text-slate-700 bg-amber-50/95 border border-amber-300/80 px-3.5 py-2.5 rounded-2xl flex items-center justify-between gap-2 font-medium shadow-xs">
+              <div className="flex items-center gap-2">
+                <span className="text-base">👉</span>
+                <span><strong>Nama santri terkunci di kiri.</strong> Geser ke kanan untuk mengisi nilai.</span>
+              </div>
             </div>
 
-            <div className="card" style={{ padding: 0, overflow: "hidden", marginBottom: 16 }}>
-              <div style={{ overflowX: "auto", WebkitOverflowScrolling: "touch" }}>
-                <table style={{ width: "100%", borderCollapse: "collapse", minWidth: 780 }}>
+            <div className="card shadow-sm" style={{ padding: 0, overflow: "hidden", marginBottom: 16, border: "1px solid var(--border)" }}>
+              <div className="overflow-x-auto overflow-y-visible" style={{ WebkitOverflowScrolling: "touch", position: "relative" }}>
+                <table style={{ width: "100%", borderCollapse: "separate", borderSpacing: 0, minWidth: 720 }}>
                   <thead>
-                    <tr style={{ background: "var(--bg-body)", borderBottom: "1px solid var(--border)", fontSize: 13, color: "var(--text-muted)" }}>
-                      <th style={{ padding: "12px 14px", textAlign: "left", width: 36 }}>#</th>
-                      <th style={{ padding: "12px 14px", textAlign: "left", minWidth: 180 }}>Nama Santri</th>
-                      <th style={{ padding: "12px 6px", textAlign: "center", width: 85 }}>
-                        <div style={{ marginBottom: 2 }}>Harian</div>
-                        <div style={{ fontSize: 10, color: "var(--primary)", opacity: 0.8 }}>(30%)</div>
+                    <tr style={{ background: "#f8fafc", borderBottom: "1px solid var(--border)", fontSize: 13, color: "var(--text-muted)" }}>
+                      {/* Sticky Index */}
+                      <th style={{ position: "sticky", left: 0, zIndex: 25, background: "#f8fafc", padding: "12px 8px", textAlign: "center", width: 40, borderBottom: "1px solid var(--border)" }}>
+                        #
                       </th>
-                      <th style={{ padding: "12px 6px", textAlign: "center", width: 85 }}>
-                         <div style={{ marginBottom: 2 }}>Komp.</div>
-                         <div style={{ fontSize: 10, color: "var(--primary)", opacity: 0.8 }}>(20%)</div>
+                      {/* Sticky Nama Santri */}
+                      <th style={{ position: "sticky", left: 40, zIndex: 25, background: "#f8fafc", padding: "12px 12px", textAlign: "left", minWidth: 160, maxWidth: 200, borderBottom: "1px solid var(--border)", borderRight: "1px solid #e2e8f0", boxShadow: "4px 0 6px -2px rgba(0,0,0,0.05)" }}>
+                        Nama Santri
                       </th>
-                      <th style={{ padding: "12px 6px", textAlign: "center", width: 85 }}>
-                         <div style={{ marginBottom: 2 }}>Sikap</div>
-                         <div style={{ fontSize: 10, color: "var(--primary)", opacity: 0.8 }}>(10%)</div>
+                      <th style={{ padding: "12px 6px", textAlign: "center", width: 85, borderBottom: "1px solid var(--border)" }}>
+                        <div style={{ marginBottom: 2, fontWeight: 700, color: "var(--text-main)" }}>Harian</div>
+                        <div style={{ fontSize: 10, color: "var(--primary)", fontWeight: 700 }}>(30%)</div>
                       </th>
-                      <th style={{ padding: "12px 6px", textAlign: "center", width: 85 }}>
-                        <div style={{ marginBottom: 2 }}>{periode}</div>
-                        <div style={{ fontSize: 10, color: "var(--primary)", opacity: 0.8 }}>(40%)</div>
+                      <th style={{ padding: "12px 6px", textAlign: "center", width: 85, borderBottom: "1px solid var(--border)" }}>
+                         <div style={{ marginBottom: 2, fontWeight: 700, color: "var(--text-main)" }}>Komp.</div>
+                         <div style={{ fontSize: 10, color: "var(--primary)", fontWeight: 700 }}>(20%)</div>
                       </th>
-                      <th style={{ padding: "12px 14px", textAlign: "right", width: 100 }}>
-                        <div style={{ marginBottom: 2 }}>Nilai Akhir</div>
-                        <div style={{ fontSize: 10, color: "var(--success)", opacity: 0.8 }}>OTOMATIS</div>
+                      <th style={{ padding: "12px 6px", textAlign: "center", width: 85, borderBottom: "1px solid var(--border)" }}>
+                         <div style={{ marginBottom: 2, fontWeight: 700, color: "var(--text-main)" }}>Sikap</div>
+                         <div style={{ fontSize: 10, color: "var(--primary)", fontWeight: 700 }}>(10%)</div>
+                      </th>
+                      <th style={{ padding: "12px 6px", textAlign: "center", width: 85, borderBottom: "1px solid var(--border)" }}>
+                        <div style={{ marginBottom: 2, fontWeight: 700, color: "var(--text-main)" }}>{periode}</div>
+                        <div style={{ fontSize: 10, color: "var(--primary)", fontWeight: 700 }}>(40%)</div>
+                      </th>
+                      <th style={{ padding: "12px 14px", textAlign: "right", width: 100, borderBottom: "1px solid var(--border)" }}>
+                        <div style={{ marginBottom: 2, fontWeight: 700, color: "var(--text-main)" }}>Nilai Akhir</div>
+                        <div style={{ fontSize: 10, color: "var(--success)", fontWeight: 700 }}>OTOMATIS</div>
                       </th>
                     </tr>
                   </thead>
                   <tbody>
                     {loadingSantri ? (
                       <tr>
-                        <td colSpan={8} style={{ textAlign: "center", padding: 48, color: "var(--text-muted)" }}>
+                        <td colSpan={7} style={{ textAlign: "center", padding: 48, color: "var(--text-muted)" }}>
                           <Loader2 size={32} style={{ animation: "spin 1s linear infinite", margin: "0 auto 12px", color: "var(--primary)" }} />
                           Memuat lembar nilai...
                         </td>
                       </tr>
                     ) : santriList.length === 0 ? (
                        <tr>
-                        <td colSpan={8} style={{ textAlign: "center", padding: 48, color: "var(--text-muted)" }}>
+                        <td colSpan={7} style={{ textAlign: "center", padding: 48, color: "var(--text-muted)" }}>
                           Tidak ada santri di kelas ini
                         </td>
                       </tr>
@@ -564,59 +571,66 @@ export default function InputNilaiPage() {
                               borderBottom: "1px solid var(--border)",
                               transition: "background 0.2s",
                             }}
+                            className="hover:bg-slate-50/60"
                           >
-                            <td style={{ padding: "10px 14px", fontSize: 13, color: "var(--text-muted)" }}>
+                            {/* Sticky Index in Body */}
+                            <td style={{ position: "sticky", left: 0, zIndex: 10, background: "#ffffff", padding: "10px 8px", fontSize: 13, color: "var(--text-muted)", textAlign: "center", borderBottom: "1px solid var(--border)" }}>
                               {idx + 1}
                             </td>
-                            <td style={{ padding: "10px 14px" }}>
-                              <div style={{ fontWeight: 700, fontSize: 14, color: "var(--text)" }}>
+                            {/* Sticky Nama Santri in Body */}
+                            <td style={{ position: "sticky", left: 40, zIndex: 10, background: "#ffffff", padding: "10px 12px", minWidth: 160, maxWidth: 200, borderBottom: "1px solid var(--border)", borderRight: "1px solid #e2e8f0", boxShadow: "4px 0 6px -2px rgba(0,0,0,0.05)" }}>
+                              <div style={{ fontWeight: 700, fontSize: 13, color: "var(--text)" }} className="truncate">
                                 {s.nama_lengkap}
                               </div>
-                              <div style={{ fontSize: 11, color: "var(--text-muted)" }}>
+                              <div style={{ fontSize: 10, color: "var(--text-muted)" }}>
                                 NIS: {s.nis || "—"}
                               </div>
                             </td>
-                            <td style={{ padding: "8px 6px", textAlign: "center" }}>
+                            <td style={{ padding: "8px 6px", textAlign: "center", borderBottom: "1px solid var(--border)" }}>
                               <input
                                 type="number"
+                                inputMode="decimal"
                                 className="form-control"
-                                style={{ fontSize: 14, padding: "8px 4px", textAlign: "center", fontWeight: 600, minHeight: 40 }}
+                                style={{ fontSize: 14, padding: "8px 4px", textAlign: "center", fontWeight: 600, minHeight: 40, width: "100%", maxWidth: 74, margin: "0 auto" }}
                                 placeholder="-"
                                 value={data.harian}
                                 onChange={(e) => handleInputChange(s.id, "harian", e.target.value)}
                               />
                             </td>
-                            <td style={{ padding: "8px 6px", textAlign: "center" }}>
+                            <td style={{ padding: "8px 6px", textAlign: "center", borderBottom: "1px solid var(--border)" }}>
                               <input
                                 type="number"
+                                inputMode="decimal"
                                 className="form-control"
-                                style={{ fontSize: 14, padding: "8px 4px", textAlign: "center", fontWeight: 600, minHeight: 40 }}
+                                style={{ fontSize: 14, padding: "8px 4px", textAlign: "center", fontWeight: 600, minHeight: 40, width: "100%", maxWidth: 74, margin: "0 auto" }}
                                 placeholder="-"
                                 value={data.kompetensi}
                                 onChange={(e) => handleInputChange(s.id, "kompetensi", e.target.value)}
                               />
                             </td>
-                            <td style={{ padding: "8px 6px", textAlign: "center" }}>
+                            <td style={{ padding: "8px 6px", textAlign: "center", borderBottom: "1px solid var(--border)" }}>
                               <input
                                 type="number"
+                                inputMode="decimal"
                                 className="form-control"
-                                style={{ fontSize: 14, padding: "8px 4px", textAlign: "center", fontWeight: 600, minHeight: 40 }}
+                                style={{ fontSize: 14, padding: "8px 4px", textAlign: "center", fontWeight: 600, minHeight: 40, width: "100%", maxWidth: 74, margin: "0 auto" }}
                                 placeholder="-"
                                 value={data.sikap}
                                 onChange={(e) => handleInputChange(s.id, "sikap", e.target.value)}
                               />
                             </td>
-                            <td style={{ padding: "8px 6px", textAlign: "center" }}>
+                            <td style={{ padding: "8px 6px", textAlign: "center", borderBottom: "1px solid var(--border)" }}>
                               <input
                                 type="number"
+                                inputMode="decimal"
                                 className="form-control"
-                                style={{ fontSize: 14, padding: "8px 4px", textAlign: "center", fontWeight: 600, minHeight: 40 }}
+                                style={{ fontSize: 14, padding: "8px 4px", textAlign: "center", fontWeight: 600, minHeight: 40, width: "100%", maxWidth: 74, margin: "0 auto" }}
                                 placeholder="-"
                                 value={data.ujian}
                                 onChange={(e) => handleInputChange(s.id, "ujian", e.target.value)}
                               />
                             </td>
-                            <td style={{ padding: "8px 14px", textAlign: "right" }}>
+                            <td style={{ padding: "8px 14px", textAlign: "right", borderBottom: "1px solid var(--border)" }}>
                               <div
                                 style={{
                                   display: "inline-block",
@@ -672,9 +686,12 @@ export default function InputNilaiPage() {
               </button>
             </div>
 
+            {/* Bottom spacer for mobile so floating bar never covers the last santri */}
+            <div className="h-28 sm:hidden" />
+
             {/* Mobile Sticky Action Bar */}
             <div
-              className="sm:hidden fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md border-t border-slate-200/80 shadow-[0_-8px_30px_rgba(0,0,0,0.12)] z-30 flex items-center justify-between gap-3 px-4 pt-3"
+              className="sm:hidden fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md border-t border-slate-200/90 shadow-[0_-8px_30px_rgba(0,0,0,0.12)] z-30 flex items-center justify-between gap-3 px-4 pt-3"
               style={{ paddingBottom: "max(14px, env(safe-area-inset-bottom))" }}
             >
               <div className="min-w-0">

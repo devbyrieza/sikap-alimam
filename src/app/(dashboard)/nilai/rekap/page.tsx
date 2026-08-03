@@ -234,17 +234,24 @@ export default function RekapNilaiPage() {
                     <span style={{ color: '#dc2626', fontWeight: 700 }}>Merah</span> = nilai &lt;75
                   </p>
                 </div>
-                <div className="table-wrap" style={{ border: 'none', borderRadius: 0 }}>
-                  <table style={{ fontSize: 13 }}>
+                
+                {/* Mobile scroll hint */}
+                <div className="sm:hidden text-xs text-slate-700 bg-amber-50/95 border-b border-amber-200/80 px-4 py-2.5 flex items-center gap-2 font-medium">
+                  <span className="text-base">👉</span>
+                  <span><strong>Nama santri terkunci di kiri.</strong> Geser ke samping untuk melihat seluruh mapel.</span>
+                </div>
+
+                <div className="table-wrap" style={{ border: 'none', borderRadius: 0, overflowX: 'auto', WebkitOverflowScrolling: 'touch' }}>
+                  <table style={{ fontSize: 13, borderCollapse: 'separate', borderSpacing: 0, minWidth: 600 }}>
                     <thead>
-                      <tr>
-                        <th style={{ width: 48 }}>#</th>
-                        <th style={{ minWidth: 180 }}>Nama Santri</th>
-                        <th style={{ width: 90 }}>NIS</th>
+                      <tr style={{ background: '#f8fafc' }}>
+                        <th style={{ position: 'sticky', left: 0, zIndex: 20, background: '#f8fafc', width: 40, textAlign: 'center', borderBottom: '1px solid #e5e2db' }}>#</th>
+                        <th style={{ position: 'sticky', left: 40, zIndex: 20, background: '#f8fafc', minWidth: 160, maxWidth: 220, borderBottom: '1px solid #e5e2db', borderRight: '1px solid #e5e2db', boxShadow: '4px 0 6px -2px rgba(0,0,0,0.05)' }}>Nama Santri</th>
+                        <th style={{ width: 90, borderBottom: '1px solid #e5e2db' }}>NIS</th>
                         {mapelList.map((m) => (
                           <th
                             key={m.id}
-                            style={{ textAlign: 'center', minWidth: 90 }}
+                            style={{ textAlign: 'center', minWidth: 90, borderBottom: '1px solid #e5e2db' }}
                             title={m.nama}
                           >
                             {m.nama.length > 12 ? m.nama.substring(0, 12) + '…' : m.nama}
@@ -264,15 +271,17 @@ export default function RekapNilaiPage() {
                         </tr>
                       ) : (
                         santriList.map((santri, i) => (
-                          <tr key={santri.id}>
-                            <td style={{ color: '#9ca3af', fontWeight: 600 }}>{i + 1}</td>
-                            <td style={{ fontWeight: 700 }}>{santri.nama_lengkap}</td>
-                            <td style={{ color: '#9ca3af', fontSize: 12 }}>{santri.nis || '—'}</td>
+                          <tr key={santri.id} className="hover:bg-slate-50/60">
+                            <td style={{ position: 'sticky', left: 0, zIndex: 10, background: '#ffffff', color: '#9ca3af', fontWeight: 600, textAlign: 'center', borderBottom: '1px solid #f1f5f9' }}>{i + 1}</td>
+                            <td style={{ position: 'sticky', left: 40, zIndex: 10, background: '#ffffff', fontWeight: 700, borderRight: '1px solid #e5e2db', borderBottom: '1px solid #f1f5f9', boxShadow: '4px 0 6px -2px rgba(0,0,0,0.05)' }}>
+                              <div className="truncate">{santri.nama_lengkap}</div>
+                            </td>
+                            <td style={{ color: '#9ca3af', fontSize: 12, borderBottom: '1px solid #f1f5f9' }}>{santri.nis || '—'}</td>
                             {mapelList.map((m) => {
                               const avg = getAvg(santri.id, m.id);
                               const isBawah = avg !== null && avg < 75;
                               return (
-                                <td key={m.id} style={{ textAlign: 'center' }}>
+                                <td key={m.id} style={{ textAlign: 'center', borderBottom: '1px solid #f1f5f9' }}>
                                   {avg !== null ? (
                                     <span
                                       style={{
