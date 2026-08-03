@@ -16,9 +16,9 @@ export async function GET(req: NextRequest) {
     const bulan = Number(searchParams.get("bulan"));
     const tahun = Number(searchParams.get("tahun"));
 
-    if (!kelas_id || !bulan || !tahun) {
+    if (!bulan || !tahun) {
       return NextResponse.json(
-        { error: "kelas_id, bulan, dan tahun wajib diisi" },
+        { error: "bulan dan tahun wajib diisi" },
         { status: 400 }
       );
     }
@@ -26,6 +26,52 @@ export async function GET(req: NextRequest) {
     // Rentang tanggal: awal - akhir bulan
     const startDate = new Date(tahun, bulan - 1, 1);
     const endDate = new Date(tahun, bulan, 0, 23, 59, 59);
+
+    if (!kelas_id) {
+      // Return global stats
+      const presensi = await prisma.presensiSiswa.findMany({
+        where: {
+          tanggal: {
+            gte: startDate,
+            lte: endDate,
+          },
+        },
+        include: {
+          kelas: { select: { id: true, nama: true, jenjang: true } },
+        },
+      });
+
+      // Calculate overall stats
+      const overall = { hadir: 0, sakit: 0, izin: 0, alpha: 0 };
+      const perKelas: Record<string, { nama: string; jenjang: string; hadir: 0; sakit: 0; izin: 0; alpha: 0 }> = {};
+      const perJenjang: Record<string, { hadir: 0; sakit: 0; izin: 0; alpha: 0 }> = {};
+
+      presensi.forEach((p) => {
+        const s = p.status.toLowerCase();
+        if (["hadir", "sakit", "izin", "alpha"].includes(s)) {
+          overall[s as keyof typeof overall]++;
+          
+          if (!perKelas[p.kelas.id]) {
+            perKelas[p.kelas.id] = { nama: p.kelas.nama, jenjang: p.kelas.jenjang || "Lainnya", hadir: 0, sakit: 0, izin: 0, alpha: 0 };
+          }
+          perKelas[p.kelas.id][s as keyof typeof overall]++;
+          
+          const jenjang = p.kelas.jenjang || "Lainnya";
+          if (!perJenjang[jenjang]) {
+            perJenjang[jenjang] = { hadir: 0, sakit: 0, izin: 0, alpha: 0 };
+          }
+          perJenjang[jenjang][s as keyof typeof overall]++;
+        }
+      });
+
+      return NextResponse.json({
+        summary: true,
+        overall,
+        perKelas: Object.values(perKelas),
+        perJenjang,
+        meta: { bulan, tahun },
+      });
+    }
 
     // Santri aktif di kelas
     const santri = await prisma.santriAktif.findMany({
