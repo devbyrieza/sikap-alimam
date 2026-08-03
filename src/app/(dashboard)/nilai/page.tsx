@@ -502,14 +502,64 @@ export default function InputNilaiPage() {
               </div>
             </div>
 
-            <div className="sm:hidden text-xs text-slate-700 bg-amber-50/95 border border-amber-300/80 px-3.5 py-2.5 rounded-2xl flex items-center justify-between gap-2 font-medium shadow-xs">
-              <div className="flex items-center gap-2">
-                <span className="text-base">👉</span>
-                <span><strong>Nama santri terkunci di kiri.</strong> Geser ke kanan untuk mengisi nilai.</span>
-              </div>
+            {/* Banner info on mobile (changed for new layout) */}
+            <div className="md:hidden text-xs text-sky-700 bg-sky-50/95 border border-sky-200/80 px-4 py-3 rounded-2xl flex items-center gap-2.5 font-medium shadow-sm mb-4">
+              <span className="text-lg">💡</span>
+              <span><strong>Lebih Mudah!</strong> Isi nilai langsung pada kartu santri di bawah.</span>
             </div>
 
-            <div className="card shadow-sm" style={{ padding: 0, overflow: "hidden", marginBottom: 16, border: "1px solid var(--border)" }}>
+            {/* ── MOBILE CARD VIEW (Responsive) ── */}
+            <div className="md:hidden flex flex-col gap-3 mb-4">
+              {loadingSantri ? (
+                <div className="text-center p-8 text-slate-500 bg-white rounded-2xl border border-slate-200">
+                  <Loader2 className="animate-spin mx-auto mb-2 text-primary" size={24} />Memuat data...
+                </div>
+              ) : santriList.length === 0 ? (
+                <div className="text-center p-8 text-slate-500 bg-white rounded-2xl border border-slate-200">Tidak ada santri di kelas ini</div>
+              ) : (
+                santriList.map((s, idx) => {
+                  const data = inputData[s.id] || { harian: "", kompetensi: "", sikap: "", ujian: "" };
+                  const nilaiAkhir = hitungNilaiAkhir(data);
+                  const isLulus = nilaiAkhir ? Number(nilaiAkhir) >= 80 : true;
+
+                  return (
+                    <div key={`mobile-${s.id}`} className="bg-white rounded-2xl border border-slate-200/80 shadow-sm p-4 overflow-hidden">
+                      <div className="flex justify-between items-start mb-4 border-b border-slate-100 pb-3">
+                        <div>
+                          <div className="font-bold text-slate-800 text-sm leading-tight mb-0.5">{idx + 1}. {s.nama_lengkap}</div>
+                          <div className="text-[11px] text-slate-500 font-medium">NIS: {s.nis || "—"}</div>
+                        </div>
+                        <div className={`shrink-0 px-2.5 py-1.5 rounded-xl text-xs font-bold border flex flex-col items-center justify-center min-w-[50px] ${nilaiAkhir ? (isLulus ? 'bg-green-50 text-green-700 border-green-200' : 'bg-red-50 text-red-700 border-red-200') : 'bg-slate-50 text-slate-400 border-slate-200'}`}>
+                          <span style={{ fontSize: 9, opacity: 0.7, marginBottom: 1 }}>AKHIR</span>
+                          <span style={{ fontSize: 13 }}>{nilaiAkhir ? nilaiAkhir : "-"}</span>
+                        </div>
+                      </div>
+                      <div className="grid grid-cols-4 gap-2.5">
+                        <div className="flex flex-col">
+                          <label className="text-[10px] font-bold text-slate-500 text-center mb-1.5">Harian<br/><span className="text-[8px] text-primary/70">(30%)</span></label>
+                          <input type="number" inputMode="decimal" className="form-control" style={{ textAlign: "center", fontSize: 14, fontWeight: 700, padding: "8px 4px", height: 44, borderRadius: 12 }} placeholder="-" value={data.harian} onChange={(e) => handleInputChange(s.id, "harian", e.target.value)} />
+                        </div>
+                        <div className="flex flex-col">
+                          <label className="text-[10px] font-bold text-slate-500 text-center mb-1.5">Komp.<br/><span className="text-[8px] text-primary/70">(20%)</span></label>
+                          <input type="number" inputMode="decimal" className="form-control" style={{ textAlign: "center", fontSize: 14, fontWeight: 700, padding: "8px 4px", height: 44, borderRadius: 12 }} placeholder="-" value={data.kompetensi} onChange={(e) => handleInputChange(s.id, "kompetensi", e.target.value)} />
+                        </div>
+                        <div className="flex flex-col">
+                          <label className="text-[10px] font-bold text-slate-500 text-center mb-1.5">Sikap<br/><span className="text-[8px] text-primary/70">(10%)</span></label>
+                          <input type="number" inputMode="decimal" className="form-control" style={{ textAlign: "center", fontSize: 14, fontWeight: 700, padding: "8px 4px", height: 44, borderRadius: 12 }} placeholder="-" value={data.sikap} onChange={(e) => handleInputChange(s.id, "sikap", e.target.value)} />
+                        </div>
+                        <div className="flex flex-col">
+                          <label className="text-[10px] font-bold text-slate-500 text-center mb-1.5">{periode}<br/><span className="text-[8px] text-primary/70">(40%)</span></label>
+                          <input type="number" inputMode="decimal" className="form-control" style={{ textAlign: "center", fontSize: 14, fontWeight: 700, padding: "8px 4px", height: 44, borderRadius: 12 }} placeholder="-" value={data.ujian} onChange={(e) => handleInputChange(s.id, "ujian", e.target.value)} />
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })
+              )}
+            </div>
+
+            {/* ── DESKTOP TABLE VIEW (Responsive) ── */}
+            <div className="hidden md:block card shadow-sm" style={{ padding: 0, overflow: "hidden", marginBottom: 16, border: "1px solid var(--border)" }}>
               <div className="overflow-x-auto overflow-y-visible" style={{ WebkitOverflowScrolling: "touch", position: "relative" }}>
                 <table style={{ width: "100%", borderCollapse: "separate", borderSpacing: 0, minWidth: 720 }}>
                   <thead>
