@@ -47,6 +47,36 @@ function formatTanggalLengkap(iso: string) {
   });
 }
 
+const JAM_WAKTU: Record<string, { mulai: string, selesai: string }> = {
+  "1": { mulai: "05:40", selesai: "06:20" },
+  "2": { mulai: "06:20", selesai: "07:00" },
+  "3": { mulai: "07:00", selesai: "07:40" },
+  "4": { mulai: "07:40", selesai: "08:20" },
+  "5": { mulai: "08:20", selesai: "09:00" },
+  "6": { mulai: "09:00", selesai: "09:40" },
+  "7": { mulai: "09:40", selesai: "10:20" },
+  "8": { mulai: "10:20", selesai: "11:00" },
+  "9": { mulai: "11:00", selesai: "11:40" },
+  "10": { mulai: "13:00", selesai: "13:40" },
+  "11": { mulai: "13:40", selesai: "14:20" },
+};
+
+function getDurasiJam(jamStr: string) {
+  if (!jamStr || jamStr === "-" || jamStr.toLowerCase() === "khusus") return "";
+  const parts = jamStr.split(",").map(p => p.trim());
+  if (parts.length === 0) return "";
+  const first = parts[0];
+  const last = parts[parts.length - 1];
+  
+  const mulai = JAM_WAKTU[first]?.mulai;
+  const selesai = JAM_WAKTU[last]?.selesai;
+  
+  if (mulai && selesai) {
+    return ` (${mulai} - ${selesai})`;
+  }
+  return "";
+}
+
 const HEADER_BG = "linear-gradient(145deg, #9b1b22 0%, #7e141a 60%, #4d0c10 100%)";
 
 export default function JurnalDetailModal({ jurnal, onClose }: JurnalDetailModalProps) {
@@ -255,7 +285,8 @@ export default function JurnalDetailModal({ jurnal, onClose }: JurnalDetailModal
               >
                 <Clock size={14} style={{ color: "#67e8f9", flexShrink: 0 }} />
                 <span>
-                  Jam Ke&nbsp;<strong style={{ color: "#fff" }}>{jurnal.jam_ke}</strong>
+                  Jam ke&nbsp;<strong style={{ color: "#fff" }}>{jurnal.jam_ke}</strong>
+                  <span style={{ color: "rgba(255,255,255,0.7)" }}>{getDurasiJam(jurnal.jam_ke)}</span>
                 </span>
               </div>
             </div>
