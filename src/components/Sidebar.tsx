@@ -19,28 +19,16 @@ const NAV: NavItem[] = [
     icon: <LayoutDashboard size={18} />,
   },
   {
-    href: "/jurnal",
-    label: "Jurnal Mengajar",
-    icon: <BookMarked size={18} />,
-    roles: ["guru"],
-  },
-  {
     href: "/presensi/santri",
     label: "Presensi Santri",
     icon: <ClipboardCheck size={18} />,
     roles: ["guru", "admin", "admin_super", "ADMIN_SUPER", "mudir", "MUDIR", "kepala", "KEPALA_SEKOLAH"],
   },
   {
-    href: "/presensi/asatidz",
-    label: "Absensi Guru",
-    icon: <UserCheck size={18} />,
-    roles: ["guru", "admin", "admin_super", "ADMIN_SUPER", "mudir", "MUDIR"],
-  },
-  {
-    href: "/tahfidz/mutabaah",
-    label: "Mutabaah Tahfidz",
-    icon: <BookOpen size={18} />,
-    roles: ["guru", "musyrif"],
+    href: "/jurnal",
+    label: "Jurnal Mengajar",
+    icon: <BookMarked size={18} />,
+    roles: ["guru"],
   },
   {
     href: "/nilai",
@@ -49,12 +37,23 @@ const NAV: NavItem[] = [
     roles: ["guru"],
   },
   {
+    href: "/tahfidz/mutabaah",
+    label: "Mutabaah Tahfidz",
+    icon: <BookOpen size={18} />,
+    roles: ["guru", "musyrif"],
+  },
+  {
+    href: "/presensi/asatidz",
+    label: "Absensi Guru",
+    icon: <UserCheck size={18} />,
+    roles: ["guru", "admin", "admin_super", "ADMIN_SUPER", "mudir", "MUDIR"],
+  },
+  {
     href: "/master",
     label: "Master Data",
     icon: <Database size={18} />,
     roles: ["admin", "admin_super", "ADMIN_SUPER", "mudir", "MUDIR", "kepala", "KEPALA_SEKOLAH"],
   },
-
 ];
 
 interface SidebarProps {
