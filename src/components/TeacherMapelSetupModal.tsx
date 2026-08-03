@@ -482,7 +482,7 @@ export default function TeacherMapelSetupModal({
                         style={{ fontWeight: 700, fontSize: "0.95rem" }}
                       />
                     </div>
-                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "0.75rem" }}>
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                       <div>
                         <label className={labelCls}>Jabatan / Posisi</label>
                         <input type="text" value={formData.jabatan} onChange={e => setFormData({ ...formData, jabatan: e.target.value })}
@@ -667,7 +667,7 @@ export default function TeacherMapelSetupModal({
                   </div>
                 </div>
 
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
                   {/* WA */}
                   <div>
                     <label className={labelCls}>No. WhatsApp / HP Aktif <span style={{ color: "#ef4444" }}>*</span></label>
@@ -729,7 +729,7 @@ export default function TeacherMapelSetupModal({
                     </select>
                   </div>
                   {/* Alamat full width */}
-                  <div style={{ gridColumn: "1 / -1" }}>
+                  <div className="col-span-1 sm:col-span-2">
                     <label className={labelCls}>
                       <span style={{ display: "flex", alignItems: "center", gap: 5 }}>
                         <MapPin size={11} /> Alamat Tinggal / Domisili

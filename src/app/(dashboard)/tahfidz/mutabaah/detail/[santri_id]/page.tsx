@@ -120,7 +120,7 @@ export default function TahfidzDetailPage() {
   };
 
   return (
-    <div className="p-6 max-w-7xl mx-auto space-y-6">
+    <div className="p-3.5 sm:p-6 md:p-7 max-w-7xl mx-auto space-y-6">
       
       {/* Back & Breadcrumb */}
       <div className="flex items-center gap-3">

@@ -32,7 +32,7 @@ export default function TahfidzMutabaahPage() {
   );
 
   return (
-    <div className="p-6 max-w-7xl mx-auto space-y-6">
+    <div className="p-3.5 sm:p-6 md:p-7 max-w-7xl mx-auto space-y-6">
       
       {/* Header Banner */}
       <div className="bg-gradient-to-r from-teal-700 to-emerald-800 rounded-3xl p-8 text-white shadow-xl shadow-teal-900/20">

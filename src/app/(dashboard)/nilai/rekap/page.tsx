@@ -136,7 +136,7 @@ export default function RekapNilaiPage() {
         </div>
       </div>
 
-      <div style={{ padding: '24px 28px', display: 'flex', flexDirection: 'column', gap: 24 }}>
+      <div className="p-3.5 sm:p-6 md:p-7 max-w-7xl mx-auto w-full flex flex-col gap-5">
         {/* Filter */}
         <div className="card">
           <div className="card-title">Filter Rekap</div>

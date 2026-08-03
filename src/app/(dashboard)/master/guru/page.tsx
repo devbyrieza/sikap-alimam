@@ -153,21 +153,21 @@ export default function MasterGuruPage() {
   };
 
   return (
-    <div className="p-6 max-w-6xl mx-auto space-y-6">
-      <div className="flex justify-between items-center mb-6">
+    <div className="p-3.5 sm:p-6 md:p-7 max-w-6xl mx-auto space-y-6">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
         <div>
-          <h1 className="text-3xl font-bold text-gray-800 flex items-center gap-2">
-            <Users className="text-emerald-600" size={32} /> Master Data Guru
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 flex items-center gap-2">
+            <Users className="text-emerald-600" size={28} /> Master Data Guru
           </h1>
-          <p className="text-gray-500 mt-1">Registrasi dan kelola staf pengajar (Guru/Musyrif) di Pesantren Al-Imam.</p>
+          <p className="text-gray-500 mt-1 text-xs sm:text-sm">Registrasi dan kelola staf pengajar (Guru/Musyrif) di Pesantren Al-Imam.</p>
         </div>
-        <div className="flex gap-3">
+        <div className="flex flex-wrap gap-2.5 w-full sm:w-auto">
           <button 
             onClick={handleSync}
             disabled={isSyncing}
-            className="bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white px-5 py-2.5 rounded-xl font-semibold shadow-md flex items-center gap-2 transition-all cursor-pointer"
+            className="flex-1 sm:flex-initial bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white px-4 py-2.5 rounded-xl font-semibold shadow-md flex items-center justify-center gap-2 text-xs sm:text-sm transition-all cursor-pointer"
           >
-            <RefreshCw size={16} className={isSyncing ? "animate-spin" : ""} />
+            <RefreshCw size={15} className={isSyncing ? "animate-spin" : ""} />
             Sync Data SIMPEG
           </button>
           <button 
@@ -178,9 +178,9 @@ export default function MasterGuruPage() {
                 setForm({ nik: "", nama_lengkap: "", no_hp: "", email: "", mata_pelajaran: "" });
               }
             }}
-            className="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-2.5 rounded-xl font-semibold shadow-md flex items-center gap-2 transition-all cursor-pointer"
+            className="flex-1 sm:flex-initial bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2.5 rounded-xl font-semibold shadow-md flex items-center justify-center gap-2 text-xs sm:text-sm transition-all cursor-pointer"
           >
-            {isAdding ? "Batal" : <><Plus size={18} /> Tambah Guru Baru</>}
+            {isAdding ? "Batal" : <><Plus size={16} /> Tambah Guru</>}
           </button>
         </div>
       </div>
