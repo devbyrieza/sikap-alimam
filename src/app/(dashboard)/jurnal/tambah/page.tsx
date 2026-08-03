@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Swal from "sweetalert2";
-import { BookOpen, ChevronLeft, Loader2, FileText, Zap, Clock, Save, Calendar, MessageSquare, Microscope, BookMarked, Edit3 } from "lucide-react";
+import { BookOpen, ChevronLeft, Loader2, FileText, Zap, Clock, Save, Calendar, MessageSquare, Microscope, BookMarked, Edit3, Check } from "lucide-react";
 import Link from "next/link";
 
 type Kelas = { id: string; nama: string; jenjang: string | null };
@@ -299,13 +299,16 @@ export default function TambahJurnalPage() {
 
                 {/* Jam ke- */}
                 <div className="form-group">
-                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "6px" }}>
-                    <label className="form-label" style={{ display: "flex", alignItems: "center", gap: 5, margin: 0 }}>
-                      <Clock size={13} />
-                      Jam ke-
-                    </label>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: "8px" }}>
+                    <div>
+                      <label className="form-label" style={{ display: "flex", alignItems: "center", gap: 5, margin: 0, marginBottom: "4px" }}>
+                        <Clock size={13} />
+                        Jam ke-
+                      </label>
+                      <p className="text-[11px] text-slate-500 font-medium">Klik angka jam (bisa lebih dari satu)</p>
+                    </div>
                     {jamKe.length > 0 && (
-                      <span className="text-xs font-semibold bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full">
+                      <span className="text-xs font-semibold bg-emerald-100 text-emerald-800 px-2.5 py-1 rounded-full whitespace-nowrap">
                         Durasi: {jamKe.length} Jam
                       </span>
                     )}
@@ -324,12 +327,22 @@ export default function TambahJurnalPage() {
                               setJamKe([...jamKe, j]);
                             }
                           }}
-                          className={`px-3 py-1.5 text-sm font-medium rounded-lg border transition-all ${
+                          className={`relative flex items-center justify-center transition-all ${
+                            j === "Khusus" ? "px-4 py-2" : "w-10 h-10"
+                          } text-sm font-bold rounded-xl border-2 ${
                             isSelected 
-                              ? "bg-emerald-600 text-white border-emerald-600 shadow-md" 
-                              : "bg-white text-slate-600 border-slate-200 hover:border-emerald-300 hover:bg-emerald-50"
+                              ? "bg-emerald-50 text-emerald-700 border-emerald-500 shadow-sm" 
+                              : "bg-white text-slate-500 border-slate-200 hover:border-emerald-300 hover:bg-slate-50"
                           }`}
                         >
+                          {isSelected && j !== "Khusus" && (
+                            <div className="absolute -top-1.5 -right-1.5 bg-emerald-500 text-white rounded-full p-0.5 shadow-sm">
+                              <Check size={10} strokeWidth={4} />
+                            </div>
+                          )}
+                          {isSelected && j === "Khusus" && (
+                            <Check size={14} strokeWidth={3} className="mr-1.5" />
+                          )}
                           {j}
                         </button>
                       );
