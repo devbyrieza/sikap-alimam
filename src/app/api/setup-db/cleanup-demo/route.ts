@@ -43,7 +43,7 @@ export async function GET() {
 
         // E. Hapus Relasi AsatidzmMapel
         await tx.asatidzmMapel.deleteMany({
-          where: { asatidz_id: pegawaiId }
+          where: { pegawai_id: pegawaiId }
         });
 
         // F. Hapus Capaian Tahfidz (Mutabaah)
