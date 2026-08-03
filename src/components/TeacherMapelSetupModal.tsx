@@ -45,7 +45,7 @@ const KATEGORI_OPTIONS = [
   { value: "MUSYRIF", label: "Musyrif / Pengasuh", desc: "Pembina asrama & santri", icon: Heart, color: "#8b5cf6", bg: "rgba(139,92,246,0.08)", border: "rgba(139,92,246,0.3)" },
   { value: "STAF", label: "Staf Pegawai", desc: "Keuangan, Sapras, IT, Media", icon: Briefcase, color: "#10b981", bg: "rgba(16,185,129,0.08)", border: "rgba(16,185,129,0.3)" },
   { value: "IBU_DAPUR", label: "Ibu Dapur", desc: "Konsumsi & dapur santri", icon: Award, color: "#f59e0b", bg: "rgba(245,158,11,0.08)", border: "rgba(245,158,11,0.3)" },
-  { value: "PIMPINAN", label: "Pimpinan / Manajemen", desc: "Mudir, Kepala Divisi, dll", icon: ShieldCheck, color: "#ef4444", bg: "rgba(239,68,68,0.08)", border: "rgba(239,68,68,0.3)" },
+  { value: "PIMPINAN", label: "Pimpinan / Manajemen", desc: "Mudir, Kepala Bidang (Kabid), dll", icon: ShieldCheck, color: "#ef4444", bg: "rgba(239,68,68,0.08)", border: "rgba(239,68,68,0.3)" },
 ];
 
 const DIVISI_OPTIONS = [
