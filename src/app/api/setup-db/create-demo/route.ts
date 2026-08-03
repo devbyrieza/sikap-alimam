@@ -105,13 +105,72 @@ export async function GET() {
         },
       });
     }
+    // === 4. Akun Admin Super ===
+    const emailAdminSuper = 'admin.super@pesantren-alimam.com';
+    const passwordAdminSuper = 'super123';
+    const passwordHashAdminSuper = await bcrypt.hash(passwordAdminSuper, 10);
+    const namaAdminSuper = 'Admin Super (Sistem)';
+
+    await prisma.user.upsert({
+      where: { email: emailAdminSuper },
+      update: { password: passwordHashAdminSuper, nama: namaAdminSuper, role: 'ADMIN_SUPER', is_active: true },
+      create: { email: emailAdminSuper, password: passwordHashAdminSuper, nama: namaAdminSuper, role: 'ADMIN_SUPER', is_active: true }
+    });
+
+    // === 5. Akun Admin Keuangan ===
+    const emailAdminKeuangan = 'admin.keuangan@pesantren-alimam.com';
+    const passwordAdminKeuangan = 'keuangan123';
+    const passwordHashAdminKeuangan = await bcrypt.hash(passwordAdminKeuangan, 10);
+    const namaAdminKeuangan = 'Admin Keuangan (TU)';
+
+    await prisma.user.upsert({
+      where: { email: emailAdminKeuangan },
+      update: { password: passwordHashAdminKeuangan, nama: namaAdminKeuangan, role: 'ADMIN_KEUANGAN', is_active: true },
+      create: { email: emailAdminKeuangan, password: passwordHashAdminKeuangan, nama: namaAdminKeuangan, role: 'ADMIN_KEUANGAN', is_active: true }
+    });
+
+    // === 6. Akun Wali Kelas ===
+    const emailWaliKelas = 'wali.kelas@pesantren-alimam.com';
+    const passwordWaliKelas = 'walikelas123';
+    const passwordHashWaliKelas = await bcrypt.hash(passwordWaliKelas, 10);
+    const namaWaliKelas = 'Ust. Wali Kelas (Demo), S.Pd.';
+
+    const userWaliKelas = await prisma.user.upsert({
+      where: { email: emailWaliKelas },
+      update: { password: passwordHashWaliKelas, nama: namaWaliKelas, role: 'WALI_KELAS', is_active: true },
+      create: { email: emailWaliKelas, password: passwordHashWaliKelas, nama: namaWaliKelas, role: 'WALI_KELAS', is_active: true }
+    });
+
+    let pegawaiWaliKelas = await prisma.pegawai.findFirst({ where: { email: emailWaliKelas } });
+    const dataPegawaiWaliKelas = {
+      nama_lengkap: namaWaliKelas,
+      email: emailWaliKelas,
+      kategori_pegawai: 'GURU',
+      jabatan: 'Wali Kelas',
+      unit_kerja: 'Pesantren Al-Imam',
+      divisi: 'Pengajar',
+      nip: `DEMO${Math.floor(Math.random() * 10000)}`,
+      user_id: userWaliKelas.id,
+      no_hp: '081223344556',
+      jenis_kelamin: 'L',
+      mata_pelajaran: 'Aqidah'
+    };
+
+    if (!pegawaiWaliKelas) {
+      await prisma.pegawai.create({ data: dataPegawaiWaliKelas });
+    } else {
+      await prisma.pegawai.update({ where: { id: pegawaiWaliKelas.id }, data: dataPegawaiWaliKelas });
+    }
 
     return NextResponse.json({
       success: true,
-      message: 'Semua Akun Demo (Guru Pribadi, Guru Presentasi, dan Wali Santri) berhasil disiapkan.',
+      message: 'Semua Akun Akses Login (Super Admin, Keuangan, Wali Kelas, Guru Mapel, Wali Santri) berhasil disiapkan.',
       data: [
-        { role: 'GURU (Pribadi)', email: emailPribadi, password: passwordPribadi },
-        { role: 'GURU (Resmi/Presentasi)', email: emailPresentasi, password: passwordPresentasi },
+        { role: 'ADMIN SUPER', email: emailAdminSuper, password: passwordAdminSuper },
+        { role: 'ADMIN KEUANGAN', email: emailAdminKeuangan, password: passwordAdminKeuangan },
+        { role: 'WALI KELAS', email: emailWaliKelas, password: passwordWaliKelas },
+        { role: 'GURU MAPEL (Pribadi)', email: emailPribadi, password: passwordPribadi },
+        { role: 'GURU MAPEL (Resmi/Presentasi)', email: emailPresentasi, password: passwordPresentasi },
         { role: 'WALI SANTRI', email: emailWali, password: passwordWali, linked_santri: firstSantri?.nama_lengkap || null }
       ]
     });
