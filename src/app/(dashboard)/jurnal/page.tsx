@@ -6,6 +6,17 @@ import { sortKelas } from "@/lib/kelas";
 
 export const dynamic = "force-dynamic";
 
+const formatName = (str: string) => {
+  if (!str) return "-";
+  return str.split(' ').map(word => {
+    if (word.includes('.')) return word; 
+    if (word === word.toUpperCase() || word === word.toLowerCase()) {
+      return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+    }
+    return word;
+  }).join(' ');
+};
+
 export const metadata = {
   title: "Jurnal Mengajar — SIAKAD Al-Imam",
   description: "Daftar jurnal mengajar guru Pesantren Al-Imam Al-Islami",
@@ -107,10 +118,10 @@ export default async function JurnalPage() {
   // Kumpulkan daftar nama guru unik (dari master pegawai + jurnal yang sudah tercatat)
   const asatidzSet = new Set<string>();
   asatidzData.forEach((a) => {
-    if (a.nama_lengkap) asatidzSet.add(a.nama_lengkap.trim());
+    if (a.nama_lengkap) asatidzSet.add(formatName(a.nama_lengkap.trim()));
   });
   jurnal.forEach((j) => {
-    if (j.pegawai?.nama_lengkap) asatidzSet.add(j.pegawai.nama_lengkap.trim());
+    if (j.pegawai?.nama_lengkap) asatidzSet.add(formatName(j.pegawai.nama_lengkap.trim()));
   });
   const asatidzList = Array.from(asatidzSet).sort((a, b) => a.localeCompare(b, "id"));
 
@@ -124,7 +135,7 @@ export default async function JurnalPage() {
     return {
       id: j.id,
       tanggal: j.tanggal.toISOString().split("T")[0],
-      asatidz: j.pegawai?.nama_lengkap || "-",
+      asatidz: j.pegawai?.nama_lengkap ? formatName(j.pegawai.nama_lengkap.trim()) : "-",
       mapel: j.mapel?.nama || "-",
       kelas: kelasNama,
       kelas_jenjang: j.kelas?.jenjang || null,

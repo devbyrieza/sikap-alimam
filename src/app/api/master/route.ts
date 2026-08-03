@@ -4,6 +4,17 @@ import { sortKelas } from "@/lib/kelas";
 
 export const dynamic = "force-dynamic";
 
+const formatName = (str: string) => {
+  if (!str) return "-";
+  return str.split(' ').map(word => {
+    if (word.includes('.')) return word; 
+    if (word === word.toUpperCase() || word === word.toLowerCase()) {
+      return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+    }
+    return word;
+  }).join(' ');
+};
+
 export async function GET() {
   try {
     const [rawKelas, rawAsatidz, allMapel] = await Promise.all([
@@ -68,6 +79,11 @@ export async function GET() {
       });
     }
 
+    const formattedAsatidz = asatidz.map(a => ({
+      ...a,
+      nama_lengkap: formatName(a.nama_lengkap)
+    }));
+
     const kelas = sortKelas(normalizedKelas);
 
     // Group mapel by kelas_id
@@ -79,7 +95,7 @@ export async function GET() {
       mapelByKelas[m.kelas_id].push({ id: m.id, nama: m.nama, kategori: m.kategori });
     }
 
-    return NextResponse.json({ kelas, asatidz, mapel: mapelByKelas });
+    return NextResponse.json({ kelas, asatidz: formattedAsatidz, mapel: mapelByKelas });
   } catch (err) {
     console.error("[GET /api/master]", err);
     return NextResponse.json({ error: "Gagal mengambil data master" }, { status: 500 });
