@@ -47,24 +47,20 @@ function formatTanggalLengkap(iso: string) {
   });
 }
 
+const HEADER_BG = "linear-gradient(145deg, #9b1b22 0%, #7e141a 60%, #4d0c10 100%)";
+
 export default function JurnalDetailModal({ jurnal, onClose }: JurnalDetailModalProps) {
-  // Lock background body scroll when modal is open
   useEffect(() => {
     if (jurnal) {
       document.body.style.overflow = "hidden";
     } else {
       document.body.style.overflow = "unset";
     }
-    return () => {
-      document.body.style.overflow = "unset";
-    };
+    return () => { document.body.style.overflow = "unset"; };
   }, [jurnal]);
 
-  // Handle ESC key press
   useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
-    };
+    const handleKeyDown = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); };
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [onClose]);
@@ -78,146 +74,528 @@ export default function JurnalDetailModal({ jurnal, onClose }: JurnalDetailModal
     "Santri memahami dan menguasai kompetensi dasar materi dengan baik.";
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 md:p-6 bg-slate-950/70 backdrop-blur-sm transition-opacity duration-300">
-      {/* Backdrop click area */}
+    <div
+      className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4"
+      style={{ background: "rgba(2, 6, 23, 0.75)", backdropFilter: "blur(6px)" }}
+    >
+      {/* Backdrop */}
       <div className="absolute inset-0" onClick={onClose} />
 
-      {/* Modal Container */}
+      {/* Modal */}
       <div
-        className="relative z-10 bg-slate-50 w-full max-w-2xl rounded-t-3xl sm:rounded-3xl shadow-2xl border border-slate-200/80 overflow-hidden flex flex-col max-h-[90vh] sm:max-h-[85vh] transition-transform duration-200"
+        className="relative z-10 w-full max-w-2xl flex flex-col overflow-hidden"
+        style={{
+          maxHeight: "90vh",
+          borderRadius: "28px 28px 0 0",
+          background: "#ffffff",
+          boxShadow: "0 -8px 60px rgba(0,0,0,0.35), 0 0 0 1px rgba(255,255,255,0.05)",
+        }}
         onClick={(e) => e.stopPropagation()}
       >
-        {/* ── HEADER BANNER (ELEGANT AL-IMAM CRIMSON) ── */}
+        {/* ═══════════════════ HEADER ═══════════════════ */}
         <div
-          className="px-6 pt-5 pb-6 text-white relative overflow-hidden shrink-0"
-          style={{
-            background: "linear-gradient(135deg, #8B181E 0%, #681116 100%)",
-          }}
+          className="relative shrink-0 overflow-hidden"
+          style={{ background: HEADER_BG, padding: "20px 24px 24px" }}
         >
-          {/* Mobile Pull Handle Indicator */}
-          <div className="sm:hidden w-full pb-3 flex justify-center">
-            <div className="w-10 h-1 rounded-full bg-white/30" />
+          {/* Pull handle (mobile) */}
+          <div className="flex justify-center mb-4">
+            <div
+              style={{
+                width: 40,
+                height: 4,
+                borderRadius: 99,
+                background: "rgba(255,255,255,0.25)",
+              }}
+            />
           </div>
 
-          {/* Background Decorative Watermark */}
-          <div className="absolute -right-4 -bottom-6 opacity-10 pointer-events-none text-white">
-            <BookOpen size={140} />
+          {/* Watermark */}
+          <div
+            className="pointer-events-none"
+            style={{
+              position: "absolute",
+              right: -20,
+              bottom: -20,
+              opacity: 0.07,
+            }}
+          >
+            <BookOpen size={150} color="white" />
           </div>
 
-          {/* Top Bar inside Header: Category & Close */}
-          <div className="flex items-center justify-between gap-2 mb-3">
-            <div className="flex items-center gap-2 flex-wrap">
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/15 text-white/95 text-[11px] font-bold tracking-wide backdrop-blur-sm border border-white/20">
-                <Sparkles size={12} className="text-amber-300" />
-                <span>JURNAL KBM</span>
+          {/* Top row: badge + close */}
+          <div className="flex items-start justify-between gap-3 mb-4">
+            <div className="flex flex-wrap items-center gap-2">
+              <span
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: 5,
+                  padding: "4px 12px",
+                  borderRadius: 99,
+                  background: "rgba(255,255,255,0.15)",
+                  border: "1px solid rgba(255,255,255,0.2)",
+                  fontSize: 11,
+                  fontWeight: 800,
+                  color: "#fff",
+                  letterSpacing: "0.06em",
+                  textTransform: "uppercase",
+                }}
+              >
+                <Sparkles size={11} style={{ color: "#fbbf24" }} />
+                Jurnal KBM Harian
               </span>
 
-              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-emerald-500/25 text-emerald-100 border border-emerald-400/30 text-[11px] font-semibold">
-                <CheckCircle2 size={12} className="text-emerald-300" />
-                <span>Terverifikasi</span>
+              <span
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: 5,
+                  padding: "4px 12px",
+                  borderRadius: 99,
+                  background: "rgba(34,197,94,0.2)",
+                  border: "1px solid rgba(134,239,172,0.3)",
+                  fontSize: 11,
+                  fontWeight: 700,
+                  color: "#86efac",
+                }}
+              >
+                <CheckCircle2 size={11} />
+                Terverifikasi
               </span>
             </div>
 
             <button
               onClick={onClose}
               aria-label="Tutup modal"
-              className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/25 text-white flex items-center justify-center transition-colors active:scale-95 border border-white/15 shrink-0"
+              style={{
+                width: 34,
+                height: 34,
+                borderRadius: "50%",
+                background: "rgba(255,255,255,0.12)",
+                border: "1px solid rgba(255,255,255,0.18)",
+                color: "#fff",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                cursor: "pointer",
+                flexShrink: 0,
+              }}
             >
               <X size={16} />
             </button>
           </div>
 
-          {/* Main Title & Date */}
-          <div className="space-y-1">
-            <h2 className="text-xl sm:text-2xl font-black text-white leading-tight tracking-tight">
-              {namaMapelBersih}
-            </h2>
-            <div className="flex items-center gap-1.5 text-white/85 text-xs sm:text-sm font-medium">
-              <Calendar size={13} className="text-white/75 shrink-0" />
-              <span>{formatTanggalLengkap(jurnal.tanggal)}</span>
-            </div>
+          {/* Subject title */}
+          <h2
+            style={{
+              fontSize: 22,
+              fontWeight: 900,
+              color: "#ffffff",
+              lineHeight: 1.25,
+              marginBottom: 6,
+              letterSpacing: "-0.02em",
+            }}
+          >
+            {namaMapelBersih}
+          </h2>
+
+          {/* Date */}
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 6,
+              color: "rgba(255,255,255,0.8)",
+              fontSize: 13,
+              fontWeight: 500,
+              marginBottom: 20,
+            }}
+          >
+            <Calendar size={14} style={{ color: "rgba(255,255,255,0.65)", flexShrink: 0 }} />
+            <span>{formatTanggalLengkap(jurnal.tanggal)}</span>
           </div>
 
-          {/* Meta Chips in Header (Clean, Integrated & No Muddy Shadow) */}
-          <div className="flex flex-wrap items-center gap-2 mt-4 pt-3 border-t border-white/15 text-xs">
-            <div className="inline-flex items-center gap-1.5 bg-black/20 backdrop-blur-sm px-3 py-1.5 rounded-xl border border-white/10 text-white/90 font-medium">
-              <GraduationCap size={14} className="text-amber-300" />
-              <span>Kelas: <strong className="text-white font-bold">{jurnal.kelas}</strong></span>
+          {/* Meta chips — one per row for clarity */}
+          <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+            {/* Kelas & Jam (same row — short values) */}
+            <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+              <div
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: 7,
+                  padding: "8px 14px",
+                  borderRadius: 12,
+                  background: "rgba(0,0,0,0.25)",
+                  border: "1px solid rgba(255,255,255,0.12)",
+                  color: "rgba(255,255,255,0.95)",
+                  fontSize: 13,
+                  fontWeight: 600,
+                }}
+              >
+                <GraduationCap size={15} style={{ color: "#fbbf24", flexShrink: 0 }} />
+                <span>
+                  Kelas&nbsp;<strong style={{ color: "#fff" }}>{jurnal.kelas}</strong>
+                </span>
+              </div>
+
+              <div
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: 7,
+                  padding: "8px 14px",
+                  borderRadius: 12,
+                  background: "rgba(0,0,0,0.25)",
+                  border: "1px solid rgba(255,255,255,0.12)",
+                  color: "rgba(255,255,255,0.95)",
+                  fontSize: 13,
+                  fontWeight: 600,
+                }}
+              >
+                <Clock size={14} style={{ color: "#67e8f9", flexShrink: 0 }} />
+                <span>
+                  Jam Ke&nbsp;<strong style={{ color: "#fff" }}>{jurnal.jam_ke}</strong>
+                </span>
+              </div>
             </div>
 
-            <div className="inline-flex items-center gap-1.5 bg-black/20 backdrop-blur-sm px-3 py-1.5 rounded-xl border border-white/10 text-white/90 font-medium">
-              <Clock size={13} className="text-sky-300" />
-              <span>Jam Ke: <strong className="text-white font-bold">{jurnal.jam_ke}</strong></span>
-            </div>
-
-            <div className="inline-flex items-center gap-1.5 bg-black/20 backdrop-blur-sm px-3 py-1.5 rounded-xl border border-white/10 text-white/90 font-medium">
-              <User size={13} className="text-emerald-300" />
-              <span>Guru: <strong className="text-white font-bold">{jurnal.asatidz}</strong></span>
+            {/* Guru — full width row so name is never cut off */}
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: 10,
+                padding: "10px 14px",
+                borderRadius: 12,
+                background: "rgba(0,0,0,0.25)",
+                border: "1px solid rgba(255,255,255,0.12)",
+              }}
+            >
+              <div
+                style={{
+                  width: 32,
+                  height: 32,
+                  borderRadius: 10,
+                  background: "rgba(255,255,255,0.15)",
+                  border: "1px solid rgba(255,255,255,0.2)",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  color: "#fff",
+                  fontWeight: 900,
+                  fontSize: 14,
+                  flexShrink: 0,
+                }}
+              >
+                {jurnal.asatidz.charAt(0)}
+              </div>
+              <div>
+                <div
+                  style={{
+                    fontSize: 10,
+                    fontWeight: 700,
+                    color: "rgba(255,255,255,0.55)",
+                    textTransform: "uppercase",
+                    letterSpacing: "0.08em",
+                    marginBottom: 2,
+                  }}
+                >
+                  Guru Pengampu
+                </div>
+                <div style={{ fontSize: 14, fontWeight: 800, color: "#fff", lineHeight: 1 }}>
+                  {jurnal.asatidz}
+                </div>
+              </div>
             </div>
           </div>
         </div>
 
-        {/* ── SCROLLABLE CONTENT BODY (AIRY, CLEAN & PROFESSIONAL) ── */}
-        <div className="p-5 sm:p-7 overflow-y-auto space-y-4 flex-1 overscroll-contain">
-          
-          {/* SECTION 1: TOPIK MATERI */}
-          <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm space-y-2">
-            <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-slate-500">
-              <BookOpen size={14} className="text-[#8B181E]" />
-              <span>Topik & Materi Pembelajaran</span>
+        {/* ═══════════════════ BODY ═══════════════════ */}
+        <div
+          className="overflow-y-auto overscroll-contain"
+          style={{ flex: 1, padding: "20px 24px", background: "#f8fafc", display: "flex", flexDirection: "column", gap: 16 }}
+        >
+          {/* Section 1 — Topik & Materi */}
+          <div
+            style={{
+              background: "#fff",
+              borderRadius: 20,
+              border: "1px solid #e2e8f0",
+              padding: "18px 20px",
+              boxShadow: "0 1px 4px rgba(0,0,0,0.05)",
+            }}
+          >
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: 8,
+                marginBottom: 12,
+              }}
+            >
+              <div
+                style={{
+                  width: 32,
+                  height: 32,
+                  borderRadius: 9,
+                  background: "rgba(155,27,34,0.1)",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  flexShrink: 0,
+                }}
+              >
+                <BookOpen size={16} style={{ color: "#9b1b22" }} />
+              </div>
+              <div>
+                <div
+                  style={{
+                    fontSize: 10,
+                    fontWeight: 800,
+                    color: "#9b1b22",
+                    textTransform: "uppercase",
+                    letterSpacing: "0.08em",
+                  }}
+                >
+                  Topik & Materi Pembelajaran
+                </div>
+              </div>
             </div>
-            <div className="text-slate-900 font-bold text-base sm:text-lg leading-relaxed pt-1">
+            <p
+              style={{
+                fontSize: 16,
+                fontWeight: 800,
+                color: "#0f172a",
+                lineHeight: 1.5,
+                margin: 0,
+              }}
+            >
               {jurnal.materi || "-"}
-            </div>
+            </p>
           </div>
 
-          {/* SECTION 2: TUJUAN PEMBELAJARAN (LEARNING OBJECTIVE) */}
-          <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm space-y-2">
-            <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-emerald-700">
-              <Target size={14} className="text-emerald-600" />
-              <span>Tujuan Pembelajaran (Learning Objective)</span>
+          {/* Section 2 — Tujuan Pembelajaran */}
+          <div
+            style={{
+              background: "#f0fdf4",
+              borderRadius: 20,
+              border: "1px solid #bbf7d0",
+              padding: "18px 20px",
+              boxShadow: "0 1px 4px rgba(0,0,0,0.04)",
+            }}
+          >
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: 8,
+                marginBottom: 12,
+              }}
+            >
+              <div
+                style={{
+                  width: 32,
+                  height: 32,
+                  borderRadius: 9,
+                  background: "rgba(22,163,74,0.12)",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  flexShrink: 0,
+                }}
+              >
+                <Target size={16} style={{ color: "#15803d" }} />
+              </div>
+              <div
+                style={{
+                  fontSize: 10,
+                  fontWeight: 800,
+                  color: "#15803d",
+                  textTransform: "uppercase",
+                  letterSpacing: "0.08em",
+                }}
+              >
+                Tujuan Pembelajaran (Learning Objective)
+              </div>
             </div>
-            <div className="text-slate-700 text-xs sm:text-sm leading-relaxed font-medium bg-emerald-50/40 p-3.5 rounded-xl border border-emerald-100/80">
+            <p
+              style={{
+                fontSize: 13,
+                fontWeight: 500,
+                color: "#14532d",
+                lineHeight: 1.65,
+                margin: 0,
+              }}
+            >
               {formattedLO}
-            </div>
+            </p>
           </div>
 
-          {/* SECTION 3: AKTIVITAS & KEGIATAN BELAJAR MENGAJAR */}
-          <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm space-y-2">
-            <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-slate-700">
-              <FileText size={14} className="text-sky-600" />
-              <span>Aktivitas & Langkah Pembelajaran</span>
+          {/* Section 3 — Aktivitas */}
+          <div
+            style={{
+              background: "#fff",
+              borderRadius: 20,
+              border: "1px solid #e2e8f0",
+              padding: "18px 20px",
+              boxShadow: "0 1px 4px rgba(0,0,0,0.05)",
+            }}
+          >
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: 8,
+                marginBottom: 12,
+              }}
+            >
+              <div
+                style={{
+                  width: 32,
+                  height: 32,
+                  borderRadius: 9,
+                  background: "rgba(2,132,199,0.1)",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  flexShrink: 0,
+                }}
+              >
+                <FileText size={16} style={{ color: "#0369a1" }} />
+              </div>
+              <div
+                style={{
+                  fontSize: 10,
+                  fontWeight: 800,
+                  color: "#0369a1",
+                  textTransform: "uppercase",
+                  letterSpacing: "0.08em",
+                }}
+              >
+                Aktivitas & Langkah Pembelajaran
+              </div>
             </div>
-            <div className="text-slate-700 text-xs sm:text-sm whitespace-pre-wrap leading-relaxed bg-slate-50/60 p-3.5 rounded-xl border border-slate-100">
+            <p
+              style={{
+                fontSize: 13,
+                fontWeight: 400,
+                color: "#334155",
+                lineHeight: 1.7,
+                margin: 0,
+                whiteSpace: "pre-wrap",
+              }}
+            >
               {jurnal.kegiatan ||
                 "Guru menyampaikan penjelasan materi secara interaktif, tanya jawab santri, dan evaluasi pemahaman di kelas."}
-            </div>
+            </p>
           </div>
 
-          {/* SECTION 4: CATATAN KHUSUS & EVALUASI GURU */}
+          {/* Section 4 — Catatan (conditional) */}
           {jurnal.catatan && (
-            <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm space-y-2">
-              <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-amber-800">
-                <MessageSquare size={14} className="text-amber-600" />
-                <span>Catatan Khusus / Evaluasi Guru</span>
+            <div
+              style={{
+                background: "#fffbeb",
+                borderRadius: 20,
+                border: "1px solid #fde68a",
+                padding: "18px 20px",
+                boxShadow: "0 1px 4px rgba(0,0,0,0.04)",
+              }}
+            >
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 8,
+                  marginBottom: 12,
+                }}
+              >
+                <div
+                  style={{
+                    width: 32,
+                    height: 32,
+                    borderRadius: 9,
+                    background: "rgba(217,119,6,0.12)",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    flexShrink: 0,
+                  }}
+                >
+                  <MessageSquare size={16} style={{ color: "#b45309" }} />
+                </div>
+                <div
+                  style={{
+                    fontSize: 10,
+                    fontWeight: 800,
+                    color: "#b45309",
+                    textTransform: "uppercase",
+                    letterSpacing: "0.08em",
+                  }}
+                >
+                  Catatan Khusus / Evaluasi Guru
+                </div>
               </div>
-              <div className="text-amber-950 text-xs sm:text-sm leading-relaxed bg-amber-50/60 p-3.5 rounded-xl border border-amber-100/80 font-medium italic">
+              <p
+                style={{
+                  fontSize: 13,
+                  fontWeight: 500,
+                  color: "#78350f",
+                  lineHeight: 1.65,
+                  fontStyle: "italic",
+                  margin: 0,
+                }}
+              >
                 &ldquo;{jurnal.catatan}&rdquo;
-              </div>
+              </p>
             </div>
           )}
 
-          {/* Document Meta / Verification Info */}
-          <div className="pt-2 flex items-center justify-between text-[11px] text-slate-400 px-1">
-            <span>ID Dokumen: <code className="font-mono text-slate-600">{jurnal.id.slice(0, 8)}</code></span>
+          {/* Document info */}
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              padding: "10px 4px",
+              fontSize: 11,
+              color: "#94a3b8",
+            }}
+          >
+            <span>
+              ID Dokumen:{" "}
+              <code style={{ color: "#64748b", fontFamily: "monospace" }}>
+                {jurnal.id.slice(0, 8)}
+              </code>
+            </span>
             <span>Pesantren Al-Imam Al-Islami</span>
           </div>
         </div>
 
-        {/* ── MODAL FOOTER ACTION BAR ── */}
-        <div className="bg-white px-6 py-4 border-t border-slate-200/80 flex items-center justify-between gap-3 shrink-0 shadow-sm">
-          <div className="flex items-center gap-1.5 text-xs text-emerald-700 font-semibold">
-            <CheckCircle2 size={15} className="text-emerald-600" />
+        {/* ═══════════════════ FOOTER ═══════════════════ */}
+        <div
+          style={{
+            padding: "16px 24px",
+            background: "#fff",
+            borderTop: "1px solid #f1f5f9",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            gap: 12,
+            flexShrink: 0,
+          }}
+        >
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 6,
+              fontSize: 12,
+              fontWeight: 700,
+              color: "#16a34a",
+            }}
+          >
+            <CheckCircle2 size={15} style={{ color: "#16a34a" }} />
             <span>SIAKAD Al-Imam</span>
           </div>
 
@@ -225,11 +603,11 @@ export default function JurnalDetailModal({ jurnal, onClose }: JurnalDetailModal
             onClick={onClose}
             className="btn btn-primary"
             style={{
-              padding: "9px 24px",
-              borderRadius: "12px",
-              fontWeight: 700,
-              fontSize: "13px",
-              boxShadow: "0 2px 8px rgba(139, 24, 30, 0.25)",
+              padding: "10px 28px",
+              borderRadius: 14,
+              fontWeight: 800,
+              fontSize: 14,
+              boxShadow: "0 4px 16px rgba(155, 27, 34, 0.3)",
             }}
           >
             Tutup Detail
