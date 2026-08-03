@@ -355,7 +355,7 @@ export default function InputNilaiPage() {
         )}
       </div>
 
-      <div style={{ padding: "24px 28px", display: "flex", flexDirection: "column", gap: 24 }}>
+      <div className="p-3.5 sm:p-6 md:p-7 max-w-7xl mx-auto w-full flex flex-col gap-5 pb-28 sm:pb-10">
         {/* ── STEP 1: Pilih Parameter ─────────────────────────────────── */}
         {step === 1 && (
           <div className="card" style={{ maxWidth: 640 }}>
@@ -503,30 +503,35 @@ export default function InputNilaiPage() {
               </div>
             </div>
 
-            <div className="card" style={{ padding: 0, overflow: "hidden", marginBottom: 24 }}>
-              <div style={{ overflowX: "auto" }}>
-                <table style={{ width: "100%", borderCollapse: "collapse", minWidth: 900 }}>
+            <div className="sm:hidden text-xs text-slate-600 bg-amber-50/90 border border-amber-200/80 px-3 py-2 rounded-xl flex items-center gap-2 font-medium">
+              <span>👉</span>
+              <span>Geser tabel ke samping untuk mengisi nilai per komponen</span>
+            </div>
+
+            <div className="card" style={{ padding: 0, overflow: "hidden", marginBottom: 16 }}>
+              <div style={{ overflowX: "auto", WebkitOverflowScrolling: "touch" }}>
+                <table style={{ width: "100%", borderCollapse: "collapse", minWidth: 780 }}>
                   <thead>
                     <tr style={{ background: "var(--bg-body)", borderBottom: "1px solid var(--border)", fontSize: 13, color: "var(--text-muted)" }}>
-                      <th style={{ padding: "12px 16px", textAlign: "left", width: 40 }}>#</th>
-                      <th style={{ padding: "12px 16px", textAlign: "left", minWidth: 200 }}>Nama Santri</th>
-                      <th style={{ padding: "12px 8px", textAlign: "center", width: 90 }}>
+                      <th style={{ padding: "12px 14px", textAlign: "left", width: 36 }}>#</th>
+                      <th style={{ padding: "12px 14px", textAlign: "left", minWidth: 180 }}>Nama Santri</th>
+                      <th style={{ padding: "12px 6px", textAlign: "center", width: 85 }}>
                         <div style={{ marginBottom: 2 }}>Harian</div>
                         <div style={{ fontSize: 10, color: "var(--primary)", opacity: 0.8 }}>(30%)</div>
                       </th>
-                      <th style={{ padding: "12px 8px", textAlign: "center", width: 90 }}>
+                      <th style={{ padding: "12px 6px", textAlign: "center", width: 85 }}>
                          <div style={{ marginBottom: 2 }}>Komp.</div>
                          <div style={{ fontSize: 10, color: "var(--primary)", opacity: 0.8 }}>(20%)</div>
                       </th>
-                      <th style={{ padding: "12px 8px", textAlign: "center", width: 90 }}>
+                      <th style={{ padding: "12px 6px", textAlign: "center", width: 85 }}>
                          <div style={{ marginBottom: 2 }}>Sikap</div>
                          <div style={{ fontSize: 10, color: "var(--primary)", opacity: 0.8 }}>(10%)</div>
                       </th>
-                      <th style={{ padding: "12px 8px", textAlign: "center", width: 90 }}>
+                      <th style={{ padding: "12px 6px", textAlign: "center", width: 85 }}>
                         <div style={{ marginBottom: 2 }}>{periode}</div>
                         <div style={{ fontSize: 10, color: "var(--primary)", opacity: 0.8 }}>(40%)</div>
                       </th>
-                      <th style={{ padding: "12px 16px", textAlign: "right", width: 110 }}>
+                      <th style={{ padding: "12px 14px", textAlign: "right", width: 100 }}>
                         <div style={{ marginBottom: 2 }}>Nilai Akhir</div>
                         <div style={{ fontSize: 10, color: "var(--success)", opacity: 0.8 }}>OTOMATIS</div>
                       </th>
@@ -560,62 +565,62 @@ export default function InputNilaiPage() {
                               transition: "background 0.2s",
                             }}
                           >
-                            <td style={{ padding: "12px 16px", fontSize: 13, color: "var(--text-muted)" }}>
+                            <td style={{ padding: "10px 14px", fontSize: 13, color: "var(--text-muted)" }}>
                               {idx + 1}
                             </td>
-                            <td style={{ padding: "12px 16px" }}>
+                            <td style={{ padding: "10px 14px" }}>
                               <div style={{ fontWeight: 700, fontSize: 14, color: "var(--text)" }}>
                                 {s.nama_lengkap}
                               </div>
-                              <div style={{ fontSize: 12, color: "var(--text-muted)" }}>
+                              <div style={{ fontSize: 11, color: "var(--text-muted)" }}>
                                 NIS: {s.nis || "—"}
                               </div>
                             </td>
-                            <td style={{ padding: "12px 8px", textAlign: "center" }}>
+                            <td style={{ padding: "8px 6px", textAlign: "center" }}>
                               <input
                                 type="number"
                                 className="form-control"
-                                style={{ fontSize: 14, padding: "8px 4px", textAlign: "center", fontWeight: 600 }}
+                                style={{ fontSize: 14, padding: "8px 4px", textAlign: "center", fontWeight: 600, minHeight: 40 }}
                                 placeholder="-"
                                 value={data.harian}
                                 onChange={(e) => handleInputChange(s.id, "harian", e.target.value)}
                               />
                             </td>
-                            <td style={{ padding: "12px 8px", textAlign: "center" }}>
+                            <td style={{ padding: "8px 6px", textAlign: "center" }}>
                               <input
                                 type="number"
                                 className="form-control"
-                                style={{ fontSize: 14, padding: "8px 4px", textAlign: "center", fontWeight: 600 }}
+                                style={{ fontSize: 14, padding: "8px 4px", textAlign: "center", fontWeight: 600, minHeight: 40 }}
                                 placeholder="-"
                                 value={data.kompetensi}
                                 onChange={(e) => handleInputChange(s.id, "kompetensi", e.target.value)}
                               />
                             </td>
-                            <td style={{ padding: "12px 8px", textAlign: "center" }}>
+                            <td style={{ padding: "8px 6px", textAlign: "center" }}>
                               <input
                                 type="number"
                                 className="form-control"
-                                style={{ fontSize: 14, padding: "8px 4px", textAlign: "center", fontWeight: 600 }}
+                                style={{ fontSize: 14, padding: "8px 4px", textAlign: "center", fontWeight: 600, minHeight: 40 }}
                                 placeholder="-"
                                 value={data.sikap}
                                 onChange={(e) => handleInputChange(s.id, "sikap", e.target.value)}
                               />
                             </td>
-                            <td style={{ padding: "12px 8px", textAlign: "center" }}>
+                            <td style={{ padding: "8px 6px", textAlign: "center" }}>
                               <input
                                 type="number"
                                 className="form-control"
-                                style={{ fontSize: 14, padding: "8px 4px", textAlign: "center", fontWeight: 600, background: "#f8fafc" }}
+                                style={{ fontSize: 14, padding: "8px 4px", textAlign: "center", fontWeight: 600, minHeight: 40 }}
                                 placeholder="-"
                                 value={data.ujian}
                                 onChange={(e) => handleInputChange(s.id, "ujian", e.target.value)}
                               />
                             </td>
-                            <td style={{ padding: "12px 16px", textAlign: "right" }}>
+                            <td style={{ padding: "8px 14px", textAlign: "right" }}>
                               <div
                                 style={{
                                   display: "inline-block",
-                                  padding: "6px 14px",
+                                  padding: "5px 12px",
                                   borderRadius: 8,
                                   background: nilaiAkhir 
                                     ? isLulus ? "var(--success-light)" : "var(--danger-light)" 
@@ -624,8 +629,8 @@ export default function InputNilaiPage() {
                                     ? isLulus ? "var(--success)" : "var(--danger)" 
                                     : "#94a3b8",
                                   fontWeight: 700,
-                                  fontSize: 14,
-                                  minWidth: 54,
+                                  fontSize: 13,
+                                  minWidth: 50,
                                   textAlign: "center",
                                   border: "1px solid",
                                   borderColor: nilaiAkhir
@@ -645,13 +650,13 @@ export default function InputNilaiPage() {
               </div>
             </div>
 
-            {/* Save Button */}
-            <div style={{ display: "flex", justifyContent: "flex-end" }}>
+            {/* Save Button (Desktop) */}
+            <div className="hidden sm:flex justify-end">
               <button
                 className="btn btn-primary"
                 onClick={handleSimpan}
                 disabled={saving || loadingSantri}
-                style={{ minWidth: 160 }}
+                style={{ minWidth: 180, padding: "12px 24px", fontSize: 14, fontWeight: 700 }}
               >
                 {saving ? (
                   <>
@@ -660,10 +665,28 @@ export default function InputNilaiPage() {
                   </>
                 ) : (
                   <>
-                    <Save size={16} />
+                    <Save size={18} />
                     Simpan Semua Nilai
                   </>
                 )}
+              </button>
+            </div>
+
+            {/* Mobile Sticky Action Bar */}
+            <div className="sm:hidden fixed bottom-0 left-0 right-0 p-3 bg-white/95 backdrop-blur-md border-t border-slate-200 shadow-2xl z-30 flex items-center justify-between gap-3">
+              <div className="min-w-0">
+                <p className="text-xs font-bold text-slate-800 leading-tight truncate">
+                  {santriList.length} Santri
+                </p>
+                <p className="text-[11px] text-slate-500 truncate">{selectedMapelNama}</p>
+              </div>
+              <button
+                className="btn btn-primary flex-1 max-w-[200px]"
+                onClick={handleSimpan}
+                disabled={saving || loadingSantri}
+                style={{ justifyContent: "center", padding: "10px 16px", fontWeight: 700 }}
+              >
+                {saving ? "Menyimpan..." : "Simpan Nilai"}
               </button>
             </div>
           </>

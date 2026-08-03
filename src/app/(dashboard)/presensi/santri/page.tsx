@@ -322,9 +322,8 @@ export default function PresensiSantriPage() {
   }
 
   return (
-    <div>
-
-      <div style={{ padding: "24px 28px" }}>
+    <div className="w-full">
+      <div className="p-3.5 sm:p-6 md:p-7 max-w-6xl mx-auto w-full pb-28 sm:pb-12">
         {/* Step 1: Pilih Kelas & Tanggal */}
         <div className="card" style={{ marginBottom: 20 }}>
           <p className="card-title">
@@ -595,13 +594,13 @@ export default function PresensiSantriPage() {
               })}
             </div>
 
-            {/* Save Button */}
-            <div style={{ display: "flex", justifyContent: "flex-end" }}>
+            {/* Save Button (Desktop) */}
+            <div className="hidden sm:flex justify-end mt-4">
               <button
                 className="btn btn-secondary"
                 onClick={handleSimpan}
                 disabled={saving}
-                style={{ minWidth: 160 }}
+                style={{ minWidth: 180, padding: "12px 24px", fontSize: 14, fontWeight: 700 }}
               >
                 {saving ? (
                   <>
@@ -610,10 +609,28 @@ export default function PresensiSantriPage() {
                   </>
                 ) : (
                   <>
-                    <Save size={16} />
+                    <Save size={18} />
                     Simpan Presensi
                   </>
                 )}
+              </button>
+            </div>
+
+            {/* Mobile Sticky Action Bar */}
+            <div className="sm:hidden fixed bottom-0 left-0 right-0 p-3 bg-white/95 backdrop-blur-md border-t border-slate-200 shadow-2xl z-30 flex items-center justify-between gap-3">
+              <div className="min-w-0">
+                <p className="text-xs font-bold text-slate-800 leading-tight truncate">
+                  {sudahDiabsen}/{santri.length} Santri Diabsen
+                </p>
+                <p className="text-[11px] text-slate-500">{progressPct}% Selesai</p>
+              </div>
+              <button
+                className="btn btn-secondary flex-1 max-w-[200px]"
+                onClick={handleSimpan}
+                disabled={saving}
+                style={{ justifyContent: "center", padding: "10px 16px", fontWeight: 700 }}
+              >
+                {saving ? "Menyimpan..." : "Simpan Presensi"}
               </button>
             </div>
           </>

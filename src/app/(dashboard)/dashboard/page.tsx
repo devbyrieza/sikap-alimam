@@ -119,7 +119,7 @@ export default async function DashboardPage() {
         </div>
       </div>
 
-      <div style={{ padding: "24px 28px", maxWidth: 1200 }}>
+      <div className="p-3.5 sm:p-6 md:p-7 max-w-7xl mx-auto w-full">
         {/* Stats */}
         <div
           style={{

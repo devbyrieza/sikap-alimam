@@ -226,7 +226,7 @@ export default function TambahJurnalPage() {
         )}
       </div>
 
-      <div style={{ padding: "28px", maxWidth: 720, margin: "0 auto" }}>
+      <div className="p-3.5 sm:p-6 md:p-7 max-w-2xl mx-auto w-full pb-20 sm:pb-12">
         {loadingMaster ? (
           <div
             style={{
