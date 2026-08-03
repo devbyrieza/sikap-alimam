@@ -261,7 +261,7 @@ export default function InputNilaiPage() {
       nilai: inputData[s.id],
     })).filter(item => 
       // Filter hanya jika minimal 1 kolom terisi
-      item.nilai.harian || item.nilai.kompetensi || item.nilai.sikap || item.nilai.pts || item.nilai.pas
+      item.nilai.harian || item.nilai.kompetensi || item.nilai.sikap || item.nilai.ujian
     );
 
     if (dataToSave.length === 0) {
