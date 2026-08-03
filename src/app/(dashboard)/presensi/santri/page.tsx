@@ -47,7 +47,12 @@ const STATUS_BG: Record<StatusType, string> = {
 
 export default function PresensiSantriPage() {
   const router = useRouter();
-  const today = new Date().toISOString().split("T")[0];
+  const today = new Intl.DateTimeFormat("en-CA", {
+    timeZone: "Asia/Jakarta",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).format(new Date());
 
   const [kelasList, setKelasList] = useState<Kelas[]>([]);
   const [loadingMaster, setLoadingMaster] = useState(true);

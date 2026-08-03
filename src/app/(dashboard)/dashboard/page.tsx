@@ -22,7 +22,12 @@ function formatJam(date: Date) {
 export default async function DashboardPage() {
   const session = await getSession();
   const today = new Date();
-  const todayStr = today.toISOString().split("T")[0];
+  const todayStr = new Intl.DateTimeFormat("en-CA", {
+    timeZone: "Asia/Jakarta",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).format(today);
 
   // Stats paralel
   const [
