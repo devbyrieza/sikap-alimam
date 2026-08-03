@@ -1,8 +1,9 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { BookOpen, Calendar, User, GraduationCap, RotateCcw, Eye, X, Clock, Target, FileText, MessageSquare, CheckCircle2 } from "lucide-react";
+import { BookOpen, Calendar, User, GraduationCap, RotateCcw, Eye, Clock, Target, FileText } from "lucide-react";
 import { getJenjangFromKelas } from "@/lib/kelas";
+import JurnalDetailModal from "@/components/JurnalDetailModal";
 
 export type KelasObject = {
   id?: string;
@@ -505,117 +506,11 @@ export default function JurnalClientFilter({
         </div>
       </div>
 
-      {/* Jurnal Detail Modal (Public Detail View for Guru, Admin & Wali Santri) */}
-      {selectedJurnal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-fadeIn">
-          <div
-            className="bg-white w-full max-w-2xl rounded-3xl shadow-2xl border border-slate-100 overflow-hidden flex flex-col max-h-[90vh]"
-            style={{ animation: "scaleUp 0.2s ease-out" }}
-          >
-            {/* Modal Header */}
-            <div className="bg-gradient-to-r from-primary to-[#7a131b] p-6 text-white relative">
-              <button
-                onClick={() => setSelectedJurnal(null)}
-                className="absolute top-5 right-5 w-9 h-9 rounded-full bg-white/20 hover:bg-white/30 text-white flex items-center justify-center transition-all"
-              >
-                <X size={18} />
-              </button>
-
-              <div className="flex items-center gap-2 mb-2">
-                <span className="px-2.5 py-0.5 rounded-full bg-white/20 text-xs font-bold uppercase tracking-wider">
-                  Detail Jurnal KBM
-                </span>
-                <span className="text-xs text-white/80 font-medium">
-                  {formatTanggal(selectedJurnal.tanggal)}
-                </span>
-              </div>
-
-              <h2 className="text-xl font-extrabold text-white leading-tight">
-                {selectedJurnal.mapel}
-              </h2>
-              <p className="text-sm text-white/90 font-medium mt-0.5">
-                Pengampu: <b>{selectedJurnal.asatidz}</b>
-              </p>
-            </div>
-
-            {/* Badges Info Row */}
-            <div className="bg-slate-50 px-6 py-3 border-b border-slate-100 flex flex-wrap items-center gap-4 text-xs font-semibold text-slate-700">
-              <div className="flex items-center gap-1.5">
-                <GraduationCap size={15} className="text-primary" />
-                <span>Kelas: <b>{selectedJurnal.kelas}</b> ({getJenjangFromKelas(selectedJurnal.kelas, selectedJurnal.kelas_jenjang)})</span>
-              </div>
-              <div className="flex items-center gap-1.5">
-                <Clock size={15} className="text-primary" />
-                <span>Jam Ke: <b>{selectedJurnal.jam_ke}</b></span>
-              </div>
-            </div>
-
-            {/* Modal Scrollable Content */}
-            <div className="p-6 overflow-y-auto space-y-5 flex-1 text-sm text-slate-700">
-              {/* Section 1: Pokok Materi */}
-              <div className="p-4 rounded-2xl bg-white border border-slate-200/80 shadow-sm">
-                <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-primary mb-2">
-                  <BookOpen size={15} />
-                  <span>Topik / Materi Pembelajaran</span>
-                </div>
-                <p className="text-slate-900 font-semibold text-base leading-relaxed">
-                  {selectedJurnal.materi || "-"}
-                </p>
-              </div>
-
-              {/* Section 2: Tujuan Pembelajaran (LO) */}
-              <div className="p-4 rounded-2xl bg-emerald-50/70 border border-emerald-200/80">
-                <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-emerald-800 mb-2">
-                  <Target size={15} />
-                  <span>Tujuan Pembelajaran (Learning Objective)</span>
-                </div>
-                <p className="text-emerald-950 font-medium leading-relaxed">
-                  {selectedJurnal.learning_outcome || selectedJurnal.materi || "Mencapai pemahaman komprehensif terhadap kompetensi materi yang diajarkan."}
-                </p>
-              </div>
-
-              {/* Section 3: Kegiatan KBM */}
-              <div className="p-4 rounded-2xl bg-white border border-slate-200/80 shadow-sm">
-                <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">
-                  <FileText size={15} />
-                  <span>Aktivitas & Kegiatan Belajar Mengajar</span>
-                </div>
-                <p className="text-slate-800 whitespace-pre-wrap leading-relaxed">
-                  {selectedJurnal.kegiatan || "-"}
-                </p>
-              </div>
-
-              {/* Section 4: Catatan Khusus / Evaluasi */}
-              {selectedJurnal.catatan && (
-                <div className="p-4 rounded-2xl bg-amber-50/70 border border-amber-200/80">
-                  <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-amber-800 mb-2">
-                    <MessageSquare size={15} />
-                    <span>Catatan Khusus / Evaluasi Kelas</span>
-                  </div>
-                  <p className="text-amber-950 font-medium leading-relaxed">
-                    {selectedJurnal.catatan}
-                  </p>
-                </div>
-              )}
-            </div>
-
-            {/* Modal Footer */}
-            <div className="bg-slate-50 px-6 py-4 border-t border-slate-100 flex items-center justify-between">
-              <div className="flex items-center gap-1.5 text-xs text-slate-500 font-medium">
-                <CheckCircle2 size={14} className="text-emerald-600" />
-                <span>Terverifikasi di SIAKAD Al-Imam</span>
-              </div>
-              <button
-                onClick={() => setSelectedJurnal(null)}
-                className="btn btn-primary"
-                style={{ padding: "9px 20px", fontSize: "13px", fontWeight: 700, borderRadius: "12px" }}
-              >
-                Tutup Detail
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Ultra-Premium Jurnal Detail Modal */}
+      <JurnalDetailModal
+        jurnal={selectedJurnal}
+        onClose={() => setSelectedJurnal(null)}
+      />
     </div>
   );
 }
