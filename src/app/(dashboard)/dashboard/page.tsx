@@ -73,6 +73,18 @@ export default async function DashboardPage() {
     take: 8,
   });
 
+  // Presensi Santri hari ini
+  const presensiSantri = await prisma.presensiSiswa.findMany({
+    where: { tanggal: new Date(todayStr) },
+    select: { status: true },
+  });
+
+  const totalPresensiSantri = presensiSantri.length;
+  const santriHadir = presensiSantri.filter((p) => p.status === "hadir").length;
+  const santriSakit = presensiSantri.filter((p) => p.status === "sakit").length;
+  const santriIzin = presensiSantri.filter((p) => p.status === "izin").length;
+  const santriAlpha = presensiSantri.filter((p) => p.status === "alpha").length;
+
   const pctHadir =
     totalAsatidz > 0 ? Math.round((hadirAsatidz / totalAsatidz) * 100) : 0;
 
@@ -220,7 +232,7 @@ export default async function DashboardPage() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
           {/* Jurnal Terbaru */}
           <div className="card">
             <div
@@ -310,7 +322,7 @@ export default async function DashboardPage() {
             )}
           </div>
 
-          {/* Absensi Hari Ini */}
+          {/* Presensi Santri Hari Ini (Statistik/Grafik) */}
           <div className="card">
             <div
               style={{
@@ -321,7 +333,104 @@ export default async function DashboardPage() {
               }}
             >
               <p className="card-title" style={{ marginBottom: 0 }}>
-                <Clock size={16} className="inline mr-1" /> Absensi Hari Ini
+                <BarChart3 size={16} className="inline mr-1" /> Presensi Santri (Hari Ini)
+              </p>
+              <Link
+                href="/presensi/santri"
+                style={{
+                  fontSize: 12,
+                  color: "var(--primary)",
+                  fontWeight: 600,
+                  textDecoration: "none",
+                }}
+              >
+                Input →
+              </Link>
+            </div>
+            
+            {totalPresensiSantri === 0 ? (
+              <div
+                style={{
+                  textAlign: "center",
+                  padding: "24px 0",
+                  color: "var(--text-muted)",
+                  fontSize: 13,
+                }}
+              >
+                Belum ada data presensi santri hari ini
+              </div>
+            ) : (
+              <div>
+                <div style={{ display: "flex", alignItems: "center", gap: 16, marginBottom: 20 }}>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ fontSize: 32, fontWeight: 800, color: "var(--text-main)", lineHeight: 1 }}>
+                      {Math.round((santriHadir / totalPresensiSantri) * 100)}%
+                    </div>
+                    <div style={{ fontSize: 12, color: "var(--text-muted)", marginTop: 4 }}>
+                      Tingkat Kehadiran
+                    </div>
+                  </div>
+                  <div style={{ textAlign: "right", flex: 1 }}>
+                    <div style={{ fontSize: 16, fontWeight: 700, color: "var(--text-main)" }}>
+                      {totalPresensiSantri}
+                    </div>
+                    <div style={{ fontSize: 12, color: "var(--text-muted)" }}>
+                      Total Santri Diabsen
+                    </div>
+                  </div>
+                </div>
+
+                {/* Progress Bar Grafik */}
+                <div style={{ display: "flex", height: 12, borderRadius: 6, overflow: "hidden", marginBottom: 16 }}>
+                  <div style={{ width: `${(santriHadir / totalPresensiSantri) * 100}%`, background: "#10b981" }} title={`Hadir: ${santriHadir}`} />
+                  <div style={{ width: `${(santriSakit / totalPresensiSantri) * 100}%`, background: "#f59e0b" }} title={`Sakit: ${santriSakit}`} />
+                  <div style={{ width: `${(santriIzin / totalPresensiSantri) * 100}%`, background: "#3b82f6" }} title={`Izin: ${santriIzin}`} />
+                  <div style={{ width: `${(santriAlpha / totalPresensiSantri) * 100}%`, background: "#ef4444" }} title={`Alpha: ${santriAlpha}`} />
+                </div>
+
+                {/* Keterangan Label */}
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "8px 12px", background: "var(--bg)", borderRadius: 8 }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 12, fontWeight: 600 }}>
+                      <div style={{ width: 8, height: 8, borderRadius: "50%", background: "#10b981" }} /> Hadir
+                    </div>
+                    <span style={{ fontSize: 13, fontWeight: 700 }}>{santriHadir}</span>
+                  </div>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "8px 12px", background: "var(--bg)", borderRadius: 8 }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 12, fontWeight: 600 }}>
+                      <div style={{ width: 8, height: 8, borderRadius: "50%", background: "#f59e0b" }} /> Sakit
+                    </div>
+                    <span style={{ fontSize: 13, fontWeight: 700 }}>{santriSakit}</span>
+                  </div>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "8px 12px", background: "var(--bg)", borderRadius: 8 }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 12, fontWeight: 600 }}>
+                      <div style={{ width: 8, height: 8, borderRadius: "50%", background: "#3b82f6" }} /> Izin
+                    </div>
+                    <span style={{ fontSize: 13, fontWeight: 700 }}>{santriIzin}</span>
+                  </div>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "8px 12px", background: "var(--bg)", borderRadius: 8 }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 12, fontWeight: 600 }}>
+                      <div style={{ width: 8, height: 8, borderRadius: "50%", background: "#ef4444" }} /> Alpha
+                    </div>
+                    <span style={{ fontSize: 13, fontWeight: 700 }}>{santriAlpha}</span>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Absensi Asatidz Hari Ini */}
+          <div className="card">
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                marginBottom: 16,
+              }}
+            >
+              <p className="card-title" style={{ marginBottom: 0 }}>
+                <Clock size={16} className="inline mr-1" /> Absensi Guru
               </p>
               <Link
                 href="/presensi/asatidz"
@@ -344,7 +453,7 @@ export default async function DashboardPage() {
                   fontSize: 13,
                 }}
               >
-                Belum ada yang absen hari ini
+                Belum ada guru yang absen hari ini
               </div>
             ) : (
               <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
