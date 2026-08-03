@@ -88,7 +88,7 @@ export default function TambahJurnalPage() {
 
   // Load master data
   useEffect(() => {
-    fetch("/api/master")
+    fetch("/api/master", { cache: "no-store" })
       .then((r) => r.json())
       .then((data) => {
         setMaster(data);
