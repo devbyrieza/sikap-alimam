@@ -446,12 +446,12 @@ export default function TambahJurnalPage() {
 
               <div className="form-group">
                 <label className="form-label">
-                  Learning Outcome (LO) / Tujuan Pembelajaran <span style={{ color: "var(--danger)" }}>*</span>
+                  Learning Objective (LO) / Tujuan Pembelajaran <span style={{ color: "var(--danger)" }}>*</span>
                 </label>
                 <textarea
                   className="form-control"
                   rows={3}
-                  placeholder="Tuliskan learning outcome atau tujuan pembelajaran yang ingin dicapai..."
+                  placeholder="Tuliskan learning objective atau tujuan pembelajaran yang ingin dicapai..."
                   value={learningOutcome}
                   onChange={(e) => {
                     setLearningOutcome(e.target.value);
