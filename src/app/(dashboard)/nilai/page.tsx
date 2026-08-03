@@ -504,7 +504,7 @@ export default function InputNilaiPage() {
 
             {/* Banner info on mobile (changed for new layout) */}
             <div className="md:hidden text-xs text-sky-700 bg-sky-50/95 border border-sky-200/80 px-4 py-3 rounded-2xl flex items-center gap-2.5 font-medium shadow-sm mb-4">
-              <span className="text-lg">💡</span>
+              <Lightbulb className="w-5 h-5" />
               <span><strong>Lebih Mudah!</strong> Isi nilai langsung pada kartu santri di bawah.</span>
             </div>
 

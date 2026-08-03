@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { BookOpen, Calendar, User, GraduationCap, RotateCcw, Eye, Clock, Target, FileText } from "lucide-react";
+import { BookOpen, Calendar, User, GraduationCap, RotateCcw, Eye, Clock, Target, FileText, ArrowRight } from "lucide-react";
 import { getJenjangFromKelas } from "@/lib/kelas";
 import JurnalDetailModal from "@/components/JurnalDetailModal";
 
@@ -295,7 +295,7 @@ export default function JurnalClientFilter({
       {/* Swipe Guidance Banner on Mobile */}
       <div className="sm:hidden mb-2.5 flex items-center justify-between gap-2 px-3 py-2 bg-amber-50/90 border border-amber-200/80 rounded-xl text-[12px] font-medium text-amber-900 shadow-sm">
         <span className="flex items-center gap-1.5 truncate">
-          <span>👉</span> Tanggal terkunci di kiri. Geser tabel ke kanan untuk melihat rincian & aksi.
+          <ArrowRight size={14} className="text-primary inline-block mr-1" /> Tanggal terkunci di kiri. Geser tabel ke kanan untuk melihat rincian & aksi.
         </span>
       </div>
 

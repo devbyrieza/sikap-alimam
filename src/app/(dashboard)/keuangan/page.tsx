@@ -417,7 +417,7 @@ export default function KeuanganSPPPage() {
               onClick={() => setStatusFilter("TERKUNCI")}
               className={`px-3 py-1.5 rounded-lg font-bold transition ${statusFilter === "TERKUNCI" ? "bg-rose-600 text-white shadow-sm" : "text-slate-600 hover:text-slate-900"}`}
             >
-              🔒 Terkunci
+              Terkunci
             </button>
           </div>
         </div>
@@ -500,7 +500,7 @@ export default function KeuanganSPPPage() {
                           </span>
                         ) : (
                           <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-rose-50 text-rose-700 font-bold text-[11px] border border-rose-200/60 animate-pulse">
-                            <Lock className="w-3 h-3 text-rose-600" /> 🔒 Terkunci Otomatis
+                            <Lock className="w-3 h-3 text-rose-600" /> Terkunci Otomatis
                           </span>
                         )}
                       </td>

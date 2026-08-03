@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { User, ChevronRight, GraduationCap, Printer, CalendarCheck, BookOpen, Sparkles, Phone, ShieldCheck } from "lucide-react";
+import { User, ChevronRight, GraduationCap, Printer, CalendarCheck, BookOpen, Sparkles, Phone, ShieldCheck, CheckCircle2, Lock } from "lucide-react";
 
 interface Anak {
   id: string;
@@ -86,12 +86,12 @@ export default function WaliDashboard() {
                       </span>
                       <span className="text-xs text-slate-400 font-mono font-medium">NIS: {anak.nis}</span>
                       {anak.lunas ? (
-                        <span className="px-2 py-0.5 rounded-md text-[10px] font-bold bg-emerald-100 text-emerald-800">
-                          ✓ SPP Lunas
+                        <span className="px-2 py-0.5 rounded-md text-[10px] font-bold bg-emerald-100 text-emerald-800 flex items-center gap-1.5">
+                          <CheckCircle2 className="w-3 h-3" /> SPP Lunas
                         </span>
                       ) : (
                         <span className="px-2 py-0.5 rounded-md text-[10px] font-bold bg-rose-100 text-rose-800 animate-pulse flex items-center gap-1">
-                          🔒 Akses Terkunci (SPP)
+                          <Lock className="w-3 h-3" /> Akses Terkunci (SPP)
                         </span>
                       )}
                     </div>
@@ -118,7 +118,7 @@ export default function WaliDashboard() {
                       gap: 8,
                     }}
                   >
-                    <span>{anak.lunas ? "Buka Rapor & Rekap Lengkap" : "🔒 Lihat Status Tagihan SPP"}</span>
+                    <span className="flex items-center gap-2">{anak.lunas ? "Buka Rapor & Rekap Lengkap" : <><Lock className="w-4 h-4" /> Lihat Status Tagihan SPP</>}</span>
                     <ChevronRight size={16} />
                   </a>
                   {anak.lunas && (

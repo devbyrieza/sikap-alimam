@@ -30,6 +30,7 @@ import {
   PhoneCall,
   ShieldCheck,
   AlertTriangle,
+  ArrowRight,
 } from "lucide-react";
 import Swal from "sweetalert2";
 import JurnalDetailModal from "@/components/JurnalDetailModal";
@@ -842,7 +843,7 @@ export default function RaporWaliPage() {
 
             {/* Guidance on Mobile */}
             <div className="sm:hidden flex items-center gap-1.5 px-3 py-2 bg-amber-50/90 border border-amber-200/80 rounded-xl text-[12px] font-medium text-amber-900">
-              <span>👉</span> Geser tabel ke kanan untuk melihat rincian guru, jam pelajaran, dan tombol detail.
+              <ArrowRight className="w-4 h-4 text-amber-500 inline-block mr-1" /> Geser tabel ke kanan untuk melihat rincian guru, jam pelajaran, dan tombol detail.
             </div>
 
             {/* Jurnal Table */}

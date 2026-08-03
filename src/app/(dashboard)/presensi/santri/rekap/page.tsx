@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
-import { ChevronLeft, Loader2, Users, Table2, AlertTriangle, PieChart } from "lucide-react";
+import { ChevronLeft, Loader2, Users, Table2, AlertTriangle, PieChart, ArrowRight } from "lucide-react";
 
 type Kelas = { id: string; nama: string; jenjang: string | null };
 
@@ -344,7 +344,7 @@ export default function RekapPresensiSantriPage() {
             <>
               {/* Mobile scroll hint */}
               <div className="sm:hidden text-xs text-slate-700 bg-amber-50/95 border-b border-amber-200/80 px-4 py-2.5 flex items-center gap-2 font-medium">
-                <span className="text-base">👉</span>
+                <ArrowRight className="w-4 h-4 text-primary" />
                 <span><strong>Nama santri terkunci di kiri.</strong> Geser ke kanan untuk melihat tanggal 1-{days.length}.</span>
               </div>
 

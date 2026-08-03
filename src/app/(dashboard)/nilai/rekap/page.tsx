@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
+import { ArrowRight } from 'lucide-react';
 
 interface Kelas {
   id: string;
@@ -237,7 +238,7 @@ export default function RekapNilaiPage() {
                 
                 {/* Mobile scroll hint */}
                 <div className="sm:hidden text-xs text-slate-700 bg-amber-50/95 border-b border-amber-200/80 px-4 py-2.5 flex items-center gap-2 font-medium">
-                  <span className="text-base">👉</span>
+                  <ArrowRight className="w-4 h-4 text-primary" />
                   <span><strong>Nama santri terkunci di kiri.</strong> Geser ke samping untuk melihat seluruh mapel.</span>
                 </div>
 
