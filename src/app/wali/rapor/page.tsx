@@ -14,38 +14,17 @@ export default function RaporWaliPage() {
   useEffect(() => {
     if (!santriId) return;
     
-    // In real app, fetch from `/api/rapor?santri_id=${santriId}`
-    // Since DB is not connected yet, we mock the data
-    setTimeout(() => {
-      setData({
-        santri: {
-          nama: "Ahmad Zaki",
-          nis: "20261011",
-          kelas: "7A MTs",
-        },
-        ringkasan: {
-          persentaseKehadiran: 98,
-          persentaseShubuh: 100,
-        },
-        detail: {
-          tahfidz: [
-            { id: "1", tanggal: "2026-07-28", jenis: "Ziyadah", surat: "An-Naba", keterangan: "Lancar" }
-          ],
-          ibadah: [
-            { id: "1", tanggal: "2026-07-28", shubuh: "Berjamaah", tahajjud: true }
-          ],
-          akademik: [
-            { id: "1", mapel: "Nahwu", guru: "Ust. Agus Ma'mun, S.Pd.I., Lc.", na: 70.45, kkm: 63 },
-            { id: "2", mapel: "Tauhid", guru: "Ust. Virnanda Adi Saputra, S.Pd.I.", na: 92.5, kkm: 60 },
-            { id: "3", mapel: "Tahfizh Al-Qur'an", guru: "Ustdh. Aisyah Na`im Qibtiyah, Lc", na: 93.03, kkm: 60 },
-            { id: "4", mapel: "Tahsin dan Tajwid", guru: "Ustdh. Aisyah Na`im Qibtiyah, Lc", na: 93.53, kkm: 60 },
-            { id: "5", mapel: "Tadrib Lughowi", guru: "Ustdh. Jamila Jafar Marie", na: 82.2, kkm: 65 },
-            { id: "6", mapel: "Ta'bir", guru: "Ustdh. Jamila Jafar Marie", na: 90.6, kkm: 60 },
-          ]
-        }
+    // Fetch from real API
+    fetch(`/api/rapor?santri_id=${santriId}`)
+      .then(res => res.json())
+      .then(d => {
+        setData(d);
+        setLoading(false);
+      })
+      .catch(err => {
+        console.error(err);
+        setLoading(false);
       });
-      setLoading(false);
-    }, 1000);
   }, [santriId]);
 
   const handleKirimWA = async () => {
@@ -143,38 +122,97 @@ export default function RaporWaliPage() {
 
         {/* Detailed Sections */}
         
-        {/* Card Style Akademik (Sesuai Referensi Gambar HP) */}
-        <div className="bg-white rounded-3xl p-8 border border-gray-100 shadow-sm mb-8">
+        {/* Akademik Section dengan Logika Hiding PTS/PAS */}
+        <div className="bg-white rounded-3xl p-8 border border-gray-100 shadow-sm mb-8 overflow-hidden">
           <div className="flex items-center gap-3 mb-6">
             <BookOpen className="text-emerald-600" />
-            <h2 className="text-xl font-bold text-gray-800">Detail Nilai Semester 1</h2>
+            <h2 className="text-xl font-bold text-gray-800">Detail Nilai Akademik</h2>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {data.detail.akademik.map((item: any, index: number) => (
-              <div key={item.id} className="bg-gray-50 rounded-2xl p-4 flex justify-between items-center border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
-                <div className="flex gap-4 items-center">
-                  <div className="w-8 h-8 rounded-lg bg-white border border-gray-200 flex items-center justify-center font-bold text-gray-600 shrink-0">
-                    {index + 1}.
-                  </div>
-                  <div>
-                    <h3 className="font-bold text-gray-800 text-lg leading-tight">{item.mapel}</h3>
-                    <p className="text-sm text-gray-500 mt-1">{item.guru}</p>
-                  </div>
-                </div>
-                
-                <div className="flex gap-2 shrink-0">
-                  <div className="flex flex-col items-center justify-center border-2 border-emerald-500 rounded-xl px-4 py-1.5 bg-emerald-50/50">
-                    <span className="text-[10px] font-bold text-emerald-700 mb-0.5">NA</span>
-                    <span className="font-bold text-emerald-600 text-lg leading-none">{item.na}</span>
-                  </div>
-                  <div className="flex flex-col items-center justify-center border border-gray-200 rounded-xl px-4 py-1.5 bg-white">
-                    <span className="text-[10px] font-bold text-gray-500 mb-0.5">KKM</span>
-                    <span className="font-bold text-gray-700 text-lg leading-none">{item.kkm}</span>
-                  </div>
-                </div>
-              </div>
-            ))}
+          <div className="overflow-x-auto">
+            <table className="w-full text-left border-collapse">
+              <thead>
+                <tr className="bg-gray-50 text-gray-500 text-sm border-y border-gray-100">
+                  <th className="py-4 px-4 font-semibold">No</th>
+                  <th className="py-4 px-4 font-semibold min-w-[150px]">Mata Pelajaran</th>
+                  <th className="py-4 px-4 font-semibold text-center">Harian<br/><span className="text-[10px] font-normal text-emerald-600">30%</span></th>
+                  <th className="py-4 px-4 font-semibold text-center">Komp.<br/><span className="text-[10px] font-normal text-emerald-600">20%</span></th>
+                  <th className="py-4 px-4 font-semibold text-center">Sikap<br/><span className="text-[10px] font-normal text-emerald-600">10%</span></th>
+                  <th className="py-4 px-4 font-semibold text-center">Ujian<br/><span className="text-[10px] font-normal text-emerald-600">40%</span></th>
+                  <th className="py-4 px-4 font-bold text-right text-emerald-700">Nilai Akhir</th>
+                </tr>
+              </thead>
+              <tbody>
+                {(() => {
+                  // Group by mapel
+                  const mapelMap = new Map();
+                  (data.detail.akademik || []).forEach((n: any) => {
+                    if (!mapelMap.has(n.mapel_id)) {
+                      mapelMap.set(n.mapel_id, {
+                        mapel: n.mapel.nama,
+                        nilai: {}
+                      });
+                    }
+                    mapelMap.get(n.mapel_id).nilai[n.jenis] = n.nilai;
+                  });
+
+                  const akademikList = Array.from(mapelMap.values());
+                  if (akademikList.length === 0) {
+                    return (
+                      <tr>
+                        <td colSpan={7} className="text-center py-8 text-gray-400">Belum ada data nilai akademik</td>
+                      </tr>
+                    );
+                  }
+
+                  return akademikList.map((item: any, i: number) => {
+                    // Logic Hiding: Check if PAS exists
+                    const hasPAS = 
+                      item.nilai.pas !== undefined || 
+                      item.nilai.harian_pas !== undefined || 
+                      item.nilai.kompetensi_pas !== undefined || 
+                      item.nilai.sikap_pas !== undefined;
+
+                    const suffix = hasPAS ? '_pas' : '_pts';
+                    const ujianKey = hasPAS ? 'pas' : 'pts';
+                    
+                    const h = item.nilai[`harian${suffix}`] || 0;
+                    const k = item.nilai[`kompetensi${suffix}`] || 0;
+                    const s = item.nilai[`sikap${suffix}`] || 0;
+                    const u = item.nilai[ujianKey] || 0;
+                    
+                    // Kalkulasi (jika semua 0, anggap belum diinput)
+                    const isEmpty = !h && !k && !s && !u;
+                    const na = isEmpty ? null : (0.3 * h + 0.2 * k + 0.1 * s + 0.4 * u).toFixed(1);
+
+                    return (
+                      <tr key={i} className="border-b border-gray-50 hover:bg-gray-50/50 transition-colors">
+                        <td className="py-4 px-4 text-gray-400 font-medium">{i + 1}</td>
+                        <td className="py-4 px-4 font-bold text-gray-700">
+                          {item.mapel}
+                          <div className="text-[10px] text-gray-400 font-normal mt-1">
+                            {hasPAS ? 'Periode: PAS' : 'Periode: PTS'}
+                          </div>
+                        </td>
+                        <td className="py-4 px-4 text-center font-medium text-gray-600">{h || '-'}</td>
+                        <td className="py-4 px-4 text-center font-medium text-gray-600">{k || '-'}</td>
+                        <td className="py-4 px-4 text-center font-medium text-gray-600">{s || '-'}</td>
+                        <td className="py-4 px-4 text-center font-bold text-gray-700 bg-gray-50/50">{u || '-'}</td>
+                        <td className="py-4 px-4 text-right">
+                          {na ? (
+                            <span className={`px-3 py-1.5 rounded-lg font-bold ${Number(na) >= 80 ? 'bg-emerald-50 text-emerald-700' : 'bg-red-50 text-red-600'}`}>
+                              {na}
+                            </span>
+                          ) : (
+                            <span className="text-gray-300">-</span>
+                          )}
+                        </td>
+                      </tr>
+                    );
+                  });
+                })()}
+              </tbody>
+            </table>
           </div>
         </div>
 

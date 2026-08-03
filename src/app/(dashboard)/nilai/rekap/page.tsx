@@ -90,14 +90,41 @@ export default function RekapNilaiPage() {
     a.nama_lengkap.localeCompare(b.nama_lengkap)
   );
 
-  // Avg nilai per santri per mapel
+  // Kalkulasi Nilai Akhir per santri per mapel
   const getAvg = (santri_id: string, mapel_id: string): number | null => {
     const vals = nilaiData.filter(
       (n) => n.santri.id === santri_id && n.mapel.id === mapel_id
     );
     if (vals.length === 0) return null;
-    const avg = vals.reduce((a, b) => a + b.nilai, 0) / vals.length;
-    return Math.round(avg * 10) / 10;
+
+    // Helper untuk mengambil nilai tertentu
+    const getVal = (jenis: string) => {
+      const entry = vals.find(v => v.jenis === jenis);
+      return entry ? Number(entry.nilai) : 0;
+    };
+
+    // Helper untuk mengecek apakah periode memiliki setidaknya 1 nilai
+    const hasPeriode = (suffix: string, ujianKey: string) => {
+      return vals.some(v => v.jenis === `harian${suffix}` || v.jenis === `kompetensi${suffix}` || v.jenis === `sikap${suffix}` || v.jenis === ujianKey);
+    };
+
+    // Hitung formula 30% Harian + 20% Komp + 10% Sikap + 40% Ujian
+    const calcFormula = (suffix: string, ujianKey: string) => {
+      const h = getVal(`harian${suffix}`);
+      const k = getVal(`kompetensi${suffix}`);
+      const s = getVal(`sikap${suffix}`);
+      const u = getVal(ujianKey);
+      return (0.3 * h) + (0.2 * k) + (0.1 * s) + (0.4 * u);
+    };
+
+    // Jika PAS ada, gunakan PAS. Jika tidak, gunakan PTS.
+    if (hasPeriode('_pas', 'pas')) {
+      return Math.round(calcFormula('_pas', 'pas') * 10) / 10;
+    } else if (hasPeriode('_pts', 'pts')) {
+      return Math.round(calcFormula('_pts', 'pts') * 10) / 10;
+    }
+
+    return null;
   };
 
   return (

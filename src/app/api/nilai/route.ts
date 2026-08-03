@@ -36,7 +36,7 @@ export async function POST(req: NextRequest) {
   }
 
   const body = await req.json();
-  const { data, mapel_id, kelas_id, semester, tahun_ajaran } = body;
+  const { data, mapel_id, kelas_id, semester, tahun_ajaran, periode } = body;
 
   if (
     !data ||
@@ -44,7 +44,8 @@ export async function POST(req: NextRequest) {
     !mapel_id ||
     !kelas_id ||
     !semester ||
-    !tahun_ajaran
+    !tahun_ajaran ||
+    !periode
   ) {
     return NextResponse.json({ error: 'Data tidak lengkap' }, { status: 400 });
   }
@@ -52,16 +53,24 @@ export async function POST(req: NextRequest) {
   let count = 0;
   
   // Data format expected: 
-  // [ { santri_id: 'uuid', nilai: { harian: 90, kompetensi: 85, sikap: null, pts: null, pas: null } } ]
+  // [ { santri_id: 'uuid', nilai: { harian: 90, kompetensi: 85, sikap: null, ujian: null } } ]
 
   for (const item of data) {
     if (!item.santri_id || !item.nilai) continue;
 
-    const jenisList = ['harian', 'kompetensi', 'sikap', 'pts', 'pas'];
+    const uiKeys = ['harian', 'kompetensi', 'sikap', 'ujian'];
 
-    for (const jenis of jenisList) {
-      const value = item.nilai[jenis];
+    for (const uiKey of uiKeys) {
+      const value = item.nilai[uiKey];
       
+      // Map uiKey to database jenis
+      let jenis = '';
+      if (uiKey === 'ujian') {
+        jenis = periode; // "pts" or "pas"
+      } else {
+        jenis = `${uiKey}_${periode}`; // e.g. "harian_pts" or "kompetensi_pas"
+      }
+
       // Jika value ada angkanya (bisa 0)
       if (value !== undefined && value !== null && value !== '') {
         const numValue = Number(value);

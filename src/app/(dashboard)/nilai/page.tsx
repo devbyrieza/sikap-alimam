@@ -34,8 +34,7 @@ interface CapaianNilai {
   harian: string;
   kompetensi: string;
   sikap: string;
-  pts: string;
-  pas: string;
+  ujian: string; // Menyimpan nilai ujian sesuai periode aktif (PTS/PAS)
 }
 
 const SEMESTER_LIST = ["1", "2"];
@@ -48,6 +47,7 @@ export default function InputNilaiPage() {
   const [mapel_id, setMapelId] = useState("");
   const [semester, setSemester] = useState("1");
   const [tahun_ajaran, setTahunAjaran] = useState("2026/2027");
+  const [periode, setPeriode] = useState("PTS"); // PTS | PAS
 
   const [kelasList, setKelasList] = useState<Kelas[]>([]);
   const [filteredKelasList, setFilteredKelasList] = useState<Kelas[]>([]);
@@ -114,7 +114,8 @@ export default function InputNilaiPage() {
             parsed.kelas === kelas_id &&
             parsed.mapel === mapel_id &&
             parsed.semester === semester &&
-            parsed.tahun === tahun_ajaran
+            parsed.tahun === tahun_ajaran &&
+            parsed.periode === periode
           ) {
             setInputData(parsed.data);
           }
@@ -135,11 +136,12 @@ export default function InputNilaiPage() {
           mapel: mapel_id,
           semester: semester,
           tahun: tahun_ajaran,
+          periode: periode,
           data: inputData,
         })
       );
     }
-  }, [inputData, step, kelas_id, mapel_id, semester, tahun_ajaran]);
+  }, [inputData, step, kelas_id, mapel_id, semester, tahun_ajaran, periode]);
 
   // Fetch santri + nilai existing saat step 2
   const fetchStep2 = useCallback(async () => {
@@ -170,7 +172,8 @@ export default function InputNilaiPage() {
             parsed.kelas === kelas_id &&
             parsed.mapel === mapel_id &&
             parsed.semester === semester &&
-            parsed.tahun === tahun_ajaran
+            parsed.tahun === tahun_ajaran &&
+            parsed.periode === periode
           ) {
             draftData = parsed.data;
           }
@@ -179,9 +182,7 @@ export default function InputNilaiPage() {
 
       const map: Record<string, CapaianNilai> = { ...draftData };
 
-      // Map existing nilai from DB
-      // Format db: [{santri_id, jenis, nilai}]
-      // We group them by santri_id
+      // Map existing nilai from DB based on periode
       const dbMap: Record<string, Record<string, string>> = {};
       (nilaiData.nilai || []).forEach((n: any) => {
         if (!dbMap[n.santri.id]) dbMap[n.santri.id] = {};
@@ -191,12 +192,19 @@ export default function InputNilaiPage() {
       santri.forEach((s) => {
         if (!map[s.id]) {
           const sDb = dbMap[s.id] || {};
+          
+          // Map correctly depending on periode
+          const suffix = periode === "PTS" ? "_pts" : "_pas";
+          const harian = sDb[`harian${suffix}`] || "";
+          const kompetensi = sDb[`kompetensi${suffix}`] || "";
+          const sikap = sDb[`sikap${suffix}`] || "";
+          const ujian = sDb[periode.toLowerCase()] || "";
+
           map[s.id] = {
-            harian: sDb.harian || "",
-            kompetensi: sDb.kompetensi || "",
-            sikap: sDb.sikap || "",
-            pts: sDb.pts || "",
-            pas: sDb.pas || "",
+            harian,
+            kompetensi,
+            sikap,
+            ujian,
           };
         }
       });
@@ -212,7 +220,7 @@ export default function InputNilaiPage() {
     } finally {
       setLoadingSantri(false);
     }
-  }, [kelas_id, mapel_id, semester, tahun_ajaran]);
+  }, [kelas_id, mapel_id, semester, tahun_ajaran, periode]);
 
   useEffect(() => {
     if (step === 2) fetchStep2();
@@ -238,12 +246,12 @@ export default function InputNilaiPage() {
     const h = Number(data.harian) || 0;
     const k = Number(data.kompetensi) || 0;
     const s = Number(data.sikap) || 0;
-    const p = Number(data.pas) || Number(data.pts) || 0; // Prioritas PAS, kalau kosong pakai PTS
+    const u = Number(data.ujian) || 0;
     
     // Jika semua kosong, return null
-    if (!data.harian && !data.kompetensi && !data.sikap && !data.pts && !data.pas) return null;
+    if (!data.harian && !data.kompetensi && !data.sikap && !data.ujian) return null;
 
-    return (0.3 * h + 0.2 * k + 0.1 * s + 0.4 * p).toFixed(1);
+    return (0.3 * h + 0.2 * k + 0.1 * s + 0.4 * u).toFixed(1);
   };
 
   const handleSimpan = async () => {
@@ -289,6 +297,7 @@ export default function InputNilaiPage() {
           kelas_id,
           semester,
           tahun_ajaran,
+          periode: periode.toLowerCase(),
         }),
       });
       const data = await res.json();
@@ -357,6 +366,20 @@ export default function InputNilaiPage() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="form-group">
+                <label className="form-label">Periode Penilaian</label>
+                <select
+                  className="form-control"
+                  value={periode}
+                  onChange={(e) => setPeriode(e.target.value)}
+                >
+                  <option value="PTS">Tengah Semester (PTS)</option>
+                  <option value="PAS">Akhir Semester (PAS)</option>
+                </select>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+              <div className="form-group">
                 <label className="form-label">Jenjang</label>
                 <select
                   className="form-control"
@@ -389,7 +412,7 @@ export default function InputNilaiPage() {
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="form-group">
                 <label className="form-label">Mata Pelajaran</label>
                 <select
@@ -500,16 +523,12 @@ export default function InputNilaiPage() {
                          <div style={{ fontSize: 10, color: "var(--primary)", opacity: 0.8 }}>(10%)</div>
                       </th>
                       <th style={{ padding: "12px 8px", textAlign: "center", width: 90 }}>
-                         <div style={{ marginBottom: 2 }}>PTS</div>
-                         <div style={{ fontSize: 10, color: "var(--primary)", opacity: 0.8 }}>(40%)</div>
+                        <div style={{ marginBottom: 2 }}>{periode}</div>
+                        <div style={{ fontSize: 10, color: "var(--primary)", opacity: 0.8 }}>(40%)</div>
                       </th>
-                      <th style={{ padding: "12px 8px", textAlign: "center", width: 90 }}>
-                         <div style={{ marginBottom: 2 }}>PAS</div>
-                         <div style={{ fontSize: 10, color: "var(--primary)", opacity: 0.8 }}>(40%)</div>
-                      </th>
-                      <th style={{ padding: "12px 16px", textAlign: "center", width: 100, borderLeft: "2px dashed var(--border)" }}>
-                         <div style={{ marginBottom: 2 }}>Nilai Akhir</div>
-                         <div style={{ fontSize: 10, color: "#16a34a" }}>Otomatis</div>
+                      <th style={{ padding: "12px 16px", textAlign: "right", width: 110 }}>
+                        <div style={{ marginBottom: 2 }}>Nilai Akhir</div>
+                        <div style={{ fontSize: 10, color: "var(--success)", opacity: 0.8 }}>OTOMATIS</div>
                       </th>
                     </tr>
                   </thead>
@@ -529,7 +548,7 @@ export default function InputNilaiPage() {
                       </tr>
                     ) : (
                       santriList.map((s, idx) => {
-                        const data = inputData[s.id] || { harian: "", kompetensi: "", sikap: "", pts: "", pas: "" };
+                        const data = inputData[s.id] || { harian: "", kompetensi: "", sikap: "", ujian: "" };
                         const nilaiAkhir = hitungNilaiAkhir(data);
                         const isLulus = nilaiAkhir ? Number(nilaiAkhir) >= 80 : true; // Asumsi KKM 80
 
@@ -588,27 +607,33 @@ export default function InputNilaiPage() {
                                 className="form-control"
                                 style={{ fontSize: 14, padding: "8px 4px", textAlign: "center", fontWeight: 600, background: "#f8fafc" }}
                                 placeholder="-"
-                                value={data.pts}
-                                onChange={(e) => handleInputChange(s.id, "pts", e.target.value)}
+                                value={data.ujian}
+                                onChange={(e) => handleInputChange(s.id, "ujian", e.target.value)}
                               />
                             </td>
-                            <td style={{ padding: "12px 8px", textAlign: "center" }}>
-                              <input
-                                type="number"
-                                className="form-control"
-                                style={{ fontSize: 14, padding: "8px 4px", textAlign: "center", fontWeight: 600, background: "#f8fafc" }}
-                                placeholder="-"
-                                value={data.pas}
-                                onChange={(e) => handleInputChange(s.id, "pas", e.target.value)}
-                              />
-                            </td>
-                            <td style={{ padding: "12px 16px", textAlign: "center", borderLeft: "2px dashed var(--border)" }}>
-                              <div style={{
-                                fontSize: 18,
-                                fontWeight: 800,
-                                color: nilaiAkhir === null ? "var(--border)" : isLulus ? "#16a34a" : "#dc2626"
-                              }}>
-                                {nilaiAkhir === null ? "-" : nilaiAkhir}
+                            <td style={{ padding: "12px 16px", textAlign: "right" }}>
+                              <div
+                                style={{
+                                  display: "inline-block",
+                                  padding: "6px 14px",
+                                  borderRadius: 8,
+                                  background: nilaiAkhir 
+                                    ? isLulus ? "var(--success-light)" : "var(--danger-light)" 
+                                    : "#f8fafc",
+                                  color: nilaiAkhir 
+                                    ? isLulus ? "var(--success)" : "var(--danger)" 
+                                    : "#94a3b8",
+                                  fontWeight: 700,
+                                  fontSize: 14,
+                                  minWidth: 54,
+                                  textAlign: "center",
+                                  border: "1px solid",
+                                  borderColor: nilaiAkhir
+                                    ? isLulus ? "rgba(22, 163, 74, 0.2)" : "rgba(220, 38, 38, 0.2)"
+                                    : "transparent"
+                                }}
+                              >
+                                {nilaiAkhir || "-"}
                               </div>
                             </td>
                           </tr>
