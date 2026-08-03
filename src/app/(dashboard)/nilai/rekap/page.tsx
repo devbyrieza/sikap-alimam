@@ -23,12 +23,13 @@ interface NilaiEntry {
 }
 
 const SEMESTER_LIST = ['1', '2'];
-const TAHUN_AJARAN_LIST = ['2024/2025', '2025/2026', '2026/2027'];
+const TAHUN_AJARAN_LIST = ['2026/2027', '2027/2028'];
 
 export default function RekapNilaiPage() {
+  const [jenjangFilter, setJenjangFilter] = useState('');
   const [kelas_id, setKelasId] = useState('');
   const [semester, setSemester] = useState('1');
-  const [tahun_ajaran, setTahunAjaran] = useState('2025/2026');
+  const [tahun_ajaran, setTahunAjaran] = useState('2026/2027');
 
   const [kelasList, setKelasList] = useState<Kelas[]>([]);
   const [mapelList, setMapelList] = useState<MapelItem[]>([]);

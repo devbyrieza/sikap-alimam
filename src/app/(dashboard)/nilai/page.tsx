@@ -39,7 +39,7 @@ interface CapaianNilai {
 }
 
 const SEMESTER_LIST = ["1", "2"];
-const TAHUN_AJARAN_LIST = ["2024/2025", "2025/2026", "2026/2027"];
+const TAHUN_AJARAN_LIST = ["2026/2027", "2027/2028"];
 
 export default function InputNilaiPage() {
   const [step, setStep] = useState(1);
@@ -47,7 +47,7 @@ export default function InputNilaiPage() {
   const [kelas_id, setKelasId] = useState("");
   const [mapel_id, setMapelId] = useState("");
   const [semester, setSemester] = useState("1");
-  const [tahun_ajaran, setTahunAjaran] = useState("2025/2026");
+  const [tahun_ajaran, setTahunAjaran] = useState("2026/2027");
 
   const [kelasList, setKelasList] = useState<Kelas[]>([]);
   const [filteredKelasList, setFilteredKelasList] = useState<Kelas[]>([]);
