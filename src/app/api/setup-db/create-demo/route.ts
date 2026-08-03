@@ -19,12 +19,24 @@ export async function GET() {
     });
 
     let pegawaiPribadi = await prisma.pegawai.findFirst({ where: { email: emailPribadi } });
+    const dataPegawaiPribadi = {
+      nama_lengkap: namaPribadi,
+      email: emailPribadi,
+      kategori_pegawai: 'GURU',
+      jabatan: 'Guru Pengajar',
+      unit_kerja: 'Pesantren Al-Imam',
+      divisi: 'Pengajar',
+      nip: `DEMO${Math.floor(Math.random() * 10000)}`,
+      user_id: userPribadi.id,
+      no_hp: '081234567890',
+      jenis_kelamin: 'L',
+      mata_pelajaran: 'Aqidah, Fiqih'
+    };
+
     if (!pegawaiPribadi) {
-      await prisma.pegawai.create({
-        data: { nama_lengkap: namaPribadi, email: emailPribadi, kategori_pegawai: 'GURU', jabatan: 'Guru Pengajar', nip: `DEMO${Math.floor(Math.random() * 10000)}`, user_id: userPribadi.id }
-      });
+      await prisma.pegawai.create({ data: dataPegawaiPribadi });
     } else {
-      await prisma.pegawai.update({ where: { id: pegawaiPribadi.id }, data: { user_id: userPribadi.id } });
+      await prisma.pegawai.update({ where: { id: pegawaiPribadi.id }, data: dataPegawaiPribadi });
     }
 
     // === 2. Akun Presentasi Resmi ===
@@ -40,12 +52,24 @@ export async function GET() {
     });
 
     let pegawaiPresentasi = await prisma.pegawai.findFirst({ where: { email: emailPresentasi } });
+    const dataPegawaiPresentasi = {
+      nama_lengkap: namaPresentasi,
+      email: emailPresentasi,
+      kategori_pegawai: 'GURU',
+      jabatan: 'Guru Pengajar',
+      unit_kerja: 'Pesantren Al-Imam',
+      divisi: 'Pengajar',
+      nip: `DEMO${Math.floor(Math.random() * 10000)}`,
+      user_id: userPresentasi.id,
+      no_hp: '081298765432',
+      jenis_kelamin: 'L',
+      mata_pelajaran: 'Bahasa Arab, Tahfidz'
+    };
+
     if (!pegawaiPresentasi) {
-      await prisma.pegawai.create({
-        data: { nama_lengkap: namaPresentasi, email: emailPresentasi, kategori_pegawai: 'GURU', jabatan: 'Guru Pengajar', nip: `DEMO${Math.floor(Math.random() * 10000)}`, user_id: userPresentasi.id }
-      });
+      await prisma.pegawai.create({ data: dataPegawaiPresentasi });
     } else {
-      await prisma.pegawai.update({ where: { id: pegawaiPresentasi.id }, data: { user_id: userPresentasi.id } });
+      await prisma.pegawai.update({ where: { id: pegawaiPresentasi.id }, data: dataPegawaiPresentasi });
     }
 
     return NextResponse.json({
