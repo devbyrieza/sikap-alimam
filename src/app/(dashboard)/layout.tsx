@@ -40,7 +40,11 @@ export default async function DashboardLayout({
   const missingFields: string[] = [];
   let needsSetup = false;
 
-  if (!isWaliSantri) {
+  const isDemoAccount = session.email?.includes("pribadi.guru") || 
+                        session.email?.includes("presentasi.guru") || 
+                        session.email?.includes("demo");
+
+  if (!isWaliSantri && !isDemoAccount) {
     const isGuru = userRole.includes("guru") || 
       userRole.includes("asatidz") || 
       userRole.includes("pengajar") || 
