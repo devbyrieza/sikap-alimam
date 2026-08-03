@@ -138,6 +138,8 @@ export default async function JurnalPage() {
     let kelasNama = j.kelas?.nama || "-";
     if (kelasNama === "I'dad Lughowy" || kelasNama === "I'dad" || kelasNama === "Idad Lughowy") {
       kelasNama = "IL";
+    } else {
+      kelasNama = kelasNama.replace(/\s*(MTs|MA|IL)$/i, "");
     }
 
     return {

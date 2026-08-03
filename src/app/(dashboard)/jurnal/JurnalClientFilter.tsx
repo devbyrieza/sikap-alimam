@@ -371,18 +371,24 @@ export default function JurnalClientFilter({
                     </td>
                     <td style={{ textAlign: "center" }}>
                       {j.jam_ke !== "-" ? (
-                        <span
-                          style={{
-                            background: "#f3f4f6",
-                            padding: "3px 10px",
-                            borderRadius: 8,
-                            fontSize: 13,
-                            fontWeight: 700,
-                            color: "#374151",
-                          }}
-                        >
-                          {j.jam_ke}
-                        </span>
+                        <div style={{ display: "flex", flexWrap: "wrap", gap: "4px", justifyContent: "center" }}>
+                          {j.jam_ke.split(",").map((jam, idx) => (
+                            <span
+                              key={idx}
+                              style={{
+                                background: jam.trim() === "Khusus" ? "#fef2f2" : "#f1f5f9",
+                                border: jam.trim() === "Khusus" ? "1px solid #fecaca" : "1px solid #e2e8f0",
+                                padding: jam.trim() === "Khusus" ? "2px 6px" : "2px 8px",
+                                borderRadius: 6,
+                                fontSize: 12,
+                                fontWeight: 700,
+                                color: jam.trim() === "Khusus" ? "#ef4444" : "#475569",
+                              }}
+                            >
+                              {jam.trim()}
+                            </span>
+                          ))}
+                        </div>
                       ) : (
                         <span style={{ color: "var(--text-muted)" }}>—</span>
                       )}
