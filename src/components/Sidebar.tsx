@@ -105,7 +105,7 @@ export default function Sidebar({ user }: SidebarProps) {
   const SidebarContent = () => (
     <>
       {/* Logo */}
-      <div className="sidebar-logo">
+      <div className="sidebar-logo" style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10 }}>
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
           <div
             style={{
@@ -126,6 +126,29 @@ export default function Sidebar({ user }: SidebarProps) {
             <p>Al-Imam Al-Islami</p>
           </div>
         </div>
+
+        {/* Mobile close button inside drawer header */}
+        <button
+          type="button"
+          onClick={() => setMobileOpen(false)}
+          className="sm:hidden"
+          style={{
+            background: "#f1f5f9",
+            border: "none",
+            color: "var(--text-muted)",
+            width: 32,
+            height: 32,
+            borderRadius: 8,
+            cursor: "pointer",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            flexShrink: 0,
+          }}
+          aria-label="Tutup Menu"
+        >
+          <X size={18} />
+        </button>
       </div>
 
       {/* Nav */}
@@ -338,13 +361,23 @@ export default function Sidebar({ user }: SidebarProps) {
             style={{
               position: "fixed",
               inset: 0,
-              background: "rgba(0,0,0,0.5)",
-              zIndex: 39,
+              background: "rgba(0,0,0,0.6)",
+              backdropFilter: "blur(4px)",
+              zIndex: 998,
             }}
           />
           <aside
             className="app-sidebar"
-            style={{ transform: "translateX(0)", zIndex: 40 }}
+            style={{
+              transform: "translateX(0)",
+              zIndex: 999,
+              width: "280px",
+              maxWidth: "85vw",
+              background: "#ffffff",
+              boxShadow: "8px 0 36px rgba(0,0,0,0.3)",
+              display: "flex",
+              flexDirection: "column",
+            }}
           >
             <SidebarContent />
           </aside>
