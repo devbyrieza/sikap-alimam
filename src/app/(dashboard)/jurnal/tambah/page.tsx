@@ -3,7 +3,7 @@
 import { useState, useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import Swal from "sweetalert2";
-import { BookOpen, ChevronLeft, Loader2, FileText, Zap, Clock, Save, Calendar, MessageSquare, Microscope, BookMarked, Edit3, Check } from "lucide-react";
+import { BookOpen, ChevronLeft, Loader2, FileText, Zap, Clock, Save, Calendar, MessageSquare, Microscope, BookMarked, Edit3, Check, Trash2, RotateCcw, AlertCircle } from "lucide-react";
 import Link from "next/link";
 
 type Kelas = { id: string; nama: string; jenjang: string | null };
@@ -55,6 +55,7 @@ export default function TambahJurnalPage() {
   const [learningOutcome, setLearningOutcome] = useState("");
   const [kegiatan, setKegiatan] = useState("");
   const [catatan, setCatatan] = useState("");
+  const [isDraftRestored, setIsDraftRestored] = useState(false);
 
   // Load draft dari localStorage
   useEffect(() => {
@@ -62,6 +63,7 @@ export default function TambahJurnalPage() {
     if (draft) {
       try {
         const p = JSON.parse(draft);
+        const hasContent = p.materi || p.learningOutcome || p.kegiatan || p.catatan || p.kelasId;
         if (p.kelasId) setKelasId(p.kelasId);
         if (p.mapelId) setMapelId(p.mapelId);
         if (p.asatidId) setAsatidId(p.asatidId);
@@ -75,17 +77,56 @@ export default function TambahJurnalPage() {
         if (p.kegiatan) setKegiatan(p.kegiatan);
         if (p.catatan) setCatatan(p.catatan);
         setLastSaved(p._savedAt || null);
+        if (hasContent) {
+          setIsDraftRestored(true);
+        }
       } catch (e) { /* ignore */ }
     }
   }, []);
 
+  // Reset Draft function
+  const handleResetDraft = () => {
+    Swal.fire({
+      title: "Kosongkan Formulir?",
+      text: "Semua tulisan draf yang tersimpan otomatis di perangkat ini akan dihapus.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#dc2626",
+      cancelButtonColor: "#64748b",
+      confirmButtonText: "Ya, Bersihkan",
+      cancelButtonText: "Batal",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        localStorage.removeItem("siakad_jurnal_draft");
+        setKelasId("");
+        setMapelId("");
+        setAsatidId("");
+        setTanggal(today);
+        setJamKe([]);
+        setMateri("");
+        setLearningOutcome("");
+        setKegiatan("");
+        setCatatan("");
+        setLastSaved(null);
+        setIsDraftRestored(false);
+        Swal.fire({
+          icon: "success",
+          title: "Draf Dibersihkan",
+          text: "Formulir telah dikosongkan.",
+          timer: 1500,
+          showConfirmButton: false,
+        });
+      }
+    });
+  };
+
   // Autosave draft ke localStorage
   useEffect(() => {
-    const savedAt = new Date().toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" });
-    const p = { kelasId, mapelId, asatidId, tanggal, jamKe, materi, learningOutcome, kegiatan, catatan, _savedAt: savedAt };
-    localStorage.setItem("siakad_jurnal_draft", JSON.stringify(p));
-    // Tampilkan info autosave hanya kalau ada perubahan bermakna
-    if (kelasId || materi || learningOutcome || kegiatan) {
+    // Hanya simpan jika ada isi
+    if (kelasId || mapelId || asatidId || materi || learningOutcome || kegiatan || catatan) {
+      const savedAt = new Date().toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" });
+      const p = { kelasId, mapelId, asatidId, tanggal, jamKe, materi, learningOutcome, kegiatan, catatan, _savedAt: savedAt };
+      localStorage.setItem("siakad_jurnal_draft", JSON.stringify(p));
       setLastSaved(savedAt);
     }
   }, [kelasId, mapelId, asatidId, tanggal, jamKe, materi, learningOutcome, kegiatan, catatan]);
@@ -217,16 +258,50 @@ export default function TambahJurnalPage() {
             <p>Catat kegiatan belajar mengajar hari ini</p>
           </div>
         </div>
-        {/* Autosave indicator */}
-        {lastSaved && (
-          <div style={{ fontSize: 12, color: "var(--text-muted)", display: "flex", alignItems: "center", gap: 5 }}>
-            <Save size={12} style={{ color: "var(--success, #15803d)" }} />
-            <span>Draft disimpan {lastSaved}</span>
-          </div>
-        )}
+        <div className="flex items-center gap-3">
+          {/* Autosave indicator */}
+          {lastSaved && (
+            <div style={{ fontSize: 12, color: "var(--text-muted)", display: "flex", alignItems: "center", gap: 5 }}>
+              <Save size={12} style={{ color: "var(--success, #15803d)" }} />
+              <span>Draf: {lastSaved}</span>
+            </div>
+          )}
+          {(kelasId || materi || learningOutcome || kegiatan || catatan) && (
+            <button
+              type="button"
+              onClick={handleResetDraft}
+              className="text-xs text-rose-600 hover:text-rose-700 bg-rose-50 hover:bg-rose-100 border border-rose-200 px-2.5 py-1.5 rounded-lg font-semibold flex items-center gap-1.5 transition-all cursor-pointer"
+              title="Kosongkan form dan hapus draf"
+            >
+              <RotateCcw size={12} />
+              <span>Reset Form</span>
+            </button>
+          )}
+        </div>
       </div>
 
       <div className="p-3.5 sm:p-6 md:p-7 max-w-2xl mx-auto w-full pb-20 sm:pb-12">
+        {/* Banner Draf Dipulihkan */}
+        {isDraftRestored && (
+          <div className="mb-4 bg-amber-50 border border-amber-200 rounded-2xl p-3.5 flex items-start justify-between gap-3 animate-in fade-in">
+            <div className="flex items-start gap-2.5">
+              <AlertCircle size={18} className="text-amber-600 shrink-0 mt-0.5" />
+              <div>
+                <p className="text-xs font-bold text-amber-900">Draf Belum Tersimpan Dipulihkan</p>
+                <p className="text-[11px] text-amber-700 mt-0.5">
+                  Formulir ini otomatis memuat data ketikan terakhir dari perangkat Anda agar data tidak hilang jika halaman tertutup.
+                </p>
+              </div>
+            </div>
+            <button
+              type="button"
+              onClick={handleResetDraft}
+              className="text-xs font-bold text-rose-600 hover:text-rose-800 bg-white border border-rose-200 px-2.5 py-1 rounded-lg shrink-0 cursor-pointer shadow-xs"
+            >
+              Hapus Draf
+            </button>
+          </div>
+        )}
         {loadingMaster ? (
           <div
             style={{
