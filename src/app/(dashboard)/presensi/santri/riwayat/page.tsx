@@ -2,7 +2,7 @@
 
 import React from "react";
 import ModuleTabs from "@/components/ModuleTabs";
-import { Hammer } from "lucide-react";
+import { Hammer, ClipboardCheck, BarChart3, UserCheck } from "lucide-react";
 
 export default function RiwayatPresensiSantriPage() {
   return (
@@ -10,9 +10,9 @@ export default function RiwayatPresensiSantriPage() {
       <div className="p-3.5 sm:p-6 md:p-7 max-w-7xl mx-auto w-full flex flex-col gap-5">
         <ModuleTabs
           tabs={[
-            { label: "📝 Input Presensi", href: "/presensi/santri", exact: true },
-            { label: "📊 Lihat Rekap", href: "/presensi/santri/rekap", exact: true },
-            { label: "👤 Riwayat per Santri", href: "/presensi/santri/riwayat", exact: true },
+            { label: "Input Presensi", href: "/presensi/santri", exact: true, icon: <ClipboardCheck size={16} /> },
+            { label: "Lihat Rekap", href: "/presensi/santri/rekap", exact: true, icon: <BarChart3 size={16} /> },
+            { label: "Riwayat per Santri", href: "/presensi/santri/riwayat", exact: true, icon: <UserCheck size={16} /> },
           ]}
         />
         

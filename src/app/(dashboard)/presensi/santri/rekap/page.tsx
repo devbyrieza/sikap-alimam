@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import ModuleTabs from "@/components/ModuleTabs";
-import { ChevronLeft, Loader2, Users, Table2, AlertTriangle, PieChart, ArrowRight } from "lucide-react";
+import { ArrowRight, FileText, Loader2, ArrowLeft, ClipboardCheck, BarChart3, UserCheck, Users, Table2, AlertTriangle, PieChart } from "lucide-react";
 
 type Kelas = { id: string; nama: string; jenjang: string | null };
 
@@ -120,9 +120,9 @@ export default function RekapPresensiSantriPage() {
       <div className="p-3.5 sm:p-6 md:p-7 max-w-7xl mx-auto w-full flex flex-col gap-5">
         <ModuleTabs
           tabs={[
-            { label: "📝 Input Presensi", href: "/presensi/santri", exact: true },
-            { label: "📊 Lihat Rekap", href: "/presensi/santri/rekap", exact: true },
-            { label: "👤 Riwayat per Santri", href: "/presensi/santri/riwayat", exact: true },
+            { label: "Input Presensi", href: "/presensi/santri", exact: true, icon: <ClipboardCheck size={16} /> },
+            { label: "Lihat Rekap", href: "/presensi/santri/rekap", exact: true, icon: <BarChart3 size={16} /> },
+            { label: "Riwayat per Santri", href: "/presensi/santri/riwayat", exact: true, icon: <UserCheck size={16} /> },
           ]}
         />
         {/* Filter */}

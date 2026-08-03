@@ -9,7 +9,8 @@ import {
   Users,
   CheckCircle,
   BookOpen,
-  Lightbulb
+  Lightbulb,
+  BarChart3
 } from "lucide-react";
 import ModuleTabs from "@/components/ModuleTabs";
 
@@ -359,8 +360,8 @@ export default function InputNilaiPage() {
       <div className="p-3.5 sm:p-6 md:p-7 max-w-7xl mx-auto w-full flex flex-col gap-5 pb-28 sm:pb-10">
         <ModuleTabs
           tabs={[
-            { label: "📝 Input Nilai", href: "/nilai", exact: true },
-            { label: "📊 Laporan Nilai", href: "/nilai/rekap", exact: true },
+            { label: "Input Nilai", href: "/nilai", exact: true, icon: <BookOpen size={16} /> },
+            { label: "Laporan Nilai", href: "/nilai/rekap", exact: true, icon: <BarChart3 size={16} /> },
           ]}
         />
         {/* ── STEP 1: Pilih Parameter ─────────────────────────────────── */}
