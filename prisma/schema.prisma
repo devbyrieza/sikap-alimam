@@ -18,10 +18,24 @@ model User {
   is_active  Boolean  @default(true)
   created_at DateTime @default(now()) @db.Timestamptz(6)
 
-  pegawai   Pegawai?
-  orang_tua OrangTuaSantri[]
+  pegawai               Pegawai?
+  orang_tua             OrangTuaSantri[]
+  password_reset_tokens PasswordResetToken[]
 
   @@map("users")
+}
+
+model PasswordResetToken {
+  id         String   @id @default(uuid()) @db.Uuid
+  user_id    String   @db.Uuid
+  token      String   @unique
+  expires_at DateTime @db.Timestamptz(6)
+  used       Boolean  @default(false)
+  created_at DateTime @default(now()) @db.Timestamptz(6)
+
+  user       User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@map("password_reset_tokens")
 }
 
 // ─── MASTER DATA ────────────────────────────────────────────────────────────

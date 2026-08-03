@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { BookOpen, Eye, EyeOff, Loader2, AlertTriangle } from "lucide-react";
+import { BookOpen, Eye, EyeOff, Loader2, AlertTriangle, X } from "lucide-react";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -11,6 +11,36 @@ export default function LoginPage() {
   const [showPass, setShowPass] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+
+  // Forgot Password State
+  const [showForgotModal, setShowForgotModal] = useState(false);
+  const [forgotInput, setForgotInput] = useState("");
+  const [forgotLoading, setForgotLoading] = useState(false);
+  const [forgotMessage, setForgotMessage] = useState<{type: "error" | "success", text: string} | null>(null);
+
+  async function handleForgotSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    if (!forgotInput) return;
+    setForgotLoading(true);
+    setForgotMessage(null);
+    try {
+      const res = await fetch("/api/auth/forgot-password", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ identifier: forgotInput }),
+      });
+      const json = await res.json();
+      if (!res.ok) {
+        setForgotMessage({ type: "error", text: json.error || "Gagal mengirim permintaan" });
+      } else {
+        setForgotMessage({ type: "success", text: json.message });
+      }
+    } catch {
+      setForgotMessage({ type: "error", text: "Terjadi kesalahan jaringan" });
+    } finally {
+      setForgotLoading(false);
+    }
+  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -110,6 +140,15 @@ export default function LoginPage() {
                 {showPass ? <EyeOff size={18} /> : <Eye size={18} />}
               </button>
             </div>
+            <div style={{ textAlign: "right", marginTop: 8 }}>
+              <button
+                type="button"
+                onClick={() => { setShowForgotModal(true); setForgotMessage(null); setForgotInput(""); }}
+                style={{ fontSize: 13, color: "var(--primary)", background: "none", border: "none", cursor: "pointer", fontWeight: 600 }}
+              >
+                Lupa Password?
+              </button>
+            </div>
           </div>
 
           {error && (
@@ -158,11 +197,60 @@ export default function LoginPage() {
           <p style={{ marginBottom: 6, lineHeight: 1.5 }}>
             Silakan login menggunakan <b>User ID</b>, <b>Email</b>, atau <b>No. WhatsApp</b> Anda.
           </p>
-          <p style={{ color: "#9ca3af", lineHeight: 1.5 }}>
-            Hubungi Kasi IT jika Anda belum memiliki akun atau lupa password.
-          </p>
         </div>
       </div>
+
+      {showForgotModal && (
+        <div style={{
+          position: "fixed", inset: 0, background: "rgba(0,0,0,0.5)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 9999, padding: 20
+        }}>
+          <div style={{ background: "white", padding: 24, borderRadius: 16, width: "100%", maxWidth: 400, position: "relative" }}>
+            <button
+              onClick={() => setShowForgotModal(false)}
+              style={{ position: "absolute", right: 16, top: 16, background: "none", border: "none", cursor: "pointer", color: "#6b7280" }}
+            >
+              <X size={20} />
+            </button>
+            <h2 style={{ fontSize: 18, fontWeight: 700, color: "#1f2937", marginBottom: 8 }}>Lupa Kata Sandi?</h2>
+            <p style={{ fontSize: 13, color: "#6b7280", marginBottom: 20, lineHeight: 1.5 }}>
+              Masukkan NIP, NIK, atau Nomor WA Anda. Kami akan mengirimkan tautan reset kata sandi melalui WhatsApp.
+            </p>
+
+            {forgotMessage && (
+              <div style={{
+                background: forgotMessage.type === "success" ? "#ecfdf5" : "#fef2f2",
+                color: forgotMessage.type === "success" ? "#047857" : "#b91c1c",
+                padding: "10px 14px", borderRadius: 8, fontSize: 13, marginBottom: 16, border: `1px solid ${forgotMessage.type === "success" ? "#a7f3d0" : "#fecaca"}`
+              }}>
+                {forgotMessage.text}
+              </div>
+            )}
+
+            <form onSubmit={handleForgotSubmit}>
+              <div className="form-group" style={{ marginBottom: 16 }}>
+                <input
+                  type="text"
+                  className="form-control"
+                  placeholder="08123xxxx / NIK / NIP"
+                  value={forgotInput}
+                  onChange={(e) => setForgotInput(e.target.value)}
+                  required
+                  disabled={forgotLoading}
+                />
+              </div>
+              <button
+                type="submit"
+                className="btn btn-primary"
+                disabled={forgotLoading || !forgotInput}
+                style={{ width: "100%", justifyContent: "center" }}
+              >
+                {forgotLoading ? <Loader2 size={16} className="spinner mr-2" /> : null}
+                {forgotLoading ? "Mengirim..." : "Kirim Tautan Reset"}
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
