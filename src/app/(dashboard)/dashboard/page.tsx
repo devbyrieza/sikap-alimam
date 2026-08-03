@@ -341,7 +341,7 @@ export default async function DashboardPage() {
               }}
             >
               <p className="card-title" style={{ marginBottom: 0 }}>
-                <BarChart3 size={16} className="inline mr-1" /> Presensi Santri (Hari Ini)
+                <BarChart3 size={16} className="inline mr-1" /> Presensi Santri (Hari ini)
               </p>
               <Link
                 href="/presensi/santri"
