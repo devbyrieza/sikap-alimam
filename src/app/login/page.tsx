@@ -169,7 +169,7 @@ export default function LoginPage() {
               type="text"
               name="email"
               className="form-control"
-              placeholder="User ID / nama@pesantren-alimam.com / No. WA"
+              placeholder="User ID / nama@email.com / No. WA"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
