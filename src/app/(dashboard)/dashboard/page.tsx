@@ -129,7 +129,7 @@ export default async function DashboardPage() {
       {/* ── Key Metrics Grid ────────────────────────────────────────────────── */}
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: 20 }}>
         {/* Guru Hadir */}
-        <div style={{ background:"white", padding:24, borderRadius:20, border:"1px solid #f1f5f9", boxShadow:"0 4px 20px rgba(0,0,0,0.03)", display:"flex", alignItems:"center", gap:16, transition:"transform 0.2s" }} onMouseEnter={e => (e.currentTarget as HTMLElement).style.transform = "translateY(-4px)"} onMouseLeave={e => (e.currentTarget as HTMLElement).style.transform = "none"}>
+        <div style={{ background:"white", padding:24, borderRadius:20, border:"1px solid #f1f5f9", boxShadow:"0 4px 20px rgba(0,0,0,0.03)", display:"flex", alignItems:"center", gap:16, transition:"transform 0.2s" }}>
           <div style={{ width:56, height:56, borderRadius:16, background:"#eff6ff", color:"#3b82f6", display:"flex", alignItems:"center", justifyContent:"center" }}>
             <UserCheck size={28} />
           </div>
@@ -145,7 +145,7 @@ export default async function DashboardPage() {
         </div>
 
         {/* Jurnal */}
-        <div style={{ background:"white", padding:24, borderRadius:20, border:"1px solid #f1f5f9", boxShadow:"0 4px 20px rgba(0,0,0,0.03)", display:"flex", alignItems:"center", gap:16, transition:"transform 0.2s" }} onMouseEnter={e => (e.currentTarget as HTMLElement).style.transform = "translateY(-4px)"} onMouseLeave={e => (e.currentTarget as HTMLElement).style.transform = "none"}>
+        <div style={{ background:"white", padding:24, borderRadius:20, border:"1px solid #f1f5f9", boxShadow:"0 4px 20px rgba(0,0,0,0.03)", display:"flex", alignItems:"center", gap:16, transition:"transform 0.2s" }}>
           <div style={{ width:56, height:56, borderRadius:16, background:"#fefce8", color:"#eab308", display:"flex", alignItems:"center", justifyContent:"center" }}>
             <BookMarked size={28} />
           </div>
@@ -159,7 +159,7 @@ export default async function DashboardPage() {
         </div>
 
         {/* Santri Aktif */}
-        <div style={{ background:"white", padding:24, borderRadius:20, border:"1px solid #f1f5f9", boxShadow:"0 4px 20px rgba(0,0,0,0.03)", display:"flex", alignItems:"center", gap:16, transition:"transform 0.2s" }} onMouseEnter={e => (e.currentTarget as HTMLElement).style.transform = "translateY(-4px)"} onMouseLeave={e => (e.currentTarget as HTMLElement).style.transform = "none"}>
+        <div style={{ background:"white", padding:24, borderRadius:20, border:"1px solid #f1f5f9", boxShadow:"0 4px 20px rgba(0,0,0,0.03)", display:"flex", alignItems:"center", gap:16, transition:"transform 0.2s" }}>
           <div style={{ width:56, height:56, borderRadius:16, background:"#ecfdf5", color:"#10b981", display:"flex", alignItems:"center", justifyContent:"center" }}>
             <ClipboardCheck size={28} />
           </div>
@@ -173,7 +173,7 @@ export default async function DashboardPage() {
         </div>
 
         {/* Guru Aktif */}
-        <div style={{ background:"white", padding:24, borderRadius:20, border:"1px solid #f1f5f9", boxShadow:"0 4px 20px rgba(0,0,0,0.03)", display:"flex", alignItems:"center", gap:16, transition:"transform 0.2s" }} onMouseEnter={e => (e.currentTarget as HTMLElement).style.transform = "translateY(-4px)"} onMouseLeave={e => (e.currentTarget as HTMLElement).style.transform = "none"}>
+        <div style={{ background:"white", padding:24, borderRadius:20, border:"1px solid #f1f5f9", boxShadow:"0 4px 20px rgba(0,0,0,0.03)", display:"flex", alignItems:"center", gap:16, transition:"transform 0.2s" }}>
           <div style={{ width:56, height:56, borderRadius:16, background:"#f5f3ff", color:"#8b5cf6", display:"flex", alignItems:"center", justifyContent:"center" }}>
             <TrendingUp size={28} />
           </div>
@@ -199,10 +199,10 @@ export default async function DashboardPage() {
           <Link href="/presensi/santri" style={{ display:"inline-flex", alignItems:"center", gap:8, background:"#10b981", color:"white", padding:"10px 20px", borderRadius:12, fontSize:13, fontWeight:700, textDecoration:"none", transition:"all 0.2s", boxShadow:"0 4px 12px rgba(16,185,129,0.3)" }}>
             <ClipboardCheck size={16} /> Input Presensi Santri
           </Link>
-          <Link href="/presensi/asatidz" style={{ display:"inline-flex", alignItems:"center", gap:8, background:"#f1f5f9", color:"#475569", padding:"10px 20px", borderRadius:12, fontSize:13, fontWeight:700, textDecoration:"none", transition:"all 0.2s" }} onMouseEnter={e => (e.currentTarget as HTMLElement).style.background="#e2e8f0"} onMouseLeave={e => (e.currentTarget as HTMLElement).style.background="#f1f5f9"}>
+          <Link href="/presensi/asatidz" style={{ display:"inline-flex", alignItems:"center", gap:8, background:"#f1f5f9", color:"#475569", padding:"10px 20px", borderRadius:12, fontSize:13, fontWeight:700, textDecoration:"none", transition:"all 0.2s" }}>
             <UserCheck size={16} /> Absensi Guru
           </Link>
-          <Link href="/nilai" style={{ display:"inline-flex", alignItems:"center", gap:8, background:"#f1f5f9", color:"#475569", padding:"10px 20px", borderRadius:12, fontSize:13, fontWeight:700, textDecoration:"none", transition:"all 0.2s" }} onMouseEnter={e => (e.currentTarget as HTMLElement).style.background="#e2e8f0"} onMouseLeave={e => (e.currentTarget as HTMLElement).style.background="#f1f5f9"}>
+          <Link href="/nilai" style={{ display:"inline-flex", alignItems:"center", gap:8, background:"#f1f5f9", color:"#475569", padding:"10px 20px", borderRadius:12, fontSize:13, fontWeight:700, textDecoration:"none", transition:"all 0.2s" }}>
             <BarChart3 size={16} /> Input Nilai
           </Link>
           {isSuperAdmin && (
