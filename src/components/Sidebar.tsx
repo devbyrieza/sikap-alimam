@@ -36,7 +36,7 @@ const NAV: NavItem[] = [
   },
   {
     href: "/keuangan",
-    label: "SPP & Keuangan",
+    label: "Keuangan",
     icon: <CreditCard size={18} />,
     roles: ["admin_super", "ADMIN_SUPER", "mudir", "MUDIR", "admin_keuangan", "ADMIN_KEUANGAN"],
   },
@@ -80,7 +80,7 @@ const NAV: NavItem[] = [
     href: "/master",
     label: "Master Data",
     icon: <Database size={18} />,
-    roles: ["admin", "admin_super", "ADMIN_SUPER", "mudir", "MUDIR", "kepala", "KEPALA_SEKOLAH"],
+    roles: ["admin_super", "ADMIN_SUPER"],
   },
 ];
 
