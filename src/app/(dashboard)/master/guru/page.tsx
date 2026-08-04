@@ -155,21 +155,33 @@ export default function MasterGuruPage() {
 
   return (
     <div className="p-3.5 sm:p-6 md:p-7 max-w-6xl mx-auto space-y-6">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
-        <div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 flex items-center gap-2">
-            <Users className="text-emerald-600" size={28} /> Master Data Guru
+      {/* Premium Hero Banner */}
+      <div className="relative overflow-hidden bg-gradient-to-br from-slate-900 via-slate-800 to-emerald-900 rounded-[32px] p-8 sm:p-10 shadow-2xl shadow-emerald-900/20 text-white flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6">
+        {/* Decorative Background Elements */}
+        <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-500/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3"></div>
+        <div className="absolute bottom-0 left-0 w-48 h-48 bg-blue-500/20 rounded-full blur-3xl translate-y-1/2 -translate-x-1/4"></div>
+        
+        <div className="relative z-10">
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 border border-white/20 backdrop-blur-md mb-4">
+            <span className="flex h-2 w-2 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.8)]"></span>
+            <span className="text-xs font-bold tracking-wider text-emerald-50">SIKAP AL-IMAM</span>
+          </div>
+          <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight mb-2 flex items-center gap-3">
+            <Users className="text-emerald-400" size={36} /> Master Data Guru
           </h1>
-          <p className="text-gray-500 mt-1 text-xs sm:text-sm">Registrasi dan kelola staf pengajar (Guru/Musyrif) di Pesantren Al-Imam.</p>
+          <p className="text-emerald-100/80 text-sm sm:text-base max-w-xl leading-relaxed">
+            Pusat registrasi dan kelola staf pengajar (Guru/Musyrif) di Pesantren Al-Imam. Atur biodata dan hak akses sistem.
+          </p>
         </div>
-        <div className="flex flex-wrap gap-2.5 w-full sm:w-auto">
+        
+        <div className="relative z-10 flex flex-wrap gap-3 w-full sm:w-auto">
           <button 
             onClick={handleSync}
             disabled={isSyncing}
-            className="flex-1 sm:flex-initial bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white px-4 py-2.5 rounded-xl font-semibold shadow-md flex items-center justify-center gap-2 text-xs sm:text-sm transition-all cursor-pointer"
+            className="flex-1 sm:flex-initial bg-white/10 hover:bg-white/20 border border-white/20 disabled:opacity-50 text-white px-5 py-3 rounded-2xl font-bold shadow-lg flex items-center justify-center gap-2 text-sm transition-all backdrop-blur-sm group"
           >
-            <RefreshCw size={15} className={isSyncing ? "animate-spin" : ""} />
-            Sync Data SIMPEG
+            <RefreshCw size={18} className={isSyncing ? "animate-spin" : "group-hover:rotate-180 transition-transform duration-500"} />
+            Sync SIMPEG
           </button>
           <button 
             onClick={() => {
@@ -179,9 +191,9 @@ export default function MasterGuruPage() {
                 setForm({ nik: "", nama_lengkap: "", no_hp: "", email: "", mata_pelajaran: "", roles: [] });
               }
             }}
-            className="flex-1 sm:flex-initial bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2.5 rounded-xl font-semibold shadow-md flex items-center justify-center gap-2 text-xs sm:text-sm transition-all cursor-pointer"
+            className="flex-1 sm:flex-initial bg-emerald-500 hover:bg-emerald-400 text-slate-900 px-5 py-3 rounded-2xl font-black shadow-[0_0_20px_rgba(16,185,129,0.4)] flex items-center justify-center gap-2 text-sm transition-all hover:scale-105"
           >
-            {isAdding ? "Batal" : <><Plus size={16} /> Tambah Guru</>}
+            {isAdding ? "Tutup Form" : <><Plus size={20} strokeWidth={3} /> Tambah Guru</>}
           </button>
         </div>
       </div>

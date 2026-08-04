@@ -277,29 +277,37 @@ export default function MasterMapelPage() {
 
   return (
     <div className="p-3.5 sm:p-6 md:p-7 max-w-6xl mx-auto space-y-6">
-      {/* Header Banner */}
-      <div className="bg-gradient-to-r from-amber-800 via-amber-700 to-yellow-900 rounded-3xl p-8 text-white shadow-xl shadow-amber-900/20 flex flex-wrap justify-between items-center gap-4">
-        <div>
+      {/* Premium Hero Banner */}
+      <div className="relative overflow-hidden bg-gradient-to-br from-slate-900 via-slate-800 to-sky-900 rounded-[32px] p-8 sm:p-10 shadow-2xl shadow-sky-900/20 text-white flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6">
+        {/* Decorative Background Elements */}
+        <div className="absolute top-0 right-0 w-64 h-64 bg-sky-500/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3"></div>
+        <div className="absolute bottom-0 left-0 w-48 h-48 bg-indigo-500/20 rounded-full blur-3xl translate-y-1/2 -translate-x-1/4"></div>
+        
+        <div className="relative z-10">
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 border border-white/20 backdrop-blur-md mb-4">
+            <span className="flex h-2 w-2 rounded-full bg-sky-400 shadow-[0_0_8px_rgba(56,189,248,0.8)]"></span>
+            <span className="text-xs font-bold tracking-wider text-sky-50">KURIKULUM RESMI</span>
+          </div>
           <div className="flex items-center gap-3 mb-2">
-            <BookOpen size={30} className="text-amber-300" />
-            <h1 className="text-2xl sm:text-3xl font-extrabold">
-              Master Mata Pelajaran Terpisah (7 MTs &amp; IL)
+            <BookOpen size={36} className="text-sky-400" />
+            <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight">
+              Master Data Mata Pelajaran
             </h1>
           </div>
-          <p className="text-amber-100 text-sm max-w-2xl">
+          <p className="text-sky-100/80 text-sm sm:text-base max-w-xl leading-relaxed">
             Pemisahan kurikulum resmi (Revisi 31 Juli 2026 - Ust. Aziz). Kelola mata pelajaran khusus Kelas 7 MTs dan Kelas IL secara independen.
           </p>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="relative z-10 flex flex-wrap gap-3 w-full sm:w-auto">
           <button
             onClick={handleSyncKurikulum}
             disabled={syncing}
-            className="bg-amber-900/60 hover:bg-amber-900/90 text-amber-100 border border-amber-400/30 font-bold px-4 py-2.5 rounded-xl shadow-sm flex items-center gap-2 text-xs sm:text-sm transition-all"
+            className="flex-1 sm:flex-initial bg-white/10 hover:bg-white/20 border border-white/20 disabled:opacity-50 text-white px-5 py-3 rounded-2xl font-bold shadow-lg flex items-center justify-center gap-2 text-sm transition-all backdrop-blur-sm group"
             title="Sinkronkan daftar mapel dengan standar kurikulum resmi Ust Aziz"
           >
-            <RefreshCw size={16} className={syncing ? "animate-spin" : ""} />
-            {syncing ? "Sinkronisasi..." : "Sinkron Kurikulum Ust Aziz"}
+            <RefreshCw size={18} className={syncing ? "animate-spin" : "group-hover:rotate-180 transition-transform duration-500"} />
+            Sync Kurikulum
           </button>
 
           <button
@@ -307,9 +315,9 @@ export default function MasterMapelPage() {
               setIsAdding(!isAdding);
               setEditingId(null);
             }}
-            className="bg-white hover:bg-amber-50 text-amber-900 font-extrabold px-5 py-2.5 rounded-xl shadow-md flex items-center gap-2 text-xs sm:text-sm transition-all"
+            className="flex-1 sm:flex-initial bg-sky-500 hover:bg-sky-400 text-slate-900 px-5 py-3 rounded-2xl font-black shadow-[0_0_20px_rgba(14,165,233,0.4)] flex items-center justify-center gap-2 text-sm transition-all hover:scale-105"
           >
-            {isAdding ? <X size={18} /> : <Plus size={18} />}
+            {isAdding ? <X size={20} strokeWidth={3} /> : <Plus size={20} strokeWidth={3} />}
             {isAdding ? "Tutup Form" : "Tambah Mapel"}
           </button>
         </div>
