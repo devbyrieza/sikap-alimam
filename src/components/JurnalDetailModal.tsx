@@ -78,7 +78,7 @@ function getDurasiJam(jamStr: string) {
   return ` (${durasiJP} Jam Pelajaran)`;
 }
 
-const HEADER_BG = "linear-gradient(145deg, #7e141a 0%, #550000 60%, #380000 100%)";
+const HEADER_BG = "linear-gradient(145deg, #6e0b0b 0%, #550000 50%, #751414 100%)";
 
 export default function JurnalDetailModal({ jurnal, onClose }: JurnalDetailModalProps) {
   useEffect(() => {

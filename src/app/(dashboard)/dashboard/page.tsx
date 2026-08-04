@@ -98,9 +98,9 @@ export default async function DashboardPage() {
         
         <div style={{ position:"relative", zIndex:1, flex:1, minWidth:0, width: "100%" }}>
           <div style={{ display:"flex", alignItems:"center", gap:10, marginBottom:6, flexWrap: "wrap" }}>
-            <div style={{ display:"flex", alignItems:"center", gap:6, background:"rgba(221, 193, 146, 0.15)", padding:"6px 12px", borderRadius:20, border:"1px solid rgba(221, 193, 146, 0.35)", backdropFilter:"blur(8px)" }}>
+            <div style={{ display:"flex", alignItems:"center", gap:6, background:"rgba(221, 193, 146, 0.18)", padding:"6px 14px", borderRadius:20, border:"1px solid rgba(221, 193, 146, 0.4)", backdropFilter:"blur(8px)" }}>
               <div style={{ width:8, height:8, borderRadius:"50%", background:"#ddc192", boxShadow:"0 0 8px rgba(221, 193, 146, 0.9)" }}></div>
-              <span style={{ fontSize:11, fontWeight:700, letterSpacing:"1px", color:"#fdf8f0", textTransform:"uppercase" }}>Sistem Informasi Terpadu</span>
+              <span style={{ fontSize:11, fontWeight:800, letterSpacing:"0.6px", color:"#fdf8f0", textTransform:"uppercase" }}>SIKAP • Sistem Informasi Kependidikan Akademik dan Pengasuhan</span>
             </div>
           </div>
           <h1 style={{ fontSize: "clamp(20px, 4vw, 32px)", fontWeight:800, margin:"0 0 8px 0", display:"flex", alignItems:"center", gap:10, letterSpacing:"-0.5px", flexWrap: "wrap", wordBreak: "break-word" }}>
@@ -186,20 +186,20 @@ export default async function DashboardPage() {
           <Zap size={18} color="#b89758" /> Aksi Cepat
         </h3>
         <div style={{ display:"flex", flexWrap:"wrap", gap:12 }}>
-          <Link href="/jurnal/tambah" style={{ display:"inline-flex", alignItems:"center", gap:8, background:"#550000", color:"white", padding:"10px 20px", borderRadius:12, fontSize:13, fontWeight:700, textDecoration:"none", transition:"all 0.2s", boxShadow:"0 4px 14px rgba(85,0,0,0.3)" }}>
+          <Link href="/jurnal/tambah" style={{ display:"inline-flex", alignItems:"center", gap:8, background:"#550000", color:"white", border:"1px solid #751414", padding:"10px 20px", borderRadius:12, fontSize:13, fontWeight:700, textDecoration:"none", transition:"all 0.2s", boxShadow:"0 4px 14px rgba(85,0,0,0.25)" }}>
             <BookMarked size={16} color="#ddc192" /> Tambah Jurnal
           </Link>
-          <Link href="/presensi/santri" style={{ display:"inline-flex", alignItems:"center", gap:8, background:"#380000", color:"#ddc192", border:"1px solid #ddc192", padding:"10px 20px", borderRadius:12, fontSize:13, fontWeight:700, textDecoration:"none", transition:"all 0.2s", boxShadow:"0 4px 14px rgba(56,0,0,0.25)" }}>
-            <ClipboardCheck size={16} /> Input Presensi Santri
+          <Link href="/presensi/santri" style={{ display:"inline-flex", alignItems:"center", gap:8, background:"#fdf5f5", color:"#550000", border:"1px solid #ebdcc3", padding:"10px 20px", borderRadius:12, fontSize:13, fontWeight:700, textDecoration:"none", transition:"all 0.2s", boxShadow:"0 2px 8px rgba(85,0,0,0.04)" }}>
+            <ClipboardCheck size={16} color="#550000" /> Input Presensi Santri
           </Link>
-          <Link href="/presensi/asatidz" style={{ display:"inline-flex", alignItems:"center", gap:8, background:"#fdf8f0", color:"#550000", border:"1px solid #ebdcc3", padding:"10px 20px", borderRadius:12, fontSize:13, fontWeight:700, textDecoration:"none", transition:"all 0.2s" }}>
-            <UserCheck size={16} /> Absensi Guru
+          <Link href="/presensi/asatidz" style={{ display:"inline-flex", alignItems:"center", gap:8, background:"#fdf8f0", color:"#550000", border:"1px solid #ebdcc3", padding:"10px 20px", borderRadius:12, fontSize:13, fontWeight:700, textDecoration:"none", transition:"all 0.2s", boxShadow:"0 2px 8px rgba(85,0,0,0.04)" }}>
+            <UserCheck size={16} color="#b89758" /> Absensi Guru
           </Link>
-          <Link href="/nilai" style={{ display:"inline-flex", alignItems:"center", gap:8, background:"#fdf8f0", color:"#550000", border:"1px solid #ebdcc3", padding:"10px 20px", borderRadius:12, fontSize:13, fontWeight:700, textDecoration:"none", transition:"all 0.2s" }}>
-            <BarChart3 size={16} /> Input Nilai
+          <Link href="/nilai" style={{ display:"inline-flex", alignItems:"center", gap:8, background:"#fdf8f0", color:"#550000", border:"1px solid #ebdcc3", padding:"10px 20px", borderRadius:12, fontSize:13, fontWeight:700, textDecoration:"none", transition:"all 0.2s", boxShadow:"0 2px 8px rgba(85,0,0,0.04)" }}>
+            <BarChart3 size={16} color="#550000" /> Input Nilai
           </Link>
           {isSuperAdmin && (
-            <Link href="/master/kelas" style={{ display:"inline-flex", alignItems:"center", gap:8, background:"#751414", color:"white", padding:"10px 20px", borderRadius:12, fontSize:13, fontWeight:700, textDecoration:"none", transition:"all 0.2s", boxShadow:"0 4px 14px rgba(117,20,20,0.3)" }}>
+            <Link href="/master/kelas" style={{ display:"inline-flex", alignItems:"center", gap:8, background:"#751414", color:"white", border:"1px solid #550000", padding:"10px 20px", borderRadius:12, fontSize:13, fontWeight:700, textDecoration:"none", transition:"all 0.2s", boxShadow:"0 4px 14px rgba(117,20,20,0.25)" }}>
               <UserCheck size={16} color="#ddc192" /> Assign Wali Kelas
             </Link>
           )}

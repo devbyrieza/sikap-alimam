@@ -1,7 +1,19 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { BookOpen, Calendar, User, GraduationCap, RotateCcw, Eye, Clock, Target, FileText, ArrowRight } from "lucide-react";
+import {
+  BookOpen,
+  Calendar,
+  User,
+  GraduationCap,
+  RotateCcw,
+  Eye,
+  Clock,
+  LayoutGrid,
+  Table as TableIcon,
+  ChevronRight,
+  Sparkles,
+} from "lucide-react";
 import { getJenjangFromKelas } from "@/lib/kelas";
 import JurnalDetailModal from "@/components/JurnalDetailModal";
 
@@ -48,6 +60,7 @@ export default function JurnalClientFilter({
   const [filterJenjang, setFilterJenjang] = useState<string>("");
   const [filterKelas, setFilterKelas] = useState("");
   const [filterAsatidz, setFilterAsatidz] = useState("");
+  const [viewMode, setViewMode] = useState<"card" | "table">("card");
 
   // Modal State for viewing complete journal detail
   const [selectedJurnal, setSelectedJurnal] = useState<JurnalRow | null>(null);
@@ -159,60 +172,65 @@ export default function JurnalClientFilter({
   const isFiltered = Boolean(filterTanggal || filterJenjang || filterKelas || filterAsatidz);
 
   return (
-    <div>
+    <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
       {/* Filter Bar */}
       <div
-        className="card"
         style={{
-          marginBottom: 20,
           display: "flex",
           gap: 14,
           flexWrap: "wrap",
           alignItems: "flex-end",
-          padding: "18px 22px",
-          borderRadius: 16,
+          padding: "20px 24px",
+          borderRadius: 20,
           background: "#ffffff",
-          boxShadow: "0 2px 8px rgba(0,0,0,0.04)",
+          border: "1px solid #ebdcc3",
+          boxShadow: "0 2px 12px rgba(85,0,0,0.03)",
         }}
       >
         {/* 1. Filter Tanggal */}
-        <div className="form-group" style={{ marginBottom: 0, minWidth: 160, flex: "1 1 150px" }}>
-          <label className="form-label" style={{ fontWeight: 600, fontSize: 13, display: "flex", alignItems: "center", gap: 6 }}>
-            <Calendar size={14} color="var(--primary)" /> Filter Tanggal
+        <div style={{ minWidth: 150, flex: "1 1 140px", display: "flex", flexDirection: "column", gap: 6 }}>
+          <label style={{ fontWeight: 700, fontSize: 13, display: "flex", alignItems: "center", gap: 6, color: "#550000" }}>
+            <Calendar size={14} color="#550000" /> Filter Tanggal
           </label>
           <input
             type="date"
             className="form-control"
             value={filterTanggal}
             onChange={(e) => setFilterTanggal(e.target.value)}
+            style={{ borderRadius: 12, border: "1px solid #ebdcc3", padding: "9px 12px", background: "#fdf8f0", fontSize: 13, outline: "none" }}
           />
         </div>
 
-        {/* 2. Filter Jenjang (Wajib dipilih sebelum filter kelas aktif) */}
-        <div className="form-group" style={{ marginBottom: 0, minWidth: 170, flex: "1 1 160px" }}>
-          <label className="form-label" style={{ fontWeight: 600, fontSize: 13, display: "flex", alignItems: "center", gap: 6 }}>
-            <GraduationCap size={14} color="var(--primary)" /> Filter Jenjang
+        {/* 2. Filter Jenjang */}
+        <div style={{ minWidth: 160, flex: "1 1 150px", display: "flex", flexDirection: "column", gap: 6 }}>
+          <label style={{ fontWeight: 700, fontSize: 13, display: "flex", alignItems: "center", gap: 6, color: "#550000" }}>
+            <GraduationCap size={14} color="#550000" /> Filter Jenjang
           </label>
           <select
             className="form-control"
             value={filterJenjang}
             onChange={(e) => handleJenjangChange(e.target.value)}
             style={{
-              fontWeight: filterJenjang ? 700 : 400,
-              borderColor: filterJenjang ? "var(--primary)" : undefined,
+              borderRadius: 12,
+              border: "1px solid #ebdcc3",
+              padding: "9px 12px",
+              background: "#fdf8f0",
+              fontSize: 13,
+              fontWeight: filterJenjang ? 700 : 500,
+              outline: "none",
             }}
           >
             <option value="">Semua Jenjang</option>
             <option value="MTs">MTs (Madrasah Tsanawiyah)</option>
-            <option value="IL">IL (I'dad Lughowy)</option>
+            <option value="IL">IL (I&apos;dad Lughowy)</option>
             <option value="MA">MA (Madrasah Aliyah)</option>
           </select>
         </div>
 
-        {/* 3. Filter Kelas (Hanya aktif jika Jenjang telah dipilih) */}
-        <div className="form-group" style={{ marginBottom: 0, minWidth: 180, flex: "1 1 170px" }}>
-          <label className="form-label" style={{ fontWeight: 600, fontSize: 13, display: "flex", alignItems: "center", gap: 6 }}>
-            <BookOpen size={14} color="var(--primary)" /> Filter Kelas
+        {/* 3. Filter Kelas */}
+        <div style={{ minWidth: 160, flex: "1 1 150px", display: "flex", flexDirection: "column", gap: 6 }}>
+          <label style={{ fontWeight: 700, fontSize: 13, display: "flex", alignItems: "center", gap: 6, color: "#550000" }}>
+            <BookOpen size={14} color="#550000" /> Filter Kelas
           </label>
           <select
             className="form-control"
@@ -220,9 +238,14 @@ export default function JurnalClientFilter({
             onChange={(e) => setFilterKelas(e.target.value)}
             disabled={!filterJenjang || (availableClasses.length === 0 && filterJenjang === "MA")}
             style={{
-              background: !filterJenjang ? "#f9fafb" : "#ffffff",
+              borderRadius: 12,
+              border: "1px solid #ebdcc3",
+              padding: "9px 12px",
+              background: !filterJenjang ? "#faf8f5" : "#fdf8f0",
               cursor: !filterJenjang ? "not-allowed" : "pointer",
-              color: !filterJenjang ? "#9ca3af" : undefined,
+              color: !filterJenjang ? "#a8a29e" : "#1a1a1a",
+              fontSize: 13,
+              outline: "none",
             }}
           >
             {!filterJenjang ? (
@@ -242,15 +265,16 @@ export default function JurnalClientFilter({
           </select>
         </div>
 
-        {/* 4. Filter Guru / Asatidz (SIMPEG) */}
-        <div className="form-group" style={{ marginBottom: 0, minWidth: 200, flex: "1 1 200px" }}>
-          <label className="form-label" style={{ fontWeight: 600, fontSize: 13, display: "flex", alignItems: "center", gap: 6 }}>
-            <User size={14} color="var(--primary)" /> Filter Guru
+        {/* 4. Filter Guru / Asatidz */}
+        <div style={{ minWidth: 180, flex: "1 1 180px", display: "flex", flexDirection: "column", gap: 6 }}>
+          <label style={{ fontWeight: 700, fontSize: 13, display: "flex", alignItems: "center", gap: 6, color: "#550000" }}>
+            <User size={14} color="#550000" /> Filter Guru
           </label>
           <select
             className="form-control"
             value={filterAsatidz}
             onChange={(e) => setFilterAsatidz(e.target.value)}
+            style={{ borderRadius: 12, border: "1px solid #ebdcc3", padding: "9px 12px", background: "#fdf8f0", fontSize: 13, outline: "none" }}
           >
             <option value="">Semua Guru</option>
             {finalAsatidzList.map((a) => (
@@ -264,18 +288,24 @@ export default function JurnalClientFilter({
         {/* Reset Button */}
         {isFiltered && (
           <button
-            className="btn btn-ghost btn-sm"
+            type="button"
             style={{
-              marginBottom: 0,
               display: "flex",
               alignItems: "center",
               gap: 6,
-              color: "#dc2626",
+              color: "#b91c1c",
+              background: "#fef2f2",
+              border: "1px solid #fecaca",
+              padding: "9px 14px",
+              borderRadius: 12,
+              fontWeight: 700,
+              fontSize: 13,
+              cursor: "pointer",
             }}
             onClick={handleReset}
           >
             <RotateCcw size={14} />
-            Reset Filter
+            Reset
           </button>
         )}
 
@@ -283,131 +313,309 @@ export default function JurnalClientFilter({
           style={{
             marginLeft: "auto",
             fontSize: 13,
-            fontWeight: 600,
-            color: "var(--text-muted)",
+            fontWeight: 700,
+            color: "#550000",
+            background: "#fdf5f5",
+            padding: "6px 14px",
+            borderRadius: 20,
+            border: "1px solid #ebdcc3",
             alignSelf: "center",
           }}
         >
-          {filtered.length} jurnal ditemukan
+          {filtered.length} Jurnal
         </div>
       </div>
 
-      {/* Swipe Guidance Banner on Mobile */}
-      <div className="sm:hidden mb-2.5 flex items-center justify-between gap-2 px-3 py-2 bg-amber-50/90 border border-amber-200/80 rounded-xl text-[12px] font-medium text-amber-900 shadow-sm">
-        <span className="flex items-center gap-1.5 truncate">
-          <ArrowRight size={14} className="text-primary inline-block mr-1" /> Tanggal terkunci di kiri. Geser tabel ke kanan untuk melihat rincian & aksi.
-        </span>
+      {/* Control Bar: View Mode Switcher (Visible on mobile & desktop) */}
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          padding: "10px 16px",
+          background: "#ffffff",
+          borderRadius: 16,
+          border: "1px solid #ebdcc3",
+          flexWrap: "wrap",
+          gap: 10,
+        }}
+      >
+        <div style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 13, fontWeight: 700, color: "#550000" }}>
+          <Sparkles size={16} color="#ddc192" />
+          <span>Tampilan Jurnal</span>
+        </div>
+
+        <div style={{ display: "flex", gap: 6, background: "#fdf8f0", padding: 4, borderRadius: 12, border: "1px solid #ebdcc3" }}>
+          <button
+            type="button"
+            onClick={() => setViewMode("card")}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 6,
+              padding: "6px 14px",
+              borderRadius: 8,
+              fontSize: 12,
+              fontWeight: 700,
+              border: "none",
+              cursor: "pointer",
+              background: viewMode === "card" ? "#550000" : "transparent",
+              color: viewMode === "card" ? "#ffffff" : "#64748b",
+              transition: "all 0.2s",
+            }}
+          >
+            <LayoutGrid size={14} />
+            <span>Kartu Modern</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setViewMode("table")}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 6,
+              padding: "6px 14px",
+              borderRadius: 8,
+              fontSize: 12,
+              fontWeight: 700,
+              border: "none",
+              cursor: "pointer",
+              background: viewMode === "table" ? "#550000" : "transparent",
+              color: viewMode === "table" ? "#ffffff" : "#64748b",
+              transition: "all 0.2s",
+            }}
+          >
+            <TableIcon size={14} />
+            <span>Tabel Lengkap</span>
+          </button>
+        </div>
       </div>
 
-      {/* Table Jurnal Mengajar with Horizontal Scroll & Sticky Frozen Columns */}
-      <div
-        className="card p-0 overflow-hidden shadow-sm border border-slate-100 rounded-2xl bg-white"
-        style={{ marginBottom: 24 }}
-      >
-        <div className="w-full overflow-x-auto">
-          <table className="w-full text-left border-collapse" style={{ minWidth: 780 }}>
-            <thead>
-              <tr style={{ background: "#f8fafc", borderBottom: "1px solid #e2e8f0" }}>
-                {/* Frozen Column 1: Tanggal */}
-                <th
+      {/* ── EMPTY STATE ── */}
+      {filtered.length === 0 ? (
+        <div
+          style={{
+            background: "#ffffff",
+            borderRadius: 20,
+            border: "1px solid #ebdcc3",
+            textAlign: "center",
+            padding: "54px 20px",
+          }}
+        >
+          <BookOpen
+            size={44}
+            style={{ margin: "0 auto 12px", color: "#ddc192" }}
+          />
+          <div style={{ fontWeight: 800, fontSize: 16, color: "#1a1a1a" }}>
+            Belum ada jurnal yang sesuai dengan filter
+          </div>
+          <div style={{ fontSize: 13, marginTop: 4, color: "#64748b" }}>
+            Coba ubah filter tanggal, jenjang, kelas, atau guru pengampu di atas.
+          </div>
+        </div>
+      ) : viewMode === "card" ? (
+        /* ── CARD VIEW (Ultra Responsive for Mobile & Desktop) ── */
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))",
+            gap: 16,
+          }}
+        >
+          {filtered.map((j) => {
+            const jenjang = getJenjangFromKelas(j.kelas, j.kelas_jenjang);
+
+            return (
+              <div
+                key={j.id}
+                style={{
+                  background: "#ffffff",
+                  borderRadius: 20,
+                  border: "1px solid #ebdcc3",
+                  padding: "18px 20px",
+                  boxShadow: "0 4px 16px rgba(85,0,0,0.03)",
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "space-between",
+                  gap: 14,
+                  transition: "transform 0.2s, box-shadow 0.2s",
+                }}
+              >
+                {/* Header Card: Tanggal, Jenjang & Kelas */}
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 10 }}>
+                  <div>
+                    <div style={{ display: "inline-flex", alignItems: "center", gap: 6, background: "#fdf5f5", color: "#550000", padding: "4px 10px", borderRadius: 8, fontSize: 12, fontWeight: 800, border: "1px solid #fae4e4" }}>
+                      <Calendar size={12} color="#550000" />
+                      {formatTanggal(j.tanggal)}
+                    </div>
+                  </div>
+
+                  <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                    <span
+                      style={{
+                        fontSize: 11,
+                        fontWeight: 800,
+                        padding: "3px 8px",
+                        borderRadius: 8,
+                        background: jenjang === "MTs" ? "#fdf5f5" : "#fdf8f0",
+                        color: jenjang === "MTs" ? "#550000" : "#b89758",
+                        border: "1px solid #ebdcc3",
+                      }}
+                    >
+                      {jenjang}
+                    </span>
+                    <span
+                      style={{
+                        fontSize: 11,
+                        fontWeight: 800,
+                        padding: "3px 8px",
+                        borderRadius: 8,
+                        background: "#550000",
+                        color: "#ffffff",
+                      }}
+                    >
+                      {j.kelas}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Mapel & Guru */}
+                <div>
+                  <h4 style={{ margin: "0 0 4px 0", fontSize: 16, fontWeight: 800, color: "#1a1a1a", lineHeight: 1.3 }}>
+                    {j.mapel}
+                  </h4>
+                  <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 13, color: "#64748b", fontWeight: 600 }}>
+                    <User size={14} color="#b89758" />
+                    <span>{j.asatidz}</span>
+                  </div>
+                </div>
+
+                {/* Materi Snippet */}
+                <div
                   style={{
-                    position: "sticky",
-                    left: 0,
-                    zIndex: 20,
-                    background: "#f8fafc",
-                    padding: "14px 16px",
-                    fontWeight: 700,
+                    background: "#fdf8f0",
+                    border: "1px solid #f6ecd9",
+                    padding: "10px 12px",
+                    borderRadius: 12,
                     fontSize: 12,
-                    textTransform: "uppercase",
-                    letterSpacing: "0.04em",
-                    color: "var(--primary)",
-                    boxShadow: "4px 0 8px -2px rgba(0,0,0,0.06)",
-                    minWidth: 125,
-                    maxWidth: 135,
+                    color: "#475569",
+                    lineHeight: 1.4,
                   }}
                 >
-                  Tanggal
-                </th>
-                <th style={{ padding: "14px 16px", fontWeight: 700, fontSize: 12, textTransform: "uppercase", letterSpacing: "0.04em", color: "#64748b", minWidth: 170 }}>
-                  Guru Pengampu
-                </th>
-                <th style={{ padding: "14px 16px", fontWeight: 700, fontSize: 12, textTransform: "uppercase", letterSpacing: "0.04em", color: "#64748b", minWidth: 160 }}>
-                  Mata Pelajaran
-                </th>
-                <th style={{ padding: "14px 16px", fontWeight: 700, fontSize: 12, textTransform: "uppercase", letterSpacing: "0.04em", color: "#64748b", textAlign: "center", minWidth: 130 }}>
-                  Jenjang & Kelas
-                </th>
-                <th style={{ padding: "14px 16px", fontWeight: 700, fontSize: 12, textTransform: "uppercase", letterSpacing: "0.04em", color: "#64748b", textAlign: "center", width: 110 }}>
-                  Durasi & Jam
-                </th>
-                <th style={{ padding: "14px 16px", fontWeight: 700, fontSize: 12, textTransform: "uppercase", letterSpacing: "0.04em", color: "#64748b", minWidth: 220 }}>
-                  Topik Jurnal & Materi
-                </th>
-                <th style={{ padding: "14px 16px", fontWeight: 700, fontSize: 12, textTransform: "uppercase", letterSpacing: "0.04em", color: "#64748b", textAlign: "center", minWidth: 120 }}>
-                  Aksi
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {filtered.length === 0 ? (
-                <tr>
-                  <td
-                    colSpan={7}
+                  <div style={{ fontWeight: 700, color: "#550000", marginBottom: 2 }}>Materi:</div>
+                  <div style={{ overflow: "hidden", textOverflow: "ellipsis", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical" }}>
+                    {j.materi}
+                  </div>
+                </div>
+
+                {/* Footer Card: Jam & Detail Button */}
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", paddingTop: 8, borderTop: "1px solid #f5ede1" }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 12, fontWeight: 700, color: "#550000" }}>
+                    <Clock size={14} color="#b89758" />
+                    <span>{j.jam_ke !== "-" ? `Jam ke-${j.jam_ke}` : "Reguler"}</span>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={() => setSelectedJurnal(j)}
                     style={{
-                      textAlign: "center",
-                      padding: "54px 16px",
-                      color: "var(--text-muted)",
+                      display: "inline-flex",
+                      alignItems: "center",
+                      gap: 6,
+                      background: "#550000",
+                      color: "#ffffff",
+                      border: "none",
+                      padding: "8px 16px",
+                      borderRadius: 10,
+                      fontSize: 12,
+                      fontWeight: 800,
+                      cursor: "pointer",
+                      boxShadow: "0 2px 8px rgba(85,0,0,0.15)",
                     }}
                   >
-                    <BookOpen
-                      size={40}
-                      style={{ marginBottom: 12, opacity: 0.3, display: "block", margin: "0 auto 12px" }}
-                    />
-                    <div style={{ fontWeight: 700, fontSize: 15, color: "#475569" }}>Belum ada jurnal yang sesuai dengan filter</div>
-                    <div style={{ fontSize: 13, marginTop: 4, color: "#94a3b8" }}>Coba ubah filter tanggal, jenjang, kelas, atau guru pengampu di atas.</div>
-                  </td>
+                    <Eye size={13} color="#ddc192" />
+                    <span>Lihat Detail</span>
+                    <ChevronRight size={13} />
+                  </button>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      ) : (
+        /* ── TABLE VIEW (Smooth Horizontally Scrollable) ── */
+        <div
+          style={{
+            background: "#ffffff",
+            borderRadius: 20,
+            border: "1px solid #ebdcc3",
+            boxShadow: "0 4px 16px rgba(85,0,0,0.03)",
+            overflow: "hidden",
+          }}
+        >
+          {/* Touch-Friendly Table Wrapper */}
+          <div
+            style={{
+              width: "100%",
+              overflowX: "auto",
+              WebkitOverflowScrolling: "touch",
+              touchAction: "pan-x pan-y",
+            }}
+          >
+            <table style={{ width: "100%", minWidth: 780, borderCollapse: "collapse", fontSize: 13 }}>
+              <thead>
+                <tr style={{ background: "#fdf8f0", borderBottom: "1px solid #ebdcc3" }}>
+                  <th style={{ padding: "14px 18px", fontWeight: 800, fontSize: 12, textTransform: "uppercase", letterSpacing: "0.04em", color: "#550000", textAlign: "left", width: 140 }}>
+                    Tanggal
+                  </th>
+                  <th style={{ padding: "14px 16px", fontWeight: 800, fontSize: 12, textTransform: "uppercase", letterSpacing: "0.04em", color: "#550000", textAlign: "left", minWidth: 170 }}>
+                    Guru Pengampu
+                  </th>
+                  <th style={{ padding: "14px 16px", fontWeight: 800, fontSize: 12, textTransform: "uppercase", letterSpacing: "0.04em", color: "#550000", textAlign: "left", minWidth: 160 }}>
+                    Mata Pelajaran
+                  </th>
+                  <th style={{ padding: "14px 16px", fontWeight: 800, fontSize: 12, textTransform: "uppercase", letterSpacing: "0.04em", color: "#550000", textAlign: "center", minWidth: 130 }}>
+                    Jenjang & Kelas
+                  </th>
+                  <th style={{ padding: "14px 16px", fontWeight: 800, fontSize: 12, textTransform: "uppercase", letterSpacing: "0.04em", color: "#550000", textAlign: "center", width: 110 }}>
+                    Jam
+                  </th>
+                  <th style={{ padding: "14px 16px", fontWeight: 800, fontSize: 12, textTransform: "uppercase", letterSpacing: "0.04em", color: "#550000", textAlign: "left", minWidth: 200 }}>
+                    Materi
+                  </th>
+                  <th style={{ padding: "14px 16px", fontWeight: 800, fontSize: 12, textTransform: "uppercase", letterSpacing: "0.04em", color: "#550000", textAlign: "center", width: 110 }}>
+                    Aksi
+                  </th>
                 </tr>
-              ) : (
-                filtered.map((j) => {
+              </thead>
+              <tbody>
+                {filtered.map((j, idx) => {
                   const jenjang = getJenjangFromKelas(j.kelas, j.kelas_jenjang);
+                  const bgRow = idx % 2 === 0 ? "#ffffff" : "#fdfcf9";
 
                   return (
                     <tr
                       key={j.id}
-                      className="hover:bg-slate-50/70 transition-colors border-b border-slate-100 last:border-0"
+                      style={{
+                        background: bgRow,
+                        borderBottom: "1px solid #f5ede1",
+                        transition: "background 0.2s",
+                      }}
                     >
-                      {/* Frozen Column: Tanggal */}
-                      <td
-                        style={{
-                          position: "sticky",
-                          left: 0,
-                          zIndex: 10,
-                          background: "#ffffff",
-                          padding: "14px 16px",
-                          boxShadow: "4px 0 8px -2px rgba(0,0,0,0.06)",
-                        }}
-                      >
-                        <span
-                          style={{
-                            fontWeight: 700,
-                            fontSize: 13,
-                            color: "var(--primary)",
-                            display: "block",
-                            lineHeight: 1.3,
-                          }}
-                        >
-                          {formatTanggal(j.tanggal)}
-                        </span>
+                      {/* Tanggal */}
+                      <td style={{ padding: "14px 18px", fontWeight: 800, color: "#550000", fontSize: 13 }}>
+                        {formatTanggal(j.tanggal)}
                       </td>
 
                       {/* Guru Pengampu */}
-                      <td style={{ padding: "14px 16px", fontWeight: 700, color: "var(--text-main)", fontSize: 13 }}>
+                      <td style={{ padding: "14px 16px", fontWeight: 700, color: "#1a1a1a", fontSize: 13 }}>
                         {j.asatidz}
                       </td>
 
                       {/* Mata Pelajaran */}
-                      <td style={{ padding: "14px 16px" }}>
-                        <span style={{ fontWeight: 600, color: "#1e293b", fontSize: 13 }}>{j.mapel}</span>
+                      <td style={{ padding: "14px 16px", fontWeight: 700, color: "#1a1a1a" }}>
+                        {j.mapel}
                       </td>
 
                       {/* Jenjang & Kelas */}
@@ -419,19 +627,21 @@ export default function JurnalClientFilter({
                               fontWeight: 800,
                               padding: "2px 7px",
                               borderRadius: 6,
-                              background: jenjang === "MTs" ? "#e0f2fe" : jenjang === "IL" ? "#fef3c7" : "#dcfce7",
-                              color: jenjang === "MTs" ? "#0369a1" : jenjang === "IL" ? "#b45309" : "#15803d",
+                              background: jenjang === "MTs" ? "#fdf5f5" : "#fdf8f0",
+                              color: jenjang === "MTs" ? "#550000" : "#b89758",
+                              border: "1px solid #ebdcc3",
                             }}
                           >
                             {jenjang}
                           </span>
                           <span
-                            className="badge"
                             style={{
-                              background: "var(--secondary-pale)",
-                              color: "var(--primary)",
-                              border: "1px solid var(--secondary)",
-                              fontWeight: 700,
+                              fontSize: 11,
+                              fontWeight: 800,
+                              padding: "2px 7px",
+                              borderRadius: 6,
+                              background: "#550000",
+                              color: "#ffffff",
                             }}
                           >
                             {j.kelas}
@@ -439,46 +649,22 @@ export default function JurnalClientFilter({
                         </div>
                       </td>
 
-                      {/* Durasi & Jam */}
+                      {/* Jam */}
                       <td style={{ padding: "14px 16px", textAlign: "center" }}>
-                        {j.jam_ke !== "-" ? (
-                          <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "5px" }}>
-                            <span style={{ fontSize: 11, fontWeight: 700, color: "var(--primary)", background: "var(--primary-pale)", padding: "2px 6px", borderRadius: 4 }}>
-                              {j.jam_ke.split(",").length} Jam
-                            </span>
-                            <div style={{ display: "flex", flexWrap: "wrap", gap: "3px", justifyContent: "center" }}>
-                              {j.jam_ke.split(",").map((jam, idx) => (
-                                <span
-                                  key={idx}
-                                  style={{
-                                    background: jam.trim() === "Khusus" ? "#fef2f2" : "#f1f5f9",
-                                    border: jam.trim() === "Khusus" ? "1px solid #fecaca" : "1px solid #e2e8f0",
-                                    padding: jam.trim() === "Khusus" ? "1px 5px" : "1px 6px",
-                                    borderRadius: 5,
-                                    fontSize: 11,
-                                    fontWeight: 700,
-                                    color: jam.trim() === "Khusus" ? "#ef4444" : "#475569",
-                                  }}
-                                >
-                                  {jam.trim()}
-                                </span>
-                              ))}
-                            </div>
-                          </div>
-                        ) : (
-                          <span style={{ color: "var(--text-muted)" }}>—</span>
-                        )}
+                        <span style={{ fontSize: 11, fontWeight: 700, color: "#550000", background: "#fdf5f5", padding: "3px 8px", borderRadius: 6, border: "1px solid #ebdcc3" }}>
+                          {j.jam_ke}
+                        </span>
                       </td>
 
                       {/* Materi */}
                       <td
                         style={{
                           padding: "14px 16px",
-                          maxWidth: 240,
+                          maxWidth: 220,
                           overflow: "hidden",
                           textOverflow: "ellipsis",
                           whiteSpace: "nowrap",
-                          color: "#334155",
+                          color: "#475569",
                           fontSize: 13,
                         }}
                         title={j.materi}
@@ -486,25 +672,38 @@ export default function JurnalClientFilter({
                         {j.materi}
                       </td>
 
-                      {/* Aksi: Buka Detail Modal */}
+                      {/* Aksi */}
                       <td style={{ padding: "14px 16px", textAlign: "center" }}>
                         <button
+                          type="button"
                           onClick={() => setSelectedJurnal(j)}
-                          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-bold text-xs bg-slate-100 hover:bg-slate-200 text-slate-800 transition-all border border-slate-200 shadow-sm hover:shadow"
-                          title="Buka Detail Lengkap Jurnal"
+                          style={{
+                            display: "inline-flex",
+                            alignItems: "center",
+                            gap: 5,
+                            padding: "6px 12px",
+                            borderRadius: 10,
+                            fontWeight: 800,
+                            fontSize: 12,
+                            background: "#550000",
+                            color: "#ffffff",
+                            border: "none",
+                            cursor: "pointer",
+                            boxShadow: "0 2px 6px rgba(85,0,0,0.12)",
+                          }}
                         >
-                          <Eye size={13} className="text-primary" />
+                          <Eye size={12} color="#ddc192" />
                           <span>Detail</span>
                         </button>
                       </td>
                     </tr>
                   );
-                })
-              )}
-            </tbody>
-          </table>
+                })}
+              </tbody>
+            </table>
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Ultra-Premium Jurnal Detail Modal */}
       <JurnalDetailModal

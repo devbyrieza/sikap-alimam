@@ -4,6 +4,22 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Swal from 'sweetalert2';
 import type { PresensiItem } from './page';
+import {
+  UserCheck,
+  Calendar,
+  Key,
+  Copy,
+  Plus,
+  BarChart3,
+  MapPin,
+  CheckCircle2,
+  Clock,
+  AlertCircle,
+  XCircle,
+  Users,
+  RefreshCw,
+  X
+} from 'lucide-react';
 
 interface Props {
   presensiHariIni: PresensiItem[];
@@ -65,8 +81,8 @@ export default function PresensiAsatidz({
       Swal.fire({
         icon: 'success',
         title: 'Token Berhasil Dibuat!',
-        html: `Token: <code style="font-weight:700;color:#7c1010">${data.token}</code>`,
-        confirmButtonColor: '#7c1010',
+        html: `Token: <code style="font-weight:700;color:#550000;background:#fdf8f0;padding:4px 8px;border-radius:6px;border:1px solid #ebdcc3">${data.token}</code>`,
+        confirmButtonColor: '#550000',
       });
       router.refresh();
     } catch (err) {
@@ -74,7 +90,7 @@ export default function PresensiAsatidz({
         icon: 'error',
         title: 'Gagal',
         text: (err as Error).message,
-        confirmButtonColor: '#7c1010',
+        confirmButtonColor: '#550000',
       });
     } finally {
       setGenerating(false);
@@ -99,8 +115,8 @@ export default function PresensiAsatidz({
       Swal.fire({
         icon: 'warning',
         title: 'Data Tidak Lengkap',
-        text: 'Pilih asatidz dan status.',
-        confirmButtonColor: '#7c1010',
+        text: 'Pilih guru dan status.',
+        confirmButtonColor: '#550000',
       });
       return;
     }
@@ -127,7 +143,7 @@ export default function PresensiAsatidz({
       Swal.fire({
         icon: 'success',
         title: 'Berhasil Disimpan!',
-        confirmButtonColor: '#7c1010',
+        confirmButtonColor: '#550000',
       });
       setShowModal(false);
       setManualForm({ asatidz_id: '', status: 'hadir', keterangan: '', jam_masuk: '' });
@@ -137,7 +153,7 @@ export default function PresensiAsatidz({
         icon: 'error',
         title: 'Gagal',
         text: (err as Error).message,
-        confirmButtonColor: '#7c1010',
+        confirmButtonColor: '#550000',
       });
     } finally {
       setSaving(false);
@@ -153,137 +169,156 @@ export default function PresensiAsatidz({
 
   return (
     <>
-      {/* Page Header */}
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", background: "linear-gradient(135deg, #0f172a 0%, #1e293b 60%, #10b981 100%)", borderRadius: "24px", padding: "32px 36px", boxShadow: "0 10px 25px -5px rgba(16, 185, 129, 0.4), 0 8px 10px -6px rgba(16, 185, 129, 0.1)", marginBottom: "24px" }}>
-        <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-          <h1 style={{ color: "white", fontSize: "28px", fontWeight: 700, margin: 0 }}>Presensi Guru</h1>
-          <p style={{ color: "#cbd5e1", fontSize: "15px", margin: 0 }}>Rekap kehadiran · {todayStr}</p>
+      {/* ── Al-Imam Platinum Hero Banner ── */}
+      <div className="hero-banner">
+        <div style={{ position:"absolute", top:0, right:0, width:256, height:256, background:"rgba(221, 193, 146, 0.15)", borderRadius:"50%", filter:"blur(40px)", transform:"translate(30%, -50%)", pointerEvents:"none" }}></div>
+        <div style={{ position:"absolute", bottom:0, left:0, width:192, height:192, background:"rgba(221, 193, 146, 0.1)", borderRadius:"50%", filter:"blur(40px)", transform:"translate(-25%, 50%)", pointerEvents:"none" }}></div>
+
+        <div style={{ position: "relative", zIndex: 1, flex: 1, minWidth: 0 }}>
+          <div style={{ display:"flex", alignItems:"center", gap:6, background:"rgba(221, 193, 146, 0.18)", padding:"5px 12px", borderRadius:20, border:"1px solid rgba(221, 193, 146, 0.4)", width:"fit-content", marginBottom:8 }}>
+            <div style={{ width:7, height:7, borderRadius:"50%", background:"#ddc192", boxShadow:"0 0 6px rgba(221, 193, 146, 0.9)" }}></div>
+            <span style={{ fontSize:11, fontWeight:800, letterSpacing:"0.5px", color:"#fdf8f0", textTransform:"uppercase" }}>Guru &amp; Asatidz Attendance</span>
+          </div>
+          <h1 style={{ fontSize: "clamp(20px, 4vw, 30px)", fontWeight: 800, margin: 0, display: "flex", alignItems: "center", gap: "10px", color: "white" }}>
+            <UserCheck size={26} color="#ddc192" /> Presensi Asatidz &amp; Guru
+          </h1>
+          <p style={{ marginTop: "6px", color: "rgba(253, 248, 240, 0.9)", fontSize: "14px", margin: "6px 0 0 0" }}>
+            Pantau dan kelola kehadiran harian dewan guru · {todayStr}
+          </p>
         </div>
-        <div style={{ display: "flex", gap: "12px", alignItems: "center", flexWrap: "wrap" }}>
+
+        <div style={{ display: "flex", gap: "10px", alignItems: "center", flexWrap: "wrap", position: "relative", zIndex: 2 }}>
           <button
-            style={{ background: "rgba(255,255,255,0.1)", color: "white", padding: "10px 18px", borderRadius: "14px", border: "1px solid rgba(255,255,255,0.2)", fontWeight: 600, display: "inline-flex", alignItems: "center", gap: "8px", textDecoration: "none" }}
+            style={{ background: "rgba(253,248,240,0.15)", color: "#fdf8f0", padding: "10px 18px", borderRadius: "14px", border: "1px solid rgba(221,193,146,0.35)", fontWeight: 700, display: "inline-flex", alignItems: "center", gap: "8px", cursor: "pointer" }}
             onClick={() => router.push('/presensi/asatidz/rekap')}
           >
-            <svg width="16" height="16" fill="none" viewBox="0 0 24 24">
-              <rect x="3" y="4" width="18" height="18" rx="2" stroke="currentColor" strokeWidth="2" />
-              <path stroke="currentColor" strokeWidth="2" strokeLinecap="round" d="M3 9h18M9 4v5M15 4v5" />
-            </svg>
+            <BarChart3 size={16} color="#ddc192" />
             Rekap Bulanan
           </button>
-          <button style={{ background: "rgba(255,255,255,0.1)", color: "white", padding: "10px 18px", borderRadius: "14px", border: "1px solid rgba(255,255,255,0.2)", fontWeight: 600, display: "inline-flex", alignItems: "center", gap: "8px", textDecoration: "none" }} onClick={() => setShowModal(true)}>
-            <svg width="16" height="16" fill="none" viewBox="0 0 24 24">
-              <path stroke="currentColor" strokeWidth="2" strokeLinecap="round" d="M12 5v14M5 12h14" />
-            </svg>
+          <button
+            style={{ background: "rgba(253,248,240,0.15)", color: "#fdf8f0", padding: "10px 18px", borderRadius: "14px", border: "1px solid rgba(221,193,146,0.35)", fontWeight: 700, display: "inline-flex", alignItems: "center", gap: "8px", cursor: "pointer" }}
+            onClick={() => setShowModal(true)}
+          >
+            <Plus size={16} color="#ddc192" />
             Input Manual
           </button>
           <button
-            style={{ background: "#ffffff", color: "#10b981", padding: "10px 18px", borderRadius: "14px", border: "none", fontWeight: 700, display: "inline-flex", alignItems: "center", gap: "8px" }}
+            style={{ background: "#ddc192", color: "#550000", padding: "10px 18px", borderRadius: "14px", border: "none", fontWeight: 800, display: "inline-flex", alignItems: "center", gap: "8px", cursor: "pointer", boxShadow: "0 2px 8px rgba(0,0,0,0.15)" }}
             onClick={handleGenerateToken}
             disabled={generating}
           >
             {generating ? (
-              <span
-                className="spinner"
-                style={{ borderTopColor: '#5a0a0a', borderColor: 'rgba(90,10,10,0.2)' }}
-              />
+              <RefreshCw size={16} className="animate-spin" />
             ) : (
-              <svg width="16" height="16" fill="none" viewBox="0 0 24 24">
-                <path stroke="currentColor" strokeWidth="2" d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83" />
-              </svg>
+              <Key size={16} />
             )}
             Generate Token
           </button>
         </div>
       </div>
 
-      <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
+      <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
         {/* Link Absen Banner */}
-        {token && (
+        {token ? (
           <div
             style={{
-              background: 'linear-gradient(135deg, #fef9ec, #fff8e7)',
-              border: '1px solid rgba(201,152,58,0.35)',
-              borderRadius: "24px", padding: "28px", boxShadow: "0 4px 20px -2px rgba(0, 0, 0, 0.05)"
+              background: "white",
+              border: "1px solid #ebdcc3",
+              borderRadius: "20px",
+              padding: "22px 24px",
+              boxShadow: "0 2px 12px rgba(85,0,0,0.03)",
             }}
           >
             <div
               style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                flexWrap: 'wrap',
-                gap: 12,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                flexWrap: "wrap",
+                gap: 16,
               }}
             >
               <div>
                 <div
                   style={{
                     fontSize: 11,
-                    fontWeight: 700,
-                    color: '#c9983a',
-                    textTransform: 'uppercase',
-                    letterSpacing: '0.06em',
+                    fontWeight: 800,
+                    color: "#550000",
+                    textTransform: "uppercase",
+                    letterSpacing: "0.06em",
                     marginBottom: 6,
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 6
                   }}
                 >
-                   Link Absensi Hari Ini
+                  <Key size={14} color="#ddc192" />
+                  Link &amp; Token Absensi Hari Ini
                 </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
                   <code
                     style={{
-                      fontSize: 15,
+                      fontSize: 16,
                       fontWeight: 800,
-                      color: '#7c1010',
-                      background: 'rgba(124,16,16,0.08)',
-                      padding: '5px 14px',
-                      borderRadius: 8,
+                      color: "#550000",
+                      background: "#fdf8f0",
+                      padding: "6px 14px",
+                      borderRadius: 10,
+                      border: "1px solid #ebdcc3",
                     }}
                   >
                     TOKEN: {token.token}
                   </code>
-                  <span style={{ fontSize: 12, color: '#9ca3af' }}>
-                    Expired tengah malam
+                  <span style={{ fontSize: 12, color: "#64748b", fontWeight: 600 }}>
+                    Expired tengah malam (23:59 WIB)
                   </span>
                 </div>
                 {absenLink && (
                   <div
                     style={{
                       fontSize: 12,
-                      color: '#9ca3af',
-                      marginTop: 4,
-                      wordBreak: 'break-all',
+                      color: "#64748b",
+                      marginTop: 6,
+                      wordBreak: "break-all",
+                      fontWeight: 500,
                     }}
                   >
                     {absenLink}
                   </div>
                 )}
               </div>
-              <button style={{ background: "#c9983a", color: "white", padding: "10px 18px", borderRadius: "14px", border: "none", fontWeight: 600, cursor: "pointer", display: "inline-flex", alignItems: "center", gap: "8px" }} onClick={handleCopyLink}>
-                <svg width="14" height="14" fill="none" viewBox="0 0 24 24">
-                  <rect x="9" y="9" width="13" height="13" rx="2" stroke="white" strokeWidth="2" />
-                  <path
-                    d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"
-                    stroke="white"
-                    strokeWidth="2"
-                  />
-                </svg>
+              <button
+                style={{
+                  background: "#550000",
+                  color: "#fdf8f0",
+                  padding: "10px 18px",
+                  borderRadius: "14px",
+                  border: "none",
+                  fontWeight: 700,
+                  cursor: "pointer",
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: "8px",
+                }}
+                onClick={handleCopyLink}
+              >
+                <Copy size={15} color="#ddc192" />
                 Salin Link
               </button>
             </div>
           </div>
-        )}
-
-        {!token && (
+        ) : (
           <div
             style={{
-              background: '#fef2f2',
-              border: '1px solid #fecaca',
-              textAlign: 'center',
-              borderRadius: "24px", padding: "24px", boxShadow: "0 4px 20px -2px rgba(0, 0, 0, 0.05)"
+              background: "#fff1f2",
+              border: "1px solid #fecdd3",
+              textAlign: "center",
+              borderRadius: "20px",
+              padding: "20px 24px",
             }}
           >
-            <p style={{ color: '#b91c1c', fontSize: 14, fontWeight: 600 }}>
-              Belum ada token untuk hari ini. Klik <strong>Generate Token</strong> untuk membuat link absensi.
+            <p style={{ color: "#9f1239", fontSize: 14, fontWeight: 700, margin: 0 }}>
+              Belum ada token untuk hari ini. Klik tombol <strong>Generate Token</strong> di atas untuk mengaktifkan link absensi mandiri asatidz.
             </p>
           </div>
         )}
@@ -291,33 +326,33 @@ export default function PresensiAsatidz({
         {/* Statistik */}
         <div
           style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))',
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fit, minmax(130px, 1fr))",
             gap: 12,
           }}
         >
           {([
-            { label: 'Hadir', value: stats.hadir, color: '#16a34a', bg: '#f0fdf4', border: '#86efac' },
-            { label: 'Telat', value: stats.telat, color: '#ea580c', bg: '#fff7ed', border: '#fdba74' },
-            { label: 'Sakit', value: stats.sakit, color: '#d97706', bg: '#fef9c3', border: '#fde047' },
-            { label: 'Izin', value: stats.izin, color: '#2563eb', bg: '#dbeafe', border: '#93c5fd' },
-            { label: 'Alpha', value: stats.alpha, color: '#dc2626', bg: '#fee2e2', border: '#fca5a5' },
-            { label: 'Belum Absen', value: stats.belum, color: '#6b7280', bg: '#f3f4f6', border: '#d1d5db' },
+            { label: "Hadir", value: stats.hadir, color: "#15803d", bg: "#f0fdf4", border: "#bbf7d0" },
+            { label: "Telat", value: stats.telat, color: "#c2410c", bg: "#fff7ed", border: "#fed7aa" },
+            { label: "Sakit", value: stats.sakit, color: "#a16207", bg: "#fefce8", border: "#fef08a" },
+            { label: "Izin", value: stats.izin, color: "#1d4ed8", bg: "#eff6ff", border: "#bfdbfe" },
+            { label: "Alpha", value: stats.alpha, color: "#b91c1c", bg: "#fef2f2", border: "#fecaca" },
+            { label: "Belum Absen", value: stats.belum, color: "#550000", bg: "#fdf8f0", border: "#ebdcc3" },
           ] as const).map((s) => (
             <div
               key={s.label}
               style={{
-                padding: '24px',
+                padding: "16px 18px",
                 background: s.bg,
                 border: `1px solid ${s.border}`,
-                textAlign: 'center',
-                borderRadius: "24px",
+                textAlign: "center",
+                borderRadius: "16px",
               }}
             >
-              <div style={{ fontSize: 30, fontWeight: 800, color: s.color, lineHeight: 1 }}>
+              <div style={{ fontSize: 26, fontWeight: 800, color: s.color, lineHeight: 1 }}>
                 {s.value}
               </div>
-              <div style={{ fontSize: 12, fontWeight: 700, color: s.color, marginTop: 6 }}>
+              <div style={{ fontSize: 12, fontWeight: 700, color: s.color, marginTop: 4 }}>
                 {s.label}
               </div>
             </div>
@@ -325,43 +360,45 @@ export default function PresensiAsatidz({
         </div>
 
         {/* Tabel sudah absen */}
-        <div style={{ background: "white", borderRadius: "24px", padding: "0", boxShadow: "0 4px 20px -2px rgba(0, 0, 0, 0.05)", display: "flex", flexDirection: "column", overflow: "hidden" }}>
+        <div style={{ background: "white", borderRadius: "20px", boxShadow: "0 2px 12px rgba(85,0,0,0.03)", border: "1px solid #ebdcc3", overflow: "hidden" }}>
           <div
             style={{
-              padding: '18px 24px',
-              borderBottom: '1px solid #e5e2db',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
+              padding: "18px 24px",
+              borderBottom: "1px solid #f5ede1",
+              background: "#fdfcf9",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
             }}
           >
-            <div className="card-title" style={{ marginBottom: 0 }}>
-              Sudah Absen
+            <div style={{ fontSize: "15px", fontWeight: "800", color: "#550000", display: "flex", alignItems: "center", gap: 8 }}>
+              <Users size={18} color="#ddc192" />
+              Sudah Absen Hari Ini
               <span
                 style={{
-                  marginLeft: 8,
-                  background: '#f0fdf4',
-                  color: '#16a34a',
+                  background: "#f0fdf4",
+                  color: "#15803d",
                   borderRadius: 99,
-                  padding: '2px 10px',
-                  fontSize: 13,
-                  fontWeight: 700,
+                  padding: "2px 10px",
+                  fontSize: 12,
+                  fontWeight: 800,
+                  border: "1px solid #bbf7d0",
                 }}
               >
                 {presensiHariIni.length}
               </span>
             </div>
           </div>
-          <div className="table-wrap" style={{ border: 'none', borderRadius: 0 }}>
-            <table>
+          <div style={{ overflowX: "auto" }}>
+            <table style={{ fontSize: 13, width: "100%", borderCollapse: "collapse" }}>
               <thead>
-                <tr>
-                  <th>#</th>
-                  <th>Nama</th>
-                  <th>Jam Masuk</th>
-                  <th>Status</th>
-                  <th>Metode</th>
-                  <th>Lokasi GPS</th>
+                <tr style={{ background: "#fdf8f0", borderBottom: "1px solid #ebdcc3" }}>
+                  <th style={{ padding: "12px 16px", textAlign: "left", color: "#550000", fontWeight: 800, width: 50 }}>#</th>
+                  <th style={{ padding: "12px 16px", textAlign: "left", color: "#550000", fontWeight: 800 }}>Nama Guru</th>
+                  <th style={{ padding: "12px 16px", textAlign: "left", color: "#550000", fontWeight: 800, width: 120 }}>Jam Masuk</th>
+                  <th style={{ padding: "12px 16px", textAlign: "left", color: "#550000", fontWeight: 800, width: 120 }}>Status</th>
+                  <th style={{ padding: "12px 16px", textAlign: "left", color: "#550000", fontWeight: 800, width: 120 }}>Metode</th>
+                  <th style={{ padding: "12px 16px", textAlign: "left", color: "#550000", fontWeight: 800, width: 140 }}>Lokasi GPS</th>
                 </tr>
               </thead>
               <tbody>
@@ -369,61 +406,76 @@ export default function PresensiAsatidz({
                   <tr>
                     <td
                       colSpan={6}
-                      style={{ textAlign: 'center', padding: '32px', color: '#9ca3af' }}
+                      style={{ textAlign: "center", padding: "40px 20px", color: "#64748b" }}
                     >
-                      Belum ada yang absen hari ini
+                      Belum ada asatidz yang absen hari ini.
                     </td>
                   </tr>
                 ) : (
                   presensiHariIni.map((p, i) => (
-                    <tr key={p.id} style={{ transition: "background-color 0.2s" }} onMouseEnter={(e) => e.currentTarget.style.backgroundColor = "#f0fdf4"} onMouseLeave={(e) => e.currentTarget.style.backgroundColor = "transparent"}>
-                      <td style={{ color: '#9ca3af', fontWeight: 600, width: 48, padding: "16px 20px", borderBottom: "1px solid #f1f5f9" }}>{i + 1}</td>
-                      <td style={{ padding: "16px 20px", borderBottom: "1px solid #f1f5f9" }}>
-                        <div style={{ fontWeight: 700 }}>{p?.pegawai?.nama_lengkap}</div>
+                    <tr
+                      key={p.id}
+                      style={{
+                        borderBottom: "1px solid #f5ede1",
+                        background: i % 2 === 0 ? "white" : "#fdfcf9",
+                      }}
+                    >
+                      <td style={{ padding: "14px 16px", color: "#550000", fontWeight: 700 }}>{i + 1}</td>
+                      <td style={{ padding: "14px 16px" }}>
+                        <div style={{ fontWeight: 700, color: "#1a1a1a" }}>{p?.pegawai?.nama_lengkap}</div>
                         {p.pegawai.jabatan && (
-                          <div style={{ fontSize: 12, color: '#9ca3af' }}>{p.pegawai.jabatan}</div>
+                          <div style={{ fontSize: 12, color: "#64748b" }}>{p.pegawai.jabatan}</div>
                         )}
                       </td>
-                      <td style={{ fontWeight: 700, padding: "16px 20px", borderBottom: "1px solid #f1f5f9" }}>{formatJam(p.jam_masuk)}</td>
-                      <td style={{ padding: "16px 20px", borderBottom: "1px solid #f1f5f9" }}>
-                        <span className={`badge badge-${p.status}`}>{p.status}</span>
-                      </td>
-                      <td style={{ padding: "16px 20px", borderBottom: "1px solid #f1f5f9" }}>
+                      <td style={{ padding: "14px 16px", fontWeight: 700, color: "#1a1a1a" }}>{formatJam(p.jam_masuk)}</td>
+                      <td style={{ padding: "14px 16px" }}>
                         <span
-                          className="badge"
                           style={{
-                            background: p.metode === 'link' ? '#ede9fe' : '#e0f2fe',
-                            color: p.metode === 'link' ? '#6d28d9' : '#0369a1',
+                            display: "inline-flex",
+                            alignItems: "center",
+                            gap: 4,
+                            fontSize: 12,
+                            fontWeight: 800,
+                            padding: "3px 10px",
+                            borderRadius: 14,
+                            background: p.status === 'hadir' ? '#f0fdf4' : p.status === 'telat' ? '#fff7ed' : '#fef2f2',
+                            color: p.status === 'hadir' ? '#15803d' : p.status === 'telat' ? '#c2410c' : '#b91c1c',
+                            border: `1px solid ${p.status === 'hadir' ? '#bbf7d0' : p.status === 'telat' ? '#fed7aa' : '#fecaca'}`,
+                            textTransform: "capitalize",
+                          }}
+                        >
+                          {p.status}
+                        </span>
+                      </td>
+                      <td style={{ padding: "14px 16px" }}>
+                        <span
+                          style={{
+                            fontSize: 12,
+                            fontWeight: 700,
+                            padding: "3px 10px",
+                            borderRadius: 14,
+                            background: p.metode === "link" ? "#fdf8f0" : "#eff6ff",
+                            color: p.metode === "link" ? "#550000" : "#1d4ed8",
+                            border: `1px solid ${p.metode === "link" ? "#ebdcc3" : "#bfdbfe"}`,
+                            textTransform: "uppercase",
                           }}
                         >
                           {p.metode}
                         </span>
                       </td>
-                      <td style={{ padding: "16px 20px", borderBottom: "1px solid #f1f5f9" }}>
+                      <td style={{ padding: "14px 16px" }}>
                         {p.lat && p.lng ? (
                           <a
                             href={`https://maps.google.com/?q=${p.lat},${p.lng}`}
                             target="_blank"
                             rel="noreferrer"
-                            style={{ color: '#7c1010', fontWeight: 600, fontSize: 13 }}
+                            style={{ color: "#550000", fontWeight: 700, fontSize: 13, display: "inline-flex", alignItems: "center", gap: 4, textDecoration: "none" }}
                           >
-                            <svg
-                              width="13"
-                              height="13"
-                              fill="none"
-                              viewBox="0 0 24 24"
-                              style={{ verticalAlign: 'middle', marginRight: 4 }}
-                            >
-                              <path
-                                stroke="currentColor"
-                                strokeWidth="2"
-                                d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"
-                              />
-                            </svg>
+                            <MapPin size={14} color="#ddc192" />
                             Lihat Peta
                           </a>
                         ) : (
-                          <span style={{ color: '#9ca3af', fontSize: 13 }}>—</span>
+                          <span style={{ color: "#94a3b8", fontSize: 13 }}>—</span>
                         )}
                       </td>
                     </tr>
@@ -436,40 +488,56 @@ export default function PresensiAsatidz({
 
         {/* Belum absen */}
         {belumAbsen.length > 0 && (
-          <div style={{ background: "white", borderRadius: "24px", padding: "0", boxShadow: "0 4px 20px -2px rgba(0, 0, 0, 0.05)", display: "flex", flexDirection: "column", overflow: "hidden" }}>
-            <div style={{ padding: '18px 24px', borderBottom: '1px solid #e5e2db' }}>
-              <div className="card-title" style={{ marginBottom: 0, color: '#dc2626' }}>
-                Belum Absen
+          <div style={{ background: "white", borderRadius: "20px", boxShadow: "0 2px 12px rgba(85,0,0,0.03)", border: "1px solid #ebdcc3", overflow: "hidden" }}>
+            <div
+              style={{
+                padding: "18px 24px",
+                borderBottom: "1px solid #f5ede1",
+                background: "#fdfcf9",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+              }}
+            >
+              <div style={{ fontSize: "15px", fontWeight: "800", color: "#b91c1c", display: "flex", alignItems: "center", gap: 8 }}>
+                <Clock size={18} color="#b91c1c" />
+                Belum Absen Hari Ini
                 <span
                   style={{
-                    marginLeft: 8,
-                    background: '#fee2e2',
-                    color: '#dc2626',
+                    background: "#fef2f2",
+                    color: "#b91c1c",
                     borderRadius: 99,
-                    padding: '2px 10px',
-                    fontSize: 13,
-                    fontWeight: 700,
+                    padding: "2px 10px",
+                    fontSize: 12,
+                    fontWeight: 800,
+                    border: "1px solid #fecaca",
                   }}
                 >
                   {belumAbsen.length}
                 </span>
               </div>
             </div>
-            <div className="table-wrap" style={{ border: 'none', borderRadius: 0 }}>
-              <table>
+            <div style={{ overflowX: "auto" }}>
+              <table style={{ fontSize: 13, width: "100%", borderCollapse: "collapse" }}>
                 <thead>
-                  <tr>
-                    <th>#</th>
-                    <th>Nama</th>
-                    <th>Jabatan</th>
+                  <tr style={{ background: "#fdf8f0", borderBottom: "1px solid #ebdcc3" }}>
+                    <th style={{ padding: "12px 16px", textAlign: "left", color: "#550000", fontWeight: 800, width: 50 }}>#</th>
+                    <th style={{ padding: "12px 16px", textAlign: "left", color: "#550000", fontWeight: 800 }}>Nama Guru</th>
+                    <th style={{ padding: "12px 16px", textAlign: "left", color: "#550000", fontWeight: 800 }}>Jabatan / Penugasan</th>
                   </tr>
                 </thead>
                 <tbody>
                   {belumAbsen.map((a, i) => (
-                    <tr key={a.id} style={{ transition: "background-color 0.2s" }} onMouseEnter={(e) => e.currentTarget.style.backgroundColor = "#f0fdf4"} onMouseLeave={(e) => e.currentTarget.style.backgroundColor = "transparent"}>
-                      <td style={{ color: '#9ca3af', fontWeight: 600, width: 48, padding: "16px 20px", borderBottom: "1px solid #f1f5f9" }}>{i + 1}</td>
-                      <td style={{ fontWeight: 700, padding: "16px 20px", borderBottom: "1px solid #f1f5f9" }}>{a.nama_lengkap}</td>
-                      <td style={{ color: '#9ca3af', fontSize: 13, padding: "16px 20px", borderBottom: "1px solid #f1f5f9" }}>{a.jabatan || '—'}</td>
+                    <tr
+                      key={a.id}
+                      style={{
+                        borderBottom: "1px solid #f5ede1",
+                        background: i % 2 === 0 ? "white" : "#fdfcf9",
+                      }}
+                    >
+                      <td style={{ padding: "14px 16px", color: "#550000", fontWeight: 700 }}>{i + 1}</td>
+                      <td style={{ padding: "14px 16px", fontWeight: 700, color: "#1a1a1a" }}>{a.nama_lengkap}</td>
+                      <td style={{ padding: "14px 16px", color: "#64748b", fontWeight: 600 }}>{a.jabatan || '—'}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -485,7 +553,8 @@ export default function PresensiAsatidz({
           style={{
             position: 'fixed',
             inset: 0,
-            background: 'rgba(0,0,0,0.5)',
+            background: 'rgba(85,0,0,0.4)',
+            backdropFilter: 'blur(4px)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -494,50 +563,46 @@ export default function PresensiAsatidz({
           }}
         >
           <div
-            style={{ background: "white", borderRadius: "24px", padding: "28px", boxShadow: "0 4px 20px -2px rgba(0, 0, 0, 0.05)", width: "100%", maxWidth: 480, maxHeight: "90vh", overflowY: "auto", display: "flex", flexDirection: "column", gap: "16px" }}
+            style={{ background: "white", borderRadius: "24px", padding: "28px", boxShadow: "0 10px 40px rgba(0,0,0,0.15)", border: "1px solid #ebdcc3", width: "100%", maxWidth: 480, maxHeight: "90vh", overflowY: "auto", display: "flex", flexDirection: "column", gap: "16px" }}
           >
             <div
               style={{
                 display: 'flex',
                 justifyContent: 'space-between',
                 alignItems: 'center',
-                marginBottom: 20,
+                borderBottom: '1px solid #f5ede1',
+                paddingBottom: 14,
               }}
             >
-              <div className="card-title" style={{ marginBottom: 0 }}>
-                Input Manual Absensi
+              <div style={{ fontSize: 16, fontWeight: 800, color: "#550000" }}>
+                Input Manual Absensi Guru
               </div>
               <button
                 onClick={() => setShowModal(false)}
                 style={{
-                  background: 'none',
-                  border: 'none',
+                  background: '#fdf8f0',
+                  border: '1px solid #ebdcc3',
+                  borderRadius: 10,
                   cursor: 'pointer',
-                  color: '#9ca3af',
-                  padding: 4,
+                  color: '#550000',
+                  padding: 6,
+                  display: 'flex',
                 }}
               >
-                <svg width="20" height="20" fill="none" viewBox="0 0 24 24">
-                  <path
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    d="M18 6 6 18M6 6l12 12"
-                  />
-                </svg>
+                <X size={18} />
               </button>
             </div>
 
-            <div className="form-group">
-              <label className="form-label">Nama Guru</label>
+            <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+              <label style={{ fontSize: 13, fontWeight: 700, color: "#550000" }}>Nama Guru</label>
               <select
-                className="form-control"
+                style={{ padding: "10px 14px", borderRadius: "12px", border: "1px solid #ebdcc3", background: "#fdf8f0", fontSize: "14px", width: "100%", outline: "none", fontWeight: 600 }}
                 value={manualForm.asatidz_id}
                 onChange={(e) =>
                   setManualForm((f) => ({ ...f, asatidz_id: e.target.value }))
                 }
               >
-                <option value="">— Pilih —</option>
+                <option value="">— Pilih Guru —</option>
                 {allAsatidz.map((a) => (
                   <option key={a.id} value={a.id}>
                     {a.nama_lengkap}
@@ -546,10 +611,10 @@ export default function PresensiAsatidz({
               </select>
             </div>
 
-            <div className="form-group">
-              <label className="form-label">Status</label>
+            <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+              <label style={{ fontSize: 13, fontWeight: 700, color: "#550000" }}>Status Kehadiran</label>
               <select
-                className="form-control"
+                style={{ padding: "10px 14px", borderRadius: "12px", border: "1px solid #ebdcc3", background: "#fdf8f0", fontSize: "14px", width: "100%", outline: "none", fontWeight: 600 }}
                 value={manualForm.status}
                 onChange={(e) =>
                   setManualForm((f) => ({ ...f, status: e.target.value }))
@@ -563,11 +628,11 @@ export default function PresensiAsatidz({
               </select>
             </div>
 
-            <div className="form-group">
-              <label className="form-label">Jam Masuk</label>
+            <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+              <label style={{ fontSize: 13, fontWeight: 700, color: "#550000" }}>Jam Masuk</label>
               <input
                 type="time"
-                className="form-control"
+                style={{ padding: "10px 14px", borderRadius: "12px", border: "1px solid #ebdcc3", background: "#fdf8f0", fontSize: "14px", width: "100%", outline: "none", fontWeight: 600 }}
                 value={manualForm.jam_masuk}
                 onChange={(e) =>
                   setManualForm((f) => ({ ...f, jam_masuk: e.target.value }))
@@ -575,12 +640,12 @@ export default function PresensiAsatidz({
               />
             </div>
 
-            <div className="form-group">
-              <label className="form-label">Keterangan</label>
+            <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+              <label style={{ fontSize: 13, fontWeight: 700, color: "#550000" }}>Keterangan</label>
               <textarea
-                className="form-control"
                 rows={3}
-                placeholder="Opsional..."
+                placeholder="Catatan / alasan izin/sakit..."
+                style={{ padding: "10px 14px", borderRadius: "12px", border: "1px solid #ebdcc3", background: "#fdf8f0", fontSize: "14px", width: "100%", outline: "none", resize: "vertical" }}
                 value={manualForm.keterangan}
                 onChange={(e) =>
                   setManualForm((f) => ({ ...f, keterangan: e.target.value }))
@@ -588,20 +653,21 @@ export default function PresensiAsatidz({
               />
             </div>
 
-            <div style={{ display: 'flex', gap: 10 }}>
+            <div style={{ display: 'flex', gap: 10, marginTop: 10 }}>
               <button
-                className="btn btn-ghost"
-                style={{ flex: 1 }}
+                type="button"
+                style={{ flex: 1, padding: "11px 18px", borderRadius: "14px", border: "1px solid #ebdcc3", background: "#fdf8f0", color: "#550000", fontWeight: 700, cursor: "pointer" }}
                 onClick={() => setShowModal(false)}
               >
                 Batal
               </button>
               <button
-                style={{ background: "#10b981", color: "white", padding: "10px 18px", borderRadius: "14px", border: "none", fontWeight: 600, cursor: "pointer", display: "inline-flex", alignItems: "center", gap: "8px", flex: 1, justifyContent: "center" }}
+                type="button"
+                style={{ flex: 1, padding: "11px 18px", borderRadius: "14px", border: "none", background: "#550000", color: "#fdf8f0", fontWeight: 700, cursor: "pointer", display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 8 }}
                 onClick={handleManualSave}
                 disabled={saving}
               >
-                {saving ? <span className="spinner" /> : null}
+                {saving ? <RefreshCw size={16} className="animate-spin" /> : null}
                 Simpan
               </button>
             </div>

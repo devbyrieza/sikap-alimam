@@ -130,22 +130,36 @@ export default function RekapNilaiPage() {
   };
 
   return (
-    <div style={{ padding: "24px 28px", maxWidth: 1200, margin: "0 auto", display: "flex", flexDirection: "column", gap: 24 }}>
+    <div className="page-container">
       <style>{`
         .platinum-table tr {
           transition: background 0.2s;
         }
         .platinum-table tr:hover {
-          background-color: #f8fafc !important;
+          background-color: #fdf8f0 !important;
         }
         .platinum-table tr:hover td.sticky-col {
-          background-color: #f8fafc !important;
+          background-color: #fdf8f0 !important;
         }
       `}</style>
-      <div style={{ background: "linear-gradient(135deg, #0f172a 0%, #1e293b 60%, #2563eb 100%)", borderRadius: "24px", padding: "32px 36px", display: "flex", justifyContent: "space-between", alignItems: "center", boxShadow: "0 20px 25px -5px rgba(37, 99, 235, 0.2), 0 10px 10px -5px rgba(37, 99, 235, 0.1)" }}>
-        <div>
-          <h1 style={{ fontSize: "1.875rem", fontWeight: "bold", color: "white", margin: "0 0 8px 0" }}>Rekap Nilai Santri</h1>
-          <p style={{ color: "#bfdbfe", margin: 0 }}>Ringkasan nilai per mata pelajaran</p>
+
+      {/* ── Al-Imam Platinum Hero Banner ── */}
+      <div className="hero-banner">
+        {/* Decorative Elements */}
+        <div style={{ position:"absolute", top:0, right:0, width:256, height:256, background:"rgba(221, 193, 146, 0.15)", borderRadius:"50%", filter:"blur(40px)", transform:"translate(30%, -50%)", pointerEvents:"none" }}></div>
+        <div style={{ position:"absolute", bottom:0, left:0, width:192, height:192, background:"rgba(221, 193, 146, 0.1)", borderRadius:"50%", filter:"blur(40px)", transform:"translate(-25%, 50%)", pointerEvents:"none" }}></div>
+
+        <div style={{ position: "relative", zIndex: 1, flex: 1, minWidth: 0 }}>
+          <div style={{ display:"flex", alignItems:"center", gap:6, background:"rgba(221, 193, 146, 0.18)", padding:"5px 12px", borderRadius:20, border:"1px solid rgba(221, 193, 146, 0.4)", width:"fit-content", marginBottom:8 }}>
+            <div style={{ width:7, height:7, borderRadius:"50%", background:"#ddc192", boxShadow:"0 0 6px rgba(221, 193, 146, 0.9)" }}></div>
+            <span style={{ fontSize:11, fontWeight:800, letterSpacing:"0.5px", color:"#fdf8f0", textTransform:"uppercase" }}>Laporan & Rekapitulasi</span>
+          </div>
+          <h1 style={{ fontSize: "clamp(20px, 4vw, 30px)", fontWeight: 800, margin: 0, display: "flex", alignItems: "center", gap: "10px", color: "white" }}>
+            <BarChart3 size={26} color="#ddc192" /> Rekap Nilai Santri
+          </h1>
+          <p style={{ marginTop: "6px", color: "rgba(253, 248, 240, 0.9)", fontSize: "14px", margin: "6px 0 0 0" }}>
+            Ringkasan capaian nilai seluruh mata pelajaran per kelas
+          </p>
         </div>
       </div>
       
@@ -157,13 +171,13 @@ export default function RekapNilaiPage() {
       />
 
       {/* Filter */}
-      <div style={{ background: "white", borderRadius: "24px", padding: "24px", boxShadow: "0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)", border: "1px solid #f1f5f9", display: "flex", flexDirection: "column", gap: "24px" }}>
-        <div style={{ fontSize: "16px", fontWeight: "bold", color: "#1e293b", marginBottom: "-8px" }}>Filter Rekap</div>
+      <div style={{ background: "white", borderRadius: "20px", padding: "22px 24px", boxShadow: "0 2px 12px rgba(85,0,0,0.03)", border: "1px solid #ebdcc3", display: "flex", flexDirection: "column", gap: "18px" }}>
+        <div style={{ fontSize: "15px", fontWeight: "800", color: "#550000" }}>Filter Rekap Nilai</div>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "16px", alignItems: "flex-end" }}>
-          <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-            <label style={{ fontSize: "14px", fontWeight: "600", color: "#334155" }}>Kelas</label>
+          <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+            <label style={{ fontSize: "13px", fontWeight: "700", color: "#550000" }}>Kelas</label>
             <select
-              style={{ padding: "10px 14px", borderRadius: "12px", border: "1px solid #e2e8f0", background: "#f8fafc", fontSize: "14px", width: "100%", outline: "none" }}
+              style={{ padding: "11px 14px", borderRadius: "12px", border: "1px solid #ebdcc3", background: "#fdf8f0", fontSize: "14px", width: "100%", outline: "none", fontWeight: 600 }}
               value={kelas_id}
               onChange={(e) => setKelasId(e.target.value)}
               disabled={loadingKelas}
@@ -176,10 +190,10 @@ export default function RekapNilaiPage() {
               ))}
             </select>
           </div>
-          <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-            <label style={{ fontSize: "14px", fontWeight: "600", color: "#334155" }}>Semester</label>
+          <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+            <label style={{ fontSize: "13px", fontWeight: "700", color: "#550000" }}>Semester</label>
             <select
-              style={{ padding: "10px 14px", borderRadius: "12px", border: "1px solid #e2e8f0", background: "#f8fafc", fontSize: "14px", width: "100%", outline: "none" }}
+              style={{ padding: "11px 14px", borderRadius: "12px", border: "1px solid #ebdcc3", background: "#fdf8f0", fontSize: "14px", width: "100%", outline: "none", fontWeight: 600 }}
               value={semester}
               onChange={(e) => setSemester(e.target.value)}
             >
@@ -190,10 +204,10 @@ export default function RekapNilaiPage() {
               ))}
             </select>
           </div>
-          <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-            <label style={{ fontSize: "14px", fontWeight: "600", color: "#334155" }}>Tahun Ajaran</label>
+          <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+            <label style={{ fontSize: "13px", fontWeight: "700", color: "#550000" }}>Tahun Ajaran</label>
             <select
-              style={{ padding: "10px 14px", borderRadius: "12px", border: "1px solid #e2e8f0", background: "#f8fafc", fontSize: "14px", width: "100%", outline: "none" }}
+              style={{ padding: "11px 14px", borderRadius: "12px", border: "1px solid #ebdcc3", background: "#fdf8f0", fontSize: "14px", width: "100%", outline: "none", fontWeight: 600 }}
               value={tahun_ajaran}
               onChange={(e) => setTahunAjaran(e.target.value)}
             >
@@ -208,46 +222,48 @@ export default function RekapNilaiPage() {
       </div>
 
       {kelas_id && mapelList.length === 0 && !loadingData && (
-        <div style={{ background: "#fef9c3", borderRadius: "24px", border: "1px solid #fde047", textAlign: "center", padding: "20px 24px" }}>
-          <p style={{ color: "#a16207", fontWeight: "600", fontSize: "14px", margin: 0 }}>
+        <div style={{ background: "#fdf8f0", borderRadius: "20px", border: "1px solid #ebdcc3", textAlign: "center", padding: "20px 24px" }}>
+          <p style={{ color: "#b89758", fontWeight: "700", fontSize: "14px", margin: 0 }}>
             Belum ada mata pelajaran untuk kelas ini.
           </p>
         </div>
       )}
 
       {kelas_id && (
-        <div style={{ background: "white", borderRadius: "24px", boxShadow: "0 1px 3px 0 rgba(0, 0, 0, 0.1)", border: "1px solid #f1f5f9", overflow: "hidden" }}>
+        <div style={{ background: "white", borderRadius: "20px", boxShadow: "0 4px 16px rgba(85,0,0,0.03)", border: "1px solid #ebdcc3", overflow: "hidden" }}>
           {loadingData ? (
-            <div style={{ textAlign: "center", padding: "48px", color: "#9ca3af" }}>
-              <Loader2 size={32} className="animate-spin" style={{ margin: "0 auto 12px", color: "#2563eb" }} />
+            <div style={{ textAlign: "center", padding: "48px", color: "#64748b" }}>
+              <Loader2 size={32} className="animate-spin" style={{ margin: "0 auto 12px", color: "#550000" }} />
               Memuat rekap nilai...
             </div>
           ) : (
             <>
-              <div style={{ padding: "20px 24px", borderBottom: "1px solid #f1f5f9" }}>
-                <div style={{ fontSize: "16px", fontWeight: "bold", color: "#1e293b", marginBottom: "4px" }}>
-                  Rekap Nilai · {kelasList.find((k) => k.id === kelas_id)?.nama} · Semester {semester} · {tahun_ajaran}
+              <div style={{ padding: "18px 24px", borderBottom: "1px solid #f5ede1", background: "#fdfcf9", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 8 }}>
+                <div>
+                  <div style={{ fontSize: "15px", fontWeight: "800", color: "#550000", marginBottom: "2px" }}>
+                    Rekap Nilai · {kelasList.find((k) => k.id === kelas_id)?.nama} · Semester {semester} · {tahun_ajaran}
+                  </div>
+                  <p style={{ fontSize: "12px", color: "#64748b", margin: 0 }}>
+                    Nilai ditampilkan sebagai nilai akhir. <span style={{ color: "#b91c1c", fontWeight: "bold" }}>Merah</span> = nilai &lt;75
+                  </p>
                 </div>
-                <p style={{ fontSize: "12px", color: "#64748b", margin: 0 }}>
-                  Nilai ditampilkan sebagai rata-rata dari semua jenis penilaian. <span style={{ color: "#dc2626", fontWeight: "bold" }}>Merah</span> = nilai &lt;75
-                </p>
               </div>
 
-              <div className="sm:hidden text-xs text-slate-700 bg-amber-50/95 border-b border-amber-200/80 px-4 py-2.5 flex items-center gap-2 font-medium">
-                <ArrowRight className="w-4 h-4 text-blue-600" />
-                <span><strong>Nama santri terkunci di kiri.</strong> Geser ke samping untuk melihat seluruh mapel.</span>
+              <div className="sm:hidden text-xs text-amber-900 bg-amber-50/95 border-b border-amber-200/80 px-4 py-2.5 flex items-center gap-2 font-medium">
+                <ArrowRight className="w-4 h-4 text-amber-700 shrink-0" />
+                <span><strong>Nama santri di kiri.</strong> Geser tabel ke kanan untuk melihat seluruh mata pelajaran.</span>
               </div>
 
-              <div style={{ overflowX: "auto" }}>
+              <div style={{ overflowX: "auto", WebkitOverflowScrolling: "touch" }}>
                 <table className="platinum-table" style={{ width: "100%", borderCollapse: "collapse", fontSize: "14px", minWidth: 600 }}>
                   <thead>
-                    <tr style={{ background: "#f8fafc" }}>
-                      <th className="sticky-col" style={{ position: "sticky", left: 0, zIndex: 20, background: "#f8fafc", width: 40, textAlign: "center", borderBottom: "1px solid #e2e8f0", padding: "16px 20px" }}>#</th>
-                      <th className="sticky-col" style={{ position: "sticky", left: 40, zIndex: 20, background: "#f8fafc", minWidth: 160, maxWidth: 220, borderBottom: "1px solid #e2e8f0", borderRight: "1px solid #e2e8f0", padding: "16px 20px", textAlign: "left", color: "#64748b" }}>Nama Santri</th>
-                      <th style={{ width: 90, borderBottom: "1px solid #e2e8f0", padding: "16px 20px", textAlign: "left", color: "#64748b" }}>NIS</th>
+                    <tr style={{ background: "#fdf8f0" }}>
+                      <th className="sticky-col" style={{ position: "sticky", left: 0, zIndex: 20, background: "#fdf8f0", width: 40, textAlign: "center", borderBottom: "1px solid #ebdcc3", padding: "14px 16px", color: "#550000", fontWeight: 800 }}>#</th>
+                      <th className="sticky-col" style={{ position: "sticky", left: 40, zIndex: 20, background: "#fdf8f0", minWidth: 170, maxWidth: 220, borderBottom: "1px solid #ebdcc3", borderRight: "1px solid #ebdcc3", padding: "14px 18px", textAlign: "left", color: "#550000", fontWeight: 800 }}>Nama Santri</th>
+                      <th style={{ width: 90, borderBottom: "1px solid #ebdcc3", padding: "14px 16px", textAlign: "left", color: "#550000", fontWeight: 800 }}>NIS</th>
                       {mapelList.map((m) => (
-                        <th key={m.id} style={{ textAlign: "center", minWidth: 100, borderBottom: "1px solid #e2e8f0", padding: "16px 20px", color: "#64748b" }} title={m.nama}>
-                          {m.nama.length > 12 ? m.nama.substring(0, 12) + "…" : m.nama}
+                        <th key={m.id} style={{ textAlign: "center", minWidth: 100, borderBottom: "1px solid #ebdcc3", padding: "14px 16px", color: "#550000", fontWeight: 800 }} title={m.nama}>
+                          {m.nama.length > 14 ? m.nama.substring(0, 14) + "…" : m.nama}
                         </th>
                       ))}
                     </tr>
@@ -255,31 +271,31 @@ export default function RekapNilaiPage() {
                   <tbody>
                     {santriList.length === 0 ? (
                       <tr>
-                        <td colSpan={3 + mapelList.length} style={{ textAlign: "center", padding: "32px", color: "#9ca3af" }}>
+                        <td colSpan={3 + mapelList.length} style={{ textAlign: "center", padding: "36px", color: "#64748b" }}>
                           Belum ada data nilai untuk filter ini
                         </td>
                       </tr>
                     ) : (
                       santriList.map((santri, i) => {
-                        const bgRow = i % 2 === 0 ? "white" : "#fafafa";
+                        const bgRow = i % 2 === 0 ? "#ffffff" : "#fdfcf9";
                         return (
                           <tr key={santri.id} style={{ background: bgRow }}>
-                            <td className="sticky-col" style={{ position: "sticky", left: 0, zIndex: 10, background: bgRow, color: "#64748b", fontWeight: "600", textAlign: "center", borderBottom: "1px solid #f1f5f9", padding: "16px 20px" }}>{i + 1}</td>
-                            <td className="sticky-col" style={{ position: "sticky", left: 40, zIndex: 10, background: bgRow, fontWeight: "bold", borderRight: "1px solid #e2e8f0", borderBottom: "1px solid #f1f5f9", padding: "16px 20px" }}>
-                              <div className="truncate" style={{ color: "#0f172a" }}>{santri.nama_lengkap}</div>
+                            <td className="sticky-col" style={{ position: "sticky", left: 0, zIndex: 10, background: bgRow, color: "#550000", fontWeight: "700", textAlign: "center", borderBottom: "1px solid #f5ede1", padding: "14px 16px" }}>{i + 1}</td>
+                            <td className="sticky-col" style={{ position: "sticky", left: 40, zIndex: 10, background: bgRow, fontWeight: "800", borderRight: "1px solid #ebdcc3", borderBottom: "1px solid #f5ede1", padding: "14px 18px" }}>
+                              <div className="truncate" style={{ color: "#1a1a1a" }}>{santri.nama_lengkap}</div>
                             </td>
-                            <td style={{ color: "#64748b", fontSize: "12px", borderBottom: "1px solid #f1f5f9", padding: "16px 20px" }}>{santri.nis || "—"}</td>
+                            <td style={{ color: "#64748b", fontSize: "12px", borderBottom: "1px solid #f5ede1", padding: "14px 16px" }}>{santri.nis || "—"}</td>
                             {mapelList.map((m) => {
                               const avg = getAvg(santri.id, m.id);
                               const isBawah = avg !== null && avg < 75;
                               return (
-                                <td key={m.id} style={{ textAlign: "center", borderBottom: "1px solid #f1f5f9", padding: "16px 20px" }}>
+                                <td key={m.id} style={{ textAlign: "center", borderBottom: "1px solid #f5ede1", padding: "14px 16px" }}>
                                   {avg !== null ? (
-                                    <span style={{ fontWeight: "bold", color: isBawah ? "#dc2626" : "#1e293b", background: isBawah ? "#fef2f2" : "transparent", padding: isBawah ? "4px 8px" : "0", borderRadius: isBawah ? "6px" : "0", fontSize: "14px" }}>
+                                    <span style={{ fontWeight: "800", color: isBawah ? "#b91c1c" : "#1a1a1a", background: isBawah ? "#fee2e2" : "#fdf8f0", padding: "4px 8px", borderRadius: "8px", border: "1px solid #ebdcc3", fontSize: "13px" }}>
                                       {avg}
                                     </span>
                                   ) : (
-                                    <span style={{ color: "#d1d5db", fontSize: "12px" }}>—</span>
+                                    <span style={{ color: "#cbd5e1", fontSize: "12px" }}>—</span>
                                   )}
                                 </td>
                               );
@@ -297,11 +313,9 @@ export default function RekapNilaiPage() {
       )}
 
       {!kelas_id && (
-        <div style={{ background: "white", borderRadius: "24px", textAlign: "center", padding: "48px 24px", color: "#9ca3af", border: "1px dashed #e2e8f0" }}>
-          <svg width="48" height="48" fill="none" viewBox="0 0 24 24" style={{ margin: "0 auto 12px", display: "block", opacity: 0.4 }}>
-            <path stroke="#9ca3af" strokeWidth="1.5" d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2M9 5a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2M9 5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2" />
-          </svg>
-          <p style={{ fontWeight: "600", margin: 0 }}>Pilih kelas untuk melihat rekap nilai</p>
+        <div style={{ background: "white", borderRadius: "20px", textAlign: "center", padding: "48px 24px", color: "#64748b", border: "1px dashed #ebdcc3" }}>
+          <BookOpen size={40} color="#ddc192" style={{ margin: "0 auto 12px", display: "block" }} />
+          <p style={{ fontWeight: "700", margin: 0, color: "#1a1a1a" }}>Pilih kelas untuk melihat rekap nilai</p>
         </div>
       )}
     </div>

@@ -266,371 +266,408 @@ export default function PresensiSantriPage() {
   const progressPct = santri.length > 0 ? Math.round((sudahDiabsen / santri.length) * 100) : 0;
 
   return (
-    <div className="w-full">
-      <div style={{ padding: "24px 28px", maxWidth: 1200, margin: "0 auto", display: "flex", flexDirection: "column", gap: 24, paddingBottom: 112 }}>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", background: "linear-gradient(135deg, #0f172a 0%, #1e293b 60%, #10b981 100%)", borderRadius: "24px", padding: "32px 36px", boxShadow: "0 10px 25px -5px rgba(16, 185, 129, 0.4), 0 8px 10px -6px rgba(16, 185, 129, 0.1)" }}>
-          <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-            <h1 style={{ color: "white", fontSize: "28px", fontWeight: 700, margin: 0 }}>Input Presensi Santri</h1>
-            <p style={{ color: "#cbd5e1", fontSize: "15px", margin: 0 }}>Catat kehadiran harian santri secara cepat.</p>
+    <div className="page-container" style={{ paddingBottom: 60 }}>
+      {/* ── Al-Imam Platinum Hero Banner ── */}
+      <div className="hero-banner">
+        {/* Decorative Elements */}
+        <div style={{ position:"absolute", top:0, right:0, width:256, height:256, background:"rgba(221, 193, 146, 0.15)", borderRadius:"50%", filter:"blur(40px)", transform:"translate(30%, -50%)", pointerEvents:"none" }}></div>
+        <div style={{ position:"absolute", bottom:0, left:0, width:192, height:192, background:"rgba(221, 193, 146, 0.1)", borderRadius:"50%", filter:"blur(40px)", transform:"translate(-25%, 50%)", pointerEvents:"none" }}></div>
+
+        <div style={{ position: "relative", zIndex: 1, flex: 1, minWidth: 0 }}>
+          <div style={{ display:"flex", alignItems:"center", gap:6, background:"rgba(221, 193, 146, 0.18)", padding:"5px 12px", borderRadius:20, border:"1px solid rgba(221, 193, 146, 0.4)", width:"fit-content", marginBottom:8 }}>
+            <div style={{ width:7, height:7, borderRadius:"50%", background:"#ddc192", boxShadow:"0 0 6px rgba(221, 193, 146, 0.9)" }}></div>
+            <span style={{ fontSize:11, fontWeight:800, letterSpacing:"0.5px", color:"#fdf8f0", textTransform:"uppercase" }}>Presensi Santri</span>
           </div>
-        </div>
-        <ModuleTabs
-          tabs={[
-            { label: "Input Presensi", href: "/presensi/santri", exact: true, icon: <ClipboardCheck size={16} /> },
-            { label: "Lihat Rekap", href: "/presensi/santri/rekap", exact: true, icon: <BarChart3 size={16} /> },
-            { label: "Riwayat per Santri", href: "/presensi/santri/riwayat", exact: true, icon: <UserCheck size={16} /> },
-          ]}
-        />
-        {/* Step 1: Pilih Kelas & Tanggal */}
-        <div style={{ background: "white", borderRadius: "24px", padding: "28px", boxShadow: "0 4px 20px -2px rgba(0, 0, 0, 0.05)", display: "flex", flexDirection: "column", gap: "20px" }}>
-          <p className="card-title">
-            <Users size={16} style={{ display: "inline", marginRight: 6, color: "var(--primary)" }} />
-            Pilih Kelas &amp; Tanggal
+          <h1 style={{ fontSize: "clamp(20px, 4vw, 30px)", fontWeight: 800, margin: 0, display: "flex", alignItems: "center", gap: "10px", color: "white" }}>
+            <ClipboardCheck size={26} color="#ddc192" /> Input Presensi Santri
+          </h1>
+          <p style={{ marginTop: "6px", color: "rgba(253, 248, 240, 0.9)", fontSize: "14px", margin: "6px 0 0 0" }}>
+            Pencatatan absensi & kehadiran harian santri per kelas secara cepat
           </p>
-          <div className="grid grid-cols-1 md:grid-cols-[1fr_1fr_1fr_auto] gap-4 items-end">
-            <div className="form-group" style={{ marginBottom: 0 }}>
-              <label className="form-label">Jenjang</label>
-              {loadingMaster ? (
-                <div
-                  className="form-control"
-                  style={{ color: "var(--text-muted)", display: "flex", alignItems: "center", gap: 8 }}
-                >
-                  <Loader2 size={14} style={{ animation: "spin 1s linear infinite" }} />
-                  Memuat...
-                </div>
-              ) : (
-                <select
-                  className="form-control"
-                  value={selectedJenjang}
-                  onChange={(e) => {
-                    setSelectedJenjang(e.target.value);
-                    setSelectedKelas("");
-                  }}
-                >
-                  <option value="">— Semua Jenjang —</option>
-                  <option value="MTs">MTs</option>
-                  <option value="IL">IL</option>
-                  <option value="MA">MA</option>
-                </select>
-              )}
-            </div>
+        </div>
+      </div>
 
-            <div className="form-group" style={{ marginBottom: 0 }}>
-              <label className="form-label">Kelas</label>
-              {loadingMaster ? (
-                <div
-                  className="form-control"
-                  style={{ color: "var(--text-muted)", display: "flex", alignItems: "center", gap: 8 }}
-                >
-                  <Loader2 size={14} style={{ animation: "spin 1s linear infinite" }} />
-                  Memuat...
-                </div>
-              ) : (
-                <select
-                  className="form-control"
-                  value={selectedKelas}
-                  onChange={(e) => setSelectedKelas(e.target.value)}
-                  disabled={!selectedJenjang}
-                >
-                  <option value="">— Pilih Kelas —</option>
-                  {kelasList
-                    .filter(k => k.jenjang === selectedJenjang)
-                    .map((k) => (
-                      <option key={k.id} value={k.id}>
-                        {k.nama}
-                      </option>
-                    ))}
-                </select>
-              )}
-            </div>
+      <ModuleTabs
+        tabs={[
+          { label: "Input Presensi", href: "/presensi/santri", exact: true, icon: <ClipboardCheck size={16} /> },
+          { label: "Lihat Rekap", href: "/presensi/santri/rekap", exact: true, icon: <BarChart3 size={16} /> },
+          { label: "Riwayat per Santri", href: "/presensi/santri/riwayat", exact: true, icon: <UserCheck size={16} /> },
+        ]}
+      />
 
-            <div className="form-group" style={{ marginBottom: 0 }}>
-              <label className="form-label">Tanggal</label>
-              <input
-                type="date"
-                className="form-control"
-                value={tanggal}
-                onChange={(e) => setTanggal(e.target.value)}
-              />
-            </div>
+      {/* Step 1: Pilih Kelas & Tanggal */}
+      <div style={{ background: "white", borderRadius: "20px", padding: "22px 24px", boxShadow: "0 2px 12px rgba(85,0,0,0.03)", border: "1px solid #ebdcc3", display: "flex", flexDirection: "column", gap: "16px" }}>
+        <div style={{ fontSize: "15px", fontWeight: "800", color: "#550000", display: "flex", alignItems: "center", gap: "8px" }}>
+          <Users size={18} color="#ddc192" />
+          Pilih Kelas &amp; Tanggal Presensi
+        </div>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: "16px", alignItems: "flex-end" }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+            <label style={{ fontSize: "13px", fontWeight: "700", color: "#550000" }}>Jenjang</label>
+            {loadingMaster ? (
+              <div
+                style={{ padding: "11px 14px", borderRadius: "12px", border: "1px solid #ebdcc3", background: "#fdf8f0", color: "#64748b", display: "flex", alignItems: "center", gap: 8, fontSize: "14px" }}
+              >
+                <Loader2 size={16} className="animate-spin text-amber-700" />
+                Memuat...
+              </div>
+            ) : (
+              <select
+                style={{ padding: "11px 14px", borderRadius: "12px", border: "1px solid #ebdcc3", background: "#fdf8f0", fontSize: "14px", width: "100%", outline: "none", fontWeight: 600 }}
+                value={selectedJenjang}
+                onChange={(e) => {
+                  setSelectedJenjang(e.target.value);
+                  setSelectedKelas("");
+                }}
+              >
+                <option value="">— Semua Jenjang —</option>
+                <option value="MTs">MTs</option>
+                <option value="IL">IL</option>
+                <option value="MA">MA</option>
+              </select>
+            )}
+          </div>
 
+          <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+            <label style={{ fontSize: "13px", fontWeight: "700", color: "#550000" }}>Kelas</label>
+            {loadingMaster ? (
+              <div
+                style={{ padding: "11px 14px", borderRadius: "12px", border: "1px solid #ebdcc3", background: "#fdf8f0", color: "#64748b", display: "flex", alignItems: "center", gap: 8, fontSize: "14px" }}
+              >
+                <Loader2 size={16} className="animate-spin text-amber-700" />
+                Memuat...
+              </div>
+            ) : (
+              <select
+                style={{ padding: "11px 14px", borderRadius: "12px", border: "1px solid #ebdcc3", background: "#fdf8f0", fontSize: "14px", width: "100%", outline: "none", fontWeight: 600 }}
+                value={selectedKelas}
+                onChange={(e) => setSelectedKelas(e.target.value)}
+                disabled={!selectedJenjang}
+              >
+                <option value="">— Pilih Kelas —</option>
+                {kelasList
+                  .filter(k => k.jenjang === selectedJenjang)
+                  .map((k) => (
+                    <option key={k.id} value={k.id}>
+                      {k.nama}
+                    </option>
+                  ))}
+              </select>
+            )}
+          </div>
+
+          <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+            <label style={{ fontSize: "13px", fontWeight: "700", color: "#550000" }}>Tanggal</label>
+            <input
+              type="date"
+              style={{ padding: "11px 14px", borderRadius: "12px", border: "1px solid #ebdcc3", background: "#fdf8f0", fontSize: "14px", width: "100%", outline: "none", fontWeight: 600 }}
+              value={tanggal}
+              onChange={(e) => setTanggal(e.target.value)}
+            />
+          </div>
+
+          <div>
             <button
-              style={{ background: "#10b981", color: "white", padding: "10px 18px", borderRadius: "14px", border: "none", fontWeight: 600, cursor: "pointer", display: "inline-flex", alignItems: "center", gap: "8px" }}
+              style={{ background: "#550000", color: "white", padding: "11px 20px", borderRadius: "12px", border: "1px solid #550000", fontWeight: 700, cursor: "pointer", display: "inline-flex", alignItems: "center", justifyContent: "center", gap: "8px", width: "100%", height: "44px", boxShadow: "0 2px 8px rgba(85,0,0,0.2)" }}
               onClick={loadPresensi}
               disabled={!selectedKelas || !tanggal || loadingSantri}
             >
               {loadingSantri ? (
                 <>
-                  <span className="spinner" />
+                  <Loader2 size={16} className="animate-spin" />
                   Memuat...
                 </>
               ) : (
                 <>
-                  <ClipboardCheck size={16} />
-                  Tampilkan
+                  <ClipboardCheck size={18} color="#ddc192" />
+                  Tampilkan Santri
                 </>
               )}
             </button>
           </div>
         </div>
+      </div>
 
-        {/* Step 2: Daftar Santri */}
-        {santri.length > 0 && (
-          <>
-            {/* Progress Indicator */}
-            <div
-              style={{ background: "white", borderRadius: "24px", padding: "24px 28px", boxShadow: "0 4px 20px -2px rgba(0, 0, 0, 0.05)", display: "flex", flexDirection: "column", gap: "20px" }}
-            >
-              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 10, flexWrap: "wrap", gap: 10 }}>
-                <div style={{ fontSize: 14, fontWeight: 700, color: "var(--text)" }}>
-                  <BarChart3 size={15} className="inline mr-1" style={{ color: "var(--primary)" }} />
-                  <span style={{ color: "var(--primary)" }}>{sudahDiabsen}</span>
-                  <span style={{ color: "var(--text-muted)", fontWeight: 500 }}> dari {santri.length} santri sudah diabsen</span>
-                </div>
-                <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-                  <span className="badge badge-hadir">Hadir: {summary.hadir}</span>
-                  <span className="badge badge-sakit">Sakit: {summary.sakit}</span>
-                  <span className="badge badge-izin">Izin: {summary.izin}</span>
-                  <span className="badge badge-alpha">Alpha: {summary.alpha}</span>
-                </div>
-              </div>
-              {/* Progress Bar */}
-              <div style={{ background: "var(--border)", borderRadius: 99, height: 8, overflow: "hidden" }}>
-                <div
-                  style={{
-                    height: "100%",
-                    width: `${progressPct}%`,
-                    background: "linear-gradient(90deg, var(--primary), #c0392b)",
-                    borderRadius: 99,
-                    transition: "width 0.4s ease",
-                  }}
-                />
-              </div>
-              <div style={{ display: "flex", justifyContent: "space-between", marginTop: 4, fontSize: 11, color: "var(--text-muted)" }}>
+      {/* Step 2: Daftar Santri */}
+      {santri.length > 0 && (
+        <div style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
+          {/* Progress & Summary Indicator */}
+          <div
+            style={{ background: "white", borderRadius: "20px", padding: "20px 24px", boxShadow: "0 2px 12px rgba(85,0,0,0.03)", border: "1px solid #ebdcc3", display: "flex", flexDirection: "column", gap: "14px" }}
+          >
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 12 }}>
+              <div style={{ fontSize: 14, fontWeight: 800, color: "#550000", display: "flex", alignItems: "center", gap: 6 }}>
+                <BarChart3 size={18} color="#ddc192" />
                 <span>Kelas {kelasNama}</span>
-                <span>{progressPct}% selesai</span>
+                <span style={{ color: "#64748b", fontWeight: 600 }}>• ({sudahDiabsen} dari {santri.length} santri)</span>
+              </div>
+              <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+                <span style={{ fontSize: "12px", fontWeight: 800, padding: "5px 12px", borderRadius: "20px", background: "#f0fdf4", color: "#15803d", border: "1px solid #bbf7d0" }}>
+                  Hadir: {summary.hadir}
+                </span>
+                <span style={{ fontSize: "12px", fontWeight: 800, padding: "5px 12px", borderRadius: "20px", background: "#fefce8", color: "#a16207", border: "1px solid #fef08a" }}>
+                  Sakit: {summary.sakit}
+                </span>
+                <span style={{ fontSize: "12px", fontWeight: 800, padding: "5px 12px", borderRadius: "20px", background: "#eff6ff", color: "#1d4ed8", border: "1px solid #bfdbfe" }}>
+                  Izin: {summary.izin}
+                </span>
+                <span style={{ fontSize: "12px", fontWeight: 800, padding: "5px 12px", borderRadius: "20px", background: "#fef2f2", color: "#b91c1c", border: "1px solid #fecaca" }}>
+                  Alpha: {summary.alpha}
+                </span>
               </div>
             </div>
 
-            {/* Bulk Action */}
-            <div style={{ marginBottom: 14, display: "flex", gap: 10, alignItems: "center" }}>
-              <button
-                type="button"
-                className="btn btn-secondary btn-sm"
-                onClick={hadirSemua}
-                style={{ fontSize: 13 }}
-              >
-                <CheckSquare size={15} />
-                Hadir Semua
-              </button>
-              <span style={{ fontSize: 12, color: "var(--text-muted)" }}>
-                Klik untuk menandai semua santri sebagai Hadir
-              </span>
+            {/* Progress Bar */}
+            <div style={{ background: "#fdf8f0", border: "1px solid #ebdcc3", borderRadius: 99, height: 10, overflow: "hidden" }}>
+              <div
+                style={{
+                  height: "100%",
+                  width: `${progressPct}%`,
+                  background: "linear-gradient(90deg, #550000, #ddc192)",
+                  borderRadius: 99,
+                  transition: "width 0.4s ease",
+                }}
+              />
             </div>
+          </div>
 
-            {/* Card list santri */}
-            <div className="space-y-3 pb-28 sm:pb-4">
-              {santri.map((s, idx) => {
-                const currentStatus = statusMap[s.id] || "hadir";
-                const needsKet = currentStatus !== "hadir";
+          {/* Bulk Action */}
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 10 }}>
+            <button
+              type="button"
+              onClick={hadirSemua}
+              style={{ display: "inline-flex", alignItems: "center", gap: 8, padding: "8px 16px", borderRadius: "12px", background: "#fdf8f0", border: "1px solid #ebdcc3", color: "#550000", fontWeight: 800, fontSize: "13px", cursor: "pointer", transition: "all 0.2s" }}
+              onMouseEnter={(e) => { e.currentTarget.style.background = "#ebdcc3"; }}
+              onMouseLeave={(e) => { e.currentTarget.style.background = "#fdf8f0"; }}
+            >
+              <CheckSquare size={16} color="#550000" />
+              Tandai Hadir Semua
+            </button>
+            <span style={{ fontSize: 13, color: "#64748b" }}>
+              Status default adalah <strong>Hadir</strong>. Ubah santri yang tidak hadir di bawah ini.
+            </span>
+          </div>
 
-                return (
+          {/* Card list santri */}
+          <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+            {santri.map((s, idx) => {
+              const currentStatus = statusMap[s.id] || "hadir";
+              const needsKet = currentStatus !== "hadir";
+
+              return (
+                <div
+                  key={s.id}
+                  style={{
+                    background: "white",
+                    borderRadius: "16px",
+                    boxShadow: "0 2px 8px rgba(85,0,0,0.02)",
+                    padding: "16px 20px",
+                    border: "1px solid #ebdcc3",
+                    borderLeft: `5px solid ${
+                      currentStatus === "hadir"
+                        ? "#15803d"
+                        : currentStatus === "sakit"
+                        ? "#d97706"
+                        : currentStatus === "izin"
+                        ? "#0284c7"
+                        : currentStatus === "alpha"
+                        ? "#b91c1c"
+                        : "#ebdcc3"
+                    }`,
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "12px"
+                  }}
+                >
+                  {/* Baris Atas: Nomor, Nama, NIS, Badge */}
                   <div
-                    key={s.id}
                     style={{
-                      background: "white", borderRadius: "20px", boxShadow: "0 4px 12px -2px rgba(0, 0, 0, 0.03)",
-                      padding: "14px 16px",
-                      borderLeft: `4px solid ${
-                        currentStatus === "hadir"
-                          ? "#15803d"
-                          : currentStatus === "sakit"
-                          ? "#d97706"
-                          : currentStatus === "izin"
-                          ? "#0284c7"
-                          : currentStatus === "alpha"
-                          ? "#b91c1c"
-                          : "#e2e8f0"
-                      }`,
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                      gap: 8,
                     }}
                   >
-                    {/* Baris Atas: Nomor, Nama, NIS, Badge */}
                     <div
                       style={{
                         display: "flex",
                         alignItems: "center",
-                        justifyContent: "space-between",
-                        marginBottom: 10,
-                        gap: 8,
+                        gap: 12,
+                        minWidth: 0,
                       }}
                     >
-                      <div
-                        style={{
-                          display: "flex",
-                          alignItems: "center",
-                          gap: 10,
-                          minWidth: 0,
-                        }}
-                      >
-                        <div style={{ minWidth: 0 }}>
-                          <p
-                            style={{
-                              fontSize: 14,
-                              fontWeight: 700,
-                              color: "var(--primary-dark)",
-                              margin: 0,
-                              lineHeight: 1.3,
-                              overflow: "hidden",
-                              textOverflow: "ellipsis",
-                              whiteSpace: "nowrap",
-                            }}
-                          >
-                            {s.nama_lengkap}
-                          </p>
-                          <p
-                            style={{
-                              fontSize: 11,
-                              color: "var(--text-muted)",
-                              margin: 0,
-                            }}
-                          >
-                            NIS: {s.nis || "-"}
-                          </p>
-                        </div>
+                      <div style={{ width: 28, height: 28, borderRadius: "50%", background: "#fdf8f0", border: "1px solid #ebdcc3", color: "#550000", fontWeight: 800, fontSize: "12px", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                        {idx + 1}
                       </div>
-
-                      {/* Badge status saat ini */}
-                      <span
-                        className={`badge badge-${currentStatus}`}
-                        style={{ flexShrink: 0, fontSize: 11, padding: "3px 10px" }}
-                      >
-                        {STATUS_LABEL[currentStatus]}
-                      </span>
-                    </div>
-
-                    {/* Tombol Status 4 Pilihan */}
-                    <div
-                      style={{
-                        display: "grid",
-                        gridTemplateColumns: "repeat(4, 1fr)",
-                        gap: 6,
-                      }}
-                    >
-                      {STATUS_LIST.map((st) => {
-                        const isSelected = currentStatus === st;
-                        return (
-                          <button
-                            key={st}
-                            type="button"
-                            onClick={() => setStatus(s.id, st)}
-                            style={{
-                              padding: "9px 4px",
-                              borderRadius: 8,
-                              border: isSelected
-                                ? `2px solid ${STATUS_COLOR[st]}`
-                                : "1px solid var(--border)",
-                              background: isSelected
-                                ? STATUS_BG[st]
-                                : "var(--surface)",
-                              color: isSelected
-                                ? STATUS_COLOR[st]
-                                : "var(--text-muted)",
-                              fontWeight: isSelected ? 700 : 500,
-                              fontSize: 13,
-                              cursor: "pointer",
-                              transition: "all 0.15s",
-                              minHeight: 44,
-                            }}
-                          >
-                            {STATUS_LABEL[st]}
-                          </button>
-                        );
-                      })}
-                    </div>
-
-                    {/* Keterangan field — muncul jika bukan hadir */}
-                    {needsKet && (
-                      <div style={{ marginTop: 10 }}>
-                        <label
+                      <div style={{ minWidth: 0 }}>
+                        <p
                           style={{
-                            fontSize: 12,
-                            fontWeight: 600,
-                            color: STATUS_COLOR[currentStatus],
-                            marginBottom: 4,
-                            display: "block",
+                            fontSize: 15,
+                            fontWeight: 800,
+                            color: "#1a1a1a",
+                            margin: 0,
+                            lineHeight: 1.3,
+                            overflow: "hidden",
+                            textOverflow: "ellipsis",
+                            whiteSpace: "nowrap",
                           }}
                         >
-                          Keterangan {STATUS_LABEL[currentStatus]} (opsional)
-                        </label>
-                        <input
-                          type="text"
-                          className="form-control"
-                          style={{ fontSize: 13 }}
-                          placeholder={
-                            currentStatus === "sakit"
-                              ? "Contoh: demam, dirawat di RS..."
-                              : currentStatus === "izin"
-                              ? "Contoh: keperluan keluarga, acara pesantren..."
-                              : "Contoh: tidak ada keterangan, kabur..."
-                          }
-                          value={keteranganMap[s.id] || ""}
-                          onChange={(e) => setKeterangan(s.id, e.target.value)}
-                        />
+                          {s.nama_lengkap}
+                        </p>
+                        <p
+                          style={{
+                            fontSize: 12,
+                            color: "#64748b",
+                            margin: "2px 0 0 0",
+                          }}
+                        >
+                          NIS: {s.nis || "—"}
+                        </p>
                       </div>
-                    )}
+                    </div>
+
+                    {/* Badge status saat ini */}
+                    <span
+                      style={{
+                        flexShrink: 0,
+                        fontSize: 12,
+                        fontWeight: 800,
+                        padding: "4px 12px",
+                        borderRadius: "20px",
+                        background: STATUS_BG[currentStatus],
+                        color: STATUS_COLOR[currentStatus],
+                        border: `1px solid ${STATUS_COLOR[currentStatus]}33`
+                      }}
+                    >
+                      {STATUS_LABEL[currentStatus]}
+                    </span>
                   </div>
-                );
-              })}
-            </div>
 
-            {/* Actions (Standard: Batal & Simpan Presensi matching Jurnal page) */}
-            <div style={{ display: "flex", gap: 10, justifyContent: "flex-end", alignItems: "center", marginTop: 20 }}>
-              <Link href="/dashboard" className="btn btn-ghost">
-                Batal
-              </Link>
-              <button
-                type="button"
-                style={{ background: "#10b981", color: "white", padding: "10px 18px", borderRadius: "14px", border: "none", fontWeight: 600, cursor: "pointer", display: "inline-flex", alignItems: "center", gap: "8px" }}
-                onClick={handleSimpan}
-                disabled={saving}
-              >
-                {saving ? (
-                  <>
-                    <span className="spinner" />
-                    Menyimpan...
-                  </>
-                ) : (
-                  <>
-                    <Save size={16} />
-                    Simpan Presensi
-                  </>
-                )}
-              </button>
-            </div>
-          </>
-        )}
+                  {/* Tombol Status 4 Pilihan */}
+                  <div
+                    style={{
+                      display: "grid",
+                      gridTemplateColumns: "repeat(4, 1fr)",
+                      gap: 8,
+                    }}
+                  >
+                    {STATUS_LIST.map((st) => {
+                      const isSelected = currentStatus === st;
+                      return (
+                        <button
+                          key={st}
+                          type="button"
+                          onClick={() => setStatus(s.id, st)}
+                          style={{
+                            padding: "9px 4px",
+                            borderRadius: 10,
+                            border: isSelected
+                              ? `2px solid ${STATUS_COLOR[st]}`
+                              : "1px solid #ebdcc3",
+                            background: isSelected
+                              ? STATUS_BG[st]
+                              : "#fdf8f0",
+                            color: isSelected
+                              ? STATUS_COLOR[st]
+                              : "#550000",
+                            fontWeight: isSelected ? 800 : 600,
+                            fontSize: 13,
+                            cursor: "pointer",
+                            transition: "all 0.15s",
+                            minHeight: 42,
+                          }}
+                        >
+                          {STATUS_LABEL[st]}
+                        </button>
+                      );
+                    })}
+                  </div>
 
-        {/* Loading state */}
-        {loadingSantri && (
-          <div
-            style={{ background: "white", borderRadius: "24px", padding: "48px 24px", boxShadow: "0 4px 20px -2px rgba(0, 0, 0, 0.05)", textAlign: "center", color: "var(--text-muted)" }}
-          >
-            <Loader2 size={32} style={{ animation: "spin 1s linear infinite", margin: "0 auto 12px", display: "block", color: "var(--primary)" }} />
-            <p style={{ fontSize: 14 }}>Memuat data santri...</p>
+                  {/* Keterangan field — muncul jika bukan hadir */}
+                  {needsKet && (
+                    <div style={{ marginTop: 2 }}>
+                      <label
+                        style={{
+                          fontSize: 12,
+                          fontWeight: 700,
+                          color: STATUS_COLOR[currentStatus],
+                          marginBottom: 4,
+                          display: "block",
+                        }}
+                      >
+                        Keterangan {STATUS_LABEL[currentStatus]} (opsional):
+                      </label>
+                      <input
+                        type="text"
+                        style={{ padding: "8px 12px", borderRadius: "10px", border: "1px solid #ebdcc3", background: "#fdf8f0", fontSize: "13px", width: "100%", outline: "none" }}
+                        placeholder={
+                          currentStatus === "sakit"
+                            ? "Contoh: Demam, istirahat di asrama/klinik..."
+                            : currentStatus === "izin"
+                            ? "Contoh: Pulang acara keluarga..."
+                            : "Contoh: Tidak ada keterangan..."
+                        }
+                        value={keteranganMap[s.id] || ""}
+                        onChange={(e) => setKeterangan(s.id, e.target.value)}
+                      />
+                    </div>
+                  )}
+                </div>
+              );
+            })}
           </div>
-        )}
 
-        {/* Empty state */}
-        {!loadingSantri && selectedKelas && tanggal && santri.length === 0 && !loadingMaster && (
-          <div
-            style={{ background: "white", borderRadius: "24px", padding: "48px 24px", boxShadow: "0 4px 20px -2px rgba(0, 0, 0, 0.05)", textAlign: "center", color: "var(--text-muted)" }}
-          >
-            <Users size={40} style={{ opacity: 0.2, marginBottom: 12, display: "block", margin: "0 auto 12px" }} />
-            <p style={{ fontSize: 14 }}>
-              Belum ada santri terdaftar di kelas ini, atau kelas belum dipilih.
-            </p>
+          {/* Bottom Action Footer */}
+          <div style={{ display: "flex", gap: 12, justifyContent: "flex-end", alignItems: "center", marginTop: 12, background: "white", padding: "16px 20px", borderRadius: "16px", border: "1px solid #ebdcc3" }}>
+            <Link
+              href="/dashboard"
+              style={{ padding: "10px 18px", borderRadius: "12px", color: "#64748b", fontWeight: 700, textDecoration: "none", fontSize: "14px" }}
+            >
+              Batal
+            </Link>
+            <button
+              type="button"
+              style={{ background: "#550000", color: "white", padding: "11px 24px", borderRadius: "12px", border: "none", fontWeight: 800, cursor: "pointer", display: "inline-flex", alignItems: "center", gap: "8px", fontSize: "14px", boxShadow: "0 4px 14px rgba(85,0,0,0.2)" }}
+              onClick={handleSimpan}
+              disabled={saving}
+            >
+              {saving ? (
+                <>
+                  <Loader2 size={16} className="animate-spin" />
+                  Menyimpan...
+                </>
+              ) : (
+                <>
+                  <Save size={18} color="#ddc192" />
+                  Simpan Presensi Santri
+                </>
+              )}
+            </button>
           </div>
-        )}
-      </div>
+        </div>
+      )}
+
+      {/* Loading state */}
+      {loadingSantri && (
+        <div
+          style={{ background: "white", borderRadius: "20px", padding: "48px 24px", border: "1px solid #ebdcc3", textAlign: "center", color: "#64748b" }}
+        >
+          <Loader2 size={32} className="animate-spin" style={{ margin: "0 auto 12px", display: "block", color: "#550000" }} />
+          <p style={{ fontSize: 14, fontWeight: 600, margin: 0 }}>Memuat data santri...</p>
+        </div>
+      )}
+
+      {/* Empty state */}
+      {!loadingSantri && selectedKelas && tanggal && santri.length === 0 && !loadingMaster && (
+        <div
+          style={{ background: "white", borderRadius: "20px", padding: "48px 24px", border: "1px dashed #ebdcc3", textAlign: "center", color: "#64748b" }}
+        >
+          <Users size={40} style={{ opacity: 0.3, color: "#ddc192", margin: "0 auto 12px", display: "block" }} />
+          <p style={{ fontSize: 14, fontWeight: 700, margin: 0, color: "#1a1a1a" }}>
+            Belum ada santri terdaftar di kelas ini.
+          </p>
+        </div>
+      )}
     </div>
   );
 }

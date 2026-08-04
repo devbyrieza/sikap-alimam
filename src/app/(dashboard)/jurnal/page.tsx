@@ -158,45 +158,50 @@ export default async function JurnalPage() {
   });
 
   return (
-    <div style={{ padding: "24px 28px", maxWidth: 1200, margin: "0 auto", display: "flex", flexDirection: "column", gap: 24 }}>
-      {/* Premium Hero Banner */}
-      <div style={{
-        display: "flex",
-        justifyContent: "space-between",
-        alignItems: "center",
-        background: "linear-gradient(135deg, #0f172a 0%, #1e293b 60%, #f59e0b 100%)",
-        borderRadius: "24px",
-        padding: "32px 36px",
-        color: "white",
-        boxShadow: "0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05)"
-      }}>
-        <div>
-          <h1 style={{ fontSize: "28px", fontWeight: "bold", margin: 0, display: "flex", alignItems: "center", gap: "8px" }}>
-            <BookOpen size={28} /> Jurnal Mengajar
+    <div className="page-container">
+      {/* ── Al-Imam Platinum Hero Banner ── */}
+      <div className="hero-banner">
+        {/* Decorative Background Elements */}
+        <div style={{ position:"absolute", top:0, right:0, width:256, height:256, background:"rgba(221, 193, 146, 0.15)", borderRadius:"50%", filter:"blur(40px)", transform:"translate(30%, -50%)", pointerEvents:"none" }}></div>
+        <div style={{ position:"absolute", bottom:0, left:0, width:192, height:192, background:"rgba(221, 193, 146, 0.1)", borderRadius:"50%", filter:"blur(40px)", transform:"translate(-25%, 50%)", pointerEvents:"none" }}></div>
+
+        <div style={{ position: "relative", zIndex: 1, flex: 1, minWidth: 0 }}>
+          <div style={{ display:"flex", alignItems:"center", gap:6, background:"rgba(221, 193, 146, 0.18)", padding:"5px 12px", borderRadius:20, border:"1px solid rgba(221, 193, 146, 0.4)", width:"fit-content", marginBottom:8 }}>
+            <div style={{ width:7, height:7, borderRadius:"50%", background:"#ddc192", boxShadow:"0 0 6px rgba(221, 193, 146, 0.9)" }}></div>
+            <span style={{ fontSize:11, fontWeight:800, letterSpacing:"0.5px", color:"#fdf8f0", textTransform:"uppercase" }}>Modul Akademik & Pengajaran</span>
+          </div>
+          <h1 style={{ fontSize: "clamp(20px, 4vw, 30px)", fontWeight: 800, margin: 0, display: "flex", alignItems: "center", gap: "10px", color: "white" }}>
+            <BookOpen size={26} color="#ddc192" /> Jurnal Mengajar
           </h1>
-          <p style={{ marginTop: "8px", opacity: 0.9, fontSize: "16px" }}>Rekap kegiatan belajar mengajar di Pesantren Al-Imam Al-Islami</p>
+          <p style={{ marginTop: "6px", color: "rgba(253, 248, 240, 0.9)", fontSize: "14px", margin: "6px 0 0 0" }}>
+            Rekap agenda belajar mengajar guru & asatidz Pesantren Al-Imam Al-Islami
+          </p>
         </div>
-        <Link href="/jurnal/tambah" style={{
-          background: "white",
-          color: "#0f172a",
-          padding: "12px 24px",
-          borderRadius: "14px",
-          fontWeight: "bold",
-          display: "flex",
-          alignItems: "center",
-          gap: "8px",
-          textDecoration: "none",
-          boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
-          transition: "transform 0.2s"
-        }}>
-          <Plus size={18} />
-          Tambah Jurnal
-        </Link>
+
+        <div style={{ position: "relative", zIndex: 1 }}>
+          <Link href="/jurnal/tambah" style={{
+            background: "#ffffff",
+            color: "#550000",
+            padding: "11px 22px",
+            borderRadius: "14px",
+            fontWeight: 800,
+            fontSize: "14px",
+            display: "inline-flex",
+            alignItems: "center",
+            gap: "8px",
+            textDecoration: "none",
+            boxShadow: "0 4px 14px rgba(0,0,0,0.12)",
+            border: "1px solid #ddc192",
+            transition: "all 0.2s"
+          }}>
+            <Plus size={18} color="#550000" />
+            Tambah Jurnal
+          </Link>
+        </div>
       </div>
 
       {/* Content */}
       <div style={{ width: "100%" }}>
-        {/* We keep JurnalClientFilter but ensure the wrapper is aligned */}
         <JurnalClientFilter 
           data={jurnalSerialized} 
           kelasList={kelasList}
