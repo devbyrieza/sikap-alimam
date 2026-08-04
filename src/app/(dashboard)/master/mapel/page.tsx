@@ -276,7 +276,7 @@ export default function MasterMapelPage() {
   const countIL = mapel.filter((m) => m.kelas?.nama === "IL" || m.kelas?.nama === "I'dad Lughowy").length;
 
   return (
-    <div className="p-3.5 sm:p-6 md:p-7 max-w-7xl mx-auto space-y-6">
+    <div className="p-3.5 sm:p-6 md:p-7 max-w-6xl mx-auto space-y-6">
       {/* Header Banner */}
       <div className="bg-gradient-to-r from-amber-800 via-amber-700 to-yellow-900 rounded-3xl p-8 text-white shadow-xl shadow-amber-900/20 flex flex-wrap justify-between items-center gap-4">
         <div>

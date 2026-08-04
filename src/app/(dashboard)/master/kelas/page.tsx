@@ -220,7 +220,7 @@ export default function MasterKelasPage() {
   };
 
   return (
-    <div className="p-3.5 sm:p-6 md:p-7 max-w-7xl mx-auto w-full space-y-6">
+    <div className="p-3.5 sm:p-6 md:p-7 max-w-6xl mx-auto space-y-6">
       {/* Header Banner */}
       <div
         className="card"
