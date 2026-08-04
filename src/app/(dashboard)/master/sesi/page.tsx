@@ -62,45 +62,71 @@ export default function MasterSesiPage() {
   };
 
   return (
-    <div className="p-3.5 sm:p-6 md:p-7 max-w-5xl mx-auto space-y-6">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+    <div style={{ padding: "24px 28px", maxWidth: 1200, margin: "0 auto", display: "flex", flexDirection: "column", gap: 24 }}>
+      <div style={{
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+        background: "linear-gradient(135deg, #0f172a 0%, #1e293b 60%, #0369a1 100%)",
+        borderRadius: "24px",
+        padding: "32px 36px",
+        boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.2), 0 8px 10px -6px rgba(0, 0, 0, 0.1)",
+        color: "white",
+        flexWrap: "wrap",
+        gap: "24px"
+      }}>
         <div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 flex items-center gap-2">
-            <Clock className="text-blue-600" size={28} /> Master Sesi Waktu
+          <h1 style={{ fontSize: "28px", fontWeight: "bold", margin: 0, display: "flex", alignItems: "center", gap: "8px" }}>
+            <Clock size={28} /> Master Sesi Waktu
           </h1>
-          <p className="text-gray-500 mt-1 text-xs sm:text-sm">Kelola slot jam pelajaran KBM per harinya secara dinamis.</p>
+          <p style={{ color: "#cbd5e1", margin: "8px 0 0 0", fontSize: "14px" }}>
+            Kelola slot jam pelajaran KBM per harinya secara dinamis.
+          </p>
         </div>
         <button 
           onClick={() => setIsAdding(!isAdding)}
-          className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-xl font-semibold shadow-md flex items-center gap-2 text-xs sm:text-sm transition-all"
+          style={{
+            padding: "10px 18px",
+            borderRadius: "14px",
+            backgroundColor: isAdding ? "#475569" : "#0ea5e9",
+            color: "white",
+            border: "none",
+            fontWeight: "bold",
+            display: "flex",
+            alignItems: "center",
+            gap: "8px",
+            cursor: "pointer",
+            boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)",
+            transition: "background-color 0.2s"
+          }}
         >
           {isAdding ? "Batal" : <><Plus size={16} /> Tambah Sesi</>}
         </button>
       </div>
 
       {isAdding && (
-        <div className="bg-white rounded-3xl p-6 border border-blue-200 shadow-md mb-6 animate-in fade-in slide-in-from-top-4">
-          <h3 className="font-bold text-lg text-gray-800 mb-4 border-b pb-2">Form Tambah Sesi Baru</h3>
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div style={{ background: "white", borderRadius: "24px", padding: "24px", border: "1px solid #e2e8f0", boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.05)" }} className="animate-in fade-in slide-in-from-top-4">
+          <h3 style={{ fontWeight: "bold", fontSize: "18px", color: "#1e293b", margin: "0 0 16px 0", paddingBottom: "8px", borderBottom: "1px solid #e2e8f0" }}>Form Tambah Sesi Baru</h3>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "16px" }}>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Jam Ke-</label>
-              <input type="number" value={form.jam_ke} onChange={(e) => setForm({...form, jam_ke: e.target.value})} className="w-full rounded-xl border-gray-300 focus:border-blue-500 focus:ring-blue-500" placeholder="Misal: 11" />
+              <label style={{ display: "block", fontSize: "14px", fontWeight: 500, color: "#475569", marginBottom: "4px" }}>Jam Ke-</label>
+              <input type="number" value={form.jam_ke} onChange={(e) => setForm({...form, jam_ke: e.target.value})} style={{ width: "100%", borderRadius: "12px", border: "1px solid #cbd5e1", padding: "10px 14px" }} placeholder="Misal: 11" />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Waktu Mulai</label>
-              <input type="time" value={form.waktu_mulai} onChange={(e) => setForm({...form, waktu_mulai: e.target.value})} className="w-full rounded-xl border-gray-300 focus:border-blue-500 focus:ring-blue-500" />
+              <label style={{ display: "block", fontSize: "14px", fontWeight: 500, color: "#475569", marginBottom: "4px" }}>Waktu Mulai</label>
+              <input type="time" value={form.waktu_mulai} onChange={(e) => setForm({...form, waktu_mulai: e.target.value})} style={{ width: "100%", borderRadius: "12px", border: "1px solid #cbd5e1", padding: "10px 14px" }} />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Waktu Selesai</label>
-              <input type="time" value={form.waktu_selesai} onChange={(e) => setForm({...form, waktu_selesai: e.target.value})} className="w-full rounded-xl border-gray-300 focus:border-blue-500 focus:ring-blue-500" />
+              <label style={{ display: "block", fontSize: "14px", fontWeight: 500, color: "#475569", marginBottom: "4px" }}>Waktu Selesai</label>
+              <input type="time" value={form.waktu_selesai} onChange={(e) => setForm({...form, waktu_selesai: e.target.value})} style={{ width: "100%", borderRadius: "12px", border: "1px solid #cbd5e1", padding: "10px 14px" }} />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Durasi (Menit)</label>
-              <input type="number" value={form.durasi_menit} onChange={(e) => setForm({...form, durasi_menit: e.target.value})} className="w-full rounded-xl border-gray-300 focus:border-blue-500 focus:ring-blue-500" />
+              <label style={{ display: "block", fontSize: "14px", fontWeight: 500, color: "#475569", marginBottom: "4px" }}>Durasi (Menit)</label>
+              <input type="number" value={form.durasi_menit} onChange={(e) => setForm({...form, durasi_menit: e.target.value})} style={{ width: "100%", borderRadius: "12px", border: "1px solid #cbd5e1", padding: "10px 14px" }} />
             </div>
           </div>
-          <div className="mt-4 flex justify-end">
-            <button onClick={handleSave} className="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-2 rounded-xl font-medium flex items-center gap-2">
+          <div style={{ marginTop: "16px", display: "flex", justifyContent: "flex-end" }}>
+            <button onClick={handleSave} style={{ backgroundColor: "#10b981", color: "white", padding: "10px 18px", borderRadius: "14px", fontWeight: "bold", display: "flex", alignItems: "center", gap: "8px", border: "none", cursor: "pointer", boxShadow: "0 4px 6px -1px rgba(16, 185, 129, 0.3)" }}>
               <Save size={18} /> Simpan Data
             </button>
           </div>
@@ -108,35 +134,35 @@ export default function MasterSesiPage() {
       )}
 
       {loading ? (
-        <div className="text-center py-10">Memuat data...</div>
+        <div style={{ textAlign: "center", padding: "40px 0" }}>Memuat data...</div>
       ) : (
-        <div className="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
+        <div style={{ background: "white", borderRadius: "24px", boxShadow: "0 1px 3px 0 rgba(0, 0, 0, 0.1)", border: "1px solid #f1f5f9", overflow: "hidden" }}>
+          <table style={{ width: "100%", borderCollapse: "collapse", textAlign: "left" }}>
+            <thead style={{ backgroundColor: "#f8fafc" }}>
               <tr>
-                <th className="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Jam Ke</th>
-                <th className="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Rentang Waktu</th>
-                <th className="px-6 py-4 text-center text-xs font-bold text-gray-500 uppercase tracking-wider">Durasi</th>
-                <th className="px-6 py-4 text-right text-xs font-bold text-gray-500 uppercase tracking-wider">Aksi</th>
+                <th style={{ padding: "16px 20px", fontSize: "12px", fontWeight: "bold", color: "#64748b", textTransform: "uppercase", letterSpacing: "0.05em" }}>Jam Ke</th>
+                <th style={{ padding: "16px 20px", fontSize: "12px", fontWeight: "bold", color: "#64748b", textTransform: "uppercase", letterSpacing: "0.05em" }}>Rentang Waktu</th>
+                <th style={{ padding: "16px 20px", fontSize: "12px", fontWeight: "bold", color: "#64748b", textTransform: "uppercase", letterSpacing: "0.05em", textAlign: "center" }}>Durasi</th>
+                <th style={{ padding: "16px 20px", fontSize: "12px", fontWeight: "bold", color: "#64748b", textTransform: "uppercase", letterSpacing: "0.05em", textAlign: "right" }}>Aksi</th>
               </tr>
             </thead>
-            <tbody className="bg-white divide-y divide-gray-100">
-              {sesi.map((s) => (
-                <tr key={s.id} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span className="bg-blue-100 text-blue-800 px-4 py-1.5 rounded-full font-bold">Sesi {s.jam_ke}</span>
+            <tbody>
+              {sesi.map((s, idx) => (
+                <tr key={s.id} className="hover:bg-[#f0fdf4] transition-colors" style={{ backgroundColor: idx % 2 === 0 ? "white" : "#fafafa", borderBottom: "1px solid #f1f5f9" }}>
+                  <td style={{ padding: "16px 20px", whiteSpace: "nowrap" }}>
+                    <span style={{ backgroundColor: "#e0f2fe", color: "#0369a1", padding: "6px 16px", borderRadius: "999px", fontWeight: "bold", fontSize: "14px" }}>Sesi {s.jam_ke}</span>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-gray-800 font-semibold font-mono">
+                  <td style={{ padding: "16px 20px", whiteSpace: "nowrap", color: "#1e293b", fontWeight: 600, fontFamily: "monospace", fontSize: "15px" }}>
                     {s.waktu_mulai} - {s.waktu_selesai}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-center text-gray-500 font-medium">
+                  <td style={{ padding: "16px 20px", whiteSpace: "nowrap", textAlign: "center", color: "#64748b", fontWeight: 500 }}>
                     {s.durasi_menit} Menit
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                    <button className="text-amber-500 hover:text-amber-700 mx-2 p-2 rounded-lg hover:bg-amber-50 transition-colors">
+                  <td style={{ padding: "16px 20px", whiteSpace: "nowrap", textAlign: "right" }}>
+                    <button style={{ color: "#f59e0b", background: "transparent", border: "none", padding: "8px", borderRadius: "8px", cursor: "pointer", margin: "0 4px" }} className="hover:bg-amber-50">
                       <Edit2 size={18} />
                     </button>
-                    <button onClick={() => handleDelete(s.id)} className="text-red-500 hover:text-red-700 p-2 rounded-lg hover:bg-red-50 transition-colors">
+                    <button onClick={() => handleDelete(s.id)} style={{ color: "#ef4444", background: "transparent", border: "none", padding: "8px", borderRadius: "8px", cursor: "pointer" }} className="hover:bg-red-50">
                       <Trash2 size={18} />
                     </button>
                   </td>

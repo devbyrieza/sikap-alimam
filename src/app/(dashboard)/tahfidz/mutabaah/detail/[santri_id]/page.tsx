@@ -1,9 +1,9 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { ArrowLeft, Plus, X, Save, AlertCircle, Trash2, Calendar, FileText } from "lucide-react";
+import { ArrowLeft, Plus, X, Save, AlertCircle, FileText } from "lucide-react";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
-import { QURAN_SURAH, Surah } from "@/lib/quran";
+import { QURAN_SURAH } from "@/lib/quran";
 import Swal from "sweetalert2";
 
 export default function TahfidzDetailPage() {
@@ -110,39 +110,63 @@ export default function TahfidzDetailPage() {
       if (data.success) {
         setShowModal(false);
         await fetchStudentData();
-        Swal.fire("Berhasil", "Catatan Tahfidz berhasil disimpan.", "success");
+        Swal.fire({ title: "Berhasil", text: "Catatan Tahfidz berhasil disimpan.", icon: "success", confirmButtonColor: "#0f172a" });
       } else {
-        Swal.fire("Gagal", data.error || "Gagal menyimpan.", "error");
+        Swal.fire({ title: "Gagal", text: data.error || "Gagal menyimpan.", icon: "error", confirmButtonColor: "#0f172a" });
       }
     } catch (err) {
-      Swal.fire("Gagal", "Terjadi kesalahan koneksi.", "error");
+      Swal.fire({ title: "Gagal", text: "Terjadi kesalahan koneksi.", icon: "error", confirmButtonColor: "#0f172a" });
     }
   };
 
   return (
-    <div className="p-3.5 sm:p-6 md:p-7 max-w-7xl mx-auto space-y-6">
+    <div style={{ padding: "24px 28px", maxWidth: 1200, margin: "0 auto", display: "flex", flexDirection: "column", gap: 24 }}>
       
       {/* Back & Breadcrumb */}
-      <div className="flex items-center gap-3">
+      <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
         <button 
           onClick={() => router.push("/tahfidz/mutabaah")}
-          className="bg-white hover:bg-gray-50 border border-gray-200 text-gray-700 h-10 w-10 rounded-xl flex items-center justify-center shadow-sm transition-all cursor-pointer"
+          style={{
+            background: "white",
+            border: "1px solid #e2e8f0",
+            color: "#475569",
+            height: "44px",
+            width: "44px",
+            borderRadius: "14px",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            boxShadow: "0 2px 4px rgba(0,0,0,0.05)",
+            cursor: "pointer",
+            transition: "all 0.2s"
+          }}
         >
-          <ArrowLeft size={18} />
+          <ArrowLeft size={20} />
         </button>
         <div>
-          <span className="text-gray-400 text-xs font-semibold uppercase tracking-wider">Tahfidz</span>
-          <h2 className="text-xl font-bold text-gray-800 leading-tight">Detail Perkembangan Santri</h2>
+          <span style={{ color: "#94a3b8", fontSize: "12px", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.5px" }}>Tahfidz</span>
+          <h2 style={{ fontSize: "20px", fontWeight: "bold", color: "#1e293b", margin: 0, lineHeight: 1.2 }}>Detail Perkembangan Santri</h2>
         </div>
       </div>
 
-      {/* Student Profile Card */}
+      {/* Student Profile Card (Premium Hero Banner) */}
       {studentInfo && (
-        <div className="bg-gradient-to-r from-teal-700 to-emerald-800 rounded-3xl p-6 text-white shadow-xl shadow-teal-900/10 flex flex-wrap justify-between items-center gap-4">
+        <div style={{
+          display: "flex",
+          flexWrap: "wrap",
+          justifyContent: "space-between",
+          alignItems: "center",
+          gap: "16px",
+          background: "linear-gradient(135deg, #0f172a 0%, #1e293b 60%, #f59e0b 100%)",
+          borderRadius: "24px",
+          padding: "32px 36px",
+          color: "white",
+          boxShadow: "0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05)"
+        }}>
           <div>
-            <div className="text-xs uppercase tracking-wider text-teal-200 font-semibold mb-1">Nama Santri</div>
-            <h1 className="text-2xl font-bold">{studentInfo.nama_lengkap}</h1>
-            <div className="flex gap-4 mt-2 text-sm text-teal-100/90 font-medium">
+            <div style={{ fontSize: "12px", textTransform: "uppercase", letterSpacing: "1px", color: "#fcd34d", fontWeight: 600, marginBottom: "4px" }}>Nama Santri</div>
+            <h1 style={{ fontSize: "32px", fontWeight: "bold", margin: 0 }}>{studentInfo.nama_lengkap}</h1>
+            <div style={{ display: "flex", gap: "16px", marginTop: "8px", fontSize: "15px", color: "rgba(255,255,255,0.9)", fontWeight: 500 }}>
               <span>NIS: {studentInfo.nis || "-"}</span>
               <span>•</span>
               <span>Kelas: {studentInfo.kelas?.nama || studentInfo.kelas}</span>
@@ -153,77 +177,103 @@ export default function TahfidzDetailPage() {
               setForm(prev => ({ ...prev, jenis: initialType }));
               setShowModal(true);
             }}
-            className="bg-white hover:bg-teal-50 text-teal-800 px-6 py-3 rounded-xl font-bold shadow-md flex items-center gap-2 transition-all cursor-pointer"
+            style={{
+              background: "white",
+              color: "#0f172a",
+              padding: "14px 24px",
+              borderRadius: "14px",
+              fontWeight: "bold",
+              boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
+              display: "flex",
+              alignItems: "center",
+              gap: "8px",
+              border: "none",
+              cursor: "pointer",
+              fontSize: "15px",
+              transition: "transform 0.2s"
+            }}
           >
-            <Plus size={18} /> Tambah Setoran
+            <Plus size={20} /> Tambah Setoran
           </button>
         </div>
       )}
 
       {/* History Log */}
-      <div className="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden">
-        <div className="p-6 border-b border-gray-100 bg-gray-50/50 flex justify-between items-center">
-          <h3 className="font-bold text-gray-800 text-lg flex items-center gap-2">
-            <FileText className="text-teal-600" size={20} /> Riwayat Mutabaah Tahfidz
+      <div style={{ background: "white", borderRadius: "16px", border: "1px solid #f1f5f9", boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)", overflow: "hidden" }}>
+        <div style={{ padding: "24px", borderBottom: "1px solid #f1f5f9", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+          <h3 style={{ fontWeight: "bold", color: "#1e293b", fontSize: "18px", display: "flex", alignItems: "center", gap: "8px", margin: 0 }}>
+            <FileText color="#f59e0b" size={24} /> Riwayat Mutabaah Tahfidz
           </h3>
-          <span className="text-sm font-semibold text-gray-500 bg-gray-100 px-3 py-1 rounded-lg">
+          <span style={{ fontSize: "13px", fontWeight: 600, color: "#64748b", background: "#f1f5f9", padding: "6px 12px", borderRadius: "10px" }}>
             Total Rekaman: {records.length}
           </span>
         </div>
 
         {loading ? (
-          <div className="flex justify-center p-12">
-            <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-teal-600"></div>
+          <div style={{ display: "flex", justifyContent: "center", padding: "48px" }}>
+            <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-slate-800"></div>
           </div>
         ) : records.length === 0 ? (
-          <div className="p-12 text-center">
-            <AlertCircle className="mx-auto text-gray-300 mb-4" size={48} />
-            <h4 className="font-bold text-gray-700">Belum ada riwayat setoran</h4>
-            <p className="text-sm text-gray-400 mt-1">Silakan klik tombol Tambah Setoran untuk mencatat hafalan baru.</p>
+          <div style={{ padding: "48px", textAlign: "center" }}>
+            <AlertCircle style={{ margin: "0 auto 16px", color: "#cbd5e1" }} size={48} />
+            <h4 style={{ fontWeight: "bold", color: "#334155", fontSize: "18px", margin: 0 }}>Belum ada riwayat setoran</h4>
+            <p style={{ fontSize: "14px", color: "#94a3b8", marginTop: "4px" }}>Silakan klik tombol Tambah Setoran untuk mencatat hafalan baru.</p>
           </div>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm text-left">
-              <thead className="bg-gray-50/60 text-gray-500 uppercase text-xs font-bold">
+          <div style={{ overflowX: "auto" }}>
+            <table style={{ width: "100%", textIndent: 0, borderCollapse: "collapse" }}>
+              <thead style={{ background: "#f8fafc", color: "#475569", textTransform: "uppercase", fontSize: "13px", fontWeight: "bold" }}>
                 <tr>
-                  <th className="px-6 py-4">Tanggal</th>
-                  <th className="px-6 py-4">Kategori</th>
-                  <th className="px-6 py-4">Batas Setoran</th>
-                  <th className="px-6 py-4 text-center">Hal</th>
-                  <th className="px-6 py-4 text-center">Nilai</th>
-                  <th className="px-6 py-4">Catatan / Keterangan</th>
-                  <th className="px-6 py-4">Musyrif</th>
+                  <th style={{ padding: "16px 20px", textAlign: "left" }}>Tanggal</th>
+                  <th style={{ padding: "16px 20px", textAlign: "left" }}>Kategori</th>
+                  <th style={{ padding: "16px 20px", textAlign: "left" }}>Batas Setoran</th>
+                  <th style={{ padding: "16px 20px", textAlign: "center" }}>Hal</th>
+                  <th style={{ padding: "16px 20px", textAlign: "center" }}>Nilai</th>
+                  <th style={{ padding: "16px 20px", textAlign: "left" }}>Catatan / Keterangan</th>
+                  <th style={{ padding: "16px 20px", textAlign: "left" }}>Musyrif</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-100">
-                {records.map((r) => (
-                  <tr key={r.id} className="hover:bg-gray-50/50 transition-colors">
-                    <td className="px-6 py-4 font-medium text-gray-600">
+              <tbody>
+                {records.map((r, idx) => (
+                  <tr 
+                    key={r.id} 
+                    style={{ borderBottom: "1px solid #f1f5f9", background: idx % 2 === 0 ? "white" : "#fafafa", transition: "background 0.2s ease-in-out" }}
+                    onMouseEnter={(e) => e.currentTarget.style.background = "#f0fdf4"} 
+                    onMouseLeave={(e) => e.currentTarget.style.background = idx % 2 === 0 ? "white" : "#fafafa"}
+                  >
+                    <td style={{ padding: "16px 20px", fontWeight: 500, color: "#475569" }}>
                       {new Date(r.tanggal).toLocaleDateString("id-ID", {
                         day: "numeric",
                         month: "short",
                         year: "numeric"
                       })}
                     </td>
-                    <td className="px-6 py-4">
-                      <span className={`px-3 py-1 rounded-xl text-xs font-bold border ${
-                        r.jenis === "ziyadah"
-                          ? "bg-blue-50 text-blue-700 border-blue-100"
+                    <td style={{ padding: "16px 20px" }}>
+                      <span style={{ 
+                        padding: "6px 12px", 
+                        borderRadius: "12px", 
+                        fontSize: "13px", 
+                        fontWeight: "bold", 
+                        border: "1px solid",
+                        textTransform: "capitalize",
+                        ...(r.jenis === "ziyadah" 
+                          ? { background: "#eff6ff", color: "#1d4ed8", borderColor: "#dbeafe" }
                           : r.jenis === "murojaah"
-                          ? "bg-amber-50 text-amber-700 border-amber-100"
-                          : "bg-emerald-50 text-emerald-700 border-emerald-100"
-                      } capitalize`}>
+                          ? { background: "#fef3c7", color: "#b45309", borderColor: "#fde68a" }
+                          : { background: "#ecfdf5", color: "#047857", borderColor: "#d1fae5" }
+                        )
+                      }}>
                         {r.jenis}
                       </span>
                     </td>
-                    <td className="px-6 py-4 font-semibold text-gray-800">
+                    <td style={{ padding: "16px 20px", fontWeight: 600, color: "#1e293b" }}>
                       {r.surat_dari} (Ayat {r.ayat_dari}) 
                       {r.surat_ke && ` s.d ${r.surat_ke} (Ayat ${r.ayat_ke})`}
                     </td>
-                    <td className="px-6 py-4 text-center font-bold text-gray-700">{r.halaman || "-"}</td>
-                    <td className="px-6 py-4 text-center font-bold text-teal-600">{r.nilai || "-"}</td>
-                    <td className="px-6 py-4 text-gray-500 max-w-xs truncate">{r.keterangan || "-"}</td>
-                    <td className="px-6 py-4 text-gray-600 font-medium">{r.pegawai?.nama_lengkap || "Sistem"}</td>
+                    <td style={{ padding: "16px 20px", textAlign: "center", fontWeight: "bold", color: "#334155" }}>{r.halaman || "-"}</td>
+                    <td style={{ padding: "16px 20px", textAlign: "center", fontWeight: "bold", color: "#0f172a" }}>{r.nilai || "-"}</td>
+                    <td style={{ padding: "16px 20px", color: "#64748b", maxWidth: "250px", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{r.keterangan || "-"}</td>
+                    <td style={{ padding: "16px 20px", color: "#475569", fontWeight: 500 }}>{r.pegawai?.nama_lengkap || "Sistem"}</td>
                   </tr>
                 ))}
               </tbody>
@@ -234,41 +284,41 @@ export default function TahfidzDetailPage() {
 
       {/* Input Modal */}
       {showModal && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-in fade-in">
-          <div className="bg-white rounded-3xl shadow-2xl border border-gray-100 w-full max-w-lg overflow-hidden animate-in zoom-in-95">
+        <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.5)", backdropFilter: "blur(4px)", display: "flex", alignItems: "center", justifyContent: "center", padding: "16px", zIndex: 50 }}>
+          <div style={{ background: "white", borderRadius: "24px", boxShadow: "0 25px 50px -12px rgba(0,0,0,0.25)", border: "1px solid #f1f5f9", width: "100%", maxWidth: "500px", overflow: "hidden" }}>
             {/* Modal Header */}
-            <div className="bg-teal-700 text-white p-6 flex justify-between items-center">
+            <div style={{ background: "#0f172a", color: "white", padding: "24px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
               <div>
-                <h3 className="font-bold text-lg">Catat Mutabaah Tahfidz</h3>
-                <p className="text-teal-100 text-xs mt-0.5">Input perkembangan Al-Quran santri</p>
+                <h3 style={{ fontWeight: "bold", fontSize: "18px", margin: 0 }}>Catat Mutabaah Tahfidz</h3>
+                <p style={{ color: "#94a3b8", fontSize: "13px", marginTop: "4px" }}>Input perkembangan Al-Quran santri</p>
               </div>
               <button 
                 onClick={() => setShowModal(false)}
-                className="text-white/80 hover:text-white bg-white/10 hover:bg-white/20 p-2 rounded-xl transition-all cursor-pointer"
+                style={{ background: "rgba(255,255,255,0.1)", color: "white", border: "none", padding: "8px", borderRadius: "12px", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}
               >
-                <X size={18} />
+                <X size={20} />
               </button>
             </div>
 
             {/* Modal Form */}
-            <form onSubmit={handleSubmit} className="p-6 space-y-4">
-              <div className="grid grid-cols-2 gap-4">
+            <form onSubmit={handleSubmit} style={{ padding: "24px", display: "flex", flexDirection: "column", gap: "16px" }}>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px" }}>
                 <div>
-                  <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Tanggal</label>
+                  <label style={{ display: "block", fontSize: "12px", fontWeight: 600, color: "#64748b", textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: "4px" }}>Tanggal</label>
                   <input
                     type="date"
                     required
                     value={form.tanggal}
                     onChange={(e) => setForm({ ...form, tanggal: e.target.value })}
-                    className="w-full rounded-xl border-gray-200 focus:border-teal-500 focus:ring-teal-500 text-sm"
+                    style={{ width: "100%", borderRadius: "12px", border: "1px solid #cbd5e1", padding: "10px 14px", fontSize: "14px", outline: "none" }}
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Kategori</label>
+                  <label style={{ display: "block", fontSize: "12px", fontWeight: 600, color: "#64748b", textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: "4px" }}>Kategori</label>
                   <select
                     value={form.jenis}
                     onChange={(e) => setForm({ ...form, jenis: e.target.value })}
-                    className="w-full rounded-xl border-gray-200 focus:border-teal-500 focus:ring-teal-500 text-sm capitalize"
+                    style={{ width: "100%", borderRadius: "12px", border: "1px solid #cbd5e1", padding: "10px 14px", fontSize: "14px", outline: "none", textTransform: "capitalize", backgroundColor: "white" }}
                   >
                     <option value="ziyadah">Ziyadah</option>
                     <option value="murojaah">Murojaah</option>
@@ -278,14 +328,14 @@ export default function TahfidzDetailPage() {
               </div>
 
               {/* Start Range */}
-              <div className="grid grid-cols-2 gap-4 bg-gray-50 p-4 rounded-2xl border border-gray-100">
-                <div className="col-span-2 text-xs font-bold text-teal-800 uppercase tracking-wide">Batas Mulai (Dari)</div>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px", background: "#f8fafc", padding: "16px", borderRadius: "16px", border: "1px solid #f1f5f9" }}>
+                <div style={{ gridColumn: "span 2", fontSize: "12px", fontWeight: "bold", color: "#334155", textTransform: "uppercase", letterSpacing: "0.5px" }}>Batas Mulai (Dari)</div>
                 <div>
-                  <label className="block text-xs font-semibold text-gray-400 mb-1">Surat</label>
+                  <label style={{ display: "block", fontSize: "12px", fontWeight: 600, color: "#94a3b8", marginBottom: "4px" }}>Surat</label>
                   <select
                     value={form.surat_dari}
                     onChange={(e) => setForm({ ...form, surat_dari: e.target.value })}
-                    className="w-full rounded-xl border-gray-200 focus:border-teal-500 focus:ring-teal-500 text-sm"
+                    style={{ width: "100%", borderRadius: "12px", border: "1px solid #cbd5e1", padding: "10px 14px", fontSize: "14px", outline: "none", backgroundColor: "white" }}
                   >
                     {QURAN_SURAH.map((s) => (
                       <option key={s.number} value={s.name}>{s.name}</option>
@@ -293,11 +343,11 @@ export default function TahfidzDetailPage() {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-gray-400 mb-1">Ayat</label>
+                  <label style={{ display: "block", fontSize: "12px", fontWeight: 600, color: "#94a3b8", marginBottom: "4px" }}>Ayat</label>
                   <select
                     value={form.ayat_dari}
                     onChange={(e) => setForm({ ...form, ayat_dari: parseInt(e.target.value) })}
-                    className="w-full rounded-xl border-gray-200 focus:border-teal-500 focus:ring-teal-500 text-sm"
+                    style={{ width: "100%", borderRadius: "12px", border: "1px solid #cbd5e1", padding: "10px 14px", fontSize: "14px", outline: "none", backgroundColor: "white" }}
                   >
                     {Array.from({ length: suratDariVerses }, (_, i) => i + 1).map(val => (
                       <option key={val} value={val}>{val}</option>
@@ -307,14 +357,14 @@ export default function TahfidzDetailPage() {
               </div>
 
               {/* End Range (Optional) */}
-              <div className="grid grid-cols-2 gap-4 bg-teal-50/30 p-4 rounded-2xl border border-teal-100/30">
-                <div className="col-span-2 text-xs font-bold text-teal-800 uppercase tracking-wide">Batas Akhir (Sampai - Opsional)</div>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px", background: "#f0fdf4", padding: "16px", borderRadius: "16px", border: "1px solid #dcfce7" }}>
+                <div style={{ gridColumn: "span 2", fontSize: "12px", fontWeight: "bold", color: "#166534", textTransform: "uppercase", letterSpacing: "0.5px" }}>Batas Akhir (Sampai - Opsional)</div>
                 <div>
-                  <label className="block text-xs font-semibold text-gray-400 mb-1">Surat</label>
+                  <label style={{ display: "block", fontSize: "12px", fontWeight: 600, color: "#94a3b8", marginBottom: "4px" }}>Surat</label>
                   <select
                     value={form.surat_ke}
                     onChange={(e) => setForm({ ...form, surat_ke: e.target.value })}
-                    className="w-full rounded-xl border-gray-200 focus:border-teal-500 focus:ring-teal-500 text-sm"
+                    style={{ width: "100%", borderRadius: "12px", border: "1px solid #cbd5e1", padding: "10px 14px", fontSize: "14px", outline: "none", backgroundColor: "white" }}
                   >
                     <option value="">Pilih Surat...</option>
                     {QURAN_SURAH.map((s) => (
@@ -323,12 +373,12 @@ export default function TahfidzDetailPage() {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-gray-400 mb-1">Ayat</label>
+                  <label style={{ display: "block", fontSize: "12px", fontWeight: 600, color: "#94a3b8", marginBottom: "4px" }}>Ayat</label>
                   <select
                     disabled={!form.surat_ke}
                     value={String(form.ayat_ke)}
                     onChange={(e) => setForm({ ...form, ayat_ke: e.target.value ? parseInt(e.target.value) : "" })}
-                    className="w-full rounded-xl border-gray-200 focus:border-teal-500 focus:ring-teal-500 text-sm disabled:bg-gray-100 disabled:text-gray-400"
+                    style={{ width: "100%", borderRadius: "12px", border: "1px solid #cbd5e1", padding: "10px 14px", fontSize: "14px", outline: "none", backgroundColor: form.surat_ke ? "white" : "#f1f5f9", color: form.surat_ke ? "#0f172a" : "#94a3b8" }}
                   >
                     <option value="">Pilih Ayat...</option>
                     {Array.from({ length: suratKeVerses }, (_, i) => i + 1).map(val => (
@@ -339,9 +389,9 @@ export default function TahfidzDetailPage() {
               </div>
 
               {/* Halaman & Nilai */}
-              <div className="grid grid-cols-2 gap-4">
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px" }}>
                 <div>
-                  <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Jumlah Halaman</label>
+                  <label style={{ display: "block", fontSize: "12px", fontWeight: 600, color: "#64748b", textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: "4px" }}>Jumlah Halaman</label>
                   <input
                     type="number"
                     min="1"
@@ -349,11 +399,11 @@ export default function TahfidzDetailPage() {
                     placeholder="Contoh: 2"
                     value={form.halaman}
                     onChange={(e) => setForm({ ...form, halaman: e.target.value })}
-                    className="w-full rounded-xl border-gray-200 focus:border-teal-500 focus:ring-teal-500 text-sm"
+                    style={{ width: "100%", borderRadius: "12px", border: "1px solid #cbd5e1", padding: "10px 14px", fontSize: "14px", outline: "none" }}
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Nilai</label>
+                  <label style={{ display: "block", fontSize: "12px", fontWeight: 600, color: "#64748b", textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: "4px" }}>Nilai</label>
                   <input
                     type="number"
                     min="0"
@@ -362,37 +412,37 @@ export default function TahfidzDetailPage() {
                     placeholder="Contoh: 85.5"
                     value={form.nilai}
                     onChange={(e) => setForm({ ...form, nilai: e.target.value })}
-                    className="w-full rounded-xl border-gray-200 focus:border-teal-500 focus:ring-teal-500 text-sm"
+                    style={{ width: "100%", borderRadius: "12px", border: "1px solid #cbd5e1", padding: "10px 14px", fontSize: "14px", outline: "none" }}
                   />
                 </div>
               </div>
 
               {/* Catatan */}
               <div>
-                <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Catatan / Keterangan</label>
+                <label style={{ display: "block", fontSize: "12px", fontWeight: 600, color: "#64748b", textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: "4px" }}>Catatan / Keterangan</label>
                 <textarea
                   value={form.keterangan}
                   onChange={(e) => setForm({ ...form, keterangan: e.target.value })}
                   placeholder="Ketik catatan di sini..."
                   rows={2}
-                  className="w-full rounded-xl border-gray-200 focus:border-teal-500 focus:ring-teal-500 text-sm"
+                  style={{ width: "100%", borderRadius: "12px", border: "1px solid #cbd5e1", padding: "10px 14px", fontSize: "14px", outline: "none", fontFamily: "inherit" }}
                 />
               </div>
 
               {/* Submit Buttons */}
-              <div className="flex justify-end gap-3 pt-2">
+              <div style={{ display: "flex", justifyContent: "flex-end", gap: "12px", paddingTop: "8px" }}>
                 <button
                   type="button"
                   onClick={() => setShowModal(false)}
-                  className="bg-gray-100 hover:bg-gray-200 text-gray-700 px-5 py-2.5 rounded-xl font-semibold transition-all cursor-pointer text-sm"
+                  style={{ background: "#f1f5f9", color: "#475569", padding: "12px 20px", borderRadius: "12px", fontWeight: 600, border: "none", cursor: "pointer", fontSize: "14px" }}
                 >
-                  Close
+                  Batal
                 </button>
                 <button
                   type="submit"
-                  className="bg-teal-600 hover:bg-teal-700 text-white px-5 py-2.5 rounded-xl font-bold shadow-md flex items-center gap-2 transition-all cursor-pointer text-sm"
+                  style={{ background: "#0f172a", color: "white", padding: "12px 24px", borderRadius: "12px", fontWeight: "bold", border: "none", cursor: "pointer", display: "flex", alignItems: "center", gap: "8px", fontSize: "14px", boxShadow: "0 4px 6px rgba(0,0,0,0.1)" }}
                 >
-                  <Save size={16} /> Save
+                  <Save size={18} /> Simpan
                 </button>
               </div>
             </form>

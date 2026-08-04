@@ -267,7 +267,13 @@ export default function PresensiSantriPage() {
 
   return (
     <div className="w-full">
-      <div className="p-3.5 sm:p-6 md:p-7 max-w-6xl mx-auto w-full pb-28 sm:pb-12">
+      <div style={{ padding: "24px 28px", maxWidth: 1200, margin: "0 auto", display: "flex", flexDirection: "column", gap: 24, paddingBottom: 112 }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", background: "linear-gradient(135deg, #0f172a 0%, #1e293b 60%, #10b981 100%)", borderRadius: "24px", padding: "32px 36px", boxShadow: "0 10px 25px -5px rgba(16, 185, 129, 0.4), 0 8px 10px -6px rgba(16, 185, 129, 0.1)" }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+            <h1 style={{ color: "white", fontSize: "28px", fontWeight: 700, margin: 0 }}>Input Presensi Santri</h1>
+            <p style={{ color: "#cbd5e1", fontSize: "15px", margin: 0 }}>Catat kehadiran harian santri secara cepat.</p>
+          </div>
+        </div>
         <ModuleTabs
           tabs={[
             { label: "Input Presensi", href: "/presensi/santri", exact: true, icon: <ClipboardCheck size={16} /> },
@@ -276,7 +282,7 @@ export default function PresensiSantriPage() {
           ]}
         />
         {/* Step 1: Pilih Kelas & Tanggal */}
-        <div className="card" style={{ marginBottom: 20 }}>
+        <div style={{ background: "white", borderRadius: "24px", padding: "28px", boxShadow: "0 4px 20px -2px rgba(0, 0, 0, 0.05)", display: "flex", flexDirection: "column", gap: "20px" }}>
           <p className="card-title">
             <Users size={16} style={{ display: "inline", marginRight: 6, color: "var(--primary)" }} />
             Pilih Kelas &amp; Tanggal
@@ -349,7 +355,7 @@ export default function PresensiSantriPage() {
             </div>
 
             <button
-              className="btn btn-primary"
+              style={{ background: "#10b981", color: "white", padding: "10px 18px", borderRadius: "14px", border: "none", fontWeight: 600, cursor: "pointer", display: "inline-flex", alignItems: "center", gap: "8px" }}
               onClick={loadPresensi}
               disabled={!selectedKelas || !tanggal || loadingSantri}
             >
@@ -373,8 +379,7 @@ export default function PresensiSantriPage() {
           <>
             {/* Progress Indicator */}
             <div
-              className="card"
-              style={{ marginBottom: 16, padding: "16px 20px" }}
+              style={{ background: "white", borderRadius: "24px", padding: "24px 28px", boxShadow: "0 4px 20px -2px rgba(0, 0, 0, 0.05)", display: "flex", flexDirection: "column", gap: "20px" }}
             >
               <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 10, flexWrap: "wrap", gap: 10 }}>
                 <div style={{ fontSize: 14, fontWeight: 700, color: "var(--text)" }}>
@@ -432,8 +437,8 @@ export default function PresensiSantriPage() {
                 return (
                   <div
                     key={s.id}
-                    className="card santri-attendance-card"
                     style={{
+                      background: "white", borderRadius: "20px", boxShadow: "0 4px 12px -2px rgba(0, 0, 0, 0.03)",
                       padding: "14px 16px",
                       borderLeft: `4px solid ${
                         currentStatus === "hadir"
@@ -584,7 +589,7 @@ export default function PresensiSantriPage() {
               </Link>
               <button
                 type="button"
-                className="btn btn-primary"
+                style={{ background: "#10b981", color: "white", padding: "10px 18px", borderRadius: "14px", border: "none", fontWeight: 600, cursor: "pointer", display: "inline-flex", alignItems: "center", gap: "8px" }}
                 onClick={handleSimpan}
                 disabled={saving}
               >
@@ -607,8 +612,7 @@ export default function PresensiSantriPage() {
         {/* Loading state */}
         {loadingSantri && (
           <div
-            className="card"
-            style={{ textAlign: "center", padding: "48px 24px", color: "var(--text-muted)" }}
+            style={{ background: "white", borderRadius: "24px", padding: "48px 24px", boxShadow: "0 4px 20px -2px rgba(0, 0, 0, 0.05)", textAlign: "center", color: "var(--text-muted)" }}
           >
             <Loader2 size={32} style={{ animation: "spin 1s linear infinite", margin: "0 auto 12px", display: "block", color: "var(--primary)" }} />
             <p style={{ fontSize: 14 }}>Memuat data santri...</p>
@@ -618,12 +622,7 @@ export default function PresensiSantriPage() {
         {/* Empty state */}
         {!loadingSantri && selectedKelas && tanggal && santri.length === 0 && !loadingMaster && (
           <div
-            className="card"
-            style={{
-              textAlign: "center",
-              padding: "48px 24px",
-              color: "var(--text-muted)",
-            }}
+            style={{ background: "white", borderRadius: "24px", padding: "48px 24px", boxShadow: "0 4px 20px -2px rgba(0, 0, 0, 0.05)", textAlign: "center", color: "var(--text-muted)" }}
           >
             <Users size={40} style={{ opacity: 0.2, marginBottom: 12, display: "block", margin: "0 auto 12px" }} />
             <p style={{ fontSize: 14 }}>

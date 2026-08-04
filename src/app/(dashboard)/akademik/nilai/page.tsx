@@ -87,20 +87,35 @@ export default function FilterNilaiPage() {
   };
 
   return (
-    <div className="p-6 max-w-7xl mx-auto space-y-6">
-      <div className="bg-gradient-to-r from-blue-700 to-indigo-800 rounded-3xl p-8 text-white shadow-xl shadow-blue-900/20">
-        <h1 className="text-3xl font-bold mb-2">Pusat Data Nilai Akademik</h1>
-        <p className="text-blue-100">Filter, pantau, dan unduh data nilai santri per jenjang dan mata pelajaran.</p>
+    <div style={{ padding: "24px 28px", maxWidth: 1200, margin: "0 auto", display: "flex", flexDirection: "column", gap: 24 }}>
+      <style>{`
+        .platinum-table tr {
+          transition: background 0.2s;
+        }
+        .platinum-table tr:hover {
+          background-color: #f8fafc !important;
+        }
+        .platinum-table tr:hover td.sticky-col {
+          background-color: #f8fafc !important;
+        }
+      `}</style>
+      <div style={{ background: "linear-gradient(135deg, #0f172a 0%, #1e293b 60%, #2563eb 100%)", borderRadius: "24px", padding: "32px 36px", display: "flex", justifyContent: "space-between", alignItems: "center", boxShadow: "0 20px 25px -5px rgba(37, 99, 235, 0.2), 0 10px 10px -5px rgba(37, 99, 235, 0.1)" }}>
+        <div>
+          <h1 style={{ fontSize: "1.875rem", fontWeight: "bold", color: "white", margin: "0 0 8px 0", display: "flex", alignItems: "center", gap: "8px" }}>
+            <BookOpen size={24} /> Pusat Data Nilai Akademik
+          </h1>
+          <p style={{ color: "#bfdbfe", margin: 0 }}>Filter, pantau, dan unduh data nilai santri per jenjang dan mata pelajaran.</p>
+        </div>
       </div>
 
-      <div className="bg-white rounded-3xl p-6 shadow-sm border border-gray-100 flex flex-wrap gap-4 items-end">
+      <div style={{ background: "white", borderRadius: "24px", padding: "24px", boxShadow: "0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)", border: "1px solid #f1f5f9", display: "flex", flexWrap: "wrap", gap: "16px", alignItems: "flex-end" }}>
         {/* 1. Filter Kelas */}
-        <div className="flex-1 min-w-[200px]">
-          <label className="block text-sm font-semibold text-gray-700 mb-1">Pilih Kelas</label>
+        <div style={{ display: "flex", flexDirection: "column", gap: "8px", flex: "1", minWidth: "200px" }}>
+          <label style={{ fontSize: "14px", fontWeight: "600", color: "#334155" }}>Pilih Kelas</label>
           <select
             value={kelas}
             onChange={(e) => handleKelasChange(e.target.value)}
-            className="w-full rounded-xl border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 bg-gray-50 py-2.5 text-sm"
+            style={{ padding: "10px 14px", borderRadius: "12px", border: "1px solid #e2e8f0", background: "#f8fafc", fontSize: "14px", width: "100%", outline: "none" }}
           >
             <option value="">Semua Kelas</option>
             {kelasList.map((k) => (
@@ -111,15 +126,15 @@ export default function FilterNilaiPage() {
           </select>
         </div>
 
-        {/* 2. Filter Mapel (Menyesuaikan dengan kelas) */}
-        <div className="flex-1 min-w-[220px]">
-          <label className="block text-sm font-semibold text-gray-700 mb-1">
+        {/* 2. Filter Mapel */}
+        <div style={{ display: "flex", flexDirection: "column", gap: "8px", flex: "1", minWidth: "220px" }}>
+          <label style={{ fontSize: "14px", fontWeight: "600", color: "#334155" }}>
             Filter Mata Pelajaran {kelas ? "(Sesuai Kelas)" : ""}
           </label>
           <select
             value={mapel}
             onChange={(e) => setMapel(e.target.value)}
-            className="w-full rounded-xl border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 bg-gray-50 py-2.5 text-sm"
+            style={{ padding: "10px 14px", borderRadius: "12px", border: "1px solid #e2e8f0", background: "#f8fafc", fontSize: "14px", width: "100%", outline: "none" }}
           >
             <option value="">{kelas ? `Semua Mapel di Kelas Ini` : "Semua Mata Pelajaran"}</option>
             {availableMapelList.map((m, idx) => (
@@ -131,69 +146,69 @@ export default function FilterNilaiPage() {
         </div>
 
         {/* 3. Cari Santri */}
-        <div className="flex-1 min-w-[200px]">
-          <label className="block text-sm font-semibold text-gray-700 mb-1">Cari Santri (NIS / Nama)</label>
+        <div style={{ display: "flex", flexDirection: "column", gap: "8px", flex: "1", minWidth: "200px" }}>
+          <label style={{ fontSize: "14px", fontWeight: "600", color: "#334155" }}>Cari Santri (NIS / Nama)</label>
           <input 
             type="text" 
             placeholder="Ketik nama santri..." 
             value={santri} 
             onChange={(e) => setSantri(e.target.value)}
-            className="w-full rounded-xl border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 bg-gray-50 py-2 text-sm"
+            style={{ padding: "10px 14px", borderRadius: "12px", border: "1px solid #e2e8f0", background: "#f8fafc", fontSize: "14px", width: "100%", outline: "none" }}
           />
         </div>
 
-        <button onClick={handleFilter} className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-2.5 rounded-xl font-bold transition-all shadow-md flex items-center gap-2">
+        <button onClick={handleFilter} style={{ background: "#2563eb", color: "white", padding: "10px 18px", borderRadius: "14px", fontWeight: "bold", border: "none", display: "flex", alignItems: "center", gap: "8px", cursor: "pointer", boxShadow: "0 4px 6px -1px rgba(37, 99, 235, 0.2)", height: "42px" }}>
           <Filter size={18} />
           Terapkan Filter
         </button>
       </div>
 
       {loading ? (
-        <div className="flex justify-center p-12">
+        <div style={{ display: "flex", justifyContent: "center", padding: "48px" }}>
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
         </div>
       ) : (
         data.length > 0 && (
-          <div className="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
-            <div className="p-4 bg-gray-50 border-b border-gray-100 flex justify-between items-center">
-              <h3 className="font-bold text-gray-700">Hasil Pencarian: {data.length} Data</h3>
-              <div className="flex gap-2">
-                <button className="flex items-center gap-2 text-sm bg-white border border-gray-300 text-gray-700 hover:bg-gray-50 px-4 py-2 rounded-lg font-medium transition-all">
+          <div style={{ background: "white", borderRadius: "24px", boxShadow: "0 1px 3px 0 rgba(0, 0, 0, 0.1)", border: "1px solid #f1f5f9", overflow: "hidden" }}>
+            <div style={{ padding: "16px 20px", background: "#f8fafc", borderBottom: "1px solid #f1f5f9", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+              <h3 style={{ fontWeight: "bold", color: "#334155", margin: 0 }}>Hasil Pencarian: {data.length} Data</h3>
+              <div style={{ display: "flex", gap: "8px" }}>
+                <button style={{ background: "white", border: "1px solid #e2e8f0", color: "#334155", padding: "10px 18px", borderRadius: "12px", display: "flex", alignItems: "center", gap: "8px", fontSize: "14px", fontWeight: "600", cursor: "pointer" }}>
                   <Download size={16} /> Export Excel
                 </button>
               </div>
             </div>
-            <div className="overflow-x-auto">
-              <table className="min-w-full divide-y divide-gray-200 text-sm">
-                <thead className="bg-gray-50">
-                  <tr>
-                    <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Santri</th>
-                    <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Kelas</th>
-                    <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Mata Pelajaran</th>
-                    <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Nilai</th>
-                    <th className="px-6 py-3 text-center text-xs font-semibold text-gray-500 uppercase tracking-wider">Keterangan</th>
+            <div style={{ overflowX: "auto" }}>
+              <table className="platinum-table" style={{ width: "100%", borderCollapse: "collapse", fontSize: "14px", textAlign: "left" }}>
+                <thead>
+                  <tr style={{ background: "#f8fafc", borderBottom: "1px solid #e2e8f0" }}>
+                    <th style={{ padding: "16px 20px", fontWeight: "600", color: "#64748b", textTransform: "uppercase", fontSize: "12px", letterSpacing: "0.05em" }}>Santri</th>
+                    <th style={{ padding: "16px 20px", fontWeight: "600", color: "#64748b", textTransform: "uppercase", fontSize: "12px", letterSpacing: "0.05em" }}>Kelas</th>
+                    <th style={{ padding: "16px 20px", fontWeight: "600", color: "#64748b", textTransform: "uppercase", fontSize: "12px", letterSpacing: "0.05em" }}>Mata Pelajaran</th>
+                    <th style={{ padding: "16px 20px", fontWeight: "600", color: "#64748b", textTransform: "uppercase", fontSize: "12px", letterSpacing: "0.05em" }}>Nilai</th>
+                    <th style={{ padding: "16px 20px", textAlign: "center", fontWeight: "600", color: "#64748b", textTransform: "uppercase", fontSize: "12px", letterSpacing: "0.05em" }}>Keterangan</th>
                   </tr>
                 </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
-                  {data.map((item) => (
-                    <tr key={item.id} className="hover:bg-gray-50">
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="font-bold text-gray-900">{item.santri.nama_lengkap}</div>
-                        <div className="text-xs text-gray-500 font-mono">NIS: {item.santri.nis}</div>
+                <tbody>
+                  {data.map((item, idx) => (
+                    <tr key={item.id} style={{ background: idx % 2 === 0 ? "white" : "#fafafa", borderBottom: "1px solid #f1f5f9" }}>
+                      <td style={{ padding: "16px 20px", whiteSpace: "nowrap" }}>
+                        <div style={{ fontWeight: "bold", color: "#0f172a" }}>{item.santri.nama_lengkap}</div>
+                        <div style={{ fontSize: "12px", color: "#64748b", fontFamily: "monospace" }}>NIS: {item.santri.nis}</div>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <span className="px-2.5 py-1 text-xs font-bold rounded-lg bg-blue-50 text-blue-700 border border-blue-200">
+                      <td style={{ padding: "16px 20px", whiteSpace: "nowrap" }}>
+                        <span style={{ padding: "6px 12px", fontSize: "12px", fontWeight: "bold", borderRadius: "8px", background: "#eff6ff", color: "#1d4ed8", border: "1px solid #bfdbfe" }}>
                           {item.kelas.nama}
                         </span>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap font-medium text-gray-800">
+                      <td style={{ padding: "16px 20px", whiteSpace: "nowrap", fontWeight: "600", color: "#1e293b" }}>
                         {item.mapel.nama}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap font-mono font-bold text-blue-600">
+                      <td style={{ padding: "16px 20px", whiteSpace: "nowrap", fontFamily: "monospace", fontWeight: "bold", color: "#2563eb", fontSize: "16px" }}>
                         {item.nilai}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-center">
-                        <span className="px-3 py-1 text-xs font-bold rounded-full bg-emerald-100 text-emerald-800">
+                      <td style={{ padding: "16px 20px", whiteSpace: "nowrap", textAlign: "center" }}>
+                        <span style={{ padding: "6px 14px", fontSize: "12px", fontWeight: "bold", borderRadius: "9999px", background: "#d1fae5", color: "#065f46" }}>
                           {item.keterangan}
                         </span>
                       </td>

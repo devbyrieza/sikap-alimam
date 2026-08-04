@@ -26,19 +26,30 @@ export default function GuruJadwalPage() {
   }, []);
 
   return (
-    <div className="p-6 max-w-4xl mx-auto space-y-6">
+    <div style={{ padding: "24px 28px", maxWidth: 1200, margin: "0 auto", display: "flex", flexDirection: "column", gap: 24 }}>
       
       {/* Welcome Banner */}
-      <div className="bg-gradient-to-r from-blue-700 to-indigo-800 rounded-3xl p-8 text-white shadow-xl flex justify-between items-center">
+      <div style={{
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+        background: "linear-gradient(135deg, #0f172a 0%, #1e293b 60%, #0369a1 100%)",
+        borderRadius: "24px",
+        padding: "32px 36px",
+        boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.2), 0 8px 10px -6px rgba(0, 0, 0, 0.1)",
+        color: "white",
+        flexWrap: "wrap",
+        gap: "24px"
+      }}>
         <div>
-          <h1 className="text-3xl font-bold mb-2">Jadwal Mengajar Anda Hari Ini</h1>
-          <p className="text-blue-100">Selamat bertugas mencetak generasi Rabbani, Ustadz!</p>
+          <h1 style={{ fontSize: "28px", fontWeight: "bold", margin: "0 0 8px 0" }}>Jadwal Mengajar Anda Hari Ini</h1>
+          <p style={{ color: "#cbd5e1", margin: 0, fontSize: "14px" }}>Selamat bertugas mencetak generasi Rabbani, Ustadz!</p>
         </div>
-        <div className="text-right">
-          <p className="text-sm text-blue-200 mb-1">Status Pekan Saat Ini</p>
-          <div className="inline-flex items-center gap-2 bg-white/20 px-4 py-2 rounded-xl backdrop-blur-sm border border-white/30">
+        <div style={{ textAlign: "right" }}>
+          <p style={{ fontSize: "14px", color: "#bae6fd", margin: "0 0 4px 0" }}>Status Pekan Saat Ini</p>
+          <div style={{ display: "inline-flex", alignItems: "center", gap: "8px", background: "rgba(255,255,255,0.2)", padding: "8px 16px", borderRadius: "12px", backdropFilter: "blur(4px)", border: "1px solid rgba(255,255,255,0.3)" }}>
             <Info size={18} />
-            <span className="font-bold uppercase tracking-wider">
+            <span style={{ fontWeight: "bold", textTransform: "uppercase", letterSpacing: "0.05em", fontSize: "14px" }}>
               {currentPekan === "ganjil" ? "Pekan Ganjil (1/3)" : "Pekan Genap (2/4)"}
             </span>
           </div>
@@ -46,38 +57,38 @@ export default function GuruJadwalPage() {
       </div>
 
       {loading ? (
-        <div className="flex justify-center p-12">
+        <div style={{ display: "flex", justifyContent: "center", padding: "48px" }}>
           <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-600"></div>
         </div>
       ) : (
-        <div className="space-y-4">
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: "24px", alignItems: "stretch" }}>
           {jadwal.length === 0 ? (
-            <div className="bg-white rounded-3xl p-12 text-center shadow-sm border border-gray-100">
-              <CheckCircle className="mx-auto text-green-500 mb-4" size={48} />
-              <h2 className="text-xl font-bold text-gray-800">Alhamdulillah!</h2>
-              <p className="text-gray-500 mt-2">Anda tidak memiliki jadwal mengajar pada hari ini.</p>
+            <div style={{ background: "white", borderRadius: "24px", padding: "48px", textAlign: "center", boxShadow: "0 1px 3px rgba(0,0,0,0.1)", border: "1px solid #f1f5f9", gridColumn: "1 / -1" }}>
+              <CheckCircle style={{ margin: "0 auto", color: "#22c55e", marginBottom: "16px" }} size={48} />
+              <h2 style={{ fontSize: "20px", fontWeight: "bold", color: "#1e293b", margin: 0 }}>Alhamdulillah!</h2>
+              <p style={{ color: "#64748b", marginTop: "8px" }}>Anda tidak memiliki jadwal mengajar pada hari ini.</p>
             </div>
           ) : (
             jadwal.map((j) => (
-              <div key={j.id} className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 flex items-center justify-between hover:shadow-md transition-shadow">
-                <div className="flex items-center gap-6">
-                  <div className="flex flex-col items-center justify-center bg-blue-50 text-blue-700 h-16 w-16 rounded-xl border border-blue-100">
-                    <span className="text-xs font-bold uppercase mb-0.5">Jam Ke</span>
-                    <span className="text-2xl font-black">{j.jam_ke}</span>
+              <div key={j.id} style={{ background: "white", borderRadius: "24px", padding: "24px", boxShadow: "0 4px 6px -1px rgba(0,0,0,0.05)", border: "1px solid #f1f5f9", display: "flex", flexDirection: "column", justifyContent: "space-between", gap: "24px", transition: "box-shadow 0.2s" }} className="hover:shadow-lg">
+                <div style={{ display: "flex", alignItems: "center", gap: "24px" }}>
+                  <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", background: "#eff6ff", color: "#1d4ed8", height: "64px", width: "64px", borderRadius: "16px", border: "1px solid #dbeafe" }}>
+                    <span style={{ fontSize: "12px", fontWeight: "bold", textTransform: "uppercase", marginBottom: "2px" }}>Jam Ke</span>
+                    <span style={{ fontSize: "24px", fontWeight: "900" }}>{j.jam_ke}</span>
                   </div>
                   <div>
-                    <h3 className="text-xl font-bold text-gray-800 mb-1">{j.mapel.nama}</h3>
-                    <div className="flex items-center gap-4 text-sm font-medium text-gray-500">
-                      <span className="flex items-center gap-1.5 bg-gray-100 px-3 py-1 rounded-lg">
+                    <h3 style={{ fontSize: "20px", fontWeight: "bold", color: "#1e293b", margin: "0 0 8px 0" }}>{j.mapel.nama}</h3>
+                    <div style={{ display: "flex", flexWrap: "wrap", gap: "12px", fontSize: "14px", fontWeight: 500, color: "#64748b" }}>
+                      <span style={{ display: "flex", alignItems: "center", gap: "6px", background: "#f1f5f9", padding: "4px 12px", borderRadius: "8px" }}>
                         <Clock size={14} /> {j.waktu_mulai} - {j.waktu_selesai}
                       </span>
-                      <span className="text-blue-600 bg-blue-50 px-3 py-1 rounded-lg border border-blue-100">
+                      <span style={{ color: "#2563eb", background: "#eff6ff", padding: "4px 12px", borderRadius: "8px", border: "1px solid #dbeafe" }}>
                         Kelas: {j.kelas.nama}
                       </span>
                     </div>
                   </div>
                 </div>
-                <button className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl font-semibold transition-all">
+                <button style={{ backgroundColor: "#0284c7", color: "white", padding: "10px 18px", borderRadius: "14px", fontWeight: "bold", border: "none", cursor: "pointer", transition: "background-color 0.2s", width: "100%", boxShadow: "0 4px 6px -1px rgba(2, 132, 199, 0.4)" }} className="hover:bg-sky-700">
                   Isi Jurnal
                 </button>
               </div>

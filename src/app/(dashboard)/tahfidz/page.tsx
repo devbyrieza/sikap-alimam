@@ -112,9 +112,6 @@ export default function TahfidzPage() {
     setLoadingSantri(true);
     setSantri([]);
     
-    // Jangan reset inputData jika ada draft. Tapi kalau tidak ada draft, baru reset.
-    // Untuk amannya, kita fetch data dari server, lalu gabungkan dengan draft jika perlu.
-    
     try {
       const res = await fetch(
         `/api/tahfidz?kelas_id=${selectedKelas}&tanggal=${tanggal}`
@@ -125,7 +122,6 @@ export default function TahfidzPage() {
       const data: SantriTahfidz[] = json.data || [];
       setSantri(data);
 
-      // Cek apakah ada draft yang relevan
       const draftStr = localStorage.getItem("tahfidz_form_draft");
       let draftData: Record<string, Capaian> = {};
       if (draftStr) {
@@ -140,9 +136,8 @@ export default function TahfidzPage() {
       const map: Record<string, Capaian> = { ...draftData };
       
       data.forEach((s) => {
-        // Jika belum ada di draft, load dari database
         if (!map[s.id] && s.capaian && s.capaian.length > 0) {
-          const c = s.capaian[0]; // Ambil setoran pertama
+          const c = s.capaian[0];
           map[s.id] = {
             id: c.id,
             jenis: c.jenis,
@@ -153,7 +148,6 @@ export default function TahfidzPage() {
             keterangan: c.keterangan || "",
           };
         } else if (!map[s.id]) {
-          // Initialize empty
           map[s.id] = {
             jenis: "",
             surat: "",
@@ -197,7 +191,6 @@ export default function TahfidzPage() {
   const handleSimpan = async () => {
     if (!selectedKelas || !tanggal || santri.length === 0) return;
 
-    // Filter santri yang form-nya minimal terisi Surat dan Jenisnya
     const validDataToSave = Object.entries(inputData)
       .filter(([_, data]) => data.jenis && data.surat.trim() !== "")
       .map(([santriId, data]) => ({
@@ -210,7 +203,7 @@ export default function TahfidzPage() {
         icon: "warning",
         title: "Belum ada data",
         text: "Silakan isi minimal 'Jenis Setoran' dan 'Nama Surat' untuk beberapa santri sebelum menyimpan.",
-        confirmButtonColor: "var(--primary)",
+        confirmButtonColor: "#0f172a",
       });
       return;
     }
@@ -220,7 +213,7 @@ export default function TahfidzPage() {
       text: `Menyimpan setoran tahfidz untuk ${validDataToSave.length} santri pada tanggal ${tanggal}`,
       icon: "question",
       showCancelButton: true,
-      confirmButtonColor: "var(--primary)",
+      confirmButtonColor: "#0f172a",
       cancelButtonColor: "#9ca3af",
       confirmButtonText: "Ya, Simpan",
       cancelButtonText: "Batal",
@@ -230,15 +223,11 @@ export default function TahfidzPage() {
 
     setSaving(true);
     try {
-      // NOTE: asatidz_id harusnya diambil dari session JWT login (User). 
-      // Karena ini demo/MVP, kita sementara pakai UUID dummy atau mock.
-      // Di sistem utuh, API route mengambil dari headers/session.
-      
       const res = await fetch("/api/tahfidz", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          asatidz_id: "00000000-0000-0000-0000-000000000000", // TODO: Replace with real user.asatidz_id
+          asatidz_id: "00000000-0000-0000-0000-000000000000",
           tanggal,
           data: validDataToSave,
         }),
@@ -247,7 +236,6 @@ export default function TahfidzPage() {
       const json = await res.json();
       if (!res.ok) throw new Error(json.message || "Gagal menyimpan");
 
-      // CLEAR AUTOSAVE on success!
       localStorage.removeItem("tahfidz_form_draft");
 
       const Toast = Swal.mixin({
@@ -262,7 +250,6 @@ export default function TahfidzPage() {
         title: "Capaian tahfidz berhasil disimpan!",
       });
       
-      // Reload from DB to get the new IDs
       loadTahfidz();
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : "Terjadi kesalahan";
@@ -270,7 +257,7 @@ export default function TahfidzPage() {
         icon: "error",
         title: "Gagal Menyimpan",
         text: message,
-        confirmButtonColor: "var(--primary)",
+        confirmButtonColor: "#0f172a",
       });
     } finally {
       setSaving(false);
@@ -280,254 +267,304 @@ export default function TahfidzPage() {
   const sudahSetor = Object.values(inputData).filter((d) => d.jenis && d.surat.trim() !== "").length;
 
   return (
-    <div>
-      {/* Page Header */}
-      <div className="page-header">
+    <div style={{ padding: "24px 28px", maxWidth: 1200, margin: "0 auto", display: "flex", flexDirection: "column", gap: 24 }}>
+      {/* Premium Hero Banner */}
+      <div style={{
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+        background: "linear-gradient(135deg, #0f172a 0%, #1e293b 60%, #f59e0b 100%)",
+        borderRadius: "24px",
+        padding: "32px 36px",
+        color: "white",
+        boxShadow: "0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05)"
+      }}>
         <div>
-          <h1><BookOpen size={16} className="inline mr-1" /> Jurnal Tahfidz</h1>
-          <p>Input capaian harian, ziyadah, dan ujian hafalan santri</p>
+          <h1 style={{ fontSize: "28px", fontWeight: "bold", margin: 0, display: "flex", alignItems: "center", gap: "8px" }}>
+            <BookOpen size={28} /> Jurnal Tahfidz
+          </h1>
+          <p style={{ marginTop: "8px", opacity: 0.9, fontSize: "16px" }}>Input capaian harian, ziyadah, dan ujian hafalan santri</p>
         </div>
       </div>
 
-      <div style={{ padding: "24px 28px" }}>
-        {/* Step 1: Pilih Kelas & Tanggal */}
-        <div className="card" style={{ marginBottom: 20 }}>
-          <p className="card-title">
-            <Users size={16} style={{ display: "inline", marginRight: 6, color: "var(--primary)" }} />
-            Pilih Kelas &amp; Tanggal
-          </p>
-          <div className="grid grid-cols-1 md:grid-cols-[1fr_1fr_auto] gap-4 items-end">
-            <div className="form-group" style={{ marginBottom: 0 }}>
-              <label className="form-label">Kelas</label>
-              {loadingMaster ? (
-                <div
-                  className="form-control"
-                  style={{ color: "var(--text-muted)", display: "flex", alignItems: "center", gap: 8 }}
-                >
-                  <Loader2 size={14} style={{ animation: "spin 1s linear infinite" }} />
-                  Memuat...
-                </div>
-              ) : (
-                <select
-                  className="form-control"
-                  value={selectedKelas}
-                  onChange={(e) => setSelectedKelas(e.target.value)}
-                >
-                  <option value="">— Pilih Kelas / Halaqah —</option>
-                  {kelasList.map((k) => (
-                    <option key={k.id} value={k.id}>
-                      {k.nama}{k.jenjang ? ` (${k.jenjang})` : ""}
-                    </option>
-                  ))}
-                </select>
-              )}
-            </div>
+      {/* Step 1: Pilih Kelas & Tanggal */}
+      <div style={{
+        background: "white",
+        borderRadius: "16px",
+        padding: "24px",
+        boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
+        display: "flex",
+        flexDirection: "column",
+        gap: "16px"
+      }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "8px", fontWeight: "bold", fontSize: "18px", color: "#1e293b" }}>
+          <Users size={20} style={{ color: "#f59e0b" }} />
+          Pilih Kelas &amp; Tanggal
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-[1fr_1fr_auto] gap-6 items-end">
+          <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+            <label style={{ fontWeight: 600, fontSize: "14px", color: "#475569" }}>Kelas</label>
+            {loadingMaster ? (
+              <div style={{ color: "#64748b", display: "flex", alignItems: "center", gap: 8, padding: "10px" }}>
+                <Loader2 size={16} style={{ animation: "spin 1s linear infinite" }} />
+                Memuat...
+              </div>
+            ) : (
+              <select
+                style={{ padding: "12px 16px", borderRadius: "12px", border: "1px solid #cbd5e1", fontSize: "15px", outline: "none", width: "100%" }}
+                value={selectedKelas}
+                onChange={(e) => setSelectedKelas(e.target.value)}
+              >
+                <option value="">— Pilih Kelas / Halaqah —</option>
+                {kelasList.map((k) => (
+                  <option key={k.id} value={k.id}>
+                    {k.nama}{k.jenjang ? ` (${k.jenjang})` : ""}
+                  </option>
+                ))}
+              </select>
+            )}
+          </div>
 
-            <div className="form-group" style={{ marginBottom: 0 }}>
-              <label className="form-label">Tanggal</label>
-              <input
-                type="date"
-                className="form-control"
-                value={tanggal}
-                onChange={(e) => setTanggal(e.target.value)}
-              />
-            </div>
+          <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+            <label style={{ fontWeight: 600, fontSize: "14px", color: "#475569" }}>Tanggal</label>
+            <input
+              type="date"
+              style={{ padding: "12px 16px", borderRadius: "12px", border: "1px solid #cbd5e1", fontSize: "15px", outline: "none", width: "100%" }}
+              value={tanggal}
+              onChange={(e) => setTanggal(e.target.value)}
+            />
+          </div>
 
+          <button
+            style={{
+              background: (!selectedKelas || !tanggal || loadingSantri) ? "#94a3b8" : "#0f172a",
+              color: "white",
+              padding: "12px 24px",
+              borderRadius: "14px",
+              fontWeight: "bold",
+              display: "flex",
+              alignItems: "center",
+              gap: "8px",
+              border: "none",
+              cursor: (!selectedKelas || !tanggal || loadingSantri) ? "not-allowed" : "pointer",
+              transition: "background 0.2s"
+            }}
+            onClick={loadTahfidz}
+            disabled={!selectedKelas || !tanggal || loadingSantri}
+          >
+            {loadingSantri ? (
+              <>
+                <Loader2 size={18} style={{ animation: "spin 1s linear infinite" }} />
+                Memuat...
+              </>
+            ) : (
+              <>
+                <ClipboardCheck size={18} />
+                Tampilkan
+              </>
+            )}
+          </button>
+        </div>
+      </div>
+
+      {/* Step 2: Tabel Input Tahfidz */}
+      {santri.length > 0 && (
+        <>
+          <div style={{
+            background: "white",
+            borderRadius: "16px",
+            padding: "16px 24px",
+            boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)",
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center"
+          }}>
+            <div style={{ fontSize: "15px", fontWeight: 700, color: "#1e293b", display: "flex", alignItems: "center", gap: "8px" }}>
+              <CheckCircle size={18} style={{ color: "#10b981" }} />
+              <span style={{ color: "#10b981" }}>{sudahSetor}</span>
+              <span style={{ color: "#64748b", fontWeight: 500 }}> dari {santri.length} santri sudah disetor</span>
+            </div>
+            <div style={{ fontSize: 13, color: "#f59e0b", background: "#fef3c7", padding: "6px 12px", borderRadius: 99, display: "flex", alignItems: "center", gap: 6, fontWeight: 600 }}>
+              <Lightbulb size={14} /> Autosave Aktif
+            </div>
+          </div>
+
+          <div style={{ background: "white", borderRadius: "16px", padding: 0, overflow: "hidden", boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)" }}>
+            <div style={{ overflowX: "auto" }}>
+              <table style={{ width: "100%", borderCollapse: "collapse", minWidth: 900 }}>
+                <thead>
+                  <tr style={{ background: "#f8fafc", borderBottom: "2px solid #e2e8f0", fontSize: 14, color: "#475569" }}>
+                    <th style={{ padding: "16px 20px", textAlign: "left", width: 40, fontWeight: 600 }}>#</th>
+                    <th style={{ padding: "16px 20px", textAlign: "left", width: 220, fontWeight: 600 }}>Nama Santri</th>
+                    <th style={{ padding: "16px 20px", textAlign: "left", width: 180, fontWeight: 600 }}>Jenis Setoran</th>
+                    <th style={{ padding: "16px 20px", textAlign: "left", width: 140, fontWeight: 600 }}>Surat</th>
+                    <th style={{ padding: "16px 20px", textAlign: "left", width: 120, fontWeight: 600 }}>Hal/Ayat</th>
+                    <th style={{ padding: "16px 20px", textAlign: "left", width: 90, fontWeight: 600 }}>Nilai</th>
+                    <th style={{ padding: "16px 20px", textAlign: "left", fontWeight: 600 }}>Ket</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {santri.map((s, idx) => {
+                    const data = inputData[s.id] || {};
+                    const isUjian = data.jenis?.includes("ujian");
+                    const isFilled = data.jenis && data.surat;
+                    
+                    return (
+                      <tr
+                        key={s.id}
+                        onMouseEnter={(e) => {
+                          if (!isFilled) e.currentTarget.style.background = "#f0fdf4";
+                        }}
+                        onMouseLeave={(e) => {
+                          if (!isFilled) e.currentTarget.style.background = idx % 2 === 0 ? "white" : "#fafafa";
+                        }}
+                        style={{
+                          borderBottom: "1px solid #f1f5f9",
+                          background: isFilled ? "rgba(16, 185, 129, 0.05)" : (idx % 2 === 0 ? "white" : "#fafafa"),
+                          transition: "background 0.2s ease-in-out",
+                        }}
+                      >
+                        <td style={{ padding: "16px 20px", fontSize: 14, color: "#64748b" }}>
+                          {idx + 1}
+                        </td>
+                        <td style={{ padding: "16px 20px" }}>
+                          <div style={{ fontWeight: 700, fontSize: 15, color: "#1e293b" }}>
+                            {s.nama_lengkap}
+                          </div>
+                          <div style={{ fontSize: 13, color: "#94a3b8", marginTop: 2 }}>
+                            NIS: {s.nis || "—"}
+                          </div>
+                        </td>
+                        <td style={{ padding: "16px 20px" }}>
+                          <select
+                            style={{ fontSize: 14, padding: "10px 14px", borderRadius: "10px", border: "1px solid #cbd5e1", width: "100%", outline: "none", backgroundColor: "white" }}
+                            value={data.jenis || ""}
+                            onChange={(e) => handleInputChange(s.id, "jenis", e.target.value)}
+                          >
+                            {JENIS_SETORAN.map(opt => (
+                              <option key={opt.value} value={opt.value}>{opt.label}</option>
+                            ))}
+                          </select>
+                        </td>
+                        <td style={{ padding: "16px 20px" }}>
+                          <input
+                            type="text"
+                            style={{ fontSize: 14, padding: "10px 14px", borderRadius: "10px", border: "1px solid #cbd5e1", width: "100%", outline: "none" }}
+                            placeholder="Al-Baqarah"
+                            value={data.surat || ""}
+                            onChange={(e) => handleInputChange(s.id, "surat", e.target.value)}
+                          />
+                        </td>
+                        <td style={{ padding: "16px 20px" }}>
+                          <div style={{ display: "flex", gap: 8 }}>
+                            <input
+                              type="text"
+                              style={{ fontSize: 14, padding: "10px", borderRadius: "10px", border: "1px solid #cbd5e1", width: "50%", outline: "none" }}
+                              placeholder="Hal"
+                              value={data.halaman || ""}
+                              onChange={(e) => handleInputChange(s.id, "halaman", e.target.value)}
+                            />
+                            <input
+                              type="text"
+                              style={{ fontSize: 14, padding: "10px", borderRadius: "10px", border: "1px solid #cbd5e1", width: "50%", outline: "none" }}
+                              placeholder="Ayat"
+                              value={data.ayat || ""}
+                              onChange={(e) => handleInputChange(s.id, "ayat", e.target.value)}
+                            />
+                          </div>
+                        </td>
+                        <td style={{ padding: "16px 20px" }}>
+                          <input
+                            type="number"
+                            style={{
+                              fontSize: 14,
+                              padding: "10px 14px",
+                              borderRadius: "10px",
+                              border: "1px solid #cbd5e1",
+                              width: "100%",
+                              outline: "none",
+                              opacity: isUjian ? 1 : 0.4,
+                              pointerEvents: isUjian ? "auto" : "none",
+                              background: isUjian ? "#fff" : "#f1f5f9"
+                            }}
+                            placeholder={isUjian ? "Nilai" : "-"}
+                            value={data.nilai || ""}
+                            onChange={(e) => handleInputChange(s.id, "nilai", e.target.value)}
+                            disabled={!isUjian}
+                          />
+                        </td>
+                        <td style={{ padding: "16px 20px" }}>
+                          <input
+                            type="text"
+                            style={{ fontSize: 14, padding: "10px 14px", borderRadius: "10px", border: "1px solid #cbd5e1", width: "100%", outline: "none" }}
+                            placeholder="Catatan..."
+                            value={data.keterangan || ""}
+                            onChange={(e) => handleInputChange(s.id, "keterangan", e.target.value)}
+                          />
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          {/* Save Button */}
+          <div style={{ display: "flex", justifyContent: "flex-end" }}>
             <button
-              className="btn btn-primary"
-              onClick={loadTahfidz}
-              disabled={!selectedKelas || !tanggal || loadingSantri}
+              style={{
+                background: "#0f172a",
+                color: "white",
+                padding: "14px 28px",
+                borderRadius: "14px",
+                fontWeight: "bold",
+                display: "flex",
+                alignItems: "center",
+                gap: "10px",
+                border: "none",
+                cursor: saving ? "not-allowed" : "pointer",
+                opacity: saving ? 0.7 : 1,
+                fontSize: "16px",
+                boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)"
+              }}
+              onClick={handleSimpan}
+              disabled={saving}
             >
-              {loadingSantri ? (
+              {saving ? (
                 <>
-                  <span className="spinner" />
-                  Memuat...
+                  <Loader2 size={20} style={{ animation: "spin 1s linear infinite" }} />
+                  Menyimpan...
                 </>
               ) : (
                 <>
-                  <ClipboardCheck size={16} />
-                  Tampilkan
+                  <Save size={20} />
+                  Simpan Jurnal Tahfidz
                 </>
               )}
             </button>
           </div>
+        </>
+      )}
+
+      {/* Empty state */}
+      {!loadingSantri && selectedKelas && tanggal && santri.length === 0 && !loadingMaster && (
+        <div
+          style={{
+            background: "white",
+            borderRadius: "16px",
+            textAlign: "center",
+            padding: "60px 24px",
+            color: "#64748b",
+            boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)"
+          }}
+        >
+          <BookOpen size={48} style={{ opacity: 0.2, margin: "0 auto 16px", display: "block" }} />
+          <p style={{ fontSize: 16, fontWeight: 500 }}>
+            Belum ada santri terdaftar di kelas ini.
+          </p>
         </div>
-
-        {/* Step 2: Tabel Input Tahfidz */}
-        {santri.length > 0 && (
-          <>
-            <div
-              className="card"
-              style={{ marginBottom: 16, padding: "16px 20px", display: "flex", justifyContent: "space-between", alignItems: "center" }}
-            >
-              <div style={{ fontSize: 14, fontWeight: 700, color: "var(--text)" }}>
-                <CheckCircle size={15} className="inline mr-1" style={{ color: "var(--primary)" }} />
-                <span style={{ color: "var(--primary)" }}>{sudahSetor}</span>
-                <span style={{ color: "var(--text-muted)", fontWeight: 500 }}> dari {santri.length} santri sudah disetor</span>
-              </div>
-              <div style={{ fontSize: 12, color: "var(--text-muted)", background: "#f8fafc", padding: "4px 10px", borderRadius: 99, display: "flex", alignItems: "center", gap: 4 }}>
-                <Lightbulb size={12} className="text-amber-500" /> Autosave Aktif
-              </div>
-            </div>
-
-            <div className="card" style={{ padding: 0, overflow: "hidden", marginBottom: 24 }}>
-              <div style={{ overflowX: "auto" }}>
-                <table style={{ width: "100%", borderCollapse: "collapse", minWidth: 900 }}>
-                  <thead>
-                    <tr style={{ background: "var(--bg-body)", borderBottom: "1px solid var(--border)", fontSize: 13, color: "var(--text-muted)" }}>
-                      <th style={{ padding: "12px 16px", textAlign: "left", width: 40 }}>#</th>
-                      <th style={{ padding: "12px 16px", textAlign: "left", width: 220 }}>Nama Santri</th>
-                      <th style={{ padding: "12px 16px", textAlign: "left", width: 180 }}>Jenis Setoran</th>
-                      <th style={{ padding: "12px 16px", textAlign: "left", width: 140 }}>Surat</th>
-                      <th style={{ padding: "12px 16px", textAlign: "left", width: 100 }}>Hal/Ayat</th>
-                      <th style={{ padding: "12px 16px", textAlign: "left", width: 90 }}>Nilai</th>
-                      <th style={{ padding: "12px 16px", textAlign: "left" }}>Ket</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {santri.map((s, idx) => {
-                      const data = inputData[s.id] || {};
-                      const isUjian = data.jenis?.includes("ujian");
-                      const isFilled = data.jenis && data.surat;
-                      
-                      return (
-                        <tr
-                          key={s.id}
-                          style={{
-                            borderBottom: "1px solid var(--border)",
-                            background: isFilled ? "rgba(21,128,61,0.02)" : "transparent",
-                            transition: "background 0.2s",
-                          }}
-                        >
-                          <td style={{ padding: "12px 16px", fontSize: 13, color: "var(--text-muted)" }}>
-                            {idx + 1}
-                          </td>
-                          <td style={{ padding: "12px 16px" }}>
-                            <div style={{ fontWeight: 700, fontSize: 14, color: "var(--text)" }}>
-                              {s.nama_lengkap}
-                            </div>
-                            <div style={{ fontSize: 12, color: "var(--text-muted)" }}>
-                              NIS: {s.nis || "—"}
-                            </div>
-                          </td>
-                          <td style={{ padding: "12px 16px" }}>
-                            <select
-                              className="form-control"
-                              style={{ fontSize: 13, padding: "8px" }}
-                              value={data.jenis || ""}
-                              onChange={(e) => handleInputChange(s.id, "jenis", e.target.value)}
-                            >
-                              {JENIS_SETORAN.map(opt => (
-                                <option key={opt.value} value={opt.value}>{opt.label}</option>
-                              ))}
-                            </select>
-                          </td>
-                          <td style={{ padding: "12px 16px" }}>
-                            <input
-                              type="text"
-                              className="form-control"
-                              style={{ fontSize: 13, padding: "8px" }}
-                              placeholder="Al-Baqarah"
-                              value={data.surat || ""}
-                              onChange={(e) => handleInputChange(s.id, "surat", e.target.value)}
-                            />
-                          </td>
-                          <td style={{ padding: "12px 16px" }}>
-                            <div style={{ display: "flex", gap: 4 }}>
-                              <input
-                                type="text"
-                                className="form-control"
-                                style={{ fontSize: 13, padding: "8px", width: "50%" }}
-                                placeholder="Hal"
-                                value={data.halaman || ""}
-                                onChange={(e) => handleInputChange(s.id, "halaman", e.target.value)}
-                              />
-                              <input
-                                type="text"
-                                className="form-control"
-                                style={{ fontSize: 13, padding: "8px", width: "50%" }}
-                                placeholder="Ayat"
-                                value={data.ayat || ""}
-                                onChange={(e) => handleInputChange(s.id, "ayat", e.target.value)}
-                              />
-                            </div>
-                          </td>
-                          <td style={{ padding: "12px 16px" }}>
-                            <input
-                              type="number"
-                              className="form-control"
-                              style={{
-                                fontSize: 13,
-                                padding: "8px",
-                                opacity: isUjian ? 1 : 0.3,
-                                pointerEvents: isUjian ? "auto" : "none",
-                                background: isUjian ? "#fff" : "#f1f5f9"
-                              }}
-                              placeholder={isUjian ? "Nilai" : "-"}
-                              value={data.nilai || ""}
-                              onChange={(e) => handleInputChange(s.id, "nilai", e.target.value)}
-                              disabled={!isUjian}
-                            />
-                          </td>
-                          <td style={{ padding: "12px 16px" }}>
-                            <input
-                              type="text"
-                              className="form-control"
-                              style={{ fontSize: 13, padding: "8px" }}
-                              placeholder="..."
-                              value={data.keterangan || ""}
-                              onChange={(e) => handleInputChange(s.id, "keterangan", e.target.value)}
-                            />
-                          </td>
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-
-            {/* Save Button */}
-            <div style={{ display: "flex", justifyContent: "flex-end" }}>
-              <button
-                className="btn btn-secondary"
-                onClick={handleSimpan}
-                disabled={saving}
-                style={{ minWidth: 160 }}
-              >
-                {saving ? (
-                  <>
-                    <span className="spinner" style={{ borderTopColor: "var(--primary-dark)" }} />
-                    Menyimpan...
-                  </>
-                ) : (
-                  <>
-                    <Save size={16} />
-                    Simpan Jurnal Tahfidz
-                  </>
-                )}
-              </button>
-            </div>
-          </>
-        )}
-
-        {/* Empty state */}
-        {!loadingSantri && selectedKelas && tanggal && santri.length === 0 && !loadingMaster && (
-          <div
-            className="card"
-            style={{
-              textAlign: "center",
-              padding: "48px 24px",
-              color: "var(--text-muted)",
-            }}
-          >
-            <BookOpen size={40} style={{ opacity: 0.2, marginBottom: 12, display: "block", margin: "0 auto 12px" }} />
-            <p style={{ fontSize: 14 }}>
-              Belum ada santri terdaftar di kelas ini.
-            </p>
-          </div>
-        )}
-      </div>
+      )}
     </div>
   );
 }

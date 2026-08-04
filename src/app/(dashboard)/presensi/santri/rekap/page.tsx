@@ -117,7 +117,13 @@ export default function RekapPresensiSantriPage() {
 
   return (
     <div>
-      <div className="p-3.5 sm:p-6 md:p-7 max-w-7xl mx-auto w-full flex flex-col gap-5">
+      <div style={{ padding: "24px 28px", maxWidth: 1200, margin: "0 auto", display: "flex", flexDirection: "column", gap: 24 }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", background: "linear-gradient(135deg, #0f172a 0%, #1e293b 60%, #10b981 100%)", borderRadius: "24px", padding: "32px 36px", boxShadow: "0 10px 25px -5px rgba(16, 185, 129, 0.4), 0 8px 10px -6px rgba(16, 185, 129, 0.1)" }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+            <h1 style={{ color: "white", fontSize: "28px", fontWeight: 700, margin: 0 }}>Rekap Presensi Santri</h1>
+            <p style={{ color: "#cbd5e1", fontSize: "15px", margin: 0 }}>Lihat laporan absensi bulanan.</p>
+          </div>
+        </div>
         <ModuleTabs
           tabs={[
             { label: "Input Presensi", href: "/presensi/santri", exact: true, icon: <ClipboardCheck size={16} /> },
@@ -126,7 +132,7 @@ export default function RekapPresensiSantriPage() {
           ]}
         />
         {/* Filter */}
-        <div className="card">
+        <div style={{ background: "white", borderRadius: "24px", padding: "28px", boxShadow: "0 4px 20px -2px rgba(0, 0, 0, 0.05)", display: "flex", flexDirection: "column", gap: "20px" }}>
           <p className="card-title">
             <Users size={15} style={{ display: "inline", marginRight: 6, color: "var(--primary)" }} />
             Filter Rekap
@@ -223,7 +229,7 @@ export default function RekapPresensiSantriPage() {
         </div>
 
         {/* Table */}
-        <div className="card" style={{ padding: 0 }}>
+        <div style={{ background: "white", borderRadius: "24px", padding: "0", boxShadow: "0 4px 20px -2px rgba(0, 0, 0, 0.05)", display: "flex", flexDirection: "column", gap: "20px", overflow: "hidden" }}>
           {/* Prompt / Summary */}
           {!selectedKelas && (
             rekapData && 'summary' in rekapData ? (
@@ -357,7 +363,7 @@ export default function RekapPresensiSantriPage() {
               </div>
 
               <div className="table-wrap" style={{ border: "none", borderRadius: 0, overflowX: "auto", WebkitOverflowScrolling: "touch" }}>
-                <table style={{ fontSize: 12, borderCollapse: "separate", borderSpacing: 0 }}>
+                <table style={{ fontSize: 12, width: "100%", borderCollapse: "separate", borderSpacing: 0 }}>
                   <thead>
                     <tr>
                       <th style={{ width: 36, textAlign: "center", position: "sticky", left: 0, background: "#f8f7f4", zIndex: 2, borderBottom: "1px solid #e5e7eb" }}>
@@ -391,11 +397,11 @@ export default function RekapPresensiSantriPage() {
                       (rekapData as RekapData).santri.map((s, idx) => {
                         const summary = getSummary(s.id);
                         return (
-                          <tr key={s.id} className="hover:bg-slate-50/60">
-                            <td style={{ textAlign: "center", color: "var(--text-muted)", fontWeight: 600, position: "sticky", left: 0, background: "white", zIndex: 1, borderBottom: "1px solid #f1f5f9" }}>
+                          <tr key={s.id} style={{ transition: "background-color 0.2s", backgroundColor: idx % 2 === 0 ? "white" : "#fafafa" }} onMouseEnter={(e) => e.currentTarget.style.backgroundColor = "#f0fdf4"} onMouseLeave={(e) => e.currentTarget.style.backgroundColor = idx % 2 === 0 ? "white" : "#fafafa"}>
+                            <td style={{ textAlign: "center", color: "var(--text-muted)", fontWeight: 600, position: "sticky", left: 0, background: "inherit", zIndex: 1, borderBottom: "1px solid #f1f5f9", padding: "16px 20px" }}>
                               {idx + 1}
                             </td>
-                            <td style={{ fontWeight: 600, position: "sticky", left: 36, background: "white", zIndex: 1, borderRight: "1px solid #e5e7eb", borderBottom: "1px solid #f1f5f9", boxShadow: "4px 0 6px -2px rgba(0,0,0,0.06)" }}>
+                            <td style={{ fontWeight: 600, position: "sticky", left: 36, background: "inherit", zIndex: 1, borderRight: "1px solid #e5e7eb", borderBottom: "1px solid #f1f5f9", boxShadow: "4px 0 6px -2px rgba(0,0,0,0.06)", padding: "16px 20px" }}>
                               <div className="truncate">{s.nama_lengkap}</div>
                               {s.nis && (
                                 <span style={{ display: "block", fontSize: 11, color: "var(--text-muted)", fontWeight: 400 }}>
@@ -444,7 +450,7 @@ export default function RekapPresensiSantriPage() {
 
         {/* Summary Card */}
         {!loading && !error && selectedKelas && rekapData && !('summary' in rekapData) && (rekapData as RekapData).santri.length > 0 && (
-          <div className="card" style={{ padding: "16px 20px" }}>
+          <div style={{ background: "white", borderRadius: "24px", padding: "24px 28px", boxShadow: "0 4px 20px -2px rgba(0, 0, 0, 0.05)", display: "flex", flexDirection: "column", gap: "20px" }}>
             <p className="card-title" style={{ marginBottom: 12, display: "flex", alignItems: "center", gap: 6 }}><PieChart size={16} className="text-primary" /> Ringkasan Kehadiran Kelas {kelasNama}</p>
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(120px, 1fr))", gap: 12 }}>
               {[

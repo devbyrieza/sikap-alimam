@@ -199,109 +199,119 @@ export default function KeuanganSPPPage() {
   };
 
   return (
-    <div className="space-y-6 pb-20">
+    <div style={{ padding: "24px 28px", maxWidth: 1200, margin: "0 auto", display: "flex", flexDirection: "column", gap: 24, paddingBottom: 80 }}>
       {/* Header Banner */}
-      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-emerald-800 via-teal-900 to-slate-900 p-6 md:p-8 text-white shadow-2xl">
-        <div className="absolute top-0 right-0 -mt-8 -mr-8 w-64 h-64 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
-        <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
-          <div className="space-y-2">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/20 border border-emerald-400/30 text-emerald-300 text-xs font-semibold tracking-wide">
-              <Sparkles className="w-3.5 h-3.5" /> Modul Admin Keuangan
-            </div>
-            <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight">
-              Manajemen Pembayaran SPP Santri
-            </h1>
-            <p className="text-emerald-100/80 text-sm max-w-xl">
-              Pantau kepatuhan SPP bulanan (jatuh tempo tgl 10) & kendalikan akses gembok portal wali santri secara real-time.
-            </p>
+      <div style={{
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+        background: "linear-gradient(135deg, #0f172a 0%, #1e293b 60%, #0369a1 100%)",
+        borderRadius: "24px",
+        padding: "32px 36px",
+        boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.2), 0 8px 10px -6px rgba(0, 0, 0, 0.1)",
+        color: "white",
+        flexWrap: "wrap",
+        gap: "24px",
+        position: "relative",
+        overflow: "hidden"
+      }}>
+        <div style={{ display: "flex", flexDirection: "column", gap: "8px", position: "relative", zIndex: 10 }}>
+          <div style={{ display: "inline-flex", alignItems: "center", gap: "8px", padding: "4px 12px", borderRadius: "999px", background: "rgba(255,255,255,0.1)", border: "1px solid rgba(255,255,255,0.2)", fontSize: "12px", fontWeight: "bold", width: "fit-content" }}>
+            <Sparkles className="w-3.5 h-3.5" /> Modul Admin Keuangan
           </div>
+          <h1 style={{ fontSize: "28px", fontWeight: "bold", margin: 0 }}>
+            Manajemen Pembayaran SPP Santri
+          </h1>
+          <p style={{ color: "#cbd5e1", margin: 0, fontSize: "14px", maxWidth: "600px" }}>
+            Pantau kepatuhan SPP bulanan (jatuh tempo tgl 10) & kendalikan akses gembok portal wali santri secara real-time.
+          </p>
+        </div>
 
-          {/* Month & Year Switcher Controls */}
-          <div className="flex flex-wrap items-center gap-2 bg-white/10 backdrop-blur-md p-2 rounded-2xl border border-white/15">
-            <button 
-              onClick={() => {
-                if (selectedBulan === 1) {
-                  setSelectedBulan(12);
-                  setSelectedTahun(selectedTahun - 1);
-                } else {
-                  setSelectedBulan(selectedBulan - 1);
-                }
-              }}
-              className="p-2 rounded-xl bg-white/10 hover:bg-white/20 text-white transition"
-              title="Bulan Sebelumnya"
-            >
-              <ChevronLeft className="w-4 h-4" />
-            </button>
+        {/* Month & Year Switcher Controls */}
+        <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: "8px", background: "rgba(255,255,255,0.1)", backdropFilter: "blur(8px)", padding: "8px", borderRadius: "16px", border: "1px solid rgba(255,255,255,0.15)", position: "relative", zIndex: 10 }}>
+          <button 
+            onClick={() => {
+              if (selectedBulan === 1) {
+                setSelectedBulan(12);
+                setSelectedTahun(selectedTahun - 1);
+              } else {
+                setSelectedBulan(selectedBulan - 1);
+              }
+            }}
+            style={{ padding: "8px", borderRadius: "12px", background: "rgba(255,255,255,0.1)", color: "white", border: "none", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}
+            title="Bulan Sebelumnya"
+          >
+            <ChevronLeft style={{ width: "16px", height: "16px" }} />
+          </button>
 
-            <select
-              value={selectedBulan}
-              onChange={(e) => setSelectedBulan(Number(e.target.value))}
-              className="bg-transparent text-white font-bold text-sm px-2 py-1.5 rounded-lg border border-white/20 outline-none cursor-pointer focus:bg-slate-900"
-            >
-              {NAMA_BULAN.map((nama, idx) => (
-                <option key={idx} value={idx + 1} className="bg-slate-900 text-white">
-                  {nama}
-                </option>
-              ))}
-            </select>
+          <select
+            value={selectedBulan}
+            onChange={(e) => setSelectedBulan(Number(e.target.value))}
+            style={{ background: "transparent", color: "white", fontWeight: "bold", fontSize: "14px", padding: "6px 8px", borderRadius: "8px", border: "1px solid rgba(255,255,255,0.2)", outline: "none", cursor: "pointer", height: "32px", display: "flex", alignItems: "center" }}
+          >
+            {NAMA_BULAN.map((nama, idx) => (
+              <option key={idx} value={idx + 1} style={{ background: "#0f172a", color: "white" }}>
+                {nama}
+              </option>
+            ))}
+          </select>
 
-            <select
-              value={selectedTahun}
-              onChange={(e) => setSelectedTahun(Number(e.target.value))}
-              className="bg-transparent text-white font-bold text-sm px-2 py-1.5 rounded-lg border border-white/20 outline-none cursor-pointer focus:bg-slate-900"
-            >
-              {[2025, 2026, 2027].map((yr) => (
-                <option key={yr} value={yr} className="bg-slate-900 text-white">
-                  {yr}
-                </option>
-              ))}
-            </select>
+          <select
+            value={selectedTahun}
+            onChange={(e) => setSelectedTahun(Number(e.target.value))}
+            style={{ background: "transparent", color: "white", fontWeight: "bold", fontSize: "14px", padding: "6px 8px", borderRadius: "8px", border: "1px solid rgba(255,255,255,0.2)", outline: "none", cursor: "pointer", height: "32px", display: "flex", alignItems: "center" }}
+          >
+            {[2025, 2026, 2027].map((yr) => (
+              <option key={yr} value={yr} style={{ background: "#0f172a", color: "white" }}>
+                {yr}
+              </option>
+            ))}
+          </select>
 
-            <button 
-              onClick={() => {
-                if (selectedBulan === 12) {
-                  setSelectedBulan(1);
-                  setSelectedTahun(selectedTahun + 1);
-                } else {
-                  setSelectedBulan(selectedBulan + 1);
-                }
-              }}
-              className="p-2 rounded-xl bg-white/10 hover:bg-white/20 text-white transition"
-              title="Bulan Berikutnya"
-            >
-              <ChevronRight className="w-4 h-4" />
-            </button>
+          <button 
+            onClick={() => {
+              if (selectedBulan === 12) {
+                setSelectedBulan(1);
+                setSelectedTahun(selectedTahun + 1);
+              } else {
+                setSelectedBulan(selectedBulan + 1);
+              }
+            }}
+            style={{ padding: "8px", borderRadius: "12px", background: "rgba(255,255,255,0.1)", color: "white", border: "none", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}
+            title="Bulan Berikutnya"
+          >
+            <ChevronRight style={{ width: "16px", height: "16px" }} />
+          </button>
 
-            <button
-              onClick={fetchData}
-              className="p-2 rounded-xl bg-emerald-500/40 hover:bg-emerald-500/60 text-emerald-200 transition ml-1"
-              title="Segarkan Data"
-            >
-              <RefreshCw className={`w-4 h-4 ${loading ? "animate-spin" : ""}`} />
-            </button>
-          </div>
+          <button
+            onClick={fetchData}
+            style={{ padding: "8px", borderRadius: "12px", background: "rgba(16, 185, 129, 0.4)", color: "#a7f3d0", border: "none", cursor: "pointer", marginLeft: "4px", display: "flex", alignItems: "center", justifyContent: "center" }}
+            title="Segarkan Data"
+          >
+            <RefreshCw className={loading ? "animate-spin" : ""} style={{ width: "16px", height: "16px" }} />
+          </button>
         </div>
       </div>
 
       {/* Date 1-10 Rule Alert Card */}
-      <div className="bg-gradient-to-r from-amber-50 to-amber-100/60 border border-amber-200/80 rounded-2xl p-4 md:p-5 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 shadow-sm">
-        <div className="flex items-start gap-3.5">
-          <div className="p-2.5 rounded-xl bg-amber-500 text-white shadow-md shadow-amber-500/20 shrink-0">
+      <div style={{ background: "linear-gradient(to right, #fffbeb, #fef3c7)", border: "1px solid #fde68a", borderRadius: "24px", padding: "20px", display: "flex", alignItems: "center", justifyContent: "space-between", gap: "16px", flexWrap: "wrap", boxShadow: "0 1px 2px 0 rgba(0, 0, 0, 0.05)" }}>
+        <div style={{ display: "flex", alignItems: "flex-start", gap: "14px" }}>
+          <div style={{ padding: "10px", borderRadius: "12px", background: "#f59e0b", color: "white", boxShadow: "0 4px 6px -1px rgba(245, 158, 11, 0.2)", flexShrink: 0 }}>
             <AlertTriangle className="w-5 h-5" />
           </div>
           <div>
-            <h4 className="text-sm font-bold text-amber-950 flex items-center gap-2">
+            <h4 style={{ fontSize: "14px", fontWeight: "bold", color: "#451a03", margin: 0, display: "flex", alignItems: "center", gap: "8px" }}>
               Kebijakan Jatuh Tempo SPP: Tanggal 1 s/d 10 Setiap Bulan
             </h4>
-            <p className="text-xs text-amber-800/90 mt-0.5 leading-relaxed">
-              Santri yang <strong>belum lunas setelah tanggal 10</strong> otomatis <span className="font-semibold text-rose-700 underline decoration-rose-400">terkunci akses portal rapor & nilainya</span>. 
-              Admin Keuangan dapat membuka kunci kapan saja dengan menekan tombol <strong>[Tandai Lunas]</strong> di bawah.
+            <p style={{ fontSize: "12px", color: "#92400e", margin: "4px 0 0 0", lineHeight: "1.5" }}>
+              Santri yang <strong style={{ fontWeight: 800 }}>belum lunas setelah tanggal 10</strong> otomatis <span style={{ fontWeight: "bold", color: "#be123c", textDecoration: "underline", textDecorationColor: "#fb7185" }}>terkunci akses portal rapor & nilainya</span>. 
+              Admin Keuangan dapat membuka kunci kapan saja dengan menekan tombol <strong style={{ fontWeight: 800 }}>[Tandai Lunas]</strong> di bawah.
             </p>
           </div>
         </div>
-        <div className="bg-white/90 backdrop-blur border border-amber-200 rounded-xl px-4 py-2 text-right shrink-0">
-          <div className="text-[11px] font-semibold text-amber-800 uppercase tracking-wider">Status Tanggal Hari Ini</div>
-          <div className="text-sm font-black text-amber-950">
+        <div style={{ background: "rgba(255,255,255,0.9)", backdropFilter: "blur(4px)", border: "1px solid #fde68a", borderRadius: "12px", padding: "8px 16px", textAlign: "right", flexShrink: 0 }}>
+          <div style={{ fontSize: "11px", fontWeight: "bold", color: "#92400e", textTransform: "uppercase", letterSpacing: "0.05em" }}>Status Tanggal Hari Ini</div>
+          <div style={{ fontSize: "14px", fontWeight: "900", color: "#451a03", marginTop: "2px" }}>
             Tgl {todayDate} {NAMA_BULAN[now.getMonth()]} {now.getFullYear()} {isCurrentMonth && (todayDate <= 10 ? "(Masa Pembayaran)" : "(Lewat Batas)")}
           </div>
         </div>
@@ -309,81 +319,81 @@ export default function KeuanganSPPPage() {
 
       {/* Summary Stat Cards */}
       {summary && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <div className="bg-white rounded-2xl border border-slate-200/80 p-4 shadow-sm hover:shadow-md transition">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Total Santri</span>
-              <div className="p-2 rounded-xl bg-slate-100 text-slate-700">
-                <Users className="w-4 h-4" />
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: "24px" }}>
+          <div style={{ background: "white", borderRadius: "24px", padding: "20px", border: "1px solid #e2e8f0", boxShadow: "0 4px 6px -1px rgba(0,0,0,0.05)", display: "flex", flexDirection: "column", gap: "8px" }}>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+              <span style={{ fontSize: "12px", fontWeight: "bold", color: "#64748b", textTransform: "uppercase", letterSpacing: "0.05em" }}>Total Santri</span>
+              <div style={{ padding: "8px", borderRadius: "12px", background: "#f1f5f9", color: "#334155" }}>
+                <Users style={{ width: "16px", height: "16px" }} />
               </div>
             </div>
-            <div className="mt-2 text-2xl font-extrabold text-slate-900">{summary.total_santri}</div>
-            <div className="text-xs text-slate-500 mt-1">Santri aktif terdaftar</div>
+            <div style={{ fontSize: "24px", fontWeight: 900, color: "#1e293b" }}>{summary.total_santri}</div>
+            <div style={{ fontSize: "12px", color: "#64748b" }}>Santri aktif terdaftar</div>
           </div>
 
-          <div className="bg-white rounded-2xl border border-emerald-200/80 p-4 shadow-sm hover:shadow-md transition">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-bold text-emerald-700 uppercase tracking-wider">Sudah Lunas</span>
-              <div className="p-2 rounded-xl bg-emerald-50 text-emerald-600">
-                <CheckCircle2 className="w-4 h-4" />
+          <div style={{ background: "white", borderRadius: "24px", padding: "20px", border: "1px solid #a7f3d0", boxShadow: "0 4px 6px -1px rgba(0,0,0,0.05)", display: "flex", flexDirection: "column", gap: "8px" }}>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+              <span style={{ fontSize: "12px", fontWeight: "bold", color: "#047857", textTransform: "uppercase", letterSpacing: "0.05em" }}>Sudah Lunas</span>
+              <div style={{ padding: "8px", borderRadius: "12px", background: "#ecfdf5", color: "#059669" }}>
+                <CheckCircle2 style={{ width: "16px", height: "16px" }} />
               </div>
             </div>
-            <div className="mt-2 text-2xl font-extrabold text-emerald-700 flex items-baseline gap-2">
+            <div style={{ fontSize: "24px", fontWeight: 900, color: "#047857", display: "flex", alignItems: "baseline", gap: "8px" }}>
               {summary.total_lunas} 
-              <span className="text-xs font-semibold text-emerald-600">({summary.persentase}%)</span>
+              <span style={{ fontSize: "12px", fontWeight: 600, color: "#059669" }}>({summary.persentase}%)</span>
             </div>
-            <div className="text-xs text-emerald-600 font-medium mt-1">{formatRupiah(summary.total_terkumpul)}</div>
+            <div style={{ fontSize: "12px", color: "#059669", fontWeight: 500 }}>{formatRupiah(summary.total_terkumpul)}</div>
           </div>
 
-          <div className="bg-white rounded-2xl border border-rose-200/80 p-4 shadow-sm hover:shadow-md transition">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-bold text-rose-700 uppercase tracking-wider">Terkunci / Menunggak</span>
-              <div className="p-2 rounded-xl bg-rose-50 text-rose-600">
-                <Lock className="w-4 h-4" />
+          <div style={{ background: "white", borderRadius: "24px", padding: "20px", border: "1px solid #fecdd3", boxShadow: "0 4px 6px -1px rgba(0,0,0,0.05)", display: "flex", flexDirection: "column", gap: "8px" }}>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+              <span style={{ fontSize: "12px", fontWeight: "bold", color: "#be123c", textTransform: "uppercase", letterSpacing: "0.05em" }}>Terkunci / Menunggak</span>
+              <div style={{ padding: "8px", borderRadius: "12px", background: "#fff1f2", color: "#e11d48" }}>
+                <Lock style={{ width: "16px", height: "16px" }} />
               </div>
             </div>
-            <div className="mt-2 text-2xl font-extrabold text-rose-700 flex items-baseline gap-2">
+            <div style={{ fontSize: "24px", fontWeight: 900, color: "#be123c", display: "flex", alignItems: "baseline", gap: "8px" }}>
               {summary.total_terkunci}
-              <span className="text-xs font-semibold text-rose-600">Santri</span>
+              <span style={{ fontSize: "12px", fontWeight: 600, color: "#e11d48" }}>Santri</span>
             </div>
-            <div className="text-xs text-rose-600 font-medium mt-1">{formatRupiah(summary.total_tunggakan)} tunggakan</div>
+            <div style={{ fontSize: "12px", color: "#e11d48", fontWeight: 500 }}>{formatRupiah(summary.total_tunggakan)} tunggakan</div>
           </div>
 
-          <div className="bg-white rounded-2xl border border-blue-200/80 p-4 shadow-sm hover:shadow-md transition">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-bold text-blue-700 uppercase tracking-wider">Target Bulan Ini</span>
-              <div className="p-2 rounded-xl bg-blue-50 text-blue-600">
-                <TrendingUp className="w-4 h-4" />
+          <div style={{ background: "white", borderRadius: "24px", padding: "20px", border: "1px solid #bfdbfe", boxShadow: "0 4px 6px -1px rgba(0,0,0,0.05)", display: "flex", flexDirection: "column", gap: "8px" }}>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+              <span style={{ fontSize: "12px", fontWeight: "bold", color: "#1d4ed8", textTransform: "uppercase", letterSpacing: "0.05em" }}>Target Bulan Ini</span>
+              <div style={{ padding: "8px", borderRadius: "12px", background: "#eff6ff", color: "#2563eb" }}>
+                <TrendingUp style={{ width: "16px", height: "16px" }} />
               </div>
             </div>
-            <div className="mt-2 text-xl font-extrabold text-blue-900">
+            <div style={{ fontSize: "20px", fontWeight: 900, color: "#1e3a8a", marginTop: "4px" }}>
               {NAMA_BULAN[selectedBulan - 1]} {selectedTahun}
             </div>
-            <div className="text-xs text-blue-600 font-medium mt-1">Jatuh tempo: 10 {NAMA_BULAN[selectedBulan - 1]}</div>
+            <div style={{ fontSize: "12px", color: "#2563eb", fontWeight: 500 }}>Jatuh tempo: 10 {NAMA_BULAN[selectedBulan - 1]}</div>
           </div>
         </div>
       )}
 
       {/* Filter & Search Bar */}
-      <div className="bg-white rounded-2xl border border-slate-200/80 p-4 shadow-sm flex flex-col md:flex-row gap-3 items-center justify-between">
-        <div className="relative w-full md:w-80">
-          <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+      <div style={{ background: "white", borderRadius: "24px", padding: "20px", boxShadow: "0 1px 3px 0 rgba(0,0,0,0.1)", border: "1px solid #f1f5f9", display: "flex", flexWrap: "wrap", gap: "16px", alignItems: "center", justifyContent: "space-between" }}>
+        <div style={{ position: "relative", width: "100%", maxWidth: "320px" }}>
+          <Search style={{ width: "16px", height: "16px", position: "absolute", left: "12px", top: "50%", transform: "translateY(-50%)", color: "#94a3b8" }} />
           <input
             type="text"
             placeholder="Cari santri / NIS..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && fetchData()}
-            className="w-full pl-9 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium outline-none focus:bg-white focus:ring-2 focus:ring-emerald-500/20"
+            style={{ width: "100%", padding: "10px 16px 10px 36px", background: "#f8fafc", border: "1px solid #e2e8f0", borderRadius: "12px", fontSize: "12px", fontWeight: 500, outline: "none", boxSizing: "border-box" }}
           />
         </div>
 
-        <div className="flex flex-wrap items-center gap-2 w-full md:w-auto">
+        <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: "12px", width: "100%", maxWidth: "fit-content" }}>
           {/* Filter Kelas */}
           <select
             value={selectedKelas}
             onChange={(e) => setSelectedKelas(e.target.value)}
-            className="px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-700 outline-none cursor-pointer focus:bg-white"
+            style={{ padding: "10px 16px", background: "#f8fafc", border: "1px solid #e2e8f0", borderRadius: "12px", fontSize: "12px", fontWeight: "bold", color: "#334155", outline: "none", cursor: "pointer" }}
           >
             <option value="ALL">Semua Kelas</option>
             {kelasList.map((k) => (
@@ -394,28 +404,28 @@ export default function KeuanganSPPPage() {
           </select>
 
           {/* Filter Status */}
-          <div className="inline-flex bg-slate-100 p-1 rounded-xl border border-slate-200 text-xs">
+          <div style={{ display: "inline-flex", background: "#f1f5f9", padding: "4px", borderRadius: "16px", border: "1px solid #e2e8f0", fontSize: "12px" }}>
             <button
               onClick={() => setStatusFilter("ALL")}
-              className={`px-3 py-1.5 rounded-lg font-bold transition ${statusFilter === "ALL" ? "bg-white text-slate-900 shadow-sm" : "text-slate-600 hover:text-slate-900"}`}
+              style={{ padding: "8px 16px", borderRadius: "12px", fontWeight: "bold", border: "none", cursor: "pointer", transition: "all 0.2s", background: statusFilter === "ALL" ? "white" : "transparent", color: statusFilter === "ALL" ? "#0f172a" : "#475569", boxShadow: statusFilter === "ALL" ? "0 1px 2px rgba(0,0,0,0.05)" : "none" }}
             >
               Semua
             </button>
             <button
               onClick={() => setStatusFilter("LUNAS")}
-              className={`px-3 py-1.5 rounded-lg font-bold transition ${statusFilter === "LUNAS" ? "bg-emerald-600 text-white shadow-sm" : "text-slate-600 hover:text-slate-900"}`}
+              style={{ padding: "8px 16px", borderRadius: "12px", fontWeight: "bold", border: "none", cursor: "pointer", transition: "all 0.2s", background: statusFilter === "LUNAS" ? "#059669" : "transparent", color: statusFilter === "LUNAS" ? "white" : "#475569", boxShadow: statusFilter === "LUNAS" ? "0 1px 2px rgba(0,0,0,0.05)" : "none" }}
             >
               Lunas
             </button>
             <button
               onClick={() => setStatusFilter("BELUM_LUNAS")}
-              className={`px-3 py-1.5 rounded-lg font-bold transition ${statusFilter === "BELUM_LUNAS" ? "bg-amber-600 text-white shadow-sm" : "text-slate-600 hover:text-slate-900"}`}
+              style={{ padding: "8px 16px", borderRadius: "12px", fontWeight: "bold", border: "none", cursor: "pointer", transition: "all 0.2s", background: statusFilter === "BELUM_LUNAS" ? "#d97706" : "transparent", color: statusFilter === "BELUM_LUNAS" ? "white" : "#475569", boxShadow: statusFilter === "BELUM_LUNAS" ? "0 1px 2px rgba(0,0,0,0.05)" : "none" }}
             >
               Belum Lunas
             </button>
             <button
               onClick={() => setStatusFilter("TERKUNCI")}
-              className={`px-3 py-1.5 rounded-lg font-bold transition ${statusFilter === "TERKUNCI" ? "bg-rose-600 text-white shadow-sm" : "text-slate-600 hover:text-slate-900"}`}
+              style={{ padding: "8px 16px", borderRadius: "12px", fontWeight: "bold", border: "none", cursor: "pointer", transition: "all 0.2s", background: statusFilter === "TERKUNCI" ? "#e11d48" : "transparent", color: statusFilter === "TERKUNCI" ? "white" : "#475569", boxShadow: statusFilter === "TERKUNCI" ? "0 1px 2px rgba(0,0,0,0.05)" : "none" }}
             >
               Terkunci
             </button>
@@ -424,34 +434,34 @@ export default function KeuanganSPPPage() {
       </div>
 
       {/* Main Table */}
-      <div className="bg-white rounded-3xl border border-slate-200/80 shadow-sm overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse">
-            <thead>
-              <tr className="bg-slate-50/80 border-b border-slate-200 text-[11px] font-black uppercase tracking-wider text-slate-500">
-                <th className="py-3.5 px-4 w-12 text-center">No</th>
-                <th className="py-3.5 px-4 min-w-[200px]">Nama Santri & NIS</th>
-                <th className="py-3.5 px-4 min-w-[130px]">Kelas</th>
-                <th className="py-3.5 px-4 min-w-[140px]">Tagihan SPP</th>
-                <th className="py-3.5 px-4 min-w-[140px] text-center">Status Pembayaran</th>
-                <th className="py-3.5 px-4 min-w-[160px] text-center">Akses Portal Wali</th>
-                <th className="py-3.5 px-4 min-w-[140px]">Tgl Bayar</th>
-                <th className="py-3.5 px-4 min-w-[160px] text-center">Aksi Cepat</th>
+      <div style={{ background: "white", borderRadius: "24px", border: "1px solid #f1f5f9", boxShadow: "0 1px 3px 0 rgba(0,0,0,0.1)", overflow: "hidden" }}>
+        <div style={{ overflowX: "auto" }}>
+          <table style={{ width: "100%", textAlign: "left", borderCollapse: "collapse", fontSize: "14px" }}>
+            <thead style={{ background: "#f8fafc", borderBottom: "1px solid #e2e8f0" }}>
+              <tr style={{ fontSize: "11px", fontWeight: 900, textTransform: "uppercase", color: "#64748b", letterSpacing: "0.05em" }}>
+                <th style={{ padding: "16px 20px", textAlign: "center", width: "48px" }}>No</th>
+                <th style={{ padding: "16px 20px", minWidth: "200px" }}>Nama Santri &amp; NIS</th>
+                <th style={{ padding: "16px 20px", minWidth: "130px" }}>Kelas</th>
+                <th style={{ padding: "16px 20px", minWidth: "140px" }}>Tagihan SPP</th>
+                <th style={{ padding: "16px 20px", minWidth: "140px", textAlign: "center" }}>Status Pembayaran</th>
+                <th style={{ padding: "16px 20px", minWidth: "160px", textAlign: "center" }}>Akses Portal Wali</th>
+                <th style={{ padding: "16px 20px", minWidth: "140px" }}>Tgl Bayar</th>
+                <th style={{ padding: "16px 20px", minWidth: "160px", textAlign: "center" }}>Aksi Cepat</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100 text-xs">
+            <tbody>
               {loading ? (
                 <tr>
-                  <td colSpan={8} className="py-12 text-center text-slate-400">
-                    <div className="inline-flex items-center gap-2">
-                      <RefreshCw className="w-4 h-4 animate-spin text-emerald-600" />
+                  <td colSpan={8} style={{ padding: "48px", textAlign: "center", color: "#94a3b8" }}>
+                    <div style={{ display: "inline-flex", alignItems: "center", gap: "8px" }}>
+                      <RefreshCw className="animate-spin text-emerald-600" style={{ width: "16px", height: "16px" }} />
                       <span>Memuat data status SPP santri...</span>
                     </div>
                   </td>
                 </tr>
               ) : santriList.length === 0 ? (
                 <tr>
-                  <td colSpan={8} className="py-12 text-center text-slate-400">
+                  <td colSpan={8} style={{ padding: "48px", textAlign: "center", color: "#94a3b8" }}>
                     Tidak ada data santri yang cocok dengan filter.
                   </td>
                 </tr>
@@ -462,88 +472,100 @@ export default function KeuanganSPPPage() {
                   const isTenggang = item.spp.lock_status === "TENGGANG";
 
                   return (
-                    <tr key={item.id} className="hover:bg-slate-50/80 transition">
-                      <td className="py-3.5 px-4 text-center font-bold text-slate-400">
+                    <tr key={item.id} className="hover:bg-[#f0fdf4] transition-colors" style={{ backgroundColor: idx % 2 === 0 ? "white" : "#fafafa", borderBottom: "1px solid #f1f5f9" }}>
+                      <td style={{ padding: "16px 20px", textAlign: "center", fontWeight: "bold", color: "#94a3b8" }}>
                         {idx + 1}
                       </td>
-                      <td className="py-3.5 px-4">
-                        <div className="font-extrabold text-slate-900">{item.nama_lengkap}</div>
-                        <div className="text-[11px] text-slate-400 font-mono">NIS: {item.nis || "-"}</div>
+                      <td style={{ padding: "16px 20px" }}>
+                        <div style={{ fontWeight: 900, color: "#1e293b", fontSize: "14px" }}>{item.nama_lengkap}</div>
+                        <div style={{ fontSize: "11px", color: "#94a3b8", fontFamily: "monospace", marginTop: "2px" }}>NIS: {item.nis || "-"}</div>
                       </td>
-                      <td className="py-3.5 px-4">
-                        <span className="inline-flex items-center px-2.5 py-1 rounded-lg bg-slate-100 text-slate-800 font-bold text-[11px]">
+                      <td style={{ padding: "16px 20px" }}>
+                        <span style={{ display: "inline-flex", alignItems: "center", padding: "4px 10px", borderRadius: "8px", background: "#f1f5f9", color: "#1e293b", fontWeight: "bold", fontSize: "11px" }}>
                           {item.kelas_nama}
                         </span>
                       </td>
-                      <td className="py-3.5 px-4 font-bold text-slate-800">
+                      <td style={{ padding: "16px 20px", fontWeight: "bold", color: "#1e293b" }}>
                         {formatRupiah(item.spp.nominal)}
                       </td>
-                      <td className="py-3.5 px-4 text-center">
+                      <td style={{ padding: "16px 20px", textAlign: "center" }}>
                         {isLunas ? (
-                          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800 font-extrabold text-[11px]">
-                            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" /> LUNAS
+                          <span style={{ display: "inline-flex", alignItems: "center", gap: "6px", padding: "4px 10px", borderRadius: "999px", background: "#d1fae5", color: "#065f46", fontWeight: 900, fontSize: "11px" }}>
+                            <CheckCircle2 style={{ width: "14px", height: "14px", color: "#059669" }} /> LUNAS
                           </span>
                         ) : (
-                          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-amber-100 text-amber-800 font-extrabold text-[11px]">
-                            <Clock className="w-3.5 h-3.5 text-amber-600" /> BELUM BAYAR
+                          <span style={{ display: "inline-flex", alignItems: "center", gap: "6px", padding: "4px 10px", borderRadius: "999px", background: "#fef3c7", color: "#92400e", fontWeight: 900, fontSize: "11px" }}>
+                            <Clock style={{ width: "14px", height: "14px", color: "#d97706" }} /> BELUM BAYAR
                           </span>
                         )}
                       </td>
-                      <td className="py-3.5 px-4 text-center">
+                      <td style={{ padding: "16px 20px", textAlign: "center" }}>
                         {isLunas ? (
-                          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-emerald-50 text-emerald-700 font-bold text-[11px] border border-emerald-200/60">
-                            <Unlock className="w-3 h-3 text-emerald-600" /> Terbuka Penuh
+                          <span style={{ display: "inline-flex", alignItems: "center", gap: "4px", padding: "4px 10px", borderRadius: "8px", background: "#ecfdf5", color: "#047857", fontWeight: "bold", fontSize: "11px", border: "1px solid rgba(16, 185, 129, 0.2)" }}>
+                            <Unlock style={{ width: "12px", height: "12px", color: "#059669" }} /> Terbuka Penuh
                           </span>
                         ) : isTenggang ? (
-                          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-blue-50 text-blue-700 font-bold text-[11px] border border-blue-200/60" title="Akses dibuka hingga tgl 10">
-                            <Clock className="w-3 h-3 text-blue-600" /> Masa Tenggang (Tgl 1-10)
+                          <span style={{ display: "inline-flex", alignItems: "center", gap: "4px", padding: "4px 10px", borderRadius: "8px", background: "#eff6ff", color: "#1d4ed8", fontWeight: "bold", fontSize: "11px", border: "1px solid rgba(59, 130, 246, 0.2)" }} title="Akses dibuka hingga tgl 10">
+                            <Clock style={{ width: "12px", height: "12px", color: "#2563eb" }} /> Masa Tenggang (Tgl 1-10)
                           </span>
                         ) : (
-                          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-rose-50 text-rose-700 font-bold text-[11px] border border-rose-200/60 animate-pulse">
-                            <Lock className="w-3 h-3 text-rose-600" /> Terkunci Otomatis
+                          <span style={{ display: "inline-flex", alignItems: "center", gap: "4px", padding: "4px 10px", borderRadius: "8px", background: "#fff1f2", color: "#be123c", fontWeight: "bold", fontSize: "11px", border: "1px solid rgba(225, 29, 72, 0.2)" }} className="animate-pulse">
+                            <Lock style={{ width: "12px", height: "12px", color: "#e11d48" }} /> Terkunci Otomatis
                           </span>
                         )}
                       </td>
-                      <td className="py-3.5 px-4 text-slate-500 font-medium">
+                      <td style={{ padding: "16px 20px", color: "#64748b", fontWeight: 500 }}>
                         {item.spp.tanggal_bayar ? (
                           <div>
-                            <div className="font-semibold text-slate-800">{item.spp.tanggal_bayar}</div>
-                            <div className="text-[10px] text-slate-400 uppercase">{item.spp.metode_bayar}</div>
+                            <div style={{ fontWeight: 600, color: "#1e293b" }}>{item.spp.tanggal_bayar}</div>
+                            <div style={{ fontSize: "10px", color: "#94a3b8", textTransform: "uppercase", marginTop: "2px" }}>{item.spp.metode_bayar}</div>
                           </div>
                         ) : (
-                          <span className="text-slate-400 italic">-</span>
+                          <span style={{ color: "#94a3b8", fontStyle: "italic" }}>-</span>
                         )}
                       </td>
-                      <td className="py-3.5 px-4 text-center">
-                        <div className="flex items-center justify-center gap-1.5">
+                      <td style={{ padding: "16px 20px", textAlign: "center" }}>
+                        <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "6px" }}>
                           <button
                             onClick={() => handleToggleStatus(item)}
                             disabled={updatingId === item.id}
-                            className={`px-3 py-1.5 rounded-xl font-bold text-xs transition flex items-center gap-1 shadow-sm ${
-                              isLunas 
-                                ? "bg-rose-50 text-rose-700 hover:bg-rose-100 border border-rose-200" 
-                                : "bg-emerald-600 text-white hover:bg-emerald-700 shadow-emerald-600/20"
-                            }`}
+                            style={{
+                              padding: "8px 12px",
+                              borderRadius: "12px",
+                              fontWeight: "bold",
+                              fontSize: "12px",
+                              display: "flex",
+                              alignItems: "center",
+                              gap: "4px",
+                              cursor: "pointer",
+                              border: isLunas ? "1px solid #fecdd3" : "none",
+                              background: isLunas ? "#fff1f2" : "#10b981",
+                              color: isLunas ? "#be123c" : "white",
+                              boxShadow: isLunas ? "none" : "0 4px 6px -1px rgba(16, 185, 129, 0.2)",
+                              transition: "all 0.2s"
+                            }}
+                            className={isLunas ? "hover:bg-rose-100" : "hover:bg-emerald-600"}
                           >
                             {updatingId === item.id ? (
-                              <RefreshCw className="w-3 h-3 animate-spin" />
+                              <RefreshCw className="animate-spin" style={{ width: "14px", height: "14px" }} />
                             ) : isLunas ? (
                               <>
-                                <XCircle className="w-3.5 h-3.5" /> Batal Lunas
+                                <XCircle style={{ width: "14px", height: "14px" }} /> Batal Lunas
                               </>
                             ) : (
                               <>
-                                <CheckCircle2 className="w-3.5 h-3.5" /> Tandai Lunas
+                                <CheckCircle2 style={{ width: "14px", height: "14px" }} /> Tandai Lunas
                               </>
                             )}
                           </button>
 
                           <button
                             onClick={() => openEditModal(item)}
-                            className="p-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 transition"
+                            style={{ padding: "8px", borderRadius: "12px", background: "#f1f5f9", color: "#334155", border: "none", cursor: "pointer", transition: "background-color 0.2s" }}
+                            className="hover:bg-slate-200"
                             title="Edit Rincian / Catatan Pembayaran"
                           >
-                            <Edit className="w-3.5 h-3.5" />
+                            <Edit style={{ width: "14px", height: "14px" }} />
                           </button>
                         </div>
                       </td>
@@ -558,58 +580,59 @@ export default function KeuanganSPPPage() {
 
       {/* Edit Detail Modal */}
       {editModalSantri && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-          <div className="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl space-y-4 animate-in fade-in zoom-in-95">
-            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+        <div style={{ position: "fixed", inset: 0, zIndex: 50, display: "flex", alignItems: "center", justifyContent: "center", padding: "16px", background: "rgba(0,0,0,0.6)", backdropFilter: "blur(4px)" }}>
+          <div style={{ background: "white", borderRadius: "24px", maxWidth: "400px", width: "100%", padding: "24px", boxShadow: "0 25px 50px -12px rgba(0,0,0,0.25)", display: "flex", flexDirection: "column", gap: "16px" }} className="animate-in fade-in zoom-in-95">
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", borderBottom: "1px solid #f1f5f9", paddingBottom: "12px" }}>
               <div>
-                <h3 className="font-extrabold text-slate-900 text-base">Edit Rincian SPP</h3>
-                <p className="text-xs text-slate-500">{editModalSantri.nama_lengkap} ({editModalSantri.kelas_nama})</p>
+                <h3 style={{ fontWeight: 900, color: "#1e293b", fontSize: "16px", margin: 0 }}>Edit Rincian SPP</h3>
+                <p style={{ fontSize: "12px", color: "#64748b", margin: "4px 0 0 0" }}>{editModalSantri.nama_lengkap} ({editModalSantri.kelas_nama})</p>
               </div>
               <button 
                 onClick={() => setEditModalSantri(null)}
-                className="p-1.5 rounded-full hover:bg-slate-100 text-slate-400 hover:text-slate-600 transition"
+                style={{ padding: "6px", borderRadius: "999px", background: "transparent", color: "#94a3b8", border: "none", cursor: "pointer", transition: "all 0.2s" }}
+                className="hover:bg-slate-100 hover:text-slate-600"
               >
-                <X className="w-4 h-4" />
+                <X style={{ width: "16px", height: "16px" }} />
               </button>
             </div>
 
-            <div className="space-y-3 text-xs">
+            <div style={{ display: "flex", flexDirection: "column", gap: "12px", fontSize: "12px" }}>
               <div>
-                <label className="font-bold text-slate-700 block mb-1">Bulan & Tahun</label>
+                <label style={{ fontWeight: "bold", color: "#334155", display: "block", marginBottom: "4px" }}>Bulan &amp; Tahun</label>
                 <input 
                   type="text" 
                   disabled 
                   value={`${NAMA_BULAN[selectedBulan - 1]} ${selectedTahun}`} 
-                  className="w-full px-3 py-2 bg-slate-100 border border-slate-200 rounded-xl font-bold text-slate-600"
+                  style={{ width: "100%", padding: "8px 12px", background: "#f1f5f9", border: "1px solid #e2e8f0", borderRadius: "12px", fontWeight: "bold", color: "#475569", boxSizing: "border-box" }}
                 />
               </div>
 
               <div>
-                <label className="font-bold text-slate-700 block mb-1">Nominal Tagihan (Rp)</label>
+                <label style={{ fontWeight: "bold", color: "#334155", display: "block", marginBottom: "4px" }}>Nominal Tagihan (Rp)</label>
                 <input 
                   type="number" 
                   value={editNominal}
                   onChange={(e) => setEditNominal(Number(e.target.value))}
-                  className="w-full px-3 py-2 bg-white border border-slate-300 rounded-xl font-bold text-slate-800 outline-none focus:ring-2 focus:ring-emerald-500/20"
+                  style={{ width: "100%", padding: "8px 12px", background: "white", border: "1px solid #cbd5e1", borderRadius: "12px", fontWeight: "bold", color: "#1e293b", outline: "none", boxSizing: "border-box" }}
                 />
               </div>
 
               <div>
-                <label className="font-bold text-slate-700 block mb-1">Tanggal Pembayaran</label>
+                <label style={{ fontWeight: "bold", color: "#334155", display: "block", marginBottom: "4px" }}>Tanggal Pembayaran</label>
                 <input 
                   type="date" 
                   value={editTglBayar}
                   onChange={(e) => setEditTglBayar(e.target.value)}
-                  className="w-full px-3 py-2 bg-white border border-slate-300 rounded-xl font-semibold text-slate-800 outline-none focus:ring-2 focus:ring-emerald-500/20"
+                  style={{ width: "100%", padding: "8px 12px", background: "white", border: "1px solid #cbd5e1", borderRadius: "12px", fontWeight: 600, color: "#1e293b", outline: "none", boxSizing: "border-box" }}
                 />
               </div>
 
               <div>
-                <label className="font-bold text-slate-700 block mb-1">Metode Pembayaran</label>
+                <label style={{ fontWeight: "bold", color: "#334155", display: "block", marginBottom: "4px" }}>Metode Pembayaran</label>
                 <select
                   value={editMetode}
                   onChange={(e) => setEditMetode(e.target.value)}
-                  className="w-full px-3 py-2 bg-white border border-slate-300 rounded-xl font-semibold text-slate-800 outline-none focus:ring-2 focus:ring-emerald-500/20"
+                  style={{ width: "100%", padding: "8px 12px", background: "white", border: "1px solid #cbd5e1", borderRadius: "12px", fontWeight: 600, color: "#1e293b", outline: "none", boxSizing: "border-box" }}
                 >
                   <option value="transfer">Transfer Bank (BSI / Mandiri)</option>
                   <option value="tunai">Tunai / Cash Bendahara</option>
@@ -618,30 +641,32 @@ export default function KeuanganSPPPage() {
               </div>
 
               <div>
-                <label className="font-bold text-slate-700 block mb-1">Catatan Keuangan (Opsional)</label>
+                <label style={{ fontWeight: "bold", color: "#334155", display: "block", marginBottom: "4px" }}>Catatan Keuangan (Opsional)</label>
                 <textarea 
                   value={editCatatan}
                   onChange={(e) => setEditCatatan(e.target.value)}
                   placeholder="Misal: Sudah transfer via rekening BSI atas nama Ayah..."
                   rows={3}
-                  className="w-full px-3 py-2 bg-white border border-slate-300 rounded-xl text-xs font-medium text-slate-800 outline-none focus:ring-2 focus:ring-emerald-500/20"
+                  style={{ width: "100%", padding: "8px 12px", background: "white", border: "1px solid #cbd5e1", borderRadius: "12px", fontSize: "12px", fontWeight: 500, color: "#1e293b", outline: "none", resize: "none", boxSizing: "border-box" }}
                 />
               </div>
             </div>
 
-            <div className="flex items-center justify-end gap-2 pt-2 border-t border-slate-100">
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-end", gap: "8px", paddingTop: "8px", borderTop: "1px solid #f1f5f9" }}>
               <button
                 onClick={() => setEditModalSantri(null)}
-                className="px-4 py-2 rounded-xl text-slate-600 font-bold text-xs hover:bg-slate-100 transition"
+                style={{ padding: "8px 16px", borderRadius: "12px", color: "#475569", fontWeight: "bold", fontSize: "12px", background: "transparent", border: "none", cursor: "pointer", transition: "background-color 0.2s" }}
+                className="hover:bg-slate-100"
               >
                 Batal
               </button>
               <button
                 onClick={handleSaveDetail}
                 disabled={updatingId !== null}
-                className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs transition flex items-center gap-1.5 shadow-md shadow-emerald-600/20"
+                style={{ padding: "8px 16px", borderRadius: "12px", background: "#059669", color: "white", fontWeight: "bold", fontSize: "12px", border: "none", cursor: updatingId !== null ? "not-allowed" : "pointer", display: "flex", alignItems: "center", gap: "6px", boxShadow: "0 4px 6px -1px rgba(5, 150, 105, 0.2)", transition: "background-color 0.2s" }}
+                className="hover:bg-emerald-700"
               >
-                {updatingId ? <RefreshCw className="w-3.5 h-3.5 animate-spin" /> : <Save className="w-3.5 h-3.5" />}
+                {updatingId ? <RefreshCw className="animate-spin" style={{ width: "14px", height: "14px" }} /> : <Save style={{ width: "14px", height: "14px" }} />}
                 Simpan Perubahan
               </button>
             </div>

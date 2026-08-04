@@ -87,19 +87,21 @@ export default async function PresensiAsatidz_Page() {
   }
 
   return (
-    <PresensiAsatidz
-      presensiHariIni={presensi as PresensiItem[]}
-      belumAbsen={belumAbsen}
-      tokenHariIni={
-        token
-          ? {
-              token: token.token,
-              expires_at: token.expires_at.toISOString(),
-            }
-          : null
-      }
-      allAsatidz={allAsatidz}
-      tanggal={today.toISOString()}
-    />
+    <div style={{ padding: "24px 28px", maxWidth: 1200, margin: "0 auto", display: "flex", flexDirection: "column", gap: 24 }}>
+      <PresensiAsatidz
+        presensiHariIni={presensi as PresensiItem[]}
+        belumAbsen={belumAbsen}
+        tokenHariIni={
+          token
+            ? {
+                token: token.token,
+                expires_at: token.expires_at.toISOString(),
+              }
+            : null
+        }
+        allAsatidz={allAsatidz}
+        tanggal={today.toISOString()}
+      />
+    </div>
   );
 }

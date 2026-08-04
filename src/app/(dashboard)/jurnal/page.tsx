@@ -158,21 +158,45 @@ export default async function JurnalPage() {
   });
 
   return (
-    <div>
-      {/* Page Header */}
-      <div className="page-header">
+    <div style={{ padding: "24px 28px", maxWidth: 1200, margin: "0 auto", display: "flex", flexDirection: "column", gap: 24 }}>
+      {/* Premium Hero Banner */}
+      <div style={{
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+        background: "linear-gradient(135deg, #0f172a 0%, #1e293b 60%, #f59e0b 100%)",
+        borderRadius: "24px",
+        padding: "32px 36px",
+        color: "white",
+        boxShadow: "0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05)"
+      }}>
         <div>
-          <h1><BookOpen size={16} className="inline mr-1" /> Jurnal Mengajar</h1>
-          <p>Rekap kegiatan belajar mengajar di Pesantren Al-Imam Al-Islami</p>
+          <h1 style={{ fontSize: "28px", fontWeight: "bold", margin: 0, display: "flex", alignItems: "center", gap: "8px" }}>
+            <BookOpen size={28} /> Jurnal Mengajar
+          </h1>
+          <p style={{ marginTop: "8px", opacity: 0.9, fontSize: "16px" }}>Rekap kegiatan belajar mengajar di Pesantren Al-Imam Al-Islami</p>
         </div>
-        <Link href="/jurnal/tambah" className="btn btn-primary">
-          <Plus size={16} />
+        <Link href="/jurnal/tambah" style={{
+          background: "white",
+          color: "#0f172a",
+          padding: "12px 24px",
+          borderRadius: "14px",
+          fontWeight: "bold",
+          display: "flex",
+          alignItems: "center",
+          gap: "8px",
+          textDecoration: "none",
+          boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
+          transition: "transform 0.2s"
+        }}>
+          <Plus size={18} />
           Tambah Jurnal
         </Link>
       </div>
 
       {/* Content */}
-      <div className="p-3.5 sm:p-6 md:p-7 max-w-7xl mx-auto w-full">
+      <div style={{ width: "100%" }}>
+        {/* We keep JurnalClientFilter but ensure the wrapper is aligned */}
         <JurnalClientFilter 
           data={jurnalSerialized} 
           kelasList={kelasList}

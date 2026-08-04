@@ -114,29 +114,30 @@ export default function RekapBulananPage() {
 
   return (
     <>
-      <div className="page-header">
-        <div>
-          <h1>Rekap Presensi Guru</h1>
-          <p>
-            Kalender kehadiran bulanan · {BULAN_NAMA[bulan]} {tahun}
-          </p>
+      <div style={{ padding: "24px 28px", maxWidth: 1200, margin: "0 auto", display: "flex", flexDirection: "column", gap: 24 }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", background: "linear-gradient(135deg, #0f172a 0%, #1e293b 60%, #10b981 100%)", borderRadius: "24px", padding: "32px 36px", boxShadow: "0 10px 25px -5px rgba(16, 185, 129, 0.4), 0 8px 10px -6px rgba(16, 185, 129, 0.1)" }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+            <h1 style={{ color: "white", fontSize: "28px", fontWeight: 700, margin: 0 }}>Rekap Presensi Guru</h1>
+            <p style={{ color: "#cbd5e1", fontSize: "15px", margin: 0 }}>
+              Kalender kehadiran bulanan · {BULAN_NAMA[bulan]} {tahun}
+            </p>
+          </div>
+          <div style={{ display: "flex", gap: "12px", alignItems: "center" }}>
+            <Link href="/presensi/asatidz" style={{ background: "rgba(255,255,255,0.1)", color: "white", padding: "10px 18px", borderRadius: "14px", border: "1px solid rgba(255,255,255,0.2)", fontWeight: 600, display: "inline-flex", alignItems: "center", gap: "8px", textDecoration: "none" }}>
+              <svg width="16" height="16" fill="none" viewBox="0 0 24 24">
+                <path
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  d="M15 18l-6-6 6-6"
+                />
+              </svg>
+              Kembali
+            </Link>
+          </div>
         </div>
-        <Link href="/presensi/asatidz" className="btn btn-ghost btn-sm">
-          <svg width="16" height="16" fill="none" viewBox="0 0 24 24">
-            <path
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              d="M15 18l-6-6 6-6"
-            />
-          </svg>
-          Kembali
-        </Link>
-      </div>
-
-      <div className="p-3.5 sm:p-6 md:p-7 max-w-7xl mx-auto w-full flex flex-col gap-5">
         {/* Filter */}
-        <div className="card">
+        <div style={{ background: "white", borderRadius: "24px", padding: "28px", boxShadow: "0 4px 20px -2px rgba(0, 0, 0, 0.05)", display: "flex", flexDirection: "column", gap: "20px" }}>
           <div style={{ display: 'flex', gap: 16, alignItems: 'flex-end', flexWrap: 'wrap' }}>
             <div className="form-group" style={{ marginBottom: 0 }}>
               <label className="form-label">Bulan</label>
@@ -220,7 +221,7 @@ export default function RekapBulananPage() {
         </div>
 
         {/* Tabel Heatmap */}
-        <div className="card" style={{ padding: 0 }}>
+        <div style={{ background: "white", borderRadius: "24px", padding: "0", boxShadow: "0 4px 20px -2px rgba(0, 0, 0, 0.05)", display: "flex", flexDirection: "column", gap: "20px", overflow: "hidden" }}>
           {loading ? (
             <div style={{ textAlign: 'center', padding: 48, color: '#9ca3af' }}>
               <div
@@ -237,7 +238,7 @@ export default function RekapBulananPage() {
             </div>
           ) : (
             <div className="table-wrap" style={{ border: 'none', borderRadius: 0 }}>
-              <table style={{ fontSize: 12 }}>
+              <table style={{ fontSize: 12, width: "100%", borderCollapse: "collapse" }}>
                 <thead>
                   <tr>
                     <th
@@ -247,6 +248,8 @@ export default function RekapBulananPage() {
                         left: 0,
                         background: '#f8f7f4',
                         zIndex: 1,
+                        padding: '16px 20px',
+                        borderBottom: '1px solid #e2e8f0',
                       }}
                     >
                       Nama Guru
@@ -280,7 +283,7 @@ export default function RekapBulananPage() {
                     allAsatidz.map(([id, nama]) => {
                       const summary = getSummary(id);
                       return (
-                        <tr key={id}>
+                        <tr key={id} style={{ transition: "background-color 0.2s" }} onMouseEnter={(e) => e.currentTarget.style.backgroundColor = "#f0fdf4"} onMouseLeave={(e) => e.currentTarget.style.backgroundColor = "transparent"}>
                           <td
                             style={{
                               fontWeight: 700,
@@ -289,6 +292,8 @@ export default function RekapBulananPage() {
                               background: 'white',
                               zIndex: 1,
                               whiteSpace: 'nowrap',
+                              padding: '16px 20px',
+                              borderBottom: '1px solid #f1f5f9',
                             }}
                           >
                             {nama}

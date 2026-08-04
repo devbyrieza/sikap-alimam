@@ -161,41 +161,54 @@ export default function IbadahHarianPage() {
   ];
 
   return (
-    <div className="p-6 max-w-7xl mx-auto space-y-6">
+    <div style={{ padding: "24px 28px", maxWidth: 1200, margin: "0 auto", display: "flex", flexDirection: "column", gap: 24 }}>
       {/* Header Banner - PPDB Platinum Standard */}
-      <div className="bg-gradient-to-r from-emerald-600 to-teal-800 rounded-3xl p-8 text-white shadow-xl shadow-emerald-900/20 relative overflow-hidden">
-        <div className="absolute top-0 right-0 p-12 opacity-10">
+      <div style={{
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+        background: "linear-gradient(135deg, #0f172a 0%, #1e293b 60%, #0369a1 100%)",
+        borderRadius: "24px",
+        padding: "32px 36px",
+        boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.2), 0 8px 10px -6px rgba(0, 0, 0, 0.1)",
+        color: "white",
+        position: "relative",
+        overflow: "hidden"
+      }}>
+        <div style={{ position: "absolute", top: 0, right: 0, padding: "48px", opacity: 0.1 }}>
           <Check size={120} />
         </div>
-        <h1 className="text-3xl font-bold mb-2 relative z-10">
-          Bina Pribadi Islami (BPI)
-        </h1>
-        <p className="text-emerald-100 relative z-10">
-          Ceklist ibadah harian dan adab santri.
-        </p>
+        <div style={{ position: "relative", zIndex: 10 }}>
+          <h1 style={{ fontSize: "28px", fontWeight: "bold", margin: "0 0 8px 0" }}>
+            Bina Pribadi Islami (BPI)
+          </h1>
+          <p style={{ color: "#cbd5e1", margin: 0 }}>
+            Ceklist ibadah harian dan adab santri.
+          </p>
+        </div>
       </div>
 
       {/* Filter Card */}
-      <div className="bg-white/70 backdrop-blur-md rounded-2xl p-6 shadow-sm border border-gray-100 flex flex-wrap gap-4 items-end">
-        <div className="flex-1 min-w-[200px]">
-          <label className="block text-sm font-medium text-gray-700 mb-1">
+      <div style={{ background: "white", borderRadius: "24px", padding: "24px", boxShadow: "0 1px 3px 0 rgba(0,0,0,0.1)", border: "1px solid #f1f5f9", display: "flex", flexWrap: "wrap", gap: "16px", alignItems: "flex-end" }}>
+        <div style={{ flex: 1, minWidth: "200px" }}>
+          <label style={{ display: "block", fontSize: "14px", fontWeight: 500, color: "#475569", marginBottom: "4px" }}>
             Tanggal
           </label>
           <input
             type="date"
             value={tanggal}
             onChange={(e) => setTanggal(e.target.value)}
-            className="w-full rounded-xl border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 px-4 py-2 bg-white"
+            style={{ width: "100%", borderRadius: "12px", border: "1px solid #cbd5e1", padding: "10px 14px", background: "white", outline: "none" }}
           />
         </div>
-        <div className="flex-1 min-w-[200px]">
-          <label className="block text-sm font-medium text-gray-700 mb-1">
+        <div style={{ flex: 1, minWidth: "200px" }}>
+          <label style={{ display: "block", fontSize: "14px", fontWeight: 500, color: "#475569", marginBottom: "4px" }}>
             Kelas / Halaqah
           </label>
           <select
             value={kelasId}
             onChange={(e) => setKelasId(e.target.value)}
-            className="w-full rounded-xl border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 px-4 py-2 bg-white"
+            style={{ width: "100%", borderRadius: "12px", border: "1px solid #cbd5e1", padding: "10px 14px", background: "white", outline: "none" }}
           >
             <option value="">Pilih Kelas...</option>
             {kelasList.map((k) => (
@@ -208,9 +221,9 @@ export default function IbadahHarianPage() {
       </div>
 
       {draftLoaded && (
-        <div className="bg-amber-50 text-amber-800 p-4 rounded-xl flex items-center gap-3 border border-amber-200">
+        <div style={{ background: "#fffbeb", color: "#92400e", padding: "16px", borderRadius: "16px", display: "flex", alignItems: "center", gap: "12px", border: "1px solid #fde68a" }}>
           <AlertCircle size={20} />
-          <span className="text-sm">
+          <span style={{ fontSize: "14px" }}>
             Menampilkan data <strong>draft yang belum tersimpan</strong> ke server.
             Klik Simpan untuk memperbarui database.
           </span>
@@ -219,65 +232,65 @@ export default function IbadahHarianPage() {
 
       {/* Data Table - Dense layout from Siakad Standard wrapped in Platinum Design */}
       {kelasId && !loading && (
-        <div className="bg-white rounded-3xl shadow-lg border border-gray-100 overflow-hidden">
-          <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200 text-sm">
-              <thead className="bg-gray-50">
+        <div style={{ background: "white", borderRadius: "24px", boxShadow: "0 1px 3px 0 rgba(0,0,0,0.1)", border: "1px solid #f1f5f9", overflow: "hidden" }}>
+          <div style={{ overflowX: "auto" }}>
+            <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "14px", textAlign: "left" }}>
+              <thead style={{ background: "#f8fafc" }}>
                 <tr>
                   <th
                     rowSpan={2}
-                    className="px-4 py-3 text-left font-semibold text-gray-600 border-b-2 border-emerald-500"
+                    style={{ padding: "16px 20px", fontWeight: 600, color: "#475569", borderBottom: "2px solid #10b981" }}
                   >
                     Nama Santri
                   </th>
                   <th
                     colSpan={5}
-                    className="px-4 py-2 text-center font-semibold text-gray-600 bg-emerald-50/50"
+                    style={{ padding: "12px", textAlign: "center", fontWeight: 600, color: "#475569", background: "#ecfdf5" }}
                   >
                     Sholat Wajib
                   </th>
                   <th
                     colSpan={4}
-                    className="px-4 py-2 text-center font-semibold text-gray-600 bg-teal-50/50"
+                    style={{ padding: "12px", textAlign: "center", fontWeight: 600, color: "#475569", background: "#f0fdfa" }}
                   >
                     Amalan Sunnah
                   </th>
                 </tr>
                 <tr>
                   {/* Wajib */}
-                  <th className="px-2 py-2 text-center text-xs font-medium text-gray-500 bg-emerald-50/30">Subuh</th>
-                  <th className="px-2 py-2 text-center text-xs font-medium text-gray-500 bg-emerald-50/30">Dzuhur</th>
-                  <th className="px-2 py-2 text-center text-xs font-medium text-gray-500 bg-emerald-50/30">Ashar</th>
-                  <th className="px-2 py-2 text-center text-xs font-medium text-gray-500 bg-emerald-50/30">Maghrib</th>
-                  <th className="px-2 py-2 text-center text-xs font-medium text-gray-500 bg-emerald-50/30">Isya</th>
+                  <th style={{ padding: "8px", textAlign: "center", fontSize: "12px", fontWeight: 500, color: "#64748b", background: "#f0fdf4" }}>Subuh</th>
+                  <th style={{ padding: "8px", textAlign: "center", fontSize: "12px", fontWeight: 500, color: "#64748b", background: "#f0fdf4" }}>Dzuhur</th>
+                  <th style={{ padding: "8px", textAlign: "center", fontSize: "12px", fontWeight: 500, color: "#64748b", background: "#f0fdf4" }}>Ashar</th>
+                  <th style={{ padding: "8px", textAlign: "center", fontSize: "12px", fontWeight: 500, color: "#64748b", background: "#f0fdf4" }}>Maghrib</th>
+                  <th style={{ padding: "8px", textAlign: "center", fontSize: "12px", fontWeight: 500, color: "#64748b", background: "#f0fdf4" }}>Isya</th>
                   {/* Sunnah */}
-                  <th className="px-2 py-2 text-center text-xs font-medium text-gray-500 bg-teal-50/30">Tahajjud</th>
-                  <th className="px-2 py-2 text-center text-xs font-medium text-gray-500 bg-teal-50/30">Dhuha</th>
-                  <th className="px-2 py-2 text-center text-xs font-medium text-gray-500 bg-teal-50/30">Shaum</th>
-                  <th className="px-2 py-2 text-center text-xs font-medium text-gray-500 bg-teal-50/30">Matsurat</th>
+                  <th style={{ padding: "8px", textAlign: "center", fontSize: "12px", fontWeight: 500, color: "#64748b", background: "#f0fdfa" }}>Tahajjud</th>
+                  <th style={{ padding: "8px", textAlign: "center", fontSize: "12px", fontWeight: 500, color: "#64748b", background: "#f0fdfa" }}>Dhuha</th>
+                  <th style={{ padding: "8px", textAlign: "center", fontSize: "12px", fontWeight: 500, color: "#64748b", background: "#f0fdfa" }}>Shaum</th>
+                  <th style={{ padding: "8px", textAlign: "center", fontSize: "12px", fontWeight: 500, color: "#64748b", background: "#f0fdfa" }}>Matsurat</th>
                 </tr>
               </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
+              <tbody>
                 {data.map((item, index) => (
-                  <tr key={item.santri_id} className="hover:bg-gray-50/50 transition-colors">
-                    <td className="px-4 py-3 whitespace-nowrap font-medium text-gray-800">
+                  <tr key={item.santri_id} className="hover:bg-[#f0fdf4] transition-colors" style={{ backgroundColor: index % 2 === 0 ? "white" : "#fafafa", borderBottom: "1px solid #f1f5f9" }}>
+                    <td style={{ padding: "16px 20px", whiteSpace: "nowrap", fontWeight: 500, color: "#1e293b" }}>
                       {item.nama_lengkap}
                     </td>
                     {/* Wajib Selects */}
                     {["shubuh", "dzuhur", "ashar", "maghrib", "isya"].map((waktu) => (
-                      <td key={waktu} className="px-1 py-2 text-center">
+                      <td key={waktu} style={{ padding: "8px", textAlign: "center" }}>
                         <select
                           value={item[waktu as keyof SantriIbadah] as string}
                           onChange={(e) => handleChange(index, waktu as keyof SantriIbadah, e.target.value)}
-                          className={`text-xs rounded-md border-0 py-1 pl-2 pr-6 ring-1 ring-inset focus:ring-2 focus:ring-inset sm:text-xs
-                            ${
-                              item[waktu as keyof SantriIbadah] === "Berjamaah"
-                                ? "bg-emerald-50 text-emerald-700 ring-emerald-200 focus:ring-emerald-600"
-                                : item[waktu as keyof SantriIbadah] === "Bolong"
-                                ? "bg-red-50 text-red-700 ring-red-200 focus:ring-red-600"
-                                : "bg-amber-50 text-amber-700 ring-amber-200 focus:ring-amber-600"
-                            }
-                          `}
+                          style={{
+                            fontSize: "12px",
+                            borderRadius: "8px",
+                            padding: "6px 8px",
+                            border: "1px solid #cbd5e1",
+                            background: item[waktu as keyof SantriIbadah] === "Berjamaah" ? "#ecfdf5" : item[waktu as keyof SantriIbadah] === "Bolong" ? "#fef2f2" : "#fffbeb",
+                            color: item[waktu as keyof SantriIbadah] === "Berjamaah" ? "#047857" : item[waktu as keyof SantriIbadah] === "Bolong" ? "#b91c1c" : "#b45309",
+                            outline: "none"
+                          }}
                         >
                           {sholatOptions.map((opt) => (
                             <option key={opt} value={opt}>{opt}</option>
@@ -287,12 +300,12 @@ export default function IbadahHarianPage() {
                     ))}
                     {/* Sunnah Checkboxes */}
                     {["tahajjud", "dhuha", "shaum", "almatsurat"].map((sunnah) => (
-                      <td key={sunnah} className="px-2 py-2 text-center">
+                      <td key={sunnah} style={{ padding: "8px", textAlign: "center" }}>
                         <input
                           type="checkbox"
                           checked={item[sunnah as keyof SantriIbadah] as boolean}
                           onChange={(e) => handleChange(index, sunnah as keyof SantriIbadah, e.target.checked)}
-                          className="w-4 h-4 text-teal-600 bg-gray-100 border-gray-300 rounded focus:ring-teal-500 cursor-pointer"
+                          style={{ width: "16px", height: "16px", cursor: "pointer" }}
                         />
                       </td>
                     ))}
@@ -300,7 +313,7 @@ export default function IbadahHarianPage() {
                 ))}
                 {data.length === 0 && (
                   <tr>
-                    <td colSpan={10} className="px-6 py-8 text-center text-gray-500">
+                    <td colSpan={10} style={{ padding: "32px", textAlign: "center", color: "#64748b" }}>
                       Tidak ada data santri ditemukan.
                     </td>
                   </tr>
@@ -309,11 +322,24 @@ export default function IbadahHarianPage() {
             </table>
           </div>
           
-          <div className="p-4 bg-gray-50 border-t border-gray-200 flex justify-end">
+          <div style={{ padding: "16px 20px", background: "#f8fafc", borderTop: "1px solid #f1f5f9", display: "flex", justifyContent: "flex-end" }}>
             <button
               onClick={handleSave}
               disabled={saving || data.length === 0}
-              className="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-2.5 rounded-xl font-medium transition-all shadow-lg shadow-emerald-600/30 disabled:opacity-50 disabled:cursor-not-allowed"
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "8px",
+                backgroundColor: saving || data.length === 0 ? "#94a3b8" : "#0284c7",
+                color: "white",
+                padding: "10px 18px",
+                borderRadius: "14px",
+                fontWeight: "bold",
+                border: "none",
+                cursor: saving || data.length === 0 ? "not-allowed" : "pointer",
+                boxShadow: saving || data.length === 0 ? "none" : "0 4px 6px -1px rgba(2, 132, 199, 0.4)",
+                transition: "all 0.2s"
+              }}
             >
               {saving ? <RefreshCw className="animate-spin" size={18} /> : <Save size={18} />}
               Simpan Ceklist
@@ -323,7 +349,7 @@ export default function IbadahHarianPage() {
       )}
 
       {loading && (
-        <div className="flex justify-center p-12">
+        <div style={{ display: "flex", justifyContent: "center", padding: "48px" }}>
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-600"></div>
         </div>
       )}

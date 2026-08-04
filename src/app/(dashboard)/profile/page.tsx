@@ -74,64 +74,78 @@ export default function ProfilePage() {
   const p = profile?.pegawai;
 
   return (
-    <div className="p-4 sm:p-6 lg:p-8 max-w-5xl mx-auto space-y-6">
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold text-slate-800 tracking-tight">Profil &amp; Pengaturan Akun</h1>
-        <p className="text-slate-500 text-sm mt-1">Kelola data kepegawaian, mapel mengajar, dan keamanan akun Anda</p>
+    <div style={{ padding: "24px 28px", maxWidth: 1200, margin: "0 auto", display: "flex", flexDirection: "column", gap: 24 }}>
+      <div style={{
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+        background: "linear-gradient(135deg, #0f172a 0%, #1e293b 60%, #0369a1 100%)",
+        borderRadius: "24px",
+        padding: "32px 36px",
+        boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.2), 0 8px 10px -6px rgba(0, 0, 0, 0.1)",
+        color: "white",
+        flexWrap: "wrap",
+        gap: "24px"
+      }}>
+        <div>
+          <h1 style={{ fontSize: "28px", fontWeight: "bold", margin: "0 0 8px 0" }}>Profil &amp; Pengaturan Akun</h1>
+          <p style={{ color: "#cbd5e1", margin: 0, fontSize: "14px" }}>Kelola data kepegawaian, mapel mengajar, dan keamanan akun Anda</p>
+        </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: "24px", alignItems: "start" }}>
         
         {/* ─── KARTU 1: DATA KEPEGAWAIAN & MAPEL (LEBAR 2 KOLOM) ─── */}
-        <div className="lg:col-span-2 space-y-6">
-          <div className="bg-white rounded-3xl p-6 sm:p-7 shadow-sm border border-slate-100 space-y-5">
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 pb-4 border-b border-slate-100">
-              <div className="flex items-center gap-3">
-                <div className="w-11 h-11 rounded-2xl bg-[#3b0a0a]/10 flex items-center justify-center text-[#3b0a0a]">
-                  <UserCheck className="w-6 h-6" />
+        <div style={{ gridColumn: "1 / -1", '@media (min-width: 1024px)': { gridColumn: "span 2" } } as React.CSSProperties} className="lg:col-span-2">
+          <div style={{ background: "white", borderRadius: "24px", padding: "24px", boxShadow: "0 4px 6px -1px rgba(0,0,0,0.05)", border: "1px solid #f1f5f9", display: "flex", flexDirection: "column", gap: "20px" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: "1px solid #f1f5f9", paddingBottom: "16px", flexWrap: "wrap", gap: "12px" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                <div style={{ width: "44px", height: "44px", borderRadius: "16px", background: "rgba(2, 132, 199, 0.1)", display: "flex", alignItems: "center", justifyContent: "center", color: "#0284c7" }}>
+                  <UserCheck style={{ width: "24px", height: "24px" }} />
                 </div>
                 <div>
-                  <h2 className="text-lg font-bold text-slate-800">Data Induk Civitas &amp; Pengajar</h2>
-                  <p className="text-xs text-slate-500">Terintegrasi dengan database SIMPEG &amp; SIAKAD</p>
+                  <h2 style={{ fontSize: "18px", fontWeight: "bold", color: "#1e293b", margin: "0 0 4px 0" }}>Data Induk Civitas &amp; Pengajar</h2>
+                  <p style={{ fontSize: "12px", color: "#64748b", margin: 0 }}>Terintegrasi dengan database SIMPEG &amp; SIAKAD</p>
                 </div>
               </div>
 
               <button
                 type="button"
                 onClick={openEditProfileModal}
-                className="px-4 py-2 bg-[#3b0a0a] hover:bg-[#520e0e] text-white rounded-xl text-xs font-bold transition-all shadow-sm flex items-center gap-1.5 cursor-pointer"
+                style={{ padding: "10px 18px", background: "#0284c7", color: "white", borderRadius: "14px", fontSize: "12px", fontWeight: "bold", border: "none", cursor: "pointer", display: "flex", alignItems: "center", gap: "6px", boxShadow: "0 4px 6px -1px rgba(2, 132, 199, 0.4)", transition: "background-color 0.2s" }}
+                className="hover:bg-sky-700"
               >
-                <Edit3 className="w-3.5 h-3.5" />
+                <Edit3 style={{ width: "14px", height: "14px" }} />
                 <span>Edit &amp; Atur Mapel</span>
               </button>
             </div>
 
             {loadingProfile ? (
-              <div className="py-12 text-center text-slate-400">
-                <Loader2 className="w-7 h-7 mx-auto mb-2 animate-spin text-[#3b0a0a]" />
-                <p className="text-xs font-semibold">Memuat profil...</p>
+              <div style={{ padding: "48px 0", textAlign: "center", color: "#94a3b8" }}>
+                <Loader2 style={{ width: "28px", height: "28px", margin: "0 auto 8px auto", color: "#0284c7" }} className="animate-spin" />
+                <p style={{ fontSize: "12px", fontWeight: 600 }}>Memuat profil...</p>
               </div>
             ) : (
-              <div className="space-y-4">
+              <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
                 {/* Header Foto + Nama */}
-                <div className="flex items-center gap-4 bg-slate-50/70 p-4 rounded-2xl border border-slate-200">
-                  <div className="w-16 h-16 rounded-2xl bg-white border border-slate-200 overflow-hidden shrink-0 flex items-center justify-center shadow-inner">
+                <div style={{ display: "flex", alignItems: "center", gap: "16px", background: "#f8fafc", padding: "16px", borderRadius: "20px", border: "1px solid #e2e8f0" }}>
+                  <div style={{ width: "64px", height: "64px", borderRadius: "20px", background: "white", border: "1px solid #e2e8f0", overflow: "hidden", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, boxShadow: "inset 0 2px 4px 0 rgba(0,0,0,0.06)" }}>
                     {p?.foto_url ? (
-                      <img src={p.foto_url} alt="" className="w-full h-full object-cover" />
+                      <img src={p.foto_url} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
                     ) : (
-                      <UserCheck className="w-7 h-7 text-slate-300" />
+                      <UserCheck style={{ width: "28px", height: "28px", color: "#cbd5e1" }} />
                     )}
                   </div>
-                  <div className="min-w-0 flex-1">
-                    <h3 className="font-bold text-base text-slate-800 truncate">
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <h3 style={{ fontWeight: "bold", fontSize: "16px", color: "#1e293b", margin: "0 0 4px 0", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
                       {p?.nama_lengkap || profile?.user?.nama || "Civitas"}
                     </h3>
-                    <p className="text-xs text-slate-500 font-medium">
+                    <p style={{ fontSize: "12px", color: "#64748b", fontWeight: 500, margin: "0 0 6px 0" }}>
                       {p?.jabatan || "Pengajar"} · {p?.unit_kerja || "Pesantren Al-Imam"}
                     </p>
-                    <div className="flex flex-wrap gap-1 mt-1.5">
+                    <div style={{ display: "flex", flexWrap: "wrap", gap: "4px" }}>
                       {(p?.kategori_pegawai || "GURU").split(",").map((k: string, i: number) => (
-                        <span key={i} className="px-2 py-0.5 bg-amber-50 text-amber-900 border border-amber-200 rounded-md text-[10px] font-bold uppercase">
+                        <span key={i} style={{ padding: "2px 8px", background: "#fffbeb", color: "#78350f", border: "1px solid #fde68a", borderRadius: "6px", fontSize: "10px", fontWeight: "bold", textTransform: "uppercase" }}>
                           {k.trim()}
                         </span>
                       ))}
@@ -140,45 +154,45 @@ export default function ProfilePage() {
                 </div>
 
                 {/* Details Grid */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
-                  <div className="p-3 bg-slate-50/50 rounded-xl border border-slate-100 space-y-1">
-                    <span className="text-slate-400 font-bold uppercase text-[10px] block">No. WhatsApp / HP</span>
-                    <p className="font-bold text-slate-800 flex items-center gap-1.5 font-mono">
-                      <Phone className="w-3.5 h-3.5 text-slate-400" />
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "12px", fontSize: "12px" }}>
+                  <div style={{ padding: "12px", background: "#f8fafc", borderRadius: "16px", border: "1px solid #f1f5f9" }}>
+                    <span style={{ color: "#94a3b8", fontWeight: "bold", textTransform: "uppercase", fontSize: "10px", display: "block", marginBottom: "4px" }}>No. WhatsApp / HP</span>
+                    <p style={{ fontWeight: "bold", color: "#1e293b", display: "flex", alignItems: "center", gap: "6px", fontFamily: "monospace", margin: 0 }}>
+                      <Phone style={{ width: "14px", height: "14px", color: "#94a3b8" }} />
                       {p?.no_hp || "-"}
                     </p>
                   </div>
-                  <div className="p-3 bg-slate-50/50 rounded-xl border border-slate-100 space-y-1">
-                    <span className="text-slate-400 font-bold uppercase text-[10px] block">Email Akun</span>
-                    <p className="font-bold text-slate-800 flex items-center gap-1.5 truncate">
-                      <Mail className="w-3.5 h-3.5 text-slate-400" />
+                  <div style={{ padding: "12px", background: "#f8fafc", borderRadius: "16px", border: "1px solid #f1f5f9" }}>
+                    <span style={{ color: "#94a3b8", fontWeight: "bold", textTransform: "uppercase", fontSize: "10px", display: "block", marginBottom: "4px" }}>Email Akun</span>
+                    <p style={{ fontWeight: "bold", color: "#1e293b", display: "flex", alignItems: "center", gap: "6px", margin: 0, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                      <Mail style={{ width: "14px", height: "14px", color: "#94a3b8" }} />
                       {p?.email || profile?.user?.email || "-"}
                     </p>
                   </div>
-                  <div className="p-3 bg-slate-50/50 rounded-xl border border-slate-100 space-y-1">
-                    <span className="text-slate-400 font-bold uppercase text-[10px] block">Jenis Kelamin</span>
-                    <p className="font-bold text-slate-800">
+                  <div style={{ padding: "12px", background: "#f8fafc", borderRadius: "16px", border: "1px solid #f1f5f9" }}>
+                    <span style={{ color: "#94a3b8", fontWeight: "bold", textTransform: "uppercase", fontSize: "10px", display: "block", marginBottom: "4px" }}>Jenis Kelamin</span>
+                    <p style={{ fontWeight: "bold", color: "#1e293b", margin: 0 }}>
                       {p?.jenis_kelamin === "LAKI_LAKI" ? "Laki-laki" : p?.jenis_kelamin === "PEREMPUAN" ? "Perempuan" : "-"}
                     </p>
                   </div>
-                  <div className="p-3 bg-slate-50/50 rounded-xl border border-slate-100 space-y-1">
-                    <span className="text-slate-400 font-bold uppercase text-[10px] block">Divisi</span>
-                    <p className="font-bold text-slate-800">{p?.divisi || "Umum"}</p>
+                  <div style={{ padding: "12px", background: "#f8fafc", borderRadius: "16px", border: "1px solid #f1f5f9" }}>
+                    <span style={{ color: "#94a3b8", fontWeight: "bold", textTransform: "uppercase", fontSize: "10px", display: "block", marginBottom: "4px" }}>Divisi</span>
+                    <p style={{ fontWeight: "bold", color: "#1e293b", margin: 0 }}>{p?.divisi || "Umum"}</p>
                   </div>
                 </div>
 
                 {/* Penugasan Mapel Banner */}
-                <div className="p-4 bg-amber-50/70 rounded-2xl border border-amber-200 space-y-1.5">
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs font-black text-amber-950 uppercase tracking-wider flex items-center gap-1.5">
-                      <BookOpen className="w-4 h-4 text-amber-700" />
+                <div style={{ padding: "16px", background: "#fffbeb", borderRadius: "20px", border: "1px solid #fde68a", display: "flex", flexDirection: "column", gap: "6px" }}>
+                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                    <span style={{ fontSize: "12px", fontWeight: 900, color: "#451a03", textTransform: "uppercase", letterSpacing: "0.05em", display: "flex", alignItems: "center", gap: "6px" }}>
+                      <BookOpen style={{ width: "16px", height: "16px", color: "#b45309" }} />
                       <span>Mata Pelajaran yang Diampu</span>
                     </span>
-                    <span className="text-[10px] font-bold text-amber-700 bg-white/80 px-2 py-0.5 rounded-full border border-amber-300">
+                    <span style={{ fontSize: "10px", fontWeight: "bold", color: "#b45309", background: "rgba(255,255,255,0.8)", padding: "2px 8px", borderRadius: "999px", border: "1px solid #fcd34d" }}>
                       Aktif di SIKAP
                     </span>
                   </div>
-                  <p className="text-xs font-semibold text-amber-900 leading-relaxed">
+                  <p style={{ fontSize: "12px", fontWeight: 600, color: "#78350f", lineHeight: "1.5", margin: 0 }}>
                     {p?.mata_pelajaran || "Belum ada mata pelajaran yang dipilih."}
                   </p>
                 </div>
@@ -188,26 +202,26 @@ export default function ProfilePage() {
         </div>
 
         {/* ─── KARTU 2: GANTI PASSWORD ─── */}
-        <div className="bg-white rounded-3xl p-6 sm:p-7 shadow-sm border border-slate-100 space-y-5">
-          <div className="flex items-center gap-3 pb-4 border-b border-slate-100">
-            <div className="w-10 h-10 rounded-2xl bg-slate-100 flex items-center justify-center text-slate-700">
-              <Lock className="w-5 h-5" />
+        <div style={{ background: "white", borderRadius: "24px", padding: "24px", boxShadow: "0 4px 6px -1px rgba(0,0,0,0.05)", border: "1px solid #f1f5f9", display: "flex", flexDirection: "column", gap: "20px" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "12px", borderBottom: "1px solid #f1f5f9", paddingBottom: "16px" }}>
+            <div style={{ width: "40px", height: "40px", borderRadius: "16px", background: "#f1f5f9", display: "flex", alignItems: "center", justifyContent: "center", color: "#334155" }}>
+              <Lock style={{ width: "20px", height: "20px" }} />
             </div>
             <div>
-              <h2 className="text-base font-bold text-slate-800">Ganti Password</h2>
-              <p className="text-xs text-slate-400">Keamanan akun login</p>
+              <h2 style={{ fontSize: "16px", fontWeight: "bold", color: "#1e293b", margin: "0 0 4px 0" }}>Ganti Password</h2>
+              <p style={{ fontSize: "12px", color: "#94a3b8", margin: 0 }}>Keamanan akun login</p>
             </div>
           </div>
 
-          <form onSubmit={handlePasswordSubmit} className="space-y-4">
+          <form onSubmit={handlePasswordSubmit} style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
             <div>
-              <label className="block text-xs font-bold text-slate-700 mb-1">Password Saat Ini</label>
-              <div className="relative">
-                <KeyRound className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+              <label style={{ display: "block", fontSize: "12px", fontWeight: "bold", color: "#334155", marginBottom: "4px" }}>Password Saat Ini</label>
+              <div style={{ position: "relative" }}>
+                <KeyRound style={{ width: "16px", height: "16px", color: "#94a3b8", position: "absolute", left: "12px", top: "50%", transform: "translateY(-50%)" }} />
                 <input
                   type="password"
                   required
-                  className="w-full pl-9 pr-3 py-2 border border-slate-300 rounded-xl text-xs outline-none focus:ring-2 focus:ring-[#3b0a0a]/20"
+                  style={{ width: "100%", padding: "8px 12px 8px 36px", border: "1px solid #cbd5e1", borderRadius: "12px", fontSize: "12px", outline: "none", boxSizing: "border-box" }}
                   placeholder="Password lama"
                   value={oldPassword}
                   onChange={(e) => setOldPassword(e.target.value)}
@@ -216,14 +230,14 @@ export default function ProfilePage() {
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-slate-700 mb-1">Password Baru</label>
-              <div className="relative">
-                <KeyRound className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+              <label style={{ display: "block", fontSize: "12px", fontWeight: "bold", color: "#334155", marginBottom: "4px" }}>Password Baru</label>
+              <div style={{ position: "relative" }}>
+                <KeyRound style={{ width: "16px", height: "16px", color: "#94a3b8", position: "absolute", left: "12px", top: "50%", transform: "translateY(-50%)" }} />
                 <input
                   type="password"
                   required
                   minLength={6}
-                  className="w-full pl-9 pr-3 py-2 border border-slate-300 rounded-xl text-xs outline-none focus:ring-2 focus:ring-[#3b0a0a]/20"
+                  style={{ width: "100%", padding: "8px 12px 8px 36px", border: "1px solid #cbd5e1", borderRadius: "12px", fontSize: "12px", outline: "none", boxSizing: "border-box" }}
                   placeholder="Password baru (min. 6 karakter)"
                   value={newPassword}
                   onChange={(e) => setNewPassword(e.target.value)}
@@ -232,14 +246,14 @@ export default function ProfilePage() {
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-slate-700 mb-1">Ulangi Password Baru</label>
-              <div className="relative">
-                <CheckCircle className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+              <label style={{ display: "block", fontSize: "12px", fontWeight: "bold", color: "#334155", marginBottom: "4px" }}>Ulangi Password Baru</label>
+              <div style={{ position: "relative" }}>
+                <CheckCircle style={{ width: "16px", height: "16px", color: "#94a3b8", position: "absolute", left: "12px", top: "50%", transform: "translateY(-50%)" }} />
                 <input
                   type="password"
                   required
                   minLength={6}
-                  className="w-full pl-9 pr-3 py-2 border border-slate-300 rounded-xl text-xs outline-none focus:ring-2 focus:ring-[#3b0a0a]/20"
+                  style={{ width: "100%", padding: "8px 12px 8px 36px", border: "1px solid #cbd5e1", borderRadius: "12px", fontSize: "12px", outline: "none", boxSizing: "border-box" }}
                   placeholder="Ulangi password baru"
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
@@ -250,9 +264,10 @@ export default function ProfilePage() {
             <button
               type="submit"
               disabled={loadingPassword}
-              className="w-full py-2.5 bg-slate-800 hover:bg-slate-900 text-white rounded-xl text-xs font-bold transition-all shadow-sm flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
+              style={{ width: "100%", padding: "10px", background: "#1e293b", color: "white", borderRadius: "14px", fontSize: "12px", fontWeight: "bold", border: "none", cursor: loadingPassword ? "not-allowed" : "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: "8px", boxShadow: "0 4px 6px -1px rgba(0,0,0,0.1)", opacity: loadingPassword ? 0.5 : 1, marginTop: "8px", transition: "background-color 0.2s" }}
+              className="hover:bg-slate-900"
             >
-              {loadingPassword ? <Loader2 className="w-4 h-4 animate-spin" /> : <Lock className="w-4 h-4" />}
+              {loadingPassword ? <Loader2 style={{ width: "16px", height: "16px" }} className="animate-spin" /> : <Lock style={{ width: "16px", height: "16px" }} />}
               <span>{loadingPassword ? "Menyimpan..." : "Update Password"}</span>
             </button>
           </form>

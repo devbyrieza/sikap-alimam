@@ -23,8 +23,6 @@ const NAMA_BULAN = [
 
 const JAM_OPTIONS = ["3", "4", "5", "6", "7", "8", "9", "Khusus"];
 
-
-
 function formatTanggalIndo(isoDate: string): string {
   if (!isoDate) return "";
   const d = new Date(isoDate + "T00:00:00");
@@ -122,7 +120,6 @@ export default function TambahJurnalPage() {
 
   // Autosave draft ke localStorage
   useEffect(() => {
-    // Hanya simpan jika ada isi
     if (kelasId || mapelId || asatidId || materi || learningOutcome || kegiatan || catatan) {
       const savedAt = new Date().toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" });
       const p = { kelasId, mapelId, asatidId, tanggal, jamKe, materi, learningOutcome, kegiatan, catatan, _savedAt: savedAt };
@@ -149,19 +146,16 @@ export default function TambahJurnalPage() {
       });
   }, []);
 
-  // Reset mapel when kelas changes
   useEffect(() => {
     setMapelId("");
   }, [kelasId]);
 
-  // Filter kelas when jenjang changes
   const filteredKelasList = useMemo(() => {
     const list = master?.kelas || [];
     if (!jenjangFilter) return list;
     return list.filter((k) => k.jenjang === jenjangFilter);
   }, [jenjangFilter, master?.kelas]);
 
-  // Auto reset kelasId if no longer valid
   useEffect(() => {
     if (kelasId) {
       const exists = filteredKelasList.find((k) => k.id === kelasId);
@@ -184,7 +178,7 @@ export default function TambahJurnalPage() {
         icon: "warning",
         title: "Form Tidak Lengkap",
         text: "Mohon lengkapi semua field yang wajib diisi.",
-        confirmButtonColor: "var(--primary)",
+        confirmButtonColor: "#0f172a",
       });
       return;
     }
@@ -220,7 +214,7 @@ export default function TambahJurnalPage() {
         icon: "success",
         title: "Jurnal Tersimpan!",
         text: "Jurnal mengajar berhasil ditambahkan.",
-        confirmButtonColor: "var(--primary)",
+        confirmButtonColor: "#0f172a",
         timer: 2000,
         timerProgressBar: true,
       });
@@ -234,7 +228,7 @@ export default function TambahJurnalPage() {
         icon: "error",
         title: "Gagal Menyimpan",
         text: message,
-        confirmButtonColor: "var(--primary)",
+        confirmButtonColor: "#0f172a",
       });
     } finally {
       setSubmitting(false);
@@ -242,27 +236,51 @@ export default function TambahJurnalPage() {
   };
 
   return (
-    <div>
-      {/* Page Header */}
-      <div className="page-header">
-        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+    <div style={{ padding: "24px 28px", maxWidth: 900, margin: "0 auto", display: "flex", flexDirection: "column", gap: 24 }}>
+      {/* Premium Hero Banner */}
+      <div style={{
+        display: "flex",
+        flexWrap: "wrap",
+        justifyContent: "space-between",
+        alignItems: "center",
+        background: "linear-gradient(135deg, #0f172a 0%, #1e293b 60%, #f59e0b 100%)",
+        borderRadius: "24px",
+        padding: "32px 36px",
+        color: "white",
+        boxShadow: "0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05)",
+        gap: "16px"
+      }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
           <Link
             href="/jurnal"
-            className="btn btn-ghost btn-sm"
-            style={{ padding: "6px 10px" }}
+            style={{
+              background: "rgba(255,255,255,0.1)",
+              border: "1px solid rgba(255,255,255,0.2)",
+              color: "white",
+              height: "44px",
+              width: "44px",
+              borderRadius: "14px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              cursor: "pointer",
+              transition: "all 0.2s",
+              textDecoration: "none"
+            }}
           >
-            <ChevronLeft size={16} />
+            <ChevronLeft size={20} />
           </Link>
           <div>
-            <h1 style={{ display: "flex", alignItems: "center", gap: 8 }}><BookMarked size={20} /> Tambah Jurnal Mengajar</h1>
-            <p>Catat kegiatan belajar mengajar hari ini</p>
+            <h1 style={{ fontSize: "28px", fontWeight: "bold", margin: 0, display: "flex", alignItems: "center", gap: "8px" }}>
+              <BookMarked size={28} /> Tambah Jurnal Mengajar
+            </h1>
+            <p style={{ marginTop: "8px", opacity: 0.9, fontSize: "16px" }}>Catat kegiatan belajar mengajar hari ini</p>
           </div>
         </div>
-        <div className="flex items-center gap-3">
-          {/* Autosave indicator */}
+        <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
           {lastSaved && (
-            <div style={{ fontSize: 12, color: "var(--text-muted)", display: "flex", alignItems: "center", gap: 5 }}>
-              <Save size={12} style={{ color: "var(--success, #15803d)" }} />
+            <div style={{ fontSize: 13, fontWeight: 600, color: "white", background: "rgba(0,0,0,0.2)", padding: "6px 12px", borderRadius: "12px", display: "flex", alignItems: "center", gap: 6 }}>
+              <Save size={14} style={{ color: "#10b981" }} />
               <span>Draf: {lastSaved}</span>
             </div>
           )}
@@ -270,25 +288,38 @@ export default function TambahJurnalPage() {
             <button
               type="button"
               onClick={handleResetDraft}
-              className="text-xs text-rose-600 hover:text-rose-700 bg-rose-50 hover:bg-rose-100 border border-rose-200 px-2.5 py-1.5 rounded-lg font-semibold flex items-center gap-1.5 transition-all cursor-pointer"
+              style={{
+                fontSize: "13px",
+                fontWeight: "bold",
+                color: "#ef4444",
+                background: "white",
+                border: "none",
+                padding: "8px 12px",
+                borderRadius: "12px",
+                display: "flex",
+                alignItems: "center",
+                gap: "6px",
+                cursor: "pointer",
+                boxShadow: "0 2px 4px rgba(0,0,0,0.1)"
+              }}
               title="Kosongkan form dan hapus draf"
             >
-              <RotateCcw size={12} />
+              <RotateCcw size={14} />
               <span>Reset Form</span>
             </button>
           )}
         </div>
       </div>
 
-      <div className="p-3.5 sm:p-6 md:p-7 max-w-2xl mx-auto w-full pb-20 sm:pb-12">
+      <div>
         {/* Banner Draf Dipulihkan */}
         {isDraftRestored && (
-          <div className="mb-4 bg-amber-50 border border-amber-200 rounded-2xl p-3.5 flex items-start justify-between gap-3 animate-in fade-in">
-            <div className="flex items-start gap-2.5">
-              <AlertCircle size={18} className="text-amber-600 shrink-0 mt-0.5" />
+          <div style={{ marginBottom: "20px", background: "#fffbeb", border: "1px solid #fde68a", borderRadius: "16px", padding: "16px 20px", display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: "12px" }}>
+            <div style={{ display: "flex", alignItems: "flex-start", gap: "10px" }}>
+              <AlertCircle size={20} style={{ color: "#d97706", flexShrink: 0, marginTop: "2px" }} />
               <div>
-                <p className="text-xs font-bold text-amber-900">Draf Belum Tersimpan Dipulihkan</p>
-                <p className="text-[11px] text-amber-700 mt-0.5">
+                <p style={{ fontSize: "14px", fontWeight: "bold", color: "#78350f", margin: 0 }}>Draf Belum Tersimpan Dipulihkan</p>
+                <p style={{ fontSize: "13px", color: "#92400e", marginTop: "4px", margin: 0 }}>
                   Formulir ini otomatis memuat data ketikan terakhir dari perangkat Anda agar data tidak hilang jika halaman tertutup.
                 </p>
               </div>
@@ -296,86 +327,57 @@ export default function TambahJurnalPage() {
             <button
               type="button"
               onClick={handleResetDraft}
-              className="text-xs font-bold text-rose-600 hover:text-rose-800 bg-white border border-rose-200 px-2.5 py-1 rounded-lg shrink-0 cursor-pointer shadow-xs"
+              style={{ fontSize: "13px", fontWeight: "bold", color: "#ef4444", background: "white", border: "1px solid #fca5a5", padding: "6px 12px", borderRadius: "10px", flexShrink: 0, cursor: "pointer", boxShadow: "0 1px 2px rgba(0,0,0,0.05)" }}
             >
               Hapus Draf
             </button>
           </div>
         )}
+        
         {loadingMaster ? (
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              minHeight: 200,
-              gap: 12,
-              color: "var(--text-muted)",
-              fontSize: 14,
-            }}
-          >
-            <Loader2
-              size={20}
-              style={{
-                animation: "spin 1s linear infinite",
-                color: "var(--primary)",
-              }}
-            />
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "center", minHeight: 200, gap: 12, color: "#64748b", fontSize: 15, fontWeight: 500 }}>
+            <Loader2 size={24} style={{ animation: "spin 1s linear infinite", color: "#0f172a" }} />
             Memuat data master...
           </div>
         ) : (
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
             {/* Card 1: Informasi Mengajar */}
-            <div className="card" style={{ marginBottom: 20 }}>
-              <p className="card-title">
-                <BookOpen
-                  size={16}
-                  style={{ display: "inline", marginRight: 6, color: "var(--primary)" }}
-                />
+            <div style={{ background: "white", borderRadius: "16px", padding: "24px", boxShadow: "0 4px 6px -1px rgba(0,0,0,0.1)", display: "flex", flexDirection: "column", gap: "20px" }}>
+              <div style={{ fontWeight: "bold", fontSize: "18px", color: "#1e293b", display: "flex", alignItems: "center", gap: "8px", borderBottom: "1px solid #f1f5f9", paddingBottom: "16px", margin: 0 }}>
+                <BookOpen size={20} color="#f59e0b" />
                 Informasi Mengajar
-              </p>
+              </div>
 
               {/* Tanggal + nama hari */}
-              <div className="form-group">
-                <label className="form-label">
-                  Tanggal <span style={{ color: "var(--danger)" }}>*</span>
+              <div>
+                <label style={{ display: "block", fontSize: "13px", fontWeight: 600, color: "#475569", marginBottom: "8px" }}>
+                  Tanggal <span style={{ color: "#ef4444" }}>*</span>
                 </label>
                 <input
                   type="date"
-                  className="form-control"
                   value={tanggal}
                   onChange={(e) => setTanggal(e.target.value)}
                   required
-                  style={{ maxWidth: 240 }}
+                  style={{ padding: "12px 16px", borderRadius: "12px", border: "1px solid #cbd5e1", fontSize: "15px", outline: "none", width: "100%", maxWidth: "260px" }}
                 />
                 {tanggal && (
-                  <div
-                    style={{
-                      marginTop: 6,
-                      fontSize: 13,
-                      fontWeight: 600,
-                      color: "var(--primary)",
-                      display: "flex",
-                      alignItems: "center",
-                      gap: 6,
-                    }}
-                  >
-                    <Calendar size={14} /> {formatTanggalIndo(tanggal)}
+                  <div style={{ marginTop: "8px", fontSize: "14px", fontWeight: 600, color: "#0f172a", display: "flex", alignItems: "center", gap: "6px" }}>
+                    <Calendar size={16} /> {formatTanggalIndo(tanggal)}
                   </div>
                 )}
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-x-5 gap-y-0">
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "24px" }}>
                 {/* Asatidz */}
-                <div className="form-group">
-                  <label className="form-label">
-                    Guru <span style={{ color: "var(--danger)" }}>*</span>
+                <div>
+                  <label style={{ display: "block", fontSize: "13px", fontWeight: 600, color: "#475569", marginBottom: "8px" }}>
+                    Guru <span style={{ color: "#ef4444" }}>*</span>
                   </label>
                   <select
-                    className="form-control"
                     value={asatidId}
                     onChange={(e) => setAsatidId(e.target.value)}
                     required
+                    style={{ padding: "12px 16px", borderRadius: "12px", border: "1px solid #cbd5e1", fontSize: "15px", outline: "none", width: "100%", backgroundColor: "white" }}
                   >
                     <option value="">— Pilih Guru —</option>
                     {master?.asatidz.map((a) => (
@@ -387,22 +389,22 @@ export default function TambahJurnalPage() {
                 </div>
 
                 {/* Jam ke- */}
-                <div className="form-group">
+                <div>
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: "8px" }}>
                     <div>
-                      <label className="form-label" style={{ display: "flex", alignItems: "center", gap: 5, margin: 0, marginBottom: "4px" }}>
-                        <Clock size={13} />
+                      <label style={{ display: "flex", alignItems: "center", gap: "6px", fontSize: "13px", fontWeight: 600, color: "#475569", margin: 0, marginBottom: "4px" }}>
+                        <Clock size={16} />
                         Jam ke- (KBM Kelas)
                       </label>
-                      <p className="text-[11px] text-slate-500 font-medium">Mulai jam ke-3 (07.00 WIB) setelah Halaqah Tahfidz</p>
+                      <p style={{ fontSize: "11px", color: "#64748b", fontWeight: 500, margin: 0 }}>Mulai jam ke-3 (07.00 WIB) setelah Halaqah Tahfidz</p>
                     </div>
                     {jamKe.length > 0 && (
-                      <span className="text-xs font-semibold bg-emerald-100 text-emerald-800 px-2.5 py-1 rounded-full whitespace-nowrap">
+                      <span style={{ fontSize: "12px", fontWeight: 600, background: "#d1fae5", color: "#065f46", padding: "4px 10px", borderRadius: "99px", whiteSpace: "nowrap" }}>
                         Durasi: {jamKe.length} Jam
                       </span>
                     )}
                   </div>
-                  <div className="flex flex-wrap gap-2">
+                  <div style={{ display: "flex", flexWrap: "wrap", gap: "8px" }}>
                     {JAM_OPTIONS.map((j) => {
                       const isSelected = jamKe.includes(j);
                       const isPagiAwal = j === "3";
@@ -417,32 +419,45 @@ export default function TambahJurnalPage() {
                               setJamKe([...jamKe, j]);
                             }
                           }}
-                          className={`relative flex flex-col items-center justify-center transition-all ${
-                            j === "Khusus" ? "px-4 py-2" : "w-11 h-11"
-                          } font-bold rounded-xl border-2 ${
-                            isSelected 
-                              ? "bg-emerald-50 text-emerald-700 border-emerald-500 shadow-sm" 
-                              : "bg-white text-slate-500 border-slate-200 hover:border-emerald-300 hover:bg-slate-50"
-                          }`}
+                          style={{
+                            position: "relative",
+                            display: "flex",
+                            flexDirection: "column",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            transition: "all 0.2s",
+                            fontWeight: "bold",
+                            borderRadius: "12px",
+                            border: "2px solid",
+                            padding: j === "Khusus" ? "8px 16px" : "0",
+                            width: j === "Khusus" ? "auto" : "44px",
+                            height: j === "Khusus" ? "auto" : "44px",
+                            ...(isSelected ? {
+                              background: "#ecfdf5", color: "#047857", borderColor: "#10b981", boxShadow: "0 1px 2px rgba(0,0,0,0.05)"
+                            } : {
+                              background: "white", color: "#64748b", borderColor: "#e2e8f0"
+                            }),
+                            cursor: "pointer"
+                          }}
                         >
                           {isSelected && j !== "Khusus" && (
-                            <div className="absolute -top-1.5 -right-1.5 bg-emerald-500 text-white rounded-full p-0.5 shadow-sm z-10">
-                              <Check size={10} strokeWidth={4} />
+                            <div style={{ position: "absolute", top: "-6px", right: "-6px", background: "#10b981", color: "white", borderRadius: "50%", padding: "2px", boxShadow: "0 1px 2px rgba(0,0,0,0.1)", zIndex: 10 }}>
+                              <Check size={12} strokeWidth={4} />
                             </div>
                           )}
                           {isSelected && j === "Khusus" && (
-                            <div className="flex items-center">
-                              <Check size={14} strokeWidth={3} className="mr-1.5" />
-                              <span className="text-sm">{j}</span>
+                            <div style={{ display: "flex", alignItems: "center" }}>
+                              <Check size={16} strokeWidth={3} style={{ marginRight: "6px" }} />
+                              <span style={{ fontSize: "14px" }}>{j}</span>
                             </div>
                           )}
-                          {!isSelected && j === "Khusus" && <span className="text-sm">{j}</span>}
+                          {!isSelected && j === "Khusus" && <span style={{ fontSize: "14px" }}>{j}</span>}
                           
-                          {/* For numbers, add small 07.00 label if jam ke-3 */}
+                          {/* For numbers */}
                           {j !== "Khusus" && (
                             <>
-                              <span className={isPagiAwal ? "text-[13px] leading-none mt-1" : "text-sm"}>{j}</span>
-                              {isPagiAwal && <span className="text-[8px] font-semibold text-emerald-600 leading-tight">07.00</span>}
+                              <span style={{ fontSize: isPagiAwal ? "14px" : "15px", lineHeight: 1, marginTop: isPagiAwal ? "2px" : "0" }}>{j}</span>
+                              {isPagiAwal && <span style={{ fontSize: "9px", fontWeight: 700, color: "#059669", lineHeight: 1.2 }}>07.00</span>}
                             </>
                           )}
                         </button>
@@ -452,14 +467,14 @@ export default function TambahJurnalPage() {
                 </div>
 
                 {/* Jenjang */}
-                <div className="form-group">
-                  <label className="form-label">
-                    Jenjang <span style={{ color: "var(--danger)" }}>*</span>
+                <div>
+                  <label style={{ display: "block", fontSize: "13px", fontWeight: 600, color: "#475569", marginBottom: "8px" }}>
+                    Jenjang <span style={{ color: "#ef4444" }}>*</span>
                   </label>
                   <select
-                    className="form-control"
                     value={jenjangFilter}
                     onChange={(e) => setJenjangFilter(e.target.value)}
+                    style={{ padding: "12px 16px", borderRadius: "12px", border: "1px solid #cbd5e1", fontSize: "15px", outline: "none", width: "100%", backgroundColor: "white" }}
                   >
                     <option value="">— Semua Jenjang —</option>
                     <option value="MTs">MTs</option>
@@ -469,16 +484,16 @@ export default function TambahJurnalPage() {
                 </div>
 
                 {/* Kelas */}
-                <div className="form-group">
-                  <label className="form-label">
-                    Kelas <span style={{ color: "var(--danger)" }}>*</span>
+                <div>
+                  <label style={{ display: "block", fontSize: "13px", fontWeight: 600, color: "#475569", marginBottom: "8px" }}>
+                    Kelas <span style={{ color: "#ef4444" }}>*</span>
                   </label>
                   <select
-                    className="form-control"
                     value={kelasId}
                     onChange={(e) => setKelasId(e.target.value)}
                     required
                     disabled={jenjangFilter !== "" && filteredKelasList.length === 0}
+                    style={{ padding: "12px 16px", borderRadius: "12px", border: "1px solid #cbd5e1", fontSize: "15px", outline: "none", width: "100%", backgroundColor: (jenjangFilter !== "" && filteredKelasList.length === 0) ? "#f1f5f9" : "white" }}
                   >
                     <option value="">— Pilih Kelas —</option>
                     {filteredKelasList.map((k) => (
@@ -490,16 +505,16 @@ export default function TambahJurnalPage() {
                 </div>
 
                 {/* Mata Pelajaran */}
-                <div className="form-group">
-                  <label className="form-label">
-                    Mata Pelajaran <span style={{ color: "var(--danger)" }}>*</span>
+                <div style={{ gridColumn: "span 2" }}>
+                  <label style={{ display: "block", fontSize: "13px", fontWeight: 600, color: "#475569", marginBottom: "8px" }}>
+                    Mata Pelajaran <span style={{ color: "#ef4444" }}>*</span>
                   </label>
                   <select
-                    className="form-control"
                     value={mapelId}
                     onChange={(e) => setMapelId(e.target.value)}
                     required
                     disabled={!kelasId}
+                    style={{ padding: "12px 16px", borderRadius: "12px", border: "1px solid #cbd5e1", fontSize: "15px", outline: "none", width: "100%", maxWidth: "50%", backgroundColor: !kelasId ? "#f1f5f9" : "white" }}
                   >
                     <option value="">
                       {kelasId ? "— Pilih Mata Pelajaran —" : "— Pilih kelas terlebih dahulu —"}
@@ -511,13 +526,7 @@ export default function TambahJurnalPage() {
                     ))}
                   </select>
                   {kelasId && mapelList.length === 0 && (
-                    <p
-                      style={{
-                        fontSize: 12,
-                        color: "var(--warning)",
-                        marginTop: 4,
-                      }}
-                    >
+                    <p style={{ fontSize: "13px", color: "#d97706", marginTop: "8px", fontWeight: 500, margin: 0 }}>
                       Belum ada mapel untuk kelas ini
                     </p>
                   )}
@@ -526,19 +535,17 @@ export default function TambahJurnalPage() {
             </div>
 
             {/* Card 2: Isi Jurnal */}
-            <div className="card" style={{ marginBottom: 20 }}>
-              <p className="card-title"><FileText size={16} className="inline mr-1" /> Isi Jurnal</p>
+            <div style={{ background: "white", borderRadius: "16px", padding: "24px", boxShadow: "0 4px 6px -1px rgba(0,0,0,0.1)", display: "flex", flexDirection: "column", gap: "20px" }}>
+              <div style={{ fontWeight: "bold", fontSize: "18px", color: "#1e293b", display: "flex", alignItems: "center", gap: "8px", borderBottom: "1px solid #f1f5f9", paddingBottom: "16px", margin: 0 }}>
+                <FileText size={20} color="#f59e0b" /> Isi Jurnal
+              </div>
 
               {/* Topik Jurnal */}
-              <div className="form-group">
-                <label className="form-label">
-                  Topik Jurnal <span style={{ color: "var(--danger)" }}>*</span>
+              <div>
+                <label style={{ display: "block", fontSize: "13px", fontWeight: 600, color: "#475569", marginBottom: "8px" }}>
+                  Topik Jurnal <span style={{ color: "#ef4444" }}>*</span>
                 </label>
-
-
-
                 <textarea
-                  className="form-control"
                   rows={3}
                   placeholder="Tuliskan topik jurnal hari ini..."
                   value={materi}
@@ -546,17 +553,16 @@ export default function TambahJurnalPage() {
                     setMateri(e.target.value);
                     handleTextareaResize(e);
                   }}
-                  style={{ minHeight: "80px" }}
+                  style={{ minHeight: "80px", width: "100%", padding: "14px 16px", borderRadius: "12px", border: "1px solid #cbd5e1", fontSize: "15px", outline: "none", fontFamily: "inherit", resize: "none" }}
                   required
                 />
               </div>
 
-              <div className="form-group">
-                <label className="form-label">
-                  Learning Objective (LO) / Tujuan Pembelajaran <span style={{ color: "var(--danger)" }}>*</span>
+              <div>
+                <label style={{ display: "block", fontSize: "13px", fontWeight: 600, color: "#475569", marginBottom: "8px" }}>
+                  Learning Objective (LO) / Tujuan Pembelajaran <span style={{ color: "#ef4444" }}>*</span>
                 </label>
                 <textarea
-                  className="form-control"
                   rows={3}
                   placeholder="Tuliskan learning objective atau tujuan pembelajaran yang ingin dicapai..."
                   value={learningOutcome}
@@ -564,17 +570,16 @@ export default function TambahJurnalPage() {
                     setLearningOutcome(e.target.value);
                     handleTextareaResize(e);
                   }}
-                  style={{ minHeight: "80px" }}
+                  style={{ minHeight: "80px", width: "100%", padding: "14px 16px", borderRadius: "12px", border: "1px solid #cbd5e1", fontSize: "15px", outline: "none", fontFamily: "inherit", resize: "none" }}
                   required
                 />
               </div>
 
-              <div className="form-group">
-                <label className="form-label">
-                  Strategi Pembelajaran <span style={{ color: "var(--danger)" }}>*</span>
+              <div>
+                <label style={{ display: "block", fontSize: "13px", fontWeight: 600, color: "#475569", marginBottom: "8px" }}>
+                  Strategi Pembelajaran <span style={{ color: "#ef4444" }}>*</span>
                 </label>
                 <textarea
-                  className="form-control"
                   rows={4}
                   placeholder="Deskripsikan strategi untuk mencapai target/tujuan pembelajaran..."
                   value={kegiatan}
@@ -582,15 +587,16 @@ export default function TambahJurnalPage() {
                     setKegiatan(e.target.value);
                     handleTextareaResize(e);
                   }}
-                  style={{ minHeight: "100px" }}
+                  style={{ minHeight: "100px", width: "100%", padding: "14px 16px", borderRadius: "12px", border: "1px solid #cbd5e1", fontSize: "15px", outline: "none", fontFamily: "inherit", resize: "none" }}
                   required
                 />
               </div>
 
-              <div className="form-group" style={{ marginBottom: 0 }}>
-                <label className="form-label">Catatan Lainnya (Opsional)</label>
+              <div>
+                <label style={{ display: "block", fontSize: "13px", fontWeight: 600, color: "#475569", marginBottom: "8px" }}>
+                  Catatan Lainnya (Opsional)
+                </label>
                 <textarea
-                  className="form-control"
                   rows={3}
                   placeholder="Catatan tambahan, kendala, atau evaluasi..."
                   value={catatan}
@@ -598,34 +604,48 @@ export default function TambahJurnalPage() {
                     setCatatan(e.target.value);
                     handleTextareaResize(e);
                   }}
-                  style={{ minHeight: "80px" }}
+                  style={{ minHeight: "80px", width: "100%", padding: "14px 16px", borderRadius: "12px", border: "1px solid #cbd5e1", fontSize: "15px", outline: "none", fontFamily: "inherit", resize: "none" }}
                 />
               </div>
             </div>
 
             {/* Actions */}
-            <div style={{ display: "flex", gap: 10, justifyContent: "flex-end", alignItems: "center" }}>
+            <div style={{ display: "flex", gap: "16px", justifyContent: "flex-end", alignItems: "center" }}>
               {lastSaved && (
-                <span style={{ fontSize: 11, color: "var(--text-muted)", display: "flex", alignItems: "center", gap: 4 }}>
-                  <Save size={11} /> Draft tersimpan pukul {lastSaved}
+                <span style={{ fontSize: "13px", color: "#64748b", display: "flex", alignItems: "center", gap: "6px", fontWeight: 500 }}>
+                  <Save size={14} /> Draft tersimpan pukul {lastSaved}
                 </span>
               )}
-              <Link href="/jurnal" className="btn btn-ghost">
+              <Link href="/jurnal" style={{ background: "transparent", color: "#475569", padding: "14px 24px", borderRadius: "14px", fontWeight: 600, textDecoration: "none", border: "1px solid #cbd5e1" }}>
                 Batal
               </Link>
               <button
                 type="submit"
-                className="btn btn-primary"
                 disabled={submitting}
+                style={{
+                  background: "#0f172a",
+                  color: "white",
+                  padding: "14px 28px",
+                  borderRadius: "14px",
+                  fontWeight: "bold",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "10px",
+                  border: "none",
+                  cursor: submitting ? "not-allowed" : "pointer",
+                  opacity: submitting ? 0.7 : 1,
+                  fontSize: "15px",
+                  boxShadow: "0 4px 6px rgba(0,0,0,0.1)"
+                }}
               >
                 {submitting ? (
                   <>
-                    <span className="spinner" />
+                    <Loader2 size={18} style={{ animation: "spin 1s linear infinite" }} />
                     Menyimpan...
                   </>
                 ) : (
                   <>
-                    <BookOpen size={16} />
+                    <BookOpen size={18} />
                     Simpan Jurnal
                   </>
                 )}

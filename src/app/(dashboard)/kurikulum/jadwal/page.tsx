@@ -36,20 +36,33 @@ export default function KurikulumJadwalPage() {
   }, [tipePekan]);
 
   return (
-    <div className="p-6 max-w-7xl mx-auto space-y-6">
-      <div className="bg-gradient-to-r from-emerald-700 to-teal-800 rounded-3xl p-8 text-white shadow-xl shadow-emerald-900/20">
-        <div className="flex items-center gap-4 mb-2">
-          <Calendar size={32} className="text-emerald-200" />
-          <h1 className="text-3xl font-bold">Pusat Jadwal Pelajaran</h1>
+    <div style={{ padding: "24px 28px", maxWidth: 1200, margin: "0 auto", display: "flex", flexDirection: "column", gap: 24 }}>
+      <div style={{
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+        background: "linear-gradient(135deg, #0f172a 0%, #1e293b 60%, #0369a1 100%)",
+        borderRadius: "24px",
+        padding: "32px 36px",
+        boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.2), 0 8px 10px -6px rgba(0, 0, 0, 0.1)",
+        color: "white",
+        flexWrap: "wrap",
+        gap: "24px"
+      }}>
+        <div>
+          <div style={{ display: "flex", alignItems: "center", gap: "16px", marginBottom: "8px" }}>
+            <Calendar size={32} style={{ color: "#a7f3d0" }} />
+            <h1 style={{ fontSize: "28px", fontWeight: "bold", margin: 0 }}>Pusat Jadwal Pelajaran</h1>
+          </div>
+          <p style={{ color: "#cbd5e1", margin: 0, fontSize: "14px" }}>Manajemen jadwal KBM Pesantren Al-Imam Al-Islami (Sistem Pekan Ganjil & Genap).</p>
         </div>
-        <p className="text-emerald-100">Manajemen jadwal KBM Pesantren Al-Imam Al-Islami (Sistem Pekan Ganjil & Genap).</p>
       </div>
 
       {/* Filter Bar */}
-      <div className="bg-white rounded-3xl p-6 shadow-sm border border-gray-100 flex flex-wrap gap-4 items-end">
-        <div className="flex-1 min-w-[200px]">
-          <label className="block text-sm font-medium text-gray-700 mb-1">Pilih Kelas</label>
-          <select value={kelas} onChange={(e) => setKelas(e.target.value)} className="w-full rounded-xl border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 bg-gray-50">
+      <div style={{ background: "white", borderRadius: "24px", padding: "24px", boxShadow: "0 1px 3px 0 rgba(0,0,0,0.1)", border: "1px solid #f1f5f9", display: "flex", flexWrap: "wrap", gap: "16px", alignItems: "flex-end" }}>
+        <div style={{ flex: 1, minWidth: "200px" }}>
+          <label style={{ display: "block", fontSize: "14px", fontWeight: 500, color: "#475569", marginBottom: "4px" }}>Pilih Kelas</label>
+          <select value={kelas} onChange={(e) => setKelas(e.target.value)} style={{ width: "100%", borderRadius: "12px", border: "1px solid #cbd5e1", padding: "10px 14px", background: "#f8fafc", outline: "none" }}>
             <option value="all">-- Semua Kelas --</option>
             {kelasList.map((k) => (
               <option key={k.id} value={k.id}>
@@ -59,18 +72,18 @@ export default function KurikulumJadwalPage() {
           </select>
         </div>
         
-        <div className="flex-1 min-w-[200px]">
-          <label className="block text-sm font-medium text-gray-700 mb-1">Filter Pekan</label>
-          <div className="flex rounded-xl shadow-sm border border-gray-300 overflow-hidden">
+        <div style={{ flex: 1, minWidth: "200px" }}>
+          <label style={{ display: "block", fontSize: "14px", fontWeight: 500, color: "#475569", marginBottom: "4px" }}>Filter Pekan</label>
+          <div style={{ display: "flex", borderRadius: "12px", border: "1px solid #cbd5e1", overflow: "hidden" }}>
             <button 
               onClick={() => setTipePekan("ganjil")}
-              className={`flex-1 py-2 text-sm font-medium transition-colors ${tipePekan === 'ganjil' ? 'bg-emerald-600 text-white' : 'bg-gray-50 text-gray-700 hover:bg-gray-100'}`}
+              style={{ flex: 1, padding: "10px", fontSize: "14px", fontWeight: 500, transition: "background-color 0.2s", background: tipePekan === 'ganjil' ? '#0ea5e9' : '#f8fafc', color: tipePekan === 'ganjil' ? 'white' : '#334155', border: "none", cursor: "pointer" }}
             >
               Pekan 1 & 3 (Ganjil)
             </button>
             <button 
               onClick={() => setTipePekan("genap")}
-              className={`flex-1 py-2 text-sm font-medium transition-colors ${tipePekan === 'genap' ? 'bg-emerald-600 text-white' : 'bg-gray-50 text-gray-700 hover:bg-gray-100'}`}
+              style={{ flex: 1, padding: "10px", fontSize: "14px", fontWeight: 500, transition: "background-color 0.2s", background: tipePekan === 'genap' ? '#0ea5e9' : '#f8fafc', color: tipePekan === 'genap' ? 'white' : '#334155', border: "none", cursor: "pointer" }}
             >
               Pekan 2 & 4 (Genap)
             </button>
@@ -80,53 +93,53 @@ export default function KurikulumJadwalPage() {
 
       {/* Jadwal Table View */}
       {loading ? (
-        <div className="flex justify-center p-12">
+        <div style={{ display: "flex", justifyContent: "center", padding: "48px" }}>
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-600"></div>
         </div>
       ) : (
-        <div className="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
-          <div className="p-5 border-b border-gray-100 bg-gray-50">
-            <h3 className="font-bold text-gray-800 text-lg flex items-center gap-2">
-              <BookOpen size={20} className="text-emerald-600" />
+        <div style={{ background: "white", borderRadius: "24px", boxShadow: "0 1px 3px 0 rgba(0,0,0,0.1)", border: "1px solid #f1f5f9", overflow: "hidden" }}>
+          <div style={{ padding: "20px", borderBottom: "1px solid #f1f5f9", background: "#f8fafc" }}>
+            <h3 style={{ fontWeight: "bold", color: "#1e293b", fontSize: "18px", display: "flex", alignItems: "center", gap: "8px", margin: 0 }}>
+              <BookOpen size={20} style={{ color: "#0ea5e9" }} />
               Tabel Jadwal {tipePekan === "ganjil" ? "Pekan Ganjil" : "Pekan Genap"}
             </h3>
           </div>
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm text-left">
-              <thead className="bg-gray-100 text-gray-600 font-semibold uppercase text-xs">
+          <div style={{ overflowX: "auto" }}>
+            <table style={{ width: "100%", textAlign: "left", borderCollapse: "collapse", fontSize: "14px" }}>
+              <thead style={{ background: "#f1f5f9", color: "#475569", textTransform: "uppercase", fontSize: "12px", fontWeight: "bold" }}>
                 <tr>
-                  <th className="px-6 py-4">Hari</th>
-                  <th className="px-6 py-4">Jam Ke</th>
-                  <th className="px-6 py-4">Waktu</th>
-                  <th className="px-6 py-4">Kelas</th>
-                  <th className="px-6 py-4">Mata Pelajaran</th>
-                  <th className="px-6 py-4">Guru Pengampu</th>
+                  <th style={{ padding: "16px 20px" }}>Hari</th>
+                  <th style={{ padding: "16px 20px" }}>Jam Ke</th>
+                  <th style={{ padding: "16px 20px" }}>Waktu</th>
+                  <th style={{ padding: "16px 20px" }}>Kelas</th>
+                  <th style={{ padding: "16px 20px" }}>Mata Pelajaran</th>
+                  <th style={{ padding: "16px 20px" }}>Guru Pengampu</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-100">
-                {jadwalList.map((j) => (
-                  <tr key={j.id} className="hover:bg-emerald-50/50 transition-colors">
-                    <td className="px-6 py-4 font-bold text-gray-800">{j.hari}</td>
-                    <td className="px-6 py-4">
-                      <span className="bg-gray-100 text-gray-700 px-3 py-1 rounded-full font-bold">
+              <tbody>
+                {jadwalList.map((j, idx) => (
+                  <tr key={j.id} className="hover:bg-[#f0fdf4] transition-colors" style={{ backgroundColor: idx % 2 === 0 ? "white" : "#fafafa", borderBottom: "1px solid #f1f5f9" }}>
+                    <td style={{ padding: "16px 20px", fontWeight: "bold", color: "#1e293b" }}>{j.hari}</td>
+                    <td style={{ padding: "16px 20px" }}>
+                      <span style={{ background: "#f1f5f9", color: "#334155", padding: "4px 12px", borderRadius: "999px", fontWeight: "bold" }}>
                         {j.jam_ke}
                       </span>
                     </td>
-                    <td className="px-6 py-4 text-gray-500 font-mono">
+                    <td style={{ padding: "16px 20px", color: "#64748b", fontFamily: "monospace" }}>
                       {j.waktu_mulai} - {j.waktu_selesai}
                     </td>
-                    <td className="px-6 py-4">
-                      <span className="bg-blue-100 text-blue-700 px-3 py-1 rounded-lg font-semibold">
+                    <td style={{ padding: "16px 20px" }}>
+                      <span style={{ background: "#e0f2fe", color: "#0369a1", padding: "4px 12px", borderRadius: "8px", fontWeight: 600 }}>
                         {j.kelas.nama}
                       </span>
                     </td>
-                    <td className="px-6 py-4">
-                      <div className="font-semibold text-gray-800">{j.mapel.nama}</div>
-                      <div className="text-xs text-emerald-600 uppercase font-medium mt-0.5">{j.mapel.kategori}</div>
+                    <td style={{ padding: "16px 20px" }}>
+                      <div style={{ fontWeight: 600, color: "#1e293b" }}>{j.mapel.nama}</div>
+                      <div style={{ fontSize: "12px", color: "#0ea5e9", textTransform: "uppercase", fontWeight: 500, marginTop: "2px" }}>{j.mapel.kategori}</div>
                     </td>
-                    <td className="px-6 py-4 flex items-center gap-2">
-                      <Users size={16} className="text-gray-400" />
-                      <span className="text-gray-700 font-medium">{j.pegawai.nama_lengkap}</span>
+                    <td style={{ padding: "16px 20px", display: "flex", alignItems: "center", gap: "8px" }}>
+                      <Users size={16} style={{ color: "#94a3b8" }} />
+                      <span style={{ color: "#334155", fontWeight: 500 }}>{j.pegawai.nama_lengkap}</span>
                     </td>
                   </tr>
                 ))}

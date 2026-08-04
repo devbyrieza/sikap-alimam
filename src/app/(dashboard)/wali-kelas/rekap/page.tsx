@@ -6,15 +6,28 @@ import { Users, FileText, BarChart3, Presentation } from "lucide-react";
 
 export default function RekapWaliKelasPage() {
   return (
-    <div>
-      <div className="page-header">
+    <div style={{ padding: "24px 28px", maxWidth: 1200, margin: "0 auto", display: "flex", flexDirection: "column", gap: 24 }}>
+      <div style={{
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between",
+        background: "linear-gradient(135deg, #0f172a 0%, #1e293b 60%, #8b5cf6 100%)",
+        borderRadius: "24px",
+        padding: "32px 36px",
+        boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)",
+        color: "white"
+      }}>
         <div>
-          <h1><Users size={16} className="inline mr-1" /> Hub Wali Kelas</h1>
-          <p>Pusat kontrol data akademik untuk kelas yang Anda ampu</p>
+          <h1 style={{ fontSize: "2rem", fontWeight: 700, margin: 0, display: "flex", alignItems: "center" }}>
+            <Users size={28} style={{ marginRight: 12 }} /> Hub Wali Kelas
+          </h1>
+          <p style={{ margin: "8px 0 0 0", opacity: 0.9, fontSize: "1.1rem" }}>
+            Pusat kontrol data akademik untuk kelas yang Anda ampu
+          </p>
         </div>
       </div>
 
-      <div className="p-3.5 sm:p-6 md:p-7 max-w-7xl mx-auto w-full flex flex-col gap-5 pb-28 sm:pb-10">
+      <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
         <ModuleTabs
           tabs={[
             { label: "Dashboard Kelas", href: "/wali-kelas", exact: true, icon: <Users size={16} /> },
@@ -23,12 +36,23 @@ export default function RekapWaliKelasPage() {
           ]}
         />
         
-        <div className="card flex flex-col items-center justify-center p-12 text-center" style={{ minHeight: "50vh" }}>
-          <div style={{ background: "var(--primary-pale)", padding: 20, borderRadius: "50%", marginBottom: 20 }}>
-            <Presentation size={40} color="var(--primary)" />
+        <div style={{ 
+          display: "flex", 
+          flexDirection: "column", 
+          alignItems: "center", 
+          justifyContent: "center", 
+          padding: "48px", 
+          textAlign: "center", 
+          minHeight: "50vh",
+          backgroundColor: "white",
+          borderRadius: "24px",
+          boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)"
+        }}>
+          <div style={{ background: "#f3f4f6", padding: 20, borderRadius: "50%", marginBottom: 20 }}>
+            <Presentation size={40} color="#8b5cf6" />
           </div>
-          <h2 style={{ fontSize: 24, fontWeight: 800, color: "var(--primary-dark)", marginBottom: 12 }}>Rekap Seluruh Mapel</h2>
-          <p style={{ color: "var(--text-muted)", maxWidth: 500, lineHeight: 1.6 }}>
+          <h2 style={{ fontSize: 24, fontWeight: 800, color: "#1e293b", marginBottom: 12 }}>Rekap Seluruh Mapel</h2>
+          <p style={{ color: "#64748b", maxWidth: 500, lineHeight: 1.6 }}>
             Modul ini akan menampilkan tabel data tinggi (high-density table) mirip desain SIAKAD lama namun dengan UI Platinum.
           </p>
         </div>

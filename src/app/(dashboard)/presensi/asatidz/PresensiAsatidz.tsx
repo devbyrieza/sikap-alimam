@@ -154,14 +154,14 @@ export default function PresensiAsatidz({
   return (
     <>
       {/* Page Header */}
-      <div className="page-header">
-        <div>
-          <h1>Presensi Guru</h1>
-          <p>Rekap kehadiran · {todayStr}</p>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", background: "linear-gradient(135deg, #0f172a 0%, #1e293b 60%, #10b981 100%)", borderRadius: "24px", padding: "32px 36px", boxShadow: "0 10px 25px -5px rgba(16, 185, 129, 0.4), 0 8px 10px -6px rgba(16, 185, 129, 0.1)", marginBottom: "24px" }}>
+        <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+          <h1 style={{ color: "white", fontSize: "28px", fontWeight: 700, margin: 0 }}>Presensi Guru</h1>
+          <p style={{ color: "#cbd5e1", fontSize: "15px", margin: 0 }}>Rekap kehadiran · {todayStr}</p>
         </div>
-        <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+        <div style={{ display: "flex", gap: "12px", alignItems: "center", flexWrap: "wrap" }}>
           <button
-            className="btn btn-ghost btn-sm"
+            style={{ background: "rgba(255,255,255,0.1)", color: "white", padding: "10px 18px", borderRadius: "14px", border: "1px solid rgba(255,255,255,0.2)", fontWeight: 600, display: "inline-flex", alignItems: "center", gap: "8px", textDecoration: "none" }}
             onClick={() => router.push('/presensi/asatidz/rekap')}
           >
             <svg width="16" height="16" fill="none" viewBox="0 0 24 24">
@@ -170,14 +170,14 @@ export default function PresensiAsatidz({
             </svg>
             Rekap Bulanan
           </button>
-          <button className="btn btn-ghost btn-sm" onClick={() => setShowModal(true)}>
+          <button style={{ background: "rgba(255,255,255,0.1)", color: "white", padding: "10px 18px", borderRadius: "14px", border: "1px solid rgba(255,255,255,0.2)", fontWeight: 600, display: "inline-flex", alignItems: "center", gap: "8px", textDecoration: "none" }} onClick={() => setShowModal(true)}>
             <svg width="16" height="16" fill="none" viewBox="0 0 24 24">
               <path stroke="currentColor" strokeWidth="2" strokeLinecap="round" d="M12 5v14M5 12h14" />
             </svg>
             Input Manual
           </button>
           <button
-            className="btn btn-secondary btn-sm"
+            style={{ background: "#ffffff", color: "#10b981", padding: "10px 18px", borderRadius: "14px", border: "none", fontWeight: 700, display: "inline-flex", alignItems: "center", gap: "8px" }}
             onClick={handleGenerateToken}
             disabled={generating}
           >
@@ -196,14 +196,14 @@ export default function PresensiAsatidz({
         </div>
       </div>
 
-      <div className="p-3.5 sm:p-6 md:p-7 max-w-7xl mx-auto w-full flex flex-col gap-5">
+      <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
         {/* Link Absen Banner */}
         {token && (
           <div
-            className="card animate-fade-up"
             style={{
               background: 'linear-gradient(135deg, #fef9ec, #fff8e7)',
               border: '1px solid rgba(201,152,58,0.35)',
+              borderRadius: "24px", padding: "28px", boxShadow: "0 4px 20px -2px rgba(0, 0, 0, 0.05)"
             }}
           >
             <div
@@ -258,7 +258,7 @@ export default function PresensiAsatidz({
                   </div>
                 )}
               </div>
-              <button className="btn btn-primary btn-sm" onClick={handleCopyLink}>
+              <button style={{ background: "#c9983a", color: "white", padding: "10px 18px", borderRadius: "14px", border: "none", fontWeight: 600, cursor: "pointer", display: "inline-flex", alignItems: "center", gap: "8px" }} onClick={handleCopyLink}>
                 <svg width="14" height="14" fill="none" viewBox="0 0 24 24">
                   <rect x="9" y="9" width="13" height="13" rx="2" stroke="white" strokeWidth="2" />
                   <path
@@ -275,12 +275,11 @@ export default function PresensiAsatidz({
 
         {!token && (
           <div
-            className="card"
             style={{
               background: '#fef2f2',
               border: '1px solid #fecaca',
               textAlign: 'center',
-              padding: '20px 24px',
+              borderRadius: "24px", padding: "24px", boxShadow: "0 4px 20px -2px rgba(0, 0, 0, 0.05)"
             }}
           >
             <p style={{ color: '#b91c1c', fontSize: 14, fontWeight: 600 }}>
@@ -307,12 +306,12 @@ export default function PresensiAsatidz({
           ] as const).map((s) => (
             <div
               key={s.label}
-              className="card"
               style={{
-                padding: '16px 20px',
+                padding: '24px',
                 background: s.bg,
                 border: `1px solid ${s.border}`,
                 textAlign: 'center',
+                borderRadius: "24px",
               }}
             >
               <div style={{ fontSize: 30, fontWeight: 800, color: s.color, lineHeight: 1 }}>
@@ -326,7 +325,7 @@ export default function PresensiAsatidz({
         </div>
 
         {/* Tabel sudah absen */}
-        <div className="card" style={{ padding: 0 }}>
+        <div style={{ background: "white", borderRadius: "24px", padding: "0", boxShadow: "0 4px 20px -2px rgba(0, 0, 0, 0.05)", display: "flex", flexDirection: "column", overflow: "hidden" }}>
           <div
             style={{
               padding: '18px 24px',
@@ -377,19 +376,19 @@ export default function PresensiAsatidz({
                   </tr>
                 ) : (
                   presensiHariIni.map((p, i) => (
-                    <tr key={p.id}>
-                      <td style={{ color: '#9ca3af', fontWeight: 600, width: 48 }}>{i + 1}</td>
-                      <td>
+                    <tr key={p.id} style={{ transition: "background-color 0.2s" }} onMouseEnter={(e) => e.currentTarget.style.backgroundColor = "#f0fdf4"} onMouseLeave={(e) => e.currentTarget.style.backgroundColor = "transparent"}>
+                      <td style={{ color: '#9ca3af', fontWeight: 600, width: 48, padding: "16px 20px", borderBottom: "1px solid #f1f5f9" }}>{i + 1}</td>
+                      <td style={{ padding: "16px 20px", borderBottom: "1px solid #f1f5f9" }}>
                         <div style={{ fontWeight: 700 }}>{p.pegawai.nama_lengkap}</div>
                         {p.pegawai.jabatan && (
                           <div style={{ fontSize: 12, color: '#9ca3af' }}>{p.pegawai.jabatan}</div>
                         )}
                       </td>
-                      <td style={{ fontWeight: 700 }}>{formatJam(p.jam_masuk)}</td>
-                      <td>
+                      <td style={{ fontWeight: 700, padding: "16px 20px", borderBottom: "1px solid #f1f5f9" }}>{formatJam(p.jam_masuk)}</td>
+                      <td style={{ padding: "16px 20px", borderBottom: "1px solid #f1f5f9" }}>
                         <span className={`badge badge-${p.status}`}>{p.status}</span>
                       </td>
-                      <td>
+                      <td style={{ padding: "16px 20px", borderBottom: "1px solid #f1f5f9" }}>
                         <span
                           className="badge"
                           style={{
@@ -400,7 +399,7 @@ export default function PresensiAsatidz({
                           {p.metode}
                         </span>
                       </td>
-                      <td>
+                      <td style={{ padding: "16px 20px", borderBottom: "1px solid #f1f5f9" }}>
                         {p.lat && p.lng ? (
                           <a
                             href={`https://maps.google.com/?q=${p.lat},${p.lng}`}
@@ -437,7 +436,7 @@ export default function PresensiAsatidz({
 
         {/* Belum absen */}
         {belumAbsen.length > 0 && (
-          <div className="card" style={{ padding: 0 }}>
+          <div style={{ background: "white", borderRadius: "24px", padding: "0", boxShadow: "0 4px 20px -2px rgba(0, 0, 0, 0.05)", display: "flex", flexDirection: "column", overflow: "hidden" }}>
             <div style={{ padding: '18px 24px', borderBottom: '1px solid #e5e2db' }}>
               <div className="card-title" style={{ marginBottom: 0, color: '#dc2626' }}>
                 Belum Absen
@@ -467,10 +466,10 @@ export default function PresensiAsatidz({
                 </thead>
                 <tbody>
                   {belumAbsen.map((a, i) => (
-                    <tr key={a.id}>
-                      <td style={{ color: '#9ca3af', fontWeight: 600, width: 48 }}>{i + 1}</td>
-                      <td style={{ fontWeight: 700 }}>{a.nama_lengkap}</td>
-                      <td style={{ color: '#9ca3af', fontSize: 13 }}>{a.jabatan || '—'}</td>
+                    <tr key={a.id} style={{ transition: "background-color 0.2s" }} onMouseEnter={(e) => e.currentTarget.style.backgroundColor = "#f0fdf4"} onMouseLeave={(e) => e.currentTarget.style.backgroundColor = "transparent"}>
+                      <td style={{ color: '#9ca3af', fontWeight: 600, width: 48, padding: "16px 20px", borderBottom: "1px solid #f1f5f9" }}>{i + 1}</td>
+                      <td style={{ fontWeight: 700, padding: "16px 20px", borderBottom: "1px solid #f1f5f9" }}>{a.nama_lengkap}</td>
+                      <td style={{ color: '#9ca3af', fontSize: 13, padding: "16px 20px", borderBottom: "1px solid #f1f5f9" }}>{a.jabatan || '—'}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -495,8 +494,7 @@ export default function PresensiAsatidz({
           }}
         >
           <div
-            className="card animate-fade-up"
-            style={{ width: '100%', maxWidth: 480, maxHeight: '90vh', overflowY: 'auto' }}
+            style={{ background: "white", borderRadius: "24px", padding: "28px", boxShadow: "0 4px 20px -2px rgba(0, 0, 0, 0.05)", width: "100%", maxWidth: 480, maxHeight: "90vh", overflowY: "auto", display: "flex", flexDirection: "column", gap: "16px" }}
           >
             <div
               style={{
@@ -599,8 +597,7 @@ export default function PresensiAsatidz({
                 Batal
               </button>
               <button
-                className="btn btn-primary"
-                style={{ flex: 1 }}
+                style={{ background: "#10b981", color: "white", padding: "10px 18px", borderRadius: "14px", border: "none", fontWeight: 600, cursor: "pointer", display: "inline-flex", alignItems: "center", gap: "8px", flex: 1, justifyContent: "center" }}
                 onClick={handleManualSave}
                 disabled={saving}
               >
