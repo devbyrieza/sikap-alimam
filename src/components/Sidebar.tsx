@@ -236,7 +236,7 @@ export default function Sidebar({ user }: SidebarProps) {
               color: "var(--primary)",
             }}
           >
-            {user.nama.charAt(0).toUpperCase()}
+            {(user.nama || "U").charAt(0).toUpperCase()}
           </div>
           <div style={{ flex: 1, minWidth: 0 }}>
             <p
@@ -249,7 +249,7 @@ export default function Sidebar({ user }: SidebarProps) {
                 whiteSpace: "nowrap",
               }}
             >
-              {user.nama}
+              {user.nama || "User"}
             </p>
             <p
               style={{

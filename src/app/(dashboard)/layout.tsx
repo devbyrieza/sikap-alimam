@@ -29,7 +29,7 @@ export default async function DashboardLayout({
           OR: [
             { user_id: session.userId },
             { email: session.email },
-            { nama_lengkap: { equals: session.nama, mode: "insensitive" } },
+            { nama_lengkap: { equals: session.nama || "", mode: "insensitive" } },
           ],
         },
       });
