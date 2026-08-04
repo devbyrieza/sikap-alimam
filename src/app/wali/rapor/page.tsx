@@ -75,7 +75,7 @@ export default function RaporWaliPage() {
     if (!data?.santri) return;
     Swal.fire({
       title: "Kirim Ringkasan ke WhatsApp?",
-      text: `Sistem akan merangkum progres ananda ${data.santri.nama} dan mengirimkannya ke WhatsApp wali santri.`,
+      text: `Sistem akan merangkum progres ananda ${data?.santri?.nama} dan mengirimkannya ke WhatsApp wali santri.`,
       icon: "question",
       showCancelButton: true,
       confirmButtonText: "Kirim Sekarang",

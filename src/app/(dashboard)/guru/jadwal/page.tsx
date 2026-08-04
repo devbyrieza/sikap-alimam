@@ -77,13 +77,13 @@ export default function GuruJadwalPage() {
                     <span style={{ fontSize: "24px", fontWeight: "900" }}>{j.jam_ke}</span>
                   </div>
                   <div>
-                    <h3 style={{ fontSize: "20px", fontWeight: "bold", color: "#1e293b", margin: "0 0 8px 0" }}>{j.mapel.nama}</h3>
+                    <h3 style={{ fontSize: "20px", fontWeight: "bold", color: "#1e293b", margin: "0 0 8px 0" }}>{j?.mapel?.nama}</h3>
                     <div style={{ display: "flex", flexWrap: "wrap", gap: "12px", fontSize: "14px", fontWeight: 500, color: "#64748b" }}>
                       <span style={{ display: "flex", alignItems: "center", gap: "6px", background: "#f1f5f9", padding: "4px 12px", borderRadius: "8px" }}>
                         <Clock size={14} /> {j.waktu_mulai} - {j.waktu_selesai}
                       </span>
                       <span style={{ color: "#2563eb", background: "#eff6ff", padding: "4px 12px", borderRadius: "8px", border: "1px solid #dbeafe" }}>
-                        Kelas: {j.kelas.nama}
+                        Kelas: {j?.kelas?.nama}
                       </span>
                     </div>
                   </div>

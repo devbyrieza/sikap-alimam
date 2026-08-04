@@ -193,16 +193,16 @@ export default function FilterNilaiPage() {
                   {data.map((item, idx) => (
                     <tr key={item.id} style={{ background: idx % 2 === 0 ? "white" : "#fafafa", borderBottom: "1px solid #f1f5f9" }}>
                       <td style={{ padding: "16px 20px", whiteSpace: "nowrap" }}>
-                        <div style={{ fontWeight: "bold", color: "#0f172a" }}>{item.santri.nama_lengkap}</div>
+                        <div style={{ fontWeight: "bold", color: "#0f172a" }}>{item?.santri?.nama_lengkap}</div>
                         <div style={{ fontSize: "12px", color: "#64748b", fontFamily: "monospace" }}>NIS: {item.santri.nis}</div>
                       </td>
                       <td style={{ padding: "16px 20px", whiteSpace: "nowrap" }}>
                         <span style={{ padding: "6px 12px", fontSize: "12px", fontWeight: "bold", borderRadius: "8px", background: "#eff6ff", color: "#1d4ed8", border: "1px solid #bfdbfe" }}>
-                          {item.kelas.nama}
+                          {item?.kelas?.nama}
                         </span>
                       </td>
                       <td style={{ padding: "16px 20px", whiteSpace: "nowrap", fontWeight: "600", color: "#1e293b" }}>
-                        {item.mapel.nama}
+                        {item?.mapel?.nama}
                       </td>
                       <td style={{ padding: "16px 20px", whiteSpace: "nowrap", fontFamily: "monospace", fontWeight: "bold", color: "#2563eb", fontSize: "16px" }}>
                         {item.nilai}

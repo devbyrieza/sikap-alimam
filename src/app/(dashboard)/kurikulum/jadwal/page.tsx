@@ -130,16 +130,16 @@ export default function KurikulumJadwalPage() {
                     </td>
                     <td style={{ padding: "16px 20px" }}>
                       <span style={{ background: "#e0f2fe", color: "#0369a1", padding: "4px 12px", borderRadius: "8px", fontWeight: 600 }}>
-                        {j.kelas.nama}
+                        {j?.kelas?.nama}
                       </span>
                     </td>
                     <td style={{ padding: "16px 20px" }}>
-                      <div style={{ fontWeight: 600, color: "#1e293b" }}>{j.mapel.nama}</div>
+                      <div style={{ fontWeight: 600, color: "#1e293b" }}>{j?.mapel?.nama}</div>
                       <div style={{ fontSize: "12px", color: "#0ea5e9", textTransform: "uppercase", fontWeight: 500, marginTop: "2px" }}>{j.mapel.kategori}</div>
                     </td>
                     <td style={{ padding: "16px 20px", display: "flex", alignItems: "center", gap: "8px" }}>
                       <Users size={16} style={{ color: "#94a3b8" }} />
-                      <span style={{ color: "#334155", fontWeight: 500 }}>{j.pegawai.nama_lengkap}</span>
+                      <span style={{ color: "#334155", fontWeight: 500 }}>{j?.pegawai?.nama_lengkap}</span>
                     </td>
                   </tr>
                 ))}

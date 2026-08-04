@@ -129,7 +129,7 @@ export default async function JurnalPage() {
     if (a.nama_lengkap) asatidzSet.add(formatName(a.nama_lengkap.trim()));
   });
   jurnal.forEach((j) => {
-    if (j.pegawai?.nama_lengkap) asatidzSet.add(formatName(j.pegawai.nama_lengkap.trim()));
+    if (j.pegawai?.nama_lengkap) asatidzSet.add(formatName(j?.pegawai?.nama_lengkap.trim()));
   });
   const asatidzList = Array.from(asatidzSet).sort((a, b) => a.localeCompare(b, "id"));
 
@@ -145,8 +145,8 @@ export default async function JurnalPage() {
     return {
       id: j.id,
       tanggal: j.tanggal.toISOString().split("T")[0],
-      asatidz: j.pegawai?.nama_lengkap ? formatName(j.pegawai.nama_lengkap.trim()) : "-",
-      mapel: j.mapel?.nama ? normalizeMapelName(j.mapel.nama) : "-",
+      asatidz: j.pegawai?.nama_lengkap ? formatName(j?.pegawai?.nama_lengkap.trim()) : "-",
+      mapel: j.mapel?.nama ? normalizeMapelName(j?.mapel?.nama) : "-",
       kelas: kelasNama,
       kelas_jenjang: j.kelas?.jenjang || null,
       jam_ke: j.jam_ke ?? "-",

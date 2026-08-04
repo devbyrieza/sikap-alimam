@@ -379,7 +379,7 @@ export default function PresensiAsatidz({
                     <tr key={p.id} style={{ transition: "background-color 0.2s" }} onMouseEnter={(e) => e.currentTarget.style.backgroundColor = "#f0fdf4"} onMouseLeave={(e) => e.currentTarget.style.backgroundColor = "transparent"}>
                       <td style={{ color: '#9ca3af', fontWeight: 600, width: 48, padding: "16px 20px", borderBottom: "1px solid #f1f5f9" }}>{i + 1}</td>
                       <td style={{ padding: "16px 20px", borderBottom: "1px solid #f1f5f9" }}>
-                        <div style={{ fontWeight: 700 }}>{p.pegawai.nama_lengkap}</div>
+                        <div style={{ fontWeight: 700 }}>{p?.pegawai?.nama_lengkap}</div>
                         {p.pegawai.jabatan && (
                           <div style={{ fontSize: 12, color: '#9ca3af' }}>{p.pegawai.jabatan}</div>
                         )}
