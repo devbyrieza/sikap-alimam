@@ -11,6 +11,7 @@ export async function GET(req: NextRequest) {
     const rawKelas = await prisma.kelas.findMany({
       where: all ? {} : { is_active: true },
       include: {
+        wali_kelas: { select: { id: true, nama_lengkap: true } },
         _count: {
           select: {
             santri: true,
@@ -36,7 +37,7 @@ export async function GET(req: NextRequest) {
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { nama, jenjang, is_active } = body;
+    const { nama, jenjang, is_active, wali_kelas_id } = body;
 
     if (!nama || !nama.trim()) {
       return NextResponse.json(
@@ -67,10 +68,12 @@ export async function POST(req: NextRequest) {
     const newKelas = await prisma.kelas.create({
       data: {
         nama: trimmedNama,
-        jenjang: jenjang?.trim() || null,
-        is_active: is_active !== undefined ? Boolean(is_active) : true,
+        jenjang: jenjang || "MTs",
+        is_active: is_active ?? true,
+        wali_kelas_id: wali_kelas_id || null,
       },
       include: {
+        wali_kelas: { select: { id: true, nama_lengkap: true } },
         _count: {
           select: {
             santri: true,

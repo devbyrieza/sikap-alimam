@@ -10,7 +10,7 @@ export async function PUT(req: NextRequest, { params }: Params) {
   try {
     const { id } = await params;
     const body = await req.json();
-    const { nama, jenjang, is_active } = body;
+    const { nama, jenjang, is_active, wali_kelas_id } = body;
 
     const existing = await prisma.kelas.findUnique({
       where: { id },
@@ -42,8 +42,10 @@ export async function PUT(req: NextRequest, { params }: Params) {
         nama: nama !== undefined ? nama.trim() : existing.nama,
         jenjang: jenjang !== undefined ? (jenjang?.trim() || null) : existing.jenjang,
         is_active: is_active !== undefined ? Boolean(is_active) : existing.is_active,
+        wali_kelas_id: wali_kelas_id !== undefined ? (wali_kelas_id || null) : existing.wali_kelas_id,
       },
       include: {
+        wali_kelas: { select: { id: true, nama_lengkap: true } },
         _count: {
           select: {
             santri: true,

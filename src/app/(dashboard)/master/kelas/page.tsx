@@ -9,6 +9,7 @@ interface KelasItem {
   nama: string;
   jenjang: string | null;
   is_active: boolean;
+  wali_kelas?: { id: string; nama_lengkap: string } | null;
   _count?: {
     santri: number;
     MataPelajaran: number;
@@ -19,11 +20,13 @@ export default function MasterKelasPage() {
   const [kelas, setKelas] = useState<KelasItem[]>([]);
   const [loading, setLoading] = useState(true);
 
+  const [guruList, setGuruList] = useState<{id: string, nama_lengkap: string}[]>([]);
+
   // Form State
   const [isAdding, setIsAdding] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
-  const [form, setForm] = useState({ nama: "", jenjang: "MTs", is_active: true });
-  const [editForm, setEditForm] = useState({ nama: "", jenjang: "MTs", is_active: true });
+  const [form, setForm] = useState({ nama: "", jenjang: "MTs", is_active: true, wali_kelas_id: "" });
+  const [editForm, setEditForm] = useState({ nama: "", jenjang: "MTs", is_active: true, wali_kelas_id: "" });
   const [submitting, setSubmitting] = useState(false);
 
   const fetchKelas = async () => {
@@ -43,8 +46,19 @@ export default function MasterKelasPage() {
     }
   };
 
+  const fetchGuruList = async () => {
+    try {
+      const res = await fetch("/api/master/guru");
+      const data = await res.json();
+      setGuruList(data);
+    } catch (err) {
+      console.error("Gagal memuat data guru:", err);
+    }
+  };
+
   useEffect(() => {
     fetchKelas();
+    fetchGuruList();
   }, []);
 
   const handleAdd = async () => {
@@ -77,7 +91,7 @@ export default function MasterKelasPage() {
         text: `Kelas "${form.nama}" berhasil didaftarkan!`,
         confirmButtonColor: "#7c1010",
       });
-      setForm({ nama: "", jenjang: "MTs", is_active: true });
+      setForm({ nama: "", jenjang: "MTs", is_active: true, wali_kelas_id: "" });
       setIsAdding(false);
       fetchKelas();
     } catch (err: any) {
@@ -98,6 +112,7 @@ export default function MasterKelasPage() {
       nama: k.nama,
       jenjang: k.jenjang || "MTs",
       is_active: k.is_active,
+      wali_kelas_id: k.wali_kelas?.id || "",
     });
   };
 
@@ -371,6 +386,22 @@ export default function MasterKelasPage() {
               </select>
             </div>
 
+            <div className="form-group" style={{ marginBottom: 0 }}>
+              <label className="form-label" style={{ fontWeight: 600 }}>
+                Wali Kelas (Opsional)
+              </label>
+              <select
+                className="form-control"
+                value={form.wali_kelas_id}
+                onChange={(e) => setForm({ ...form, wali_kelas_id: e.target.value })}
+              >
+                <option value="">-- Pilih Wali Kelas --</option>
+                {guruList.map(g => (
+                  <option key={g.id} value={g.id}>{g.nama_lengkap}</option>
+                ))}
+              </select>
+            </div>
+
             <div style={{ display: "flex", gap: 8 }}>
               <button
                 type="button"
@@ -429,6 +460,7 @@ export default function MasterKelasPage() {
                   <th style={{ width: 50, textAlign: "center" }}>No</th>
                   <th>Nama Kelas</th>
                   <th>Jenjang</th>
+                  <th>Wali Kelas</th>
                   <th style={{ textAlign: "center" }}>Jumlah Santri</th>
                   <th style={{ textAlign: "center" }}>Jumlah Mapel</th>
                   <th style={{ textAlign: "center" }}>Status</th>
@@ -505,6 +537,26 @@ export default function MasterKelasPage() {
                             }}
                           >
                             {k.jenjang || "MTs"}
+                          </span>
+                        )}
+                      </td>
+
+                      <td>
+                        {isEditing ? (
+                          <select
+                            className="form-control"
+                            value={editForm.wali_kelas_id}
+                            onChange={(e) => setEditForm({ ...editForm, wali_kelas_id: e.target.value })}
+                            style={{ padding: "6px 10px", fontSize: 13 }}
+                          >
+                            <option value="">- Belum Ada -</option>
+                            {guruList.map(g => (
+                              <option key={g.id} value={g.id}>{g.nama_lengkap}</option>
+                            ))}
+                          </select>
+                        ) : (
+                          <span style={{ fontSize: 13, color: k.wali_kelas ? "var(--text-main)" : "var(--text-muted)", fontWeight: 500 }}>
+                            {k.wali_kelas?.nama_lengkap || "- Belum Ada -"}
                           </span>
                         )}
                       </td>
