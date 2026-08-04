@@ -154,18 +154,19 @@ export default function Sidebar({ user }: SidebarProps) {
               width: 38,
               height: 38,
               borderRadius: 10,
-              background: "linear-gradient(135deg, var(--secondary), var(--secondary-light))",
+              background: "linear-gradient(135deg, #550000, #751414)",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
               flexShrink: 0,
-              boxShadow: "0 2px 6px rgba(217, 119, 6, 0.2)",
+              boxShadow: "0 2px 8px rgba(85, 0, 0, 0.35)",
+              border: "1px solid rgba(221, 193, 146, 0.3)",
             }}
           >
-            <GraduationCap size={22} color="#3d0a0a" />
+            <GraduationCap size={22} color="#ddc192" />
           </div>
           <div>
-            <h1 style={{ margin: 0, fontSize: "16px", fontWeight: 800, color: "var(--primary-dark)", letterSpacing: "-0.02em", lineHeight: 1.2 }}>SIKAP</h1>
+            <h1 style={{ margin: 0, fontSize: "16px", fontWeight: 800, color: "#550000", letterSpacing: "-0.02em", lineHeight: 1.2 }}>SIKAP</h1>
             <p style={{ margin: 0, fontSize: "10px", color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.08em", fontWeight: 600, marginTop: "2px" }}>Al-Imam Al-Islami</p>
           </div>
         </div>
@@ -226,14 +227,15 @@ export default function Sidebar({ user }: SidebarProps) {
               width: 36,
               height: 36,
               borderRadius: "50%",
-              background: "var(--primary-pale)",
+              background: "#fdf5f5",
+              border: "1px solid #ebdcc3",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
               flexShrink: 0,
               fontSize: 14,
-              fontWeight: 700,
-              color: "var(--primary)",
+              fontWeight: 800,
+              color: "#550000",
             }}
           >
             {((user?.nama) || "U").charAt(0).toUpperCase()}
@@ -243,7 +245,7 @@ export default function Sidebar({ user }: SidebarProps) {
               style={{
                 fontSize: 13,
                 fontWeight: 700,
-                color: "var(--primary-dark)",
+                color: "#550000",
                 overflow: "hidden",
                 textOverflow: "ellipsis",
                 whiteSpace: "nowrap",
@@ -254,7 +256,7 @@ export default function Sidebar({ user }: SidebarProps) {
             <p
               style={{
                 fontSize: 11,
-                color: (user?.role || "").toUpperCase().includes("ADMIN") ? "var(--primary)" : "var(--text-muted)",
+                color: (user?.role || "").toUpperCase().includes("ADMIN") ? "#550000" : "var(--text-muted)",
                 fontWeight: (user?.role || "").toUpperCase().includes("ADMIN") ? 700 : 500,
                 overflow: "hidden",
                 textOverflow: "ellipsis",
@@ -274,9 +276,9 @@ export default function Sidebar({ user }: SidebarProps) {
               style={{
                 width: "100%",
                 justifyContent: "center",
-                color: "var(--primary)",
-                background: "var(--primary-pale)",
-                borderColor: "rgba(155, 27, 34, 0.2)",
+                color: "#550000",
+                background: "#fdf8f0",
+                borderColor: "#ebdcc3",
                 padding: "7px 0",
                 fontSize: "11px",
                 fontWeight: 700,
@@ -299,9 +301,9 @@ export default function Sidebar({ user }: SidebarProps) {
             style={{
               width: "100%",
               justifyContent: "center",
-              color: "var(--primary-dark)",
-              background: "var(--surface-50)",
-              borderColor: "var(--border)",
+              color: "#380000",
+              background: "#ffffff",
+              borderColor: "#ebdcc3",
               padding: "7px 0",
               fontSize: "11px",
               fontWeight: 700,
@@ -322,8 +324,8 @@ export default function Sidebar({ user }: SidebarProps) {
                 flex: 1,
                 justifyContent: "center",
                 color: "var(--text-muted)",
-                background: "#f8fafc",
-                borderColor: "var(--border)",
+                background: "#fcfaf8",
+                borderColor: "#ebdcc3",
                 padding: "7px 0",
                 fontSize: "11px"
               }}
@@ -337,9 +339,9 @@ export default function Sidebar({ user }: SidebarProps) {
               style={{
                 flex: 1,
                 justifyContent: "center",
-                color: "#ef4444",
-                background: "#fef2f2",
-                borderColor: "#fee2e2",
+                color: "#550000",
+                background: "#fdf5f5",
+                borderColor: "#ebdcc3",
                 padding: "7px 0",
                 fontSize: "11px",
                 cursor: "pointer"

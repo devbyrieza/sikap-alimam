@@ -63,21 +63,22 @@ const JAM_WAKTU: Record<string, { mulai: string, selesai: string }> = {
 
 function getDurasiJam(jamStr: string) {
   if (!jamStr || jamStr === "-" || jamStr.toLowerCase() === "khusus") return "";
-  const parts = jamStr.split(",").map(p => p.trim());
+  const parts = jamStr.split(",").map((p) => p.trim()).filter(Boolean);
   if (parts.length === 0) return "";
   const first = parts[0];
   const last = parts[parts.length - 1];
-  
+
   const mulai = JAM_WAKTU[first]?.mulai;
   const selesai = JAM_WAKTU[last]?.selesai;
-  
+  const durasiJP = parts.length;
+
   if (mulai && selesai) {
-    return ` (${mulai} - ${selesai})`;
+    return ` (${mulai} - ${selesai} · ${durasiJP} Jam Pelajaran)`;
   }
-  return "";
+  return ` (${durasiJP} Jam Pelajaran)`;
 }
 
-const HEADER_BG = "linear-gradient(145deg, #9b1b22 0%, #7e141a 60%, #4d0c10 100%)";
+const HEADER_BG = "linear-gradient(145deg, #7e141a 0%, #550000 60%, #380000 100%)";
 
 export default function JurnalDetailModal({ jurnal, onClose }: JurnalDetailModalProps) {
   useEffect(() => {
@@ -111,56 +112,90 @@ export default function JurnalDetailModal({ jurnal, onClose }: JurnalDetailModal
       {/* Backdrop */}
       <div className="absolute inset-0" onClick={onClose} />
 
-      {/* Modal */}
+      {/* Modal Card */}
       <div
         className="relative z-10 w-full max-w-2xl flex flex-col overflow-hidden"
         style={{
-          maxHeight: "90vh",
-          borderRadius: "28px 28px 0 0",
+          maxHeight: "92vh",
+          borderRadius: "24px",
           background: "#ffffff",
-          boxShadow: "0 -8px 60px rgba(0,0,0,0.35), 0 0 0 1px rgba(255,255,255,0.05)",
+          boxShadow: "0 20px 70px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,0.1)",
         }}
         onClick={(e) => e.stopPropagation()}
       >
-        {/* ═══════════════════ HEADER ═══════════════════ */}
+        {/* Sticky Top Bar (Close button & sticky title indicator) */}
         <div
-          className="relative shrink-0 overflow-hidden"
-          style={{ background: HEADER_BG, padding: "20px 24px 24px" }}
+          style={{
+            background: "linear-gradient(90deg, #800a0a 0%, #550000 100%)",
+            padding: "12px 20px",
+            borderBottom: "1px solid rgba(255,255,255,0.1)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            gap: 12,
+            zIndex: 20,
+            flexShrink: 0,
+          }}
         >
-          {/* Pull handle (mobile) */}
-          <div className="flex justify-center mb-4">
-            <div
-              style={{
-                width: 40,
-                height: 4,
-                borderRadius: 99,
-                background: "rgba(255,255,255,0.25)",
-              }}
-            />
+          <div style={{ display: "flex", alignItems: "center", gap: 8, overflow: "hidden" }}>
+            <span style={{ fontSize: 11, fontWeight: 800, color: "#ddc192", textTransform: "uppercase", letterSpacing: "0.08em", whiteSpace: "nowrap" }}>
+              Jurnal KBM
+            </span>
+            <span style={{ color: "rgba(255,255,255,0.3)" }}>•</span>
+            <span style={{ fontSize: 13, fontWeight: 800, color: "#ffffff", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+              {namaMapelBersih}
+            </span>
           </div>
 
-          {/* Watermark */}
-          <div
-            className="pointer-events-none"
+          <button
+            onClick={onClose}
+            aria-label="Tutup modal"
             style={{
-              position: "absolute",
-              right: -20,
-              bottom: -20,
-              opacity: 0.07,
+              width: 30,
+              height: 30,
+              borderRadius: "50%",
+              background: "rgba(255,255,255,0.15)",
+              border: "1px solid rgba(255,255,255,0.2)",
+              color: "#fff",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              cursor: "pointer",
+              flexShrink: 0,
             }}
           >
-            <BookOpen size={150} color="white" />
-          </div>
+            <X size={15} />
+          </button>
+        </div>
 
-          {/* Top row: badge + close */}
-          <div className="flex items-start justify-between gap-3 mb-4">
-            <div className="flex flex-wrap items-center gap-2">
+        {/* Scrollable Modal Content Container (Header Banner + Body scroll together!) */}
+        <div className="overflow-y-auto overscroll-contain flex-1 flex flex-col">
+          {/* Header Banner */}
+          <div
+            className="relative shrink-0 overflow-hidden"
+            style={{ background: HEADER_BG, padding: "18px 24px 20px" }}
+          >
+            {/* Watermark */}
+            <div
+              className="pointer-events-none"
+              style={{
+                position: "absolute",
+                right: -20,
+                bottom: -20,
+                opacity: 0.06,
+              }}
+            >
+              <BookOpen size={140} color="white" />
+            </div>
+
+            {/* Badges row */}
+            <div className="flex flex-wrap items-center gap-2 mb-3">
               <span
                 style={{
                   display: "inline-flex",
                   alignItems: "center",
                   gap: 5,
-                  padding: "4px 12px",
+                  padding: "4px 10px",
                   borderRadius: 99,
                   background: "rgba(255,255,255,0.15)",
                   border: "1px solid rgba(255,255,255,0.2)",
@@ -180,7 +215,7 @@ export default function JurnalDetailModal({ jurnal, onClose }: JurnalDetailModal
                   display: "inline-flex",
                   alignItems: "center",
                   gap: 5,
-                  padding: "4px 12px",
+                  padding: "4px 10px",
                   borderRadius: 99,
                   background: "rgba(34,197,94,0.2)",
                   border: "1px solid rgba(134,239,172,0.3)",
@@ -194,159 +229,117 @@ export default function JurnalDetailModal({ jurnal, onClose }: JurnalDetailModal
               </span>
             </div>
 
-            <button
-              onClick={onClose}
-              aria-label="Tutup modal"
+            {/* Title & Date */}
+            <h2
               style={{
-                width: 34,
-                height: 34,
-                borderRadius: "50%",
-                background: "rgba(255,255,255,0.12)",
-                border: "1px solid rgba(255,255,255,0.18)",
-                color: "#fff",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                cursor: "pointer",
-                flexShrink: 0,
+                fontSize: 22,
+                fontWeight: 900,
+                color: "#ffffff",
+                lineHeight: 1.25,
+                marginBottom: 4,
+                letterSpacing: "-0.02em",
               }}
             >
-              <X size={16} />
-            </button>
-          </div>
+              {namaMapelBersih}
+            </h2>
 
-          {/* Subject title */}
-          <h2
-            style={{
-              fontSize: 22,
-              fontWeight: 900,
-              color: "#ffffff",
-              lineHeight: 1.25,
-              marginBottom: 6,
-              letterSpacing: "-0.02em",
-            }}
-          >
-            {namaMapelBersih}
-          </h2>
-
-          {/* Date */}
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: 6,
-              color: "rgba(255,255,255,0.8)",
-              fontSize: 13,
-              fontWeight: 500,
-              marginBottom: 20,
-            }}
-          >
-            <Calendar size={14} style={{ color: "rgba(255,255,255,0.65)", flexShrink: 0 }} />
-            <span>{formatTanggalLengkap(jurnal.tanggal)}</span>
-          </div>
-
-          {/* Meta chips — one per row for clarity */}
-          <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-            {/* Kelas & Jam (same row — short values) */}
-            <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-              <div
-                style={{
-                  display: "inline-flex",
-                  alignItems: "center",
-                  gap: 7,
-                  padding: "8px 14px",
-                  borderRadius: 12,
-                  background: "rgba(0,0,0,0.25)",
-                  border: "1px solid rgba(255,255,255,0.12)",
-                  color: "rgba(255,255,255,0.95)",
-                  fontSize: 13,
-                  fontWeight: 600,
-                }}
-              >
-                <GraduationCap size={15} style={{ color: "#fbbf24", flexShrink: 0 }} />
-                <span>
-                  Kelas&nbsp;<strong style={{ color: "#fff" }}>{jurnal.kelas}</strong>
-                </span>
-              </div>
-
-              <div
-                style={{
-                  display: "inline-flex",
-                  alignItems: "center",
-                  gap: 7,
-                  padding: "8px 14px",
-                  borderRadius: 12,
-                  background: "rgba(0,0,0,0.25)",
-                  border: "1px solid rgba(255,255,255,0.12)",
-                  color: "rgba(255,255,255,0.95)",
-                  fontSize: 13,
-                  fontWeight: 600,
-                }}
-              >
-                <Clock size={14} style={{ color: "#67e8f9", flexShrink: 0 }} />
-                <span>
-                  Jam ke&nbsp;<strong style={{ color: "#fff" }}>{jurnal.jam_ke}</strong>
-                  <span style={{ color: "rgba(255,255,255,0.7)" }}>{getDurasiJam(jurnal.jam_ke)}</span>
-                </span>
-              </div>
-            </div>
-
-            {/* Guru — full width row so name is never cut off */}
             <div
               style={{
                 display: "flex",
                 alignItems: "center",
-                gap: 10,
-                padding: "10px 14px",
-                borderRadius: 12,
-                background: "rgba(0,0,0,0.25)",
-                border: "1px solid rgba(255,255,255,0.12)",
+                gap: 6,
+                color: "rgba(255,255,255,0.85)",
+                fontSize: 13,
+                fontWeight: 500,
+                marginBottom: 14,
               }}
             >
+              <Calendar size={14} style={{ color: "#ddc192", flexShrink: 0 }} />
+              <span>{formatTanggalLengkap(jurnal.tanggal)}</span>
+            </div>
+
+            {/* Meta Info Grid — Compact & Clean */}
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 10 }}>
+              {/* Kelas & Jam */}
               <div
                 style={{
-                  width: 32,
-                  height: 32,
-                  borderRadius: 10,
-                  background: "rgba(255,255,255,0.15)",
-                  border: "1px solid rgba(255,255,255,0.2)",
                   display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  color: "#fff",
-                  fontWeight: 900,
-                  fontSize: 14,
-                  flexShrink: 0,
+                  flexDirection: "column",
+                  gap: 6,
+                  padding: "10px 14px",
+                  borderRadius: 14,
+                  background: "rgba(0,0,0,0.25)",
+                  border: "1px solid rgba(255,255,255,0.12)",
                 }}
               >
-                {jurnal.asatidz.charAt(0)}
+                <div style={{ display: "flex", alignItems: "center", gap: 6, color: "rgba(255,255,255,0.95)", fontSize: 13, fontWeight: 700 }}>
+                  <GraduationCap size={15} style={{ color: "#fbbf24", flexShrink: 0 }} />
+                  <span>Kelas <strong style={{ color: "#fff" }}>{jurnal.kelas}</strong></span>
+                </div>
+                <div style={{ display: "flex", alignItems: "center", gap: 6, color: "rgba(255,255,255,0.95)", fontSize: 12, fontWeight: 600 }}>
+                  <Clock size={14} style={{ color: "#67e8f9", flexShrink: 0 }} />
+                  <span>
+                    Jam ke <strong style={{ color: "#fff" }}>{jurnal.jam_ke}</strong>
+                    <span style={{ color: "#ddc192", fontWeight: 700 }}>{getDurasiJam(jurnal.jam_ke)}</span>
+                  </span>
+                </div>
               </div>
-              <div>
+
+              {/* Guru Pengampu */}
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 10,
+                  padding: "10px 14px",
+                  borderRadius: 14,
+                  background: "rgba(0,0,0,0.25)",
+                  border: "1px solid rgba(255,255,255,0.12)",
+                }}
+              >
                 <div
                   style={{
-                    fontSize: 10,
-                    fontWeight: 700,
-                    color: "rgba(255,255,255,0.55)",
-                    textTransform: "uppercase",
-                    letterSpacing: "0.08em",
-                    marginBottom: 2,
+                    width: 34,
+                    height: 34,
+                    borderRadius: 10,
+                    background: "rgba(255,255,255,0.15)",
+                    border: "1px solid rgba(255,255,255,0.2)",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    color: "#fff",
+                    fontWeight: 900,
+                    fontSize: 14,
+                    flexShrink: 0,
                   }}
                 >
-                  Guru Pengampu
+                  {jurnal.asatidz.charAt(0)}
                 </div>
-                <div style={{ fontSize: 14, fontWeight: 800, color: "#fff", lineHeight: 1 }}>
-                  {jurnal.asatidz}
+                <div>
+                  <div
+                    style={{
+                      fontSize: 10,
+                      fontWeight: 700,
+                      color: "rgba(255,255,255,0.55)",
+                      textTransform: "uppercase",
+                      letterSpacing: "0.08em",
+                      marginBottom: 2,
+                    }}
+                  >
+                    Guru Pengampu
+                  </div>
+                  <div style={{ fontSize: 13, fontWeight: 800, color: "#fff", lineHeight: 1.2 }}>
+                    {jurnal.asatidz}
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
 
-        {/* ═══════════════════ BODY ═══════════════════ */}
-        <div
-          className="overflow-y-auto overscroll-contain"
-          style={{ flex: 1, padding: "20px 24px", background: "#f8fafc", display: "flex", flexDirection: "column", gap: 16 }}
-        >
+          {/* ═══════════════════ BODY ═══════════════════ */}
+          <div
+            style={{ flex: 1, padding: "20px 24px", background: "#f8fafc", display: "flex", flexDirection: "column", gap: 16 }}
+          >
           {/* Section 1 — Topik & Materi */}
           <div
             style={{
@@ -602,6 +595,7 @@ export default function JurnalDetailModal({ jurnal, onClose }: JurnalDetailModal
             <span>Pesantren Al-Imam Al-Islami</span>
           </div>
         </div>
+      </div>
 
         {/* ═══════════════════ FOOTER ═══════════════════ */}
         <div
