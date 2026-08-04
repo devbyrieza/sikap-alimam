@@ -17,12 +17,14 @@ export async function GET() {
           { mata_pelajaran: { not: null } },
         ],
       },
+      include: { user: true },
       orderBy: { nama_lengkap: "asc" },
     });
 
     // Fallback: jika belum terfilter, ambil semua pegawai
     if (guru.length === 0) {
       guru = await prisma.pegawai.findMany({
+        include: { user: true },
         orderBy: { nama_lengkap: "asc" },
       });
     }
@@ -38,15 +40,19 @@ export async function GET() {
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { nik, nama_lengkap, no_hp, email, mata_pelajaran } = body;
+    const { nik, nama_lengkap, no_hp, email, mata_pelajaran, roles } = body;
 
     if (!nama_lengkap || !nama_lengkap.trim()) {
       return NextResponse.json({ error: "Nama lengkap wajib diisi" }, { status: 400 });
     }
 
+    const nipOrNik = nik || `GURU-${Date.now()}`;
+    const fallbackEmail = email || `${nipOrNik}@pesantren-alimam.com`;
+
+    // 1. Create Pegawai
     const newGuru = await prisma.pegawai.create({
       data: {
-        nik: nik || `GURU-${Date.now()}`,
+        nik: nipOrNik,
         nama_lengkap: nama_lengkap.trim(),
         no_hp: no_hp || null,
         email: email || null,
@@ -54,6 +60,28 @@ export async function POST(req: NextRequest) {
         kategori_pegawai: "ASATIDZ",
       },
     });
+
+    // 2. Create User if roles provided
+    if (roles && roles.length > 0) {
+      const bcrypt = require('bcryptjs');
+      const passwordHash = await bcrypt.hash('Sikap2026!', 10);
+      const roleString = roles.join(",");
+
+      const newUser = await prisma.user.create({
+        data: {
+          email: fallbackEmail,
+          password: passwordHash,
+          nama: nama_lengkap.trim(),
+          role: roleString,
+          is_active: true
+        }
+      });
+
+      await prisma.pegawai.update({
+        where: { id: newGuru.id },
+        data: { user_id: newUser.id }
+      });
+    }
 
     return NextResponse.json(newGuru, { status: 201 });
   } catch (error: any) {

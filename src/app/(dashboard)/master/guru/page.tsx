@@ -24,7 +24,7 @@ export default function MasterGuruPage() {
   // Form State
   const [isAdding, setIsAdding] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
-  const [form, setForm] = useState({ nik: "", nama_lengkap: "", no_hp: "", email: "", mata_pelajaran: "" });
+  const [form, setForm] = useState({ nik: "", nama_lengkap: "", no_hp: "", email: "", mata_pelajaran: "", roles: [] as string[] });
 
   const fetchGuru = async () => {
     setLoading(true);
@@ -111,7 +111,7 @@ export default function MasterGuruPage() {
       }
       setIsAdding(false);
       setEditingId(null);
-      setForm({ nik: "", nama_lengkap: "", no_hp: "", email: "", mata_pelajaran: "" });
+      setForm({ nik: "", nama_lengkap: "", no_hp: "", email: "", mata_pelajaran: "", roles: [] });
       fetchGuru();
     } catch (err) {
       Swal.fire("Gagal", "Terjadi kesalahan server", "error");
@@ -119,7 +119,8 @@ export default function MasterGuruPage() {
   };
 
   const handleEdit = (g: any) => {
-    setForm({ nik: g.nik || "", nama_lengkap: g.nama_lengkap || "", no_hp: g.no_hp || "", email: g.email || "", mata_pelajaran: g.mata_pelajaran || "" });
+    const roles = g.user?.role ? g.user.role.split(",").map((r: string) => r.trim().toUpperCase()) : [];
+    setForm({ nik: g.nik || "", nama_lengkap: g.nama_lengkap || "", no_hp: g.no_hp || "", email: g.email || "", mata_pelajaran: g.mata_pelajaran || "", roles });
     setEditingId(g.id);
     setIsAdding(true);
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -175,7 +176,7 @@ export default function MasterGuruPage() {
               setIsAdding(!isAdding);
               if (isAdding) {
                 setEditingId(null);
-                setForm({ nik: "", nama_lengkap: "", no_hp: "", email: "", mata_pelajaran: "" });
+                setForm({ nik: "", nama_lengkap: "", no_hp: "", email: "", mata_pelajaran: "", roles: [] });
               }
             }}
             className="flex-1 sm:flex-initial bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2.5 rounded-xl font-semibold shadow-md flex items-center justify-center gap-2 text-xs sm:text-sm transition-all cursor-pointer"
@@ -210,6 +211,34 @@ export default function MasterGuruPage() {
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Mata Pelajaran (Opsional)</label>
               <input type="text" value={form.mata_pelajaran} onChange={(e) => setForm({...form, mata_pelajaran: e.target.value})} className="w-full rounded-xl border-gray-300 focus:border-emerald-500 focus:ring-emerald-500" placeholder="Contoh: Fiqh, Akidah" />
+            </div>
+            <div className="md:col-span-2 lg:col-span-5 border-t pt-4 mt-2">
+              <label className="block text-sm font-bold text-gray-800 mb-3">Hak Akses Sistem (Multi-Role)</label>
+              <div className="flex flex-wrap gap-3">
+                {[
+                  { value: "GURU", label: "Guru Mapel" },
+                  { value: "WALI_KELAS", label: "Wali Kelas" },
+                  { value: "ADMIN_KEUANGAN", label: "Admin Keuangan" },
+                  { value: "ADMIN_SUPER", label: "Admin Super" },
+                ].map((role) => (
+                  <label key={role.value} className="flex items-center gap-2 bg-slate-50 px-3 py-2 rounded-lg border border-slate-200 cursor-pointer hover:bg-slate-100 transition-colors">
+                    <input 
+                      type="checkbox" 
+                      className="rounded text-emerald-600 focus:ring-emerald-500"
+                      checked={form.roles.includes(role.value)}
+                      onChange={(e) => {
+                        if (e.target.checked) {
+                          setForm({ ...form, roles: [...form.roles, role.value] });
+                        } else {
+                          setForm({ ...form, roles: form.roles.filter((r) => r !== role.value) });
+                        }
+                      }}
+                    />
+                    <span className="text-sm font-medium text-gray-700">{role.label}</span>
+                  </label>
+                ))}
+              </div>
+              <p className="text-xs text-gray-500 mt-2">Centang role yang sesuai. Satu akun dapat memiliki lebih dari satu role.</p>
             </div>
           </div>
           <div className="mt-4 flex justify-end">
@@ -252,6 +281,20 @@ export default function MasterGuruPage() {
                       <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-100 px-2 py-0.5 rounded-md inline-flex items-center gap-1">
                         <BookOpen size={10} />
                         {g.mata_pelajaran}
+                      </span>
+                    )}
+                  </div>
+                  {/* Roles Badges */}
+                  <div className="flex flex-wrap gap-1 mt-1">
+                    {g.user?.role ? (
+                      g.user.role.split(",").map((r: string, idx: number) => (
+                        <span key={idx} className="text-[9px] font-bold tracking-wider bg-blue-50 text-blue-600 px-1.5 py-0.5 rounded border border-blue-100">
+                          {r.trim().toUpperCase()}
+                        </span>
+                      ))
+                    ) : (
+                      <span className="text-[9px] font-bold tracking-wider bg-red-50 text-red-500 px-1.5 py-0.5 rounded border border-red-100">
+                        NO ACCOUNT
                       </span>
                     )}
                   </div>

@@ -12,8 +12,8 @@ export default async function DashboardLayout({
   const session = await getSession();
   if (!session) redirect("/login");
 
-  const userRole = (session.role || "").toLowerCase().trim();
-  const isWaliSantri = userRole.includes("wali") || userRole.includes("orang_tua");
+  const userRoles = (session.role || "").toLowerCase().split(",").map(r => r.trim());
+  const isWaliSantri = userRoles.includes("wali_santri") || userRoles.includes("orang_tua") || userRoles.includes("wali");
 
   let pegawai = null;
   if (!isWaliSantri) {
@@ -45,10 +45,8 @@ export default async function DashboardLayout({
                         session.email?.includes("demo");
 
   if (!isWaliSantri && !isDemoAccount) {
-    const isGuru = userRole.includes("guru") || 
-      userRole.includes("asatidz") || 
-      userRole.includes("pengajar") || 
-      userRole === "user" ||
+    const isGuru = userRoles.some(r => r.includes("guru") || r.includes("asatidz") || r.includes("pengajar") || r.includes("wali_kelas")) || 
+      userRoles.includes("user") ||
       (pegawai?.kategori_pegawai || "").toUpperCase().includes("GURU") ||
       (pegawai?.kategori_pegawai || "").toUpperCase().includes("ASATIDZ");
 

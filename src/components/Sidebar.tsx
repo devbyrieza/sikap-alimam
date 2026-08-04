@@ -100,9 +100,9 @@ export default function Sidebar({ user }: SidebarProps) {
     return pathname.startsWith(href);
   };
 
-  const userRole = (user?.role || "").toLowerCase().trim();
+  const userRoles = (user?.role || "").toLowerCase().split(",").map(r => r.trim());
   const visibleNav = NAV.filter(
-    (item) => !item.roles || item.roles.some((r) => r.toLowerCase() === userRole)
+    (item) => !item.roles || item.roles.some((r) => userRoles.includes(r.toLowerCase()))
   );
 
   async function handleLogout() {
