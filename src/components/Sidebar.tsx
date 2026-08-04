@@ -236,7 +236,7 @@ export default function Sidebar({ user }: SidebarProps) {
               color: "var(--primary)",
             }}
           >
-            {(user.nama || "U").charAt(0).toUpperCase()}
+            {((user?.nama) || "U").charAt(0).toUpperCase()}
           </div>
           <div style={{ flex: 1, minWidth: 0 }}>
             <p
@@ -249,19 +249,19 @@ export default function Sidebar({ user }: SidebarProps) {
                 whiteSpace: "nowrap",
               }}
             >
-              {user.nama || "User"}
+              {user?.nama || "User"}
             </p>
             <p
               style={{
                 fontSize: 11,
-                color: user.role?.toUpperCase().includes("ADMIN") ? "var(--primary)" : "var(--text-muted)",
-                fontWeight: user.role?.toUpperCase().includes("ADMIN") ? 700 : 500,
+                color: (user?.role || "").toUpperCase().includes("ADMIN") ? "var(--primary)" : "var(--text-muted)",
+                fontWeight: (user?.role || "").toUpperCase().includes("ADMIN") ? 700 : 500,
                 overflow: "hidden",
                 textOverflow: "ellipsis",
                 whiteSpace: "nowrap",
               }}
             >
-              {user.role?.toUpperCase().includes("ADMIN") ? "Admin Super & Guru" : (user.role?.toUpperCase() === "GURU" ? "Guru Pengajar" : user.role)}
+              {(user?.role || "").toUpperCase().includes("ADMIN") ? "Admin Super & Guru" : ((user?.role || "").toUpperCase() === "GURU" ? "Guru Pengajar" : (user?.role || "Pengguna"))}
             </p>
           </div>
         </div>

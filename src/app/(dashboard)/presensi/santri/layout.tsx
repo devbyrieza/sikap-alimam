@@ -5,7 +5,7 @@ import NavTabs from "./NavTabs";
 
 export default async function PresensiSantriLayout({ children }: { children: ReactNode }) {
   const session = await getSession();
-  const isAdmin = session?.role?.toUpperCase().includes("ADMIN");
+  const isAdmin = (session?.role || "").toUpperCase().includes("ADMIN");
 
   return (
     <div>

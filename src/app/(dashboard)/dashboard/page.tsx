@@ -26,42 +26,57 @@ export default async function DashboardPage() {
   }).format(today);
 
   // Stats paralel
-  const [ totalAsatidz, totalSantri, jurnalHariIni, hadirAsatidz ] = await Promise.all([
-    prisma.pegawai.count({
-      where: {
-        OR: [
-          { kategori_pegawai: { in: ["ASATIDZ", "GURU", "Guru", "asatidz", "guru", "PENGAJAR"] } },
-          { kategori_pegawai: { contains: "ASATIDZ", mode: "insensitive" } },
-          { kategori_pegawai: { contains: "GURU", mode: "insensitive" } },
-          { jabatan: { contains: "Guru", mode: "insensitive" } },
-          { jabatan: { contains: "Pengajar", mode: "insensitive" } },
-        ],
-      },
-    }),
-    prisma.santriAktif.count({ where: { is_active: true } }),
-    prisma.jurnalMengajar.count({ where: { tanggal: new Date(todayStr) } }),
-    prisma.presensiAsatidz.count({
-      where: { tanggal: new Date(todayStr), status: { in: ["hadir", "telat"] } },
-    }),
-  ]);
+  let totalAsatidz = 0;
+  let totalSantri = 0;
+  let jurnalHariIni = 0;
+  let hadirAsatidz = 0;
+  let jurnalTerbaru: any[] = [];
+  let absenHariIni: any[] = [];
+  let presensiSantri: any[] = [];
 
-  // Jurnal terbaru
-  const jurnalTerbaru = await prisma.jurnalMengajar.findMany({
-    take: 5, orderBy: { created_at: "desc" },
-    include: { pegawai: { select: { nama_lengkap: true } }, mapel: { select: { nama: true } }, kelas: { select: { nama: true } } },
-  });
+  try {
+    const todayDate = new Date(todayStr);
+    const results = await Promise.allSettled([
+      prisma.pegawai.count({
+        where: {
+          OR: [
+            { kategori_pegawai: { in: ["ASATIDZ", "GURU", "Guru", "asatidz", "guru", "PENGAJAR"] } },
+            { kategori_pegawai: { contains: "ASATIDZ", mode: "insensitive" } },
+            { kategori_pegawai: { contains: "GURU", mode: "insensitive" } },
+            { jabatan: { contains: "Guru", mode: "insensitive" } },
+            { jabatan: { contains: "Pengajar", mode: "insensitive" } },
+          ],
+        },
+      }),
+      prisma.santriAktif.count({ where: { is_active: true } }),
+      prisma.jurnalMengajar.count({ where: { tanggal: todayDate } }),
+      prisma.presensiAsatidz.count({
+        where: { tanggal: todayDate, status: { in: ["hadir", "telat"] } },
+      }),
+      prisma.jurnalMengajar.findMany({
+        take: 5, orderBy: { created_at: "desc" },
+        include: { pegawai: { select: { nama_lengkap: true } }, mapel: { select: { nama: true } }, kelas: { select: { nama: true } } },
+      }),
+      prisma.presensiAsatidz.findMany({
+        where: { tanggal: todayDate },
+        include: { pegawai: { select: { nama_lengkap: true } } },
+        orderBy: { jam_masuk: "desc" }, take: 8,
+      }),
+      prisma.presensiSiswa.findMany({
+        where: { tanggal: todayDate }, select: { status: true },
+      }),
+    ]);
 
-  // Absensi hari ini
-  const absenHariIni = await prisma.presensiAsatidz.findMany({
-    where: { tanggal: new Date(todayStr) },
-    include: { pegawai: { select: { nama_lengkap: true } } },
-    orderBy: { jam_masuk: "desc" }, take: 8,
-  });
-
-  // Presensi Santri hari ini
-  const presensiSantri = await prisma.presensiSiswa.findMany({
-    where: { tanggal: new Date(todayStr) }, select: { status: true },
-  });
+    if (results[0].status === "fulfilled") totalAsatidz = results[0].value;
+    if (results[1].status === "fulfilled") totalSantri = results[1].value;
+    if (results[2].status === "fulfilled") jurnalHariIni = results[2].value;
+    if (results[3].status === "fulfilled") hadirAsatidz = results[3].value;
+    if (results[4].status === "fulfilled") jurnalTerbaru = results[4].value || [];
+    if (results[5].status === "fulfilled") absenHariIni = results[5].value || [];
+    if (results[6].status === "fulfilled") presensiSantri = results[6].value || [];
+  } catch (err) {
+    console.error("DashboardPage: error fetching stats:", err);
+  }
 
   const totalPresensiSantri = presensiSantri.length;
   const santriHadir = presensiSantri.filter((p) => p.status === "hadir").length;

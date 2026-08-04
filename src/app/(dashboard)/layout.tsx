@@ -17,22 +17,26 @@ export default async function DashboardLayout({
 
   let pegawai = null;
   if (!isWaliSantri) {
-    if (session.asatidz_id) {
-      pegawai = await prisma.pegawai.findUnique({
-        where: { id: session.asatidz_id },
-      });
-    }
+    try {
+      if (session.asatidz_id) {
+        pegawai = await prisma.pegawai.findUnique({
+          where: { id: session.asatidz_id },
+        });
+      }
 
-    if (!pegawai && session.userId) {
-      pegawai = await prisma.pegawai.findFirst({
-        where: {
-          OR: [
-            { user_id: session.userId },
-            { email: session.email },
-            { nama_lengkap: { equals: session.nama || "", mode: "insensitive" } },
-          ],
-        },
-      });
+      if (!pegawai && session.userId) {
+        pegawai = await prisma.pegawai.findFirst({
+          where: {
+            OR: [
+              { user_id: session.userId },
+              { email: session.email },
+              { nama_lengkap: { equals: session.nama || "", mode: "insensitive" } },
+            ],
+          },
+        });
+      }
+    } catch (e) {
+      console.error("DashboardLayout: Error fetching pegawai:", e);
     }
   }
 
@@ -69,7 +73,7 @@ export default async function DashboardLayout({
 
   return (
     <div className="app-layout">
-      <Sidebar user={{ nama: session.nama, role: session.role, email: session.email, originalRole: session.originalRole }} />
+      <Sidebar user={{ nama: session.nama || "", role: session.role || "", email: session.email || "", originalRole: session.originalRole }} />
       <main className="app-content">
         {children}
       </main>
@@ -83,7 +87,7 @@ export default async function DashboardLayout({
             nik: pegawai.nik,
             jenis_kelamin: pegawai.jenis_kelamin,
             tempat_lahir: pegawai.tempat_lahir,
-            tanggal_lahir: pegawai.tanggal_lahir,
+            tanggal_lahir: pegawai.tanggal_lahir ? pegawai.tanggal_lahir.toISOString().split("T")[0] : null,
             no_hp: pegawai.no_hp,
             email: pegawai.email,
             alamat: pegawai.alamat,
@@ -99,8 +103,8 @@ export default async function DashboardLayout({
           initialMapel={pegawai?.mata_pelajaran || ""}
           needsSetup={needsSetup}
           missingFields={missingFields}
-          userName={session.nama}
-          userRole={session.role}
+          userName={session.nama || "Ustadz"}
+          userRole={session.role || "guru"}
         />
       )}
     </div>
