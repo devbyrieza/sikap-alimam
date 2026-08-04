@@ -69,6 +69,8 @@ export default async function DashboardPage() {
   const santriIzin = presensiSantri.filter((p) => p.status === "izin").length;
   const santriAlpha = presensiSantri.filter((p) => p.status === "alpha").length;
   const pctHadir = totalAsatidz > 0 ? Math.round((hadirAsatidz / totalAsatidz) * 100) : 0;
+  
+  const isSuperAdmin = (session?.role || "").toLowerCase().includes("admin_super");
 
   return (
     <div style={{ padding: "24px 28px", maxWidth: 1200, margin: "0 auto", display: "flex", flexDirection: "column", gap: 24 }}>
@@ -188,6 +190,11 @@ export default async function DashboardPage() {
           <Link href="/nilai" style={{ display:"inline-flex", alignItems:"center", gap:8, background:"#f1f5f9", color:"#475569", padding:"10px 20px", borderRadius:12, fontSize:13, fontWeight:700, textDecoration:"none", transition:"all 0.2s" }} onMouseEnter={e => (e.currentTarget as HTMLElement).style.background="#e2e8f0"} onMouseLeave={e => (e.currentTarget as HTMLElement).style.background="#f1f5f9"}>
             <BarChart3 size={16} /> Input Nilai
           </Link>
+          {isSuperAdmin && (
+            <Link href="/master/kelas" style={{ display:"inline-flex", alignItems:"center", gap:8, background:"#8b5cf6", color:"white", padding:"10px 20px", borderRadius:12, fontSize:13, fontWeight:700, textDecoration:"none", transition:"all 0.2s", boxShadow:"0 4px 12px rgba(139,92,246,0.3)" }}>
+              <UserCheck size={16} /> Assign Wali Kelas
+            </Link>
+          )}
         </div>
       </div>
 

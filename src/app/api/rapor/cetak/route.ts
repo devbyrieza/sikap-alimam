@@ -68,6 +68,13 @@ export async function GET(req: NextRequest) {
       kebersihan: "A"
     };
 
+    // 4b. Ambil Mutabaah Tahfidz
+    const tahfidz = await prisma.capaianTahfidz.findMany({
+      where: { santri_id },
+      orderBy: { tanggal: "desc" },
+      take: 20, // 20 riwayat terakhir
+    });
+
     // 5. Kalkulasi Total & Rata-rata
     const totalNilai = nilai.reduce((sum, n) => sum + n.nilai, 0);
     const rataRata = nilai.length > 0 ? (totalNilai / nilai.length).toFixed(1) : 0;
@@ -114,7 +121,8 @@ export async function GET(req: NextRequest) {
         jumlahSantri
       },
       kepribadian,
-      absen
+      absen,
+      tahfidz
     });
   } catch (error) {
     console.error("Error fetching data rapor cetak:", error);

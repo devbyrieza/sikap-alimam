@@ -42,7 +42,7 @@ export default function CetakRaporPage() {
     return <div className="p-10 text-center text-red-500">Data rapor tidak ditemukan.</div>;
   }
 
-  const { santri, nilai_akademik, kedisiplinan, kepribadian, absen } = data;
+  const { santri, nilai_akademik, kedisiplinan, kepribadian, absen, tahfidz } = data;
 
   const renderTabelKategori = (judul: string, judulArab: string, mapelList: any[], startIndex: number = 1) => {
     if (mapelList.length === 0) return null;
@@ -230,6 +230,66 @@ export default function CetakRaporPage() {
               </tbody>
             </table>
           </div>
+        </div>
+
+        {/* Tabel Mutabaah Tahfidz */}
+        <div style={{ marginBottom: "32px", pageBreakInside: "avoid" }}>
+          <table style={{ width: "100%", borderCollapse: "collapse", border: "1px solid #cbd5e1", fontSize: "14px" }}>
+            <thead>
+              <tr style={{ backgroundColor: "#f1f5f9" }}>
+                <th colSpan={4} style={{ border: "1px solid #cbd5e1", padding: "16px 20px", textAlign: "left" }}>
+                  Mutaba'ah Tahfidz Al-Qur'an (Riwayat Terakhir)
+                </th>
+                <th colSpan={1} style={{ border: "1px solid #cbd5e1", padding: "16px 20px", textAlign: "right" }} dir="rtl">
+                  متابعة تحفيظ القرآن
+                </th>
+              </tr>
+              <tr style={{ backgroundColor: "#f8fafc", fontSize: "12px", color: "#475569", fontWeight: "bold" }}>
+                <th style={{ border: "1px solid #cbd5e1", padding: "10px", width: "40px", textAlign: "center" }}>No</th>
+                <th style={{ border: "1px solid #cbd5e1", padding: "10px", textAlign: "center" }}>Tanggal</th>
+                <th style={{ border: "1px solid #cbd5e1", padding: "10px", textAlign: "left" }}>Jenis</th>
+                <th style={{ border: "1px solid #cbd5e1", padding: "10px", textAlign: "left" }}>Surat & Ayat</th>
+                <th style={{ border: "1px solid #cbd5e1", padding: "10px", textAlign: "center" }}>Keterangan</th>
+              </tr>
+            </thead>
+            <tbody>
+              {!tahfidz || tahfidz.length === 0 ? (
+                <tr>
+                  <td colSpan={5} style={{ border: "1px solid #cbd5e1", padding: "16px 20px", textAlign: "center", color: "#94a3b8" }}>
+                    Belum ada riwayat capaian tahfidz pada semester ini.
+                  </td>
+                </tr>
+              ) : (
+                tahfidz.slice(0, 10).map((t: any, idx: number) => {
+                  const isEven = idx % 2 === 0;
+                  return (
+                    <tr key={t.id || idx} style={{ backgroundColor: isEven ? "white" : "#fafafa" }}>
+                      <td style={{ border: "1px solid #cbd5e1", padding: "10px", textAlign: "center" }}>{idx + 1}</td>
+                      <td style={{ border: "1px solid #cbd5e1", padding: "10px", textAlign: "center" }}>
+                        {new Date(t.tanggal).toLocaleDateString("id-ID")}
+                      </td>
+                      <td style={{ border: "1px solid #cbd5e1", padding: "10px" }}>
+                        <span style={{ padding: "4px 8px", backgroundColor: "#d1fae5", color: "#065f46", borderRadius: "4px", fontSize: "11px", fontWeight: "bold", textTransform: "uppercase" }}>
+                          {t.jenis}
+                        </span>
+                      </td>
+                      <td style={{ border: "1px solid #cbd5e1", padding: "10px", fontWeight: "bold" }}>
+                        {t.surat} {t.ayat ? `(Ayat ${t.ayat})` : ""}
+                      </td>
+                      <td style={{ border: "1px solid #cbd5e1", padding: "10px", textAlign: "center", fontWeight: 600 }}>
+                        {t.keterangan || "Lancar"}
+                      </td>
+                    </tr>
+                  );
+                })
+              )}
+            </tbody>
+          </table>
+          {tahfidz && tahfidz.length > 10 && (
+            <div style={{ fontSize: "11px", color: "#64748b", marginTop: "8px", fontStyle: "italic", textAlign: "right" }}>
+              *Menampilkan 10 capaian tahfidz terakhir. Selengkapnya dapat dilihat pada aplikasi wali santri.
+            </div>
+          )}
         </div>
 
         {/* Tanda Tangan */}
