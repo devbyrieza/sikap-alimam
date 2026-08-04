@@ -1,14 +1,14 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Users, Plus, Trash2, Edit2, Save, Mail, Phone, RefreshCw, BookOpen } from "lucide-react";
+import { Users, Plus, Trash2, Edit2, Save, Mail, Phone, RefreshCw, BookOpen, X, Sparkles } from "lucide-react";
 import Swal from "sweetalert2";
 
+// ─── Helpers ──────────────────────────────────────────────────────────────────
 const formatName = (str: string) => {
   if (!str) return "-";
   return str.split(' ').map(word => {
-    if (word.includes('.')) return word; // Biarkan singkatan gelar (misal B.A, S.Pd)
-    // Jika semua huruf kapital (misal dari database) atau semua huruf kecil (wahyudi), kita format menjadi Title Case
+    if (word.includes('.')) return word; // Biarkan singkatan gelar
     if (word === word.toUpperCase() || word === word.toLowerCase()) {
       return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
     }
@@ -24,7 +24,8 @@ export default function MasterGuruPage() {
   // Form State
   const [isAdding, setIsAdding] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
-  const [form, setForm] = useState({ nik: "", nama_lengkap: "", no_hp: "", email: "", mata_pelajaran: "", roles: [] as string[] });
+  const emptyForm = { nik: "", nama_lengkap: "", no_hp: "", email: "", mata_pelajaran: "", roles: [] as string[] };
+  const [form, setForm] = useState(emptyForm);
 
   const fetchGuru = async () => {
     setLoading(true);
@@ -32,313 +33,272 @@ export default function MasterGuruPage() {
       const res = await fetch("/api/master/guru");
       const data = await res.json();
       setGuru(data);
-    } catch (err) {
-      console.error("Gagal memuat data guru:", err);
-    } finally {
-      setLoading(false);
-    }
+    } catch { /* silent */ } finally { setLoading(false); }
   };
 
-  useEffect(() => {
-    fetchGuru();
-  }, []);
+  useEffect(() => { fetchGuru(); }, []);
 
   const handleSync = async () => {
     setIsSyncing(true);
     Swal.fire({
-      title: "Sinkronisasi...",
-      text: "Menghubungkan ke database SIMPEG Al-Imam...",
-      allowOutsideClick: false,
-      didOpen: () => {
-        Swal.showLoading();
-      }
+      title: "Sinkronisasi...", text: "Menghubungkan ke database SIMPEG...",
+      allowOutsideClick: false, didOpen: () => Swal.showLoading()
     });
 
     try {
       const res = await fetch("/api/master/guru/sync", { method: "POST" });
       const data = await res.json();
-      
       if (data.success) {
         await fetchGuru();
-        Swal.fire({
-          icon: "success",
-          title: "Sinkronisasi Berhasil",
-          text: data.fallback 
-            ? data.message
-            : `Berhasil menyinkronkan data. Terupdate/Tambah: ${data.updated}, Terhapus: ${data.deleted}.`,
-        });
+        Swal.fire({ icon: "success", title: "Sinkronisasi Berhasil", text: data.fallback ? data.message : `Terupdate/Tambah: ${data.updated}, Terhapus: ${data.deleted}.`, confirmButtonColor: "#059669" });
       } else {
         Swal.fire("Gagal", data.error || "Terjadi kesalahan saat sinkronisasi.", "error");
       }
-    } catch (err: any) {
-      Swal.fire("Gagal", "Koneksi ke server SIKAP terputus.", "error");
-    } finally {
-      setIsSyncing(false);
-    }
+    } catch { Swal.fire("Gagal", "Koneksi ke server terputus.", "error"); } finally { setIsSyncing(false); }
   };
-
-
 
   const handleSave = async () => {
     if (!form.nama_lengkap) {
-      Swal.fire("Error", "Nama lengkap wajib diisi", "error");
+      Swal.fire({ icon: "warning", title: "Perhatian", text: "Nama lengkap wajib diisi", confirmButtonColor: "#059669" });
       return;
     }
 
     try {
       if (editingId) {
-        const res = await fetch(`/api/master/guru/${editingId}`, {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(form)
-        });
-        if (res.ok) {
-          Swal.fire("Berhasil", "Data Guru berhasil diperbarui", "success");
-        } else {
-          Swal.fire("Gagal", "Gagal memperbarui data", "error");
-        }
+        const res = await fetch(`/api/master/guru/${editingId}`, { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify(form) });
+        if (res.ok) Swal.fire({ icon: "success", title: "Berhasil", text: "Data Guru diperbarui", confirmButtonColor: "#059669", timer: 1500, showConfirmButton: false });
+        else Swal.fire("Gagal", "Gagal memperbarui data", "error");
       } else {
-        const res = await fetch("/api/master/guru", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(form)
-        });
-        if (res.ok) {
-          Swal.fire("Berhasil", "Data Guru berhasil ditambahkan", "success");
-        } else {
-          Swal.fire("Gagal", "NIK atau Email sudah terdaftar", "error");
-        }
+        const res = await fetch("/api/master/guru", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(form) });
+        if (res.ok) Swal.fire({ icon: "success", title: "Berhasil", text: "Data Guru ditambahkan", confirmButtonColor: "#059669", timer: 1500, showConfirmButton: false });
+        else Swal.fire("Gagal", "NIK atau Email sudah terdaftar", "error");
       }
-      setIsAdding(false);
-      setEditingId(null);
-      setForm({ nik: "", nama_lengkap: "", no_hp: "", email: "", mata_pelajaran: "", roles: [] });
-      fetchGuru();
-    } catch (err) {
-      Swal.fire("Gagal", "Terjadi kesalahan server", "error");
-    }
+      setIsAdding(false); setEditingId(null); setForm(emptyForm); fetchGuru();
+    } catch { Swal.fire("Gagal", "Terjadi kesalahan server", "error"); }
   };
 
   const handleEdit = (g: any) => {
     const roles = g.user?.role ? g.user.role.split(",").map((r: string) => r.trim().toUpperCase()) : [];
     setForm({ nik: g.nik || "", nama_lengkap: g.nama_lengkap || "", no_hp: g.no_hp || "", email: g.email || "", mata_pelajaran: g.mata_pelajaran || "", roles });
-    setEditingId(g.id);
-    setIsAdding(true);
+    setEditingId(g.id); setIsAdding(true);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleDelete = async (id: string, name: string) => {
     const confirm = await Swal.fire({
-      title: "Hapus Data?",
-      text: `Anda yakin ingin menghapus ${name}?`,
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#d33",
-      cancelButtonColor: "#3085d6",
-      confirmButtonText: "Ya, hapus!",
-      cancelButtonText: "Batal"
+      title: "Hapus Data?", text: `Anda yakin ingin menghapus ${name}?`,
+      icon: "warning", showCancelButton: true, confirmButtonColor: "#dc2626", cancelButtonColor: "#6b7280", confirmButtonText: "Ya, Hapus", cancelButtonText: "Batal"
     });
-
     if (confirm.isConfirmed) {
       try {
         const res = await fetch(`/api/master/guru/${id}`, { method: "DELETE" });
         if (res.ok) {
-          Swal.fire("Terhapus!", "Data guru telah dihapus.", "success");
+          Swal.fire({ icon: "success", title: "Terhapus", text: "Data guru dihapus.", confirmButtonColor: "#059669" });
           fetchGuru();
-        } else {
-          Swal.fire("Gagal", "Gagal menghapus data", "error");
-        }
-      } catch (err) {
-        Swal.fire("Gagal", "Terjadi kesalahan server", "error");
-      }
+        } else { Swal.fire("Gagal", "Gagal menghapus data", "error"); }
+      } catch { Swal.fire("Gagal", "Terjadi kesalahan server", "error"); }
     }
   };
 
   return (
-    <div className="p-3.5 sm:p-6 md:p-7 max-w-6xl mx-auto space-y-6">
-      {/* Premium Hero Banner */}
-      <div className="relative overflow-hidden bg-gradient-to-br from-slate-900 via-slate-800 to-emerald-900 rounded-[32px] p-8 sm:p-10 shadow-2xl shadow-emerald-900/20 text-white flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6">
-        {/* Decorative Background Elements */}
-        <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-500/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3"></div>
-        <div className="absolute bottom-0 left-0 w-48 h-48 bg-blue-500/20 rounded-full blur-3xl translate-y-1/2 -translate-x-1/4"></div>
+    <div style={{ padding: "24px 28px", maxWidth: 1100, margin: "0 auto", display: "flex", flexDirection: "column", gap: 24 }}>
+
+      {/* ── Hero Banner ─────────────────────────────────────────────────────── */}
+      <div style={{
+        background: "linear-gradient(135deg, #064e3b 0%, #047857 60%, #10b981 100%)",
+        borderRadius: 24, padding: "32px 36px", color: "white",
+        display: "flex", justifyContent: "space-between", alignItems: "center",
+        flexWrap: "wrap", gap: 20,
+        boxShadow: "0 16px 40px rgba(4,120,87,0.25)",
+        position: "relative", overflow: "hidden",
+      }}>
+        {/* Decorative circles */}
+        <div style={{ position:"absolute", top:-40, right:-40, width:200, height:200, borderRadius:"50%", background:"rgba(255,255,255,0.06)", pointerEvents:"none" }} />
+        <div style={{ position:"absolute", bottom:-60, right:120, width:160, height:160, borderRadius:"50%", background:"rgba(255,255,255,0.04)", pointerEvents:"none" }} />
         
-        <div className="relative z-10">
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 border border-white/20 backdrop-blur-md mb-4">
-            <span className="flex h-2 w-2 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.8)]"></span>
-            <span className="text-xs font-bold tracking-wider text-emerald-50">SIKAP AL-IMAM</span>
+        <div style={{ position:"relative", zIndex:1 }}>
+          <div style={{ display:"flex", alignItems:"center", gap:12, marginBottom:8 }}>
+            <Users size={32} color="#6ee7b7" />
+            <h1 style={{ margin:0, fontSize:26, fontWeight:800, letterSpacing:"-0.3px" }}>Master Data Guru</h1>
           </div>
-          <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight mb-2 flex items-center gap-3">
-            <Users className="text-emerald-400" size={36} /> Master Data Guru
-          </h1>
-          <p className="text-emerald-100/80 text-sm sm:text-base max-w-xl leading-relaxed">
+          <p style={{ margin:0, color:"rgba(255,255,255,0.82)", fontSize:14, lineHeight:1.6, maxWidth:460 }}>
             Pusat registrasi dan kelola staf pengajar (Guru/Musyrif) di Pesantren Al-Imam. Atur biodata dan hak akses sistem.
           </p>
         </div>
-        
-        <div className="relative z-10 flex flex-wrap gap-3 w-full sm:w-auto">
-          <button 
-            onClick={handleSync}
-            disabled={isSyncing}
-            className="flex-1 sm:flex-initial bg-white/10 hover:bg-white/20 border border-white/20 disabled:opacity-50 text-white px-5 py-3 rounded-2xl font-bold shadow-lg flex items-center justify-center gap-2 text-sm transition-all backdrop-blur-sm group"
-          >
-            <RefreshCw size={18} className={isSyncing ? "animate-spin" : "group-hover:rotate-180 transition-transform duration-500"} />
-            Sync SIMPEG
+
+        <div style={{ position:"relative", zIndex:1, display:"flex", gap:12, flexWrap:"wrap" }}>
+          <button onClick={handleSync} disabled={isSyncing} style={{
+            background:"rgba(255,255,255,0.1)", color:"white", border:"1px solid rgba(255,255,255,0.2)", cursor:"pointer",
+            fontWeight:700, fontSize:14, padding:"12px 22px", borderRadius:14, display:"flex", alignItems:"center", gap:8, backdropFilter:"blur(8px)", transition:"all 0.2s", whiteSpace:"nowrap",
+          }}>
+            <RefreshCw size={18} className={isSyncing ? "animate-spin" : ""} /> Sync SIMPEG
           </button>
-          <button 
-            onClick={() => {
-              setIsAdding(!isAdding);
-              if (isAdding) {
-                setEditingId(null);
-                setForm({ nik: "", nama_lengkap: "", no_hp: "", email: "", mata_pelajaran: "", roles: [] });
-              }
-            }}
-            className="flex-1 sm:flex-initial bg-emerald-500 hover:bg-emerald-400 text-slate-900 px-5 py-3 rounded-2xl font-black shadow-[0_0_20px_rgba(16,185,129,0.4)] flex items-center justify-center gap-2 text-sm transition-all hover:scale-105"
-          >
-            {isAdding ? "Tutup Form" : <><Plus size={20} strokeWidth={3} /> Tambah Guru</>}
+          <button onClick={() => { setIsAdding(!isAdding); if (isAdding) { setEditingId(null); setForm(emptyForm); } }} style={{
+            background:"#10b981", color:"#022c22", border:"none", cursor:"pointer",
+            fontWeight:800, fontSize:14, padding:"12px 22px", borderRadius:14, display:"flex", alignItems:"center", gap:8, boxShadow:"0 4px 16px rgba(16,185,129,0.3)", transition:"all 0.2s", whiteSpace:"nowrap",
+          }}>
+            {isAdding ? <X size={18} /> : <Plus size={18} />} {isAdding ? "Tutup Form" : "Tambah Guru"}
           </button>
         </div>
       </div>
 
+      {/* ── Add Form ─────────────────────────────────────────────────────────── */}
       {isAdding && (
-        <div className="bg-white rounded-3xl p-6 border border-emerald-200 shadow-md mb-6 animate-in fade-in slide-in-from-top-4">
-          <h3 className="font-bold text-lg text-gray-800 mb-4 border-b pb-2">
-            {editingId ? "Form Edit Data Guru" : "Form Pendaftaran Guru Baru"}
-          </h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+        <div style={{
+          background:"#ecfdf5", borderRadius:20, padding:"28px 32px",
+          border:"2px solid #a7f3d0", boxShadow:"0 4px 20px rgba(5,150,105,0.08)",
+        }}>
+          <div style={{ display:"flex", alignItems:"center", gap:10, marginBottom:20 }}>
+            <Sparkles size={20} color="#059669" />
+            <h3 style={{ margin:0, fontSize:16, fontWeight:700, color:"#059669" }}>
+              {editingId ? "Form Edit Data Guru" : "Form Pendaftaran Guru Baru"}
+            </h3>
+          </div>
+          <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fit, minmax(220px, 1fr))", gap:16, alignItems:"flex-start" }}>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">NIK / Kode Identitas</label>
-              <input type="text" value={form.nik} onChange={(e) => setForm({...form, nik: e.target.value})} className="w-full rounded-xl border-gray-300 focus:border-emerald-500 focus:ring-emerald-500" placeholder="Kosongkan = Auto Generate" />
+              <label style={{ display:"block", fontSize:13, fontWeight:600, color:"#334155", marginBottom:6 }}>NIK / Kode Identitas</label>
+              <input type="text" className="form-control" placeholder="Kosong = Auto Generate" value={form.nik} onChange={e => setForm({ ...form, nik: e.target.value })} />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Nama Lengkap & Gelar</label>
-              <input type="text" value={form.nama_lengkap} onChange={(e) => setForm({...form, nama_lengkap: e.target.value})} className="w-full rounded-xl border-gray-300 focus:border-emerald-500 focus:ring-emerald-500" placeholder="Ust. Fulan, Lc." />
+              <label style={{ display:"block", fontSize:13, fontWeight:600, color:"#334155", marginBottom:6 }}>Nama Lengkap & Gelar *</label>
+              <input type="text" className="form-control" placeholder="Ust. Fulan, Lc." value={form.nama_lengkap} onChange={e => setForm({ ...form, nama_lengkap: e.target.value })} />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">No. WhatsApp</label>
-              <input type="tel" value={form.no_hp} onChange={(e) => setForm({...form, no_hp: e.target.value})} className="w-full rounded-xl border-gray-300 focus:border-emerald-500 focus:ring-emerald-500" placeholder="0812..." />
+              <label style={{ display:"block", fontSize:13, fontWeight:600, color:"#334155", marginBottom:6 }}>No. WhatsApp</label>
+              <input type="tel" className="form-control" placeholder="0812..." value={form.no_hp} onChange={e => setForm({ ...form, no_hp: e.target.value })} />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Email Aktif</label>
-              <input type="email" value={form.email} onChange={(e) => setForm({...form, email: e.target.value})} className="w-full rounded-xl border-gray-300 focus:border-emerald-500 focus:ring-emerald-500" placeholder="fulan@contoh.com" />
+              <label style={{ display:"block", fontSize:13, fontWeight:600, color:"#334155", marginBottom:6 }}>Email Aktif</label>
+              <input type="email" className="form-control" placeholder="fulan@contoh.com" value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Mata Pelajaran (Opsional)</label>
-              <input type="text" value={form.mata_pelajaran} onChange={(e) => setForm({...form, mata_pelajaran: e.target.value})} className="w-full rounded-xl border-gray-300 focus:border-emerald-500 focus:ring-emerald-500" placeholder="Contoh: Fiqh, Akidah" />
-            </div>
-            <div className="md:col-span-2 lg:col-span-5 border-t pt-4 mt-2">
-              <label className="block text-sm font-bold text-gray-800 mb-3">Hak Akses Sistem (Multi-Role)</label>
-              <div className="flex flex-wrap gap-3">
-                {[
-                  { value: "GURU", label: "Guru Mapel" },
-                  { value: "WALI_KELAS", label: "Wali Kelas" },
-                  { value: "ADMIN_KEUANGAN", label: "Admin Keuangan" },
-                  { value: "ADMIN_SUPER", label: "Admin Super" },
-                ].map((role) => (
-                  <label key={role.value} className="flex items-center gap-2 bg-slate-50 px-3 py-2 rounded-lg border border-slate-200 cursor-pointer hover:bg-slate-100 transition-colors">
-                    <input 
-                      type="checkbox" 
-                      className="rounded text-emerald-600 focus:ring-emerald-500"
-                      checked={form.roles.includes(role.value)}
-                      onChange={(e) => {
-                        if (e.target.checked) {
-                          setForm({ ...form, roles: [...form.roles, role.value] });
-                        } else {
-                          setForm({ ...form, roles: form.roles.filter((r) => r !== role.value) });
-                        }
-                      }}
-                    />
-                    <span className="text-sm font-medium text-gray-700">{role.label}</span>
-                  </label>
-                ))}
-              </div>
-              <p className="text-xs text-gray-500 mt-2">Centang role yang sesuai. Satu akun dapat memiliki lebih dari satu role.</p>
+              <label style={{ display:"block", fontSize:13, fontWeight:600, color:"#334155", marginBottom:6 }}>Mata Pelajaran (Opsional)</label>
+              <input type="text" className="form-control" placeholder="Contoh: Fiqh, Akidah" value={form.mata_pelajaran} onChange={e => setForm({ ...form, mata_pelajaran: e.target.value })} />
             </div>
           </div>
-          <div className="mt-4 flex justify-end">
-            <button onClick={handleSave} className="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-2 rounded-xl font-medium flex items-center gap-2">
-              <Save size={18} /> Simpan Data
+          
+          <div style={{ marginTop:24, paddingTop:24, borderTop:"1px solid #d1fae5" }}>
+            <label style={{ display:"block", fontSize:14, fontWeight:700, color:"#064e3b", marginBottom:12 }}>Hak Akses Sistem (Multi-Role)</label>
+            <div style={{ display:"flex", flexWrap:"wrap", gap:12 }}>
+              {[
+                { value: "GURU", label: "Guru Mapel" },
+                { value: "WALI_KELAS", label: "Wali Kelas" },
+                { value: "ADMIN_KEUANGAN", label: "Admin Keuangan" },
+                { value: "ADMIN_SUPER", label: "Admin Super" },
+              ].map(role => (
+                <label key={role.value} style={{
+                  display:"flex", alignItems:"center", gap:8, background:"white", padding:"8px 16px", borderRadius:12,
+                  border:"1px solid #a7f3d0", cursor:"pointer", transition:"all 0.2s"
+                }} onMouseEnter={e => (e.currentTarget as HTMLElement).style.background = "#d1fae5"} onMouseLeave={e => (e.currentTarget as HTMLElement).style.background = "white"}>
+                  <input type="checkbox" style={{ accentColor:"#059669" }} checked={form.roles.includes(role.value)} onChange={e => {
+                    if (e.target.checked) setForm({ ...form, roles: [...form.roles, role.value] });
+                    else setForm({ ...form, roles: form.roles.filter(r => r !== role.value) });
+                  }} />
+                  <span style={{ fontSize:13, fontWeight:600, color:"#334155" }}>{role.label}</span>
+                </label>
+              ))}
+            </div>
+          </div>
+          
+          <div style={{ display:"flex", justifyContent:"flex-end", gap:12, marginTop:24 }}>
+            <button onClick={() => setIsAdding(false)} className="btn btn-ghost">Batal</button>
+            <button onClick={handleSave} className="btn" style={{ background:"#059669", color:"white", fontWeight:700 }}>
+              <Save size={16} /> Simpan Data
             </button>
           </div>
         </div>
       )}
 
+      {/* ── Data Grid ────────────────────────────────────────────────────────── */}
       {loading ? (
-        <div className="text-center py-10">Memuat data guru...</div>
+        <div style={{ padding:48, textAlign:"center", color:"#94a3b8" }}>Memuat data guru...</div>
+      ) : guru.length === 0 ? (
+        <div style={{ padding:48, textAlign:"center", color:"#94a3b8" }}>Belum ada data guru.</div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {guru.map((g) => (
-            <div 
-              key={g.id} 
-              className="group bg-white rounded-3xl p-6 shadow-sm border border-slate-100 hover:border-emerald-200 hover:shadow-xl hover:shadow-emerald-900/5 transition-all duration-300 relative flex flex-col gap-4 overflow-hidden"
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))", gap: 24 }}>
+          {guru.map(g => (
+            <div key={g.id} style={{
+              background: "white", borderRadius: 20, padding: 24,
+              border: "1px solid #f1f5f9", boxShadow: "0 4px 16px rgba(0,0,0,0.04)",
+              position: "relative", overflow: "hidden", display: "flex", flexDirection: "column", gap: 20,
+              transition: "transform 0.2s, box-shadow 0.2s"
+            }}
+            onMouseEnter={e => { (e.currentTarget as HTMLElement).style.transform = "translateY(-4px)"; (e.currentTarget as HTMLElement).style.boxShadow = "0 12px 24px rgba(5,150,105,0.1)"; }}
+            onMouseLeave={e => { (e.currentTarget as HTMLElement).style.transform = "none"; (e.currentTarget as HTMLElement).style.boxShadow = "0 4px 16px rgba(0,0,0,0.04)"; }}
             >
-              {/* Decorative Background Blob */}
-              <div className="absolute -top-10 -right-10 w-32 h-32 bg-gradient-to-br from-emerald-100/40 to-teal-50/10 rounded-full blur-2xl -z-10 group-hover:scale-150 transition-transform duration-500"></div>
-
-              {/* Header: Avatar, Name & Mapel */}
-              <div className="flex items-start gap-4">
-                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-emerald-600 to-teal-500 text-white flex items-center justify-center font-black text-2xl shadow-lg shadow-emerald-500/20 shrink-0 transform group-hover:scale-105 transition-transform duration-300">
+              <div style={{ position:"absolute", top:-30, right:-30, width:120, height:120, background:"rgba(16,185,129,0.05)", borderRadius:"50%", pointerEvents:"none" }} />
+              
+              <div style={{ display: "flex", gap: 16, alignItems: "flex-start" }}>
+                <div style={{
+                  width: 52, height: 52, borderRadius: 16, flexShrink: 0,
+                  background: "linear-gradient(135deg, #10b981 0%, #059669 100%)", color: "white",
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  fontSize: 24, fontWeight: 800, boxShadow: "0 4px 12px rgba(16,185,129,0.3)"
+                }}>
                   {formatName(g.nama_lengkap).charAt(0).toUpperCase()}
                 </div>
-                <div className="flex-1 min-w-0 flex flex-col gap-2">
-                  <h3 
-                    className="font-bold text-slate-800 text-[15px] leading-tight group-hover:text-emerald-700 transition-colors" 
-                    title={formatName(g.nama_lengkap)}
-                  >
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <h3 style={{ margin: "0 0 6px 0", fontSize: 16, fontWeight: 800, color: "#1e293b", whiteSpace:"nowrap", overflow:"hidden", textOverflow:"ellipsis" }} title={formatName(g.nama_lengkap)}>
                     {formatName(g.nama_lengkap)}
                   </h3>
-                  <div className="flex flex-wrap items-center gap-2">
-                    <span className="text-[10px] font-bold tracking-wider uppercase text-slate-400 bg-slate-50 px-2 py-0.5 rounded-md border border-slate-100">
-                      {g.nik || "GURU-NO-ID"}
+                  <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+                    <span style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.5px", background: "#f1f5f9", color: "#64748b", padding: "2px 6px", borderRadius: 6, border: "1px solid #e2e8f0" }}>
+                      {g.nik || "NO-ID"}
                     </span>
                     {g.mata_pelajaran && (
-                      <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-100 px-2 py-0.5 rounded-md inline-flex items-center gap-1">
-                        <BookOpen size={10} />
-                        {g.mata_pelajaran}
+                      <span style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.5px", background: "#ecfdf5", color: "#059669", padding: "2px 6px", borderRadius: 6, border: "1px solid #a7f3d0", display:"flex", alignItems:"center", gap:4 }}>
+                        <BookOpen size={10} /> {g.mata_pelajaran}
                       </span>
                     )}
                   </div>
-                  {/* Roles Badges */}
-                  <div className="flex flex-wrap gap-1 mt-1">
+                  <div style={{ display:"flex", flexWrap:"wrap", gap:4, marginTop:8 }}>
                     {g.user?.role ? (
-                      g.user.role.split(",").map((r: string, idx: number) => (
-                        <span key={idx} className="text-[9px] font-bold tracking-wider bg-blue-50 text-blue-600 px-1.5 py-0.5 rounded border border-blue-100">
+                      g.user.role.split(",").map((r: string, i: number) => (
+                        <span key={i} style={{ fontSize:9, fontWeight:800, letterSpacing:"0.5px", background:"#eff6ff", color:"#2563eb", padding:"2px 6px", borderRadius:4, border:"1px solid #bfdbfe" }}>
                           {r.trim().toUpperCase()}
                         </span>
                       ))
                     ) : (
-                      <span className="text-[9px] font-bold tracking-wider bg-red-50 text-red-500 px-1.5 py-0.5 rounded border border-red-100">
-                        NO ACCOUNT
-                      </span>
+                      <span style={{ fontSize:9, fontWeight:800, letterSpacing:"0.5px", background:"#fef2f2", color:"#dc2626", padding:"2px 6px", borderRadius:4, border:"1px solid #fecaca" }}>NO ACCOUNT</span>
                     )}
                   </div>
                 </div>
               </div>
 
-              {/* Divider */}
-              <div className="w-full h-px bg-gradient-to-r from-slate-100 via-slate-200 to-transparent"></div>
+              <div style={{ height: 1, background: "#f1f5f9" }} />
 
-              {/* Contact Info & Actions */}
-              <div className="flex items-end justify-between gap-4 mt-auto">
-                <div className="space-y-2.5 flex-1 min-w-0">
-                  <div className="flex items-center gap-2.5 text-slate-500 group-hover:text-slate-700 transition-colors">
-                    <div className="w-6 h-6 bg-slate-50 rounded-lg flex items-center justify-center shrink-0">
-                      <Phone size={12} className="text-slate-400 group-hover:text-emerald-500 transition-colors" />
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginTop: "auto" }}>
+                <div style={{ display: "flex", flexDirection: "column", gap: 8, flex: 1, minWidth: 0 }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                    <div style={{ width: 24, height: 24, background: "#f8fafc", borderRadius: 6, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                      <Phone size={12} color="#94a3b8" />
                     </div>
-                    <span className="text-xs font-semibold truncate">{g.no_hp || "Belum ada No. HP"}</span>
+                    <span style={{ fontSize: 12, fontWeight: 600, color: "#64748b", whiteSpace:"nowrap", overflow:"hidden", textOverflow:"ellipsis" }}>
+                      {g.no_hp || "Belum ada No. HP"}
+                    </span>
                   </div>
-                  <div className="flex items-center gap-2.5 text-slate-500 group-hover:text-slate-700 transition-colors">
-                    <div className="w-6 h-6 bg-slate-50 rounded-lg flex items-center justify-center shrink-0">
-                      <Mail size={12} className="text-slate-400 group-hover:text-emerald-500 transition-colors" />
+                  <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                    <div style={{ width: 24, height: 24, background: "#f8fafc", borderRadius: 6, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                      <Mail size={12} color="#94a3b8" />
                     </div>
-                    <span className="text-xs font-semibold truncate">{g.email || "Belum ada Email"}</span>
+                    <span style={{ fontSize: 12, fontWeight: 600, color: "#64748b", whiteSpace:"nowrap", overflow:"hidden", textOverflow:"ellipsis" }}>
+                      {g.email || "Belum ada Email"}
+                    </span>
                   </div>
                 </div>
 
-                <div className="flex flex-col gap-1.5 shrink-0">
-                  <button onClick={() => handleEdit(g)} className="p-2.5 bg-slate-50 hover:bg-amber-50 text-slate-400 hover:text-amber-600 rounded-xl transition-all shadow-sm hover:shadow-md cursor-pointer group/btn" title="Edit Data">
-                    <Edit2 size={14} className="group-hover/btn:scale-110 transition-transform" />
+                <div style={{ display: "flex", gap: 6, flexShrink: 0 }}>
+                  <button onClick={() => handleEdit(g)} title="Edit" style={{
+                    width: 32, height: 32, borderRadius: 10, background: "#f8fafc", border: "1px solid #e2e8f0", color: "#64748b",
+                    display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", transition: "all 0.2s"
+                  }} onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = "#fef9c3"; (e.currentTarget as HTMLElement).style.borderColor = "#fcd34d"; (e.currentTarget as HTMLElement).style.color = "#92400e"; }} onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = "#f8fafc"; (e.currentTarget as HTMLElement).style.borderColor = "#e2e8f0"; (e.currentTarget as HTMLElement).style.color = "#64748b"; }}>
+                    <Edit2 size={14} />
                   </button>
-                  <button onClick={() => handleDelete(g.id, g.nama_lengkap)} className="p-2.5 bg-slate-50 hover:bg-red-50 text-slate-400 hover:text-red-600 rounded-xl transition-all shadow-sm hover:shadow-md cursor-pointer group/btn" title="Hapus Data">
-                    <Trash2 size={14} className="group-hover/btn:scale-110 transition-transform" />
+                  <button onClick={() => handleDelete(g.id, g.nama_lengkap)} title="Hapus" style={{
+                    width: 32, height: 32, borderRadius: 10, background: "#f8fafc", border: "1px solid #e2e8f0", color: "#64748b",
+                    display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", transition: "all 0.2s"
+                  }} onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = "#fef2f2"; (e.currentTarget as HTMLElement).style.borderColor = "#fca5a5"; (e.currentTarget as HTMLElement).style.color = "#dc2626"; }} onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = "#f8fafc"; (e.currentTarget as HTMLElement).style.borderColor = "#e2e8f0"; (e.currentTarget as HTMLElement).style.color = "#64748b"; }}>
+                    <Trash2 size={14} />
                   </button>
                 </div>
               </div>
