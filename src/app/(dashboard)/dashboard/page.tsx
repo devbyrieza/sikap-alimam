@@ -88,40 +88,32 @@ export default async function DashboardPage() {
   const isSuperAdmin = (session?.role || "").toLowerCase().includes("admin_super");
 
   return (
-    <div style={{ padding: "24px 28px", maxWidth: 1200, margin: "0 auto", display: "flex", flexDirection: "column", gap: 24 }}>
+    <div className="page-container">
       
       {/* ── Premium Hero Banner ─────────────────────────────────────────────── */}
-      <div style={{
-        background: "linear-gradient(135deg, #380000 0%, #550000 50%, #751414 100%)",
-        borderRadius: 24, padding: "32px 36px", color: "white",
-        display: "flex", justifyContent: "space-between", alignItems: "center",
-        flexWrap: "wrap", gap: 20,
-        boxShadow: "0 16px 40px rgba(85, 0, 0, 0.35), 0 4px 16px rgba(221, 193, 146, 0.2)",
-        border: "1px solid rgba(221, 193, 146, 0.25)",
-        position: "relative", overflow: "hidden",
-      }}>
+      <div className="hero-banner">
         {/* Decorative Background Elements */}
         <div style={{ position:"absolute", top:0, right:0, width:256, height:256, background:"rgba(221, 193, 146, 0.15)", borderRadius:"50%", filter:"blur(40px)", transform:"translate(30%, -50%)", pointerEvents:"none" }}></div>
         <div style={{ position:"absolute", bottom:0, left:0, width:192, height:192, background:"rgba(221, 193, 146, 0.1)", borderRadius:"50%", filter:"blur(40px)", transform:"translate(-25%, 50%)", pointerEvents:"none" }}></div>
         
-        <div style={{ position:"relative", zIndex:1, flex:1, minWidth:300 }}>
-          <div style={{ display:"flex", alignItems:"center", gap:10, marginBottom:6 }}>
+        <div style={{ position:"relative", zIndex:1, flex:1, minWidth:0, width: "100%" }}>
+          <div style={{ display:"flex", alignItems:"center", gap:10, marginBottom:6, flexWrap: "wrap" }}>
             <div style={{ display:"flex", alignItems:"center", gap:6, background:"rgba(221, 193, 146, 0.15)", padding:"6px 12px", borderRadius:20, border:"1px solid rgba(221, 193, 146, 0.35)", backdropFilter:"blur(8px)" }}>
               <div style={{ width:8, height:8, borderRadius:"50%", background:"#ddc192", boxShadow:"0 0 8px rgba(221, 193, 146, 0.9)" }}></div>
               <span style={{ fontSize:11, fontWeight:700, letterSpacing:"1px", color:"#fdf8f0", textTransform:"uppercase" }}>Sistem Informasi Terpadu</span>
             </div>
           </div>
-          <h1 style={{ fontSize:32, fontWeight:800, margin:"0 0 8px 0", display:"flex", alignItems:"center", gap:12, letterSpacing:"-0.5px" }}>
-            Ahlan wa Sahlan, {session?.nama ? session.nama.split(" ")[0] : "User"} <Hand size={28} color="#ddc192" />
+          <h1 style={{ fontSize: "clamp(20px, 4vw, 32px)", fontWeight:800, margin:"0 0 8px 0", display:"flex", alignItems:"center", gap:10, letterSpacing:"-0.5px", flexWrap: "wrap", wordBreak: "break-word" }}>
+            Ahlan wa Sahlan, {session?.nama ? session.nama.split(" ")[0] : "User"} <Hand size={24} color="#ddc192" />
           </h1>
-          <div style={{ display:"flex", alignItems:"center", gap:16, color:"rgba(253, 248, 240, 0.85)", fontSize:14 }}>
+          <div style={{ display:"flex", alignItems:"center", gap:12, color:"rgba(253, 248, 240, 0.85)", fontSize:13, flexWrap: "wrap" }}>
             <span style={{ display:"flex", alignItems:"center", gap:6 }}><Calendar size={14} color="#ddc192" /> {formatTanggal(today)}</span>
             <span style={{ display:"flex", alignItems:"center", gap:6 }}><Clock size={14} color="#ddc192" /> {formatJam(today)} WIB</span>
           </div>
         </div>
 
-        <div style={{ position:"relative", zIndex:1, textAlign:"right" }}>
-          <div style={{ fontSize:28, fontFamily:"var(--font-arabic)", color:"#ddc192", fontWeight:600, textShadow:"0 2px 12px rgba(221, 193, 146, 0.4)" }}>
+        <div style={{ position:"relative", zIndex:1, textAlign:"left" }}>
+          <div style={{ fontSize: "clamp(20px, 4vw, 28px)", fontFamily:"var(--font-arabic)", color:"#ddc192", fontWeight:600, textShadow:"0 2px 12px rgba(221, 193, 146, 0.4)" }}>
             بسم الله الرحمن الرحيم
           </div>
         </div>
