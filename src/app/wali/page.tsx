@@ -77,7 +77,7 @@ export default function WaliDashboard() {
               <div className="p-6 sm:p-7 flex items-center justify-between gap-6 flex-wrap">
                 <div className="flex items-center gap-4 sm:gap-5">
                   <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-primary/10 text-primary flex items-center justify-center font-black text-xl sm:text-2xl flex-shrink-0 shadow-inner">
-                    {anak.nama.charAt(0)}
+                    {(anak?.nama || "A").charAt(0)}
                   </div>
                   <div>
                     <div className="flex items-center gap-2 flex-wrap">

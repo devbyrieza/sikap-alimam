@@ -235,7 +235,7 @@ export default function MasterGuruPage() {
                   display: "flex", alignItems: "center", justifyContent: "center",
                   fontSize: 24, fontWeight: 800, boxShadow: "0 4px 12px rgba(16,185,129,0.3)"
                 }}>
-                  {formatName(g.nama_lengkap).charAt(0).toUpperCase()}
+                  {(formatName(g.nama_lengkap) || "G").charAt(0).toUpperCase()}
                 </div>
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <h3 style={{ margin: "0 0 6px 0", fontSize: 16, fontWeight: 800, color: "#1e293b", whiteSpace:"nowrap", overflow:"hidden", textOverflow:"ellipsis" }} title={formatName(g.nama_lengkap)}>

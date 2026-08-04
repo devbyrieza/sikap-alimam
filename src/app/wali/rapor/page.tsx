@@ -261,7 +261,7 @@ export default function RaporWaliPage() {
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 relative z-10">
             <div className="flex items-center gap-4 sm:gap-6">
               <div className="w-16 h-16 sm:w-20 sm:h-20 bg-white/20 backdrop-blur-md rounded-2xl border border-white/30 text-white flex items-center justify-center font-black text-2xl sm:text-3xl shadow-inner flex-shrink-0">
-                {santri.nama.charAt(0)}
+                {(santri?.nama || "S").charAt(0)}
               </div>
               <div>
                 <div className="flex items-center gap-2 mb-1 flex-wrap">
