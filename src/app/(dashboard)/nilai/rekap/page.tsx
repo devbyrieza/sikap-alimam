@@ -171,13 +171,23 @@ export default function RekapNilaiPage() {
       />
 
       {/* Filter */}
-      <div style={{ background: "white", borderRadius: "20px", padding: "22px 24px", boxShadow: "0 2px 12px rgba(85,0,0,0.03)", border: "1px solid #ebdcc3", display: "flex", flexDirection: "column", gap: "18px" }}>
+      <div
+        className="w-full flex flex-col gap-4 box-border"
+        style={{
+          background: "white",
+          borderRadius: "20px",
+          padding: "clamp(16px, 3.5vw, 24px)",
+          boxShadow: "0 2px 12px rgba(85,0,0,0.03)",
+          border: "1px solid #ebdcc3",
+        }}
+      >
         <div style={{ fontSize: "15px", fontWeight: "800", color: "#550000" }}>Filter Rekap Nilai</div>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "16px", alignItems: "flex-end" }}>
-          <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 w-full items-end">
+          <div className="flex flex-col gap-1.5 min-w-0 w-full">
             <label style={{ fontSize: "13px", fontWeight: "700", color: "#550000" }}>Kelas</label>
             <select
-              style={{ padding: "11px 14px", borderRadius: "12px", border: "1px solid #ebdcc3", background: "#fdf8f0", fontSize: "14px", width: "100%", outline: "none", fontWeight: 600 }}
+              className="w-full min-w-0 box-border"
+              style={{ padding: "11px 14px", borderRadius: "12px", border: "1px solid #ebdcc3", background: "#fdf8f0", fontSize: "14px", outline: "none", fontWeight: 600 }}
               value={kelas_id}
               onChange={(e) => setKelasId(e.target.value)}
               disabled={loadingKelas}
@@ -190,10 +200,11 @@ export default function RekapNilaiPage() {
               ))}
             </select>
           </div>
-          <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+          <div className="flex flex-col gap-1.5 min-w-0 w-full">
             <label style={{ fontSize: "13px", fontWeight: "700", color: "#550000" }}>Semester</label>
             <select
-              style={{ padding: "11px 14px", borderRadius: "12px", border: "1px solid #ebdcc3", background: "#fdf8f0", fontSize: "14px", width: "100%", outline: "none", fontWeight: 600 }}
+              className="w-full min-w-0 box-border"
+              style={{ padding: "11px 14px", borderRadius: "12px", border: "1px solid #ebdcc3", background: "#fdf8f0", fontSize: "14px", outline: "none", fontWeight: 600 }}
               value={semester}
               onChange={(e) => setSemester(e.target.value)}
             >
@@ -204,10 +215,11 @@ export default function RekapNilaiPage() {
               ))}
             </select>
           </div>
-          <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+          <div className="flex flex-col gap-1.5 min-w-0 w-full">
             <label style={{ fontSize: "13px", fontWeight: "700", color: "#550000" }}>Tahun Ajaran</label>
             <select
-              style={{ padding: "11px 14px", borderRadius: "12px", border: "1px solid #ebdcc3", background: "#fdf8f0", fontSize: "14px", width: "100%", outline: "none", fontWeight: 600 }}
+              className="w-full min-w-0 box-border"
+              style={{ padding: "11px 14px", borderRadius: "12px", border: "1px solid #ebdcc3", background: "#fdf8f0", fontSize: "14px", outline: "none", fontWeight: 600 }}
               value={tahun_ajaran}
               onChange={(e) => setTahunAjaran(e.target.value)}
             >

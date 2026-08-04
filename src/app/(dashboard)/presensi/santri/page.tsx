@@ -296,16 +296,26 @@ export default function PresensiSantriPage() {
       />
 
       {/* Step 1: Pilih Kelas & Tanggal */}
-      <div style={{ background: "white", borderRadius: "20px", padding: "22px 24px", boxShadow: "0 2px 12px rgba(85,0,0,0.03)", border: "1px solid #ebdcc3", display: "flex", flexDirection: "column", gap: "16px" }}>
+      <div
+        className="w-full flex flex-col gap-4 box-border"
+        style={{
+          background: "white",
+          borderRadius: "20px",
+          padding: "clamp(16px, 3.5vw, 24px)",
+          boxShadow: "0 2px 12px rgba(85,0,0,0.03)",
+          border: "1px solid #ebdcc3",
+        }}
+      >
         <div style={{ fontSize: "15px", fontWeight: "800", color: "#550000", display: "flex", alignItems: "center", gap: "8px" }}>
           <Users size={18} color="#ddc192" />
           Pilih Kelas &amp; Tanggal Presensi
         </div>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: "16px", alignItems: "flex-end" }}>
-          <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 w-full items-end">
+          <div className="flex flex-col gap-1.5 min-w-0 w-full">
             <label style={{ fontSize: "13px", fontWeight: "700", color: "#550000" }}>Jenjang</label>
             {loadingMaster ? (
               <div
+                className="w-full box-border"
                 style={{ padding: "11px 14px", borderRadius: "12px", border: "1px solid #ebdcc3", background: "#fdf8f0", color: "#64748b", display: "flex", alignItems: "center", gap: 8, fontSize: "14px" }}
               >
                 <Loader2 size={16} className="animate-spin text-amber-700" />
@@ -313,7 +323,8 @@ export default function PresensiSantriPage() {
               </div>
             ) : (
               <select
-                style={{ padding: "11px 14px", borderRadius: "12px", border: "1px solid #ebdcc3", background: "#fdf8f0", fontSize: "14px", width: "100%", outline: "none", fontWeight: 600 }}
+                className="w-full min-w-0 box-border"
+                style={{ padding: "11px 14px", borderRadius: "12px", border: "1px solid #ebdcc3", background: "#fdf8f0", fontSize: "14px", outline: "none", fontWeight: 600 }}
                 value={selectedJenjang}
                 onChange={(e) => {
                   setSelectedJenjang(e.target.value);
@@ -328,10 +339,11 @@ export default function PresensiSantriPage() {
             )}
           </div>
 
-          <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+          <div className="flex flex-col gap-1.5 min-w-0 w-full">
             <label style={{ fontSize: "13px", fontWeight: "700", color: "#550000" }}>Kelas</label>
             {loadingMaster ? (
               <div
+                className="w-full box-border"
                 style={{ padding: "11px 14px", borderRadius: "12px", border: "1px solid #ebdcc3", background: "#fdf8f0", color: "#64748b", display: "flex", alignItems: "center", gap: 8, fontSize: "14px" }}
               >
                 <Loader2 size={16} className="animate-spin text-amber-700" />
@@ -339,7 +351,8 @@ export default function PresensiSantriPage() {
               </div>
             ) : (
               <select
-                style={{ padding: "11px 14px", borderRadius: "12px", border: "1px solid #ebdcc3", background: "#fdf8f0", fontSize: "14px", width: "100%", outline: "none", fontWeight: 600 }}
+                className="w-full min-w-0 box-border"
+                style={{ padding: "11px 14px", borderRadius: "12px", border: "1px solid #ebdcc3", background: "#fdf8f0", fontSize: "14px", outline: "none", fontWeight: 600 }}
                 value={selectedKelas}
                 onChange={(e) => setSelectedKelas(e.target.value)}
                 disabled={!selectedJenjang}
@@ -356,19 +369,21 @@ export default function PresensiSantriPage() {
             )}
           </div>
 
-          <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+          <div className="flex flex-col gap-1.5 min-w-0 w-full">
             <label style={{ fontSize: "13px", fontWeight: "700", color: "#550000" }}>Tanggal</label>
             <input
               type="date"
-              style={{ padding: "11px 14px", borderRadius: "12px", border: "1px solid #ebdcc3", background: "#fdf8f0", fontSize: "14px", width: "100%", outline: "none", fontWeight: 600 }}
+              className="w-full min-w-0 box-border"
+              style={{ padding: "11px 14px", borderRadius: "12px", border: "1px solid #ebdcc3", background: "#fdf8f0", fontSize: "14px", outline: "none", fontWeight: 600 }}
               value={tanggal}
               onChange={(e) => setTanggal(e.target.value)}
             />
           </div>
 
-          <div>
+          <div className="w-full min-w-0">
             <button
-              style={{ background: "#550000", color: "white", padding: "11px 20px", borderRadius: "12px", border: "1px solid #550000", fontWeight: 700, cursor: "pointer", display: "inline-flex", alignItems: "center", justifyContent: "center", gap: "8px", width: "100%", height: "44px", boxShadow: "0 2px 8px rgba(85,0,0,0.2)" }}
+              className="w-full box-border flex items-center justify-center gap-2"
+              style={{ background: "#550000", color: "white", padding: "11px 20px", borderRadius: "12px", border: "1px solid #550000", fontWeight: 700, cursor: "pointer", height: "44px", boxShadow: "0 2px 8px rgba(85,0,0,0.2)" }}
               onClick={loadPresensi}
               disabled={!selectedKelas || !tanggal || loadingSantri}
             >

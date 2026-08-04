@@ -402,16 +402,27 @@ export default function InputNilaiPage() {
 
       {/* ── STEP 1: Pilih Parameter ─────────────────────────────────── */}
       {step === 1 && (
-        <div style={{ background: "white", borderRadius: "24px", padding: "32px", boxShadow: "0 4px 20px rgba(85,0,0,0.03)", border: "1px solid #ebdcc3", maxWidth: 640, display: "flex", flexDirection: "column", gap: "22px" }}>
+        <div
+          className="w-full max-w-[640px] flex flex-col gap-5 sm:gap-6 box-border"
+          style={{
+            background: "white",
+            borderRadius: "24px",
+            padding: "clamp(18px, 4vw, 32px)",
+            boxShadow: "0 4px 20px rgba(85,0,0,0.03)",
+            border: "1px solid #ebdcc3",
+          }}
+        >
           <p style={{ fontSize: "18px", fontWeight: "800", color: "#550000", margin: 0, display: "flex", alignItems: "center", gap: "10px" }}>
             <Users size={20} color="#550000" />
             Parameter Penilaian
           </p>
 
-          <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+          {/* Periode */}
+          <div className="flex flex-col gap-1.5 min-w-0 w-full">
             <label style={{ fontSize: "13px", fontWeight: "700", color: "#550000" }}>Periode Penilaian</label>
             <select
-              style={{ padding: "12px 16px", borderRadius: "12px", border: "1px solid #ebdcc3", background: "#fdf8f0", fontSize: "14px", outline: "none", fontWeight: 600 }}
+              className="w-full min-w-0 box-border"
+              style={{ padding: "12px 14px", borderRadius: "12px", border: "1px solid #ebdcc3", background: "#fdf8f0", fontSize: "14px", outline: "none", fontWeight: 600 }}
               value={periode}
               onChange={(e) => setPeriode(e.target.value)}
             >
@@ -420,11 +431,13 @@ export default function InputNilaiPage() {
             </select>
           </div>
 
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px" }}>
-            <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+          {/* Jenjang & Kelas */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full">
+            <div className="flex flex-col gap-1.5 min-w-0 w-full">
               <label style={{ fontSize: "13px", fontWeight: "700", color: "#550000" }}>Jenjang</label>
               <select
-                style={{ padding: "12px 16px", borderRadius: "12px", border: "1px solid #ebdcc3", background: "#fdf8f0", fontSize: "14px", outline: "none" }}
+                className="w-full min-w-0 box-border"
+                style={{ padding: "12px 14px", borderRadius: "12px", border: "1px solid #ebdcc3", background: "#fdf8f0", fontSize: "14px", outline: "none", fontWeight: 600 }}
                 value={jenjangFilter}
                 onChange={(e) => setJenjangFilter(e.target.value)}
                 disabled={loadingKelas}
@@ -436,10 +449,11 @@ export default function InputNilaiPage() {
               </select>
             </div>
 
-            <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+            <div className="flex flex-col gap-1.5 min-w-0 w-full">
               <label style={{ fontSize: "13px", fontWeight: "700", color: "#550000" }}>Kelas</label>
               <select
-                style={{ padding: "12px 16px", borderRadius: "12px", border: "1px solid #ebdcc3", background: "#fdf8f0", fontSize: "14px", outline: "none" }}
+                className="w-full min-w-0 box-border"
+                style={{ padding: "12px 14px", borderRadius: "12px", border: "1px solid #ebdcc3", background: "#fdf8f0", fontSize: "14px", outline: "none", fontWeight: 600 }}
                 value={kelas_id}
                 onChange={(e) => setKelasId(e.target.value)}
                 disabled={loadingKelas || (jenjangFilter !== "" && filteredKelasList.length === 0)}
@@ -454,10 +468,12 @@ export default function InputNilaiPage() {
             </div>
           </div>
 
-          <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+          {/* Mata Pelajaran */}
+          <div className="flex flex-col gap-1.5 min-w-0 w-full">
             <label style={{ fontSize: "13px", fontWeight: "700", color: "#550000" }}>Mata Pelajaran</label>
             <select
-              style={{ padding: "12px 16px", borderRadius: "12px", border: "1px solid #ebdcc3", background: "#fdf8f0", fontSize: "14px", outline: "none" }}
+              className="w-full min-w-0 box-border"
+              style={{ padding: "12px 14px", borderRadius: "12px", border: "1px solid #ebdcc3", background: "#fdf8f0", fontSize: "14px", outline: "none", fontWeight: 600 }}
               value={mapel_id}
               onChange={(e) => setMapelId(e.target.value)}
               disabled={!kelas_id || loadingMapel}
@@ -476,11 +492,13 @@ export default function InputNilaiPage() {
             )}
           </div>
 
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px" }}>
-            <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+          {/* Semester & Tahun Ajaran */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full">
+            <div className="flex flex-col gap-1.5 min-w-0 w-full">
               <label style={{ fontSize: "13px", fontWeight: "700", color: "#550000" }}>Semester</label>
               <select
-                style={{ padding: "12px 16px", borderRadius: "12px", border: "1px solid #ebdcc3", background: "#fdf8f0", fontSize: "14px", outline: "none" }}
+                className="w-full min-w-0 box-border"
+                style={{ padding: "12px 14px", borderRadius: "12px", border: "1px solid #ebdcc3", background: "#fdf8f0", fontSize: "14px", outline: "none", fontWeight: 600 }}
                 value={semester}
                 onChange={(e) => setSemester(e.target.value)}
               >
@@ -491,10 +509,11 @@ export default function InputNilaiPage() {
                 ))}
               </select>
             </div>
-            <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+            <div className="flex flex-col gap-1.5 min-w-0 w-full">
               <label style={{ fontSize: "13px", fontWeight: "700", color: "#550000" }}>Tahun Ajaran</label>
               <select
-                style={{ padding: "12px 16px", borderRadius: "12px", border: "1px solid #ebdcc3", background: "#fdf8f0", fontSize: "14px", outline: "none" }}
+                className="w-full min-w-0 box-border"
+                style={{ padding: "12px 14px", borderRadius: "12px", border: "1px solid #ebdcc3", background: "#fdf8f0", fontSize: "14px", outline: "none", fontWeight: 600 }}
                 value={tahun_ajaran}
                 onChange={(e) => setTahunAjaran(e.target.value)}
               >
@@ -507,8 +526,10 @@ export default function InputNilaiPage() {
             </div>
           </div>
 
-          <div style={{ display: "flex", justifyContent: "flex-end", marginTop: "8px" }}>
+          {/* Submit Action */}
+          <div className="flex justify-end mt-2 w-full">
             <button
+              className="w-full sm:w-auto flex items-center justify-center gap-2"
               style={{
                 background: !kelas_id || !mapel_id ? "#e2e8f0" : "#550000",
                 color: !kelas_id || !mapel_id ? "#94a3b8" : "#ffffff",
@@ -517,9 +538,6 @@ export default function InputNilaiPage() {
                 fontWeight: 800,
                 fontSize: "14px",
                 border: "none",
-                display: "flex",
-                alignItems: "center",
-                gap: "8px",
                 cursor: !kelas_id || !mapel_id ? "not-allowed" : "pointer",
                 boxShadow: !kelas_id || !mapel_id ? "none" : "0 4px 14px rgba(85, 0, 0, 0.25)",
                 transition: "all 0.2s",
@@ -527,7 +545,7 @@ export default function InputNilaiPage() {
               disabled={!kelas_id || !mapel_id}
               onClick={() => setStep(2)}
             >
-              Lanjut ke Lembar Nilai
+              <span>Lanjut ke Lembar Nilai</span>
               <svg width="18" height="18" fill="none" viewBox="0 0 24 24">
                 <path stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" d="M9 18l6-6-6-6" />
               </svg>
@@ -713,11 +731,22 @@ export default function InputNilaiPage() {
             </div>
           </div>
 
-          <div style={{ display: "flex", gap: "12px", justifyContent: "flex-end", alignItems: "center", marginTop: "16px" }}>
-            <button type="button" style={{ background: "white", color: "#550000", padding: "12px 20px", borderRadius: "14px", fontWeight: "700", border: "1px solid #ebdcc3", cursor: "pointer" }} onClick={() => setStep(1)}>
+          <div className="flex flex-col-reverse sm:flex-row gap-3 justify-end items-stretch sm:items-center mt-4 w-full">
+            <button
+              type="button"
+              className="w-full sm:w-auto"
+              style={{ background: "white", color: "#550000", padding: "12px 20px", borderRadius: "14px", fontWeight: "700", border: "1px solid #ebdcc3", cursor: "pointer" }}
+              onClick={() => setStep(1)}
+            >
               Batal
             </button>
-            <button type="button" style={{ background: "#550000", color: "white", padding: "12px 26px", borderRadius: "14px", fontWeight: "800", border: "none", display: "flex", alignItems: "center", gap: "8px", cursor: saving || loadingSantri ? "not-allowed" : "pointer", boxShadow: "0 4px 14px rgba(85,0,0,0.25)" }} onClick={handleSimpan} disabled={saving || loadingSantri}>
+            <button
+              type="button"
+              className="w-full sm:w-auto flex items-center justify-center gap-2"
+              style={{ background: "#550000", color: "white", padding: "12px 26px", borderRadius: "14px", fontWeight: "800", border: "none", cursor: saving || loadingSantri ? "not-allowed" : "pointer", boxShadow: "0 4px 14px rgba(85,0,0,0.25)" }}
+              onClick={handleSimpan}
+              disabled={saving || loadingSantri}
+            >
               {saving ? (
                 <><Loader2 size={18} className="animate-spin" /> Menyimpan...</>
               ) : (
