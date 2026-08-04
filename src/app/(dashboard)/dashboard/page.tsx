@@ -96,7 +96,7 @@ export default async function DashboardPage() {
             </div>
           </div>
           <h1 style={{ fontSize:32, fontWeight:800, margin:"0 0 8px 0", display:"flex", alignItems:"center", gap:12, letterSpacing:"-0.5px" }}>
-            Ahlan wa Sahlan, {session?.nama?.split(" ")[0]} <Hand size={28} color="#fcd34d" />
+            Ahlan wa Sahlan, {session?.nama ? session.nama.split(" ")[0] : "User"} <Hand size={28} color="#fcd34d" />
           </h1>
           <div style={{ display:"flex", alignItems:"center", gap:16, color:"rgba(255,255,255,0.8)", fontSize:14 }}>
             <span style={{ display:"flex", alignItems:"center", gap:6 }}><Calendar size={14} /> {formatTanggal(today)}</span>
