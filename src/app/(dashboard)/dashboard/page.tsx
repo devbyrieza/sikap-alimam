@@ -212,10 +212,10 @@ export default async function DashboardPage() {
               {jurnalTerbaru.map((j) => (
                 <div key={j.id} style={{ background:"#f8fafc", padding:16, borderRadius:12, borderLeft:"4px solid #3b82f6" }}>
                   <div style={{ fontSize:14, fontWeight:700, color:"#0f172a", marginBottom:4 }}>
-                    {j.mapel.nama} — Kelas {j.kelas.nama}
+                    {j.mapel?.nama || "Mapel Kosong"} — Kelas {j.kelas?.nama || "?"}
                   </div>
                   <div style={{ fontSize:12, color:"#64748b", marginBottom:8, display:"flex", alignItems:"center", gap:6 }}>
-                    <span style={{ fontWeight:600, color:"#334155" }}>{j.pegawai.nama_lengkap}</span> • {j.tanggal.toLocaleDateString("id-ID", { day:"numeric", month:"short" })}
+                    <span style={{ fontWeight:600, color:"#334155" }}>{j.pegawai?.nama_lengkap || "Guru"}</span> • {j.tanggal.toLocaleDateString("id-ID", { day:"numeric", month:"short" })}
                   </div>
                   <div style={{ fontSize:13, color:"#475569", lineHeight:1.5, display:"-webkit-box", WebkitLineClamp:1, WebkitBoxOrient:"vertical", overflow:"hidden" }}>
                     {j.materi}
@@ -300,7 +300,7 @@ export default async function DashboardPage() {
               {absenHariIni.map((a) => (
                 <div key={a.id} style={{ display:"flex", alignItems:"center", justifyContent:"space-between", padding:"12px 16px", background:"#f8fafc", borderRadius:12, border:"1px solid #f1f5f9" }}>
                   <div style={{ fontSize:13, fontWeight:700, color:"#334155" }}>
-                    {a.pegawai.nama_lengkap}
+                    {a.pegawai?.nama_lengkap || "Tanpa Nama"}
                   </div>
                   <div style={{ display:"flex", alignItems:"center", gap:12 }}>
                     {a.jam_masuk && (
