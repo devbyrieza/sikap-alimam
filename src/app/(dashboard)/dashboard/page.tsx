@@ -120,15 +120,15 @@ export default async function DashboardPage() {
       </div>
 
       {/* ── Key Metrics Grid ────────────────────────────────────────────────── */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: 20 }}>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: 28 }}>
         {/* Guru Hadir */}
-        <div style={{ background:"white", padding:24, borderRadius:20, border:"1px solid #ebdcc3", boxShadow:"0 4px 20px rgba(85,0,0,0.03)", display:"flex", alignItems:"center", gap:16, transition:"transform 0.2s" }}>
-          <div style={{ width:56, height:56, borderRadius:16, background:"#fdf5f5", color:"#550000", border:"1px solid #fae4e4", display:"flex", alignItems:"center", justifyContent:"center" }}>
+        <div className="stat-card animate-slide-up" style={{ animationDelay: "0.05s" }}>
+          <div className="stat-icon" style={{ background:"#fdf5f5", color:"#550000", border:"1px solid #fae4e4" }}>
             <UserCheck size={28} />
           </div>
           <div>
-            <div style={{ fontSize:13, fontWeight:600, color:"#64748b", marginBottom:4 }}>Guru Hadir Hari Ini</div>
-            <div style={{ fontSize:24, fontWeight:800, color:"#1a1a1a", lineHeight:1 }}>
+            <div className="stat-label">Guru Hadir Hari Ini</div>
+            <div className="stat-value">
               {hadirAsatidz} <span style={{ fontSize:16, color:"#94a3b8", fontWeight:600 }}>/ {totalAsatidz}</span>
             </div>
             <div style={{ fontSize:12, fontWeight:700, color: pctHadir >= 80 ? "#16a34a" : "#d97706", marginTop:6 }}>
@@ -138,13 +138,13 @@ export default async function DashboardPage() {
         </div>
 
         {/* Jurnal */}
-        <div style={{ background:"white", padding:24, borderRadius:20, border:"1px solid #ebdcc3", boxShadow:"0 4px 20px rgba(85,0,0,0.03)", display:"flex", alignItems:"center", gap:16, transition:"transform 0.2s" }}>
-          <div style={{ width:56, height:56, borderRadius:16, background:"#fdf8f0", color:"#b89758", border:"1px solid #f6ecd9", display:"flex", alignItems:"center", justifyContent:"center" }}>
+        <div className="stat-card animate-slide-up" style={{ animationDelay: "0.1s" }}>
+          <div className="stat-icon" style={{ background:"#fdf8f0", color:"#b89758", border:"1px solid #f6ecd9" }}>
             <BookMarked size={28} />
           </div>
           <div>
-            <div style={{ fontSize:13, fontWeight:600, color:"#64748b", marginBottom:4 }}>Jurnal Terisi</div>
-            <div style={{ fontSize:24, fontWeight:800, color:"#1a1a1a", lineHeight:1 }}>
+            <div className="stat-label">Jurnal Terisi</div>
+            <div className="stat-value">
               {jurnalHariIni}
             </div>
             <div style={{ fontSize:12, fontWeight:600, color:"#94a3b8", marginTop:6 }}>Entri hari ini</div>
@@ -152,13 +152,13 @@ export default async function DashboardPage() {
         </div>
 
         {/* Santri Aktif */}
-        <div style={{ background:"white", padding:24, borderRadius:20, border:"1px solid #ebdcc3", boxShadow:"0 4px 20px rgba(85,0,0,0.03)", display:"flex", alignItems:"center", gap:16, transition:"transform 0.2s" }}>
-          <div style={{ width:56, height:56, borderRadius:16, background:"#fdf5f5", color:"#550000", border:"1px solid #fae4e4", display:"flex", alignItems:"center", justifyContent:"center" }}>
+        <div className="stat-card animate-slide-up" style={{ animationDelay: "0.15s" }}>
+          <div className="stat-icon" style={{ background:"#fdf5f5", color:"#550000", border:"1px solid #fae4e4" }}>
             <ClipboardCheck size={28} />
           </div>
           <div>
-            <div style={{ fontSize:13, fontWeight:600, color:"#64748b", marginBottom:4 }}>Total Santri Aktif</div>
-            <div style={{ fontSize:24, fontWeight:800, color:"#1a1a1a", lineHeight:1 }}>
+            <div className="stat-label">Total Santri Aktif</div>
+            <div className="stat-value">
               {totalSantri}
             </div>
             <div style={{ fontSize:12, fontWeight:600, color:"#94a3b8", marginTop:6 }}>Terdaftar di sistem</div>
@@ -166,13 +166,13 @@ export default async function DashboardPage() {
         </div>
 
         {/* Guru Aktif */}
-        <div style={{ background:"white", padding:24, borderRadius:20, border:"1px solid #ebdcc3", boxShadow:"0 4px 20px rgba(85,0,0,0.03)", display:"flex", alignItems:"center", gap:16, transition:"transform 0.2s" }}>
-          <div style={{ width:56, height:56, borderRadius:16, background:"#fdf8f0", color:"#b89758", border:"1px solid #f6ecd9", display:"flex", alignItems:"center", justifyContent:"center" }}>
+        <div className="stat-card animate-slide-up" style={{ animationDelay: "0.2s" }}>
+          <div className="stat-icon" style={{ background:"#fdf8f0", color:"#b89758", border:"1px solid #f6ecd9" }}>
             <TrendingUp size={28} />
           </div>
           <div>
-            <div style={{ fontSize:13, fontWeight:600, color:"#64748b", marginBottom:4 }}>Total Guru & Staf</div>
-            <div style={{ fontSize:24, fontWeight:800, color:"#1a1a1a", lineHeight:1 }}>
+            <div className="stat-label">Total Guru & Staf</div>
+            <div className="stat-value">
               {totalAsatidz}
             </div>
             <div style={{ fontSize:12, fontWeight:600, color:"#94a3b8", marginTop:6 }}>Data Kepegawaian</div>

@@ -205,6 +205,10 @@ export default function Sidebar({ user }: SidebarProps) {
             href={item.href}
             className={`sidebar-link ${isActive(item.href) ? "active" : ""}`}
             onClick={() => setMobileOpen(false)}
+            style={{
+              transform: isActive(item.href) ? "none" : undefined,
+              transition: "all 0.18s cubic-bezier(0.34, 1.56, 0.64, 1)",
+            }}
           >
             {item.icon}
             {item.label}
@@ -366,11 +370,13 @@ export default function Sidebar({ user }: SidebarProps) {
           left: 0,
           right: 0,
           height: 56,
-          background: "var(--primary-dark)",
+          background: "linear-gradient(135deg, #380000 0%, #550000 60%, #6e0b0b 100%)",
+          borderBottom: "1px solid rgba(221, 193, 146, 0.2)",
           zIndex: 50,
           padding: "0 16px",
           alignItems: "center",
           justifyContent: "space-between",
+          boxShadow: "0 2px 12px rgba(85,0,0,0.25)",
         }}
         className="mobile-header"
       >
