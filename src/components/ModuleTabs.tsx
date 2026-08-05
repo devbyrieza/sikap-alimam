@@ -19,7 +19,7 @@ export default function ModuleTabs({ tabs }: ModuleTabsProps) {
   const pathname = usePathname();
 
   return (
-    <div style={{ marginBottom: 24 }}>
+    <div style={{ marginBottom: 24, maxWidth: "100%", overflow: "hidden" }}>
       <div
         className="hide-scrollbar"
         style={{
@@ -54,6 +54,7 @@ export default function ModuleTabs({ tabs }: ModuleTabsProps) {
                 background: isActive ? "var(--primary)" : "transparent",
                 textDecoration: "none",
                 whiteSpace: "nowrap",
+                flexShrink: 0,
                 transition: "all 0.2s ease",
                 boxShadow: isActive ? "0 4px 12px rgba(155, 27, 34, 0.25)" : "none",
               }}
