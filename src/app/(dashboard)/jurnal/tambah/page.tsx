@@ -367,7 +367,7 @@ export default function TambahJurnalPage() {
                 )}
               </div>
 
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "24px" }}>
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "24px" }}>
                 {/* Asatidz */}
                 <div>
                   <label style={{ display: "block", fontSize: "13px", fontWeight: 600, color: "#475569", marginBottom: "8px" }}>
@@ -505,7 +505,7 @@ export default function TambahJurnalPage() {
                 </div>
 
                 {/* Mata Pelajaran */}
-                <div style={{ gridColumn: "span 2" }}>
+                <div>
                   <label style={{ display: "block", fontSize: "13px", fontWeight: 600, color: "#475569", marginBottom: "8px" }}>
                     Mata Pelajaran <span style={{ color: "#ef4444" }}>*</span>
                   </label>
@@ -514,7 +514,7 @@ export default function TambahJurnalPage() {
                     onChange={(e) => setMapelId(e.target.value)}
                     required
                     disabled={!kelasId}
-                    style={{ padding: "12px 16px", borderRadius: "12px", border: "1px solid #cbd5e1", fontSize: "15px", outline: "none", width: "100%", maxWidth: "50%", backgroundColor: !kelasId ? "#f1f5f9" : "white" }}
+                    style={{ padding: "12px 16px", borderRadius: "12px", border: "1px solid #cbd5e1", fontSize: "15px", outline: "none", width: "100%", backgroundColor: !kelasId ? "#f1f5f9" : "white" }}
                   >
                     <option value="">
                       {kelasId ? "— Pilih Mata Pelajaran —" : "— Pilih kelas terlebih dahulu —"}
@@ -623,7 +623,7 @@ export default function TambahJurnalPage() {
                 type="submit"
                 disabled={submitting}
                 style={{
-                  background: "#0f172a",
+                  background: "#550000",
                   color: "white",
                   padding: "14px 28px",
                   borderRadius: "14px",
@@ -635,7 +635,8 @@ export default function TambahJurnalPage() {
                   cursor: submitting ? "not-allowed" : "pointer",
                   opacity: submitting ? 0.7 : 1,
                   fontSize: "15px",
-                  boxShadow: "0 4px 6px rgba(0,0,0,0.1)"
+                  boxShadow: "0 4px 14px rgba(85,0,0,0.25)",
+                  transition: "all 0.2s"
                 }}
               >
                 {submitting ? (
