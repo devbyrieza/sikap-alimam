@@ -70,6 +70,29 @@ export default function PresensiSantriPage() {
   const [loadingSantri, setLoadingSantri] = useState(false);
   const [saving, setSaving] = useState(false);
 
+  // Load draft dari localStorage
+  useEffect(() => {
+    const draft = localStorage.getItem("siakad_presensi_draft");
+    if (draft) {
+      try {
+        const p = JSON.parse(draft);
+        if (p.selectedJenjang) setSelectedJenjang(p.selectedJenjang);
+        if (p.selectedKelas) setSelectedKelas(p.selectedKelas);
+        if (p.tanggal) setTanggal(p.tanggal);
+        if (p.statusMap) setStatusMap(p.statusMap);
+        if (p.keteranganMap) setKeteranganMap(p.keteranganMap);
+      } catch (e) { /* ignore */ }
+    }
+  }, []);
+
+  // Autosave draft ke localStorage
+  useEffect(() => {
+    if (selectedKelas || Object.keys(statusMap).length > 0 || Object.keys(keteranganMap).length > 0) {
+      const p = { selectedJenjang, selectedKelas, tanggal, statusMap, keteranganMap };
+      localStorage.setItem("siakad_presensi_draft", JSON.stringify(p));
+    }
+  }, [selectedJenjang, selectedKelas, tanggal, statusMap, keteranganMap]);
+
   // Load kelas list from master
   useEffect(() => {
     fetch("/api/master")
@@ -241,6 +264,8 @@ export default function PresensiSantriPage() {
 
       const json = await res.json();
       if (!res.ok) throw new Error(json.error || "Gagal menyimpan");
+
+      localStorage.removeItem("siakad_presensi_draft");
 
       Swal.fire({
         icon: "success",
