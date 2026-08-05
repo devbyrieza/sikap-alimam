@@ -33,9 +33,14 @@ export default async function DashboardPage() {
   let jurnalTerbaru: any[] = [];
   let absenHariIni: any[] = [];
   let presensiSantri: any[] = [];
+  let jadwalHariIni: any[] = [];
 
   try {
     const todayDate = new Date(todayStr);
+    
+    // Cari nama hari dalam bahasa Indonesia
+    const dayNames = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
+    const currentDayName = dayNames[today.getDay()];
     const results = await Promise.allSettled([
       prisma.pegawai.count({
         where: {
@@ -65,6 +70,12 @@ export default async function DashboardPage() {
       prisma.presensiSiswa.findMany({
         where: { tanggal: todayDate }, select: { status: true },
       }),
+      // Query 7: Jadwal Mengajar (hanya jika login sbg guru)
+      session?.asatidz_id ? prisma.jadwalPelajaran.findMany({
+        where: { pegawai_id: session.asatidz_id, hari: currentDayName },
+        include: { mapel: { select: { nama: true } }, kelas: { select: { nama: true } } },
+        orderBy: { jam_ke: "asc" }
+      }) : Promise.resolve([])
     ]);
 
     if (results[0].status === "fulfilled") totalAsatidz = results[0].value;
@@ -74,6 +85,7 @@ export default async function DashboardPage() {
     if (results[4].status === "fulfilled") jurnalTerbaru = results[4].value || [];
     if (results[5].status === "fulfilled") absenHariIni = results[5].value || [];
     if (results[6].status === "fulfilled") presensiSantri = results[6].value || [];
+    if (results[7].status === "fulfilled") jadwalHariIni = results[7].value || [];
   } catch (err) {
     console.error("DashboardPage: error fetching stats:", err);
   }
@@ -121,21 +133,23 @@ export default async function DashboardPage() {
 
       {/* ── Key Metrics Grid ────────────────────────────────────────────────── */}
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: 28 }}>
-        {/* Guru Hadir */}
-        <div className="stat-card animate-slide-up" style={{ animationDelay: "0.05s" }}>
-          <div className="stat-icon" style={{ background:"#fdf5f5", color:"#550000", border:"1px solid #fae4e4" }}>
-            <UserCheck size={28} />
-          </div>
-          <div>
-            <div className="stat-label">Guru Hadir Hari Ini</div>
-            <div className="stat-value">
-              {hadirAsatidz} <span style={{ fontSize:16, color:"#94a3b8", fontWeight:600 }}>/ {totalAsatidz}</span>
+        {/* Guru Hadir (Hanya Admin) */}
+        {isSuperAdmin && (
+          <div className="stat-card animate-slide-up" style={{ animationDelay: "0.05s" }}>
+            <div className="stat-icon" style={{ background:"#fdf5f5", color:"#550000", border:"1px solid #fae4e4" }}>
+              <UserCheck size={28} />
             </div>
-            <div style={{ fontSize:12, fontWeight:700, color: pctHadir >= 80 ? "#16a34a" : "#d97706", marginTop:6 }}>
-              {pctHadir}% Kehadiran
+            <div>
+              <div className="stat-label">Guru Hadir Hari Ini</div>
+              <div className="stat-value">
+                {hadirAsatidz} <span style={{ fontSize:16, color:"#94a3b8", fontWeight:600 }}>/ {totalAsatidz}</span>
+              </div>
+              <div style={{ fontSize:12, fontWeight:700, color: pctHadir >= 80 ? "#16a34a" : "#d97706", marginTop:6 }}>
+                {pctHadir}% Kehadiran
+              </div>
             </div>
           </div>
-        </div>
+        )}
 
         {/* Jurnal */}
         <div className="stat-card animate-slide-up" style={{ animationDelay: "0.1s" }}>
@@ -165,20 +179,57 @@ export default async function DashboardPage() {
           </div>
         </div>
 
-        {/* Guru Aktif */}
-        <div className="stat-card animate-slide-up" style={{ animationDelay: "0.2s" }}>
-          <div className="stat-icon" style={{ background:"#fdf8f0", color:"#b89758", border:"1px solid #f6ecd9" }}>
-            <TrendingUp size={28} />
-          </div>
-          <div>
-            <div className="stat-label">Total Guru & Staf</div>
-            <div className="stat-value">
-              {totalAsatidz}
+        {/* Guru Aktif (Hanya Admin) */}
+        {isSuperAdmin && (
+          <div className="stat-card animate-slide-up" style={{ animationDelay: "0.2s" }}>
+            <div className="stat-icon" style={{ background:"#fdf8f0", color:"#b89758", border:"1px solid #f6ecd9" }}>
+              <TrendingUp size={28} />
             </div>
-            <div style={{ fontSize:12, fontWeight:600, color:"#94a3b8", marginTop:6 }}>Data Kepegawaian</div>
+            <div>
+              <div className="stat-label">Total Guru & Staf</div>
+              <div className="stat-value">
+                {totalAsatidz}
+              </div>
+              <div style={{ fontSize:12, fontWeight:600, color:"#94a3b8", marginTop:6 }}>Data Kepegawaian</div>
+            </div>
           </div>
-        </div>
+        )}
       </div>
+
+      {/* ── Jadwal Mengajar Widget ────────────────────────────────────────────── */}
+      {!isSuperAdmin && session?.asatidz_id && (
+        <div style={{ background:"white", borderRadius:20, padding:24, border:"1px solid #ebdcc3", boxShadow:"0 4px 20px rgba(85,0,0,0.03)" }}>
+          <h3 style={{ margin:"0 0 16px 0", fontSize:16, fontWeight:700, color:"#1a1a1a", display:"flex", alignItems:"center", gap:8 }}>
+            <Clock size={18} color="#550000" /> Jadwal Mengajar Hari Ini
+          </h3>
+          
+          {jadwalHariIni.length === 0 ? (
+            <div style={{ padding:20, background:"#fcfaf8", borderRadius:12, border:"1px dashed #ebdcc3", color:"#94a3b8", fontSize:13, textAlign:"center" }}>
+              Alhamdulillah, tidak ada jadwal mengajar untuk hari ini.
+            </div>
+          ) : (
+            <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fit, minmax(250px, 1fr))", gap:12 }}>
+              {jadwalHariIni.map((j) => (
+                <div key={j.id} style={{ display:"flex", alignItems:"center", gap:16, background:"#fdfaf7", padding:16, borderRadius:12, borderLeft:"4px solid #550000", border:"1px solid #ebdcc3", borderLeftWidth:"4px" }}>
+                  <div style={{ flexShrink:0, background:"rgba(85, 0, 0, 0.05)", width:48, height:48, borderRadius:"50%", display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", color:"#550000" }}>
+                    <span style={{ fontSize:10, fontWeight:600, textTransform:"uppercase", letterSpacing:0.5 }}>Jam</span>
+                    <span style={{ fontSize:16, fontWeight:800, lineHeight:1 }}>{j.jam_ke}</span>
+                  </div>
+                  <div style={{ flex:1 }}>
+                    <div style={{ fontSize:14, fontWeight:700, color:"#1a1a1a", marginBottom:4 }}>
+                      {j.mapel?.nama || "Mapel Kosong"}
+                    </div>
+                    <div style={{ fontSize:12, color:"#64748b", display:"flex", alignItems:"center", gap:4 }}>
+                      <span style={{ display:"inline-flex", padding:"2px 6px", background:"#fdf5f5", color:"#550000", borderRadius:4, fontWeight:600 }}>Kelas {j.kelas?.nama}</span>
+                      <span>• {j.waktu_mulai} - {j.waktu_selesai}</span>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
 
       {/* ── Quick Actions ─────────────────────────────────────────────────────── */}
       <div style={{ background:"white", borderRadius:20, padding:24, border:"1px solid #ebdcc3", boxShadow:"0 4px 20px rgba(85,0,0,0.03)" }}>
