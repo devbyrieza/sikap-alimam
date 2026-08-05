@@ -548,7 +548,7 @@ html, body {
 }
 
 .hero-banner {
-  background: linear-gradient(135deg, #550000 0%, #6e0b0b 50%, #851414 100%);
+  background: linear-gradient(135deg, #550000 0%, #440000 100%);
   border-radius: 24px;
   padding: 32px 36px;
   color: white;

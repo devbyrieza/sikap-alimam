@@ -243,7 +243,7 @@ export default function TambahJurnalPage() {
         flexWrap: "wrap",
         justifyContent: "space-between",
         alignItems: "center",
-        background: "linear-gradient(135deg, #0f172a 0%, #1e293b 60%, #f59e0b 100%)",
+        background: "linear-gradient(135deg, #550000 0%, #440000 100%)",
         borderRadius: "24px",
         padding: "32px 36px",
         color: "white",

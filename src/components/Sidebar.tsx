@@ -370,7 +370,7 @@ export default function Sidebar({ user }: SidebarProps) {
           left: 0,
           right: 0,
           height: 56,
-          background: "linear-gradient(135deg, #380000 0%, #550000 60%, #6e0b0b 100%)",
+          background: "#550000",
           borderBottom: "1px solid rgba(221, 193, 146, 0.2)",
           zIndex: 50,
           padding: "0 16px",
