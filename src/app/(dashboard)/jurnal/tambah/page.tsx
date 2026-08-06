@@ -564,17 +564,18 @@ export default function TambahJurnalPage() {
               {/* Sub Topik Jurnal */}
               <div>
                 <label style={{ display: "block", fontSize: "13px", fontWeight: 600, color: "#475569", marginBottom: "8px" }}>
-                  Sub Topik Jurnal <span style={{ color: "#94a3b8", fontWeight: "normal", fontSize: "12px" }}>(Opsional)</span>
+                  Sub Topik Jurnal <span style={{ color: "#ef4444" }}>*</span>
                 </label>
                 <textarea
                   rows={2}
-                  placeholder="Tuliskan sub topik yang spesifik (opsional)..."
+                  placeholder="Tuliskan sub topik yang spesifik..."
                   value={subMateri}
                   onChange={(e) => {
                     setSubMateri(e.target.value);
                     handleTextareaResize(e);
                   }}
                   style={{ minHeight: "60px", width: "100%", padding: "14px 16px", borderRadius: "12px", border: "1px solid #cbd5e1", fontSize: "15px", outline: "none", fontFamily: "inherit", resize: "none" }}
+                  required
                 />
               </div>
 
