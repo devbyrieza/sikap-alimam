@@ -26,12 +26,22 @@ export async function POST(req: NextRequest) {
 
     // Jika tidak ditemukan via User email, coba cari di tabel Pegawai (via NIK, NIP, HP, atau Email)
     if (!user) {
+      const cleanPhone = identifier.replace(/\D/g, "");
+      let phoneVariations = [identifier];
+      if (cleanPhone.startsWith("62")) {
+        phoneVariations.push("0" + cleanPhone.substring(2));
+      } else if (cleanPhone.startsWith("0")) {
+        phoneVariations.push("62" + cleanPhone.substring(1));
+        phoneVariations.push("+62" + cleanPhone.substring(1));
+      }
+
       const pegawai = await prisma.pegawai.findFirst({
         where: {
+          user_id: { not: null },
           OR: [
             { nik: identifier },
             { nip: identifier },
-            { no_hp: identifier },
+            { no_hp: { in: phoneVariations } },
             { email: { equals: identifier, mode: "insensitive" } },
           ],
         },
