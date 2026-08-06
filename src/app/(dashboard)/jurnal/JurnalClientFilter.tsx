@@ -52,9 +52,9 @@ export default function JurnalClientFilter({
   kelasList = [],
   asatidzList = [],
 }: {
-  data: JurnalRow[];
   kelasList?: (string | KelasObject)[];
   asatidzList?: string[];
+  isAdminSuper?: boolean;
 }) {
   const [filterTanggal, setFilterTanggal] = useState("");
   const [filterJenjang, setFilterJenjang] = useState<string>("");
@@ -705,11 +705,14 @@ export default function JurnalClientFilter({
         </div>
       )}
 
-      {/* Ultra-Premium Jurnal Detail Modal */}
-      <JurnalDetailModal
-        jurnal={selectedJurnal}
-        onClose={() => setSelectedJurnal(null)}
-      />
+      {selectedJurnal && (
+        <JurnalDetailModal
+          isOpen={!!selectedJurnal}
+          onClose={() => setSelectedJurnal(null)}
+          data={selectedJurnal}
+          isAdminSuper={isAdminSuper}
+        />
+      )}
     </div>
   );
 }

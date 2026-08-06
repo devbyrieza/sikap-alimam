@@ -32,8 +32,10 @@ export interface JurnalDetailData {
 }
 
 interface JurnalDetailModalProps {
-  jurnal: JurnalDetailData | null;
+  data?: JurnalDetailData | null;
   onClose: () => void;
+  isOpen?: boolean;
+  isAdminSuper?: boolean;
 }
 
 function formatTanggalLengkap(iso: string) {
@@ -80,15 +82,17 @@ function getDurasiJam(jamStr: string) {
 
 const HEADER_BG = "linear-gradient(145deg, #6e0b0b 0%, #550000 50%, #751414 100%)";
 
-export default function JurnalDetailModal({ jurnal, onClose }: JurnalDetailModalProps) {
+export default function JurnalDetailModal({ jurnal, data, onClose, isOpen, isAdminSuper }: JurnalDetailModalProps) {
+  const displayData = data || jurnal;
+
   useEffect(() => {
-    if (jurnal) {
+    if (displayData || isOpen) {
       document.body.style.overflow = "hidden";
     } else {
       document.body.style.overflow = "unset";
     }
     return () => { document.body.style.overflow = "unset"; };
-  }, [jurnal]);
+  }, [displayData, isOpen]);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); };
@@ -96,12 +100,12 @@ export default function JurnalDetailModal({ jurnal, onClose }: JurnalDetailModal
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [onClose]);
 
-  if (!jurnal) return null;
+  if (!displayData) return null;
 
-  const namaMapelBersih = jurnal.mapel.replace(/^\[.*?\]\s*/, "");
+  const namaMapelBersih = displayData.mapel.replace(/^\[.*?\]\s*/, "");
   const formattedLO =
-    jurnal.learning_outcome ||
-    jurnal.materi ||
+    displayData.learning_outcome ||
+    displayData.materi ||
     "Santri memahami dan menguasai kompetensi dasar materi dengan baik.";
 
   return (
@@ -255,7 +259,7 @@ export default function JurnalDetailModal({ jurnal, onClose }: JurnalDetailModal
               }}
             >
               <Calendar size={14} style={{ color: "#ddc192", flexShrink: 0 }} />
-              <span>{formatTanggalLengkap(jurnal.tanggal)}</span>
+              <span>{formatTanggalLengkap(displayData.tanggal)}</span>
             </div>
 
             {/* Meta Info Grid — Compact & Clean */}
@@ -274,13 +278,13 @@ export default function JurnalDetailModal({ jurnal, onClose }: JurnalDetailModal
               >
                 <div style={{ display: "flex", alignItems: "center", gap: 6, color: "rgba(255,255,255,0.95)", fontSize: 13, fontWeight: 700 }}>
                   <GraduationCap size={15} style={{ color: "#fbbf24", flexShrink: 0 }} />
-                  <span>Kelas <strong style={{ color: "#fff" }}>{jurnal.kelas}</strong></span>
+                  <span>Kelas <strong style={{ color: "#fff" }}>{displayData.kelas}</strong></span>
                 </div>
                 <div style={{ display: "flex", alignItems: "center", gap: 6, color: "rgba(255,255,255,0.95)", fontSize: 12, fontWeight: 600 }}>
                   <Clock size={14} style={{ color: "#67e8f9", flexShrink: 0 }} />
                   <span>
-                    Jam ke <strong style={{ color: "#fff" }}>{jurnal.jam_ke}</strong>
-                    <span style={{ color: "#ddc192", fontWeight: 700 }}>{getDurasiJam(jurnal.jam_ke)}</span>
+                    Jam ke <strong style={{ color: "#fff" }}>{displayData.jam_ke}</strong>
+                    <span style={{ color: "#ddc192", fontWeight: 700 }}>{getDurasiJam(displayData.jam_ke)}</span>
                   </span>
                 </div>
               </div>
@@ -313,7 +317,7 @@ export default function JurnalDetailModal({ jurnal, onClose }: JurnalDetailModal
                     flexShrink: 0,
                   }}
                 >
-                  {jurnal.asatidz.charAt(0)}
+                  {displayData.asatidz.charAt(0)}
                 </div>
                 <div>
                   <div
@@ -329,7 +333,7 @@ export default function JurnalDetailModal({ jurnal, onClose }: JurnalDetailModal
                     Guru Pengampu
                   </div>
                   <div style={{ fontSize: 13, fontWeight: 800, color: "#fff", lineHeight: 1.2 }}>
-                    {jurnal.asatidz}
+                    {displayData.asatidz}
                   </div>
                 </div>
               </div>
@@ -395,7 +399,7 @@ export default function JurnalDetailModal({ jurnal, onClose }: JurnalDetailModal
                 margin: 0,
               }}
             >
-              {jurnal.materi || "-"}
+              {displayData.materi || "-"}
             </p>
           </div>
 
@@ -510,13 +514,13 @@ export default function JurnalDetailModal({ jurnal, onClose }: JurnalDetailModal
                 whiteSpace: "pre-wrap",
               }}
             >
-              {jurnal.kegiatan ||
+              {displayData.kegiatan ||
                 "Guru menyampaikan penjelasan materi secara interaktif, tanya jawab santri, dan evaluasi pemahaman di kelas."}
             </p>
           </div>
 
           {/* Section 4 — Catatan (conditional) */}
-          {jurnal.catatan && (
+          {displayData.catatan && (
             <div
               style={{
                 background: "#fffbeb",
@@ -570,7 +574,7 @@ export default function JurnalDetailModal({ jurnal, onClose }: JurnalDetailModal
                   margin: 0,
                 }}
               >
-                &ldquo;{jurnal.catatan}&rdquo;
+                &ldquo;{displayData.catatan}&rdquo;
               </p>
             </div>
           )}
@@ -589,7 +593,7 @@ export default function JurnalDetailModal({ jurnal, onClose }: JurnalDetailModal
             <span>
               ID Dokumen:{" "}
               <code style={{ color: "#64748b", fontFamily: "monospace" }}>
-                {jurnal.id.slice(0, 8)}
+                {displayData.id.slice(0, 8)}
               </code>
             </span>
             <span>Pesantren Al-Imam Al-Islami</span>
@@ -624,19 +628,79 @@ export default function JurnalDetailModal({ jurnal, onClose }: JurnalDetailModal
             <span>SIAKAD Al-Imam</span>
           </div>
 
-          <button
-            onClick={onClose}
-            className="btn btn-primary"
-            style={{
-              padding: "10px 28px",
-              borderRadius: 14,
-              fontWeight: 800,
-              fontSize: 14,
-              boxShadow: "0 4px 16px rgba(155, 27, 34, 0.3)",
-            }}
-          >
-            Tutup Detail
-          </button>
+          <div style={{ display: "flex", gap: 12 }}>
+            <a
+              href={`/jurnal/edit/${displayData.id}`}
+              className="btn btn-secondary"
+              style={{
+                padding: "10px 24px",
+                borderRadius: 14,
+                fontWeight: 800,
+                fontSize: 14,
+              }}
+            >
+              Edit Jurnal
+            </a>
+            
+            {isAdminSuper && (
+              <button
+                onClick={() => {
+                  import("sweetalert2").then(({ default: Swal }) => {
+                    Swal.fire({
+                      title: 'Hapus Jurnal?',
+                      text: "Tindakan ini tidak dapat dibatalkan!",
+                      icon: 'warning',
+                      showCancelButton: true,
+                      confirmButtonColor: '#d33',
+                      cancelButtonColor: '#3085d6',
+                      confirmButtonText: 'Ya, Hapus!',
+                      cancelButtonText: 'Batal'
+                    }).then((result) => {
+                      if (result.isConfirmed) {
+                        fetch(`/api/jurnal/${displayData.id}`, { method: 'DELETE' })
+                          .then(res => res.json())
+                          .then(res => {
+                            if (res.error) throw new Error(res.error);
+                            Swal.fire('Terhapus!', 'Data jurnal telah dihapus.', 'success').then(() => {
+                              window.location.reload();
+                            });
+                          })
+                          .catch(err => {
+                            Swal.fire('Error', err.message || 'Gagal menghapus jurnal', 'error');
+                          });
+                      }
+                    });
+                  });
+                }}
+                className="btn"
+                style={{
+                  padding: "10px 24px",
+                  borderRadius: 14,
+                  fontWeight: 800,
+                  fontSize: 14,
+                  background: "#fee2e2",
+                  color: "#dc2626",
+                  border: "1px solid #fecaca"
+                }}
+              >
+                Hapus Jurnal
+              </button>
+            )}
+
+            <button
+              onClick={onClose}
+              className="btn btn-primary"
+              style={{
+                padding: "10px 28px",
+                borderRadius: 14,
+                fontWeight: 800,
+                fontSize: 14,
+                boxShadow: "0 4px 16px rgba(155, 27, 34, 0.3)",
+              }}
+            >
+              Tutup Detail
+            </button>
+          </div>
         </div>
       </div>
     </div>

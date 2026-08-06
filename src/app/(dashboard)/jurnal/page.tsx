@@ -3,6 +3,7 @@ import Link from "next/link";
 import { BookOpen, Plus } from "lucide-react";
 import JurnalClientFilter from "./JurnalClientFilter";
 import { sortKelas } from "@/lib/kelas";
+import { getSession } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
 
@@ -43,6 +44,9 @@ async function getJurnal() {
 }
 
 export default async function JurnalPage() {
+  const session = await getSession();
+  const isAdminSuper = session?.role === "ADMIN_SUPER";
+
   // 1. Fetch Jurnal
   const jurnal = await getJurnal();
 
@@ -206,6 +210,7 @@ export default async function JurnalPage() {
           data={jurnalSerialized} 
           kelasList={kelasList}
           asatidzList={asatidzList}
+          isAdminSuper={isAdminSuper}
         />
       </div>
     </div>

@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contekan Demo SIKAP</title>
+    <style>
+        :root {
+            --primary: #550000;
+            --secondary: #ddc192;
+            --bg: #f8fafc;
+            --text: #1e293b;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            margin: 0;
+            padding: 16px;
+            padding-bottom: 60px;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        h1 {
+            color: var(--primary);
+            font-size: 24px;
+            border-bottom: 2px solid var(--secondary);
+            padding-bottom: 10px;
+            margin-top: 10px;
+            text-align: center;
+        }
+        h2 {
+            color: var(--primary);
+            font-size: 18px;
+            margin-top: 30px;
+            background: #fdf5f5;
+            padding: 10px 14px;
+            border-left: 4px solid var(--primary);
+            border-radius: 4px;
+        }
+        h3 {
+            font-size: 16px;
+            color: #334155;
+            margin-top: 20px;
+        }
+        .card {
+            background: white;
+            padding: 16px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            margin-bottom: 16px;
+            border: 1px solid #e2e8f0;
+        }
+        .account-box {
+            background: #1e293b;
+            color: white;
+            padding: 16px;
+            border-radius: 12px;
+            margin-bottom: 24px;
+        }
+        .account-box p {
+            margin: 5px 0;
+            font-size: 14px;
+        }
+        .account-box code {
+            background: #334155;
+            padding: 2px 6px;
+            border-radius: 4px;
+            color: #38bdf8;
+            font-weight: bold;
+        }
+        .dialogue {
+            background: #ecfeff;
+            border-left: 4px solid #06b6d4;
+            padding: 12px;
+            font-style: italic;
+            font-size: 15px;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+        .dialogue strong {
+            color: #0891b2;
+            font-style: normal;
+        }
+        .action {
+            color: #b45309;
+            font-weight: bold;
+            font-size: 14px;
+            display: block;
+            margin-bottom: 8px;
+        }
+        .jurnal-data {
+            background: #fdf8f0;
+            border: 1px solid #ddc192;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+        .jurnal-data p {
+            margin: 6px 0;
+        }
+        ul, ol {
+            padding-left: 20px;
+            margin: 10px 0;
+        }
+        li {
+            margin-bottom: 8px;
+        }
+        .badge {
+            background: #ef4444;
+            color: white;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: bold;
+            vertical-align: super;
+        }
+        .badge-info {
+            background: #0284c7;
+            color: white;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: bold;
+            vertical-align: super;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>📝 Contekan Demo SIKAP</h1>
+
+    <div class="account-box">
+        <p><strong>Akun Admin Super (Layar TV):</strong><br>
+        Email: <code>riezaekatomara@gmail.com</code></p>
+        <p style="margin-top:12px;"><strong>Akun Guru / Wali Kelas (Mobile Simulator):</strong><br>
+        Email: <code>presentasi.guru@pesantren-alimam.com</code><br>
+        Pass: <code>presentasi123</code></p>
+    </div>
+
+    <h2>1. Pembukaan (Opening)</h2>
+    <div class="card">
+        <span class="action">👉 Tampilkan layar Login SIKAP di TV</span>
+        <div class="dialogue">
+            <strong>Katakan:</strong> "Bismillah. Asatidz sekalian, hari ini kita me-launching SIKAP. Aplikasi ini dibuat khusus untuk mempermudah hidup Antum. Desainnya ringan, cepat, dan bisa dipakai ngabsen atau ngisi jurnal langsung sambil jalan ke kelas dari HP masing-masing."
+        </div>
+    </div>
+
+    <h2>2. Wajah Guru & Jadwal Pintar</h2>
+    <div class="card">
+        <span class="action">👉 Login pakai Akun Guru di Mobile Simulator</span>
+        <div class="dialogue">
+            <strong>Katakan:</strong> "Coba perhatikan. Tampilannya sangat bersih, tidak ada menu admin yang bikin pusing. Hebatnya lagi, di sini langsung muncul <b>Jadwal Mengajar Hari Ini</b>. Sistem otomatis mencarikan jadwal Antum, jadi gak perlu repot ingat-ingat lagi hari ini ngajar kelas apa."
+        </div>
+    </div>
+
+    <h2>3. Demo 1: Presensi Santri</h2>
+    <div class="card">
+        <span class="action">👉 Klik menu 'Input Presensi Santri'</span>
+        <ul>
+            <li>Pilih Kelas & Mapel.</li>
+            <li>Tunjukkan semua santri sudah hijau (Hadir) secara otomatis.</li>
+        </ul>
+        <div class="dialogue">
+            <strong>Katakan:</strong> "Sistem ini pintar, otomatis semua anak statusnya Hadir. Antum cukup klik 1 atau 2 anak yang kebetulan sakit atau izin. Sangat hemat waktu!"
+        </div>
+        <span class="action">👉 Klik tombol Simpan Presensi.</span>
+    </div>
+
+    <h2>4. Demo 2: Jurnal Mengajar <span class="badge">WOW FACTOR</span></h2>
+    <div class="card">
+        <span class="action">👉 Klik menu 'Tambah Jurnal'</span>
+        <div class="dialogue">
+            <strong>Katakan:</strong> "Nah, ini fitur andalan kita. Kalau lagi ngetik jurnal panjang-panjang lalu tiba-tiba sinyal hilang atau tak sengaja tertutup, data Antum tidak akan hilang!"
+        </div>
+        
+        <span class="action">👉 KETIK sebagian kalimat di form Topik Jurnal.</span>
+        <span class="action">👉 REFRESH HALAMAN (Tutup & Buka lagi).</span>
+        <span class="action">👉 Tunjukkan ketikan tadi otomatis kembali!</span>
+
+        <h3>Contoh Isian Jurnal (Bisa dicontek):</h3>
+        <div class="jurnal-data">
+            <p><strong>Topik:</strong><br> Bab 1: Sejarah Perkembangan Islam di Andalusia</p>
+            <p><strong>Learning Objective (LO):</strong><br> Santri mampu memahami faktor-faktor kejayaan Islam di Spanyol dan tokoh-tokoh pentingnya.</p>
+            <p><strong>Strategi Pembelajaran:</strong><br> Metode ceramah interaktif dilanjutkan dengan diskusi kelompok kecil dan tanya jawab.</p>
+            <p><strong>Catatan Tambahan (Opsional):</strong><br> Alhamdulillah kelas berjalan lancar, anak-anak sangat antusias saat sesi diskusi.</p>
+        </div>
+        <span class="action">👉 Klik tombol Simpan Jurnal.</span>
+    </div>
+
+    <h2>5. Demo 3: Penilaian Santri</h2>
+    <div class="card">
+        <span class="action">👉 Klik menu 'Input Nilai'</span>
+        <div class="dialogue">
+            <strong>Katakan:</strong> "Untuk input nilai harian atau ujian, formnya dibuat mirip Excel agar gampang diisi massal. Sistem juga akan menolak otomatis kalau Antum tak sengaja ngetik huruf atau nilai di atas 100."
+        </div>
+        <span class="action">👉 Praktekkan mengisi nilai (ketik 150 agar ditolak sistem, lalu ketik angka normal 85).</span>
+        <span class="action">👉 Klik Simpan.</span>
+    </div>
+
+    <h2>6. Demo 4: Hak Istimewa Wali Kelas <span class="badge-info">WAJIB</span></h2>
+    <div class="card">
+        <span class="action">👉 Arahkan ke Sidebar, klik menu 'Hub Wali Kelas' (Tetap pakai Akun Guru yang sama)</span>
+        <div class="dialogue">
+            <strong>Katakan:</strong> "Bapak/Ibu, SIKAP ini tidak punya 'Akun Wali Kelas' yang terpisah. <b>Hanya pakai 1 akun saja!</b> Sistem secara otomatis mengenali jika Antum adalah Wali Kelas dan akan membukakan pintu rahasia ini: <b>Hub Wali Kelas</b>."
+        </div>
+        <span class="action">👉 Klik salah satu fitur (misal: Rekap Presensi Kelas atau Cetak Rapor)</span>
+        <div class="dialogue">
+            <strong>Katakan:</strong> "Antum tidak perlu lagi keliling menagih nilai atau capek merekap absen sebulan. Semua nilai dan presensi yang diisi oleh guru bidang studi lain, detik itu juga langsung tersaji rapi di meja digital Antum. Tugas Wali Kelas tinggal memantau dan cetak rapor!"
+        </div>
+    </div>
+
+    <h2>7. Penutup (Closing) & Sinkronisasi Live</h2>
+    <div class="card">
+        <span class="action">👉 Buka Layar TV (Admin Super) dan Refresh Dashboard-nya</span>
+        <div class="dialogue">
+            <strong>Katakan:</strong> "Sebagai penutup, mari kita lihat layar TV (Kacamata Kepala Sekolah/Kurikulum). Jurnal dan nilai yang baru saja kita ketik di HP Guru tadi, <b>detik ini juga langsung muncul di Dashboard pusat!</b>"
+        </div>
+        <div class="dialogue">
+            <strong>Katakan:</strong> "Selain itu, absensi asatidz kini juga cukup dari SIKAP dan langsung tembus ke SIMPEG. Sekian dari kami, SIKAP siap mempermudah rutinitas antum!"
+        </div>
+    </div>
+    
+    <div style="text-align: center; margin-top: 30px; font-size: 13px; color: #64748b;">
+        Tarik napas, senyum, dan kuasai panggung!<br>Bismillah! 🚀
+    </div>
+</div>
+
+</body>
+</html>
