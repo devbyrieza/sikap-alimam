@@ -25,7 +25,7 @@ const normalizeMapelName = (name: string) => {
 
 export async function GET() {
   try {
-    const [rawKelas, rawAsatidz, allMapel] = await Promise.all([
+    const [rawKelas, rawAsatidz, allMapel, rawAsatidzmMapel] = await Promise.all([
       prisma.kelas.findMany({ 
         where: { is_active: true },
         select: { id: true, nama: true, jenjang: true },
@@ -50,6 +50,9 @@ export async function GET() {
         where: { is_active: true },
         orderBy: { nama: "asc" },
         select: { id: true, nama: true, kelas_id: true, kategori: true },
+      }),
+      prisma.asatidzmMapel.findMany({
+        select: { pegawai_id: true, mapel_id: true, kelas_id: true },
       }),
     ]);
 
@@ -84,7 +87,12 @@ export async function GET() {
       });
     }
 
-    return NextResponse.json({ kelas, asatidz: formattedAsatidz, mapel: mapelByKelas });
+    return NextResponse.json({ 
+      kelas, 
+      asatidz: formattedAsatidz, 
+      mapel: mapelByKelas,
+      asatidzmMapel: rawAsatidzmMapel 
+    });
   } catch (err) {
     console.error("[GET /api/master]", err);
     return NextResponse.json({ error: "Gagal mengambil data master" }, { status: 500 });

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { sortKelas } from "@/lib/kelas";
+import { getSession } from "@/lib/auth";
 
 export async function GET(req: NextRequest) {
   try {
@@ -10,6 +11,18 @@ export async function GET(req: NextRequest) {
     const whereClause: any = { is_active: true };
     if (kelas_id) {
       whereClause.kelas_id = kelas_id;
+    }
+
+    const session = await getSession();
+    const role = (session?.role || "").toLowerCase();
+    const isAdmin = role.includes("admin_super");
+
+    if (session?.asatidz_id && !isAdmin) {
+      whereClause.asatidz_mapel = {
+        some: {
+          pegawai_id: session.asatidz_id
+        }
+      };
     }
 
     const rawMapel = await prisma.mataPelajaran.findMany({

@@ -9,10 +9,12 @@ import Link from "next/link";
 type Kelas = { id: string; nama: string; jenjang: string | null };
 type Asatidz = { id: string; nama_lengkap: string; jabatan: string | null };
 type Mapel = { id: string; nama: string };
+type AsatidzmMapel = { pegawai_id: string; mapel_id: string; kelas_id: string };
 type MasterData = {
   kelas: Kelas[];
   asatidz: Asatidz[];
   mapel: Record<string, Mapel[]>;
+  asatidzmMapel: AsatidzmMapel[];
 };
 
 const NAMA_HARI = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
@@ -44,7 +46,9 @@ export default function EditJurnalPage({ params }: { params: Promise<{ id: strin
   const today = new Date().toISOString().split("T")[0];
 
   const [master, setMaster] = useState<MasterData | null>(null);
+  const [currentUser, setCurrentUser] = useState<any>(null);
   const [loadingMaster, setLoadingMaster] = useState(true);
+  const [loadingInitial, setLoadingInitial] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [lastSaved, setLastSaved] = useState<string | null>(null);
 
@@ -179,15 +183,28 @@ export default function EditJurnalPage({ params }: { params: Promise<{ id: strin
           setCatatan(j.catatan || "");
         }
       })
-      .catch(e => console.error(e));
+      .catch(e => console.error(e))
+      .finally(() => setLoadingInitial(false));
   }, [id, today]);
 
   // Load master data
   useEffect(() => {
-    fetch("/api/master", { cache: "no-store" })
-      .then((r) => r.json())
-      .then((data) => {
-        setMaster(data);
+    Promise.all([
+      fetch("/api/master", { cache: "no-store" }).then((r) => r.json()),
+      fetch("/api/profile", { cache: "no-store" }).then((r) => r.json())
+    ])
+      .then(([masterData, profileData]) => {
+        setMaster(masterData);
+        if (profileData?.data) {
+          setCurrentUser(profileData.data);
+          
+          const role = (profileData.data.role || "").toLowerCase();
+          const isAdmin = role.includes("admin_super");
+          
+          if (profileData.data.asatidz_id && !isAdmin && !asatidId) {
+            setAsatidId(profileData.data.asatidz_id);
+          }
+        }
         setLoadingMaster(false);
       })
       .catch(() => {
@@ -213,11 +230,27 @@ export default function EditJurnalPage({ params }: { params: Promise<{ id: strin
   useEffect(() => {
     if (kelasId) {
       const exists = filteredKelasList.find((k) => k.id === kelasId);
-      if (!exists) setKelasId("");
+      if (!exists && !loadingInitial) setKelasId("");
     }
-  }, [filteredKelasList, kelasId]);
+  }, [filteredKelasList, kelasId, loadingInitial]);
 
-  const mapelList = (kelasId && master?.mapel?.[kelasId]) || [];
+  const mapelList = useMemo(() => {
+    let list = (kelasId && master?.mapel?.[kelasId]) || [];
+    
+    if (asatidId && master?.asatidzmMapel && list.length > 0) {
+      const allowedMapelIds = master.asatidzmMapel
+        .filter(am => am.pegawai_id === asatidId && am.kelas_id === kelasId)
+        .map(am => am.mapel_id);
+      
+      if (allowedMapelIds.length > 0) {
+        list = list.filter(m => allowedMapelIds.includes(m.id));
+      } else {
+        list = [];
+      }
+    }
+    
+    return list;
+  }, [kelasId, asatidId, master]);
 
   const handleTextareaResize = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     e.target.style.height = "auto";
@@ -332,9 +365,9 @@ export default function EditJurnalPage({ params }: { params: Promise<{ id: strin
           </Link>
           <div>
             <h1 style={{ fontSize: "28px", fontWeight: "bold", margin: 0, display: "flex", alignItems: "center", gap: "8px" }}>
-              <BookMarked size={28} /> Tambah Jurnal Mengajar
+              <BookMarked size={28} /> Edit Jurnal Mengajar
             </h1>
-            <p style={{ marginTop: "8px", opacity: 0.9, fontSize: "16px" }}>Catat kegiatan belajar mengajar hari ini</p>
+            <p style={{ marginTop: "8px", opacity: 0.9, fontSize: "16px" }}>Ubah catatan kegiatan belajar mengajar</p>
           </div>
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
@@ -430,22 +463,28 @@ export default function EditJurnalPage({ params }: { params: Promise<{ id: strin
               <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "24px" }}>
                 {/* Asatidz */}
                 <div>
-                  <label style={{ display: "block", fontSize: "13px", fontWeight: 600, color: "#475569", marginBottom: "8px" }}>
-                    Guru <span style={{ color: "#ef4444" }}>*</span>
+                  <label style={{ display: "block", fontSize: "14px", fontWeight: 600, color: "#475569", marginBottom: "8px" }}>
+                    Nama Guru <span style={{ color: "#ef4444" }}>*</span>
                   </label>
-                  <select
-                    value={asatidId}
-                    onChange={(e) => setAsatidId(e.target.value)}
-                    required
-                    style={{ padding: "12px 16px", borderRadius: "12px", border: "1px solid #cbd5e1", fontSize: "15px", outline: "none", width: "100%", backgroundColor: "white" }}
-                  >
-                    <option value="">— Pilih Guru —</option>
-                    {master?.asatidz.map((a) => (
-                      <option key={a.id} value={a.id}>
-                        {a.nama_lengkap}
-                      </option>
-                    ))}
-                  </select>
+                  {(!currentUser?.role?.toLowerCase().includes("admin_super") && currentUser?.asatidz_id) ? (
+                    <div style={{ padding: "12px 16px", borderRadius: "12px", border: "1px solid #cbd5e1", fontSize: "15px", backgroundColor: "#f1f5f9", color: "#334155", fontWeight: 600 }}>
+                      {currentUser.nama}
+                    </div>
+                  ) : (
+                    <select
+                      value={asatidId}
+                      onChange={(e) => setAsatidId(e.target.value)}
+                      required
+                      style={{ padding: "12px 16px", borderRadius: "12px", border: "1px solid #cbd5e1", fontSize: "15px", outline: "none", width: "100%", backgroundColor: "white" }}
+                    >
+                      <option value="">-- Pilih Guru --</option>
+                      {master?.asatidz.map((a) => (
+                        <option key={a.id} value={a.id}>
+                          {a.nama_lengkap}
+                        </option>
+                      ))}
+                    </select>
+                  )}
                 </div>
 
                 {/* Jam ke- */}

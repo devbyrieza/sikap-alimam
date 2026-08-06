@@ -9,10 +9,12 @@ import Link from "next/link";
 type Kelas = { id: string; nama: string; jenjang: string | null };
 type Asatidz = { id: string; nama_lengkap: string; jabatan: string | null };
 type Mapel = { id: string; nama: string };
+type AsatidzmMapel = { pegawai_id: string; mapel_id: string; kelas_id: string };
 type MasterData = {
   kelas: Kelas[];
   asatidz: Asatidz[];
   mapel: Record<string, Mapel[]>;
+  asatidzmMapel: AsatidzmMapel[];
 };
 
 const NAMA_HARI = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
@@ -38,6 +40,7 @@ export default function TambahJurnalPage() {
   const today = new Date().toISOString().split("T")[0];
 
   const [master, setMaster] = useState<MasterData | null>(null);
+  const [currentUser, setCurrentUser] = useState<any>(null);
   const [loadingMaster, setLoadingMaster] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [lastSaved, setLastSaved] = useState<string | null>(null);
@@ -138,10 +141,26 @@ export default function TambahJurnalPage() {
 
   // Load master data
   useEffect(() => {
-    fetch("/api/master", { cache: "no-store" })
-      .then((r) => r.json())
-      .then((data) => {
-        setMaster(data);
+    Promise.all([
+      fetch("/api/master", { cache: "no-store" }).then((r) => r.json()),
+      fetch("/api/profile", { cache: "no-store" }).then((r) => r.json()),
+    ])
+      .then(([masterData, profileData]) => {
+        setMaster(masterData);
+        if (profileData?.data) {
+          setCurrentUser(profileData.data);
+          
+          // Auto-assign asatidId if user has asatidz_id and no draft was restored with a different ID
+          const role = (profileData.data.role || "").toLowerCase();
+          const isAdmin = role.includes("admin_super");
+          
+          if (profileData.data.asatidz_id) {
+            // Only force assignment if it's not admin, or if it is admin but asatidId is empty
+            if (!isAdmin || !asatidId) {
+              setAsatidId(profileData.data.asatidz_id);
+            }
+          }
+        }
         setLoadingMaster(false);
       })
       .catch(() => {
@@ -171,7 +190,28 @@ export default function TambahJurnalPage() {
     }
   }, [filteredKelasList, kelasId]);
 
-  const mapelList = (kelasId && master?.mapel?.[kelasId]) || [];
+  const mapelList = useMemo(() => {
+    let list = (kelasId && master?.mapel?.[kelasId]) || [];
+    
+    // Filter berdasarkan AsatidzmMapel (jika asatidId terpilih)
+    if (asatidId && master?.asatidzmMapel && list.length > 0) {
+      const allowedMapelIds = master.asatidzmMapel
+        .filter(am => am.pegawai_id === asatidId && am.kelas_id === kelasId)
+        .map(am => am.mapel_id);
+      
+      // Jika guru punya mapping di kelas ini, filter mapelnya.
+      // Jika tidak punya mapping sama sekali (allowedMapelIds.length === 0), 
+      // kita tampilkan semua agar fallback tetap jalan (atau kosongkan). Sesuai permintaan, filter mapelnya.
+      if (allowedMapelIds.length > 0) {
+        list = list.filter(m => allowedMapelIds.includes(m.id));
+      } else {
+        // Guru tidak mengajar di kelas ini menurut master data
+        list = [];
+      }
+    }
+    
+    return list;
+  }, [kelasId, asatidId, master]);
 
   const handleTextareaResize = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     e.target.style.height = "auto";
@@ -384,22 +424,31 @@ export default function TambahJurnalPage() {
               <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "24px" }}>
                 {/* Asatidz */}
                 <div>
-                  <label style={{ display: "block", fontSize: "13px", fontWeight: 600, color: "#475569", marginBottom: "8px" }}>
-                    Guru <span style={{ color: "#ef4444" }}>*</span>
-                  </label>
-                  <select
-                    value={asatidId}
-                    onChange={(e) => setAsatidId(e.target.value)}
-                    required
-                    style={{ padding: "12px 16px", borderRadius: "12px", border: "1px solid #cbd5e1", fontSize: "15px", outline: "none", width: "100%", backgroundColor: "white" }}
-                  >
-                    <option value="">— Pilih Guru —</option>
-                    {master?.asatidz.map((a) => (
-                      <option key={a.id} value={a.id}>
-                        {a.nama_lengkap}
-                      </option>
-                    ))}
-                  </select>
+                  {/* Pilih Guru */}
+                  <div>
+                    <label style={{ display: "block", fontSize: "14px", fontWeight: 600, color: "#475569", marginBottom: "8px" }}>
+                      Nama Guru <span style={{ color: "#ef4444" }}>*</span>
+                    </label>
+                    {(!currentUser?.role?.toLowerCase().includes("admin_super") && currentUser?.asatidz_id) ? (
+                      <div style={{ padding: "12px 16px", borderRadius: "12px", border: "1px solid #cbd5e1", fontSize: "15px", backgroundColor: "#f1f5f9", color: "#334155", fontWeight: 600 }}>
+                        {currentUser.nama}
+                      </div>
+                    ) : (
+                      <select
+                        value={asatidId}
+                        onChange={(e) => setAsatidId(e.target.value)}
+                        required
+                        style={{ padding: "12px 16px", borderRadius: "12px", border: "1px solid #cbd5e1", fontSize: "15px", outline: "none", width: "100%", backgroundColor: "white" }}
+                      >
+                        <option value="">-- Pilih Guru --</option>
+                        {master?.asatidz.map((a) => (
+                          <option key={a.id} value={a.id}>
+                            {a.nama_lengkap}
+                          </option>
+                        ))}
+                      </select>
+                    )}
+                  </div>
                 </div>
 
                 {/* Jam ke- */}
