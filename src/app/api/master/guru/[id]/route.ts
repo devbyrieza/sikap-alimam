@@ -10,9 +10,27 @@ export async function DELETE(
 ) {
   try {
     const { id } = await params;
-    await prisma.pegawai.delete({
-      where: { id },
-    });
+    
+    const pegawai = await prisma.pegawai.findUnique({ where: { id } });
+    if (pegawai) {
+      // Remove dependencies
+      await prisma.jadwalPelajaran.deleteMany({ where: { pegawai_id: id } });
+      await prisma.asatidzmMapel.deleteMany({ where: { pegawai_id: id } });
+      await prisma.jurnalMengajar.deleteMany({ where: { pegawai_id: id } });
+      await prisma.presensiAsatidz.deleteMany({ where: { pegawai_id: id } });
+      await prisma.capaianTahfidz.deleteMany({ where: { pegawai_id: id } });
+      await prisma.ibadahAdabSantri.deleteMany({ where: { pegawai_id: id } });
+      await prisma.kelas.updateMany({ where: { wali_kelas_id: id }, data: { wali_kelas_id: null } });
+
+      // Delete the Pegawai
+      await prisma.pegawai.delete({ where: { id } });
+
+      // Delete the User account if exists
+      if (pegawai.user_id) {
+        await prisma.user.delete({ where: { id: pegawai.user_id } }).catch(() => {});
+      }
+    }
+
     return NextResponse.json({ success: true, message: "Guru berhasil dihapus" });
   } catch (error) {
     console.error("Error deleting guru:", error);
