@@ -39,6 +39,7 @@ interface PresensiRecord {
   status: string;
   keterangan: string | null;
   kelasNama: string;
+  waliKelas: string;
 }
 
 interface SantriDetail {
@@ -452,6 +453,7 @@ export default function RiwayatPresensiSantriPage() {
                       <th style={{ padding: "12px 16px", textAlign: "left", color: "#550000", fontWeight: 800, width: 140 }}>Status</th>
                       <th style={{ padding: "12px 16px", textAlign: "left", color: "#550000", fontWeight: 800 }}>Keterangan</th>
                       <th style={{ padding: "12px 16px", textAlign: "left", color: "#550000", fontWeight: 800, width: 140 }}>Kelas</th>
+                      <th style={{ padding: "12px 16px", textAlign: "left", color: "#550000", fontWeight: 800, width: 180 }}>Wali Kelas</th>
                       {userRole?.includes("ADMIN_SUPER") && (
                         <th style={{ padding: "12px 16px", textAlign: "center", color: "#550000", fontWeight: 800, width: 60 }}>Aksi</th>
                       )}
@@ -513,6 +515,9 @@ export default function RiwayatPresensiSantriPage() {
                           </td>
                           <td style={{ padding: "14px 16px", fontWeight: 600, color: "#64748b" }}>
                             {p.kelasNama}
+                          </td>
+                          <td style={{ padding: "14px 16px", fontWeight: 600, color: "#475569" }}>
+                            {p.waliKelas}
                           </td>
                           {userRole?.includes("ADMIN_SUPER") && (
                             <td style={{ padding: "14px 16px", textAlign: "center" }}>

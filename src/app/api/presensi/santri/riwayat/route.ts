@@ -80,7 +80,7 @@ export async function GET(req: NextRequest) {
         status: true,
         keterangan: true,
         created_at: true,
-        kelas: { select: { nama: true } },
+        kelas: { select: { nama: true, wali_kelas: { select: { nama_lengkap: true } } } },
       },
     });
 
@@ -102,6 +102,7 @@ export async function GET(req: NextRequest) {
         status: p.status,
         keterangan: p.keterangan,
         kelasNama: p.kelas.nama,
+        waliKelas: p.kelas.wali_kelas?.nama_lengkap ?? "Wali Kelas belum diatur",
       };
     });
 
