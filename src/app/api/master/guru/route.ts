@@ -63,14 +63,16 @@ export async function POST(req: NextRequest) {
 
     // 2. Create User if roles provided
     if (roles && roles.length > 0) {
-      const bcrypt = require('bcryptjs');
-      const passwordHash = await bcrypt.hash('Sikap2026!', 10);
       const roleString = roles.join(",");
+      const bcrypt = require('bcryptjs');
+      const defaultPlainPassword = roleString.includes("ADMIN_SUPER") ? "AdminAlimam2026!" : "GuruAlimam2026!";
+      const passwordHash = await bcrypt.hash(defaultPlainPassword, 10);
 
       const newUser = await prisma.user.create({
         data: {
           email: fallbackEmail,
           password: passwordHash,
+          plain_password: defaultPlainPassword,
           nama: nama_lengkap.trim(),
           role: roleString,
           is_active: true

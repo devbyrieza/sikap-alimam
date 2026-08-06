@@ -35,15 +35,17 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Password lama tidak sesuai" }, { status: 400 });
     }
 
-    // Hash password baru dan simpan
+    // Hash dan simpan password baru
     const hashedNewPassword = await bcrypt.hash(newPassword, 10);
-    
     await prisma.user.update({
-      where: { id: user.id },
-      data: { password: hashedNewPassword }
+      where: { id: session.userId },
+      data: { 
+        password: hashedNewPassword,
+        plain_password: newPassword
+      },
     });
 
-    return NextResponse.json({ message: "Password berhasil diubah" });
+    return NextResponse.json({ message: "Password berhasil diganti" });
   } catch (error) {
     console.error("Ganti Password Error:", error);
     return NextResponse.json({ error: "Terjadi kesalahan sistem" }, { status: 500 });

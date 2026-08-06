@@ -152,7 +152,7 @@ async function executeSync(simpegGuruList: any[]) {
         });
 
         if (!savedPegawai.user_id) {
-          const passwordHash = await bcrypt.hash("Sikap2026!", 10);
+          const passwordHash = await bcrypt.hash("GuruAlimam2026!", 10);
           const fallbackEmail = guru.email || `${savedPegawai.nik || savedPegawai.id}@pesantren-alimam.com`;
           
           try {
@@ -160,6 +160,7 @@ async function executeSync(simpegGuruList: any[]) {
               data: {
                 email: fallbackEmail,
                 password: passwordHash,
+                plain_password: "GuruAlimam2026!",
                 nama: guru.nama_lengkap.trim(),
                 role: "GURU",
                 is_active: true

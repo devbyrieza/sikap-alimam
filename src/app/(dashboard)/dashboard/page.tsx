@@ -20,6 +20,13 @@ function formatJam(date: Date) {
 
 export default async function DashboardPage() {
   const session = await getSession();
+  
+  // Load current user for password check
+  const currentUser = session?.userId ? await prisma.user.findUnique({ where: { id: session.userId } }) : null;
+  const isDefaultPassword = currentUser?.plain_password === "GuruAlimam2026!" || 
+                            currentUser?.plain_password === "AdminAlimam2026!" || 
+                            currentUser?.plain_password === "Sikap2026!";
+
   const today = new Date();
   const todayStr = new Intl.DateTimeFormat("en-CA", {
     timeZone: "Asia/Jakarta", year: "numeric", month: "2-digit", day: "2-digit",
@@ -102,6 +109,18 @@ export default async function DashboardPage() {
   return (
     <div className="page-container">
       
+      {isDefaultPassword && (
+        <div style={{ background: "#fef3c7", borderLeft: "4px solid #f59e0b", padding: "12px 16px", marginBottom: "20px", borderRadius: "8px", display: "flex", justifyContent: "space-between", alignItems: "center", gap: "16px", flexWrap: "wrap" }}>
+          <div>
+            <h3 style={{ margin: 0, color: "#92400e", fontSize: "14px", fontWeight: "bold" }}>⚠️ Peringatan Keamanan</h3>
+            <p style={{ margin: "4px 0 0 0", color: "#b45309", fontSize: "13px" }}>Anda masih menggunakan kata sandi default. Segera ganti kata sandi Anda demi keamanan akun.</p>
+          </div>
+          <Link href="/profile" style={{ background: "#f59e0b", color: "white", padding: "8px 16px", borderRadius: "6px", fontSize: "12px", fontWeight: "bold", textDecoration: "none" }}>
+            Ganti Password
+          </Link>
+        </div>
+      )}
+
       {/* ── Premium Hero Banner ─────────────────────────────────────────────── */}
       <div className="hero-banner">
         {/* Decorative Background Elements */}
@@ -116,7 +135,7 @@ export default async function DashboardPage() {
             </div>
           </div>
           <h1 style={{ fontSize: "clamp(20px, 4vw, 32px)", fontWeight:800, margin:"0 0 8px 0", display:"flex", alignItems:"center", gap:10, letterSpacing:"-0.5px", flexWrap: "wrap", wordBreak: "break-word" }}>
-            Ahlan wa Sahlan, {session?.nama ? session.nama.split(" ")[0] : "User"} <Hand size={24} color="#ddc192" />
+            Ahlan wa Sahlan, Ust. {session?.nama ? session.nama.split(" ")[0] : "User"} <Hand size={24} color="#ddc192" />
           </h1>
           <div style={{ display:"flex", alignItems:"center", gap:12, color:"rgba(253, 248, 240, 0.85)", fontSize:13, flexWrap: "wrap" }}>
             <span style={{ display:"flex", alignItems:"center", gap:6 }}><Calendar size={14} color="#ddc192" /> {formatTanggal(today)}</span>

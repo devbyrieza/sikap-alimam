@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Users, Plus, Trash2, Edit2, Save, Mail, Phone, RefreshCw, BookOpen, X, Sparkles } from "lucide-react";
+import { Users, Plus, Trash2, Edit2, Save, Mail, Phone, RefreshCw, BookOpen, X, Sparkles, Eye, EyeOff } from "lucide-react";
 import Swal from "sweetalert2";
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -20,6 +20,7 @@ export default function MasterGuruPage() {
   const [guru, setGuru] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [isSyncing, setIsSyncing] = useState(false);
+  const [showPwd, setShowPwd] = useState<Record<string, boolean>>({});
 
   // Form State
   const [isAdding, setIsAdding] = useState(false);
@@ -251,17 +252,35 @@ export default function MasterGuruPage() {
                       </span>
                     )}
                   </div>
-                  <div style={{ display:"flex", flexWrap:"wrap", gap:4, marginTop:8 }}>
-                    {g.user?.role ? (
-                      g.user.role.split(",").map((r: string, i: number) => (
-                        <span key={i} style={{ fontSize:9, fontWeight:800, letterSpacing:"0.5px", background:"#eff6ff", color:"#2563eb", padding:"2px 6px", borderRadius:4, border:"1px solid #bfdbfe" }}>
-                          {r.trim().toUpperCase()}
-                        </span>
-                      ))
-                    ) : (
-                      <span style={{ fontSize:9, fontWeight:800, letterSpacing:"0.5px", background:"#fef2f2", color:"#dc2626", padding:"2px 6px", borderRadius:4, border:"1px solid #fecaca" }}>NO ACCOUNT</span>
-                    )}
-                  </div>
+                    <div style={{ display:"flex", flexWrap:"wrap", gap:4, marginTop:8, alignItems: "center" }}>
+                      {g.user?.role ? (
+                        <>
+                          {g.user.role.split(",").map((r: string, i: number) => (
+                            <span key={i} style={{ fontSize:9, fontWeight:800, letterSpacing:"0.5px", background:"#eff6ff", color:"#2563eb", padding:"2px 6px", borderRadius:4, border:"1px solid #bfdbfe" }}>
+                              {r.trim().toUpperCase()}
+                            </span>
+                          ))}
+                          
+                          {/* TOMBOL LIHAT SANDI (KHUSUS ADMIN SUPER) */}
+                          <div style={{ display: "flex", alignItems: "center", gap: "6px", marginLeft: "4px" }}>
+                            <button
+                              title="Lihat Sandi"
+                              onClick={() => setShowPwd(prev => ({ ...prev, [g.id]: !prev[g.id] }))}
+                              style={{ display: "flex", alignItems: "center", justifyContent: "center", background: showPwd[g.id] ? "#fef2f2" : "#f1f5f9", color: showPwd[g.id] ? "#dc2626" : "#64748b", border: "1px solid", borderColor: showPwd[g.id] ? "#fecaca" : "#e2e8f0", padding: "2px 6px", borderRadius: "4px", cursor: "pointer", transition: "all 0.2s" }}
+                            >
+                              {showPwd[g.id] ? <EyeOff size={12} /> : <Eye size={12} />}
+                            </button>
+                            {showPwd[g.id] && (
+                              <span style={{ fontSize: "10px", fontWeight: 700, color: "#b91c1c", background: "#fef2f2", padding: "2px 6px", borderRadius: "4px", border: "1px dashed #fca5a5" }}>
+                                {g.user.plain_password || "Tidak ada data sandi"}
+                              </span>
+                            )}
+                          </div>
+                        </>
+                      ) : (
+                        <span style={{ fontSize:9, fontWeight:800, letterSpacing:"0.5px", background:"#fef2f2", color:"#dc2626", padding:"2px 6px", borderRadius:4, border:"1px solid #fecaca" }}>NO ACCOUNT</span>
+                      )}
+                    </div>
                 </div>
               </div>
 
