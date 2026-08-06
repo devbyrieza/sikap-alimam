@@ -429,7 +429,7 @@ export default function EditJurnalPage({ params }: { params: Promise<{ id: strin
                         <Clock size={16} />
                         Jam ke- (KBM Kelas)
                       </label>
-                      <p style={{ fontSize: "11px", color: "#64748b", fontWeight: 500, margin: 0 }}>Mulai jam ke-3 (07.00 WIB) setelah Halaqah Tahfidz</p>
+                      <p style={{ fontSize: "11px", color: "#64748b", fontWeight: 500, margin: 0 }}>KBM Mulai jam ke-3 (07.00 WIB)</p>
                     </div>
                     {jamKe.length > 0 && (
                       <span style={{ fontSize: "12px", fontWeight: 600, background: "#d1fae5", color: "#065f46", padding: "4px 10px", borderRadius: "99px", whiteSpace: "nowrap" }}>
@@ -440,7 +440,15 @@ export default function EditJurnalPage({ params }: { params: Promise<{ id: strin
                   <div style={{ display: "flex", flexWrap: "wrap", gap: "8px" }}>
                     {JAM_OPTIONS.map((j) => {
                       const isSelected = jamKe.includes(j);
-                      const isPagiAwal = j === "3";
+                      const waktuMap: Record<string, string> = {
+                        "3": "07.00-07.40",
+                        "4": "07.40-08.20",
+                        "5": "08.20-09.00",
+                        "6": "09.00-09.40",
+                        "7": "10.00-10.40",
+                        "8": "10.40-11.20",
+                        "9": "11.20-12.00",
+                      };
                       return (
                         <button
                           key={j}
@@ -462,9 +470,9 @@ export default function EditJurnalPage({ params }: { params: Promise<{ id: strin
                             fontWeight: "bold",
                             borderRadius: "12px",
                             border: "2px solid",
-                            padding: j === "Khusus" ? "8px 16px" : "0",
-                            width: j === "Khusus" ? "auto" : "44px",
-                            height: j === "Khusus" ? "auto" : "44px",
+                            padding: "6px 12px",
+                            minWidth: "64px",
+                            height: "auto",
                             ...(isSelected ? {
                               background: "#ecfdf5", color: "#047857", borderColor: "#10b981", boxShadow: "0 1px 2px rgba(0,0,0,0.05)"
                             } : {
@@ -479,18 +487,19 @@ export default function EditJurnalPage({ params }: { params: Promise<{ id: strin
                             </div>
                           )}
                           {isSelected && j === "Khusus" && (
-                            <div style={{ display: "flex", alignItems: "center" }}>
-                              <Check size={16} strokeWidth={3} style={{ marginRight: "6px" }} />
+                            <div style={{ display: "flex", alignItems: "center", marginBottom: "2px" }}>
+                              <Check size={14} strokeWidth={3} style={{ marginRight: "4px" }} />
                               <span style={{ fontSize: "14px" }}>{j}</span>
                             </div>
                           )}
-                          {!isSelected && j === "Khusus" && <span style={{ fontSize: "14px" }}>{j}</span>}
+                          {!isSelected && j === "Khusus" && <span style={{ fontSize: "14px", marginBottom: "2px" }}>{j}</span>}
+                          {j === "Khusus" && <span style={{ fontSize: "9px", fontWeight: 600, color: isSelected ? "#059669" : "#94a3b8" }}>Menyesuaikan</span>}
                           
                           {/* For numbers */}
                           {j !== "Khusus" && (
                             <>
-                              <span style={{ fontSize: isPagiAwal ? "14px" : "15px", lineHeight: 1, marginTop: isPagiAwal ? "2px" : "0" }}>{j}</span>
-                              {isPagiAwal && <span style={{ fontSize: "9px", fontWeight: 700, color: "#059669", lineHeight: 1.2 }}>07.00</span>}
+                              <span style={{ fontSize: "14px", lineHeight: 1, marginBottom: "4px" }}>{j}</span>
+                              <span style={{ fontSize: "9px", fontWeight: 700, color: isSelected ? "#059669" : "#94a3b8", lineHeight: 1 }}>{waktuMap[j]}</span>
                             </>
                           )}
                         </button>
