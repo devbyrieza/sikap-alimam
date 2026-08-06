@@ -105,20 +105,20 @@ export default function MasterGuruPage() {
 
       {/* ── Hero Banner ─────────────────────────────────────────────────────── */}
       <div style={{
-        background: "linear-gradient(135deg, #064e3b 0%, #047857 60%, #10b981 100%)",
+        background: "linear-gradient(135deg, #3b0000 0%, #550000 60%, #7a0000 100%)",
         borderRadius: 24, padding: "32px 36px", color: "white",
         display: "flex", justifyContent: "space-between", alignItems: "center",
         flexWrap: "wrap", gap: 20,
-        boxShadow: "0 16px 40px rgba(4,120,87,0.25)",
+        boxShadow: "0 10px 25px rgba(0,0,0,0.2)",
         position: "relative", overflow: "hidden",
       }}>
         {/* Decorative circles */}
-        <div style={{ position:"absolute", top:-40, right:-40, width:200, height:200, borderRadius:"50%", background:"rgba(255,255,255,0.06)", pointerEvents:"none" }} />
-        <div style={{ position:"absolute", bottom:-60, right:120, width:160, height:160, borderRadius:"50%", background:"rgba(255,255,255,0.04)", pointerEvents:"none" }} />
+        <div style={{ position:"absolute", top:-40, right:-40, width:200, height:200, borderRadius:"50%", background:"rgba(221,193,146,0.1)", pointerEvents:"none" }} />
+        <div style={{ position:"absolute", bottom:-60, right:120, width:160, height:160, borderRadius:"50%", background:"rgba(221,193,146,0.05)", pointerEvents:"none" }} />
         
         <div style={{ position:"relative", zIndex:1 }}>
           <div style={{ display:"flex", alignItems:"center", gap:12, marginBottom:8 }}>
-            <Users size={32} color="#6ee7b7" />
+            <Users size={32} color="#ddc192" />
             <h1 style={{ margin:0, fontSize:26, fontWeight:800, letterSpacing:"-0.3px" }}>Master Data Guru</h1>
           </div>
           <p style={{ margin:0, color:"rgba(255,255,255,0.82)", fontSize:14, lineHeight:1.6, maxWidth:460 }}>
@@ -134,8 +134,8 @@ export default function MasterGuruPage() {
             <RefreshCw size={18} className={isSyncing ? "animate-spin" : ""} /> Sync SIMPEG
           </button>
           <button onClick={() => { setIsAdding(!isAdding); if (isAdding) { setEditingId(null); setForm(emptyForm); } }} style={{
-            background:"#10b981", color:"#022c22", border:"none", cursor:"pointer",
-            fontWeight:800, fontSize:14, padding:"12px 22px", borderRadius:14, display:"flex", alignItems:"center", gap:8, boxShadow:"0 4px 16px rgba(16,185,129,0.3)", transition:"all 0.2s", whiteSpace:"nowrap",
+            background:"#ddc192", color:"#3b0000", border:"none", cursor:"pointer",
+            fontWeight:800, fontSize:14, padding:"12px 22px", borderRadius:14, display:"flex", alignItems:"center", gap:8, boxShadow:"0 4px 16px rgba(221,193,146,0.3)", transition:"all 0.2s", whiteSpace:"nowrap",
           }}>
             {isAdding ? <X size={18} /> : <Plus size={18} />} {isAdding ? "Tutup Form" : "Tambah Guru"}
           </button>
@@ -231,9 +231,9 @@ export default function MasterGuruPage() {
               <div style={{ display: "flex", gap: 16, alignItems: "flex-start" }}>
                 <div style={{
                   width: 52, height: 52, borderRadius: 16, flexShrink: 0,
-                  background: "linear-gradient(135deg, #10b981 0%, #059669 100%)", color: "white",
+                  background: "linear-gradient(135deg, #7a0000 0%, #550000 100%)", color: "white",
                   display: "flex", alignItems: "center", justifyContent: "center",
-                  fontSize: 24, fontWeight: 800, boxShadow: "0 4px 12px rgba(16,185,129,0.3)"
+                  fontSize: 24, fontWeight: 800, boxShadow: "0 4px 12px rgba(85,0,0,0.3)"
                 }}>
                   {(formatName(g.nama_lengkap) || "G").charAt(0).toUpperCase()}
                 </div>

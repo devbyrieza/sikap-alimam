@@ -155,20 +155,20 @@ export default function MasterMapelPage() {
 
       {/* ── Hero Banner ─────────────────────────────────────────────────────── */}
       <div style={{
-        background: "linear-gradient(135deg, #0f172a 0%, #1e293b 60%, #0369a1 100%)",
+        background: "linear-gradient(135deg, #3b0000 0%, #550000 60%, #7a0000 100%)",
         borderRadius: 24, padding: "32px 36px", color: "white",
         display: "flex", justifyContent: "space-between", alignItems: "center",
         flexWrap: "wrap", gap: 20,
-        boxShadow: "0 16px 40px rgba(3,105,161,0.25)",
+        boxShadow: "0 10px 25px rgba(0,0,0,0.2)",
         position: "relative", overflow: "hidden",
       }}>
         {/* Decorative circles */}
-        <div style={{ position:"absolute", top:-40, right:-40, width:200, height:200, borderRadius:"50%", background:"rgba(56,189,248,0.1)", pointerEvents:"none" }} />
-        <div style={{ position:"absolute", bottom:-60, right:120, width:160, height:160, borderRadius:"50%", background:"rgba(56,189,248,0.05)", pointerEvents:"none" }} />
+        <div style={{ position:"absolute", top:-40, right:-40, width:200, height:200, borderRadius:"50%", background:"rgba(221,193,146,0.1)", pointerEvents:"none" }} />
+        <div style={{ position:"absolute", bottom:-60, right:120, width:160, height:160, borderRadius:"50%", background:"rgba(221,193,146,0.05)", pointerEvents:"none" }} />
         
         <div style={{ position:"relative", zIndex:1 }}>
           <div style={{ display:"flex", alignItems:"center", gap:12, marginBottom:8 }}>
-            <BookOpen size={32} color="#38bdf8" />
+            <BookOpen size={32} color="#ddc192" />
             <h1 style={{ margin:0, fontSize:26, fontWeight:800, letterSpacing:"-0.3px" }}>Master Data Mata Pelajaran</h1>
           </div>
           <p style={{ margin:0, color:"rgba(255,255,255,0.82)", fontSize:14, lineHeight:1.6, maxWidth:460 }}>
@@ -184,8 +184,8 @@ export default function MasterMapelPage() {
             <RefreshCw size={18} /> Sync Kurikulum
           </button>
           <button onClick={() => { setIsAdding(!isAdding); setEditingId(null); }} style={{
-            background:"#38bdf8", color:"#0f172a", border:"none", cursor:"pointer",
-            fontWeight:800, fontSize:14, padding:"12px 22px", borderRadius:14, display:"flex", alignItems:"center", gap:8, boxShadow:"0 4px 16px rgba(56,189,248,0.3)", transition:"all 0.2s", whiteSpace:"nowrap",
+            background:"#ddc192", color:"#3b0000", border:"none", cursor:"pointer",
+            fontWeight:800, fontSize:14, padding:"12px 22px", borderRadius:14, display:"flex", alignItems:"center", gap:8, boxShadow:"0 4px 16px rgba(221,193,146,0.3)", transition:"all 0.2s", whiteSpace:"nowrap",
           }}>
             {isAdding ? <X size={18} /> : <Plus size={18} />} {isAdding ? "Tutup Form" : "Tambah Mapel"}
           </button>

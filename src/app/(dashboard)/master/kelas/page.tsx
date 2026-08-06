@@ -136,11 +136,11 @@ export default function MasterKelasPage() {
 
       {/* ── Hero Banner ─────────────────────────────────────────────────────── */}
       <div style={{
-        background: "linear-gradient(135deg, #7c1010 0%, #a81515 60%, #c42020 100%)",
+        background: "linear-gradient(135deg, #3b0000 0%, #550000 60%, #7a0000 100%)",
         borderRadius: 24, padding: "32px 36px", color: "white",
         display: "flex", justifyContent: "space-between", alignItems: "center",
         flexWrap: "wrap", gap: 20,
-        boxShadow: "0 16px 40px rgba(124,16,16,0.28)",
+        boxShadow: "0 16px 40px rgba(85,0,0,0.28)",
         position: "relative", overflow: "hidden",
       }}>
         {/* Decorative circles */}
@@ -161,10 +161,10 @@ export default function MasterKelasPage() {
           onClick={() => { setIsAdding(!isAdding); setEditingId(null); }}
           style={{
             position:"relative", zIndex:1,
-            background:"white", color:"#7c1010", border:"none", cursor:"pointer",
-            fontWeight:700, fontSize:14, padding:"12px 22px", borderRadius:14,
+            background:"#ddc192", color:"#3b0000", border:"none", cursor:"pointer",
+            fontWeight:800, fontSize:14, padding:"12px 22px", borderRadius:14,
             display:"flex", alignItems:"center", gap:8,
-            boxShadow:"0 4px 16px rgba(0,0,0,0.15)", transition:"all 0.2s",
+            boxShadow:"0 4px 16px rgba(221,193,146,0.3)", transition:"all 0.2s",
             whiteSpace:"nowrap",
           }}
         >
