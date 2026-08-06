@@ -111,24 +111,21 @@ export default function Sidebar({ user }: SidebarProps) {
     router.refresh();
   }
 
-  async function handleSwitchRole() {
-    const targetRole = user.role === "ADMIN_SUPER" ? "GURU" : "ADMIN_SUPER";
-    try {
-      const res = await fetch("/api/auth/switch-role", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ targetRole }),
-      });
-      if (res.ok) {
-        router.push("/dashboard");
-        router.refresh();
-      } else {
-        alert("Gagal mengganti role");
-      }
-    } catch {
-      alert("Terjadi kesalahan");
-    }
-  }
+  const formatRoleDisplay = (roleStr: string) => {
+    if (!roleStr) return "Pengguna";
+    const mapping: Record<string, string> = {
+      ADMIN_SUPER: "Admin Super",
+      GURU: "Guru Mapel",
+      WALI_KELAS: "Wali Kelas",
+      ADMIN_KEUANGAN: "Admin Keuangan",
+    };
+    
+    return roleStr
+      .toUpperCase()
+      .split(",")
+      .map(r => mapping[r.trim()] || r.trim())
+      .join(" & ");
+  };
 
   const SidebarContent = () => (
     <>
@@ -267,34 +264,11 @@ export default function Sidebar({ user }: SidebarProps) {
                 whiteSpace: "nowrap",
               }}
             >
-              {(user?.role || "").toUpperCase().includes("ADMIN") ? "Admin Super & Guru" : ((user?.role || "").toUpperCase() === "GURU" ? "Guru Pengajar" : (user?.role || "Pengguna"))}
+              {formatRoleDisplay(user?.role || "")}
             </p>
           </div>
         </div>
           
-          {user.originalRole === "ADMIN_SUPER" && (
-            <button
-              type="button"
-              onClick={handleSwitchRole}
-              className="btn btn-ghost btn-sm"
-              style={{
-                width: "100%",
-                justifyContent: "center",
-                color: "#550000",
-                background: "#fdf8f0",
-                borderColor: "#ebdcc3",
-                padding: "7px 0",
-                fontSize: "11px",
-                fontWeight: 700,
-                cursor: "pointer",
-                marginBottom: 6
-              }}
-            >
-              <UserCheck size={13} style={{ marginRight: 4 }} />
-              Ganti ke Mode {user.role === "ADMIN_SUPER" ? "Guru" : "Admin"}
-            </button>
-          )}
-
           <button
             type="button"
             onClick={() => {
