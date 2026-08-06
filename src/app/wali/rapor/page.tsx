@@ -986,7 +986,7 @@ export default function RaporWaliPage() {
 
       {/* Ultra-Premium Jurnal Detail Modal */}
       <JurnalDetailModal
-        displayData={selectedJurnal}
+        data={selectedJurnal}
         onClose={() => setSelectedJurnal(null)}
       />
     </div>

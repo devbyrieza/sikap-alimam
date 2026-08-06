@@ -82,8 +82,8 @@ function getDurasiJam(jamStr: string) {
 
 const HEADER_BG = "linear-gradient(145deg, #6e0b0b 0%, #550000 50%, #751414 100%)";
 
-export default function JurnalDetailModal({ jurnal, data, onClose, isOpen, isAdminSuper }: JurnalDetailModalProps) {
-  const displayData = data || jurnal;
+export default function JurnalDetailModal({ data, onClose, isOpen, isAdminSuper }: JurnalDetailModalProps) {
+  const displayData = data;
 
   useEffect(() => {
     if (displayData || isOpen) {
