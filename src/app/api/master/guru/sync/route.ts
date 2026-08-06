@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { Client } from "pg";
 import { PrismaClient } from "@prisma/client";
+import bcrypt from "bcryptjs";
 import fs from "fs";
 import path from "path";
 
@@ -121,7 +122,7 @@ async function executeSync(simpegGuruList: any[]) {
     try {
         let validNik = guru.nik && guru.nik.trim() !== "" && guru.nik.trim() !== "-" ? guru.nik.trim() : null;
 
-        await prisma.pegawai.upsert({
+        const savedPegawai = await prisma.pegawai.upsert({
           where: { id: guru.id },
           update: {
             nik: validNik,
@@ -149,6 +150,38 @@ async function executeSync(simpegGuruList: any[]) {
             kategori_pegawai: 'ASATIDZ'
           }
         });
+
+        if (!savedPegawai.user_id) {
+          const passwordHash = await bcrypt.hash("Sikap2026!", 10);
+          const fallbackEmail = guru.email || `${savedPegawai.nik || savedPegawai.id}@pesantren-alimam.com`;
+          
+          try {
+            const newUser = await prisma.user.create({
+              data: {
+                email: fallbackEmail,
+                password: passwordHash,
+                nama: guru.nama_lengkap.trim(),
+                role: "GURU",
+                is_active: true
+              }
+            });
+            await prisma.pegawai.update({
+              where: { id: savedPegawai.id },
+              data: { user_id: newUser.id }
+            });
+          } catch (e) {
+            console.error("Gagal membuat user otomatis untuk", guru.nama_lengkap, e);
+          }
+        } else {
+          const existingUser = await prisma.user.findUnique({ where: { id: savedPegawai.user_id } });
+          if (existingUser && !existingUser.role.includes("GURU")) {
+            const newRole = existingUser.role ? `${existingUser.role},GURU` : "GURU";
+            await prisma.user.update({
+              where: { id: existingUser.id },
+              data: { role: newRole }
+            });
+          }
+        }
 
       // Auto-mapping ke AsatidzmMapel jika ada mata_pelajaran
       if (guru.mata_pelajaran) {
