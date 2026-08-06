@@ -51,7 +51,9 @@ export default function JurnalClientFilter({
   data,
   kelasList = [],
   asatidzList = [],
+  isAdminSuper = false,
 }: {
+  data: JurnalRow[];
   kelasList?: (string | KelasObject)[];
   asatidzList?: string[];
   isAdminSuper?: boolean;
