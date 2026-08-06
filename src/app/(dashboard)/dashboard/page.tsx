@@ -205,11 +205,11 @@ export default async function DashboardPage() {
               <TrendingUp size={28} />
             </div>
             <div>
-              <div className="stat-label">Total Guru & Staf</div>
+              <div className="stat-label">Total Asatidz / Guru</div>
               <div className="stat-value">
                 {totalAsatidz}
               </div>
-              <div style={{ fontSize:12, fontWeight:600, color:"#94a3b8", marginTop:6 }}>Data Kepegawaian</div>
+              <div style={{ fontSize:12, fontWeight:600, color:"#94a3b8", marginTop:6 }}>Aktif Mengajar</div>
             </div>
           </div>
         )}
