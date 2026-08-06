@@ -55,6 +55,8 @@ export default function EditJurnalPage({ params }: { params: Promise<{ id: strin
   const [asatidId, setAsatidId] = useState("");
   const [tanggal, setTanggal] = useState(today);
   const [jamKe, setJamKe] = useState<string[]>([]);
+  const [jamKhususMulai, setJamKhususMulai] = useState("");
+  const [jamKhususSelesai, setJamKhususSelesai] = useState("");
   const [materi, setMateri] = useState("");
   const [subMateri, setSubMateri] = useState("");
   const [learningOutcome, setLearningOutcome] = useState("");
@@ -66,11 +68,11 @@ export default function EditJurnalPage({ params }: { params: Promise<{ id: strin
   useEffect(() => {
     if (kelasId || mapelId || asatidId || materi || subMateri || learningOutcome || kegiatan || catatan) {
       const savedAt = new Date().toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" });
-      const p = { kelasId, mapelId, asatidId, tanggal, jamKe, materi, subMateri, learningOutcome, kegiatan, catatan, _savedAt: savedAt };
+      const p = { kelasId, mapelId, asatidId, tanggal, jamKe, jamKhususMulai, jamKhususSelesai, materi, subMateri, learningOutcome, kegiatan, catatan, _savedAt: savedAt };
       localStorage.setItem("siakad_jurnal_draft", JSON.stringify(p));
       setLastSaved(savedAt);
     }
-  }, [kelasId, mapelId, asatidId, tanggal, jamKe, materi, subMateri, learningOutcome, kegiatan, catatan]);
+  }, [kelasId, mapelId, asatidId, tanggal, jamKe, jamKhususMulai, jamKhususSelesai, materi, subMateri, learningOutcome, kegiatan, catatan]);
 
   // Load draft dari localStorage
   useEffect(() => {
@@ -87,6 +89,8 @@ export default function EditJurnalPage({ params }: { params: Promise<{ id: strin
           if (Array.isArray(p.jamKe)) setJamKe(p.jamKe);
           else if (typeof p.jamKe === "string") setJamKe(p.jamKe.split(",").map((s: string) => s.trim()));
         }
+        if (p.jamKhususMulai) setJamKhususMulai(p.jamKhususMulai);
+        if (p.jamKhususSelesai) setJamKhususSelesai(p.jamKhususSelesai);
         if (p.materi) setMateri(p.materi);
         if (p.subMateri) setSubMateri(p.subMateri);
         if (p.learningOutcome) setLearningOutcome(p.learningOutcome);
@@ -119,6 +123,8 @@ export default function EditJurnalPage({ params }: { params: Promise<{ id: strin
         setAsatidId("");
         setTanggal(today);
         setJamKe([]);
+        setJamKhususMulai("");
+        setJamKhususSelesai("");
         setMateri("");
         setSubMateri("");
         setLearningOutcome("");
@@ -149,7 +155,23 @@ export default function EditJurnalPage({ params }: { params: Promise<{ id: strin
           setMapelId(j.mapel_id || "");
           setAsatidId(j.pegawai_id || "");
           setTanggal(j.tanggal ? j.tanggal.split("T")[0] : today);
-          if (j.jam_ke) setJamKe(j.jam_ke.split(",").map((x: string) => x.trim()));
+          if (j.jam_ke) {
+            const parsed = j.jam_ke.split(",").map((x: string) => x.trim());
+            const finalJamKe: string[] = [];
+            parsed.forEach((val: string) => {
+              if (val.startsWith("Khusus")) {
+                finalJamKe.push("Khusus");
+                const match = val.match(/\((.*?)-(.*?)\)/);
+                if (match) {
+                  setJamKhususMulai(match[1].trim());
+                  setJamKhususSelesai(match[2].trim());
+                }
+              } else {
+                finalJamKe.push(val);
+              }
+            });
+            setJamKe(finalJamKe);
+          }
           setMateri(j.materi || "");
           setSubMateri(j.sub_materi || "");
           setLearningOutcome(j.learning_outcome || "");
@@ -229,6 +251,11 @@ export default function EditJurnalPage({ params }: { params: Promise<{ id: strin
             if (a === "Khusus") return 1;
             if (b === "Khusus") return -1;
             return parseInt(a) - parseInt(b);
+          }).map(j => {
+            if (j === "Khusus" && jamKhususMulai && jamKhususSelesai) {
+              return `Khusus (${jamKhususMulai}-${jamKhususSelesai})`;
+            }
+            return j;
           }).join(", ") : null,
           materi,
           sub_materi: subMateri || null,
@@ -506,6 +533,16 @@ export default function EditJurnalPage({ params }: { params: Promise<{ id: strin
                       );
                     })}
                   </div>
+                  {jamKe.includes("Khusus") && (
+                    <div style={{ marginTop: "12px", padding: "12px", background: "#f8fafc", borderRadius: "12px", border: "1px dashed #cbd5e1" }}>
+                      <label style={{ display: "block", fontSize: "12px", fontWeight: 600, color: "#475569", marginBottom: "8px" }}>Tentukan Waktu Khusus <span style={{ color: "#ef4444" }}>*</span></label>
+                      <div style={{ display: "flex", gap: "12px", alignItems: "center" }}>
+                        <input type="time" value={jamKhususMulai} onChange={e => setJamKhususMulai(e.target.value)} required={jamKe.includes("Khusus")} style={{ padding: "8px 12px", borderRadius: "8px", border: "1px solid #cbd5e1", outline: "none", fontSize: "14px", background: "white", color: "#334155" }} />
+                        <span style={{ color: "#64748b", fontWeight: 600, fontSize: "13px" }}>s.d</span>
+                        <input type="time" value={jamKhususSelesai} onChange={e => setJamKhususSelesai(e.target.value)} required={jamKe.includes("Khusus")} style={{ padding: "8px 12px", borderRadius: "8px", border: "1px solid #cbd5e1", outline: "none", fontSize: "14px", background: "white", color: "#334155" }} />
+                      </div>
+                    </div>
+                  )}
                 </div>
 
                 {/* Jenjang */}
