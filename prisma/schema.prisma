@@ -179,6 +179,7 @@ model JurnalMengajar {
   tanggal    DateTime @db.Date
   jam_ke           String? // "1-2", "3", dll
   materi           String
+  sub_materi       String? // Tambahan Sub Topik
   learning_outcome String? // LO / Tujuan Pembelajaran
   kegiatan         String
   catatan          String?

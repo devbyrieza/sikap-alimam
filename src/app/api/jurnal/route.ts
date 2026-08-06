@@ -35,7 +35,7 @@ export async function GET(req: NextRequest) {
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { pegawai_id, mapel_id, kelas_id, tanggal, jam_ke, materi, learning_outcome, kegiatan, catatan } = body;
+    const { pegawai_id, mapel_id, kelas_id, tanggal, jam_ke, materi, sub_materi, learning_outcome, kegiatan, catatan } = body;
 
     if (!pegawai_id || !mapel_id || !kelas_id || !tanggal || !materi || !kegiatan) {
       return NextResponse.json({ error: "Field wajib tidak lengkap" }, { status: 400 });
@@ -49,6 +49,7 @@ export async function POST(req: NextRequest) {
         tanggal: new Date(tanggal),
         jam_ke: jam_ke || null,
         materi,
+        sub_materi: sub_materi || null,
         learning_outcome: learning_outcome || null,
         kegiatan,
         catatan: catatan || null,

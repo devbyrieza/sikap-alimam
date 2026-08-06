@@ -92,27 +92,22 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    // Role Selection Logic
-    if (user.role === 'ADMIN_SUPER' && !selectedRole) {
-      return NextResponse.json({
-        success: true,
-        requireRoleSelection: true,
-        availableRoles: ['ADMIN_SUPER', 'GURU']
-      });
+    // Format nama dengan sapaan Ust. jika belum ada
+    let formattedNama = user.nama.trim();
+    if (!/^Ust\.\s/i.test(formattedNama) && !/^Ustadz\s/i.test(formattedNama) && !/^Ustadzah\s/i.test(formattedNama)) {
+      formattedNama = "Ust. " + formattedNama;
     }
-
-    const finalRole = selectedRole && user.role === 'ADMIN_SUPER' ? selectedRole : user.role;
 
     await createSession({
       userId: user.id,
       email: user.email,
-      nama: user.nama,
-      role: finalRole,
+      nama: formattedNama,
+      role: user.role,
       originalRole: user.role,
       asatidz_id: asatidzId,
     });
 
-    return NextResponse.json({ success: true, role: finalRole, nama: user.nama });
+    return NextResponse.json({ success: true, role: user.role, nama: formattedNama });
   } catch (err) {
     console.error("Login error:", err);
     return NextResponse.json(

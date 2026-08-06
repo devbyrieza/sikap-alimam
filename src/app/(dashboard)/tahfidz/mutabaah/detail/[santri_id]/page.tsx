@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import { ArrowLeft, Plus, X, Save, AlertCircle, FileText } from "lucide-react";
+import React, { useState, useEffect, useCallback } from "react";
+import { ArrowLeft, Plus, X, Save, AlertCircle, FileText, Trash2 } from "lucide-react";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { QURAN_SURAH } from "@/lib/quran";
 import Swal from "sweetalert2";
@@ -44,9 +44,15 @@ export default function TahfidzDetailPage() {
   // Derived states for Ayat ranges
   const [suratDariVerses, setSuratDariVerses] = useState<number>(7);
   const [suratKeVerses, setSuratKeVerses] = useState<number>(0);
+  
+  const [userRole, setUserRole] = useState<string>("");
+
+  useEffect(() => {
+    fetch("/api/profile").then(r => r.json()).then(d => { if(d.data?.role) setUserRole(d.data.role); }).catch(()=>{});
+  }, []);
 
   // Fetch student info and records
-  const fetchStudentData = async () => {
+  const fetchStudentData = useCallback(async () => {
     setLoading(true);
     try {
       const res = await fetch(`/api/tahfidz/mutabaah/${santriId}`);
@@ -58,19 +64,46 @@ export default function TahfidzDetailPage() {
         // Fallback fetch if no records exist yet
         const listRes = await fetch("/api/tahfidz/mutabaah");
         const listData = await listRes.json();
-        const found = listData.find((s: any) => s.id === santriId);
-        setStudentInfo(found ? { nama_lengkap: found.nama_lengkap, nis: found.nis, kelas: { nama: found.kelas } } : null);
+        const std = listData.find((s: any) => s.id === santriId);
+        if (std) setStudentInfo(std);
       }
-    } catch (err) {
-      console.error("Gagal memuat data detail:", err);
+    } catch (error) {
+      console.error("Gagal mengambil data", error);
     } finally {
       setLoading(false);
+    }
+  }, [santriId]);
+
+  const handleDelete = async (id: string, detailStr: string) => {
+    const confirm = await Swal.fire({
+      icon: "warning",
+      title: "Hapus Mutabaah?",
+      text: `Yakin ingin menghapus rekam ${detailStr}?`,
+      showCancelButton: true,
+      confirmButtonText: "Ya, Hapus!",
+      cancelButtonText: "Batal",
+      confirmButtonColor: "#ef4444",
+      cancelButtonColor: "#64748b",
+    });
+
+    if (confirm.isConfirmed) {
+      try {
+        const res = await fetch(`/api/tahfidz/mutabaah/hapus/${id}`, { method: "DELETE" });
+        if (res.ok) {
+          Swal.fire("Terhapus!", "Data mutabaah berhasil dihapus.", "success");
+          fetchStudentData();
+        } else {
+          Swal.fire("Gagal", "Gagal menghapus data.", "error");
+        }
+      } catch {
+        Swal.fire("Error", "Terjadi kesalahan server.", "error");
+      }
     }
   };
 
   useEffect(() => {
     fetchStudentData();
-  }, [santriId]);
+  }, [fetchStudentData]);
 
   // Adjust verse counts when surah changes
   useEffect(() => {
@@ -231,6 +264,9 @@ export default function TahfidzDetailPage() {
                   <th style={{ padding: "16px 20px", textAlign: "center" }}>Nilai</th>
                   <th style={{ padding: "16px 20px", textAlign: "left" }}>Catatan / Keterangan</th>
                   <th style={{ padding: "16px 20px", textAlign: "left" }}>Musyrif</th>
+                  {userRole?.includes("ADMIN_SUPER") && (
+                    <th style={{ padding: "16px 20px", textAlign: "center" }}>Aksi</th>
+                  )}
                 </tr>
               </thead>
               <tbody>
@@ -274,6 +310,38 @@ export default function TahfidzDetailPage() {
                     <td style={{ padding: "16px 20px", textAlign: "center", fontWeight: "bold", color: "#0f172a" }}>{r.nilai || "-"}</td>
                     <td style={{ padding: "16px 20px", color: "#64748b", maxWidth: "250px", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{r.keterangan || "-"}</td>
                     <td style={{ padding: "16px 20px", color: "#475569", fontWeight: 500 }}>{r.pegawai?.nama_lengkap || "Sistem"}</td>
+                    {userRole?.includes("ADMIN_SUPER") && (
+                      <td style={{ padding: "16px 20px", textAlign: "center" }}>
+                        <button 
+                          onClick={() => handleDelete(r.id, `${r.jenis} ${r.surat_dari}`)}
+                          title="Hapus Data (Khusus Admin Super)"
+                          style={{
+                            background: "#fef2f2",
+                            color: "#dc2626",
+                            border: "1px solid #fecaca",
+                            borderRadius: "8px",
+                            width: "32px",
+                            height: "32px",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            cursor: "pointer",
+                            transition: "all 0.2s",
+                            margin: "0 auto"
+                          }}
+                          onMouseEnter={(e) => {
+                            e.currentTarget.style.background = "#fee2e2";
+                            e.currentTarget.style.transform = "translateY(-1px)";
+                          }}
+                          onMouseLeave={(e) => {
+                            e.currentTarget.style.background = "#fef2f2";
+                            e.currentTarget.style.transform = "none";
+                          }}
+                        >
+                          <Trash2 size={16} />
+                        </button>
+                      </td>
+                    )}
                   </tr>
                 ))}
               </tbody>

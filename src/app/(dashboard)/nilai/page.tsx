@@ -11,7 +11,8 @@ import {
   BookOpen,
   Lightbulb,
   BarChart3,
-  ArrowLeft
+  ArrowLeft,
+  Trash2
 } from "lucide-react";
 import ModuleTabs from "@/components/ModuleTabs";
 
@@ -64,6 +65,12 @@ export default function InputNilaiPage() {
   const [loadingMapel, setLoadingMapel] = useState(false);
   const [loadingSantri, setLoadingSantri] = useState(false);
   const [saving, setSaving] = useState(false);
+  
+  const [userRole, setUserRole] = useState<string>("");
+
+  useEffect(() => {
+    fetch("/api/profile").then(r => r.json()).then(d => { if(d.data?.role) setUserRole(d.data.role); }).catch(()=>{});
+  }, []);
 
   // Fetch kelas
   useEffect(() => {
@@ -255,6 +262,35 @@ export default function InputNilaiPage() {
     if (!data.harian && !data.kompetensi && !data.sikap && !data.ujian) return null;
 
     return (0.3 * h + 0.2 * k + 0.1 * s + 0.4 * u).toFixed(1);
+  };
+
+  const handleDeleteMassal = async (santriId: string, santriName: string) => {
+    const confirm = await Swal.fire({
+      icon: "warning",
+      title: "Hapus Nilai?",
+      text: `Yakin ingin menghapus SELURUH nilai ${santriName} untuk mapel ini di semester ${semester} tahun ${tahun_ajaran}?`,
+      showCancelButton: true,
+      confirmButtonText: "Ya, Hapus!",
+      cancelButtonText: "Batal",
+      confirmButtonColor: "#ef4444",
+      cancelButtonColor: "#64748b",
+    });
+
+    if (confirm.isConfirmed) {
+      try {
+        const res = await fetch(`/api/nilai/hapus?santri_id=${santriId}&mapel_id=${mapel_id}&semester=${semester}&tahun_ajaran=${tahun_ajaran}`, {
+          method: "DELETE",
+        });
+        if (res.ok) {
+          Swal.fire("Terhapus!", "Nilai santri berhasil dihapus.", "success");
+          fetchStep2(); // Reload data
+        } else {
+          Swal.fire("Gagal", "Gagal menghapus nilai.", "error");
+        }
+      } catch {
+        Swal.fire("Error", "Terjadi kesalahan server.", "error");
+      }
+    }
   };
 
   const handleSimpan = async () => {
@@ -669,6 +705,11 @@ export default function InputNilaiPage() {
                       <div style={{ fontWeight: "800", color: "#550000" }}>Nilai Akhir</div>
                       <div style={{ fontSize: "11px", color: "#16a34a", fontWeight: "bold", marginTop: "2px" }}>OTOMATIS</div>
                     </th>
+                    {userRole?.includes("ADMIN_SUPER") && (
+                      <th style={{ padding: "16px 12px", textAlign: "center", width: 60, borderBottom: "1px solid #ebdcc3", color: "#550000", fontWeight: 800 }}>
+                        Aksi
+                      </th>
+                    )}
                   </tr>
                 </thead>
                 <tbody>
@@ -722,6 +763,38 @@ export default function InputNilaiPage() {
                               {nilaiAkhir || "-"}
                             </div>
                           </td>
+                          {userRole?.includes("ADMIN_SUPER") && (
+                            <td style={{ padding: "16px 12px", textAlign: "center", borderBottom: "1px solid #f5ede1" }}>
+                              <button 
+                                onClick={() => handleDeleteMassal(s.id, s.nama_lengkap)}
+                                title="Hapus Semua Nilai (Khusus Admin Super)"
+                                style={{
+                                  background: "#fef2f2",
+                                  color: "#dc2626",
+                                  border: "1px solid #fecaca",
+                                  borderRadius: "8px",
+                                  width: "32px",
+                                  height: "32px",
+                                  display: "flex",
+                                  alignItems: "center",
+                                  justifyContent: "center",
+                                  cursor: "pointer",
+                                  transition: "all 0.2s",
+                                  margin: "0 auto"
+                                }}
+                                onMouseEnter={(e) => {
+                                  e.currentTarget.style.background = "#fee2e2";
+                                  e.currentTarget.style.transform = "translateY(-1px)";
+                                }}
+                                onMouseLeave={(e) => {
+                                  e.currentTarget.style.background = "#fef2f2";
+                                  e.currentTarget.style.transform = "none";
+                                }}
+                              >
+                                <Trash2 size={16} />
+                              </button>
+                            </td>
+                          )}
                         </tr>
                       );
                     })

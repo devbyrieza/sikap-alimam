@@ -18,7 +18,8 @@ import {
   XCircle,
   Users,
   RefreshCw,
-  X
+  X,
+  Trash2
 } from 'lucide-react';
 
 interface Props {
@@ -27,6 +28,7 @@ interface Props {
   tokenHariIni: { token: string; expires_at: string } | null;
   allAsatidz: { id: string; nama_lengkap: string }[];
   tanggal: string;
+  isAdminSuper?: boolean;
 }
 
 export default function PresensiAsatidz({
@@ -35,6 +37,7 @@ export default function PresensiAsatidz({
   tokenHariIni,
   allAsatidz,
   tanggal,
+  isAdminSuper,
 }: Props) {
   const router = useRouter();
   const [token, setToken] = useState(tokenHariIni);
@@ -55,6 +58,33 @@ export default function PresensiAsatidz({
     month: 'long',
     day: 'numeric',
   });
+
+  const handleDelete = async (id: string, name: string) => {
+    const result = await Swal.fire({
+      title: "Hapus Presensi?",
+      text: `Yakin ingin menghapus data presensi ${name}?`,
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#ef4444",
+      cancelButtonColor: "#64748b",
+      confirmButtonText: "Ya, Hapus!",
+      cancelButtonText: "Batal"
+    });
+
+    if (result.isConfirmed) {
+      try {
+        const res = await fetch(`/api/presensi/asatidz/${id}`, { method: "DELETE" });
+        if (res.ok) {
+          Swal.fire("Terhapus!", "Data presensi berhasil dihapus.", "success");
+          router.refresh();
+        } else {
+          Swal.fire("Gagal", "Gagal menghapus data presensi.", "error");
+        }
+      } catch {
+        Swal.fire("Error", "Terjadi kesalahan server.", "error");
+      }
+    }
+  };
 
   const getAbsenLink = () => {
     if (!token) return null;
@@ -399,6 +429,9 @@ export default function PresensiAsatidz({
                   <th style={{ padding: "12px 16px", textAlign: "left", color: "#550000", fontWeight: 800, width: 120 }}>Status</th>
                   <th style={{ padding: "12px 16px", textAlign: "left", color: "#550000", fontWeight: 800, width: 120 }}>Metode</th>
                   <th style={{ padding: "12px 16px", textAlign: "left", color: "#550000", fontWeight: 800, width: 140 }}>Lokasi GPS</th>
+                  {isAdminSuper && (
+                    <th style={{ padding: "12px 16px", textAlign: "center", color: "#550000", fontWeight: 800, width: 60 }}>Aksi</th>
+                  )}
                 </tr>
               </thead>
               <tbody>
@@ -478,6 +511,37 @@ export default function PresensiAsatidz({
                           <span style={{ color: "#94a3b8", fontSize: 13 }}>—</span>
                         )}
                       </td>
+                      {isAdminSuper && (
+                        <td style={{ padding: "14px 16px", textAlign: "center" }}>
+                          <button 
+                            onClick={() => handleDelete(p.id, p.pegawai.nama_lengkap)}
+                            title="Hapus Data (Khusus Admin Super)"
+                            style={{
+                              background: "#fef2f2",
+                              color: "#dc2626",
+                              border: "1px solid #fecaca",
+                              borderRadius: "8px",
+                              width: "32px",
+                              height: "32px",
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                              cursor: "pointer",
+                              transition: "all 0.2s"
+                            }}
+                            onMouseEnter={(e) => {
+                              e.currentTarget.style.background = "#fee2e2";
+                              e.currentTarget.style.transform = "translateY(-1px)";
+                            }}
+                            onMouseLeave={(e) => {
+                              e.currentTarget.style.background = "#fef2f2";
+                              e.currentTarget.style.transform = "none";
+                            }}
+                          >
+                            <Trash2 size={16} />
+                          </button>
+                        </td>
+                      )}
                     </tr>
                   ))
                 )}

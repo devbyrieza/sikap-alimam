@@ -101,6 +101,7 @@ export default async function PresensiAsatidz_Page() {
         }
         allAsatidz={allAsatidz}
         tanggal={today.toISOString()}
+        isAdminSuper={userRole === 'admin_super'}
       />
     </div>
   );

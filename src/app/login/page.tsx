@@ -127,43 +127,7 @@ export default function LoginPage() {
           </p>
         </div>
 
-        {requireRoleSelection ? (
-          <div>
-            <p style={{ textAlign: "center", marginBottom: 20, fontSize: 14, color: "#4b5563" }}>
-              Akun Anda memiliki akses ganda. Silakan pilih hak akses yang ingin digunakan saat ini:
-            </p>
-            <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-              {availableRoles.map(role => (
-                <button
-                  key={role}
-                  onClick={() => handleRoleSelect(role)}
-                  disabled={loading}
-                  className="btn btn-primary"
-                  style={{ width: "100%", padding: "12px", background: role === 'ADMIN_SUPER' ? 'var(--primary)' : 'var(--secondary)' }}
-                >
-                  {loading ? <Loader2 className="spin" size={18} /> : `Masuk sebagai ${role === 'ADMIN_SUPER' ? 'Admin Super' : 'Guru'}`}
-                </button>
-              ))}
-            </div>
-            {error && (
-              <div className="alert-error" style={{ marginTop: 16 }}>
-                <AlertTriangle size={16} />
-                <span>{error}</span>
-              </div>
-            )}
-            <button
-              onClick={() => {
-                setRequireRoleSelection(false);
-                setPassword("");
-              }}
-              className="btn btn-ghost"
-              style={{ width: "100%", marginTop: 16, fontSize: 13, color: "#6b7280" }}
-            >
-              Kembali
-            </button>
-          </div>
-        ) : (
-          <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit}>
           <div className="form-group" style={{ marginBottom: 16 }}>
             <label className="form-label" style={{ fontSize: 13, fontWeight: 700, marginBottom: 8, color: "var(--text-main)" }}>Email / No. WA</label>
             <input
@@ -248,7 +212,6 @@ export default function LoginPage() {
             {loading ? <Loader2 className="spin" size={18} /> : "Masuk ke Sistem"}
           </button>
         </form>
-        )}
 
         <div
           style={{

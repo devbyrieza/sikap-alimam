@@ -16,8 +16,12 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Password lama dan baru harus diisi" }, { status: 400 });
     }
 
-    if (newPassword.length < 6) {
-      return NextResponse.json({ error: "Password baru minimal 6 karakter" }, { status: 400 });
+    if (newPassword.length < 8) {
+      return NextResponse.json({ error: "Password baru minimal 8 karakter" }, { status: 400 });
+    }
+
+    if (!/[A-Za-z]/.test(newPassword) || !/[0-9]/.test(newPassword)) {
+      return NextResponse.json({ error: "Password baru harus mengandung kombinasi huruf dan angka" }, { status: 400 });
     }
 
     // Ambil data user dari DB

@@ -38,8 +38,12 @@ export default function ProfilePage() {
       Swal.fire({ icon: "error", title: "Gagal", text: "Password baru dan konfirmasi tidak cocok!" });
       return;
     }
-    if (newPassword.length < 6) {
-      Swal.fire({ icon: "warning", title: "Peringatan", text: "Password baru minimal 6 karakter!" });
+    if (newPassword.length < 8) {
+      Swal.fire({ icon: "warning", title: "Peringatan", text: "Password baru minimal 8 karakter!" });
+      return;
+    }
+    if (!/[A-Za-z]/.test(newPassword) || !/[0-9]/.test(newPassword)) {
+      Swal.fire({ icon: "warning", title: "Peringatan", text: "Password baru harus mengandung kombinasi huruf dan angka!" });
       return;
     }
 

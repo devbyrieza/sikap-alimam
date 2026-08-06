@@ -15,8 +15,10 @@ import {
   XCircle,
   Loader2,
   Filter,
-  GraduationCap
+  GraduationCap,
+  Trash2
 } from "lucide-react";
+import Swal from "sweetalert2";
 
 interface KelasItem {
   id: string;
@@ -90,6 +92,12 @@ export default function RiwayatPresensiSantriPage() {
   const [loadingMaster, setLoadingMaster] = useState<boolean>(true);
   const [loadingSantriList, setLoadingSantriList] = useState<boolean>(false);
   const [loadingData, setLoadingData] = useState<boolean>(false);
+
+  const [userRole, setUserRole] = useState<string>("");
+
+  useEffect(() => {
+    fetch("/api/profile").then(r => r.json()).then(d => { if(d.data?.role) setUserRole(d.data.role); }).catch(()=>{});
+  }, []);
 
   // Fetch Master Kelas
   useEffect(() => {
@@ -165,6 +173,33 @@ export default function RiwayatPresensiSantriPage() {
   useEffect(() => {
     fetchRiwayat();
   }, [fetchRiwayat]);
+
+  const handleDelete = async (id: string, dateStr: string) => {
+    const result = await Swal.fire({
+      title: "Hapus Presensi?",
+      text: `Yakin ingin menghapus presensi tanggal ${dateStr}?`,
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#ef4444",
+      cancelButtonColor: "#64748b",
+      confirmButtonText: "Ya, Hapus!",
+      cancelButtonText: "Batal"
+    });
+
+    if (result.isConfirmed) {
+      try {
+        const res = await fetch(`/api/presensi/santri/${id}`, { method: "DELETE" });
+        if (res.ok) {
+          Swal.fire("Terhapus!", "Data presensi berhasil dihapus.", "success");
+          fetchRiwayat();
+        } else {
+          Swal.fire("Gagal", "Gagal menghapus data presensi.", "error");
+        }
+      } catch {
+        Swal.fire("Error", "Terjadi kesalahan server.", "error");
+      }
+    }
+  };
 
   const filteredKelas = selectedJenjang
     ? kelasList.filter((k) => k.jenjang === selectedJenjang)
@@ -417,6 +452,9 @@ export default function RiwayatPresensiSantriPage() {
                       <th style={{ padding: "12px 16px", textAlign: "left", color: "#550000", fontWeight: 800, width: 140 }}>Status</th>
                       <th style={{ padding: "12px 16px", textAlign: "left", color: "#550000", fontWeight: 800 }}>Keterangan</th>
                       <th style={{ padding: "12px 16px", textAlign: "left", color: "#550000", fontWeight: 800, width: 140 }}>Kelas</th>
+                      {userRole?.includes("ADMIN_SUPER") && (
+                        <th style={{ padding: "12px 16px", textAlign: "center", color: "#550000", fontWeight: 800, width: 60 }}>Aksi</th>
+                      )}
                     </tr>
                   </thead>
                   <tbody>
@@ -476,6 +514,37 @@ export default function RiwayatPresensiSantriPage() {
                           <td style={{ padding: "14px 16px", fontWeight: 600, color: "#64748b" }}>
                             {p.kelasNama}
                           </td>
+                          {userRole?.includes("ADMIN_SUPER") && (
+                            <td style={{ padding: "14px 16px", textAlign: "center" }}>
+                              <button 
+                                onClick={() => handleDelete(p.id, formattedDate)}
+                                title="Hapus Data (Khusus Admin Super)"
+                                style={{
+                                  background: "#fef2f2",
+                                  color: "#dc2626",
+                                  border: "1px solid #fecaca",
+                                  borderRadius: "8px",
+                                  width: "32px",
+                                  height: "32px",
+                                  display: "flex",
+                                  alignItems: "center",
+                                  justifyContent: "center",
+                                  cursor: "pointer",
+                                  transition: "all 0.2s"
+                                }}
+                                onMouseEnter={(e) => {
+                                  e.currentTarget.style.background = "#fee2e2";
+                                  e.currentTarget.style.transform = "translateY(-1px)";
+                                }}
+                                onMouseLeave={(e) => {
+                                  e.currentTarget.style.background = "#fef2f2";
+                                  e.currentTarget.style.transform = "none";
+                                }}
+                              >
+                                <Trash2 size={16} />
+                              </button>
+                            </td>
+                          )}
                         </tr>
                       );
                     })}

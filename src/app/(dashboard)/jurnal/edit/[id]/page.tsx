@@ -56,10 +56,21 @@ export default function EditJurnalPage({ params }: { params: Promise<{ id: strin
   const [tanggal, setTanggal] = useState(today);
   const [jamKe, setJamKe] = useState<string[]>([]);
   const [materi, setMateri] = useState("");
+  const [subMateri, setSubMateri] = useState("");
   const [learningOutcome, setLearningOutcome] = useState("");
   const [kegiatan, setKegiatan] = useState("");
   const [catatan, setCatatan] = useState("");
   const [isDraftRestored, setIsDraftRestored] = useState(false);
+
+  // Autosave draft ke localStorage
+  useEffect(() => {
+    if (kelasId || mapelId || asatidId || materi || subMateri || learningOutcome || kegiatan || catatan) {
+      const savedAt = new Date().toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" });
+      const p = { kelasId, mapelId, asatidId, tanggal, jamKe, materi, subMateri, learningOutcome, kegiatan, catatan, _savedAt: savedAt };
+      localStorage.setItem("siakad_jurnal_draft", JSON.stringify(p));
+      setLastSaved(savedAt);
+    }
+  }, [kelasId, mapelId, asatidId, tanggal, jamKe, materi, subMateri, learningOutcome, kegiatan, catatan]);
 
   // Load draft dari localStorage
   useEffect(() => {
@@ -77,6 +88,7 @@ export default function EditJurnalPage({ params }: { params: Promise<{ id: strin
           else if (typeof p.jamKe === "string") setJamKe(p.jamKe.split(",").map((s: string) => s.trim()));
         }
         if (p.materi) setMateri(p.materi);
+        if (p.subMateri) setSubMateri(p.subMateri);
         if (p.learningOutcome) setLearningOutcome(p.learningOutcome);
         if (p.kegiatan) setKegiatan(p.kegiatan);
         if (p.catatan) setCatatan(p.catatan);
@@ -108,6 +120,7 @@ export default function EditJurnalPage({ params }: { params: Promise<{ id: strin
         setTanggal(today);
         setJamKe([]);
         setMateri("");
+        setSubMateri("");
         setLearningOutcome("");
         setKegiatan("");
         setCatatan("");
@@ -138,6 +151,7 @@ export default function EditJurnalPage({ params }: { params: Promise<{ id: strin
           setTanggal(j.tanggal ? j.tanggal.split("T")[0] : today);
           if (j.jam_ke) setJamKe(j.jam_ke.split(",").map((x: string) => x.trim()));
           setMateri(j.materi || "");
+          setSubMateri(j.sub_materi || "");
           setLearningOutcome(j.learning_outcome || "");
           setKegiatan(j.kegiatan || "");
           setCatatan(j.catatan || "");
@@ -203,7 +217,7 @@ export default function EditJurnalPage({ params }: { params: Promise<{ id: strin
 
     setSubmitting(true);
     try {
-      const res = await fetch("/api/jurnal/", {
+      const res = await fetch(`/api/jurnal/${id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -217,6 +231,7 @@ export default function EditJurnalPage({ params }: { params: Promise<{ id: strin
             return parseInt(a) - parseInt(b);
           }).join(", ") : null,
           materi,
+          sub_materi: subMateri || null,
           learning_outcome: learningOutcome || null,
           kegiatan,
           catatan: catatan || null,
@@ -573,6 +588,23 @@ export default function EditJurnalPage({ params }: { params: Promise<{ id: strin
                   }}
                   style={{ minHeight: "80px", width: "100%", padding: "14px 16px", borderRadius: "12px", border: "1px solid #cbd5e1", fontSize: "15px", outline: "none", fontFamily: "inherit", resize: "none" }}
                   required
+                />
+              </div>
+
+              {/* Sub Topik Jurnal */}
+              <div>
+                <label style={{ display: "block", fontSize: "13px", fontWeight: 600, color: "#475569", marginBottom: "8px" }}>
+                  Sub Topik Jurnal <span style={{ color: "#94a3b8", fontWeight: "normal", fontSize: "12px" }}>(Opsional)</span>
+                </label>
+                <textarea
+                  rows={2}
+                  placeholder="Tuliskan sub topik yang spesifik (opsional)..."
+                  value={subMateri}
+                  onChange={(e) => {
+                    setSubMateri(e.target.value);
+                    handleTextareaResize(e);
+                  }}
+                  style={{ minHeight: "60px", width: "100%", padding: "14px 16px", borderRadius: "12px", border: "1px solid #cbd5e1", fontSize: "15px", outline: "none", fontFamily: "inherit", resize: "none" }}
                 />
               </div>
 

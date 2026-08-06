@@ -4,7 +4,7 @@ import { prisma } from "@/lib/prisma";
 export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const body = await req.json();
-    const { pegawai_id, mapel_id, kelas_id, tanggal, jam_ke, materi, learning_outcome, kegiatan, catatan } = body;
+    const { pegawai_id, mapel_id, kelas_id, tanggal, jam_ke, materi, sub_materi, learning_outcome, kegiatan, catatan } = body;
     const resolvedParams = await params;
 
     const jurnal = await prisma.jurnalMengajar.update({
@@ -16,6 +16,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
         tanggal: tanggal ? new Date(tanggal) : undefined,
         jam_ke: jam_ke || null,
         materi,
+        sub_materi: sub_materi || null,
         learning_outcome: learning_outcome || null,
         kegiatan,
         catatan: catatan || null,
