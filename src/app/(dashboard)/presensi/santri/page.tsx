@@ -55,6 +55,23 @@ const STATUS_BG: Record<StatusType, string> = {
 
 const JAM_OPTIONS = ["3", "4", "5", "6", "7", "8", "9", "Khusus"];
 
+function formatTanggalWithHari(dateStr: string) {
+  if (!dateStr) return "";
+  try {
+    const [year, month, day] = dateStr.split("-").map(Number);
+    if (!year || !month || !day) return "";
+    const date = new Date(year, month - 1, day);
+    const days = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
+    const months = [
+      "Januari", "Februari", "Maret", "April", "Mei", "Juni",
+      "Juli", "Agustus", "September", "Oktober", "November", "Desember"
+    ];
+    return `${days[date.getDay()]}, ${day} ${months[month - 1]} ${year}`;
+  } catch {
+    return "";
+  }
+}
+
 export default function PresensiSantriPage() {
   const router = useRouter();
   const today = new Intl.DateTimeFormat("en-CA", {
@@ -496,6 +513,12 @@ export default function PresensiSantriPage() {
               value={tanggal}
               onChange={(e) => setTanggal(e.target.value)}
             />
+            {tanggal && (
+              <div style={{ fontSize: "12px", fontWeight: 700, color: "#047857", display: "flex", alignItems: "center", gap: "5px", background: "#ecfdf5", padding: "4px 10px", borderRadius: "8px", border: "1px solid #a7f3d0", width: "fit-content" }}>
+                <Calendar size={13} color="#047857" />
+                <span>{formatTanggalWithHari(tanggal)}</span>
+              </div>
+            )}
           </div>
 
           {/* Jenjang */}

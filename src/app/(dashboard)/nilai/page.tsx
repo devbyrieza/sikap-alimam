@@ -53,65 +53,126 @@ export default function InputNilaiPage() {
   const [tahun_ajaran, setTahunAjaran] = useState("2026/2027");
   const [periode, setPeriode] = useState("PTS"); // PTS | PAS
 
-  const [kelasList, setKelasList] = useState<Kelas[]>([]);
-  const [filteredKelasList, setFilteredKelasList] = useState<Kelas[]>([]);
-  const [mapelList, setMapelList] = useState<MapelItem[]>([]);
+  const [master, setMaster] = useState<{
+    kelas: Kelas[];
+    mapel: Record<string, MapelItem[]>;
+    asatidzmMapel: { id: string; pegawai_id: string; mapel_id: string; kelas_id: string }[];
+  } | null>(null);
+  const [asatidId, setAsatidId] = useState("");
+  const [isAdminSuper, setIsAdminSuper] = useState(false);
+
   const [santriList, setSantriList] = useState<Santri[]>([]);
   
   // State Input per Santri (Map)
   const [inputData, setInputData] = useState<Record<string, CapaianNilai>>({});
 
   const [loadingKelas, setLoadingKelas] = useState(true);
-  const [loadingMapel, setLoadingMapel] = useState(false);
   const [loadingSantri, setLoadingSantri] = useState(false);
   const [saving, setSaving] = useState(false);
-  
-  const [userRole, setUserRole] = useState<string>("");
 
+  // Fetch profile & master data
   useEffect(() => {
-    fetch("/api/profile").then(r => r.json()).then(d => { if(d.data?.role) setUserRole(d.data.role); }).catch(()=>{});
-  }, []);
-
-  // Fetch kelas
-  useEffect(() => {
-    fetch("/api/master/kelas")
-      .then((r) => r.json())
-      .then((d) => {
-        setKelasList(d.kelas || []);
-        setFilteredKelasList(d.kelas || []);
+    Promise.all([
+      fetch("/api/profile").then((r) => r.json()),
+      fetch("/api/master").then((r) => r.json()),
+    ])
+      .then(([profileRes, masterRes]) => {
+        if (profileRes.data) {
+          const role = (profileRes.data.role || "").toLowerCase();
+          const isAdmin = role.includes("admin_super");
+          setIsAdminSuper(isAdmin);
+          if (profileRes.data.asatidz_id) {
+            setAsatidId(profileRes.data.asatidz_id);
+          }
+        }
+        if (masterRes) {
+          setMaster(masterRes);
+        }
       })
       .catch(() => {})
       .finally(() => setLoadingKelas(false));
   }, []);
 
-  // Filter kelas when jenjang changes
+  // Available Jenjang
+  const availableJenjangs = useMemo(() => {
+    const defaultJenjangs = ["MTs", "IL", "MA"];
+    if (isAdminSuper || !asatidId || !master?.asatidzmMapel || !master?.kelas) return defaultJenjangs;
+
+    const teacherKelasIds = master.asatidzmMapel
+      .filter((am) => am.pegawai_id === asatidId)
+      .map((am) => am.kelas_id);
+
+    if (teacherKelasIds.length === 0) return defaultJenjangs;
+
+    const teacherJenjangs = master.kelas
+      .filter((k) => teacherKelasIds.includes(k.id) && k.jenjang)
+      .map((k) => k.jenjang as string);
+
+    const uniqueJenjangs = Array.from(new Set(teacherJenjangs));
+    return uniqueJenjangs.length > 0 ? uniqueJenjangs : defaultJenjangs;
+  }, [asatidId, master, isAdminSuper]);
+
+  // Auto-select Jenjang jika hanya ada 1 pilihan
   useEffect(() => {
-    if (!jenjangFilter) {
-      setFilteredKelasList(kelasList);
-    } else {
-      setFilteredKelasList(kelasList.filter(k => k.jenjang === jenjangFilter));
+    if (availableJenjangs.length === 1) {
+      setJenjangFilter(availableJenjangs[0]);
+    } else if (jenjangFilter && !availableJenjangs.includes(jenjangFilter)) {
+      setJenjangFilter("");
     }
-    // Auto reset kelas_id if it's no longer in the list
-    if (kelas_id) {
-      const exists = kelasList.find(k => k.id === kelas_id && (!jenjangFilter || k.jenjang === jenjangFilter));
+  }, [availableJenjangs]);
+
+  // Filtered Kelas List
+  const filteredKelasList = useMemo(() => {
+    let list = master?.kelas || [];
+    if (jenjangFilter) {
+      list = list.filter((k) => k.jenjang === jenjangFilter);
+    }
+
+    if (!isAdminSuper && asatidId && master?.asatidzmMapel) {
+      const teacherKelasIds = master.asatidzmMapel
+        .filter((am) => am.pegawai_id === asatidId)
+        .map((am) => am.kelas_id);
+
+      if (teacherKelasIds.length > 0) {
+        list = list.filter((k) => teacherKelasIds.includes(k.id));
+      }
+    }
+
+    return list;
+  }, [jenjangFilter, asatidId, master, isAdminSuper]);
+
+  // Auto-select Kelas jika hanya ada 1 kelas
+  useEffect(() => {
+    if (filteredKelasList.length === 1) {
+      setKelasId(filteredKelasList[0].id);
+    } else if (kelas_id) {
+      const exists = filteredKelasList.find((k) => k.id === kelas_id);
       if (!exists) setKelasId("");
     }
-  }, [jenjangFilter, kelasList]);
+  }, [filteredKelasList]);
 
-  // Fetch mapel saat kelas berubah
-  useEffect(() => {
-    if (!kelas_id) {
-      setMapelList([]);
-      return;
+  // Mapel List
+  const mapelList = useMemo(() => {
+    let list = (kelas_id && master?.mapel?.[kelas_id]) || [];
+    if (!isAdminSuper && asatidId && master?.asatidzmMapel && list.length > 0) {
+      const allowedMapelIds = master.asatidzmMapel
+        .filter((am) => am.pegawai_id === asatidId && am.kelas_id === kelas_id)
+        .map((am) => am.mapel_id);
+      if (allowedMapelIds.length > 0) {
+        list = list.filter((m) => allowedMapelIds.includes(m.id));
+      } else {
+        list = [];
+      }
     }
-    setLoadingMapel(true);
-    setMapelId("");
-    fetch(`/api/master/mapel?kelas_id=${kelas_id}`)
-      .then((r) => r.json())
-      .then((d) => setMapelList(d.mapel || []))
-      .catch(() => {})
-      .finally(() => setLoadingMapel(false));
-  }, [kelas_id]);
+    return list;
+  }, [kelas_id, asatidId, master, isAdminSuper]);
+
+  // Auto-select Mapel jika hanya ada 1 mapel
+  useEffect(() => {
+    if (mapelList.length === 1) {
+      setMapelId(mapelList[0].id);
+    }
+  }, [mapelList]);
 
   // AUTOSAVE: Load Draft from localStorage on mount (for Step 2)
   useEffect(() => {
@@ -478,10 +539,12 @@ export default function InputNilaiPage() {
                 onChange={(e) => setJenjangFilter(e.target.value)}
                 disabled={loadingKelas}
               >
-                <option value="">— Semua Jenjang —</option>
-                <option value="MTs">MTs</option>
-                <option value="IL">IL</option>
-                <option value="MA">MA</option>
+                {availableJenjangs.length > 1 && <option value="">— Semua Jenjang —</option>}
+                {availableJenjangs.map((j) => (
+                  <option key={j} value={j}>
+                    {j}
+                  </option>
+                ))}
               </select>
             </div>
 
