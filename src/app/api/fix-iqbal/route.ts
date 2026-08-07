@@ -93,7 +93,7 @@ export async function GET() {
           kelas_id: kelas7.id,
           nama: { equals: "Shorf", mode: "insensitive" },
         },
-        orderBy: { created_at: "asc" },
+        orderBy: { id: "asc" },
       });
 
       // Jika ada lebih dari 1 mapel Shorf di kelas 7 MTs, hapus duplikatnya
