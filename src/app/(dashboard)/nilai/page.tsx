@@ -426,7 +426,7 @@ export default function InputNilaiPage() {
     }
   };
 
-  const selectedKelasNama = kelasList.find((k) => k.id === kelas_id)?.nama || "";
+  const selectedKelasNama = master?.kelas?.find((k) => k.id === kelas_id)?.nama || "";
   const selectedMapelNama = mapelList.find((m) => m.id === mapel_id)?.nama || "";
 
   return (
