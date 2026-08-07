@@ -25,11 +25,31 @@ export async function GET() {
         where: {
           OR: [
             { user_id: session.userId },
-            { email: session.email },
+            { email: { equals: session.email, mode: "insensitive" } },
             { nama_lengkap: { equals: session.nama, mode: "insensitive" } },
           ],
         },
       });
+
+      // Fallback: jika spasi/gelar sedikit berbeda, cari berdasarkan nama utama
+      if (!pegawai && session.nama) {
+        const coreName = session.nama.split(",")[0].trim();
+        if (coreName.length >= 3) {
+          pegawai = await prisma.pegawai.findFirst({
+            where: {
+              nama_lengkap: { contains: coreName, mode: "insensitive" },
+            },
+          });
+        }
+      }
+
+      // Auto-link user_id jika ketemu pegawai tapi user_id belum terhubung
+      if (pegawai && (!pegawai.user_id || pegawai.user_id !== session.userId)) {
+        await prisma.pegawai.update({
+          where: { id: pegawai.id },
+          data: { user_id: session.userId },
+        }).catch(() => {});
+      }
     }
 
     // Check completeness
