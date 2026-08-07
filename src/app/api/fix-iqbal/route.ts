@@ -42,30 +42,50 @@ export async function GET() {
       });
     }
 
-    // 2. Cari / reset user account
-    let user = await prisma.user.findFirst({
-      where: {
-        OR: [
-          { email: { equals: "muhammadiqbal.mi118@gmail.com", mode: "insensitive" } },
-          { nama: { contains: "Iqbal", mode: "insensitive" } },
-        ],
-      },
-    });
+    // 2. Cari / reset user account & hapus duplikat
+    try {
+      // Hapus user duplikat lama dengan email lain (seperti @pesantren-alimam.com)
+      await prisma.user.deleteMany({
+        where: {
+          AND: [
+            {
+              OR: [
+                { email: { contains: "iqbal", mode: "insensitive" } },
+                { nama: { contains: "Iqbal", mode: "insensitive" } },
+              ],
+            },
+            {
+              email: { not: "muhammadiqbal.mi118@gmail.com" },
+            },
+          ],
+        },
+      }).catch(() => {});
 
-    if (user) {
-      await prisma.user.update({
-        where: { id: user.id },
-        data: {
-          email: "muhammadiqbal.mi118@gmail.com",
-          nama: "Muhammad Iqbal, S.Pd.",
-          role: "GURU",
+      let user = await prisma.user.findFirst({
+        where: {
+          email: { equals: "muhammadiqbal.mi118@gmail.com", mode: "insensitive" },
         },
       });
-      // Link pegawai to user
-      await prisma.pegawai.update({
-        where: { id: pegawai.id },
-        data: { user_id: user.id },
-      });
+
+      if (!user) {
+        user = await prisma.user.create({
+          data: {
+            email: "muhammadiqbal.mi118@gmail.com",
+            nama: "Muhammad Iqbal, S.Pd.",
+            role: "GURU",
+            password: "password123", // fallback
+          },
+        });
+      }
+
+      if (user && pegawai) {
+        await prisma.pegawai.update({
+          where: { id: pegawai.id },
+          data: { user_id: user.id },
+        }).catch(() => {});
+      }
+    } catch (userErr) {
+      console.warn("User cleanup warning:", userErr);
     }
 
     // 3. Hapus relasi lama yang rusak di asatidz_mapel
