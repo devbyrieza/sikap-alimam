@@ -763,7 +763,7 @@ export default function InputNilaiPage() {
                       <div style={{ fontWeight: "800", color: "#550000" }}>Nilai Akhir</div>
                       <div style={{ fontSize: "11px", color: "#16a34a", fontWeight: "bold", marginTop: "2px" }}>OTOMATIS</div>
                     </th>
-                    {userRole?.includes("ADMIN_SUPER") && (
+                    {isAdminSuper && (
                       <th style={{ padding: "16px 12px", textAlign: "center", width: 60, borderBottom: "1px solid #ebdcc3", color: "#550000", fontWeight: 800 }}>
                         Aksi
                       </th>
@@ -821,7 +821,7 @@ export default function InputNilaiPage() {
                               {nilaiAkhir || "-"}
                             </div>
                           </td>
-                          {userRole?.includes("ADMIN_SUPER") && (
+                          {isAdminSuper && (
                             <td style={{ padding: "16px 12px", textAlign: "center", borderBottom: "1px solid #f5ede1" }}>
                               <button 
                                 onClick={() => handleDeleteMassal(s.id, s.nama_lengkap)}
