@@ -575,7 +575,7 @@ export default function InputNilaiPage() {
               style={{ padding: "12px 14px", borderRadius: "12px", border: "1px solid #ebdcc3", background: "#fdf8f0", fontSize: "14px", outline: "none", fontWeight: 600 }}
               value={mapel_id}
               onChange={(e) => setMapelId(e.target.value)}
-              disabled={!kelas_id || loadingMapel}
+              disabled={!kelas_id || loadingKelas}
             >
               <option value="">— Pilih Mapel —</option>
               {mapelList.map((m) => (
@@ -584,11 +584,6 @@ export default function InputNilaiPage() {
                 </option>
               ))}
             </select>
-            {loadingMapel && (
-              <p style={{ fontSize: 12, color: "#b89758", margin: "4px 0 0 0" }}>
-                Memuat mata pelajaran...
-              </p>
-            )}
           </div>
 
           {/* Semester & Tahun Ajaran */}
