@@ -80,8 +80,9 @@ export default function PresensiSantriPage() {
   const [loadingSantri, setLoadingSantri] = useState(false);
   const [saving, setSaving] = useState(false);
 
-  // Load draft dari localStorage
+  // Load draft dari localStorage (Tanggal selalu di-default ke Hari Ini / today)
   useEffect(() => {
+    setTanggal(today);
     const draft = localStorage.getItem("siakad_presensi_draft");
     if (draft) {
       try {
@@ -90,12 +91,12 @@ export default function PresensiSantriPage() {
         if (p.selectedKelas) setSelectedKelas(p.selectedKelas);
         if (p.mapelId) setMapelId(p.mapelId);
         if (p.jamKe) setJamKe(p.jamKe);
-        if (p.tanggal) setTanggal(p.tanggal);
+        if (p.tanggal && p.tanggal === today) setTanggal(p.tanggal);
         if (p.statusMap) setStatusMap(p.statusMap);
         if (p.keteranganMap) setKeteranganMap(p.keteranganMap);
       } catch (e) { /* ignore */ }
     }
-  }, []);
+  }, [today]);
 
   // Fetch Profile to get asatidId
   useEffect(() => {

@@ -61,8 +61,9 @@ export default function TambahJurnalPage() {
   const [catatan, setCatatan] = useState("");
   const [isDraftRestored, setIsDraftRestored] = useState(false);
 
-  // Load draft dari localStorage
+  // Load draft dari localStorage (Tanggal selalu di-default ke Hari Ini / today)
   useEffect(() => {
+    setTanggal(today);
     const draft = localStorage.getItem("siakad_jurnal_draft");
     if (draft) {
       try {
@@ -71,7 +72,7 @@ export default function TambahJurnalPage() {
         if (p.kelasId) setKelasId(p.kelasId);
         if (p.mapelId) setMapelId(p.mapelId);
         if (p.asatidId) setAsatidId(p.asatidId);
-        if (p.tanggal) setTanggal(p.tanggal);
+        if (p.tanggal && p.tanggal === today) setTanggal(p.tanggal);
         if (p.jamKe) {
           if (Array.isArray(p.jamKe)) setJamKe(p.jamKe);
           else if (typeof p.jamKe === "string") setJamKe(p.jamKe.split(",").map((s: string) => s.trim()));
@@ -89,7 +90,7 @@ export default function TambahJurnalPage() {
         }
       } catch (e) { /* ignore */ }
     }
-  }, []);
+  }, [today]);
 
   // Reset Draft function
   const handleResetDraft = () => {
