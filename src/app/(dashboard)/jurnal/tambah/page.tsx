@@ -173,22 +173,62 @@ export default function TambahJurnalPage() {
       });
   }, []);
 
+  // Available Jenjang Options berdasarkan guru yang dipilih / login
+  const availableJenjangs = useMemo(() => {
+    const defaultJenjangs = ["MTs", "IL", "MA"];
+    if (!asatidId || !master?.asatidzmMapel || !master?.kelas) return defaultJenjangs;
+
+    const teacherKelasIds = master.asatidzmMapel
+      .filter((am) => am.pegawai_id === asatidId)
+      .map((am) => am.kelas_id);
+
+    if (teacherKelasIds.length === 0) return defaultJenjangs;
+
+    const teacherJenjangs = master.kelas
+      .filter((k) => teacherKelasIds.includes(k.id) && k.jenjang)
+      .map((k) => k.jenjang as string);
+
+    const uniqueJenjangs = Array.from(new Set(teacherJenjangs));
+    return uniqueJenjangs.length > 0 ? uniqueJenjangs : defaultJenjangs;
+  }, [asatidId, master]);
+
+  // Auto-select Jenjang jika hanya ada 1 pilihan
   useEffect(() => {
-    setMapelId("");
-  }, [kelasId]);
+    if (availableJenjangs.length === 1) {
+      setJenjangFilter(availableJenjangs[0]);
+    } else if (jenjangFilter && !availableJenjangs.includes(jenjangFilter)) {
+      setJenjangFilter("");
+    }
+  }, [availableJenjangs]);
 
   const filteredKelasList = useMemo(() => {
-    const list = master?.kelas || [];
-    if (!jenjangFilter) return list;
-    return list.filter((k) => k.jenjang === jenjangFilter);
-  }, [jenjangFilter, master?.kelas]);
+    let list = master?.kelas || [];
+    if (jenjangFilter) {
+      list = list.filter((k) => k.jenjang === jenjangFilter);
+    }
 
+    if (asatidId && master?.asatidzmMapel) {
+      const teacherKelasIds = master.asatidzmMapel
+        .filter((am) => am.pegawai_id === asatidId)
+        .map((am) => am.kelas_id);
+
+      if (teacherKelasIds.length > 0) {
+        list = list.filter((k) => teacherKelasIds.includes(k.id));
+      }
+    }
+
+    return list;
+  }, [jenjangFilter, asatidId, master]);
+
+  // Auto-select Kelas jika hanya ada 1 kelas
   useEffect(() => {
-    if (kelasId) {
+    if (filteredKelasList.length === 1) {
+      setKelasId(filteredKelasList[0].id);
+    } else if (kelasId) {
       const exists = filteredKelasList.find((k) => k.id === kelasId);
       if (!exists) setKelasId("");
     }
-  }, [filteredKelasList, kelasId]);
+  }, [filteredKelasList]);
 
   const mapelList = useMemo(() => {
     let list = (kelasId && master?.mapel?.[kelasId]) || [];
@@ -199,19 +239,22 @@ export default function TambahJurnalPage() {
         .filter(am => am.pegawai_id === asatidId && am.kelas_id === kelasId)
         .map(am => am.mapel_id);
       
-      // Jika guru punya mapping di kelas ini, filter mapelnya.
-      // Jika tidak punya mapping sama sekali (allowedMapelIds.length === 0), 
-      // kita tampilkan semua agar fallback tetap jalan (atau kosongkan). Sesuai permintaan, filter mapelnya.
       if (allowedMapelIds.length > 0) {
         list = list.filter(m => allowedMapelIds.includes(m.id));
       } else {
-        // Guru tidak mengajar di kelas ini menurut master data
         list = [];
       }
     }
     
     return list;
   }, [kelasId, asatidId, master]);
+
+  // Auto-select Mapel jika hanya ada 1 mapel
+  useEffect(() => {
+    if (mapelList.length === 1) {
+      setMapelId(mapelList[0].id);
+    }
+  }, [mapelList]);
 
   const handleTextareaResize = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     e.target.style.height = "auto";
@@ -558,10 +601,12 @@ export default function TambahJurnalPage() {
                     onChange={(e) => setJenjangFilter(e.target.value)}
                     style={{ padding: "12px 16px", borderRadius: "12px", border: "1px solid #cbd5e1", fontSize: "15px", outline: "none", width: "100%", backgroundColor: "white" }}
                   >
-                    <option value="">— Semua Jenjang —</option>
-                    <option value="MTs">MTs</option>
-                    <option value="IL">IL</option>
-                    <option value="MA">MA</option>
+                    {availableJenjangs.length > 1 && <option value="">— Semua Jenjang —</option>}
+                    {availableJenjangs.map((j) => (
+                      <option key={j} value={j}>
+                        {j}
+                      </option>
+                    ))}
                   </select>
                 </div>
 
