@@ -54,13 +54,53 @@ export async function syncAsatidzMapel(pegawaiId: string, mapelString: string | 
     const activeMapelIds: { pegawai_id: string; mapel_id: string; kelas_id: string }[] = [];
 
     for (const assignment of targetAssignments) {
+      const kName = assignment.kelasNama.trim();
+      const kUpper = kName.toUpperCase();
+
+      const OR_conditions: any[] = [
+        { nama: { equals: kName, mode: "insensitive" } },
+        { nama: { contains: kName, mode: "insensitive" } },
+      ];
+
+      if (kUpper === "IL" || kUpper.includes("IDAD") || kUpper.includes("I'DAD") || kUpper.includes("LUGHO") || kUpper.includes("ISLAM")) {
+        OR_conditions.push(
+          { nama: { contains: "I'dad", mode: "insensitive" } },
+          { nama: { contains: "Idad", mode: "insensitive" } },
+          { nama: { contains: "Lugho", mode: "insensitive" } },
+          { nama: { equals: "IL", mode: "insensitive" } },
+          { jenjang: { equals: "I'dad Lughowi", mode: "insensitive" } },
+          { jenjang: { equals: "IL", mode: "insensitive" } },
+          { jenjang: { contains: "Islam", mode: "insensitive" } }
+        );
+      } else {
+        const numMatch = kName.match(/\d+/);
+        if (numMatch) {
+          const num = numMatch[0];
+          OR_conditions.push(
+            { nama: { startsWith: num, mode: "insensitive" } },
+            { nama: { contains: `${num} MTs`, mode: "insensitive" } },
+            { nama: { contains: `${num} MA`, mode: "insensitive" } }
+          );
+        }
+      }
+
       // 1. Ensure Kelas exists
       let kelas = await prisma.kelas.findFirst({
         where: {
-          OR: [
-            { nama: { equals: assignment.kelasNama, mode: "insensitive" } },
-          ],
+          is_active: true,
+          OR: OR_conditions,
         },
+        include: {
+          _count: { select: { santri: true } },
+        },
+        orderBy: {
+          santri: { _count: "desc" },
+        },
+      }).catch(async () => {
+        // Fallback without sort if santri relation ordering fails
+        return await prisma.kelas.findFirst({
+          where: { is_active: true, OR: OR_conditions },
+        });
       });
 
       if (!kelas) {
@@ -74,10 +114,19 @@ export async function syncAsatidzMapel(pegawaiId: string, mapelString: string | 
       }
 
       // 2. Ensure MataPelajaran exists
+      const mName = assignment.mapelNama.trim();
+      const mapelOR: any[] = [
+        { nama: { equals: mName, mode: "insensitive" } },
+        { nama: { contains: mName, mode: "insensitive" } },
+      ];
+      if (mName.toLowerCase().includes("tahsin")) {
+        mapelOR.push({ nama: { contains: "Tahsin", mode: "insensitive" } });
+      }
+
       let mapel = await prisma.mataPelajaran.findFirst({
         where: {
-          nama: { equals: assignment.mapelNama, mode: "insensitive" },
           kelas_id: kelas.id,
+          OR: mapelOR,
         },
       });
 
@@ -114,19 +163,25 @@ export async function syncAsatidzMapel(pegawaiId: string, mapelString: string | 
       activeMapelIds.push({ pegawai_id: pegawaiId, mapel_id: mapel.id, kelas_id: kelas.id });
     }
 
-    // Clean up old assignments that are no longer selected
+    // Clean up old assignments that are no longer selected or duplicate entries
     const allTeacherAssignments = await prisma.asatidzmMapel.findMany({
       where: { pegawai_id: pegawaiId },
     });
 
+    const seenKey = new Set<string>();
     for (const cur of allTeacherAssignments) {
+      const pairKey = `${cur.mapel_id}_${cur.kelas_id}`;
       const stillActive = activeMapelIds.some(
         (a) => a.mapel_id === cur.mapel_id && a.kelas_id === cur.kelas_id
       );
-      if (!stillActive) {
+
+      // If no longer active OR if we've already seen this exact pair (duplicate row)
+      if (!stillActive || seenKey.has(pairKey)) {
         await prisma.asatidzmMapel.delete({
           where: { id: cur.id },
         }).catch(() => {});
+      } else {
+        seenKey.add(pairKey);
       }
     }
   } catch (error) {
