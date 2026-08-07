@@ -14,6 +14,9 @@ import {
   BarChart3,
   CheckSquare,
   UserCheck,
+  Clock,
+  Check,
+  Calendar,
 } from "lucide-react";
 
 type Kelas = { id: string; nama: string; jenjang: string | null };
@@ -50,6 +53,8 @@ const STATUS_BG: Record<StatusType, string> = {
   alpha: "rgba(185,28,28,0.10)",
 };
 
+const JAM_OPTIONS = ["3", "4", "5", "6", "7", "8", "9", "Khusus"];
+
 export default function PresensiSantriPage() {
   const router = useRouter();
   const today = new Intl.DateTimeFormat("en-CA", {
@@ -68,10 +73,13 @@ export default function PresensiSantriPage() {
   const [loadingMaster, setLoadingMaster] = useState(true);
 
   const [asatidId, setAsatidId] = useState("");
+  const [isAdminSuper, setIsAdminSuper] = useState(false);
   const [selectedJenjang, setSelectedJenjang] = useState("");
   const [selectedKelas, setSelectedKelas] = useState("");
   const [mapelId, setMapelId] = useState("");
-  const [jamKe, setJamKe] = useState("");
+  const [jamKe, setJamKe] = useState<string[]>([]);
+  const [jamKhususMulai, setJamKhususMulai] = useState("");
+  const [jamKhususSelesai, setJamKhususSelesai] = useState("");
   const [tanggal, setTanggal] = useState(today);
 
   const [santri, setSantri] = useState<SantriPresensi[]>([]);
@@ -90,7 +98,12 @@ export default function PresensiSantriPage() {
         if (p.selectedJenjang) setSelectedJenjang(p.selectedJenjang);
         if (p.selectedKelas) setSelectedKelas(p.selectedKelas);
         if (p.mapelId) setMapelId(p.mapelId);
-        if (p.jamKe) setJamKe(p.jamKe);
+        if (p.jamKe) {
+          if (Array.isArray(p.jamKe)) setJamKe(p.jamKe);
+          else if (typeof p.jamKe === "string" && p.jamKe) setJamKe(p.jamKe.split(",").map((s: string) => s.trim()));
+        }
+        if (p.jamKhususMulai) setJamKhususMulai(p.jamKhususMulai);
+        if (p.jamKhususSelesai) setJamKhususSelesai(p.jamKhususSelesai);
         if (p.tanggal && p.tanggal === today) setTanggal(p.tanggal);
         if (p.statusMap) setStatusMap(p.statusMap);
         if (p.keteranganMap) setKeteranganMap(p.keteranganMap);
@@ -98,15 +111,16 @@ export default function PresensiSantriPage() {
     }
   }, [today]);
 
-  // Fetch Profile to get asatidId
+  // Fetch Profile to get asatidId & role
   useEffect(() => {
     fetch("/api/profile")
       .then((r) => r.json())
       .then((profileData) => {
-        if (profileData.data?.asatidz_id) {
+        if (profileData.data) {
           const role = (profileData.data.role || "").toLowerCase();
           const isAdmin = role.includes("admin_super");
-          if (!isAdmin) {
+          setIsAdminSuper(isAdmin);
+          if (profileData.data.asatidz_id) {
             setAsatidId(profileData.data.asatidz_id);
           }
         }
@@ -145,7 +159,7 @@ export default function PresensiSantriPage() {
   // Available Jenjang Options berdasarkan guru yang dipilih / login
   const availableJenjangs = useMemo(() => {
     const defaultJenjangs = ["MTs", "IL", "MA"];
-    if (!asatidId || !master?.asatidzmMapel || !master?.kelas) return defaultJenjangs;
+    if (isAdminSuper || !asatidId || !master?.asatidzmMapel || !master?.kelas) return defaultJenjangs;
 
     const teacherKelasIds = master.asatidzmMapel
       .filter((am) => am.pegawai_id === asatidId)
@@ -159,7 +173,7 @@ export default function PresensiSantriPage() {
 
     const uniqueJenjangs = Array.from(new Set(teacherJenjangs));
     return uniqueJenjangs.length > 0 ? uniqueJenjangs : defaultJenjangs;
-  }, [asatidId, master]);
+  }, [asatidId, master, isAdminSuper]);
 
   // Auto-select Jenjang jika hanya ada 1 pilihan
   useEffect(() => {
@@ -176,7 +190,7 @@ export default function PresensiSantriPage() {
       list = list.filter((k) => k.jenjang === selectedJenjang);
     }
 
-    if (asatidId && master?.asatidzmMapel) {
+    if (!isAdminSuper && asatidId && master?.asatidzmMapel) {
       const teacherKelasIds = master.asatidzmMapel
         .filter((am) => am.pegawai_id === asatidId)
         .map((am) => am.kelas_id);
@@ -187,7 +201,7 @@ export default function PresensiSantriPage() {
     }
 
     return list;
-  }, [selectedJenjang, asatidId, master]);
+  }, [selectedJenjang, asatidId, master, isAdminSuper]);
 
   // Auto-select Kelas jika hanya ada 1 kelas
   useEffect(() => {
@@ -201,7 +215,7 @@ export default function PresensiSantriPage() {
 
   const mapelList = useMemo(() => {
     let list = (selectedKelas && master?.mapel?.[selectedKelas]) || [];
-    if (asatidId && master?.asatidzmMapel && list.length > 0) {
+    if (!isAdminSuper && asatidId && master?.asatidzmMapel && list.length > 0) {
       const allowedMapelIds = master.asatidzmMapel
         .filter(am => am.pegawai_id === asatidId && am.kelas_id === selectedKelas)
         .map(am => am.mapel_id);
@@ -212,7 +226,7 @@ export default function PresensiSantriPage() {
       }
     }
     return list;
-  }, [selectedKelas, asatidId, master]);
+  }, [selectedKelas, asatidId, master, isAdminSuper]);
 
   // Auto-select Mapel jika hanya ada 1 mapel
   useEffect(() => {
@@ -221,9 +235,23 @@ export default function PresensiSantriPage() {
     }
   }, [mapelList]);
 
-  // Load santri + status presensi when kelas and tanggal are set
+  const jamKeString = useMemo(() => {
+    if (!Array.isArray(jamKe) || jamKe.length === 0) return "";
+    return jamKe.slice().sort((a, b) => {
+      if (a === "Khusus") return 1;
+      if (b === "Khusus") return -1;
+      return parseInt(a) - parseInt(b);
+    }).map(j => {
+      if (j === "Khusus" && jamKhususMulai && jamKhususSelesai) {
+        return `Khusus (${jamKhususMulai}-${jamKhususSelesai})`;
+      }
+      return j;
+    }).join(", ");
+  }, [jamKe, jamKhususMulai, jamKhususSelesai]);
+
+  // Load santri + status presensi when kelas, tanggal, mapel, and jamKe are set
   const loadPresensi = useCallback(async () => {
-    if (!selectedKelas || !tanggal || !mapelId || !jamKe) {
+    if (!selectedKelas || !tanggal || !mapelId || !jamKeString) {
       Swal.fire({
         icon: "warning",
         title: "Data Kurang Lengkap",
@@ -240,7 +268,7 @@ export default function PresensiSantriPage() {
 
     try {
       const res = await fetch(
-        `/api/presensi/santri?kelas_id=${selectedKelas}&tanggal=${tanggal}&mapel_id=${mapelId}&jam_ke=${encodeURIComponent(jamKe)}`
+        `/api/presensi/santri?kelas_id=${selectedKelas}&tanggal=${tanggal}&mapel_id=${mapelId}&jam_ke=${encodeURIComponent(jamKeString)}`
       );
       const json = await res.json();
       if (!res.ok) throw new Error(json.error);
@@ -457,9 +485,22 @@ export default function PresensiSantriPage() {
           <Users size={18} color="#ddc192" />
           Pilih Kelas &amp; Tanggal Presensi
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 w-full items-end">
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "16px", width: "100%", alignItems: "flex-end" }}>
+          {/* Tanggal */}
           <div className="flex flex-col gap-1.5 min-w-0 w-full">
-            <label style={{ fontSize: "13px", fontWeight: "700", color: "#550000" }}>Jenjang</label>
+            <label style={{ fontSize: "13px", fontWeight: "700", color: "#550000" }}>Tanggal <span style={{ color: "#ef4444" }}>*</span></label>
+            <input
+              type="date"
+              className="w-full min-w-0 box-border"
+              style={{ padding: "11px 14px", borderRadius: "12px", border: "1px solid #ebdcc3", background: "#fdf8f0", fontSize: "14px", outline: "none", fontWeight: 600 }}
+              value={tanggal}
+              onChange={(e) => setTanggal(e.target.value)}
+            />
+          </div>
+
+          {/* Jenjang */}
+          <div className="flex flex-col gap-1.5 min-w-0 w-full">
+            <label style={{ fontSize: "13px", fontWeight: "700", color: "#550000" }}>Jenjang <span style={{ color: "#ef4444" }}>*</span></label>
             {loadingMaster ? (
               <div
                 className="w-full box-border"
@@ -478,16 +519,19 @@ export default function PresensiSantriPage() {
                   setSelectedKelas("");
                 }}
               >
-                <option value="">— Semua Jenjang —</option>
-                <option value="MTs">MTs</option>
-                <option value="IL">IL</option>
-                <option value="MA">MA</option>
+                {availableJenjangs.length > 1 && <option value="">— Semua Jenjang —</option>}
+                {availableJenjangs.map((j) => (
+                  <option key={j} value={j}>
+                    {j}
+                  </option>
+                ))}
               </select>
             )}
           </div>
 
+          {/* Kelas */}
           <div className="flex flex-col gap-1.5 min-w-0 w-full">
-            <label style={{ fontSize: "13px", fontWeight: "700", color: "#550000" }}>Kelas</label>
+            <label style={{ fontSize: "13px", fontWeight: "700", color: "#550000" }}>Kelas <span style={{ color: "#ef4444" }}>*</span></label>
             {loadingMaster ? (
               <div
                 className="w-full box-border"
@@ -505,19 +549,18 @@ export default function PresensiSantriPage() {
                 disabled={!selectedJenjang}
               >
                 <option value="">— Pilih Kelas —</option>
-                {kelasList
-                  .filter(k => k.jenjang === selectedJenjang)
-                  .map((k) => (
-                    <option key={k.id} value={k.id}>
-                      {k.nama}
-                    </option>
-                  ))}
+                {filteredKelasList.map((k) => (
+                  <option key={k.id} value={k.id}>
+                    {k.nama}
+                  </option>
+                ))}
               </select>
             )}
           </div>
 
+          {/* Mata Pelajaran */}
           <div className="flex flex-col gap-1.5 min-w-0 w-full">
-            <label style={{ fontSize: "13px", fontWeight: "700", color: "#550000" }}>Mata Pelajaran</label>
+            <label style={{ fontSize: "13px", fontWeight: "700", color: "#550000" }}>Mata Pelajaran <span style={{ color: "#ef4444" }}>*</span></label>
             <select
               className="w-full min-w-0 box-border"
               style={{ padding: "11px 14px", borderRadius: "12px", border: "1px solid #ebdcc3", background: !selectedKelas ? "#f1f5f9" : "#fdf8f0", fontSize: "14px", outline: "none", fontWeight: 600 }}
@@ -533,48 +576,135 @@ export default function PresensiSantriPage() {
               ))}
             </select>
           </div>
+        </div>
 
-          <div className="flex flex-col gap-1.5 min-w-0 w-full">
-            <label style={{ fontSize: "13px", fontWeight: "700", color: "#550000" }}>Jam Ke- / Tgl</label>
-            <div style={{ display: "flex", gap: 8 }}>
-              <input
-                type="text"
-                placeholder="1-2, dll"
-                className="w-full min-w-0 box-border"
-                style={{ width: "40%", padding: "11px 10px", borderRadius: "12px", border: "1px solid #ebdcc3", background: "#fdf8f0", fontSize: "14px", outline: "none", fontWeight: 600 }}
-                value={jamKe}
-                onChange={(e) => setJamKe(e.target.value)}
-              />
-              <input
-                type="date"
-                className="w-full min-w-0 box-border"
-                style={{ width: "60%", padding: "11px 10px", borderRadius: "12px", border: "1px solid #ebdcc3", background: "#fdf8f0", fontSize: "14px", outline: "none", fontWeight: 600 }}
-                value={tanggal}
-                onChange={(e) => setTanggal(e.target.value)}
-              />
+        {/* Component Jam ke- (KBM Kelas) */}
+        <div style={{ padding: "16px", background: "#fdf8f0", borderRadius: "16px", border: "1px solid #ebdcc3", marginTop: "4px" }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: "12px", flexWrap: "wrap", gap: 8 }}>
+            <div>
+              <label style={{ display: "flex", alignItems: "center", gap: "6px", fontSize: "13px", fontWeight: 700, color: "#550000", margin: 0, marginBottom: "4px" }}>
+                <Clock size={16} color="#ddc192" />
+                Jam ke- (KBM Kelas) <span style={{ color: "#ef4444" }}>*</span>
+              </label>
+              <p style={{ fontSize: "11px", color: "#64748b", fontWeight: 500, margin: 0 }}>
+                KBM Mulai jam ke-3 (07.00 WIB) · <span style={{ color: "#b45309", fontWeight: 600 }}>09.40–10.00: Waktu Istirahat</span>
+              </p>
             </div>
+            {jamKe.length > 0 && (
+              <span style={{ fontSize: "12px", fontWeight: 700, background: "#d1fae5", color: "#065f46", padding: "4px 12px", borderRadius: "99px", whiteSpace: "nowrap", border: "1px solid #a7f3d0" }}>
+                Durasi: {jamKe.length} Jam
+              </span>
+            )}
           </div>
 
-          <div className="w-full min-w-0">
-            <button
-              className="w-full box-border flex items-center justify-center gap-2"
-              style={{ background: "#550000", color: "white", padding: "11px 20px", borderRadius: "12px", border: "1px solid #550000", fontWeight: 700, cursor: "pointer", height: "44px", boxShadow: "0 2px 8px rgba(85,0,0,0.2)" }}
-              onClick={loadPresensi}
-              disabled={!selectedKelas || !tanggal || !mapelId || !jamKe || loadingSantri}
-            >
-              {loadingSantri ? (
-                <>
-                  <Loader2 size={16} className="animate-spin" />
-                  Memuat...
-                </>
-              ) : (
-                <>
-                  <ClipboardCheck size={18} color="#ddc192" />
-                  Tampilkan Santri
-                </>
-              )}
-            </button>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: "8px" }}>
+            {JAM_OPTIONS.map((j) => {
+              const isSelected = jamKe.includes(j);
+              const waktuMap: Record<string, string> = {
+                "3": "07.00-07.40",
+                "4": "07.40-08.20",
+                "5": "08.20-09.00",
+                "6": "09.00-09.40",
+                "7": "10.00-10.40",
+                "8": "10.40-11.20",
+                "9": "11.20-12.00",
+              };
+              return (
+                <button
+                  key={j}
+                  type="button"
+                  onClick={() => {
+                    if (isSelected) {
+                      setJamKe(jamKe.filter((k) => k !== j));
+                    } else {
+                      setJamKe([...jamKe, j]);
+                    }
+                  }}
+                  style={{
+                    position: "relative",
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    transition: "all 0.2s",
+                    fontWeight: "bold",
+                    borderRadius: "12px",
+                    border: "2px solid",
+                    padding: "6px 12px",
+                    minWidth: "68px",
+                    height: "auto",
+                    ...(isSelected
+                      ? {
+                          background: "#ecfdf5",
+                          color: "#047857",
+                          borderColor: "#10b981",
+                          boxShadow: "0 1px 3px rgba(16,185,129,0.2)",
+                        }
+                      : {
+                          background: "white",
+                          color: "#64748b",
+                          borderColor: "#cbd5e1",
+                        }),
+                    cursor: "pointer",
+                  }}
+                >
+                  {isSelected && j !== "Khusus" && (
+                    <div style={{ position: "absolute", top: "-6px", right: "-6px", background: "#10b981", color: "white", borderRadius: "50%", padding: "2px", boxShadow: "0 1px 2px rgba(0,0,0,0.1)", zIndex: 10 }}>
+                      <Check size={12} strokeWidth={4} />
+                    </div>
+                  )}
+                  {isSelected && j === "Khusus" && (
+                    <div style={{ display: "flex", alignItems: "center", marginBottom: "2px" }}>
+                      <Check size={14} strokeWidth={3} style={{ marginRight: "4px" }} />
+                      <span style={{ fontSize: "14px" }}>{j}</span>
+                    </div>
+                  )}
+                  {!isSelected && j === "Khusus" && <span style={{ fontSize: "14px", marginBottom: "2px" }}>{j}</span>}
+                  {j === "Khusus" && <span style={{ fontSize: "9px", fontWeight: 600, color: isSelected ? "#059669" : "#94a3b8" }}>Menyesuaikan</span>}
+
+                  {j !== "Khusus" && (
+                    <>
+                      <span style={{ fontSize: "14px", lineHeight: 1, marginBottom: "4px" }}>{j}</span>
+                      <span style={{ fontSize: "9px", fontWeight: 700, color: isSelected ? "#059669" : "#94a3b8", lineHeight: 1 }}>{waktuMap[j]}</span>
+                    </>
+                  )}
+                </button>
+              );
+            })}
           </div>
+
+          {jamKe.includes("Khusus") && (
+            <div style={{ marginTop: "12px", padding: "12px", background: "white", borderRadius: "12px", border: "1px dashed #cbd5e1" }}>
+              <label style={{ display: "block", fontSize: "12px", fontWeight: 600, color: "#475569", marginBottom: "8px" }}>Tentukan Waktu Khusus <span style={{ color: "#ef4444" }}>*</span></label>
+              <div style={{ display: "flex", gap: "12px", alignItems: "center" }}>
+                <input type="time" value={jamKhususMulai} onChange={(e) => setJamKhususMulai(e.target.value)} required={jamKe.includes("Khusus")} style={{ padding: "8px 12px", borderRadius: "8px", border: "1px solid #cbd5e1", outline: "none", fontSize: "14px", background: "white", color: "#334155" }} />
+                <span style={{ color: "#64748b", fontWeight: 600, fontSize: "13px" }}>s.d</span>
+                <input type="time" value={jamKhususSelesai} onChange={(e) => setJamKhususSelesai(e.target.value)} required={jamKe.includes("Khusus")} style={{ padding: "8px 12px", borderRadius: "8px", border: "1px solid #cbd5e1", outline: "none", fontSize: "14px", background: "white", color: "#334155" }} />
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Tombol Tampilkan Santri */}
+        <div className="w-full min-w-0" style={{ marginTop: "4px" }}>
+          <button
+            className="w-full box-border flex items-center justify-center gap-2"
+            style={{ background: "#550000", color: "white", padding: "12px 20px", borderRadius: "12px", border: "1px solid #550000", fontWeight: 700, cursor: "pointer", height: "46px", boxShadow: "0 2px 8px rgba(85,0,0,0.2)" }}
+            onClick={loadPresensi}
+            disabled={!selectedKelas || !tanggal || !mapelId || jamKe.length === 0 || loadingSantri}
+          >
+            {loadingSantri ? (
+              <>
+                <Loader2 size={16} className="animate-spin" />
+                Memuat...
+              </>
+            ) : (
+              <>
+                <ClipboardCheck size={18} color="#ddc192" />
+                Tampilkan Santri
+              </>
+            )}
+          </button>
         </div>
       </div>
 
