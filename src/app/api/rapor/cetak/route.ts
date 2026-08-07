@@ -52,10 +52,22 @@ export async function GET(req: NextRequest) {
       where: { santri_id }, // Idealnya difilter berdasarkan rentang tanggal semester
     });
 
+    const getDateString = (d: Date) => d.toISOString().split("T")[0];
+    const datesSakit = new Set<string>();
+    const datesIzin = new Set<string>();
+    const datesAlpha = new Set<string>();
+
+    presensi.forEach(p => {
+      const d = getDateString(p.tanggal);
+      if (p.status === "sakit") datesSakit.add(d);
+      if (p.status === "izin") datesIzin.add(d);
+      if (p.status === "alpha") datesAlpha.add(d);
+    });
+
     const absen = {
-      sakit: presensi.filter(p => p.status === "sakit").length,
-      izin: presensi.filter(p => p.status === "izin").length,
-      alpha: presensi.filter(p => p.status === "alpha").length,
+      sakit: datesSakit.size,
+      izin: datesIzin.size,
+      alpha: datesAlpha.size,
     };
 
     // 4. Ambil Nilai Kepribadian & Kedisiplinan (BPI)

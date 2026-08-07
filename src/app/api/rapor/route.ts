@@ -38,11 +38,29 @@ export async function GET(req: NextRequest) {
       orderBy: { tanggal: "desc" },
     });
     
-    const totalHari = presensi.length || 0;
-    const totalHadir = presensi.filter((p) => p.status === "hadir").length;
-    const totalSakit = presensi.filter((p) => p.status === "sakit").length;
-    const totalIzin = presensi.filter((p) => p.status === "izin").length;
-    const totalAlpha = presensi.filter((p) => p.status === "alpha").length;
+    // Karena absen sekarang per mapel, kita harus menghitung total hari unik per status.
+    const getDateString = (d: Date) => d.toISOString().split("T")[0];
+    
+    const datesHadir = new Set<string>();
+    const datesSakit = new Set<string>();
+    const datesIzin = new Set<string>();
+    const datesAlpha = new Set<string>();
+    const datesTotal = new Set<string>();
+
+    presensi.forEach(p => {
+      const d = getDateString(p.tanggal);
+      datesTotal.add(d);
+      if (p.status === "hadir") datesHadir.add(d);
+      if (p.status === "sakit") datesSakit.add(d);
+      if (p.status === "izin") datesIzin.add(d);
+      if (p.status === "alpha") datesAlpha.add(d);
+    });
+
+    const totalHari = datesTotal.size;
+    const totalHadir = datesHadir.size;
+    const totalSakit = datesSakit.size;
+    const totalIzin = datesIzin.size;
+    const totalAlpha = datesAlpha.size;
     const persentaseKehadiran = totalHari > 0 ? Math.round((totalHadir / totalHari) * 100) : 100;
 
     // 3. Get Jurnal Mengajar di Kelas Santri

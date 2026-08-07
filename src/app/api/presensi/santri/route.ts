@@ -6,9 +6,11 @@ export async function GET(req: NextRequest) {
     const { searchParams } = new URL(req.url);
     const kelas_id = searchParams.get("kelas_id");
     const tanggal = searchParams.get("tanggal");
+    const mapel_id = searchParams.get("mapel_id");
+    const jam_ke = searchParams.get("jam_ke");
 
     if (!kelas_id || !tanggal) {
-      return NextResponse.json({ error: "kelas_id dan tanggal wajib" }, { status: 400 });
+      return NextResponse.json({ error: "kelas_id dan tanggal wajib diisi" }, { status: 400 });
     }
 
     const tanggalDate = new Date(tanggal);
@@ -25,6 +27,8 @@ export async function GET(req: NextRequest) {
       where: {
         kelas_id,
         tanggal: tanggalDate,
+        ...(mapel_id ? { mapel_id } : { mapel_id: null }),
+        ...(jam_ke ? { jam_ke } : { jam_ke: null }),
       },
       select: { santri_id: true, status: true, keterangan: true, id: true },
     });
@@ -53,31 +57,40 @@ export async function GET(req: NextRequest) {
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { kelas_id, tanggal, presensi } = body as {
+    const { kelas_id, tanggal, mapel_id, jam_ke, presensi } = body as {
       kelas_id: string;
       tanggal: string;
+      mapel_id: string;
+      jam_ke: string;
       presensi: { santri_id: string; status: string; keterangan?: string }[];
     };
 
-    if (!kelas_id || !tanggal || !Array.isArray(presensi) || presensi.length === 0) {
+    if (!kelas_id || !tanggal || !mapel_id || !jam_ke || !Array.isArray(presensi) || presensi.length === 0) {
       return NextResponse.json({ error: "Data tidak lengkap" }, { status: 400 });
     }
 
     const tanggalDate = new Date(tanggal);
 
     // Upsert semua presensi
-    const ops = presensi.map((p) =>
-      prisma.presensiSiswa.upsert({
+    const ops = presensi.map((p) => {
+      // Prisma's upsert with compound unique constraint with nullable fields might be tricky.
+      // We will use a raw query or findFirst + update/create if Prisma upsert fails on nulls,
+      // but in Prisma 5, upsert works with the generated unique object if fields are exactly matched.
+      return prisma.presensiSiswa.upsert({
         where: {
-          santri_id_tanggal: {
+          santri_id_tanggal_mapel_id_jam_ke: {
             santri_id: p.santri_id,
             tanggal: tanggalDate,
+            mapel_id,
+            jam_ke,
           },
         },
         create: {
           santri_id: p.santri_id,
           kelas_id,
           tanggal: tanggalDate,
+          mapel_id,
+          jam_ke,
           status: p.status,
           keterangan: p.keterangan ?? null,
         },
@@ -85,8 +98,8 @@ export async function POST(req: NextRequest) {
           status: p.status,
           keterangan: p.keterangan ?? null,
         },
-      })
-    );
+      });
+    });
 
     await prisma.$transaction(ops);
 

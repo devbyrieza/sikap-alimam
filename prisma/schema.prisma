@@ -108,6 +108,7 @@ model MataPelajaran {
   jurnal        JurnalMengajar[]
   nilai         NilaiSantri[]
   jadwal        JadwalPelajaran[]
+  presensi      PresensiSiswa[]
 
   @@unique([nama, kelas_id])
   @@map("mata_pelajaran")
@@ -201,12 +202,15 @@ model PresensiSiswa {
   tanggal    DateTime @db.Date
   status     String // hadir | sakit | izin | alpha
   keterangan String?
+  mapel_id   String?  @db.Uuid
+  jam_ke     String? // "1-2", "3", dll
   created_at DateTime @default(now()) @db.Timestamptz(6)
 
-  santri SantriAktif @relation(fields: [santri_id], references: [id])
-  kelas  Kelas       @relation(fields: [kelas_id], references: [id])
+  santri SantriAktif    @relation(fields: [santri_id], references: [id])
+  kelas  Kelas          @relation(fields: [kelas_id], references: [id])
+  mapel  MataPelajaran? @relation(fields: [mapel_id], references: [id])
 
-  @@unique([santri_id, tanggal])
+  @@unique([santri_id, tanggal, mapel_id, jam_ke])
   @@map("presensi_siswa")
 }
 

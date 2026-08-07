@@ -106,6 +106,16 @@ export default async function DashboardPage() {
   
   const isSuperAdmin = (session?.role || "").toLowerCase().includes("admin_super");
 
+  let greetingName = "Ust. User";
+  if (session?.nama) {
+    const parts = session.nama.split(" ");
+    if (parts[0].toLowerCase().startsWith("ust")) {
+      greetingName = `${parts[0]} ${parts[1] || ""}`.trim();
+    } else {
+      greetingName = `Ust. ${parts[0]}`;
+    }
+  }
+
   return (
     <div className="page-container">
       
@@ -135,7 +145,7 @@ export default async function DashboardPage() {
             </div>
           </div>
           <h1 style={{ fontSize: "clamp(20px, 4vw, 32px)", fontWeight:800, margin:"0 0 8px 0", display:"flex", alignItems:"center", gap:10, letterSpacing:"-0.5px", flexWrap: "wrap", wordBreak: "break-word" }}>
-            Ahlan wa Sahlan, Ust. {session?.nama ? session.nama.split(" ")[0] : "User"} <Hand size={24} color="#ddc192" />
+            Ahlan wa Sahlan, {greetingName} <Hand size={24} color="#ddc192" />
           </h1>
           <div style={{ display:"flex", alignItems:"center", gap:12, color:"rgba(253, 248, 240, 0.85)", fontSize:13, flexWrap: "wrap" }}>
             <span style={{ display:"flex", alignItems:"center", gap:6 }}><Calendar size={14} color="#ddc192" /> {formatTanggal(today)}</span>
