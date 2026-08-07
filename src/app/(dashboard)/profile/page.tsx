@@ -83,17 +83,17 @@ export default function ProfilePage() {
         display: "flex",
         justifyContent: "space-between",
         alignItems: "center",
-        background: "linear-gradient(135deg, #0f172a 0%, #1e293b 60%, #0369a1 100%)",
+        background: "linear-gradient(135deg, #064e3b 0%, #047857 60%, #0f172a 100%)",
         borderRadius: "24px",
         padding: "32px 36px",
-        boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.2), 0 8px 10px -6px rgba(0, 0, 0, 0.1)",
+        boxShadow: "0 10px 25px -5px rgba(6, 78, 59, 0.3), 0 8px 10px -6px rgba(0, 0, 0, 0.1)",
         color: "white",
         flexWrap: "wrap",
         gap: "24px"
       }}>
         <div>
           <h1 style={{ fontSize: "28px", fontWeight: "bold", margin: "0 0 8px 0" }}>Profil &amp; Pengaturan Akun</h1>
-          <p style={{ color: "#cbd5e1", margin: 0, fontSize: "14px" }}>Kelola data kepegawaian, mapel mengajar, dan keamanan akun Anda</p>
+          <p style={{ color: "#d1fae5", margin: 0, fontSize: "14px" }}>Kelola data kepegawaian, mapel mengajar, dan keamanan akun Anda</p>
         </div>
       </div>
 
@@ -104,7 +104,7 @@ export default function ProfilePage() {
           <div style={{ background: "white", borderRadius: "24px", padding: "24px", boxShadow: "0 4px 6px -1px rgba(0,0,0,0.05)", border: "1px solid #f1f5f9", display: "flex", flexDirection: "column", gap: "20px" }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: "1px solid #f1f5f9", paddingBottom: "16px", flexWrap: "wrap", gap: "12px" }}>
               <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-                <div style={{ width: "44px", height: "44px", borderRadius: "16px", background: "rgba(2, 132, 199, 0.1)", display: "flex", alignItems: "center", justifyContent: "center", color: "#0284c7" }}>
+                <div style={{ width: "44px", height: "44px", borderRadius: "16px", background: "#ecfdf5", display: "flex", alignItems: "center", justifyContent: "center", color: "#047857" }}>
                   <UserCheck style={{ width: "24px", height: "24px" }} />
                 </div>
                 <div>
@@ -116,8 +116,8 @@ export default function ProfilePage() {
               <button
                 type="button"
                 onClick={openEditProfileModal}
-                style={{ padding: "10px 18px", background: "#0284c7", color: "white", borderRadius: "14px", fontSize: "12px", fontWeight: "bold", border: "none", cursor: "pointer", display: "flex", alignItems: "center", gap: "6px", boxShadow: "0 4px 6px -1px rgba(2, 132, 199, 0.4)", transition: "background-color 0.2s" }}
-                className="hover:bg-sky-700"
+                style={{ padding: "10px 18px", background: "#047857", color: "white", borderRadius: "14px", fontSize: "12px", fontWeight: "bold", border: "none", cursor: "pointer", display: "flex", alignItems: "center", gap: "6px", boxShadow: "0 4px 6px -1px rgba(4, 120, 87, 0.4)", transition: "all 0.2s" }}
+                className="hover:bg-emerald-800 active:scale-95"
               >
                 <Edit3 style={{ width: "14px", height: "14px" }} />
                 <span>Edit &amp; Atur Mapel</span>
@@ -126,7 +126,7 @@ export default function ProfilePage() {
 
             {loadingProfile ? (
               <div style={{ padding: "48px 0", textAlign: "center", color: "#94a3b8" }}>
-                <Loader2 style={{ width: "28px", height: "28px", margin: "0 auto 8px auto", color: "#0284c7" }} className="animate-spin" />
+                <Loader2 style={{ width: "28px", height: "28px", margin: "0 auto 8px auto", color: "#047857" }} className="animate-spin" />
                 <p style={{ fontSize: "12px", fontWeight: 600 }}>Memuat profil...</p>
               </div>
             ) : (
@@ -137,7 +137,7 @@ export default function ProfilePage() {
                     {p?.foto_url ? (
                       <img src={p.foto_url} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
                     ) : (
-                      <UserCheck style={{ width: "28px", height: "28px", color: "#cbd5e1" }} />
+                      <UserCheck style={{ width: "28px", height: "28px", color: "#047857" }} />
                     )}
                   </div>
                   <div style={{ flex: 1, minWidth: 0 }}>
@@ -162,14 +162,14 @@ export default function ProfilePage() {
                   <div style={{ padding: "12px", background: "#f8fafc", borderRadius: "16px", border: "1px solid #f1f5f9" }}>
                     <span style={{ color: "#94a3b8", fontWeight: "bold", textTransform: "uppercase", fontSize: "10px", display: "block", marginBottom: "4px" }}>No. WhatsApp / HP</span>
                     <p style={{ fontWeight: "bold", color: "#1e293b", display: "flex", alignItems: "center", gap: "6px", fontFamily: "monospace", margin: 0 }}>
-                      <Phone style={{ width: "14px", height: "14px", color: "#94a3b8" }} />
+                      <Phone style={{ width: "14px", height: "14px", color: "#047857" }} />
                       {p?.no_hp || "-"}
                     </p>
                   </div>
                   <div style={{ padding: "12px", background: "#f8fafc", borderRadius: "16px", border: "1px solid #f1f5f9" }}>
                     <span style={{ color: "#94a3b8", fontWeight: "bold", textTransform: "uppercase", fontSize: "10px", display: "block", marginBottom: "4px" }}>Email Akun</span>
                     <p style={{ fontWeight: "bold", color: "#1e293b", display: "flex", alignItems: "center", gap: "6px", margin: 0, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
-                      <Mail style={{ width: "14px", height: "14px", color: "#94a3b8" }} />
+                      <Mail style={{ width: "14px", height: "14px", color: "#047857" }} />
                       {p?.email || profile?.user?.email || "-"}
                     </p>
                   </div>
@@ -208,7 +208,7 @@ export default function ProfilePage() {
         {/* ─── KARTU 2: GANTI PASSWORD ─── */}
         <div style={{ background: "white", borderRadius: "24px", padding: "24px", boxShadow: "0 4px 6px -1px rgba(0,0,0,0.05)", border: "1px solid #f1f5f9", display: "flex", flexDirection: "column", gap: "20px" }}>
           <div style={{ display: "flex", alignItems: "center", gap: "12px", borderBottom: "1px solid #f1f5f9", paddingBottom: "16px" }}>
-            <div style={{ width: "40px", height: "40px", borderRadius: "16px", background: "#f1f5f9", display: "flex", alignItems: "center", justifyContent: "center", color: "#334155" }}>
+            <div style={{ width: "40px", height: "40px", borderRadius: "16px", background: "#ecfdf5", display: "flex", alignItems: "center", justifyContent: "center", color: "#047857" }}>
               <Lock style={{ width: "20px", height: "20px" }} />
             </div>
             <div>
@@ -268,8 +268,8 @@ export default function ProfilePage() {
             <button
               type="submit"
               disabled={loadingPassword}
-              style={{ width: "100%", padding: "10px", background: "#1e293b", color: "white", borderRadius: "14px", fontSize: "12px", fontWeight: "bold", border: "none", cursor: loadingPassword ? "not-allowed" : "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: "8px", boxShadow: "0 4px 6px -1px rgba(0,0,0,0.1)", opacity: loadingPassword ? 0.5 : 1, marginTop: "8px", transition: "background-color 0.2s" }}
-              className="hover:bg-slate-900"
+              style={{ width: "100%", padding: "10px", background: "#047857", color: "white", borderRadius: "14px", fontSize: "12px", fontWeight: "bold", border: "none", cursor: loadingPassword ? "not-allowed" : "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: "8px", boxShadow: "0 4px 6px -1px rgba(4, 120, 87, 0.4)", opacity: loadingPassword ? 0.5 : 1, marginTop: "8px", transition: "all 0.2s" }}
+              className="hover:bg-emerald-800 active:scale-95"
             >
               {loadingPassword ? <Loader2 style={{ width: "16px", height: "16px" }} className="animate-spin" /> : <Lock style={{ width: "16px", height: "16px" }} />}
               <span>{loadingPassword ? "Menyimpan..." : "Update Password"}</span>
