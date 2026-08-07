@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Swal from "sweetalert2";
@@ -17,6 +17,8 @@ import {
 } from "lucide-react";
 
 type Kelas = { id: string; nama: string; jenjang: string | null };
+type Mapel = { id: string; nama: string };
+type AsatidzmMapel = { id: string; pegawai_id: string; mapel_id: string; kelas_id: string };
 type SantriPresensi = {
   id: string;
   nama_lengkap: string;
@@ -57,11 +59,19 @@ export default function PresensiSantriPage() {
     day: "2-digit",
   }).format(new Date());
 
+  const [master, setMaster] = useState<{
+    kelas: Kelas[];
+    mapel: Record<string, Mapel[]>;
+    asatidzmMapel: AsatidzmMapel[];
+  } | null>(null);
   const [kelasList, setKelasList] = useState<Kelas[]>([]);
   const [loadingMaster, setLoadingMaster] = useState(true);
 
+  const [asatidId, setAsatidId] = useState("");
   const [selectedJenjang, setSelectedJenjang] = useState("");
   const [selectedKelas, setSelectedKelas] = useState("");
+  const [mapelId, setMapelId] = useState("");
+  const [jamKe, setJamKe] = useState("");
   const [tanggal, setTanggal] = useState(today);
 
   const [santri, setSantri] = useState<SantriPresensi[]>([]);
@@ -78,6 +88,8 @@ export default function PresensiSantriPage() {
         const p = JSON.parse(draft);
         if (p.selectedJenjang) setSelectedJenjang(p.selectedJenjang);
         if (p.selectedKelas) setSelectedKelas(p.selectedKelas);
+        if (p.mapelId) setMapelId(p.mapelId);
+        if (p.jamKe) setJamKe(p.jamKe);
         if (p.tanggal) setTanggal(p.tanggal);
         if (p.statusMap) setStatusMap(p.statusMap);
         if (p.keteranganMap) setKeteranganMap(p.keteranganMap);
@@ -85,19 +97,36 @@ export default function PresensiSantriPage() {
     }
   }, []);
 
+  // Fetch Profile to get asatidId
+  useEffect(() => {
+    fetch("/api/profile")
+      .then((r) => r.json())
+      .then((profileData) => {
+        if (profileData.data?.asatidz_id) {
+          const role = (profileData.data.role || "").toLowerCase();
+          const isAdmin = role.includes("admin_super");
+          if (!isAdmin) {
+            setAsatidId(profileData.data.asatidz_id);
+          }
+        }
+      })
+      .catch(() => {});
+  }, []);
+
   // Autosave draft ke localStorage
   useEffect(() => {
     if (selectedKelas || Object.keys(statusMap).length > 0 || Object.keys(keteranganMap).length > 0) {
-      const p = { selectedJenjang, selectedKelas, tanggal, statusMap, keteranganMap };
+      const p = { selectedJenjang, selectedKelas, mapelId, jamKe, tanggal, statusMap, keteranganMap };
       localStorage.setItem("siakad_presensi_draft", JSON.stringify(p));
     }
-  }, [selectedJenjang, selectedKelas, tanggal, statusMap, keteranganMap]);
+  }, [selectedJenjang, selectedKelas, mapelId, jamKe, tanggal, statusMap, keteranganMap]);
 
   // Load kelas list from master
   useEffect(() => {
     fetch("/api/master")
       .then((r) => r.json())
       .then((data) => {
+        setMaster(data);
         setKelasList(data.kelas || []);
         setLoadingMaster(false);
       })
@@ -112,9 +141,96 @@ export default function PresensiSantriPage() {
       });
   }, []);
 
+  // Available Jenjang Options berdasarkan guru yang dipilih / login
+  const availableJenjangs = useMemo(() => {
+    const defaultJenjangs = ["MTs", "IL", "MA"];
+    if (!asatidId || !master?.asatidzmMapel || !master?.kelas) return defaultJenjangs;
+
+    const teacherKelasIds = master.asatidzmMapel
+      .filter((am) => am.pegawai_id === asatidId)
+      .map((am) => am.kelas_id);
+
+    if (teacherKelasIds.length === 0) return defaultJenjangs;
+
+    const teacherJenjangs = master.kelas
+      .filter((k) => teacherKelasIds.includes(k.id) && k.jenjang)
+      .map((k) => k.jenjang as string);
+
+    const uniqueJenjangs = Array.from(new Set(teacherJenjangs));
+    return uniqueJenjangs.length > 0 ? uniqueJenjangs : defaultJenjangs;
+  }, [asatidId, master]);
+
+  // Auto-select Jenjang jika hanya ada 1 pilihan
+  useEffect(() => {
+    if (availableJenjangs.length === 1) {
+      setSelectedJenjang(availableJenjangs[0]);
+    } else if (selectedJenjang && !availableJenjangs.includes(selectedJenjang)) {
+      setSelectedJenjang("");
+    }
+  }, [availableJenjangs]);
+
+  const filteredKelasList = useMemo(() => {
+    let list = master?.kelas || [];
+    if (selectedJenjang) {
+      list = list.filter((k) => k.jenjang === selectedJenjang);
+    }
+
+    if (asatidId && master?.asatidzmMapel) {
+      const teacherKelasIds = master.asatidzmMapel
+        .filter((am) => am.pegawai_id === asatidId)
+        .map((am) => am.kelas_id);
+
+      if (teacherKelasIds.length > 0) {
+        list = list.filter((k) => teacherKelasIds.includes(k.id));
+      }
+    }
+
+    return list;
+  }, [selectedJenjang, asatidId, master]);
+
+  // Auto-select Kelas jika hanya ada 1 kelas
+  useEffect(() => {
+    if (filteredKelasList.length === 1) {
+      setSelectedKelas(filteredKelasList[0].id);
+    } else if (selectedKelas) {
+      const exists = filteredKelasList.find((k) => k.id === selectedKelas);
+      if (!exists) setSelectedKelas("");
+    }
+  }, [filteredKelasList]);
+
+  const mapelList = useMemo(() => {
+    let list = (selectedKelas && master?.mapel?.[selectedKelas]) || [];
+    if (asatidId && master?.asatidzmMapel && list.length > 0) {
+      const allowedMapelIds = master.asatidzmMapel
+        .filter(am => am.pegawai_id === asatidId && am.kelas_id === selectedKelas)
+        .map(am => am.mapel_id);
+      if (allowedMapelIds.length > 0) {
+        list = list.filter(m => allowedMapelIds.includes(m.id));
+      } else {
+        list = [];
+      }
+    }
+    return list;
+  }, [selectedKelas, asatidId, master]);
+
+  // Auto-select Mapel jika hanya ada 1 mapel
+  useEffect(() => {
+    if (mapelList.length === 1) {
+      setMapelId(mapelList[0].id);
+    }
+  }, [mapelList]);
+
   // Load santri + status presensi when kelas and tanggal are set
   const loadPresensi = useCallback(async () => {
-    if (!selectedKelas || !tanggal) return;
+    if (!selectedKelas || !tanggal || !mapelId || !jamKe) {
+      Swal.fire({
+        icon: "warning",
+        title: "Data Kurang Lengkap",
+        text: "Pilih Kelas, Tanggal, Mata Pelajaran, dan Jam Ke- terlebih dahulu.",
+        confirmButtonColor: "var(--primary)",
+      });
+      return;
+    }
 
     setLoadingSantri(true);
     setSantri([]);
@@ -123,7 +239,7 @@ export default function PresensiSantriPage() {
 
     try {
       const res = await fetch(
-        `/api/presensi/santri?kelas_id=${selectedKelas}&tanggal=${tanggal}`
+        `/api/presensi/santri?kelas_id=${selectedKelas}&tanggal=${tanggal}&mapel_id=${mapelId}&jam_ke=${encodeURIComponent(jamKe)}`
       );
       const json = await res.json();
       if (!res.ok) throw new Error(json.error);
@@ -156,13 +272,14 @@ export default function PresensiSantriPage() {
     } finally {
       setLoadingSantri(false);
     }
-  }, [selectedKelas, tanggal]);
+  }, [selectedKelas, tanggal, mapelId, jamKe]);
 
-  useEffect(() => {
-    if (selectedKelas && tanggal) {
-      loadPresensi();
-    }
-  }, [selectedKelas, tanggal, loadPresensi]);
+  // Disable auto load to let user fill everything first
+  // useEffect(() => {
+  //   if (selectedKelas && tanggal && mapelId && jamKe) {
+  //     loadPresensi();
+  //   }
+  // }, [selectedKelas, tanggal, mapelId, jamKe, loadPresensi]);
 
   const setStatus = (santriId: string, status: StatusType) => {
     setStatusMap((prev) => ({ ...prev, [santriId]: status }));
@@ -205,11 +322,12 @@ export default function PresensiSantriPage() {
   ).length;
 
   const handleSimpan = async () => {
-    if (!selectedKelas || !tanggal || santri.length === 0) return;
+    if (!selectedKelas || !tanggal || !mapelId || !jamKe || santri.length === 0) return;
 
     // (Confirmation alert for missing attendance removed because default is now Hadir)
 
     const kelasNamaConfirm = kelasList.find((k) => k.id === selectedKelas)?.nama;
+    const mapelNamaConfirm = mapelList.find((m) => m.id === mapelId)?.nama;
 
     const confirm = await Swal.fire({
       title: "Simpan Presensi?",
@@ -217,6 +335,7 @@ export default function PresensiSantriPage() {
         <div style="font-size:13px; color:#6b7280; margin-bottom: 14px; text-align:left; padding: 10px 12px; background: #f9fafb; border-radius: 8px;">
           Tanggal: <strong>${tanggal}</strong><br/>
           Kelas: <strong>${kelasNamaConfirm}</strong><br/>
+          Mapel: <strong>${mapelNamaConfirm}</strong> (Jam ${jamKe})<br/>
           Total Santri: <strong>${santri.length}</strong>
         </div>
         <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:4px">
@@ -258,6 +377,8 @@ export default function PresensiSantriPage() {
         body: JSON.stringify({
           kelas_id: selectedKelas,
           tanggal,
+          mapel_id: mapelId,
+          jam_ke: jamKe,
           presensi: presensiPayload,
         }),
       });
@@ -335,7 +456,7 @@ export default function PresensiSantriPage() {
           <Users size={18} color="#ddc192" />
           Pilih Kelas &amp; Tanggal Presensi
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 w-full items-end">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 w-full items-end">
           <div className="flex flex-col gap-1.5 min-w-0 w-full">
             <label style={{ fontSize: "13px", fontWeight: "700", color: "#550000" }}>Jenjang</label>
             {loadingMaster ? (
@@ -344,7 +465,7 @@ export default function PresensiSantriPage() {
                 style={{ padding: "11px 14px", borderRadius: "12px", border: "1px solid #ebdcc3", background: "#fdf8f0", color: "#64748b", display: "flex", alignItems: "center", gap: 8, fontSize: "14px" }}
               >
                 <Loader2 size={16} className="animate-spin text-amber-700" />
-                Memuat...
+                ...
               </div>
             ) : (
               <select
@@ -372,7 +493,7 @@ export default function PresensiSantriPage() {
                 style={{ padding: "11px 14px", borderRadius: "12px", border: "1px solid #ebdcc3", background: "#fdf8f0", color: "#64748b", display: "flex", alignItems: "center", gap: 8, fontSize: "14px" }}
               >
                 <Loader2 size={16} className="animate-spin text-amber-700" />
-                Memuat...
+                ...
               </div>
             ) : (
               <select
@@ -395,14 +516,42 @@ export default function PresensiSantriPage() {
           </div>
 
           <div className="flex flex-col gap-1.5 min-w-0 w-full">
-            <label style={{ fontSize: "13px", fontWeight: "700", color: "#550000" }}>Tanggal</label>
-            <input
-              type="date"
+            <label style={{ fontSize: "13px", fontWeight: "700", color: "#550000" }}>Mata Pelajaran</label>
+            <select
               className="w-full min-w-0 box-border"
-              style={{ padding: "11px 14px", borderRadius: "12px", border: "1px solid #ebdcc3", background: "#fdf8f0", fontSize: "14px", outline: "none", fontWeight: 600 }}
-              value={tanggal}
-              onChange={(e) => setTanggal(e.target.value)}
-            />
+              style={{ padding: "11px 14px", borderRadius: "12px", border: "1px solid #ebdcc3", background: !selectedKelas ? "#f1f5f9" : "#fdf8f0", fontSize: "14px", outline: "none", fontWeight: 600 }}
+              value={mapelId}
+              onChange={(e) => setMapelId(e.target.value)}
+              disabled={!selectedKelas}
+            >
+              <option value="">{selectedKelas ? "- Pilih Mapel -" : "- Pilih Kelas -"}</option>
+              {mapelList.map((m) => (
+                <option key={m.id} value={m.id}>
+                  {m.nama}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="flex flex-col gap-1.5 min-w-0 w-full">
+            <label style={{ fontSize: "13px", fontWeight: "700", color: "#550000" }}>Jam Ke- / Tgl</label>
+            <div style={{ display: "flex", gap: 8 }}>
+              <input
+                type="text"
+                placeholder="1-2, dll"
+                className="w-full min-w-0 box-border"
+                style={{ width: "40%", padding: "11px 10px", borderRadius: "12px", border: "1px solid #ebdcc3", background: "#fdf8f0", fontSize: "14px", outline: "none", fontWeight: 600 }}
+                value={jamKe}
+                onChange={(e) => setJamKe(e.target.value)}
+              />
+              <input
+                type="date"
+                className="w-full min-w-0 box-border"
+                style={{ width: "60%", padding: "11px 10px", borderRadius: "12px", border: "1px solid #ebdcc3", background: "#fdf8f0", fontSize: "14px", outline: "none", fontWeight: 600 }}
+                value={tanggal}
+                onChange={(e) => setTanggal(e.target.value)}
+              />
+            </div>
           </div>
 
           <div className="w-full min-w-0">
@@ -410,7 +559,7 @@ export default function PresensiSantriPage() {
               className="w-full box-border flex items-center justify-center gap-2"
               style={{ background: "#550000", color: "white", padding: "11px 20px", borderRadius: "12px", border: "1px solid #550000", fontWeight: 700, cursor: "pointer", height: "44px", boxShadow: "0 2px 8px rgba(85,0,0,0.2)" }}
               onClick={loadPresensi}
-              disabled={!selectedKelas || !tanggal || loadingSantri}
+              disabled={!selectedKelas || !tanggal || !mapelId || !jamKe || loadingSantri}
             >
               {loadingSantri ? (
                 <>
