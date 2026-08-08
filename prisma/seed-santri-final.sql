@@ -119,6 +119,8 @@ INSERT INTO santri_aktif (id, nis, nama_lengkap, kelas_id, jenis_kelamin)
 SELECT gen_random_uuid(), '2602070018', 'Panji Ahmad', (SELECT id FROM kelas WHERE nama = 'IL'), 'L'
 WHERE NOT EXISTS (SELECT 1 FROM santri_aktif WHERE nama_lengkap = 'Panji Ahmad');
 INSERT INTO santri_aktif (id, nis, nama_lengkap, kelas_id, jenis_kelamin)
+SELECT gen_random_uuid(), '2602070019', 'Iman Prayogo', (SELECT id FROM kelas WHERE nama = 'IL'), 'L'
+WHERE NOT EXISTS (SELECT 1 FROM santri_aktif WHERE nama_lengkap = 'Iman Prayogo');
 INSERT INTO santri_aktif (id, nis, nama_lengkap, kelas_id, jenis_kelamin)
 SELECT gen_random_uuid(), '2602070020', 'Syeh Al Bani Irsyad Amrulloh', (SELECT id FROM kelas WHERE nama = 'IL'), 'L'
 WHERE NOT EXISTS (SELECT 1 FROM santri_aktif WHERE nama_lengkap = 'Syeh Al Bani Irsyad Amrulloh');
