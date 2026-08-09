@@ -645,3 +645,363 @@ html, body {
 .swal2-container {
   z-index: 9999999 !important;
 }
+
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   BLU BCA "CALM, NOT SELLS" — DESIGN ENHANCEMENT LAYER
+   Inspired by blu by BCA Digital's premium mobile app aesthetic.
+   NON-DESTRUCTIVE: Zero color changes. Only refines feel & polish.
+   Applied: radius, shadow depth, transitions, surface, typography rhythm.
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+
+/* ── 1. APP SURFACE BACKGROUND — Ice-Blue tint (BLU signature) ──────── */
+@layer base {
+  /* Subtle ice-blue tint makes screens feel calm & premium vs. flat white */
+  html, body {
+    background-color: #F8FAFC;
+  }
+
+  /* ── 2. TYPOGRAPHY RHYTHM — Plus Jakarta Sans, breathable ────────────
+     More generous line-height & letter-spacing for readability */
+  body {
+    line-height: 1.65;
+    letter-spacing: -0.01em;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    font-feature-settings: "kern" 1, "liga" 1, "calt" 1;
+  }
+
+  /* Heading letter-spacing refinement — BLU uses tight, intentional tracking */
+  h1, h2 {
+    letter-spacing: -0.03em;
+    line-height: 1.1;
+    text-wrap: balance;
+  }
+  h3, h4 {
+    letter-spacing: -0.02em;
+    line-height: 1.25;
+    text-wrap: balance;
+  }
+  h5, h6 {
+    letter-spacing: -0.01em;
+    line-height: 1.35;
+  }
+  p {
+    text-wrap: pretty;
+    line-height: 1.75;
+  }
+
+  /* ── 3. SCROLLBAR — Slim, pill-shaped, BLU-style ─────────────────── */
+  ::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: rgba(148, 163, 184, 0.45);
+    border-radius: 9999px;
+    border: none;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgba(100, 116, 139, 0.65);
+  }
+
+  /* ── 4. FOCUS RING — Elegant glow ring, BLU-style ──────────────────
+     Replaces harsh outline with smooth ring + offset */
+  :focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 2px #F8FAFC, 0 0 0 4px var(--color-primary, #0f766e);
+    border-radius: 10px;
+    transition: box-shadow 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  /* ── 5. SELECTION — Soft brand-tinted ────────────────────────────── */
+  ::selection {
+    background: rgba(var(--color-primary-rgb, 15 118 110), 0.15);
+    color: inherit;
+  }
+
+  /* ── 6. IMAGES — Smooth rendering ────────────────────────────────── */
+  img {
+    image-rendering: -webkit-optimize-contrast;
+  }
+}
+
+/* ── 7. BUTTON MICRO-INTERACTIONS — BLU tactile press feel ────────── */
+@layer base {
+  button,
+  [role="button"],
+  [type="button"],
+  [type="submit"],
+  [type="reset"] {
+    transition: transform 0.15s cubic-bezier(0.4, 0, 0.2, 1),
+                box-shadow 0.15s cubic-bezier(0.4, 0, 0.2, 1),
+                opacity 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+  }
+
+  button:active,
+  [role="button"]:active,
+  [type="button"]:active,
+  [type="submit"]:active {
+    transform: scale(0.97);
+  }
+
+  button:disabled,
+  [type="button"]:disabled,
+  [type="submit"]:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none !important;
+  }
+}
+
+/* ── 8. INPUT FIELD STATES — BLU's elegant floating label feel ──────── */
+@layer base {
+  input,
+  textarea,
+  select {
+    transition: border-color 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+                box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+                background-color 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    background-color: #FFFFFF;
+    border-radius: 12px;
+  }
+
+  input:focus,
+  textarea:focus,
+  select:focus {
+    outline: none;
+    border-color: var(--color-primary, #0f766e) !important;
+    box-shadow: 0 0 0 3px rgba(var(--color-primary-rgb, 15 118 110), 0.12),
+                0 1px 4px rgba(0, 0, 0, 0.06);
+    background-color: #FFFFFF;
+  }
+
+  input::placeholder,
+  textarea::placeholder {
+    color: #94A3B8;
+    opacity: 1;
+    font-weight: 400;
+    letter-spacing: 0;
+  }
+}
+
+/* ── 9. CARD & PANEL REFINEMENTS — BLU floating card depth ─────────── */
+@layer components {
+  /* Standard card: white with refined shadow depth */
+  .card,
+  [class*="card-"],
+  .panel {
+    background-color: #FFFFFF;
+    border-radius: 16px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05),
+                0 1px 2px rgba(0, 0, 0, 0.03);
+    transition: box-shadow 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+                transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .card:hover {
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08),
+                0 3px 8px rgba(0, 0, 0, 0.04);
+    transform: translateY(-1px);
+  }
+
+  /* Glass card variant — BLU signature glassmorphism */
+  .card-glass {
+    background: rgba(255, 255, 255, 0.82);
+    backdrop-filter: blur(16px) saturate(1.6);
+    -webkit-backdrop-filter: blur(16px) saturate(1.6);
+    border: 1px solid rgba(255, 255, 255, 0.55);
+    border-radius: 20px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08),
+                0 2px 8px rgba(0, 0, 0, 0.04),
+                inset 0 1px 0 rgba(255, 255, 255, 0.7);
+  }
+
+  /* Elevated floating card — for hero/feature panels */
+  .card-elevated {
+    background: #FFFFFF;
+    border-radius: 20px;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.10),
+                0 4px 12px rgba(0, 0, 0, 0.05),
+                0 1px 3px rgba(0, 0, 0, 0.03);
+    transition: box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+                transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .card-elevated:hover {
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.13),
+                0 8px 20px rgba(0, 0, 0, 0.07),
+                0 2px 5px rgba(0, 0, 0, 0.04);
+    transform: translateY(-2px);
+  }
+}
+
+/* ── 10. LINK TRANSITIONS — Smooth, intentional ──────────────────────── */
+@layer base {
+  a {
+    transition: color 0.15s cubic-bezier(0.4, 0, 0.2, 1),
+                opacity 0.15s cubic-bezier(0.4, 0, 0.2, 1),
+                text-decoration-color 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+}
+
+/* ── 11. TABLE REFINEMENTS — BLU density with breathing room ─────────── */
+@layer components {
+  table {
+    border-collapse: separate;
+    border-spacing: 0;
+  }
+
+  /* Smooth row hover for data-dense tables */
+  tbody tr {
+    transition: background-color 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  tbody tr:hover > td {
+    background-color: rgba(248, 250, 252, 0.9);
+  }
+
+  /* Rounded first/last cell corners for separated table sections */
+  thead th:first-child { border-radius: 12px 0 0 0; }
+  thead th:last-child  { border-radius: 0 12px 0 0; }
+}
+
+/* ── 12. MODAL & BOTTOM SHEET — BLU slide-up rounded panels ──────────── */
+@layer components {
+  .modal-panel,
+  [role="dialog"] > div {
+    border-radius: 24px;
+    box-shadow: 0 32px 80px rgba(0, 0, 0, 0.18),
+                0 12px 32px rgba(0, 0, 0, 0.10);
+  }
+
+  /* BLU-style bottom sheet top radius */
+  .bottom-sheet {
+    border-top-left-radius: 24px;
+    border-top-right-radius: 24px;
+    box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.10);
+  }
+}
+
+/* ── 13. BADGE & TAG REFINEMENTS ─────────────────────────────────────── */
+@layer components {
+  .badge,
+  .tag {
+    border-radius: 9999px;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    transition: opacity 0.15s ease, transform 0.15s ease;
+  }
+}
+
+/* ── 14. ANIMATION UTILITIES — BLU micro-interaction helpers ─────────── */
+@layer utilities {
+  .transition-smooth {
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .transition-spring {
+    transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .transition-fast {
+    transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .hover-lift {
+    transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+                box-shadow 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .hover-lift:hover {
+    transform: translateY(-2px);
+  }
+  .hover-scale:hover {
+    transform: scale(1.02);
+  }
+  .press-scale:active {
+    transform: scale(0.97);
+  }
+  .text-balance {
+    text-wrap: balance;
+  }
+  .text-pretty {
+    text-wrap: pretty;
+  }
+
+  /* BLU-style number/stat typography */
+  .text-stat {
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum" 1;
+    letter-spacing: -0.02em;
+  }
+}
+
+/* ── 15. SIDEBAR/NAV REFINEMENTS for Dashboard Projects ─────────────── */
+@layer components {
+  /* Sidebar active item — BLU's clear but calm active state */
+  .sidebar-item-active,
+  [data-active="true"] {
+    border-radius: 12px;
+    transition: background-color 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+                color 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  /* Nav link hover */
+  .nav-link,
+  nav a {
+    border-radius: 10px;
+    transition: background-color 0.15s cubic-bezier(0.4, 0, 0.2, 1),
+                color 0.15s cubic-bezier(0.4, 0, 0.2, 1),
+                transform 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+}
+
+/* ── 16. LOADING & SKELETON — BLU animated shimmer ──────────────────── */
+@layer utilities {
+  @keyframes shimmer {
+    0% { background-position: -400px 0; }
+    100% { background-position: 400px 0; }
+  }
+
+  .skeleton {
+    background: linear-gradient(
+      90deg,
+      #F1F5F9 25%,
+      #E2E8F0 50%,
+      #F1F5F9 75%
+    );
+    background-size: 800px 100%;
+    animation: shimmer 1.5s infinite linear;
+    border-radius: 8px;
+  }
+}
+
+/* ── 17. FORM SECTION GROUPING — Breathing room like BLU ────────────── */
+@layer components {
+  .form-section {
+    background: #FFFFFF;
+    border-radius: 16px;
+    padding: 1.5rem;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0, 0, 0, 0.03);
+    margin-bottom: 1rem;
+  }
+
+  .form-group {
+    margin-bottom: 1.25rem;
+  }
+
+  label {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    color: #475569;
+    display: block;
+    margin-bottom: 0.375rem;
+  }
+}
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   END BLU BCA DESIGN ENHANCEMENT LAYER
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
