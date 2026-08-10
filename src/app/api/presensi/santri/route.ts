@@ -61,7 +61,7 @@ export async function POST(req: NextRequest) {
       kelas_id: string;
       tanggal: string;
       mapel_id: string;
-      jam_ke: string;
+      jam_ke: string | string[];
       presensi: { santri_id: string; status: string; keterangan?: string }[];
     };
 
@@ -69,6 +69,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Data tidak lengkap" }, { status: 400 });
     }
 
+    const jam_ke_str = Array.isArray(jam_ke) ? jam_ke.join(", ") : String(jam_ke);
     const tanggalDate = new Date(tanggal);
 
     // Untuk menghindari bug upsert Prisma dengan tipe Date dan nullable fields,
@@ -78,7 +79,7 @@ export async function POST(req: NextRequest) {
       where: {
         tanggal: tanggalDate,
         mapel_id,
-        jam_ke,
+        jam_ke: jam_ke_str,
         santri_id: { in: presensi.map((p) => p.santri_id) },
       },
       select: { id: true, santri_id: true },
@@ -104,7 +105,7 @@ export async function POST(req: NextRequest) {
             kelas_id,
             tanggal: tanggalDate,
             mapel_id,
-            jam_ke,
+            jam_ke: jam_ke_str,
             status: p.status,
             keterangan: p.keterangan ?? null,
           },
