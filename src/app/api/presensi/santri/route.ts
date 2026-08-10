@@ -71,34 +71,45 @@ export async function POST(req: NextRequest) {
 
     const tanggalDate = new Date(tanggal);
 
-    // Upsert semua presensi
+    // Untuk menghindari bug upsert Prisma dengan tipe Date dan nullable fields,
+    // kita akan mengeksekusi operasi secara manual.
+    // 1. Ambil data presensi yang sudah ada untuk (tanggal, mapel_id, jam_ke)
+    const existingPresensi = await prisma.presensiSiswa.findMany({
+      where: {
+        tanggal: tanggalDate,
+        mapel_id,
+        jam_ke,
+        santri_id: { in: presensi.map((p) => p.santri_id) },
+      },
+      select: { id: true, santri_id: true },
+    });
+
+    const existingMap = new Map(existingPresensi.map((p) => [p.santri_id, p.id]));
+
     const ops = presensi.map((p) => {
-      // Prisma's upsert with compound unique constraint with nullable fields might be tricky.
-      // We will use a raw query or findFirst + update/create if Prisma upsert fails on nulls,
-      // but in Prisma 5, upsert works with the generated unique object if fields are exactly matched.
-      return prisma.presensiSiswa.upsert({
-        where: {
-          santri_id_tanggal_mapel_id_jam_ke: {
+      const existingId = existingMap.get(p.santri_id);
+      
+      if (existingId) {
+        return prisma.presensiSiswa.update({
+          where: { id: existingId },
+          data: {
+            status: p.status,
+            keterangan: p.keterangan ?? null,
+          },
+        });
+      } else {
+        return prisma.presensiSiswa.create({
+          data: {
             santri_id: p.santri_id,
+            kelas_id,
             tanggal: tanggalDate,
             mapel_id,
             jam_ke,
+            status: p.status,
+            keterangan: p.keterangan ?? null,
           },
-        },
-        create: {
-          santri_id: p.santri_id,
-          kelas_id,
-          tanggal: tanggalDate,
-          mapel_id,
-          jam_ke,
-          status: p.status,
-          keterangan: p.keterangan ?? null,
-        },
-        update: {
-          status: p.status,
-          keterangan: p.keterangan ?? null,
-        },
-      });
+        });
+      }
     });
 
     await prisma.$transaction(ops);
