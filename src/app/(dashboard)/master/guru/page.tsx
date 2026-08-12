@@ -81,11 +81,13 @@ export default function MasterGuruPage() {
 
       let dataMapel = [];
       if (resMapel?.ok) {
-        dataMapel = await resMapel.json();
+        const jsonMapel = await resMapel.json();
+        dataMapel = jsonMapel.mapel || jsonMapel || [];
       }
 
       if (!Array.isArray(dataGuru)) dataGuru = [];
       if (!Array.isArray(dataKelas)) dataKelas = [];
+      if (!Array.isArray(dataMapel)) dataMapel = [];
       
       // Calculate which teacher is assigned to which class
       // dataKelas contains [{ id, wali_kelas: { id } }]
