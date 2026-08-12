@@ -4,8 +4,8 @@
 export const NILAI_INDIKATOR = [
   { label: "Sangat Baik", nilai: 95, warna: "#059669", bg: "#ecfdf5", border: "#a7f3d0" },
   { label: "Baik",        nilai: 82, warna: "#0284c7", bg: "#eff6ff", border: "#bfdbfe" },
-  { label: "Cukup",       nilai: 68, warna: "#d97706", bg: "#fffbeb", border: "#fde68a" },
-  { label: "Kurang",      nilai: 54, warna: "#dc2626", bg: "#fef2f2", border: "#fecaca" },
+  { label: "Cukup",       nilai: 70, warna: "#d97706", bg: "#fffbeb", border: "#fde68a" },
+  { label: "Kurang",      nilai: 55, warna: "#dc2626", bg: "#fef2f2", border: "#fecaca" },
   { label: "Buruk",       nilai: 40, warna: "#7c3aed", bg: "#f5f3ff", border: "#ddd6fe" },
 ] as const;
 
@@ -18,8 +18,8 @@ export function indikatorToNilai(indikator: IndikatorNilai): number {
 export function nilaiToIndikator(nilai: number): IndikatorNilai {
   if (nilai >= 90) return "Sangat Baik";
   if (nilai >= 75) return "Baik";
-  if (nilai >= 60) return "Cukup";
-  if (nilai >= 45) return "Kurang";
+  if (nilai >= 62) return "Cukup";
+  if (nilai >= 47) return "Kurang";
   return "Buruk";
 }
 
