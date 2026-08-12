@@ -50,7 +50,13 @@ export async function PUT(
 
     const updatedGuru = await prisma.pegawai.update({
       where: { id },
-      data: { nik, nama_lengkap, no_hp, email, mata_pelajaran: mata_pelajaran || null },
+      data: { 
+        nik: nik?.trim() || null, 
+        nama_lengkap, 
+        no_hp: no_hp?.trim() || null, 
+        email: email?.trim() || null, 
+        mata_pelajaran: mata_pelajaran || null 
+      },
     });
 
     // Handle wali_kelas assignment
