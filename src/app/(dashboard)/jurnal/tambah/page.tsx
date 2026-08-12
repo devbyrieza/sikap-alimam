@@ -292,7 +292,18 @@ export default function TambahJurnalPage() {
       }
     }
 
-    return list;
+    // 4. Final deduplication by mapel name
+    const finalUnique: any[] = [];
+    const seenNames = new Set<string>();
+    for (const m of list) {
+      const nameKey = m.nama.trim().toLowerCase();
+      if (!seenNames.has(nameKey)) {
+        seenNames.add(nameKey);
+        finalUnique.push(m);
+      }
+    }
+
+    return finalUnique;
   }, [kelasId, asatidId, master]);
 
   // Auto-select Mapel jika hanya ada 1 mapel
