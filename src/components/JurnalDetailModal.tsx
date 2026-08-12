@@ -173,7 +173,7 @@ export default function JurnalDetailModal({ data, onClose, isOpen, isAdminSuper 
         </div>
 
         {/* Scrollable Modal Content Container (Header Banner + Body scroll together!) */}
-        <div className="overflow-y-auto overscroll-contain flex-1 flex flex-col">
+        <div className="overflow-y-auto overscroll-contain flex-1 flex flex-col custom-scrollbar">
           {/* Header Banner */}
           <div
             className="relative shrink-0 overflow-hidden"
