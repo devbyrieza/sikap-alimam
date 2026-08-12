@@ -214,6 +214,43 @@ async function executeSync(simpegGuruList: any[]) {
                 },
               },
             });
+
+            // Fallback: If exact class name is not found (e.g. "IL" changed to "I'dad Lughowy Putra" during sync)
+            if (!dbKelas) {
+              const upRaw = rawKelas.toUpperCase();
+              let targetJenjang: string | null = null;
+              
+              if (upRaw === "IL" || upRaw.includes("IDAD") || upRaw.includes("LUGHOWY")) {
+                targetJenjang = "IL";
+              } else if (upRaw.includes("MTS")) {
+                targetJenjang = "MTs";
+              } else if (upRaw.includes("MA") || upRaw.includes("ALIYAH")) {
+                targetJenjang = "MA";
+              }
+
+              if (targetJenjang) {
+                // Try to extract grade number (e.g. "7" from "7 MTs")
+                const gradeMatch = upRaw.match(/^(\d+)/);
+                const gradeStr = gradeMatch ? gradeMatch[1] : "";
+
+                dbKelas = await prisma.kelas.findFirst({
+                  where: { 
+                    jenjang: targetJenjang, 
+                    is_active: true,
+                    // If there's a grade number, ensure the class name starts with or contains it
+                    ...(gradeStr ? { nama: { startsWith: gradeStr } } : {})
+                  },
+                  orderBy: { santri: { _count: 'desc' } }
+                });
+              }
+            }
+
+            // If we still can't find the class, SKIP this mapping!
+            // We should NOT map the teacher to a random class just because the mapel name matches.
+            if (!dbKelas) {
+              console.warn(`Kelas [${rawKelas}] tidak ditemukan untuk mapel ${rawMapel}, skip mapping ini.`);
+              continue;
+            }
           }
 
           // 2. Normalisasi & Cari Mapel di SIKAP
