@@ -50,7 +50,8 @@ export default function MasterGuruPage() {
       }
     }
 
-    const newEntry = `[${kelasStr}] ${newMapelName.trim()}`;
+    const cleanMapelName = newMapelName.trim().replace(/^\[.*?\]\s*/, "");
+    const newEntry = `[${kelasStr}] ${cleanMapelName}`;
     const currentList = form.mata_pelajaran ? form.mata_pelajaran.split(",").map(s => s.trim()).filter(s => s) : [];
     currentList.push(newEntry);
     setForm({ ...form, mata_pelajaran: currentList.join(", ") });

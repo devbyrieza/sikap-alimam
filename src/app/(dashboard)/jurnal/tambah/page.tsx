@@ -237,13 +237,14 @@ export default function TambahJurnalPage() {
     // Filter berdasarkan AsatidzmMapel (jika asatidId terpilih)
     if (asatidId && master?.asatidzmMapel && list.length > 0) {
       const allowedMapelIds = master.asatidzmMapel
-        .filter(am => am.pegawai_id === asatidId && am.kelas_id === kelasId)
+        .filter(am => am.pegawai_id === asatidId)
         .map(am => am.mapel_id);
       
       if (allowedMapelIds.length > 0) {
-        list = list.filter(m => allowedMapelIds.includes(m.id));
-      } else {
-        list = [];
+        const filtered = list.filter(m => allowedMapelIds.includes(m.id));
+        if (filtered.length > 0) {
+          list = filtered;
+        }
       }
     }
     
@@ -626,7 +627,7 @@ export default function TambahJurnalPage() {
                     <option value="">— Pilih Kelas —</option>
                     {filteredKelasList.map((k) => (
                       <option key={k.id} value={k.id}>
-                        {k.nama}
+                        {k.nama || (k.jenjang ? `Kelas ${k.jenjang}` : "Tanpa Nama")}
                       </option>
                     ))}
                   </select>
