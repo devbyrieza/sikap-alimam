@@ -34,21 +34,39 @@ export default function MasterGuruPage() {
     try {
       const [resGuru, resKelas] = await Promise.all([
         fetch("/api/master/guru"),
-        fetch("/api/master/kelas")
+        fetch("/api/master/kelas").catch(() => null) // Prevent Promise.all from failing if kelas fails
       ]);
-      const dataGuru = await resGuru.json();
-      const dataKelas = await resKelas.json();
+      
+      let dataGuru = [];
+      if (resGuru?.ok) {
+        dataGuru = await resGuru.json();
+      } else {
+        console.error("Gagal fetch guru");
+      }
+      
+      let dataKelas = [];
+      if (resKelas?.ok) {
+        const jsonKelas = await resKelas.json();
+        dataKelas = jsonKelas.kelas || jsonKelas || [];
+      }
+
+      if (!Array.isArray(dataGuru)) dataGuru = [];
+      if (!Array.isArray(dataKelas)) dataKelas = [];
       
       // Calculate which teacher is assigned to which class
       // dataKelas contains [{ id, wali_kelas: { id } }]
       const enrichedGuru = dataGuru.map((g: any) => {
-        const assignedClass = dataKelas.find((k: any) => k.wali_kelas?.id === g.id);
+        const assignedClass = dataKelas.find((k: any) => k.wali_kelas && k.wali_kelas.id === g.id);
         return { ...g, wali_kelas_id: assignedClass?.id || "" };
       });
 
       setGuru(enrichedGuru);
       setKelasList(dataKelas);
-    } catch { /* silent */ } finally { setLoading(false); }
+    } catch (err) { 
+      console.error("Error in fetchData:", err);
+    } finally { 
+      setLoading(false); 
+    }
   };
 
   const fetchGuru = async () => {
