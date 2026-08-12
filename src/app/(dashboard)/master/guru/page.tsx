@@ -29,6 +29,23 @@ export default function MasterGuruPage() {
   const emptyForm = { nik: "", nama_lengkap: "", no_hp: "", email: "", mata_pelajaran: "", roles: [] as string[], wali_kelas_id: "" };
   const [form, setForm] = useState(emptyForm);
 
+  // Mapel Builder State
+  const [newMapelClass, setNewMapelClass] = useState("");
+  const [newMapelName, setNewMapelName] = useState("");
+  const [showRawMapel, setShowRawMapel] = useState(false);
+
+  const handleAddMapel = () => {
+    if (!newMapelClass || !newMapelName.trim()) return;
+    const kelasObj = kelasList.find(k => k.id === newMapelClass);
+    // The class name to bracket e.g. "7 MTs"
+    const kelasStr = kelasObj ? kelasObj.nama : newMapelClass;
+    const newEntry = `[${kelasStr}] ${newMapelName.trim()}`;
+    const currentList = form.mata_pelajaran ? form.mata_pelajaran.split(",").map(s => s.trim()).filter(s => s) : [];
+    currentList.push(newEntry);
+    setForm({ ...form, mata_pelajaran: currentList.join(", ") });
+    setNewMapelName(""); // reset input
+  };
+
   const fetchData = async () => {
     setLoading(true);
     try {
@@ -216,9 +233,60 @@ export default function MasterGuruPage() {
               <label style={{ display:"block", fontSize:13, fontWeight:600, color:"#334155", marginBottom:6 }}>Email Aktif</label>
               <input type="email" className="form-control" placeholder="fulan@contoh.com" value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} />
             </div>
-            <div>
-              <label style={{ display:"block", fontSize:13, fontWeight:600, color:"#334155", marginBottom:6 }}>Mata Pelajaran (Opsional)</label>
-              <input type="text" className="form-control" placeholder="Contoh: Fiqh, Akidah" value={form.mata_pelajaran} onChange={e => setForm({ ...form, mata_pelajaran: e.target.value })} />
+            <div style={{ gridColumn: "1 / -1", background:"#f8fafc", padding:20, borderRadius:16, border:"1px solid #e2e8f0" }}>
+              <label style={{ display:"block", fontSize:13, fontWeight:600, color:"#334155", marginBottom:12 }}>Mata Pelajaran yang Diajarkan</label>
+              
+              <div style={{ display:"flex", flexWrap:"wrap", gap:8, marginBottom:16 }}>
+                {(form.mata_pelajaran || "").split(",").map(s => s.trim()).filter(s => s).map((mapel, idx) => (
+                  <div key={idx} style={{ background:"#ecfdf5", border:"1px solid #a7f3d0", color:"#047857", padding:"6px 12px", borderRadius:20, fontSize:12, fontWeight:600, display:"flex", alignItems:"center", gap:6 }}>
+                    {mapel}
+                    <button type="button" onClick={() => {
+                      const currentList = (form.mata_pelajaran || "").split(",").map(s => s.trim()).filter(s => s);
+                      currentList.splice(idx, 1);
+                      setForm({ ...form, mata_pelajaran: currentList.join(", ") });
+                    }} style={{ background:"transparent", border:"none", cursor:"pointer", color:"#059669", padding:0, display:"flex" }}>
+                      <X size={14} />
+                    </button>
+                  </div>
+                ))}
+                {(form.mata_pelajaran || "").split(",").filter(s => s.trim()).length === 0 && (
+                  <span style={{ fontSize:12, color:"#94a3b8", fontStyle:"italic" }}>Belum ada mata pelajaran. Tambahkan di bawah.</span>
+                )}
+              </div>
+
+              <div style={{ display:"flex", gap:10, alignItems:"flex-end", flexWrap:"wrap" }}>
+                <div style={{ flex:1, minWidth:200 }}>
+                  <label style={{ display:"block", fontSize:11, fontWeight:600, color:"#64748b", marginBottom:4 }}>Pilih Kelas/Jenjang</label>
+                  <select className="form-control" value={newMapelClass} onChange={e => setNewMapelClass(e.target.value)}>
+                    <option value="">-- Pilih --</option>
+                    {kelasList.filter(k => k.nama && k.nama.trim() !== "").map(k => (
+                      <option key={k.id} value={k.id}>{k.nama}</option>
+                    ))}
+                  </select>
+                </div>
+                <div style={{ flex:2, minWidth:200 }}>
+                  <label style={{ display:"block", fontSize:11, fontWeight:600, color:"#64748b", marginBottom:4 }}>Nama Pelajaran (misal: Siroh)</label>
+                  <input type="text" className="form-control" placeholder="Ketik nama mapel..." value={newMapelName} onChange={e => setNewMapelName(e.target.value)} onKeyDown={e => {
+                    if (e.key === 'Enter') {
+                      e.preventDefault();
+                      handleAddMapel();
+                    }
+                  }} />
+                </div>
+                <button type="button" onClick={handleAddMapel} disabled={!newMapelClass || !newMapelName.trim()} className="btn" style={{ background:"#3b82f6", color:"white", padding:"10px 16px", borderRadius:12, fontWeight:700 }}>
+                  <Plus size={16} /> Tambah Mapel
+                </button>
+              </div>
+
+              {/* Raw String Input (Optional/Hidden for Advanced Users) */}
+              <div style={{ marginTop: 12 }}>
+                <label style={{ display:"flex", alignItems:"center", gap:6, fontSize:11, color:"#94a3b8", cursor:"pointer", width: "fit-content" }} onClick={() => setShowRawMapel(!showRawMapel)}>
+                  {showRawMapel ? <EyeOff size={12} /> : <Eye size={12} />} Mode Edit Teks Manual
+                </label>
+                {showRawMapel && (
+                  <input type="text" className="form-control" style={{ marginTop:6, fontSize:12 }} value={form.mata_pelajaran} onChange={e => setForm({ ...form, mata_pelajaran: e.target.value })} />
+                )}
+              </div>
             </div>
           </div>
           
