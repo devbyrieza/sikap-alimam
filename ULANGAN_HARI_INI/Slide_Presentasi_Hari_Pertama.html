@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Slide Matematika Kelas 7</title>
+<style>
+  body { 
+    margin: 0; 
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+    overflow: hidden; 
+    background: #1a1a2e; 
+    color: white; 
+  }
+  .slide { 
+    display: none; 
+    height: 100vh; 
+    width: 100vw; 
+    flex-direction: column; 
+    justify-content: center; 
+    align-items: center; 
+    text-align: center; 
+    padding: 2rem; 
+    box-sizing: border-box; 
+  }
+  .slide.active { 
+    display: flex; 
+    animation: fadeIn 0.8s ease-in-out; 
+  }
+  h1 { 
+    font-size: 4.5rem; 
+    color: #e94560; 
+    text-transform: uppercase; 
+    text-shadow: 2px 2px 8px rgba(0,0,0,0.6); 
+    margin-bottom: 20px;
+  }
+  h2 { 
+    font-size: 3rem; 
+    color: #0f3460; 
+    background: #fff; 
+    padding: 15px 30px; 
+    border-radius: 15px; 
+    box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+  }
+  p { 
+    font-size: 2.2rem; 
+    max-width: 80%; 
+    line-height: 1.6; 
+    margin: 15px 0;
+  }
+  img { 
+    max-height: 40vh; 
+    border-radius: 15px; 
+    margin-top: 20px; 
+    box-shadow: 0 8px 25px rgba(0,0,0,0.5); 
+  }
+  .controls { 
+    position: fixed; 
+    bottom: 20px; 
+    right: 20px; 
+    opacity: 0.5;
+    transition: opacity 0.3s;
+  }
+  .controls:hover {
+    opacity: 1;
+  }
+  button { 
+    font-size: 1.2rem; 
+    padding: 10px 20px; 
+    margin: 5px; 
+    cursor: pointer; 
+    border: none; 
+    border-radius: 5px; 
+    background: #e94560; 
+    color: white; 
+    font-weight: bold;
+  }
+  button:hover { background: #d0304a; }
+  @keyframes fadeIn { 
+    from { opacity: 0; transform: translateY(30px); } 
+    to { opacity: 1; transform: translateY(0); } 
+  }
+  .highlight { 
+    color: #f9a826; 
+    font-weight: bold; 
+  }
+  .list-item {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 15px 30px;
+    border-radius: 10px;
+    margin: 10px;
+    display: inline-block;
+    font-size: 2rem;
+  }
+</style>
+</head>
+<body>
+
+<div id="slide1" class="slide active">
+  <h1>Matematika Itu<br>Bukan Cuma Angka!</h1>
+  <p>Tapi tentang melatih <span class="highlight">Cara Berpikir</span> dan Logika.</p>
+</div>
+
+<div id="slide2" class="slide">
+  <h1>Tebak Tokoh!</h1>
+  <!-- Gambar Al-Khawarizmi dari Wikimedia Commons -->
+  <img src="https://upload.wikimedia.org/wikipedia/commons/3/30/Al-Khwarizmi_portrait.jpg" alt="Al-Khawarizmi">
+  <p>Ada yang tahu siapakah Ilmuwan Muslim hebat ini?</p>
+</div>
+
+<div id="slide3" class="slide">
+  <h1>Bapak Aljabar Dunia</h1>
+  <img src="https://upload.wikimedia.org/wikipedia/commons/3/30/Al-Khwarizmi_portrait.jpg" alt="Al-Khawarizmi">
+  <p><span class="highlight">Muhammad bin Musa Al-Khawarizmi</span><br>Ilmuwan Muslim Penemu Aljabar dan Angka Nol (0).<br>Belajar matematika = Meneruskan tradisi ulama.</p>
+</div>
+
+<div id="slide4" class="slide">
+  <h1>Kenapa Santri Wajib Bisa Matematika?</h1>
+  <div style="display: flex; flex-direction: column; align-items: center;">
+    <div class="list-item">💡 Menghitung <b>Zakat</b> (Persentase)</div>
+    <div class="list-item">💡 Membagi <b>Harta Waris / Faraidh</b> (Pecahan Rumit)</div>
+    <div class="list-item">💡 Menentukan <b>Arah Kiblat & Falak</b> (Geometri)</div>
+  </div>
+</div>
+
+<div id="slide5" class="slide">
+  <h1>Masa Depan Matematika</h1>
+  <h2>MATEMATIKA ➔ LOGIKA ➔ ALGORITMA ➔ CODING</h2>
+  <p>Apa itu <span class="highlight">Algoritma?</span></p>
+  <p style="font-size: 2rem; background: rgba(255,255,255,0.1); padding: 20px; border-radius: 10px;">
+    <b>Algoritma</b> adalah <i>urutan langkah-langkah yang jelas dan teratur untuk menyelesaikan suatu masalah atau mencapai tujuan.</i>
+  </p>
+  <p style="font-size: 1.5rem;">*(Tahukah kamu? Kata Algoritma diambil dari nama Al-Khawarizmi!)*</p>
+</div>
+
+<div id="slide6" class="slide">
+  <h1>KONTRAK BELAJAR KITA</h1>
+  <div style="display: flex; flex-direction: column; align-items: flex-start; text-align: left; width: 80%;">
+    <div class="list-item">1️⃣ <b>TIDAK BOLEH TAKUT SALAH.</b> Maju saja dulu!</div>
+    <div class="list-item">2️⃣ <b>DILARANG MENERTAWAKAN TEMAN.</b> Kita sama-sama belajar.</div>
+    <div class="list-item">3️⃣ <b>SALING MENGHARGAI.</b> Yang di depan bicara, yang lain dengarkan.</div>
+  </div>
+  <h2 style="margin-top: 30px; font-size: 2.5rem; background: #f9a826; color: #1a1a2e;">⭐ ADA POIN KEAKTIFAN! ⭐</h2>
+  <p style="font-size: 1.5rem;">Berani maju / bertanya = Poin Tambahan untuk Nilai Rapot!</p>
+</div>
+
+<div id="slide7" class="slide">
+  <h1>🎮 TUGAS HARI INI 🎮</h1>
+  <h2>Membuat Algoritma Pertama Kalian!</h2>
+  <p>Coba tuliskan urutan langkah (Algoritma) mulai dari saat kamu keluar kamar sampai selesai jajan membeli sesuatu di Kantin / Minimarket.</p>
+  <p style="font-size: 1.8rem; font-style: italic; color: #ccc;">Contoh Langkah 1: Keluar pintu asrama lalu pakai sandal...<br>Langkah 2: Berjalan lurus ke arah gerbang... dsb.</p>
+</div>
+
+<div class="controls">
+  <button onclick="prevSlide()">&laquo; Mundur</button>
+  <button onclick="nextSlide()">Maju &raquo;</button>
+</div>
+
+<script>
+  let current = 1;
+  const total = 7;
+  function showSlide(n) {
+    for(let i=1; i<=total; i++) {
+      document.getElementById('slide'+i).classList.remove('active');
+    }
+    document.getElementById('slide'+n).classList.add('active');
+  }
+  
+  function nextSlide() { 
+    if(current < total) { 
+      current++; 
+      showSlide(current); 
+    } 
+  }
+  
+  function prevSlide() { 
+    if(current > 1) { 
+      current--; 
+      showSlide(current); 
+    } 
+  }
+  
+  // Navigasi menggunakan keyboard (Panah Kanan/Kiri, Spasi, atau Enter)
+  document.addEventListener('keydown', function(event) {
+    if(event.key === 'ArrowRight' || event.key === ' ' || event.key === 'Enter') {
+        nextSlide();
+    }
+    if(event.key === 'ArrowLeft') {
+        prevSlide();
+    }
+  });
+</script>
+
+</body>
+</html>

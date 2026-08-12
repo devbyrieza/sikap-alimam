@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<title>Ulangan Harian Matematika - Paket B</title>
+<style>
+  @page { size: A4; margin: 15mm; }
+  body { font-family: 'Segoe UI', Arial, sans-serif; line-height: 1.5; color: #1e293b; margin: 0; padding: 15px; background: #fff; }
+  .header { border-bottom: 3px double #550000; padding-bottom: 8px; margin-bottom: 15px; text-align: center; }
+  .header h2 { margin: 0; color: #550000; font-size: 19px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .header p { margin: 4px 0 0 0; font-size: 12px; color: #475569; font-weight: 600; }
+  .identitas { display: flex; justify-content: space-between; background: #fdf8f0; border: 1px solid #ebdcc3; padding: 10px 16px; border-radius: 8px; margin-bottom: 18px; font-size: 13px; font-weight: bold; color: #334155; }
+  .soal-container { display: flex; flex-direction: column; gap: 14px; }
+  .soal-item { background: #fff; padding-bottom: 10px; border-bottom: 1px dashed #cbd5e1; }
+  .soal-text { font-size: 14px; font-weight: 600; color: #0f172a; margin-bottom: 4px; }
+  .soal-rumus { font-size: 18px; font-weight: bold; color: #550000; margin: 6px 0; background: #f8fafc; padding: 8px 14px; border-left: 4px solid #550000; display: inline-flex; align-items: center; gap: 8px; border-radius: 4px; }
+  
+  /* CSS Pecahan Matematika Asli (Atas/Bawah dengan Garis Per) */
+  .frac {
+    display: inline-flex;
+    flex-direction: column;
+    vertical-align: middle;
+    text-align: center;
+    font-size: 16px;
+    line-height: 1.1;
+    margin: 0 4px;
+  }
+  .frac .top {
+    border-bottom: 2px solid #550000;
+    padding: 0 4px 2px 4px;
+    font-weight: bold;
+  }
+  .frac .bottom {
+    padding: 2px 4px 0 4px;
+    font-weight: bold;
+  }
+
+  .ruang-jawab { height: 60px; border: 1px dashed #94a3b8; border-radius: 6px; margin-top: 4px; background: #fafafa; }
+  .note-time { font-size: 11px; background: #eff6ff; color: #1d4ed8; padding: 4px 8px; border-radius: 4px; display: inline-block; margin-top: 2px; font-weight: bold; }
+  .footer { margin-top: 20px; text-align: center; font-size: 11px; font-style: italic; color: #64748b; border-top: 1px solid #cbd5e1; padding-top: 8px; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h2>ULANGAN HARIAN MATEMATIKA (PAKET B)</h2>
+  <p>MTs AL-IMAM · KELAS 7 · MATERI: KABATAKU, BIL. BULAT, PECAHAN & ZONA WAKTU</p>
+</div>
+
+<div class="identitas">
+  <span>Nama Santri : ............................................................</span>
+  <span>Kelas : 7 MTs (PAKET B)</span>
+</div>
+
+<div class="soal-container">
+  <!-- Soal 1 -->
+  <div class="soal-item">
+    <div class="soal-text">1. Operasi Hitung Campuran (KABATAKU):</div>
+    <div class="soal-rumus">3 + 4 × 5 = .....</div>
+    <div class="ruang-jawab"></div>
+  </div>
+
+  <!-- Soal 2 -->
+  <div class="soal-item">
+    <div class="soal-text">2. Operasi Bilangan Bulat Negatif:</div>
+    <div class="soal-rumus">14 - (-6) + (-8) = .....</div>
+    <div class="ruang-jawab"></div>
+  </div>
+
+  <!-- Soal 3 -->
+  <div class="soal-item">
+    <div class="soal-text">3. Operasi Hitung Pecahan:</div>
+    <div class="soal-rumus">
+      <div class="frac"><span class="top">3</span><span class="bottom">4</span></div>
+      <span>+</span>
+      <div class="frac"><span class="top">1</span><span class="bottom">5</span></div>
+      <span>= .....</span>
+    </div>
+    <div class="ruang-jawab"></div>
+  </div>
+
+  <!-- Soal 4 -->
+  <div class="soal-item">
+    <div class="soal-text">4. Perbedaan Zona Waktu Indonesia (WIB, WITA, WIT):</div>
+    <div style="font-size: 13px; color: #334155; margin-bottom: 4px;">
+      Santri Al-Imam di Jakarta (<strong>WIB</strong>) melakukan video call dengan santri di Jayapura (<strong>WIT</strong>). Jika di Jakarta menunjukkan pukul <strong>09.00 WIB</strong>, pukul berapakah di Jayapura (WIT)?
+    </div>
+    <div class="note-time">Petunjuk: WITA = WIB + 1 Jam | WIT = WIB + 2 Jam</div>
+    <div class="ruang-jawab" style="height: 50px;"></div>
+  </div>
+
+  <!-- Soal 5 -->
+  <div class="soal-item" style="border-bottom: none;">
+    <div class="soal-text">5. Soal Cerita Perjalanan & Zona Waktu:</div>
+    <div style="font-size: 13px; color: #334155; margin-bottom: 4px;">
+      Ustaz Rieza terbang dari Jakarta (<strong>WIB</strong>) pukul <strong>08.00 WIB</strong> menuju Makassar (<strong>WITA</strong>). Lama perjalanan udara adalah <strong>3 jam</strong>. Pukul berapakah pesawat mendarat di Makassar menurut waktu lokal (<strong>WITA</strong>)?
+    </div>
+    <div class="ruang-jawab" style="height: 65px;"></div>
+  </div>
+</div>
+
+<div class="footer">
+  "Kerjakan dengan Jujur & Teliti. Kejujuran adalah Mahkota Penuntut Ilmu."
+</div>
+
+</body>
+</html>
