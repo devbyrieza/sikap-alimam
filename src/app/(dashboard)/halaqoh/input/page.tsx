@@ -401,8 +401,16 @@ export default function HalaqohInputPage() {
     dhuha: "Halaqoh Dhuha",
   };
 
-  const formatTanggal = (s: string) =>
-    new Date(s).toLocaleDateString("id-ID", { weekday: "long", day: "numeric", month: "long", year: "numeric" });
+  const formatTanggal = (s: string) => {
+    if (!s) return "";
+    const cleanDate = s.split("T")[0];
+    const parts = cleanDate.split("-");
+    if (parts.length < 3) return s;
+    const d = new Date(parseInt(parts[0], 10), parseInt(parts[1], 10) - 1, parseInt(parts[2], 10));
+    const HARI = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
+    const BULAN = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
+    return `${HARI[d.getDay()]}, ${d.getDate()} ${BULAN[d.getMonth()]} ${d.getFullYear()}`;
+  };
 
   if (loading) {
     return (
