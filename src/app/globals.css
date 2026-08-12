@@ -142,7 +142,7 @@ body {
   letter-spacing: 0.1em;
   margin-top: 4px;
 }
-.sidebar-nav { padding: 16px 12px; flex: 1; overflow-y: auto; }
+.sidebar-nav { padding: 16px 12px; flex: 1; overflow-y: auto;  overscroll-behavior: contain;}
 .sidebar-section-title {
   font-size: 10px;
   font-weight: 700;
