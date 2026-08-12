@@ -70,32 +70,54 @@ export async function PUT(
 
     if (roles) {
       const roleString = roles.length > 0 ? roles.join(",") : "GURU";
-      if (updatedGuru.user_id) {
-        await prisma.user.update({
-          where: { id: updatedGuru.user_id },
-          data: { role: roleString, email: email || undefined }
-        });
-      } else {
-        // Create user if doesn't exist
+      try {
+        if (updatedGuru.user_id) {
+          // Verify user exists first to prevent P2025
+          const existingUser = await prisma.user.findUnique({ where: { id: updatedGuru.user_id } });
+          if (existingUser) {
+            await prisma.user.update({
+              where: { id: updatedGuru.user_id },
+              data: { role: roleString, ...(email ? { email } : {}) }
+            });
+          } else {
+            // user_id exists on Pegawai but User record is missing (dangling). Clear it.
+            await prisma.pegawai.update({ where: { id: updatedGuru.id }, data: { user_id: null } });
+            throw new Error("User record not found, will recreate");
+          }
+        } else {
+          throw new Error("No user_id, need to create");
+        }
+      } catch (userError: any) {
+        if (userError.code === 'P2002') {
+          return NextResponse.json({ error: "Email sudah digunakan oleh akun lain" }, { status: 400 });
+        }
+        // Create user if doesn't exist or if we threw above
         const bcrypt = require('bcryptjs');
         const passwordHash = await bcrypt.hash('Sikap2026!', 10);
         const nipOrNik = nik || `GURU-${Date.now()}`;
         const fallbackEmail = email || `${nipOrNik}@pesantren-alimam.com`;
 
-        const newUser = await prisma.user.create({
-          data: {
-            email: fallbackEmail,
-            password: passwordHash,
-            nama: nama_lengkap.trim(),
-            role: roleString,
-            is_active: true
-          }
-        });
+        try {
+          const newUser = await prisma.user.create({
+            data: {
+              email: fallbackEmail,
+              password: passwordHash,
+              nama: nama_lengkap.trim(),
+              role: roleString,
+              is_active: true
+            }
+          });
 
-        await prisma.pegawai.update({
-          where: { id: updatedGuru.id },
-          data: { user_id: newUser.id }
-        });
+          await prisma.pegawai.update({
+            where: { id: updatedGuru.id },
+            data: { user_id: newUser.id }
+          });
+        } catch (createError: any) {
+          if (createError.code === 'P2002') {
+            return NextResponse.json({ error: "Email sudah digunakan oleh akun lain" }, { status: 400 });
+          }
+          console.error("Error creating user:", createError);
+        }
       }
     }
 

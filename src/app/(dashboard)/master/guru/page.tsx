@@ -130,12 +130,20 @@ export default function MasterGuruPage() {
     try {
       if (editingId) {
         const res = await fetch(`/api/master/guru/${editingId}`, { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify(form) });
-        if (res.ok) Swal.fire({ icon: "success", title: "Berhasil", text: "Data Guru diperbarui", confirmButtonColor: "#059669", timer: 1500, showConfirmButton: false });
-        else Swal.fire("Gagal", "Gagal memperbarui data", "error");
+        if (res.ok) {
+          Swal.fire({ icon: "success", title: "Berhasil", text: "Data Guru diperbarui", confirmButtonColor: "#059669", timer: 1500, showConfirmButton: false });
+        } else {
+          const errData = await res.json().catch(() => ({}));
+          Swal.fire("Gagal", errData.error || "Gagal memperbarui data", "error");
+        }
       } else {
         const res = await fetch("/api/master/guru", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(form) });
-        if (res.ok) Swal.fire({ icon: "success", title: "Berhasil", text: "Data Guru ditambahkan", confirmButtonColor: "#059669", timer: 1500, showConfirmButton: false });
-        else Swal.fire("Gagal", "NIK atau Email sudah terdaftar", "error");
+        if (res.ok) {
+          Swal.fire({ icon: "success", title: "Berhasil", text: "Data Guru ditambahkan", confirmButtonColor: "#059669", timer: 1500, showConfirmButton: false });
+        } else {
+          const errData = await res.json().catch(() => ({}));
+          Swal.fire("Gagal", errData.error || "Gagal menambahkan data", "error");
+        }
       }
       setIsAdding(false); setEditingId(null); setForm(emptyForm); fetchGuru();
     } catch { Swal.fire("Gagal", "Terjadi kesalahan server", "error"); }
