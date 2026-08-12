@@ -186,6 +186,11 @@ async function executeSync(simpegGuruList: any[]) {
 
       // Auto-mapping ke AsatidzmMapel jika ada mata_pelajaran
       if (guru.mata_pelajaran) {
+        // Hapus mapping lama agar bersih jika ada perubahan dari string SIMPEG
+        await prisma.asatidzmMapel.deleteMany({
+          where: { pegawai_id: guru.id }
+        });
+
         const segments = (guru.mata_pelajaran as string)
           .split(",")
           .map((s) => s.trim())
