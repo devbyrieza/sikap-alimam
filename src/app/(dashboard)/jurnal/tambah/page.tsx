@@ -232,22 +232,66 @@ export default function TambahJurnalPage() {
   }, [filteredKelasList]);
 
   const mapelList = useMemo(() => {
-    let list = (kelasId && master?.mapel?.[kelasId]) || [];
-    
-    // Filter berdasarkan AsatidzmMapel (jika asatidId terpilih)
+    if (!kelasId) return [];
+
+    // Get the selected class object to know its jenjang
+    const selectedKelas = master?.kelas?.find((k: any) => k.id === kelasId);
+    const selectedJenjang = selectedKelas?.jenjang;
+
+    // 1. Get mapels directly assigned to this class
+    let list: any[] = master?.mapel?.[kelasId] ? [...master.mapel[kelasId]] : [];
+
+    // 2. Aggregate mapels from all classes belonging to the SAME jenjang
+    if (selectedJenjang && master?.kelas && master?.mapel) {
+      const sameJenjangKelasIds = master.kelas
+        .filter((k: any) => k.jenjang === selectedJenjang)
+        .map((k: any) => k.id);
+
+      const extraMapels: any[] = [];
+      for (const kId of sameJenjangKelasIds) {
+        if (master.mapel[kId]) {
+          extraMapels.push(...master.mapel[kId]);
+        }
+      }
+
+      // Deduplicate by name
+      const mapelNames = new Set(list.map((m: any) => m.nama.toLowerCase()));
+      for (const em of extraMapels) {
+        if (!mapelNames.has(em.nama.toLowerCase())) {
+          list.push(em);
+          mapelNames.add(em.nama.toLowerCase());
+        }
+      }
+    }
+
+    // 3. Filter berdasarkan AsatidzmMapel (jika asatidId terpilih)
     if (asatidId && master?.asatidzmMapel && list.length > 0) {
-      const allowedMapelIds = master.asatidzmMapel
-        .filter(am => am.pegawai_id === asatidId)
-        .map(am => am.mapel_id);
-      
-      if (allowedMapelIds.length > 0) {
-        const filtered = list.filter(m => allowedMapelIds.includes(m.id));
+      const allowedMapelIds = new Set(
+        master.asatidzmMapel
+          .filter((am: any) => am.pegawai_id === asatidId)
+          .map((am: any) => am.mapel_id)
+      );
+
+      // Collect names of all mapels assigned to this teacher across any class
+      const teacherMapelNames = new Set<string>();
+      if (master?.mapel) {
+        Object.values(master.mapel).flat().forEach((m: any) => {
+          if (allowedMapelIds.has(m.id)) {
+            teacherMapelNames.add(m.nama.toLowerCase());
+          }
+        });
+      }
+
+      if (allowedMapelIds.size > 0 || teacherMapelNames.size > 0) {
+        const filtered = list.filter(
+          (m: any) => allowedMapelIds.has(m.id) || teacherMapelNames.has(m.nama.toLowerCase())
+        );
         if (filtered.length > 0) {
           list = filtered;
         }
       }
     }
-    
+
     return list;
   }, [kelasId, asatidId, master]);
 
