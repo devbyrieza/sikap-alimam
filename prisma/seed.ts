@@ -3,14 +3,15 @@ import bcrypt from "bcryptjs";
 
 const prisma = new PrismaClient();
 
-const ASATIDZ = [
-  "Agus Cahyono",
-  "Wahyudi Pranata, Lc.",
-  "Imron Abdillah",
-  "Ramdan",
-  "Abdil Aziz, S.Pd., B.A.",
-  "Rieza Eka Tomara, S.Kom",
-  "Muhammad Iqbal, S. Pd"
+const ASATIDZ_CONFIG = [
+  { nama: "Ust. Wahab Rajasam, M.Pd", role: "ADMIN_SUPER,GURU", jabatan: "Admin Super & Guru", kategori: "GURU" },
+  { nama: "Rieza Eka Tomara, S.Kom", role: "ADMIN_SUPER", jabatan: "Admin Super IT", kategori: "GURU" },
+  { nama: "Wahyudi Pranata, Lc.", role: "KABID_PENGASUHAN,MUSYRIF", jabatan: "Kabid Pengasuhan & Musyrif", kategori: "GURU" },
+  { nama: "Imron Abdillah", role: "KABID_KURIKULUM,WALI_KELAS,MUSYRIF,GURU", jabatan: "Kabid Kurikulum & Wali Kelas IL", kategori: "GURU" },
+  { nama: "Agus Cahyono", role: "WALI_KELAS,MUSYRIF,GURU", jabatan: "Wali Kelas MTs & Musyrif", kategori: "GURU" },
+  { nama: "Muhammad Iqbal, S. Pd", role: "MUSYRIF,GURU", jabatan: "Musyrif & Guru", kategori: "GURU" },
+  { nama: "Abdil Aziz, S.Pd., B.A.", role: "GURU,KABID_KURIKULUM", jabatan: "Guru & Kurikulum", kategori: "GURU" },
+  { nama: "Ikhwan Ramandhanu", role: "MUSYRIF", jabatan: "Musyrif / Pengasuh", kategori: "MUSYRIF" },
 ];
 
 const MAPEL_7MTS = [
@@ -101,7 +102,7 @@ async function main() {
       email: "admin@pesantren-alimam.com",
       password: adminPass,
       nama: "Administrator",
-      role: "admin",
+      role: "ADMIN_SUPER",
     },
   });
   console.log("✅ Admin user created:", admin.email);
@@ -139,10 +140,9 @@ async function main() {
   }
   console.log(`✅ ${MAPEL_IL.length} mapel Kelas IL`);
 
-  // 5. Asatidz
-  for (const nama of ASATIDZ) {
-    // Buat user login untuk tiap pegawai
-    const slug = nama
+  // 5. Asatidz & Civitas
+  for (const item of ASATIDZ_CONFIG) {
+    const slug = item.nama
       .toLowerCase()
       .replace(/\s+/g, ".")
       .replace(/[^a-z.]/g, "");
@@ -151,22 +151,22 @@ async function main() {
 
     const user = await prisma.user.upsert({
       where: { email },
-      update: { password: pass },
-      create: { email, password: pass, nama, role: "guru" },
+      update: { password: pass, role: item.role },
+      create: { email, password: pass, nama: item.nama, role: item.role },
     });
 
     await prisma.pegawai.upsert({
       where: { user_id: user.id },
-      update: {},
+      update: { jabatan: item.jabatan, kategori_pegawai: item.kategori },
       create: {
         user_id: user.id,
-        nama_lengkap: nama,
-        jabatan: "Guru Bahasa Arab",
-        kategori_pegawai: "GURU",
+        nama_lengkap: item.nama,
+        jabatan: item.jabatan,
+        kategori_pegawai: item.kategori,
       },
     });
   }
-  console.log(`✅ ${ASATIDZ.length} pegawai dengan akun login`);
+  console.log(`✅ ${ASATIDZ_CONFIG.length} civitas/asatidz dengan role struktural telah dikonfigurasi`);
 
   // 6. Santri MTs
   for (const s of SANTRI_MTS) {
@@ -205,8 +205,6 @@ async function main() {
   console.log(`✅ ${SANTRI_IL.length} santri IL`);
 
   console.log("\n🎉 Seeding selesai!");
-  console.log("📧 Admin login: admin@pesantren-alimam.com / AdminAlimam2026!");
-  console.log("📧 Guru login : nama.guru@pesantren-alimam.com / alimam123");
 }
 
 main()
