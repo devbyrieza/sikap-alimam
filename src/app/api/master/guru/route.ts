@@ -40,7 +40,7 @@ export async function GET() {
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { nik, nama_lengkap, no_hp, email, mata_pelajaran, roles } = body;
+    const { nik, nama_lengkap, no_hp, email, mata_pelajaran, roles, wali_kelas_id } = body;
 
     if (!nama_lengkap || !nama_lengkap.trim()) {
       return NextResponse.json({ error: "Nama lengkap wajib diisi" }, { status: 400 });
@@ -60,6 +60,14 @@ export async function POST(req: NextRequest) {
         kategori_pegawai: "ASATIDZ",
       },
     });
+
+    // Handle wali_kelas assignment for newly created teacher
+    if (roles?.includes("WALI_KELAS") && wali_kelas_id) {
+      await prisma.kelas.update({
+        where: { id: wali_kelas_id },
+        data: { wali_kelas_id: newGuru.id },
+      });
+    }
 
     // 2. Create User if roles provided
     if (roles && roles.length > 0) {

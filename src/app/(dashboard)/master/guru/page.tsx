@@ -18,6 +18,7 @@ const formatName = (str: string) => {
 
 export default function MasterGuruPage() {
   const [guru, setGuru] = useState<any[]>([]);
+  const [kelasList, setKelasList] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [isSyncing, setIsSyncing] = useState(false);
   const [showPwd, setShowPwd] = useState<Record<string, boolean>>({});
@@ -25,19 +26,36 @@ export default function MasterGuruPage() {
   // Form State
   const [isAdding, setIsAdding] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
-  const emptyForm = { nik: "", nama_lengkap: "", no_hp: "", email: "", mata_pelajaran: "", roles: [] as string[] };
+  const emptyForm = { nik: "", nama_lengkap: "", no_hp: "", email: "", mata_pelajaran: "", roles: [] as string[], wali_kelas_id: "" };
   const [form, setForm] = useState(emptyForm);
 
-  const fetchGuru = async () => {
+  const fetchData = async () => {
     setLoading(true);
     try {
-      const res = await fetch("/api/master/guru");
-      const data = await res.json();
-      setGuru(data);
+      const [resGuru, resKelas] = await Promise.all([
+        fetch("/api/master/guru"),
+        fetch("/api/master/kelas")
+      ]);
+      const dataGuru = await resGuru.json();
+      const dataKelas = await resKelas.json();
+      
+      // Calculate which teacher is assigned to which class
+      // dataKelas contains [{ id, wali_kelas: { id } }]
+      const enrichedGuru = dataGuru.map((g: any) => {
+        const assignedClass = dataKelas.find((k: any) => k.wali_kelas?.id === g.id);
+        return { ...g, wali_kelas_id: assignedClass?.id || "" };
+      });
+
+      setGuru(enrichedGuru);
+      setKelasList(dataKelas);
     } catch { /* silent */ } finally { setLoading(false); }
   };
 
-  useEffect(() => { fetchGuru(); }, []);
+  const fetchGuru = async () => {
+    await fetchData();
+  };
+
+  useEffect(() => { fetchData(); }, []);
 
   const handleSync = async () => {
     setIsSyncing(true);
@@ -80,7 +98,15 @@ export default function MasterGuruPage() {
 
   const handleEdit = (g: any) => {
     const roles = g.user?.role ? g.user.role.split(",").map((r: string) => r.trim().toUpperCase()) : [];
-    setForm({ nik: g.nik || "", nama_lengkap: g.nama_lengkap || "", no_hp: g.no_hp || "", email: g.email || "", mata_pelajaran: g.mata_pelajaran || "", roles });
+    setForm({ 
+      nik: g.nik || "", 
+      nama_lengkap: g.nama_lengkap || "", 
+      no_hp: g.no_hp || "", 
+      email: g.email || "", 
+      mata_pelajaran: g.mata_pelajaran || "", 
+      roles,
+      wali_kelas_id: g.wali_kelas_id || "" 
+    });
     setEditingId(g.id); setIsAdding(true);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -193,12 +219,40 @@ export default function MasterGuruPage() {
                 }} onMouseEnter={e => (e.currentTarget as HTMLElement).style.background = "#d1fae5"} onMouseLeave={e => (e.currentTarget as HTMLElement).style.background = "white"}>
                   <input type="checkbox" style={{ accentColor:"#059669" }} checked={form.roles.includes(role.value)} onChange={e => {
                     if (e.target.checked) setForm({ ...form, roles: [...form.roles, role.value] });
-                    else setForm({ ...form, roles: form.roles.filter(r => r !== role.value) });
+                    else {
+                      // If unchecking WALI_KELAS, optionally clear wali_kelas_id
+                      setForm({ ...form, roles: form.roles.filter(r => r !== role.value), ...(role.value === "WALI_KELAS" && { wali_kelas_id: "" }) });
+                    }
                   }} />
                   <span style={{ fontSize:13, fontWeight:600, color:"#334155" }}>{role.label}</span>
                 </label>
               ))}
             </div>
+
+            {/* Selector Kelas khusus jika WALI_KELAS dicentang */}
+            {form.roles.includes("WALI_KELAS") && (
+              <div style={{ marginTop: 20, padding: 16, background: "rgba(5, 150, 105, 0.05)", borderRadius: 12, border: "1px dashed #6ee7b7" }}>
+                <label style={{ display:"block", fontSize:13, fontWeight:600, color:"#047857", marginBottom:8 }}>
+                  Tugaskan sebagai Wali Kelas untuk:
+                </label>
+                <select 
+                  className="form-control" 
+                  value={form.wali_kelas_id} 
+                  onChange={e => setForm({ ...form, wali_kelas_id: e.target.value })}
+                  style={{ maxWidth: 300, background: "white", borderColor: "#a7f3d0" }}
+                >
+                  <option value="">-- Pilih Kelas --</option>
+                  {kelasList.map(k => (
+                    <option key={k.id} value={k.id}>
+                      {k.nama} {k.jenjang ? `(${k.jenjang})` : ""}
+                    </option>
+                  ))}
+                </select>
+                <p style={{ margin: "6px 0 0 0", fontSize: 11, color: "#059669" }}>
+                  * Mengatur ini akan memindahkan status Wali Kelas lama (jika ada) ke guru ini.
+                </p>
+              </div>
+            )}
           </div>
           
           <div style={{ display:"flex", justifyContent:"flex-end", gap:12, marginTop:24 }}>
