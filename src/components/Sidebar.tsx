@@ -75,7 +75,7 @@ const NAV: NavItem[] = [
     href: "/halaqoh",
     label: "Halaqoh",
     icon: <BookHeart size={18} />,
-    roles: ["guru", "GURU", "musyrif", "MUSYRIF", "wali_kelas", "WALI_KELAS", "admin_super", "ADMIN_SUPER", "mudir", "MUDIR", "kasi_pengasuhan", "KASI_PENGASUHAN"],
+    roles: ["guru", "GURU", "musyrif", "MUSYRIF", "wali_kelas", "WALI_KELAS", "admin_super", "ADMIN_SUPER", "mudir", "MUDIR", "kabid_pengasuhan", "KABID_PENGASUHAN"],
   },
   {
     href: "/presensi/asatidz",

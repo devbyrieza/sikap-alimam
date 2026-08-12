@@ -15,7 +15,7 @@ model User {
   password       String
   plain_password String?
   nama           String
-  role           String   @default("guru") // ADMIN_SUPER | ADMIN_KEUANGAN | MUDIR | KEPALA_SEKOLAH | KASI_PENGASUHAN | KASI_ASRAMA | KASI_KEDISIPLINAN | KASI_KURIKULUM | GURU | MUSYRIF | WALI_SANTRI
+  role           String   @default("guru") // ADMIN_SUPER | ADMIN_KEUANGAN | MUDIR | KEPALA_SEKOLAH | KABID_PENGASUHAN | KABID_ASRAMA | KABID_KEDISIPLINAN | KABID_KURIKULUM | GURU | MUSYRIF | WALI_SANTRI
   is_active      Boolean  @default(true)
   created_at     DateTime @default(now()) @db.Timestamptz(6)
 

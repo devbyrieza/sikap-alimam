@@ -259,7 +259,7 @@ export default function LaporanHalaqohPage() {
               </div>
               <div>
                 <div>Mengetahui,</div>
-                <div style={{ fontWeight: 700, color: "#1e293b", marginTop: 2 }}>Kepala Pengasuhan</div>
+                <div style={{ fontWeight: 700, color: "#1e293b", marginTop: 2 }}>Kabid Pengasuhan</div>
                 <div style={{ height: 50 }} />
                 <div style={{ fontWeight: 700 }}>( ___________________ )</div>
               </div>
