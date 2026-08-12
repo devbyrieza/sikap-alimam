@@ -350,7 +350,14 @@ export default function MasterGuruPage() {
             <div style={{ display:"flex", flexWrap:"wrap", gap:12 }}>
               {[
                 { value: "GURU", label: "Guru Mapel" },
+                { value: "MUSYRIF", label: "Musyrif Halaqoh / Asrama" },
                 { value: "WALI_KELAS", label: "Wali Kelas" },
+                { value: "MUDIR", label: "Mudir Pesantren" },
+                { value: "KEPALA_SEKOLAH", label: "Kepala Sekolah" },
+                { value: "KABID_PENGASUHAN", label: "Kabid Pengasuhan" },
+                { value: "KABID_ASRAMA", label: "Kabid Asrama" },
+                { value: "KABID_KEDISIPLINAN", label: "Kabid Kedisiplinan" },
+                { value: "KABID_KURIKULUM", label: "Kabid Kurikulum" },
                 { value: "ADMIN_KEUANGAN", label: "Admin Keuangan" },
                 { value: "ADMIN_SUPER", label: "Admin Super" },
               ].map(role => (

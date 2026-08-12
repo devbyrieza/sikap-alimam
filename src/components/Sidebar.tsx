@@ -123,8 +123,16 @@ export default function Sidebar({ user }: SidebarProps) {
     const mapping: Record<string, string> = {
       ADMIN_SUPER: "Admin Super",
       GURU: "Guru Mapel",
+      MUSYRIF: "Musyrif",
       WALI_KELAS: "Wali Kelas",
+      MUDIR: "Mudir Pesantren",
+      KEPALA_SEKOLAH: "Kepala Sekolah",
+      KABID_PENGASUHAN: "Kabid Pengasuhan",
+      KABID_ASRAMA: "Kabid Asrama",
+      KABID_KEDISIPLINAN: "Kabid Kedisiplinan",
+      KABID_KURIKULUM: "Kabid Kurikulum",
       ADMIN_KEUANGAN: "Admin Keuangan",
+      WALI_SANTRI: "Wali Santri",
     };
     
     return roleStr
