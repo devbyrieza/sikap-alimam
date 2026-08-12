@@ -260,7 +260,9 @@ export default function MasterGuruPage() {
                   style={{ maxWidth: 300, background: "white", borderColor: "#a7f3d0" }}
                 >
                   <option value="">-- Pilih Kelas --</option>
-                  {kelasList.map(k => (
+                  {kelasList
+                    .filter(k => k.nama && k.nama.trim() !== "")
+                    .map(k => (
                     <option key={k.id} value={k.id}>
                       {k.nama} {k.jenjang ? `(${k.jenjang})` : ""}
                     </option>
