@@ -148,17 +148,20 @@ export default function TambahJurnalPage() {
     ])
       .then(([masterData, profileData]) => {
         setMaster(masterData);
-        if (profileData?.data) {
-          setCurrentUser(profileData.data);
+        const loggedInUser = profileData?.user;
+        const pegawaiObj = profileData?.pegawai;
+
+        if (loggedInUser || pegawaiObj) {
+          setCurrentUser(loggedInUser);
           
-          // Auto-assign asatidId if user has asatidz_id and no draft was restored with a different ID
-          const role = (profileData.data.role || "").toLowerCase();
+          const role = (loggedInUser?.role || "").toLowerCase();
           const isAdmin = role.includes("admin_super");
+          const teacherId = pegawaiObj?.id;
           
-          if (profileData.data.asatidz_id) {
-            // Only force assignment if it's not admin, or if it is admin but asatidId is empty
+          if (teacherId) {
+            // Always set logged-in teacher as default for non-admin_super users
             if (!isAdmin || !asatidId) {
-              setAsatidId(profileData.data.asatidz_id);
+              setAsatidId(teacherId);
             }
           }
         }
