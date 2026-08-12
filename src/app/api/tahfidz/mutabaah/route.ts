@@ -10,6 +10,22 @@ export async function GET(req: NextRequest) {
       where: { is_active: true },
       include: {
         kelas: true,
+        halaqoh_anggota: {
+          where: { is_active: true },
+          include: {
+            kelompok: {
+              include: { pegawai: true }
+            }
+          }
+        },
+        catatan_halaqoh: {
+          orderBy: { tanggal: "desc" },
+          take: 5
+        },
+        ujian_tahfidz: {
+          orderBy: { tanggal: "desc" },
+          take: 1
+        },
         capaian_tahfidz: {
           orderBy: { tanggal: "desc" },
           take: 1
@@ -18,25 +34,60 @@ export async function GET(req: NextRequest) {
       orderBy: { nama_lengkap: "asc" }
     });
 
-    // Format data agar UI mudah konsumsi
     const formatted = santriList.map(s => {
-      const lastTahfidz = s.capaian_tahfidz[0] || null;
+      const activeHalaqoh = s.halaqoh_anggota[0]?.kelompok || null;
+      const lastCatatan = s.catatan_halaqoh[0] || null;
+      const lastUjian = s.ujian_tahfidz[0] || null;
+      const lastCapaian = s.capaian_tahfidz[0] || null;
+
+      // Ziyadah & Murojaah Terakhir
+      const lastZiyadah = s.catatan_halaqoh.find(c => c.jenis === "ziyadah") || null;
+      const lastMurojaah = s.catatan_halaqoh.find(c => c.jenis === "murojaah") || null;
+
       return {
         id: s.id,
         nis: s.nis,
         nama_lengkap: s.nama_lengkap,
         kelas: s.kelas.nama,
-        last_tahfidz: lastTahfidz ? {
-          tanggal: lastTahfidz.tanggal,
-          jenis: lastTahfidz.jenis,
-          surat: lastTahfidz.surat,
-          surat_dari: lastTahfidz.surat_dari,
-          surat_ke: lastTahfidz.surat_ke,
-          ayat_dari: lastTahfidz.ayat_dari,
-          ayat_ke: lastTahfidz.ayat_ke,
-          halaman: lastTahfidz.halaman,
-          nilai: lastTahfidz.nilai,
-          keterangan: lastTahfidz.keterangan
+        kelompok_halaqoh: activeHalaqoh ? {
+          id: activeHalaqoh.id,
+          nama: activeHalaqoh.nama_kelompok,
+          sesi: activeHalaqoh.sesi,
+          musyrif: activeHalaqoh.pegawai?.nama_lengkap || "Belum ditentukan"
+        } : null,
+        last_ziyadah: lastZiyadah ? {
+          tanggal: lastZiyadah.tanggal,
+          sesi: lastZiyadah.sesi,
+          surah: lastZiyadah.surah_nama,
+          ayat_dari: lastZiyadah.ayat_dari,
+          ayat_ke: lastZiyadah.ayat_ke,
+          nilai_akhir: lastZiyadah.nilai_akhir
+        } : null,
+        last_murojaah: lastMurojaah ? {
+          tanggal: lastMurojaah.tanggal,
+          sesi: lastMurojaah.sesi,
+          surah: lastMurojaah.surah_nama,
+          ayat_dari: lastMurojaah.ayat_dari,
+          ayat_ke: lastMurojaah.ayat_ke,
+          nilai_akhir: lastMurojaah.nilai_akhir
+        } : null,
+        last_ujian: lastUjian ? {
+          tanggal: lastUjian.tanggal,
+          jenis: lastUjian.jenis_ujian,
+          nilai_akhir: lastUjian.nilai_akhir,
+          is_lulus: lastUjian.is_lulus
+        } : null,
+        last_tahfidz: lastCapaian ? {
+          tanggal: lastCapaian.tanggal,
+          jenis: lastCapaian.jenis,
+          surat: lastCapaian.surat,
+          surat_dari: lastCapaian.surat_dari,
+          surat_ke: lastCapaian.surat_ke,
+          ayat_dari: lastCapaian.ayat_dari,
+          ayat_ke: lastCapaian.ayat_ke,
+          halaman: lastCapaian.halaman,
+          nilai: lastCapaian.nilai,
+          keterangan: lastCapaian.keterangan
         } : null
       };
     });
@@ -47,6 +98,7 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
+
 
 // Tambah Catatan Tahfidz Baru
 export async function POST(req: NextRequest) {

@@ -1,173 +1,398 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Book, RefreshCcw, Plus, Search, BookOpen, AlertCircle } from "lucide-react";
+import { 
+  BookOpen, 
+  Search, 
+  BookHeart, 
+  Award, 
+  CalendarDays, 
+  Users, 
+  ChevronRight, 
+  FileText, 
+  CheckCircle2, 
+  Clock, 
+  BarChart3,
+  Filter
+} from "lucide-react";
 import Link from "next/link";
 
+interface SantriMutabaah {
+  id: string;
+  nis: string | null;
+  nama_lengkap: string;
+  kelas: string;
+  kelompok_halaqoh: {
+    id: string;
+    nama: string;
+    sesi: string;
+    musyrif: string;
+  } | null;
+  last_ziyadah: {
+    tanggal: string;
+    sesi: string;
+    surah: string;
+    ayat_dari: number;
+    ayat_ke: number;
+    nilai_akhir: number;
+  } | null;
+  last_murojaah: {
+    tanggal: string;
+    sesi: string;
+    surah: string;
+    ayat_dari: number;
+    ayat_ke: number;
+    nilai_akhir: number;
+  } | null;
+  last_ujian: {
+    tanggal: string;
+    jenis: string;
+    nilai_akhir: number;
+    is_lulus: boolean;
+  } | null;
+}
+
 export default function TahfidzMutabaahPage() {
-  const [santri, setSantri] = useState<any[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [santriList, setSantriList] = useState<SantriMutabaah[]>([]);
+  const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
+  const [kelasFilter, setKelasFilter] = useState("all");
 
   useEffect(() => {
-    const fetchSantri = async () => {
-      setLoading(true);
-      try {
-        const res = await fetch("/api/tahfidz/mutabaah");
-        const data = await res.json();
-        setSantri(data);
-      } catch (err) {
-        console.error("Gagal memuat data mutabaah tahfidz:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchSantri();
+    fetch("/api/tahfidz/mutabaah")
+      .then((res) => res.json())
+      .then((data) => {
+        if (Array.isArray(data)) setSantriList(data);
+      })
+      .catch((err) => console.error("Gagal memuat mutabaah:", err))
+      .finally(() => setLoading(false));
   }, []);
 
-  const filteredSantri = santri.filter(s => 
-    s.nama_lengkap.toLowerCase().includes(search.toLowerCase()) ||
-    (s.nis && s.nis.includes(search))
-  );
+  const uniqueKelas = Array.from(new Set(santriList.map((s) => s.kelas).filter(Boolean)));
+
+  const filteredSantri = santriList.filter((s) => {
+    const matchSearch =
+      s.nama_lengkap.toLowerCase().includes(search.toLowerCase()) ||
+      (s.nis && s.nis.includes(search)) ||
+      (s.kelompok_halaqoh?.musyrif && s.kelompok_halaqoh.musyrif.toLowerCase().includes(search.toLowerCase()));
+
+    const matchKelas = kelasFilter === "all" || s.kelas === kelasFilter;
+
+    return matchSearch && matchKelas;
+  });
+
+  const getNilaiBadge = (nilai?: number | null) => {
+    if (!nilai) return <span style={{ fontSize: 11, color: "#94a3b8" }}>Belum ada setoran</span>;
+    if (nilai >= 90) return <span style={{ background: "#ecfdf5", color: "#059669", border: "1px solid #a7f3d0", padding: "2px 8px", borderRadius: 8, fontSize: 11, fontWeight: 700 }}>{nilai} · Sangat Baik</span>;
+    if (nilai >= 80) return <span style={{ background: "#eff6ff", color: "#0284c7", border: "1px solid #bfdbfe", padding: "2px 8px", borderRadius: 8, fontSize: 11, fontWeight: 700 }}>{nilai} · Baik</span>;
+    if (nilai >= 70) return <span style={{ background: "#fffbeb", color: "#d97706", border: "1px solid #fde68a", padding: "2px 8px", borderRadius: 8, fontSize: 11, fontWeight: 700 }}>{nilai} · Cukup</span>;
+    return <span style={{ background: "#fef2f2", color: "#dc2626", border: "1px solid #fecaca", padding: "2px 8px", borderRadius: 8, fontSize: 11, fontWeight: 700 }}>{nilai} · Perlu Bimbingan</span>;
+  };
+
+  const formatTgl = (isoStr?: string) => {
+    if (!isoStr) return "";
+    try {
+      const parts = isoStr.split("T")[0].split("-");
+      if (parts.length < 3) return isoStr;
+      return `${parts[2]}/${parts[1]}`;
+    } catch {
+      return isoStr;
+    }
+  };
 
   return (
-    <div style={{ padding: "24px 28px", maxWidth: 1200, margin: "0 auto", display: "flex", flexDirection: "column", gap: 24 }}>
-      
-      {/* Premium Hero Banner */}
+    <div style={{ maxWidth: 1200, margin: "0 auto", padding: "24px 20px", fontFamily: "inherit" }}>
+      {/* ─── PLATINUM HERO BANNER ────────────────────────────────────────── */}
       <div style={{
-        display: "flex",
-        justifyContent: "space-between",
-        alignItems: "center",
-        background: "linear-gradient(135deg, #0f172a 0%, #1e293b 60%, #f59e0b 100%)",
-        borderRadius: "24px",
-        padding: "32px 36px",
+        background: "linear-gradient(135deg, #550000 0%, #7a0000 100%)",
+        borderRadius: 24,
+        padding: "28px 32px",
+        marginBottom: 24,
         color: "white",
-        boxShadow: "0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05)"
+        boxShadow: "0 10px 30px rgba(85, 0, 0, 0.35)",
+        position: "relative",
+        overflow: "hidden"
       }}>
-        <div>
-          <h1 style={{ fontSize: "28px", fontWeight: "bold", margin: 0, display: "flex", alignItems: "center", gap: "12px" }}>
-            <BookOpen size={32} style={{ color: "#fcd34d" }} />
-            Mutabaah Tahfidz Al-Quran
-          </h1>
-          <p style={{ marginTop: "8px", opacity: 0.9, fontSize: "16px" }}>
-            Pusat pemantauan setoran Ziyadah, Murojaah, dan Tilawah santri Al-Imam.
-          </p>
+        <div style={{ position: "absolute", top: -40, right: -40, width: 220, height: 220, background: "rgba(255,255,255,0.05)", borderRadius: "50%" }} />
+        
+        <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", gap: 16 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
+            <div style={{ background: "rgba(255,255,255,0.15)", borderRadius: 16, padding: 12, backdropFilter: "blur(10px)" }}>
+              <BookOpen size={28} />
+            </div>
+            <div>
+              <h1 style={{ margin: 0, fontSize: 22, fontWeight: 800, letterSpacing: "-0.02em" }}>Mutabaah Tahfidz Al-Qur'an</h1>
+              <p style={{ margin: 0, fontSize: 13, opacity: 0.8, marginTop: 4 }}>
+                Pusat Rekapitulasi Catatan Ziyadah, Murojaah, dan Ujian Tahfidz Santri Pesantren Al-Imam.
+              </p>
+            </div>
+          </div>
+
+          <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
+            <Link
+              href="/halaqoh"
+              style={{
+                display: "inline-flex", alignItems: "center", gap: 8,
+                background: "rgba(255,255,255,0.2)", backdropFilter: "blur(8px)",
+                color: "white", textDecoration: "none", padding: "10px 18px", borderRadius: 14,
+                fontSize: 13, fontWeight: 700, border: "1px solid rgba(255,255,255,0.3)"
+              }}
+            >
+              <BookHeart size={16} /> Input Halaqoh Sesi
+            </Link>
+
+            <Link
+              href="/halaqoh/ujian"
+              style={{
+                display: "inline-flex", alignItems: "center", gap: 8,
+                background: "#f59e0b", color: "#451a03", textDecoration: "none",
+                padding: "10px 18px", borderRadius: 14, fontSize: 13, fontWeight: 800,
+                boxShadow: "0 4px 12px rgba(245,158,11,0.4)"
+              }}
+            >
+              <Award size={16} /> Ujian Pekanan
+            </Link>
+          </div>
         </div>
       </div>
 
-      {/* Control Bar */}
+      {/* ─── STATS SUMMARY GRID ────────────────────────────────────────── */}
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: 16, marginBottom: 24 }}>
+        <div style={{ background: "white", borderRadius: 18, padding: 20, border: "1.5px solid #e2e8f0", boxShadow: "0 2px 8px rgba(0,0,0,0.03)", display: "flex", alignItems: "center", gap: 14 }}>
+          <div style={{ width: 44, height: 44, background: "#ecfdf5", borderRadius: 14, display: "flex", alignItems: "center", justifyContent: "center", color: "#059669" }}>
+            <Users size={22} />
+          </div>
+          <div>
+            <div style={{ fontSize: 12, color: "#64748b", fontWeight: 600 }}>Total Santri Aktif</div>
+            <div style={{ fontSize: 20, fontWeight: 800, color: "#0f172a" }}>{santriList.length} Santri</div>
+          </div>
+        </div>
+
+        <div style={{ background: "white", borderRadius: 18, padding: 20, border: "1.5px solid #e2e8f0", boxShadow: "0 2px 8px rgba(0,0,0,0.03)", display: "flex", alignItems: "center", gap: 14 }}>
+          <div style={{ width: 44, height: 44, background: "#eff6ff", borderRadius: 14, display: "flex", alignItems: "center", justifyContent: "center", color: "#0284c7" }}>
+            <BookHeart size={22} />
+          </div>
+          <div>
+            <div style={{ fontSize: 12, color: "#64748b", fontWeight: 600 }}>Ber-Kelompok Halaqoh</div>
+            <div style={{ fontSize: 20, fontWeight: 800, color: "#0f172a" }}>
+              {santriList.filter(s => s.kelompok_halaqoh).length} Santri
+            </div>
+          </div>
+        </div>
+
+        <div style={{ background: "white", borderRadius: 18, padding: 20, border: "1.5px solid #e2e8f0", boxShadow: "0 2px 8px rgba(0,0,0,0.03)", display: "flex", alignItems: "center", gap: 14 }}>
+          <div style={{ width: 44, height: 44, background: "#fffbeb", borderRadius: 14, display: "flex", alignItems: "center", justifyContent: "center", color: "#d97706" }}>
+            <CalendarDays size={22} />
+          </div>
+          <div>
+            <div style={{ fontSize: 12, color: "#64748b", fontWeight: 600 }}>Setoran Murojaah</div>
+            <div style={{ fontSize: 20, fontWeight: 800, color: "#0f172a" }}>
+              {santriList.filter(s => s.last_murojaah).length} Santri
+            </div>
+          </div>
+        </div>
+
+        <div style={{ background: "white", borderRadius: 18, padding: 20, border: "1.5px solid #e2e8f0", boxShadow: "0 2px 8px rgba(0,0,0,0.03)", display: "flex", alignItems: "center", gap: 14 }}>
+          <div style={{ width: 44, height: 44, background: "#f5f3ff", borderRadius: 14, display: "flex", alignItems: "center", justifyContent: "center", color: "#7c3aed" }}>
+            <Award size={22} />
+          </div>
+          <div>
+            <div style={{ fontSize: 12, color: "#64748b", fontWeight: 600 }}>Lulus Ujian Pekanan</div>
+            <div style={{ fontSize: 20, fontWeight: 800, color: "#0f172a" }}>
+              {santriList.filter(s => s.last_ujian?.is_lulus).length} Santri
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* ─── SEARCH & FILTER CONTROLS ───────────────────────────────────── */}
       <div style={{
-        background: "white",
-        borderRadius: "16px",
-        padding: "24px",
-        boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
-        display: "flex",
-        flexWrap: "wrap",
-        gap: "16px",
-        alignItems: "center",
-        justifyContent: "space-between"
+        background: "white", borderRadius: 18, padding: 18, marginBottom: 20,
+        border: "1.5px solid #e2e8f0", boxShadow: "0 2px 8px rgba(0,0,0,0.04)",
+        display: "flex", flexWrap: "wrap", gap: 14, alignItems: "center", justifyContent: "space-between"
       }}>
-        <div style={{ position: "relative", width: "100%", maxWidth: "400px" }}>
-          <span style={{ position: "absolute", top: 0, bottom: 0, left: 16, display: "flex", alignItems: "center", pointerEvents: "none" }}>
-            <Search size={20} color="#94a3b8" />
-          </span>
+        {/* Search Input */}
+        <div style={{ position: "relative", flex: 1, minWidth: 260 }}>
+          <Search size={18} color="#94a3b8" style={{ position: "absolute", left: 14, top: "50%", transform: "translateY(-50%)" }} />
           <input
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
+            placeholder="Cari nama santri, NIS, atau musyrif..."
             style={{
-              width: "100%",
-              padding: "12px 16px 12px 44px",
-              borderRadius: "14px",
-              border: "1px solid #cbd5e1",
-              fontSize: "15px",
-              outline: "none",
-              backgroundColor: "#f8fafc"
+              width: "100%", padding: "10px 14px 10px 42px", borderRadius: 12,
+              border: "1.5px solid #cbd5e1", fontSize: 13, outline: "none", background: "#f8fafc"
             }}
-            placeholder="Cari nama santri atau NIS..."
           />
         </div>
-        <div style={{ fontSize: "14px", fontWeight: 600, color: "#0f172a", backgroundColor: "#f1f5f9", padding: "10px 18px", borderRadius: "14px" }}>
-          Total Santri Aktif: <span style={{ fontWeight: 800 }}>{filteredSantri.length}</span>
+
+        {/* Filter Kelas */}
+        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+          <Filter size={16} color="#64748b" />
+          <select
+            value={kelasFilter}
+            onChange={(e) => setKelasFilter(e.target.value)}
+            style={{
+              padding: "10px 14px", borderRadius: 12, border: "1.5px solid #cbd5e1",
+              fontSize: 13, outline: "none", background: "white", fontWeight: 600, color: "#334155"
+            }}
+          >
+            <option value="all">Semua Kelas</option>
+            {uniqueKelas.map((k) => (
+              <option key={k} value={k}>{k}</option>
+            ))}
+          </select>
         </div>
+
+        <Link
+          href="/halaqoh/rekap"
+          style={{
+            display: "inline-flex", alignItems: "center", gap: 6,
+            color: "#550000", fontWeight: 700, fontSize: 13, textDecoration: "none"
+          }}
+        >
+          <BarChart3 size={16} /> Lihat Rekap Lengkap & Cetak Laporan <ChevronRight size={14} />
+        </Link>
       </div>
 
-      {/* Main Table */}
-      {loading ? (
-        <div style={{ display: "flex", justifyContent: "center", padding: "48px" }}>
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-slate-800"></div>
-        </div>
-      ) : filteredSantri.length === 0 ? (
-        <div style={{ background: "white", borderRadius: "16px", padding: "48px", textAlign: "center", boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)" }}>
-          <AlertCircle size={48} style={{ margin: "0 auto 16px", color: "#cbd5e1" }} />
-          <h2 style={{ fontSize: "20px", fontWeight: "bold", color: "#1e293b" }}>Santri Tidak Ditemukan</h2>
-          <p style={{ color: "#64748b", marginTop: "8px" }}>Coba kata kunci pencarian yang lain.</p>
-        </div>
-      ) : (
-        <div style={{ background: "white", borderRadius: "16px", overflow: "hidden", boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)" }}>
+      {/* ─── REKAP MUTABAAH DATA TABLE (SIAKAD DENSITY + PPDB PLATINUM AESTHETICS) ─── */}
+      <div style={{ background: "white", borderRadius: 20, border: "1.5px solid #e2e8f0", overflow: "hidden", boxShadow: "0 4px 16px rgba(0,0,0,0.04)" }}>
+        {loading ? (
+          <div style={{ padding: 48, textAlign: "center", color: "#94a3b8" }}>
+            <BookOpen size={32} style={{ animation: "pulse 1.5s infinite", margin: "0 auto 12px" }} />
+            <div>Memuat data mutabaah tahfidz...</div>
+          </div>
+        ) : filteredSantri.length === 0 ? (
+          <div style={{ padding: 48, textAlign: "center", color: "#94a3b8" }}>
+            Data mutabaah santri tidak ditemukan.
+          </div>
+        ) : (
           <div style={{ overflowX: "auto" }}>
-            <table style={{ width: "100%", textIndent: 0, borderCollapse: "collapse" }}>
-              <thead style={{ background: "#f8fafc", color: "#475569", fontWeight: 600, fontSize: "13px", textTransform: "uppercase", borderBottom: "2px solid #e2e8f0" }}>
-                <tr>
-                  <th style={{ padding: "16px 20px", textAlign: "left" }}>Nama / NIS</th>
-                  <th style={{ padding: "16px 20px", textAlign: "left" }}>Kelas</th>
-                  <th style={{ padding: "16px 20px", textAlign: "left" }}>Setoran Terakhir</th>
-                  <th style={{ padding: "16px 20px", textAlign: "center" }}>Hafalan Baru</th>
-                  <th style={{ padding: "16px 20px", textAlign: "center" }}>Murojaah</th>
-                  <th style={{ padding: "16px 20px", textAlign: "center" }}>Tilawah</th>
+            <table style={{ width: "100%", borderCollapse: "collapse", textAlign: "left", fontSize: 13 }}>
+              <thead>
+                <tr style={{ background: "#f8fafc", borderBottom: "1.5px solid #e2e8f0", color: "#475569", fontWeight: 700 }}>
+                  <th style={{ padding: "14px 18px", width: 50 }}>#</th>
+                  <th style={{ padding: "14px 18px" }}>NAMA SANTRI / NIS</th>
+                  <th style={{ padding: "14px 18px" }}>KELAS</th>
+                  <th style={{ padding: "14px 18px" }}>KELOMPOK HALAQOH & MUSYRIF</th>
+                  <th style={{ padding: "14px 18px" }}>SETORAN ZIYADAH TERAKHIR</th>
+                  <th style={{ padding: "14px 18px" }}>SETORAN MUROJAAH TERAKHIR</th>
+                  <th style={{ padding: "14px 18px" }}>UJIAN PEKANAN</th>
+                  <th style={{ padding: "14px 18px", textAlign: "right" }}>AKSI</th>
                 </tr>
               </thead>
               <tbody>
                 {filteredSantri.map((s, idx) => (
-                  <tr 
-                    key={s.id} 
-                    style={{ borderBottom: "1px solid #f1f5f9", background: idx % 2 === 0 ? "white" : "#fafafa", transition: "background 0.2s ease-in-out" }}
-                    onMouseEnter={(e) => e.currentTarget.style.background = "#f0fdf4"} 
-                    onMouseLeave={(e) => e.currentTarget.style.background = idx % 2 === 0 ? "white" : "#fafafa"}
+                  <tr
+                    key={s.id}
+                    style={{
+                      borderBottom: "1px solid #f1f5f9",
+                      transition: "background 0.15s"
+                    }}
+                    onMouseEnter={(e) => (e.currentTarget.style.background = "#f8fafc")}
+                    onMouseLeave={(e) => (e.currentTarget.style.background = "white")}
                   >
-                    <td style={{ padding: "16px 20px" }}>
-                      <div style={{ fontWeight: "bold", color: "#1e293b", fontSize: "15px" }}>{s.nama_lengkap}</div>
-                      <div style={{ fontSize: "13px", color: "#94a3b8", marginTop: "2px" }}>{s.nis || "Belum ada NIS"}</div>
+                    <td style={{ padding: "14px 18px", color: "#94a3b8", fontWeight: 600 }}>{idx + 1}</td>
+                    
+                    {/* Santri Name & NIS */}
+                    <td style={{ padding: "14px 18px" }}>
+                      <div style={{ fontWeight: 700, color: "#1e293b" }}>{s.nama_lengkap}</div>
+                      <div style={{ fontSize: 11, color: "#64748b" }}>NIS: {s.nis || "-"}</div>
                     </td>
-                    <td style={{ padding: "16px 20px" }}>
-                      <span style={{ background: "#eff6ff", color: "#1d4ed8", padding: "6px 12px", borderRadius: "12px", fontWeight: 600, fontSize: "13px" }}>
+
+                    {/* Kelas Badge */}
+                    <td style={{ padding: "14px 18px" }}>
+                      <span style={{
+                        background: "#eff6ff", color: "#1d4ed8", border: "1px solid #bfdbfe",
+                        padding: "3px 10px", borderRadius: 10, fontSize: 12, fontWeight: 700
+                      }}>
                         {s.kelas}
                       </span>
                     </td>
-                    <td style={{ padding: "16px 20px" }}>
-                      {s.last_tahfidz ? (
+
+                    {/* Kelompok & Musyrif */}
+                    <td style={{ padding: "14px 18px" }}>
+                      {s.kelompok_halaqoh ? (
                         <div>
-                          <div style={{ fontWeight: 600, color: "#334155", fontSize: "14px", textTransform: "capitalize" }}>
-                            {s.last_tahfidz.jenis} : {s.last_tahfidz.surat}
+                          <div style={{ fontWeight: 700, color: "#0f172a", fontSize: 12, display: "flex", alignItems: "center", gap: 6 }}>
+                            <BookHeart size={14} color="#550000" /> {s.kelompok_halaqoh.nama}
                           </div>
-                          <div style={{ fontSize: "12px", color: "#94a3b8", marginTop: "4px" }}>
-                            Batas: Ayat {s.last_tahfidz.ayat_dari} - {s.last_tahfidz.ayat_ke} ({s.last_tahfidz.halaman} Hal)
+                          <div style={{ fontSize: 11, color: "#64748b", marginTop: 2 }}>
+                            Musyrif: <strong style={{ color: "#334155" }}>{s.kelompok_halaqoh.musyrif}</strong>
                           </div>
                         </div>
                       ) : (
-                        <span style={{ color: "#94a3b8", fontSize: "13px", fontStyle: "italic" }}>Belum ada catatan setoran</span>
+                        <span style={{ fontSize: 11, color: "#94a3b8", fontStyle: "italic" }}>Belum diplot</span>
                       )}
                     </td>
-                    
-                    {/* Ziyadah Button */}
-                    <td style={{ padding: "16px 20px", textAlign: "center" }}>
-                      <Link href={`/tahfidz/mutabaah/detail/${s.id}?type=ziyadah`} style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", background: "#2563eb", color: "white", height: "40px", width: "40px", borderRadius: "12px", boxShadow: "0 2px 4px rgba(37,99,235,0.2)" }}>
-                        <Plus size={18} />
-                      </Link>
+
+                    {/* Ziyadah Terakhir */}
+                    <td style={{ padding: "14px 18px" }}>
+                      {s.last_ziyadah ? (
+                        <div>
+                          <div style={{ fontWeight: 700, color: "#1e293b" }}>
+                            QS. {s.last_ziyadah.surah} ({s.last_ziyadah.ayat_dari}-{s.last_ziyadah.ayat_ke})
+                          </div>
+                          <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 4 }}>
+                            <span style={{ fontSize: 11, color: "#64748b" }}>{formatTgl(s.last_ziyadah.tanggal)}</span>
+                            {getNilaiBadge(s.last_ziyadah.nilai_akhir)}
+                          </div>
+                        </div>
+                      ) : (
+                        <span style={{ fontSize: 11, color: "#94a3b8" }}>Belum ada setoran</span>
+                      )}
                     </td>
 
-                    {/* Murojaah Button */}
-                    <td style={{ padding: "16px 20px", textAlign: "center" }}>
-                      <Link href={`/tahfidz/mutabaah/detail/${s.id}?type=murojaah`} style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", background: "#f59e0b", color: "white", height: "40px", width: "40px", borderRadius: "12px", boxShadow: "0 2px 4px rgba(245,158,11,0.2)" }}>
-                        <RefreshCcw size={16} />
-                      </Link>
+                    {/* Murojaah Terakhir */}
+                    <td style={{ padding: "14px 18px" }}>
+                      {s.last_murojaah ? (
+                        <div>
+                          <div style={{ fontWeight: 700, color: "#1e293b" }}>
+                            QS. {s.last_murojaah.surah} ({s.last_murojaah.ayat_dari}-{s.last_murojaah.ayat_ke})
+                          </div>
+                          <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 4 }}>
+                            <span style={{ fontSize: 11, color: "#64748b" }}>{formatTgl(s.last_murojaah.tanggal)}</span>
+                            {getNilaiBadge(s.last_murojaah.nilai_akhir)}
+                          </div>
+                        </div>
+                      ) : (
+                        <span style={{ fontSize: 11, color: "#94a3b8" }}>Belum ada setoran</span>
+                      )}
                     </td>
 
-                    {/* Tilawah Button */}
-                    <td style={{ padding: "16px 20px", textAlign: "center" }}>
-                      <Link href={`/tahfidz/mutabaah/detail/${s.id}?type=tilawah`} style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", background: "#10b981", color: "white", height: "40px", width: "40px", borderRadius: "12px", boxShadow: "0 2px 4px rgba(16,185,129,0.2)" }}>
-                        <Book size={18} />
+                    {/* Ujian Pekanan */}
+                    <td style={{ padding: "14px 18px" }}>
+                      {s.last_ujian ? (
+                        <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                          {s.last_ujian.is_lulus ? (
+                            <span style={{ background: "#ecfdf5", color: "#059669", border: "1px solid #a7f3d0", padding: "3px 8px", borderRadius: 8, fontSize: 11, fontWeight: 700, display: "inline-flex", alignItems: "center", gap: 4 }}>
+                              <CheckCircle2 size={12} /> Lulus ({s.last_ujian.nilai_akhir})
+                            </span>
+                          ) : (
+                            <span style={{ background: "#fffbeb", color: "#d97706", border: "1px solid #fde68a", padding: "3px 8px", borderRadius: 8, fontSize: 11, fontWeight: 700 }}>
+                              Mengulang ({s.last_ujian.nilai_akhir})
+                            </span>
+                          )}
+                        </div>
+                      ) : (
+                        <span style={{ fontSize: 11, color: "#94a3b8" }}>Belum ujian</span>
+                      )}
+                    </td>
+
+                    {/* Action Buttons */}
+                    <td style={{ padding: "14px 18px", textAlign: "right" }}>
+                      <Link
+                        href={`/tahfidz/mutabaah/detail/${s.id}`}
+                        style={{
+                          display: "inline-flex", alignItems: "center", gap: 6,
+                          background: "#f1f5f9", color: "#334155", textDecoration: "none",
+                          padding: "6px 12px", borderRadius: 10, fontSize: 12, fontWeight: 700,
+                          border: "1px solid #cbd5e1", transition: "all 0.15s"
+                        }}
+                        onMouseEnter={(e) => (e.currentTarget.style.background = "#e2e8f0")}
+                        onMouseLeave={(e) => (e.currentTarget.style.background = "#f1f5f9")}
+                      >
+                        <FileText size={14} /> Detail Riwayat
                       </Link>
                     </td>
                   </tr>
@@ -175,8 +400,8 @@ export default function TahfidzMutabaahPage() {
               </tbody>
             </table>
           </div>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 }
