@@ -104,7 +104,7 @@ export function sortKelasNames(names: string[]): string[] {
 }
 
 export function normalizeKelasList<T extends { id: string, nama: string, jenjang?: string | null, _count?: { santri: number } }>(kelasList: T[]): T[] {
-  const map = new Map<string, T>();
+  const result: T[] = [];
   
   for (const k of kelasList) {
     let rawName = k.nama || "";
@@ -117,24 +117,13 @@ export function normalizeKelasList<T extends { id: string, nama: string, jenjang
 
     // Specific normalize for IL
     if (jenjang === "IL" || cleanName.toUpperCase().includes("I'DAD") || cleanName.toUpperCase().includes("IDAD")) {
-      cleanName = "IL";
+      // If the name is too long, we can simplify it, but we MUST keep distinguishing words.
+      // For now, let's just ensure jenjang is IL
       jenjang = "IL";
     }
 
-    const key = `${jenjang}-${cleanName}`.toLowerCase();
-    
-    if (map.has(key)) {
-      const existing = map.get(key)!;
-      // Prefer the one with more santri
-      const existCount = existing._count?.santri || 0;
-      const newCount = k._count?.santri || 0;
-      if (newCount > existCount) {
-        map.set(key, { ...k, nama: cleanName, jenjang });
-      }
-    } else {
-      map.set(key, { ...k, nama: cleanName, jenjang });
-    }
+    result.push({ ...k, nama: cleanName, jenjang });
   }
 
-  return sortKelas(Array.from(map.values()));
+  return sortKelas(result);
 }
