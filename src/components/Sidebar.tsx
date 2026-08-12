@@ -69,7 +69,7 @@ const NAV: NavItem[] = [
     href: "/tahfidz/mutabaah",
     label: "Mutabaah Tahfidz",
     icon: <BookOpen size={18} />,
-    roles: ["guru", "GURU", "musyrif", "MUSYRIF", "wali_kelas", "WALI_KELAS", "admin_wali_kelas", "ADMIN_WALI_KELAS", "admin_super", "ADMIN_SUPER"],
+    roles: ["guru", "GURU", "musyrif", "MUSYRIF", "wali_kelas", "WALI_KELAS", "admin_wali_kelas", "ADMIN_WALI_KELAS", "admin_super", "ADMIN_SUPER", "kabid_pengasuhan", "KABID_PENGASUHAN", "mudir", "MUDIR"],
   },
   {
     href: "/halaqoh",
