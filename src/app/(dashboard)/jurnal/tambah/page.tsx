@@ -61,36 +61,11 @@ export default function TambahJurnalPage() {
   const [catatan, setCatatan] = useState("");
   const [isDraftRestored, setIsDraftRestored] = useState(false);
 
-  // Load draft dari localStorage (Tanggal selalu di-default ke Hari Ini / today)
-  useEffect(() => {
-    setTanggal(today);
-    const draft = localStorage.getItem("siakad_jurnal_draft");
-    if (draft) {
-      try {
-        const p = JSON.parse(draft);
-        const hasContent = p.materi || p.learningOutcome || p.kegiatan || p.catatan || p.kelasId;
-        if (p.kelasId) setKelasId(p.kelasId);
-        if (p.mapelId) setMapelId(p.mapelId);
-        if (p.asatidId) setAsatidId(p.asatidId);
-        if (p.tanggal && p.tanggal === today) setTanggal(p.tanggal);
-        if (p.jamKe) {
-          if (Array.isArray(p.jamKe)) setJamKe(p.jamKe);
-          else if (typeof p.jamKe === "string") setJamKe(p.jamKe.split(",").map((s: string) => s.trim()));
-        }
-        if (p.jamKhususMulai) setJamKhususMulai(p.jamKhususMulai);
-        if (p.jamKhususSelesai) setJamKhususSelesai(p.jamKhususSelesai);
-        if (p.materi) setMateri(p.materi);
-        if (p.subMateri) setSubMateri(p.subMateri);
-        if (p.learningOutcome) setLearningOutcome(p.learningOutcome);
-        if (p.kegiatan) setKegiatan(p.kegiatan);
-        if (p.catatan) setCatatan(p.catatan);
-        setLastSaved(p._savedAt || null);
-        if (hasContent) {
-          setIsDraftRestored(true);
-        }
-      } catch (e) { /* ignore */ }
-    }
-  }, [today]);
+  // User-specific draft key helper
+  const getDraftKey = () => {
+    const uid = currentUser?.id || asatidId;
+    return uid ? `siakad_jurnal_draft_${uid}` : "siakad_jurnal_draft";
+  };
 
   // Reset Draft function
   const handleResetDraft = () => {
@@ -105,15 +80,15 @@ export default function TambahJurnalPage() {
       cancelButtonText: "Batal",
     }).then((result) => {
       if (result.isConfirmed) {
+        localStorage.removeItem(getDraftKey());
         localStorage.removeItem("siakad_jurnal_draft");
         setKelasId("");
         setMapelId("");
-        setAsatidId("");
-        setTanggal(today);
         setJamKe([]);
         setJamKhususMulai("");
         setJamKhususSelesai("");
         setMateri("");
+        setSubMateri("");
         setLearningOutcome("");
         setKegiatan("");
         setCatatan("");
@@ -130,17 +105,20 @@ export default function TambahJurnalPage() {
     });
   };
 
-  // Autosave draft ke localStorage
+  // Autosave draft ke localStorage (spesifik per akun user yang login)
   useEffect(() => {
-    if (kelasId || mapelId || asatidId || materi || subMateri || learningOutcome || kegiatan || catatan) {
+    const uid = currentUser?.id || asatidId;
+    if (!uid) return;
+
+    if (kelasId || mapelId || materi || subMateri || learningOutcome || kegiatan || catatan) {
       const savedAt = new Date().toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" });
-      const p = { kelasId, mapelId, asatidId, tanggal, jamKe, jamKhususMulai, jamKhususSelesai, materi, subMateri, learningOutcome, kegiatan, catatan, _savedAt: savedAt };
-      localStorage.setItem("siakad_jurnal_draft", JSON.stringify(p));
+      const p = { uid, kelasId, mapelId, asatidId, tanggal, jamKe, jamKhususMulai, jamKhususSelesai, materi, subMateri, learningOutcome, kegiatan, catatan, _savedAt: savedAt };
+      localStorage.setItem(`siakad_jurnal_draft_${uid}`, JSON.stringify(p));
       setLastSaved(savedAt);
     }
-  }, [kelasId, mapelId, asatidId, tanggal, jamKe, jamKhususMulai, jamKhususSelesai, materi, subMateri, learningOutcome, kegiatan, catatan]);
+  }, [currentUser, kelasId, mapelId, asatidId, tanggal, jamKe, jamKhususMulai, jamKhususSelesai, materi, subMateri, learningOutcome, kegiatan, catatan]);
 
-  // Load master data
+  // Load master data & user profile, then restore user-specific draft
   useEffect(() => {
     Promise.all([
       fetch("/api/master", { cache: "no-store" }).then((r) => r.json()),
@@ -157,12 +135,46 @@ export default function TambahJurnalPage() {
           const role = (loggedInUser?.role || "").toLowerCase();
           const isAdmin = role.includes("admin_super");
           const teacherId = pegawaiObj?.id;
+          const uid = loggedInUser?.id || teacherId;
           
           if (teacherId) {
             // Always set logged-in teacher as default for non-admin_super users
             if (!isAdmin || !asatidId) {
               setAsatidId(teacherId);
             }
+          }
+
+          // Restore draft KHUSUS untuk akun user yang sedang aktif
+          const draftKey = uid ? `siakad_jurnal_draft_${uid}` : null;
+          const userDraft = draftKey ? localStorage.getItem(draftKey) : null;
+          
+          if (userDraft) {
+            try {
+              const p = JSON.parse(userDraft);
+              const hasContent = p.materi || p.learningOutcome || p.kegiatan || p.catatan;
+              if (p.kelasId) setKelasId(p.kelasId);
+              if (p.mapelId) setMapelId(p.mapelId);
+              if (p.tanggal && p.tanggal === today) setTanggal(p.tanggal);
+              if (p.jamKe) {
+                if (Array.isArray(p.jamKe)) setJamKe(p.jamKe);
+                else if (typeof p.jamKe === "string") setJamKe(p.jamKe.split(",").map((s: string) => s.trim()));
+              }
+              if (p.jamKhususMulai) setJamKhususMulai(p.jamKhususMulai);
+              if (p.jamKhususSelesai) setJamKhususSelesai(p.jamKhususSelesai);
+              if (p.materi) setMateri(p.materi);
+              if (p.subMateri) setSubMateri(p.subMateri);
+              if (p.learningOutcome) setLearningOutcome(p.learningOutcome);
+              if (p.kegiatan) setKegiatan(p.kegiatan);
+              if (p.catatan) setCatatan(p.catatan);
+              setLastSaved(p._savedAt || null);
+              if (hasContent) {
+                setIsDraftRestored(true);
+              }
+            } catch (e) { /* ignore */ }
+          } else {
+            // Hapus draf global lama yang bukan milik user ini
+            localStorage.removeItem("siakad_jurnal_draft");
+            setIsDraftRestored(false);
           }
         }
         setLoadingMaster(false);
