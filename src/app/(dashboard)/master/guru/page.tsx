@@ -19,6 +19,7 @@ const formatName = (str: string) => {
 export default function MasterGuruPage() {
   const [guru, setGuru] = useState<any[]>([]);
   const [kelasList, setKelasList] = useState<any[]>([]);
+  const [mapelList, setMapelList] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [isSyncing, setIsSyncing] = useState(false);
   const [showPwd, setShowPwd] = useState<Record<string, boolean>>({});
@@ -59,9 +60,10 @@ export default function MasterGuruPage() {
   const fetchData = async () => {
     setLoading(true);
     try {
-      const [resGuru, resKelas] = await Promise.all([
+      const [resGuru, resKelas, resMapel] = await Promise.all([
         fetch("/api/master/guru"),
-        fetch("/api/master/kelas").catch(() => null) // Prevent Promise.all from failing if kelas fails
+        fetch("/api/master/kelas").catch(() => null),
+        fetch("/api/master/mapel").catch(() => null)
       ]);
       
       let dataGuru = [];
@@ -77,6 +79,11 @@ export default function MasterGuruPage() {
         dataKelas = jsonKelas.kelas || jsonKelas || [];
       }
 
+      let dataMapel = [];
+      if (resMapel?.ok) {
+        dataMapel = await resMapel.json();
+      }
+
       if (!Array.isArray(dataGuru)) dataGuru = [];
       if (!Array.isArray(dataKelas)) dataKelas = [];
       
@@ -89,6 +96,7 @@ export default function MasterGuruPage() {
 
       setGuru(enrichedGuru);
       setKelasList(dataKelas);
+      setMapelList(dataMapel);
     } catch (err) { 
       console.error("Error in fetchData:", err);
     } finally { 
@@ -291,13 +299,21 @@ export default function MasterGuruPage() {
                   </select>
                 </div>
                 <div style={{ flex:2, minWidth:200 }}>
-                  <label style={{ display:"block", fontSize:11, fontWeight:600, color:"#64748b", marginBottom:4 }}>Nama Pelajaran (misal: Siroh)</label>
-                  <input type="text" className="form-control" placeholder="Ketik nama mapel..." value={newMapelName} onChange={e => setNewMapelName(e.target.value)} onKeyDown={e => {
-                    if (e.key === 'Enter') {
-                      e.preventDefault();
-                      handleAddMapel();
+                  <label style={{ display:"block", fontSize:11, fontWeight:600, color:"#64748b", marginBottom:4 }}>Pilih Mata Pelajaran</label>
+                  <select 
+                    className="form-control" 
+                    value={newMapelName} 
+                    onChange={e => setNewMapelName(e.target.value)}
+                    disabled={!newMapelClass}
+                  >
+                    <option value="">-- Pilih Mapel --</option>
+                    {mapelList
+                      .filter(m => m.kelas_id === newMapelClass)
+                      .map(m => (
+                        <option key={m.id} value={m.nama}>{m.nama}</option>
+                      ))
                     }
-                  }} />
+                  </select>
                 </div>
                 <button type="button" onClick={handleAddMapel} disabled={!newMapelClass || !newMapelName.trim()} className="btn" style={{ background:"#3b82f6", color:"white", padding:"10px 16px", borderRadius:12, fontWeight:700 }}>
                   <Plus size={16} /> Tambah Mapel
