@@ -74,6 +74,7 @@ model Pegawai {
   kelas_wali        Kelas[]           @relation("WaliKelas")
   halaqoh_kelompok  HalaqohKelompok[]
   catatan_halaqoh   CatatanHalaqoh[]
+  ujian_tahfidz     UjianTahfidz[]
 
   @@map("pegawai")
 }
@@ -150,6 +151,7 @@ model SantriAktif {
   pembayaran_spp    PembayaranSPP[]
   halaqoh_anggota   HalaqohAnggota[]
   catatan_halaqoh   CatatanHalaqoh[]
+  ujian_tahfidz     UjianTahfidz[]
 
   @@map("santri_aktif")
 }
@@ -365,6 +367,32 @@ model CatatanHalaqoh {
 
   @@unique([santri_id, tanggal, sesi])
   @@map("catatan_halaqoh")
+}
+
+// Rekap Ujian Tahfidz (Pekanan, Bulanan, Target, Itqon per 5 juz)
+model UjianTahfidz {
+  id              String   @id @default(uuid()) @db.Uuid
+  santri_id       String   @db.Uuid
+  pegawai_id      String   @db.Uuid  // Penguji / Musyrif
+  tanggal         DateTime @db.Date
+  jenis_ujian     String   // "ujian_pekanan" | "ujian_bulanan" | "ujian_target" | "ujian_itqon"
+  juz             Int?     // Khusus untuk Ujian Itqon (misal: juz 1-5 = 5)
+  surah_nomor     Int?
+  surah_nama      String?
+  ayat_dari       Int?
+  ayat_ke         Int?
+  jumlah_halaman  Float?
+  nilai_bacaan    Float
+  nilai_sikap     Float    @default(82)
+  nilai_akhir     Float
+  is_lulus        Boolean  @default(true) // Untuk Itqon (+10 bonus)
+  catatan         String?
+  created_at      DateTime @default(now()) @db.Timestamptz(6)
+
+  pegawai Pegawai     @relation(fields: [pegawai_id], references: [id])
+  santri  SantriAktif @relation(fields: [santri_id], references: [id])
+
+  @@map("ujian_tahfidz")
 }
 
 // ─── WALI SANTRI ────────────────────────────────────────────────────────────

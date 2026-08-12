@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { BookHeart, Sun, Moon, Cloud, CalendarDays, Users, Plus, ArrowRight, Clock, CheckCircle2, XCircle, AlertCircle } from "lucide-react";
+import { BookHeart, Sun, Moon, Cloud, CalendarDays, Users, Plus, ArrowRight, Clock, CheckCircle2, XCircle, AlertCircle, Award, FileText } from "lucide-react";
 import Link from "next/link";
 
 const HARI_NAMA = ["Ahad", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
@@ -122,7 +122,7 @@ export default function HalaqohDashboardPage() {
           marginBottom: 20, display: "flex", alignItems: "center", gap: 10, color: "#065f46"
         }}>
           <CheckCircle2 size={18} />
-          <span>Hari Ahad — Tidak ada jadwal halaqoh. Selamat beristirahat! 🌿</span>
+          <span>Hari Ahad — Tidak ada jadwal halaqoh. Selamat beristirahat!</span>
         </div>
       )}
 
@@ -217,6 +217,34 @@ export default function HalaqohDashboardPage() {
             </div>
           </Link>
         )}
+        <Link href="/halaqoh/ujian" style={{
+          display: "flex", alignItems: "center", gap: 12, background: "white",
+          border: "1.5px solid #e2e8f0", borderRadius: 16, padding: "16px 20px",
+          textDecoration: "none", color: "#1e293b", transition: "all 0.2s",
+          boxShadow: "0 2px 8px rgba(0,0,0,0.04)"
+        }}>
+          <div style={{ background: "#ecfdf5", borderRadius: 10, padding: 8 }}>
+            <Award size={18} color="#047857" />
+          </div>
+          <div>
+            <div style={{ fontSize: 13, fontWeight: 700 }}>Ujian Tahfidz</div>
+            <div style={{ fontSize: 11, color: "#64748b" }}>Pekanan, Bulanan, & Itqon</div>
+          </div>
+        </Link>
+        <Link href="/halaqoh/laporan" style={{
+          display: "flex", alignItems: "center", gap: 12, background: "white",
+          border: "1.5px solid #e2e8f0", borderRadius: 16, padding: "16px 20px",
+          textDecoration: "none", color: "#1e293b", transition: "all 0.2s",
+          boxShadow: "0 2px 8px rgba(0,0,0,0.04)"
+        }}>
+          <div style={{ background: "#f8fafc", borderRadius: 10, padding: 8 }}>
+            <FileText size={18} color="#7c3aed" />
+          </div>
+          <div>
+            <div style={{ fontSize: 13, fontWeight: 700 }}>Cetak Laporan</div>
+            <div style={{ fontSize: 11, color: "#64748b" }}>Rekap Pekanan & Bulanan</div>
+          </div>
+        </Link>
         <Link href="/halaqoh/rekap" style={{
           display: "flex", alignItems: "center", gap: 12, background: "white",
           border: "1.5px solid #e2e8f0", borderRadius: 16, padding: "16px 20px",

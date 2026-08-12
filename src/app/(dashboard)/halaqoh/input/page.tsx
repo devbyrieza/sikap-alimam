@@ -1,17 +1,17 @@
 "use client";
 
 import React, { useState, useEffect, useCallback, useRef } from "react";
-import { BookHeart, ArrowLeft, Search, ChevronDown, BookOpen, Users, Save, CheckCircle2, AlertCircle } from "lucide-react";
+import { BookHeart, ArrowLeft, Search, ChevronDown, BookOpen, Users, Save, CheckCircle2, AlertCircle, RotateCcw, Award } from "lucide-react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 
 // ─── NILAI INDIKATOR ────────────────────────────────────────────────────────
 const NILAI_INDIKATOR = [
-  { label: "Sangat Baik", nilai: 95, warna: "#059669", bg: "#ecfdf5", border: "#a7f3d0", emoji: "⭐" },
-  { label: "Baik",        nilai: 82, warna: "#0284c7", bg: "#eff6ff", border: "#bfdbfe", emoji: "👍" },
-  { label: "Cukup",       nilai: 70, warna: "#d97706", bg: "#fffbeb", border: "#fde68a", emoji: "👌" },
-  { label: "Kurang",      nilai: 55, warna: "#dc2626", bg: "#fef2f2", border: "#fecaca", emoji: "⚠️" },
-  { label: "Buruk",       nilai: 40, warna: "#7c3aed", bg: "#f5f3ff", border: "#ddd6fe", emoji: "❌" },
+  { label: "Sangat Baik", nilai: 95, warna: "#059669", bg: "#ecfdf5", border: "#a7f3d0" },
+  { label: "Baik",        nilai: 82, warna: "#0284c7", bg: "#eff6ff", border: "#bfdbfe" },
+  { label: "Cukup",       nilai: 70, warna: "#d97706", bg: "#fffbeb", border: "#fde68a" },
+  { label: "Kurang",      nilai: 55, warna: "#dc2626", bg: "#fef2f2", border: "#fecaca" },
+  { label: "Buruk",       nilai: 40, warna: "#7c3aed", bg: "#f5f3ff", border: "#ddd6fe" },
 ] as const;
 
 const KEHADIRAN_OPT = [
@@ -457,7 +457,15 @@ export default function HalaqohInputPage() {
                   fontWeight: 700, fontSize: 13, cursor: "pointer", textTransform: "capitalize", transition: "all 0.2s"
                 }}
               >
-                {j === "ziyadah" ? "📖 Ziyadah" : "🔄 Murojaah"}
+                {j === "ziyadah" ? (
+                  <span style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
+                    <BookOpen size={14} /> Ziyadah
+                  </span>
+                ) : (
+                  <span style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
+                    <RotateCcw size={14} /> Murojaah
+                  </span>
+                )}
               </button>
             ))}
           </div>
