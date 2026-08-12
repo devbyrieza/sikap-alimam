@@ -110,10 +110,13 @@ body {
 .app-content {
   margin-left: 260px;
   flex: 1;
+  min-width: 0;
+  width: calc(100% - 260px);
   min-height: 100vh;
   display: flex;
   flex-direction: column;
 }
+
 @media (max-width: 768px) {
   .app-sidebar { transform: translateX(-100%); }
   .app-sidebar.open { transform: translateX(0); }

@@ -101,12 +101,13 @@ export default function TahfidzMutabaahPage() {
   };
 
   return (
-    <div style={{ maxWidth: 1200, margin: "0 auto", padding: "24px 20px", fontFamily: "inherit" }}>
+    <div style={{ maxWidth: 1200, width: "100%", margin: "0 auto", padding: "24px 20px", boxSizing: "border-box", fontFamily: "inherit" }}>
+
       {/* ─── PLATINUM HERO BANNER ────────────────────────────────────────── */}
       <div style={{
         background: "linear-gradient(135deg, #550000 0%, #7a0000 100%)",
         borderRadius: 24,
-        padding: "28px 32px",
+        padding: "24px 28px",
         marginBottom: 24,
         color: "white",
         boxShadow: "0 10px 30px rgba(85, 0, 0, 0.35)",
@@ -115,9 +116,9 @@ export default function TahfidzMutabaahPage() {
       }}>
         <div style={{ position: "absolute", top: -40, right: -40, width: 220, height: 220, background: "rgba(255,255,255,0.05)", borderRadius: "50%" }} />
         
-        <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", gap: 16 }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
-            <div style={{ background: "rgba(255,255,255,0.15)", borderRadius: 16, padding: 12, backdropFilter: "blur(10px)" }}>
+        <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", gap: 16, width: "100%" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 14, minWidth: 260, flex: "1 1 300px" }}>
+            <div style={{ background: "rgba(255,255,255,0.15)", borderRadius: 16, padding: 12, backdropFilter: "blur(10px)", flexShrink: 0 }}>
               <BookOpen size={28} />
             </div>
             <div>
@@ -128,14 +129,15 @@ export default function TahfidzMutabaahPage() {
             </div>
           </div>
 
-          <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
+          <div style={{ display: "flex", gap: 10, flexWrap: "wrap", flexShrink: 0 }}>
             <Link
               href="/halaqoh"
               style={{
                 display: "inline-flex", alignItems: "center", gap: 8,
                 background: "rgba(255,255,255,0.2)", backdropFilter: "blur(8px)",
                 color: "white", textDecoration: "none", padding: "10px 18px", borderRadius: 14,
-                fontSize: 13, fontWeight: 700, border: "1px solid rgba(255,255,255,0.3)"
+                fontSize: 13, fontWeight: 700, border: "1px solid rgba(255,255,255,0.3)",
+                whiteSpace: "nowrap"
               }}
             >
               <BookHeart size={16} /> Input Halaqoh Sesi
@@ -147,7 +149,7 @@ export default function TahfidzMutabaahPage() {
                 display: "inline-flex", alignItems: "center", gap: 8,
                 background: "#f59e0b", color: "#451a03", textDecoration: "none",
                 padding: "10px 18px", borderRadius: 14, fontSize: 13, fontWeight: 800,
-                boxShadow: "0 4px 12px rgba(245,158,11,0.4)"
+                boxShadow: "0 4px 12px rgba(245,158,11,0.4)", whiteSpace: "nowrap"
               }}
             >
               <Award size={16} /> Ujian Pekanan
@@ -157,9 +159,9 @@ export default function TahfidzMutabaahPage() {
       </div>
 
       {/* ─── STATS SUMMARY GRID ────────────────────────────────────────── */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: 16, marginBottom: 24 }}>
-        <div style={{ background: "white", borderRadius: 18, padding: 20, border: "1.5px solid #e2e8f0", boxShadow: "0 2px 8px rgba(0,0,0,0.03)", display: "flex", alignItems: "center", gap: 14 }}>
-          <div style={{ width: 44, height: 44, background: "#ecfdf5", borderRadius: 14, display: "flex", alignItems: "center", justifyContent: "center", color: "#059669" }}>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: 16, marginBottom: 24, width: "100%" }}>
+        <div style={{ background: "white", borderRadius: 18, padding: 18, border: "1.5px solid #e2e8f0", boxShadow: "0 2px 8px rgba(0,0,0,0.03)", display: "flex", alignItems: "center", gap: 14 }}>
+          <div style={{ width: 44, height: 44, background: "#ecfdf5", borderRadius: 14, display: "flex", alignItems: "center", justifyContent: "center", color: "#059669", flexShrink: 0 }}>
             <Users size={22} />
           </div>
           <div>
@@ -168,20 +170,20 @@ export default function TahfidzMutabaahPage() {
           </div>
         </div>
 
-        <div style={{ background: "white", borderRadius: 18, padding: 20, border: "1.5px solid #e2e8f0", boxShadow: "0 2px 8px rgba(0,0,0,0.03)", display: "flex", alignItems: "center", gap: 14 }}>
-          <div style={{ width: 44, height: 44, background: "#eff6ff", borderRadius: 14, display: "flex", alignItems: "center", justifyContent: "center", color: "#0284c7" }}>
+        <div style={{ background: "white", borderRadius: 18, padding: 18, border: "1.5px solid #e2e8f0", boxShadow: "0 2px 8px rgba(0,0,0,0.03)", display: "flex", alignItems: "center", gap: 14 }}>
+          <div style={{ width: 44, height: 44, background: "#eff6ff", borderRadius: 14, display: "flex", alignItems: "center", justifyContent: "center", color: "#0284c7", flexShrink: 0 }}>
             <BookHeart size={22} />
           </div>
           <div>
-            <div style={{ fontSize: 12, color: "#64748b", fontWeight: 600 }}>Ber-Kelompok Halaqoh</div>
+            <div style={{ fontSize: 12, color: "#64748b", fontWeight: 600 }}>Ber-Kelompok</div>
             <div style={{ fontSize: 20, fontWeight: 800, color: "#0f172a" }}>
               {santriList.filter(s => s.kelompok_halaqoh).length} Santri
             </div>
           </div>
         </div>
 
-        <div style={{ background: "white", borderRadius: 18, padding: 20, border: "1.5px solid #e2e8f0", boxShadow: "0 2px 8px rgba(0,0,0,0.03)", display: "flex", alignItems: "center", gap: 14 }}>
-          <div style={{ width: 44, height: 44, background: "#fffbeb", borderRadius: 14, display: "flex", alignItems: "center", justifyContent: "center", color: "#d97706" }}>
+        <div style={{ background: "white", borderRadius: 18, padding: 18, border: "1.5px solid #e2e8f0", boxShadow: "0 2px 8px rgba(0,0,0,0.03)", display: "flex", alignItems: "center", gap: 14 }}>
+          <div style={{ width: 44, height: 44, background: "#fffbeb", borderRadius: 14, display: "flex", alignItems: "center", justifyContent: "center", color: "#d97706", flexShrink: 0 }}>
             <CalendarDays size={22} />
           </div>
           <div>
@@ -192,8 +194,8 @@ export default function TahfidzMutabaahPage() {
           </div>
         </div>
 
-        <div style={{ background: "white", borderRadius: 18, padding: 20, border: "1.5px solid #e2e8f0", boxShadow: "0 2px 8px rgba(0,0,0,0.03)", display: "flex", alignItems: "center", gap: 14 }}>
-          <div style={{ width: 44, height: 44, background: "#f5f3ff", borderRadius: 14, display: "flex", alignItems: "center", justifyContent: "center", color: "#7c3aed" }}>
+        <div style={{ background: "white", borderRadius: 18, padding: 18, border: "1.5px solid #e2e8f0", boxShadow: "0 2px 8px rgba(0,0,0,0.03)", display: "flex", alignItems: "center", gap: 14 }}>
+          <div style={{ width: 44, height: 44, background: "#f5f3ff", borderRadius: 14, display: "flex", alignItems: "center", justifyContent: "center", color: "#7c3aed", flexShrink: 0 }}>
             <Award size={22} />
           </div>
           <div>
@@ -209,8 +211,10 @@ export default function TahfidzMutabaahPage() {
       <div style={{
         background: "white", borderRadius: 18, padding: 18, marginBottom: 20,
         border: "1.5px solid #e2e8f0", boxShadow: "0 2px 8px rgba(0,0,0,0.04)",
-        display: "flex", flexWrap: "wrap", gap: 14, alignItems: "center", justifyContent: "space-between"
+        display: "flex", flexWrap: "wrap", gap: 14, alignItems: "center", justifyContent: "space-between",
+        width: "100%"
       }}>
+
         {/* Search Input */}
         <div style={{ position: "relative", flex: 1, minWidth: 260 }}>
           <Search size={18} color="#94a3b8" style={{ position: "absolute", left: 14, top: "50%", transform: "translateY(-50%)" }} />
