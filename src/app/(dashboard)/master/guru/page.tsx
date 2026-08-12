@@ -37,8 +37,18 @@ export default function MasterGuruPage() {
   const handleAddMapel = () => {
     if (!newMapelClass || !newMapelName.trim()) return;
     const kelasObj = kelasList.find(k => k.id === newMapelClass);
-    // The class name to bracket e.g. "7 MTs"
-    const kelasStr = kelasObj ? kelasObj.nama : newMapelClass;
+    
+    let kelasStr = newMapelClass;
+    if (kelasObj) {
+      if (kelasObj.jenjang === "IL") {
+        kelasStr = "IL";
+      } else if (kelasObj.jenjang) {
+        kelasStr = `${kelasObj.nama} ${kelasObj.jenjang}`;
+      } else {
+        kelasStr = kelasObj.nama;
+      }
+    }
+
     const newEntry = `[${kelasStr}] ${newMapelName.trim()}`;
     const currentList = form.mata_pelajaran ? form.mata_pelajaran.split(",").map(s => s.trim()).filter(s => s) : [];
     currentList.push(newEntry);
@@ -259,9 +269,17 @@ export default function MasterGuruPage() {
                   <label style={{ display:"block", fontSize:11, fontWeight:600, color:"#64748b", marginBottom:4 }}>Pilih Kelas/Jenjang</label>
                   <select className="form-control" value={newMapelClass} onChange={e => setNewMapelClass(e.target.value)}>
                     <option value="">-- Pilih --</option>
-                    {kelasList.filter(k => k.nama && k.nama.trim() !== "").map(k => (
-                      <option key={k.id} value={k.id}>{k.nama}</option>
-                    ))}
+                    {kelasList.filter(k => k.nama && k.nama.trim() !== "").map(k => {
+                      let tagPrefix = k.nama;
+                      if (k.jenjang === "IL") tagPrefix = "IL";
+                      else if (k.jenjang) tagPrefix = `${k.nama} ${k.jenjang}`;
+                      
+                      return (
+                        <option key={k.id} value={k.id}>
+                          {k.nama} {k.jenjang ? `(${k.jenjang})` : ""} 👉 [{tagPrefix}]
+                        </option>
+                      );
+                    })}
                   </select>
                 </div>
                 <div style={{ flex:2, minWidth:200 }}>
