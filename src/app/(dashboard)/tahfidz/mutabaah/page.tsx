@@ -222,7 +222,7 @@ export default function TahfidzMutabaahPage() {
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="Cari nama santri, NIS, atau musyrif..."
+            placeholder="Cari nama santri, NIS, atau pengampu..."
             style={{
               width: "100%", padding: "10px 14px 10px 42px", borderRadius: 12,
               border: "1.5px solid #cbd5e1", fontSize: 13, outline: "none", background: "#f8fafc"
@@ -278,7 +278,7 @@ export default function TahfidzMutabaahPage() {
                   <th style={{ padding: "14px 18px", width: 50 }}>#</th>
                   <th style={{ padding: "14px 18px" }}>NAMA SANTRI / NIS</th>
                   <th style={{ padding: "14px 18px" }}>KELAS</th>
-                  <th style={{ padding: "14px 18px" }}>KELOMPOK HALAQOH & MUSYRIF</th>
+                  <th style={{ padding: "14px 18px" }}>KELOMPOK HALAQOH & PENGAMPU</th>
                   <th style={{ padding: "14px 18px" }}>SETORAN ZIYADAH TERAKHIR</th>
                   <th style={{ padding: "14px 18px" }}>SETORAN MUROJAAH TERAKHIR</th>
                   <th style={{ padding: "14px 18px" }}>UJIAN PEKANAN</th>
@@ -314,7 +314,7 @@ export default function TahfidzMutabaahPage() {
                       </span>
                     </td>
 
-                    {/* Kelompok & Musyrif */}
+                    {/* Kelompok & Pengampu */}
                     <td style={{ padding: "14px 18px" }}>
                       {s.kelompok_halaqoh ? (
                         <div>
@@ -322,13 +322,14 @@ export default function TahfidzMutabaahPage() {
                             <BookHeart size={14} color="#550000" /> {s.kelompok_halaqoh.nama}
                           </div>
                           <div style={{ fontSize: 11, color: "#64748b", marginTop: 2 }}>
-                            Musyrif: <strong style={{ color: "#334155" }}>{s.kelompok_halaqoh.musyrif}</strong>
+                            Pengampu: <strong style={{ color: "#334155" }}>{s.kelompok_halaqoh.musyrif}</strong>
                           </div>
                         </div>
                       ) : (
                         <span style={{ fontSize: 11, color: "#94a3b8", fontStyle: "italic" }}>Belum diplot</span>
                       )}
                     </td>
+
 
                     {/* Ziyadah Terakhir */}
                     <td style={{ padding: "14px 18px" }}>
