@@ -64,14 +64,16 @@ model Pegawai {
   updated_at          DateTime  @default(now()) @db.Timestamptz(6)
   user_id             String?   @unique @db.Uuid
 
-  user            User?             @relation(fields: [user_id], references: [id])
-  jurnal          JurnalMengajar[]
-  presensi        PresensiAsatidz[]
-  mengajar        AsatidzmMapel[]
-  capaian_tahfidz CapaianTahfidz[]
-  ibadah_adab     IbadahAdabSantri[]
-  jadwal          JadwalPelajaran[]
-  kelas_wali      Kelas[]           @relation("WaliKelas")
+  user              User?             @relation(fields: [user_id], references: [id])
+  jurnal            JurnalMengajar[]
+  presensi          PresensiAsatidz[]
+  mengajar          AsatidzmMapel[]
+  capaian_tahfidz   CapaianTahfidz[]
+  ibadah_adab       IbadahAdabSantri[]
+  jadwal            JadwalPelajaran[]
+  kelas_wali        Kelas[]           @relation("WaliKelas")
+  halaqoh_kelompok  HalaqohKelompok[]
+  catatan_halaqoh   CatatanHalaqoh[]
 
   @@map("pegawai")
 }
@@ -83,14 +85,15 @@ model Kelas {
   is_active     Boolean  @default(true)
   wali_kelas_id String?  @db.Uuid
 
-  wali_kelas     Pegawai?          @relation("WaliKelas", fields: [wali_kelas_id], references: [id])
-  santri         SantriAktif[]
-  presensi_siswa PresensiSiswa[]
-  jurnal         JurnalMengajar[]
-  nilai          NilaiSantri[]
-  mapel          AsatidzmMapel[]
-  MataPelajaran  MataPelajaran[]
-  jadwal         JadwalPelajaran[]
+  wali_kelas       Pegawai?          @relation("WaliKelas", fields: [wali_kelas_id], references: [id])
+  santri           SantriAktif[]
+  presensi_siswa   PresensiSiswa[]
+  jurnal           JurnalMengajar[]
+  nilai            NilaiSantri[]
+  mapel            AsatidzmMapel[]
+  MataPelajaran    MataPelajaran[]
+  jadwal           JadwalPelajaran[]
+  halaqoh_kelompok HalaqohKelompok[]
 
   @@map("kelas")
 }
@@ -138,13 +141,15 @@ model SantriAktif {
   is_active     Boolean  @default(true)
   created_at    DateTime @default(now()) @db.Timestamptz(6)
 
-  kelas           Kelas            @relation(fields: [kelas_id], references: [id])
-  presensi        PresensiSiswa[]
-  nilai           NilaiSantri[]
-  capaian_tahfidz CapaianTahfidz[]
-  orang_tua       OrangTuaSantri[]
-  ibadah_adab     IbadahAdabSantri[]
-  pembayaran_spp  PembayaranSPP[]
+  kelas             Kelas            @relation(fields: [kelas_id], references: [id])
+  presensi          PresensiSiswa[]
+  nilai             NilaiSantri[]
+  capaian_tahfidz   CapaianTahfidz[]
+  orang_tua         OrangTuaSantri[]
+  ibadah_adab       IbadahAdabSantri[]
+  pembayaran_spp    PembayaranSPP[]
+  halaqoh_anggota   HalaqohAnggota[]
+  catatan_halaqoh   CatatanHalaqoh[]
 
   @@map("santri_aktif")
 }
@@ -293,6 +298,73 @@ model CapaianTahfidz {
   pegawai Pegawai @relation(fields: [pegawai_id], references: [id])
 
   @@map("capaian_tahfidz")
+}
+
+// ─── HALAQOH KEPENGASUHAN ───────────────────────────────────────────────────
+
+// Kelompok Halaqoh: Satu pengampu mengampu satu kelompok di satu sesi
+model HalaqohKelompok {
+  id            String   @id @default(uuid()) @db.Uuid
+  pegawai_id    String   @db.Uuid
+  kelas_id      String?  @db.Uuid
+  nama_kelompok String
+  sesi          String   // "subuh" | "maghrib" | "dhuha"
+  is_active     Boolean  @default(true)
+  created_at    DateTime @default(now()) @db.Timestamptz(6)
+
+  pegawai Pegawai          @relation(fields: [pegawai_id], references: [id])
+  kelas   Kelas?           @relation(fields: [kelas_id], references: [id])
+  anggota HalaqohAnggota[]
+  catatan CatatanHalaqoh[]
+
+  @@map("halaqoh_kelompok")
+}
+
+// Daftar Santri dalam suatu Kelompok Halaqoh
+model HalaqohAnggota {
+  id          String   @id @default(uuid()) @db.Uuid
+  kelompok_id String   @db.Uuid
+  santri_id   String   @db.Uuid
+  is_active   Boolean  @default(true)
+  created_at  DateTime @default(now()) @db.Timestamptz(6)
+
+  kelompok HalaqohKelompok @relation(fields: [kelompok_id], references: [id], onDelete: Cascade)
+  santri   SantriAktif     @relation(fields: [santri_id], references: [id])
+
+  @@unique([kelompok_id, santri_id])
+  @@map("halaqoh_anggota")
+}
+
+// Catatan Harian Halaqoh per Santri per Sesi
+model CatatanHalaqoh {
+  id              String   @id @default(uuid()) @db.Uuid
+  kelompok_id     String   @db.Uuid
+  pegawai_id      String   @db.Uuid
+  santri_id       String   @db.Uuid
+  tanggal         DateTime @db.Date
+  sesi            String   // "subuh" | "maghrib" | "dhuha"
+  jenis           String   // "ziyadah" | "murojaah"
+  surah_nomor     Int
+  surah_nama      String
+  surah_nama_arab String?
+  ayat_dari       Int
+  ayat_ke         Int
+  jumlah_halaman  Float
+  kehadiran       String   @default("hadir") // hadir | sakit | izin | alfa
+  alasan          String?
+  nilai_sikap     Float
+  nilai_bacaan    Float
+  nilai_akhir     Float
+  catatan         String?
+  created_at      DateTime @default(now()) @db.Timestamptz(6)
+  updated_at      DateTime @default(now()) @db.Timestamptz(6)
+
+  kelompok HalaqohKelompok @relation(fields: [kelompok_id], references: [id])
+  pegawai  Pegawai         @relation(fields: [pegawai_id], references: [id])
+  santri   SantriAktif     @relation(fields: [santri_id], references: [id])
+
+  @@unique([santri_id, tanggal, sesi])
+  @@map("catatan_halaqoh")
 }
 
 // ─── WALI SANTRI ────────────────────────────────────────────────────────────

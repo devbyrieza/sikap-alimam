@@ -17,7 +17,8 @@ import {
   Settings, 
   Database,
   CreditCard,
-  HeartHandshake
+  HeartHandshake,
+  BookHeart
 } from "lucide-react";
 import { useState } from "react";
 
@@ -69,6 +70,12 @@ const NAV: NavItem[] = [
     label: "Mutabaah Tahfidz",
     icon: <BookOpen size={18} />,
     roles: ["guru", "GURU", "musyrif", "MUSYRIF", "wali_kelas", "WALI_KELAS", "admin_wali_kelas", "ADMIN_WALI_KELAS", "admin_super", "ADMIN_SUPER"],
+  },
+  {
+    href: "/halaqoh",
+    label: "Halaqoh",
+    icon: <BookHeart size={18} />,
+    roles: ["guru", "GURU", "musyrif", "MUSYRIF", "wali_kelas", "WALI_KELAS", "admin_super", "ADMIN_SUPER", "mudir", "MUDIR", "kasi_pengasuhan", "KASI_PENGASUHAN"],
   },
   {
     href: "/presensi/asatidz",
