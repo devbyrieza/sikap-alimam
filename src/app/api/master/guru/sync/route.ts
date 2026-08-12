@@ -209,9 +209,9 @@ async function executeSync(simpegGuruList: any[]) {
           }
 
           // 1. Cari Kelas di SIKAP
-          let dbKelas = null;
+          let dbKelasList: any[] = [];
           if (rawKelas) {
-            dbKelas = await prisma.kelas.findFirst({
+            const exactKelas = await prisma.kelas.findFirst({
               where: {
                 nama: {
                   equals: rawKelas,
@@ -219,9 +219,10 @@ async function executeSync(simpegGuruList: any[]) {
                 },
               },
             });
+            if (exactKelas) dbKelasList.push(exactKelas);
 
             // Fallback: If exact class name is not found (e.g. "IL" changed to "I'dad Lughowy Putra" during sync)
-            if (!dbKelas) {
+            if (dbKelasList.length === 0) {
               const upRaw = rawKelas.toUpperCase();
               let targetJenjang: string | null = null;
               
@@ -238,21 +239,19 @@ async function executeSync(simpegGuruList: any[]) {
                 const gradeMatch = upRaw.match(/^(\d+)/);
                 const gradeStr = gradeMatch ? gradeMatch[1] : "";
 
-                dbKelas = await prisma.kelas.findFirst({
+                dbKelasList = await prisma.kelas.findMany({
                   where: { 
                     jenjang: targetJenjang, 
                     is_active: true,
                     // If there's a grade number, ensure the class name starts with or contains it
                     ...(gradeStr ? { nama: { startsWith: gradeStr } } : {})
-                  },
-                  orderBy: { santri: { _count: 'desc' } }
+                  }
                 });
               }
             }
 
             // If we still can't find the class, SKIP this mapping!
-            // We should NOT map the teacher to a random class just because the mapel name matches.
-            if (!dbKelas) {
+            if (dbKelasList.length === 0) {
               console.warn(`Kelas [${rawKelas}] tidak ditemukan untuk mapel ${rawMapel}, skip mapping ini.`);
               continue;
             }
@@ -279,37 +278,41 @@ async function executeSync(simpegGuruList: any[]) {
             searchName = "IPA";
           }
 
-          const mapelFilter: any = {
-            nama: {
-              contains: searchName,
-              mode: "insensitive",
-            },
-          };
+          // Loop over all matching classes and assign mapels
+          const loopKelas = dbKelasList.length > 0 ? dbKelasList : [null];
+          for (const kls of loopKelas) {
+            const mapelFilter: any = {
+              nama: {
+                contains: searchName,
+                mode: "insensitive",
+              },
+            };
 
-          if (dbKelas) {
-            mapelFilter.kelas_id = dbKelas.id;
-          }
+            if (kls) {
+              mapelFilter.kelas_id = kls.id;
+            }
 
-          const matchedMapel = await prisma.mataPelajaran.findFirst({
-            where: mapelFilter,
-          });
+            const matchedMapel = await prisma.mataPelajaran.findFirst({
+              where: mapelFilter,
+            });
 
-          if (matchedMapel) {
-            await prisma.asatidzmMapel.upsert({
-              where: {
-                pegawai_id_mapel_id_kelas_id: {
+            if (matchedMapel) {
+              await prisma.asatidzmMapel.upsert({
+                where: {
+                  pegawai_id_mapel_id_kelas_id: {
+                    pegawai_id: guru.id,
+                    mapel_id: matchedMapel.id,
+                    kelas_id: matchedMapel.kelas_id,
+                  },
+                },
+                update: {},
+                create: {
                   pegawai_id: guru.id,
                   mapel_id: matchedMapel.id,
                   kelas_id: matchedMapel.kelas_id,
                 },
-              },
-              update: {},
-              create: {
-                pegawai_id: guru.id,
-                mapel_id: matchedMapel.id,
-                kelas_id: matchedMapel.kelas_id,
-              },
-            });
+              });
+            }
           }
         }
       }
