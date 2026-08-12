@@ -1,118 +1,130 @@
-export const dynamic = 'force-dynamic';
-
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import { getSession } from '@/lib/auth';
+
+export const dynamic = 'force-dynamic';
 
 export async function GET(request: Request) {
-  const session = await getSession();
-  if (!session) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-
-  const { searchParams } = new URL(request.url);
-  const santri_id = searchParams.get('santri_id');
-  const bulan = parseInt(searchParams.get('bulan') || '1');
-  const tahun = parseInt(searchParams.get('tahun') || '2026');
-  const pekan_ke = parseInt(searchParams.get('pekan_ke') || '1');
-  const periode = searchParams.get('periode') || 'pekanan';
-
-  if (!santri_id) {
-    return NextResponse.json({ error: 'santri_id diperlukan' }, { status: 400 });
-  }
-
   try {
-    // Calculate date range based on period
-    let startDate: Date;
-    let endDate: Date;
+    const { searchParams } = new URL(request.url);
+    const santri_id = searchParams.get('santri_id');
+    const bulan = searchParams.get('bulan');
+    const tahun = searchParams.get('tahun');
+    const pekan_ke = searchParams.get('pekan_ke');
 
-    if (periode === 'pekanan') {
-      const startDay = (pekan_ke - 1) * 7 + 1;
-      const endDay = Math.min(31, pekan_ke * 7);
-      startDate = new Date(Date.UTC(tahun, bulan - 1, startDay));
-      endDate = new Date(Date.UTC(tahun, bulan - 1, endDay, 23, 59, 59));
-    } else if (periode === 'bulanan') {
-      startDate = new Date(Date.UTC(tahun, bulan - 1, 1));
-      endDate = new Date(Date.UTC(tahun, bulan, 0, 23, 59, 59));
-    } else {
-      // Semesteran
-      const isSemester2 = bulan > 6;
-      const startMonth = isSemester2 ? 6 : 0;
-      const endMonth = isSemester2 ? 11 : 5;
-      startDate = new Date(Date.UTC(tahun, startMonth, 1));
-      endDate = new Date(Date.UTC(tahun, endMonth + 1, 0, 23, 59, 59));
+    if (!santri_id) {
+      return NextResponse.json({ error: 'santri_id is required' }, { status: 400 });
     }
 
-    // Fetch CatatanHalaqoh in date range
-    const catatan = await prisma.catatanHalaqoh.findMany({
-      where: {
-        santri_id,
-        tanggal: { gte: startDate, lte: endDate },
-      },
+    let startDate: Date | undefined;
+    let endDate: Date | undefined;
+
+    if (bulan && tahun) {
+      const year = parseInt(tahun);
+      const month = parseInt(bulan) - 1;
+
+      if (pekan_ke) {
+        const week = parseInt(pekan_ke);
+        const startDay = (week - 1) * 7 + 1;
+        let endDay = week * 7;
+
+        startDate = new Date(year, month, startDay);
+        endDate = new Date(year, month, endDay, 23, 59, 59, 999);
+
+        const lastDayOfMonth = new Date(year, month + 1, 0).getDate();
+        if (endDay > lastDayOfMonth || week >= 5) {
+          endDate = new Date(year, month, lastDayOfMonth, 23, 59, 59, 999);
+        }
+      } else {
+        startDate = new Date(year, month, 1);
+        endDate = new Date(year, month + 1, 0, 23, 59, 59, 999);
+      }
+    }
+
+    const whereDate = startDate && endDate ? {
+      gte: startDate,
+      lte: endDate
+    } : undefined;
+
+    const catatanWhere: any = { santri_id };
+    if (whereDate) catatanWhere.tanggal = whereDate;
+
+    const ujianWhere: any = { santri_id };
+    if (whereDate) ujianWhere.tanggal = whereDate;
+
+    const [catatanList, ujianList] = await Promise.all([
+      prisma.catatanHalaqoh.findMany({ where: catatanWhere }),
+      prisma.ujianTahfidz.findMany({ where: ujianWhere })
+    ]);
+
+    let total_hadir = 0;
+    let total_sakit = 0;
+    let total_izin = 0;
+    let total_alfa = 0;
+    let total_halaman = 0;
+
+    let sum_sikap = 0;
+    let sum_bacaan = 0;
+    let sum_harian = 0;
+
+    catatanList.forEach(c => {
+      if (c.kehadiran === 'hadir') total_hadir++;
+      else if (c.kehadiran === 'sakit') total_sakit++;
+      else if (c.kehadiran === 'izin') total_izin++;
+      else if (c.kehadiran === 'alfa') total_alfa++;
+
+      total_halaman += (c.jumlah_halaman || 0);
+      sum_sikap += (c.nilai_sikap || 0);
+      sum_bacaan += (c.nilai_bacaan || 0);
+      sum_harian += (c.nilai_akhir || 0);
     });
 
-    // Fetch UjianTahfidz in date range
-    const ujian = await prisma.ujianTahfidz.findMany({
-      where: {
-        santri_id,
-        tanggal: { gte: startDate, lte: endDate },
-      },
-      orderBy: { tanggal: 'desc' },
-    });
+    const catatanCount = catatanList.length || 1;
+    const avg_nilai_sikap = Math.round((sum_sikap / catatanCount) * 100) / 100;
+    const avg_nilai_bacaan = Math.round((sum_bacaan / catatanCount) * 100) / 100;
+    const avg_nilai_harian = Math.round((sum_harian / catatanCount) * 100) / 100;
 
-    const total_hadir = catatan.filter(c => c.kehadiran === 'hadir').length;
-    const total_sakit = catatan.filter(c => c.kehadiran === 'sakit').length;
-    const total_izin = catatan.filter(c => c.kehadiran === 'izin').length;
-    const total_alfa = catatan.filter(c => c.kehadiran === 'alfa').length;
+    const ujianPekanan = ujianList.filter(u => u.jenis_ujian === 'ujian_pekanan');
+    const ujianBulanan = ujianList.filter(u => u.jenis_ujian === 'ujian_bulanan');
+    const ujianItqon = ujianList.filter(u => u.jenis_ujian === 'ujian_itqon' && u.is_lulus);
 
-    const total_halaman = parseFloat(catatan.reduce((a, c) => a + (c.jumlah_halaman || 0), 0).toFixed(1));
+    const ujian_pekanan_nilai = ujianPekanan.length 
+      ? Math.round(ujianPekanan.reduce((acc, u) => acc + u.nilai_akhir, 0) / ujianPekanan.length)
+      : 0;
+      
+    const ujian_bulanan_nilai = ujianBulanan.length 
+      ? Math.round(ujianBulanan.reduce((acc, u) => acc + u.nilai_akhir, 0) / ujianBulanan.length)
+      : 0;
 
-    const hadirRecords = catatan.filter(c => c.kehadiran === 'hadir');
-    const avg_nilai_sikap = hadirRecords.length > 0
-      ? Math.round(hadirRecords.reduce((a, c) => a + c.nilai_sikap, 0) / hadirRecords.length)
-      : 82;
+    const ujian_itqon_count = ujianItqon.length;
 
-    const avg_nilai_bacaan = hadirRecords.length > 0
-      ? Math.round(hadirRecords.reduce((a, c) => a + c.nilai_bacaan, 0) / hadirRecords.length)
-      : 82;
-
-    const avg_nilai_harian = hadirRecords.length > 0
-      ? Math.round(hadirRecords.reduce((a, c) => a + c.nilai_akhir, 0) / hadirRecords.length)
-      : 82;
-
-    const ujianPekanan = ujian.find((u: any) => u.jenis_ujian === 'ujian_pekanan');
-    const ujianBulanan = ujian.find((u: any) => u.jenis_ujian === 'ujian_bulanan');
-    const ujianTarget = ujian.find((u: any) => u.jenis_ujian === 'ujian_target');
-    const ujianItqonList = ujian.filter((u: any) => u.jenis_ujian === 'ujian_itqon' && u.is_lulus);
-
-    const ujian_pekanan_nilai = ujianPekanan?.nilai_akhir ?? null;
-    const ujian_bulanan_nilai = ujianBulanan?.nilai_akhir ?? null;
-    const ujian_target_nilai = ujianTarget?.nilai_akhir ?? null;
-    const ujian_itqon_count = ujianItqonList.length;
-
-    // Calculate Raport Estimation
-    const examScore = ujian_pekanan_nilai || ujian_bulanan_nilai || ujian_target_nilai || avg_nilai_harian;
-    const bonusItqon = ujian_itqon_count > 0 ? 10 : 0;
-    const nilai_raport_estimasi = Math.min(100, Math.round((avg_nilai_harian + examScore) / 2) + bonusItqon);
+    let nilai_raport_estimasi = Math.round((avg_nilai_harian + (ujian_pekanan_nilai || avg_nilai_harian)) / 2);
+    if (ujian_itqon_count > 0) {
+      nilai_raport_estimasi += 10;
+    }
+    if (nilai_raport_estimasi > 100) {
+      nilai_raport_estimasi = 100;
+    }
 
     return NextResponse.json({
-      santri_id,
-      periode,
-      bulan,
-      tahun,
-      total_hadir,
-      total_sakit,
-      total_izin,
-      total_alfa,
-      total_halaman,
-      avg_nilai_sikap,
-      avg_nilai_bacaan,
-      avg_nilai_harian,
-      ujian_pekanan_nilai,
-      ujian_bulanan_nilai,
-      ujian_target_nilai,
-      ujian_itqon_count,
-      nilai_raport_estimasi,
+      summary: {
+        total_hadir,
+        total_sakit,
+        total_izin,
+        total_alfa,
+        total_halaman,
+        avg_nilai_sikap: catatanList.length === 0 ? 0 : avg_nilai_sikap,
+        avg_nilai_bacaan: catatanList.length === 0 ? 0 : avg_nilai_bacaan,
+        avg_nilai_harian: catatanList.length === 0 ? 0 : avg_nilai_harian,
+        ujian_pekanan_nilai,
+        ujian_bulanan_nilai,
+        ujian_itqon_count,
+        nilai_raport_estimasi: catatanList.length === 0 ? 0 : nilai_raport_estimasi
+      },
+      catatan: catatanList,
+      ujian: ujianList
     });
-  } catch (error) {
-    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+
+  } catch (error: any) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }

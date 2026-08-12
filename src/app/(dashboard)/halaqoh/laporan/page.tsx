@@ -54,6 +54,7 @@ export default function LaporanHalaqohPage() {
   };
 
   const selectedSantri = allSantri.find(s => s.id === selectedSantriId);
+  const summary = report?.summary || report || {};
 
   const BULAN_NAMES = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
 
@@ -194,15 +195,15 @@ export default function LaporanHalaqohPage() {
               <div style={{ background: "#ecfdf5", border: "1.5px solid #a7f3d0", borderRadius: 14, padding: 14, textAlign: "center" }}>
                 <div style={{ fontSize: 11, fontWeight: 700, color: "#047857" }}>KEHADIRAN</div>
                 <div style={{ fontSize: 22, fontWeight: 900, color: "#065f46", marginTop: 4 }}>
-                  {report.total_hadir || 0} <span style={{ fontSize: 12, fontWeight: 500 }}>sesi</span>
+                  {summary.total_hadir || 0} <span style={{ fontSize: 12, fontWeight: 500 }}>sesi</span>
                 </div>
-                <div style={{ fontSize: 10, color: "#047857", marginTop: 2 }}>Sakit: {report.total_sakit || 0} · Izin: {report.total_izin || 0} · Alfa: {report.total_alfa || 0}</div>
+                <div style={{ fontSize: 10, color: "#047857", marginTop: 2 }}>Sakit: {summary.total_sakit || 0} · Izin: {summary.total_izin || 0} · Alfa: {summary.total_alfa || 0}</div>
               </div>
 
               <div style={{ background: "#eff6ff", border: "1.5px solid #bfdbfe", borderRadius: 14, padding: 14, textAlign: "center" }}>
                 <div style={{ fontSize: 11, fontWeight: 700, color: "#0284c7" }}>TOTAL CAPAIAN</div>
                 <div style={{ fontSize: 22, fontWeight: 900, color: "#0369a1", marginTop: 4 }}>
-                  {report.total_halaman || 0} <span style={{ fontSize: 12, fontWeight: 500 }}>hal.</span>
+                  {summary.total_halaman || 0} <span style={{ fontSize: 12, fontWeight: 500 }}>hal.</span>
                 </div>
                 <div style={{ fontSize: 10, color: "#0284c7", marginTop: 2 }}>Mushaf Madinah</div>
               </div>
@@ -210,7 +211,7 @@ export default function LaporanHalaqohPage() {
               <div style={{ background: "#fffbeb", border: "1.5px solid #fde68a", borderRadius: 14, padding: 14, textAlign: "center" }}>
                 <div style={{ fontSize: 11, fontWeight: 700, color: "#d97706" }}>RATA HARIAN</div>
                 <div style={{ fontSize: 22, fontWeight: 900, color: "#b45309", marginTop: 4 }}>
-                  {report.avg_nilai_harian || "—"}
+                  {summary.avg_nilai_harian || "—"}
                 </div>
                 <div style={{ fontSize: 10, color: "#d97706", marginTop: 2 }}>Nilai Sikap + Bacaan</div>
               </div>
@@ -218,7 +219,7 @@ export default function LaporanHalaqohPage() {
               <div style={{ background: "#f5f3ff", border: "1.5px solid #ddd6fe", borderRadius: 14, padding: 14, textAlign: "center" }}>
                 <div style={{ fontSize: 11, fontWeight: 700, color: "#7c3aed" }}>NILAI UJIAN</div>
                 <div style={{ fontSize: 22, fontWeight: 900, color: "#6d28d9", marginTop: 4 }}>
-                  {report.ujian_pekanan_nilai || report.ujian_bulanan_nilai || "—"}
+                  {summary.ujian_pekanan_nilai || summary.ujian_bulanan_nilai || "—"}
                 </div>
                 <div style={{ fontSize: 10, color: "#7c3aed", marginTop: 2 }}>{periode === "pekanan" ? "Ujian Pekanan Sabtu" : "Ujian Bulanan"}</div>
               </div>
@@ -235,16 +236,16 @@ export default function LaporanHalaqohPage() {
                   ESTIMASI NILAI RAPORT TAHFIDZ
                 </div>
                 <div style={{ fontSize: 11, opacity: 0.7, marginTop: 2 }}>
-                  Formula: (Rata Harian + Nilai Ujian) / 2 {report.ujian_itqon_count > 0 ? "+ 10 Bonus Itqon" : ""}
+                  Formula: (Rata Harian + Nilai Ujian) / 2 {summary.ujian_itqon_count > 0 ? "+ 10 Bonus Itqon" : ""}
                 </div>
               </div>
               <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                {report.ujian_itqon_count > 0 && (
+                {summary.ujian_itqon_count > 0 && (
                   <span style={{ background: "#ecfdf5", color: "#059669", padding: "4px 10px", borderRadius: 8, fontSize: 11, fontWeight: 800 }}>
                     +10 ITQON
                   </span>
                 )}
-                <span style={{ fontSize: 28, fontWeight: 900 }}>{report.nilai_raport_estimasi || "—"}</span>
+                <span style={{ fontSize: 28, fontWeight: 900 }}>{summary.nilai_raport_estimasi || "—"}</span>
               </div>
             </div>
 
