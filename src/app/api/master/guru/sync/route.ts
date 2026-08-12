@@ -39,7 +39,7 @@ export async function POST(req: NextRequest) {
     await pgClient.connect();
     
     const res = await pgClient.query(`
-      SELECT id, nik, nama_lengkap, jenis_kelamin, tempat_lahir, tanggal_lahir, no_hp, email, alamat, kategori_pegawai, mata_pelajaran 
+      SELECT id, nik, nama_lengkap, jenis_kelamin, tempat_lahir, tanggal_lahir, no_hp, email, alamat, kategori_pegawai, mata_pelajaran, foto_url 
       FROM ${schema}.pegawai 
       WHERE kategori_pegawai = 'ASATIDZ' 
          OR kategori_pegawai = 'GURU' 
@@ -134,6 +134,7 @@ async function executeSync(simpegGuruList: any[]) {
             email: guru.email,
             alamat: guru.alamat,
             mata_pelajaran: guru.mata_pelajaran,
+            foto_url: guru.foto_url || null,
             kategori_pegawai: 'ASATIDZ'
           },
           create: {
@@ -147,6 +148,7 @@ async function executeSync(simpegGuruList: any[]) {
             email: guru.email,
             alamat: guru.alamat,
             mata_pelajaran: guru.mata_pelajaran,
+            foto_url: guru.foto_url || null,
             kategori_pegawai: 'ASATIDZ'
           }
         });

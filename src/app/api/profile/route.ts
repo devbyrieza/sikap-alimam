@@ -74,6 +74,7 @@ export async function GET() {
         nama: session.nama,
         email: session.email,
         role: session.role,
+        foto_url: pegawai?.foto_url || null,
       },
       isComplete,
       missingFields,

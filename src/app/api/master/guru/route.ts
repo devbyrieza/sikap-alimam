@@ -40,7 +40,7 @@ export async function GET() {
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { nik, nama_lengkap, no_hp, email, mata_pelajaran, roles, wali_kelas_id } = body;
+    const { nik, nama_lengkap, no_hp, email, mata_pelajaran, foto_url, roles, wali_kelas_id } = body;
 
     if (!nama_lengkap || !nama_lengkap.trim()) {
       return NextResponse.json({ error: "Nama lengkap wajib diisi" }, { status: 400 });
@@ -57,6 +57,7 @@ export async function POST(req: NextRequest) {
         no_hp: no_hp || null,
         email: email || null,
         mata_pelajaran: mata_pelajaran || null,
+        foto_url: foto_url?.trim() || null,
         kategori_pegawai: "ASATIDZ",
       },
     });

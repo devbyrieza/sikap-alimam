@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Users, Plus, Trash2, Edit2, Save, Mail, Phone, RefreshCw, BookOpen, X, Sparkles, Eye, EyeOff } from "lucide-react";
+import { Users, Plus, Trash2, Edit2, Save, Mail, Phone, RefreshCw, BookOpen, X, Sparkles, Eye, EyeOff, Download } from "lucide-react";
 import Swal from "sweetalert2";
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -27,7 +27,7 @@ export default function MasterGuruPage() {
   // Form State
   const [isAdding, setIsAdding] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
-  const emptyForm = { nik: "", nama_lengkap: "", no_hp: "", email: "", mata_pelajaran: "", roles: [] as string[], wali_kelas_id: "" };
+  const emptyForm = { nik: "", nama_lengkap: "", no_hp: "", email: "", mata_pelajaran: "", foto_url: "", roles: [] as string[], wali_kelas_id: "" };
   const [form, setForm] = useState(emptyForm);
 
   // Mapel Builder State
@@ -168,6 +168,7 @@ export default function MasterGuruPage() {
       no_hp: g.no_hp || "", 
       email: g.email || "", 
       mata_pelajaran: g.mata_pelajaran || "", 
+      foto_url: g.foto_url || "",
       roles,
       wali_kelas_id: g.wali_kelas_id || "" 
     });
@@ -261,6 +262,15 @@ export default function MasterGuruPage() {
             <div>
               <label style={{ display:"block", fontSize:13, fontWeight:600, color:"#334155", marginBottom:6 }}>Email Aktif</label>
               <input type="email" className="form-control" placeholder="fulan@contoh.com" value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} />
+            </div>
+            <div>
+              <label style={{ display:"block", fontSize:13, fontWeight:600, color:"#334155", marginBottom:6 }}>URL Foto Profil (Opsional)</label>
+              <div style={{ display:"flex", gap:8, alignItems:"center" }}>
+                <input type="text" className="form-control" placeholder="https://... /foto.jpg" value={form.foto_url || ""} onChange={e => setForm({ ...form, foto_url: e.target.value })} />
+                {form.foto_url && (
+                  <img src={form.foto_url} alt="Preview" style={{ width:36, height:36, borderRadius:10, objectFit:"cover", border:"1px solid #a7f3d0", flexShrink:0 }} />
+                )}
+              </div>
             </div>
             <div style={{ gridColumn: "1 / -1", background:"#f8fafc", padding:20, borderRadius:16, border:"1px solid #e2e8f0" }}>
               <label style={{ display:"block", fontSize:13, fontWeight:600, color:"#334155", marginBottom:12 }}>Mata Pelajaran yang Diajarkan</label>
@@ -417,14 +427,26 @@ export default function MasterGuruPage() {
               <div style={{ position:"absolute", top:-30, right:-30, width:120, height:120, background:"rgba(16,185,129,0.05)", borderRadius:"50%", pointerEvents:"none" }} />
               
               <div style={{ display: "flex", gap: 16, alignItems: "flex-start" }}>
-                <div style={{
-                  width: 52, height: 52, borderRadius: 16, flexShrink: 0,
-                  background: "linear-gradient(135deg, #7a0000 0%, #550000 100%)", color: "white",
-                  display: "flex", alignItems: "center", justifyContent: "center",
-                  fontSize: 24, fontWeight: 800, boxShadow: "0 4px 12px rgba(85,0,0,0.3)"
-                }}>
-                  {(formatName(g.nama_lengkap) || "G").charAt(0).toUpperCase()}
-                </div>
+                {g.foto_url ? (
+                  <img
+                    src={g.foto_url}
+                    alt={g.nama_lengkap}
+                    style={{
+                      width: 52, height: 52, borderRadius: 16, flexShrink: 0,
+                      objectFit: "cover", boxShadow: "0 4px 12px rgba(0,0,0,0.12)",
+                      border: "2px solid #ffffff"
+                    }}
+                  />
+                ) : (
+                  <div style={{
+                    width: 52, height: 52, borderRadius: 16, flexShrink: 0,
+                    background: "linear-gradient(135deg, #7a0000 0%, #550000 100%)", color: "white",
+                    display: "flex", alignItems: "center", justifyContent: "center",
+                    fontSize: 24, fontWeight: 800, boxShadow: "0 4px 12px rgba(85,0,0,0.3)"
+                  }}>
+                    {(formatName(g.nama_lengkap) || "G").charAt(0).toUpperCase()}
+                  </div>
+                )}
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <h3 style={{ margin: "0 0 6px 0", fontSize: 16, fontWeight: 800, color: "#1e293b", whiteSpace:"nowrap", overflow:"hidden", textOverflow:"ellipsis" }} title={formatName(g.nama_lengkap)}>
                     {formatName(g.nama_lengkap)}
@@ -494,6 +516,23 @@ export default function MasterGuruPage() {
                 </div>
 
                 <div style={{ display: "flex", gap: 6, flexShrink: 0 }}>
+                  {g.foto_url && (
+                    <a
+                      href={g.foto_url}
+                      download={`Foto_${formatName(g.nama_lengkap).replace(/\s+/g, '_')}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      title="Download Foto Guru"
+                      style={{
+                        width: 32, height: 32, borderRadius: 10, background: "#ecfdf5", border: "1px solid #a7f3d0", color: "#059669",
+                        display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", transition: "all 0.2s"
+                      }}
+                      onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = "#d1fae5"; }}
+                      onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = "#ecfdf5"; }}
+                    >
+                      <Download size={14} />
+                    </a>
+                  )}
                   <button onClick={() => handleEdit(g)} title="Edit" style={{
                     width: 32, height: 32, borderRadius: 10, background: "#f8fafc", border: "1px solid #e2e8f0", color: "#64748b",
                     display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", transition: "all 0.2s"

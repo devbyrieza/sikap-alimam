@@ -85,7 +85,7 @@ const NAV: NavItem[] = [
 ];
 
 interface SidebarProps {
-  user: { nama: string; role: string; email: string; originalRole?: string };
+  user: { nama: string; role: string; email: string; foto_url?: string; originalRole?: string };
 }
 
 export default function Sidebar({ user }: SidebarProps) {
@@ -223,24 +223,40 @@ export default function Sidebar({ user }: SidebarProps) {
             marginBottom: 12,
           }}
         >
-          <div
-            style={{
-              width: 36,
-              height: 36,
-              borderRadius: "50%",
-              background: "#fdf5f5",
-              border: "1px solid #ebdcc3",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              flexShrink: 0,
-              fontSize: 14,
-              fontWeight: 800,
-              color: "#550000",
-            }}
-          >
-            {((user?.nama) || "U").charAt(0).toUpperCase()}
-          </div>
+          {user?.foto_url ? (
+            <img
+              src={user.foto_url}
+              alt={user.nama || "Profile"}
+              style={{
+                width: 36,
+                height: 36,
+                borderRadius: "50%",
+                objectFit: "cover",
+                border: "1.5px solid #ebdcc3",
+                flexShrink: 0,
+                boxShadow: "0 2px 6px rgba(0,0,0,0.1)"
+              }}
+            />
+          ) : (
+            <div
+              style={{
+                width: 36,
+                height: 36,
+                borderRadius: "50%",
+                background: "#fdf5f5",
+                border: "1px solid #ebdcc3",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                flexShrink: 0,
+                fontSize: 14,
+                fontWeight: 800,
+                color: "#550000",
+              }}
+            >
+              {((user?.nama) || "U").charAt(0).toUpperCase()}
+            </div>
+          )}
           <div style={{ flex: 1, minWidth: 0 }}>
             <p
               style={{
