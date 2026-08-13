@@ -3,6 +3,7 @@ export const dynamic = 'force-dynamic';
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { getSession } from '@/lib/auth';
+import { syncHalaqohFromExcel } from '@/lib/syncHalaqohFromExcel';
 
 export async function GET(request: Request) {
   const session = await getSession();
@@ -13,6 +14,11 @@ export async function GET(request: Request) {
   const sesi = searchParams.get('sesi');
 
   try {
+    const totalKelompok = await prisma.halaqohKelompok.count();
+    if (totalKelompok === 0) {
+      await syncHalaqohFromExcel().catch(() => {});
+    }
+
     const kelompok = await prisma.halaqohKelompok.findMany({
       where: {
         ...(pegawai_id && { pegawai_id }),
@@ -27,6 +33,7 @@ export async function GET(request: Request) {
       },
     });
     return NextResponse.json(kelompok);
+
   } catch (error) {
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
