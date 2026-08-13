@@ -19,6 +19,26 @@ async function executeSync() {
       prisma.mataPelajaran.findMany({ where: { is_active: true } }),
     ]);
 
+    // Ensure Ust. Maulidin Bachtiar exists as teacher for Kode M (pengganti Ust. Muhammad Maulana Rizki)
+    let maulidin = pegawaiList.find((p) => p.nama_lengkap.toLowerCase().includes("maulidin") || p.nama_lengkap.toLowerCase().includes("bachtiar"));
+    if (!maulidin) {
+      try {
+        maulidin = await prisma.pegawai.create({
+          data: {
+            nama_lengkap: "Maulidin Bachtiar",
+            jenis_kelamin: "L",
+            kategori_pegawai: "GURU",
+            jabatan: "Admin Keuangan & Guru Bahasa Inggris",
+            mata_pelajaran: "Bahasa Inggris",
+          },
+        });
+
+        pegawaiList.push(maulidin);
+      } catch (e) {
+        /* ignore if exists */
+      }
+    }
+
     const findTeacher = (codeOrName: string) => {
       const q = codeOrName.toLowerCase();
       return pegawaiList.find((p) => {
@@ -35,10 +55,11 @@ async function executeSync() {
         if (q === "j" || q.includes("teguh")) return name.includes("teguh") || name.includes("hudaya");
         if (q === "k" || q.includes("wahab")) return name.includes("wahab") || name.includes("rajasam");
         if (q === "l" || q.includes("wahyudi")) return name.includes("wahyudi") || name.includes("pranata");
-        if (q === "m" || q.includes("rizki") || q.includes("maulana")) return name.includes("maulana") || name.includes("rizki");
+        if (q === "m" || q.includes("maulidin") || q.includes("bachtiar") || q.includes("rizki") || q.includes("maulana")) return name.includes("maulidin") || name.includes("bachtiar") || name.includes("maulana") || name.includes("rizki");
         return name.includes(q);
       });
     };
+
 
     const findKelas = (namaQuery: string) => {
       const q = namaQuery.toUpperCase();
