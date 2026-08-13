@@ -407,7 +407,7 @@ export default function MasterGuruPage() {
           
           <div style={{ display:"flex", justifyContent:"flex-end", gap:12, marginTop:24 }}>
             <button onClick={() => setIsAdding(false)} className="btn btn-ghost">Batal</button>
-            <button onClick={handleSave} className="btn" style={{ background:"#059669", color:"white", fontWeight:700 }}>
+            <button onClick={handleSave} className="btn" style={{ background:"#550000", color:"white", fontWeight:700 }}>
               <Save size={16} /> Simpan Data
             </button>
           </div>

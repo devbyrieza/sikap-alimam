@@ -663,7 +663,7 @@ export default function KeuanganSPPPage() {
               <button
                 onClick={handleSaveDetail}
                 disabled={updatingId !== null}
-                style={{ padding: "8px 16px", borderRadius: "12px", background: "#059669", color: "white", fontWeight: "bold", fontSize: "12px", border: "none", cursor: updatingId !== null ? "not-allowed" : "pointer", display: "flex", alignItems: "center", gap: "6px", boxShadow: "0 4px 6px -1px rgba(5, 150, 105, 0.2)", transition: "background-color 0.2s" }}
+                style={{ padding: "8px 16px", borderRadius: "12px", background: "#550000", color: "white", fontWeight: "bold", fontSize: "12px", border: "none", cursor: updatingId !== null ? "not-allowed" : "pointer", display: "flex", alignItems: "center", gap: "6px", boxShadow: "0 4px 6px -1px rgba(85, 0, 0, 0.25)", transition: "background-color 0.2s" }}
                 className="hover:bg-emerald-700"
               >
                 {updatingId ? <RefreshCw className="animate-spin" style={{ width: "14px", height: "14px" }} /> : <Save style={{ width: "14px", height: "14px" }} />}
