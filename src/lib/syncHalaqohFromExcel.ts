@@ -29,11 +29,9 @@ export async function syncHalaqohFromExcel() {
       const q = nameQuery.toLowerCase().trim();
       const parts = q.split(" ").filter((p) => p.length > 2);
 
-      // Exact substring match
       let match = santriList.find((s) => s.nama_lengkap.toLowerCase().includes(q));
       if (match) return match;
 
-      // Partial word match
       if (parts.length > 0) {
         match = santriList.find((s) => {
           const sn = s.nama_lengkap.toLowerCase();
@@ -43,7 +41,6 @@ export async function syncHalaqohFromExcel() {
 
       if (match) return match;
 
-      // First two words match
       if (parts.length >= 2) {
         match = santriList.find((s) => {
           const sn = s.nama_lengkap.toLowerCase();
@@ -147,7 +144,39 @@ export async function syncHalaqohFromExcel() {
 
     for (const groupDef of groupsDefinition) {
       let teacher = findTeacher(groupDef.musyrifQuery);
-      if (!teacher) {
+
+      if (!teacher && groupDef.musyrifQuery === "Ikhwan") {
+        try {
+          const email = "ikhwan@pesantren-alimam.com";
+          let u = await prisma.user.findFirst({ where: { email } });
+          if (!u) {
+            u = await prisma.user.create({
+              data: {
+                email,
+                nama: "Ust. Ikhwan",
+                role: "musyrif",
+                password: "$2a$10$abcdefghijklmnopqrstuvwxyz0123456789",
+                plain_password: "GuruAlimam2026!",
+                is_active: true,
+              },
+            });
+          }
+
+          teacher = await prisma.pegawai.create({
+            data: {
+              user_id: u.id,
+              email,
+              nama_lengkap: "Ust. Ikhwan",
+              jenis_kelamin: "L",
+              kategori_pegawai: "ASATIDZ",
+              jabatan: "Musyrif Halaqoh (Pengabdian)",
+            },
+          });
+          pegawaiList.push(teacher);
+        } catch (e) {
+          /* ignore */
+        }
+      } else if (!teacher) {
         try {
           teacher = await prisma.pegawai.create({
             data: {
@@ -162,6 +191,8 @@ export async function syncHalaqohFromExcel() {
           continue;
         }
       }
+
+      if (!teacher) continue;
 
       for (const sesi of seseis) {
         const kel = await prisma.halaqohKelompok.create({
