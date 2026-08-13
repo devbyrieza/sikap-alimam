@@ -267,14 +267,16 @@ export default function PresensiSantriPage() {
   }, [jamKe, jamKhususMulai, jamKhususSelesai]);
 
   // Load santri + status presensi when kelas, tanggal, mapel, and jamKe are set
-  const loadPresensi = useCallback(async () => {
+  const loadPresensi = useCallback(async (isManualClick = false) => {
     if (!selectedKelas || !tanggal || !mapelId || !jamKeString) {
-      Swal.fire({
-        icon: "warning",
-        title: "Data Kurang Lengkap",
-        text: "Pilih Kelas, Tanggal, Mata Pelajaran, dan Jam Ke- terlebih dahulu.",
-        confirmButtonColor: "var(--primary)",
-      });
+      if (isManualClick) {
+        Swal.fire({
+          icon: "warning",
+          title: "Data Kurang Lengkap",
+          text: "Pilih Kelas, Tanggal, Mata Pelajaran, dan Jam Ke- terlebih dahulu.",
+          confirmButtonColor: "var(--primary)",
+        });
+      }
       return;
     }
 
@@ -318,14 +320,15 @@ export default function PresensiSantriPage() {
     } finally {
       setLoadingSantri(false);
     }
-  }, [selectedKelas, tanggal, mapelId, jamKe]);
+  }, [selectedKelas, tanggal, mapelId, jamKeString]);
 
-  // Disable auto load to let user fill everything first
-  // useEffect(() => {
-  //   if (selectedKelas && tanggal && mapelId && jamKe) {
-  //     loadPresensi();
-  //   }
-  // }, [selectedKelas, tanggal, mapelId, jamKe, loadPresensi]);
+  // Otomatis muat daftar santri ketika seluruh filter (Kelas, Tanggal, Mapel, Jam Ke-) terisi lengkap
+  useEffect(() => {
+    if (selectedKelas && tanggal && mapelId && jamKeString) {
+      loadPresensi(false);
+    }
+  }, [selectedKelas, tanggal, mapelId, jamKeString, loadPresensi]);
+
 
   const setStatus = (santriId: string, status: StatusType) => {
     setStatusMap((prev) => ({ ...prev, [santriId]: status }));
@@ -713,7 +716,8 @@ export default function PresensiSantriPage() {
           <button
             className="w-full box-border flex items-center justify-center gap-2"
             style={{ background: "#550000", color: "white", padding: "12px 20px", borderRadius: "12px", border: "1px solid #550000", fontWeight: 700, cursor: "pointer", height: "46px", boxShadow: "0 2px 8px rgba(85,0,0,0.2)" }}
-            onClick={loadPresensi}
+            onClick={() => loadPresensi(true)}
+
             disabled={!selectedKelas || !tanggal || !mapelId || jamKe.length === 0 || loadingSantri}
           >
             {loadingSantri ? (
