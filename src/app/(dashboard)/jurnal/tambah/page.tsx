@@ -208,14 +208,17 @@ export default function TambahJurnalPage() {
     return uniqueJenjangs.length > 0 ? uniqueJenjangs : defaultJenjangs;
   }, [asatidId, master]);
 
-  // Auto-select Jenjang jika hanya ada 1 pilihan
+  // Auto-select Jenjang HANYA jika hanya ada 1 pilihan. Jika > 1, HARUS minta user memilih ("")
   useEffect(() => {
     if (availableJenjangs.length === 1) {
       setJenjangFilter(availableJenjangs[0]);
-    } else if (jenjangFilter && !availableJenjangs.includes(jenjangFilter)) {
+    } else if (availableJenjangs.length > 1) {
       setJenjangFilter("");
+      setKelasId("");
+      setMapelId("");
     }
   }, [availableJenjangs]);
+
 
   const filteredKelasList = useMemo(() => {
     if (!jenjangFilter) return [];

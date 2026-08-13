@@ -108,27 +108,12 @@ export default function PresensiSantriPage() {
   const [loadingSantri, setLoadingSantri] = useState(false);
   const [saving, setSaving] = useState(false);
 
-  // Load draft dari localStorage (Tanggal selalu di-default ke Hari Ini / today)
+  // Default tanggal ke Hari Ini & bersihkan draf awal agar alur selalu bersih meminta pilih jenjang
   useEffect(() => {
     setTanggal(today);
-    const draft = localStorage.getItem("siakad_presensi_draft");
-    if (draft) {
-      try {
-        const p = JSON.parse(draft);
-        if (p.selectedJenjang) setSelectedJenjang(p.selectedJenjang);
-        if (p.selectedKelas) setSelectedKelas(p.selectedKelas);
-        if (p.mapelId) setMapelId(p.mapelId);
-        if (p.jamKe) {
-          if (Array.isArray(p.jamKe)) setJamKe(p.jamKe);
-          else if (typeof p.jamKe === "string" && p.jamKe) setJamKe(p.jamKe.split(",").map((s: string) => s.trim()));
-        }
-        if (p.jamKhususMulai) setJamKhususMulai(p.jamKhususMulai);
-        if (p.jamKhususSelesai) setJamKhususSelesai(p.jamKhususSelesai);
-        if (p.tanggal && p.tanggal === today) setTanggal(p.tanggal);
-        if (p.statusMap) setStatusMap(p.statusMap);
-        if (p.keteranganMap) setKeteranganMap(p.keteranganMap);
-      } catch (e) { /* ignore */ }
-    }
+    try {
+      localStorage.removeItem("siakad_presensi_draft");
+    } catch (e) {}
   }, [today]);
 
   // Fetch Profile to get asatidId & role
@@ -197,12 +182,16 @@ export default function PresensiSantriPage() {
     return uniqueJenjangs.length > 0 ? uniqueJenjangs : defaultJenjangs;
   }, [asatidId, master, isAdminSuper]);
 
-  // Auto-select Jenjang jika hanya ada 1 pilihan
+  // Auto-select Jenjang HANYA jika hanya ada 1 pilihan. Jika > 1, HARUS minta user memilih ("")
   useEffect(() => {
     if (availableJenjangs.length === 1) {
       setSelectedJenjang(availableJenjangs[0]);
-    } else if (selectedJenjang && !availableJenjangs.includes(selectedJenjang)) {
+    } else if (availableJenjangs.length > 1) {
       setSelectedJenjang("");
+      setSelectedKelas("");
+      setMapelId("");
+      setJamKe([]);
+      setSantri([]);
     }
   }, [availableJenjangs]);
 
