@@ -235,6 +235,28 @@ export default function HalaqohDashboardPage() {
       {/* ─── TAB 1: SESI & KELOMPOK PENGAMPU ───────────────────────────────── */}
       {activeTab === "sesi" && (
         <>
+          {/* Banner Informasi Dimulainya Mutabaah & Wajib Ujian Pekanan */}
+          <div style={{
+            background: "linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%)",
+            border: "1.5px solid #93c5fd", borderRadius: 18, padding: "16px 20px",
+            marginBottom: 24, display: "flex", alignItems: "flex-start", gap: 14,
+            color: "#1e3a8a", boxShadow: "0 2px 10px rgba(59,130,246,0.08)"
+          }}>
+            <div style={{ background: "#2563eb", color: "white", padding: 8, borderRadius: 12, flexShrink: 0, marginTop: 2 }}>
+              <CalendarDays size={20} />
+            </div>
+            <div style={{ flex: 1 }}>
+              <div style={{ fontSize: 14, fontWeight: 800, color: "#1e40af", marginBottom: 4 }}>
+                📌 Pengumuman Resmi Pengisian Mutabaah Tahfidz
+              </div>
+              <div style={{ fontSize: 13, lineHeight: 1.5, color: "#1e3a8a" }}>
+                Pengisian <strong>Catatan Mutabaah Sesi Harian (Subuh, Magrib, Dhuha)</strong> secara efektif dimulai pada <strong>Senin Subuh, 17 Agustus 2026</strong>.
+                <br />
+                ⚡ <strong>Penting:</strong> Input <strong>Ujian Pekanan</strong> yang telah lewat dan Ujian Pekanan hari <strong>Sabtu, 15 Agustus 2026</strong> <u>TETAP WAJIB UNTUK DIISI</u> oleh seluruh Pengampu.
+              </div>
+            </div>
+          </div>
+
           {hariIni === "Selasa" && (
             <div style={{
               background: "#fffbeb", border: "1px solid #fde68a", borderRadius: 14, padding: "14px 18px",

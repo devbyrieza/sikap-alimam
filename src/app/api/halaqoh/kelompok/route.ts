@@ -10,13 +10,31 @@ export async function GET(request: Request) {
   if (!session) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
   const { searchParams } = new URL(request.url);
-  const pegawai_id = searchParams.get('pegawai_id');
+  let pegawai_id = searchParams.get('pegawai_id');
   const sesi = searchParams.get('sesi');
 
   try {
     const totalKelompok = await prisma.halaqohKelompok.count();
     if (totalKelompok === 0) {
       await syncHalaqohFromExcel().catch(() => {});
+    }
+
+    // Resolution for logged in teacher / pengampu
+    if (!pegawai_id && session.role !== "admin_super" && session.role !== "mudir") {
+      if (session.asatidz_id) {
+        pegawai_id = session.asatidz_id;
+      } else if (session.userId) {
+        const p = await prisma.pegawai.findFirst({
+          where: {
+            OR: [
+              { user_id: session.userId },
+              { email: session.email },
+              ...(session.nama ? [{ nama_lengkap: { contains: session.nama.split(" ")[0], mode: "insensitive" as const } }] : [])
+            ]
+          }
+        });
+        if (p) pegawai_id = p.id;
+      }
     }
 
     const kelompok = await prisma.halaqohKelompok.findMany({
@@ -33,6 +51,7 @@ export async function GET(request: Request) {
       },
     });
     return NextResponse.json(kelompok);
+
 
   } catch (error) {
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
