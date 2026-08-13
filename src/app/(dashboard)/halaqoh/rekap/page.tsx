@@ -107,9 +107,9 @@ export default function HalaqohRekapPage() {
 
       {/* Header */}
       <div style={{
-        background: "linear-gradient(135deg, #1e1b4b 0%, #312e81 100%)",
+        background: "linear-gradient(135deg, #550000 0%, #7a0000 100%)",
         borderRadius: 20, padding: "22px 28px", marginBottom: 24, color: "white",
-        boxShadow: "0 8px 32px rgba(49,46,129,0.3)"
+        boxShadow: "0 8px 32px rgba(85,0,0,0.3)"
       }}>
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
           <TrendingUp size={20} />
