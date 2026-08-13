@@ -87,6 +87,42 @@ export default function UjianTahfidzPage() {
 
   useEffect(() => { fetchData(); }, [fetchData]);
 
+  // --- AUTOSAVE DRAFT LOGIC ---
+  const draftKey = "sikap_ujian_draft";
+
+  // Restore draft
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem(draftKey);
+      if (saved) {
+        const d = JSON.parse(saved);
+        if (d.selectedSantriId) setSelectedSantriId(d.selectedSantriId);
+        if (d.jenisUjian) setJenisUjian(d.jenisUjian);
+        if (d.juz) setJuz(d.juz);
+        if (d.surahNama) setSurahNama(d.surahNama);
+        if (d.ayatDari) setAyatDari(d.ayatDari);
+        if (d.ayatKe) setAyatKe(d.ayatKe);
+        if (d.jumlahHalaman) setJumlahHalaman(d.jumlahHalaman);
+        if (d.nilaiBacaanLabel) setNilaiBacaanLabel(d.nilaiBacaanLabel);
+        if (d.nilaiSikapLabel) setNilaiSikapLabel(d.nilaiSikapLabel);
+        if (typeof d.isLulus === "boolean") setIsLulus(d.isLulus);
+        if (d.catatan) setCatatan(d.catatan);
+      }
+    } catch (e) {
+      console.error("Gagal membaca draft", e);
+    }
+  }, []);
+
+  // Save draft
+  useEffect(() => {
+    const draft = {
+      selectedSantriId, jenisUjian, juz, surahNama, ayatDari, ayatKe,
+      jumlahHalaman, nilaiBacaanLabel, nilaiSikapLabel, isLulus, catatan
+    };
+    localStorage.setItem(draftKey, JSON.stringify(draft));
+  }, [selectedSantriId, jenisUjian, juz, surahNama, ayatDari, ayatKe, jumlahHalaman, nilaiBacaanLabel, nilaiSikapLabel, isLulus, catatan]);
+  // ----------------------------
+
   const selectedSantri = allSantri.find(s => s.id === selectedSantriId);
 
   const filteredSantri = allSantri.filter(s =>
@@ -136,6 +172,7 @@ export default function UjianTahfidzPage() {
       setTimeout(() => setSaved(false), 4000);
       setSelectedSantriId("");
       setCatatan("");
+      localStorage.removeItem(draftKey); // Clear draft on success
       await fetchData();
     } catch (e: any) {
       setError(e.message || "Terjadi kesalahan");
