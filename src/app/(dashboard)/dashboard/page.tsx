@@ -3,7 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { BookMarked, ClipboardCheck, UserCheck, BarChart3, TrendingUp, Calendar, Clock, Hand, Zap, BookOpen } from "lucide-react";
 import Link from "next/link";
 import RealtimeClock from "@/components/RealtimeClock";
-
+import { syncScheduleFromPDF } from "@/lib/syncScheduleFromPDF";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -11,18 +11,23 @@ export const revalidate = 0;
 function formatTanggal(date: Date) {
   return date.toLocaleDateString("id-ID", {
     weekday: "long", year: "numeric", month: "long", day: "numeric",
+    timeZone: "Asia/Jakarta"
   });
 }
 
 function formatJam(date: Date) {
   return date.toLocaleTimeString("id-ID", {
     hour: "2-digit", minute: "2-digit",
+    timeZone: "Asia/Jakarta"
   });
 }
 
 export default async function DashboardPage() {
   const session = await getSession();
   
+  // Auto-sync database jadwal pelajaran jika belum terisi
+  await syncScheduleFromPDF().catch(() => {});
+
   // Load current user for password check
   const currentUser = session?.userId ? await prisma.user.findUnique({ where: { id: session.userId } }) : null;
   const isDefaultPassword = currentUser?.plain_password === "GuruAlimam2026!" || 
@@ -55,7 +60,6 @@ export default async function DashboardPage() {
     // Resolved Asatidz ID untuk user yang sedang login
     if (!asatidzId && session?.userId) {
       const p = await prisma.pegawai.findFirst({
-
         where: {
           OR: [
             { user_id: session.userId },
@@ -114,44 +118,10 @@ export default async function DashboardPage() {
     if (results[6].status === "fulfilled") presensiSantri = results[6].value || [];
     if (results[7].status === "fulfilled") jadwalHariIni = (results[7].value || []) as any[];
 
-    // Fallback cerdas: HANYA untuk Ust. Arifin Saefullah jika jadwal di DB belum terisi untuk Kamis
-    const teacherNameLower = (session?.nama || "").toLowerCase();
-    if (jadwalHariIni.length === 0 && asatidzId && (teacherNameLower.includes("arifin") || teacherNameLower.includes("saefullah"))) {
-      const teacherMapel = await prisma.asatidzmMapel.findMany({
-        where: { pegawai_id: asatidzId },
-        include: { mapel: { select: { nama: true } }, kelas: { select: { nama: true } } }
-      });
-
-      if (teacherMapel.length > 0) {
-        const ilItem = teacherMapel.find(t => t.kelas.nama.toUpperCase().includes("IL") || t.kelas.nama.toUpperCase().includes("I'DAD"));
-        const mtsItem = teacherMapel.find(t => t.kelas.nama.toUpperCase().includes("MTS") || t.kelas.nama.includes("7"));
-
-        if (ilItem && mtsItem) {
-          jadwalHariIni = [
-            {
-              id: "dyn-il",
-              jam_ke: "3 - 4",
-              waktu_mulai: "07:00",
-              waktu_selesai: "08:20",
-              mapel: { nama: ilItem.mapel.nama },
-              kelas: { nama: ilItem.kelas.nama }
-            },
-            {
-              id: "dyn-mts",
-              jam_ke: "5 - 6",
-              waktu_mulai: "08:20",
-              waktu_selesai: "09:40",
-              mapel: { nama: mtsItem.mapel.nama },
-              kelas: { nama: mtsItem.kelas.nama }
-            }
-          ];
-        }
-      }
-    }
-
   } catch (err) {
     console.error("DashboardPage: error fetching stats:", err);
   }
+
 
 
   const totalPresensiSantri = presensiSantri.length;
