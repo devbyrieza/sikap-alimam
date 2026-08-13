@@ -167,10 +167,10 @@ export default function IbadahHarianPage() {
         display: "flex",
         justifyContent: "space-between",
         alignItems: "center",
-        background: "linear-gradient(135deg, #0f172a 0%, #1e293b 60%, #0369a1 100%)",
+        background: "linear-gradient(135deg, #550000 0%, #7a0000 100%)",
         borderRadius: "24px",
         padding: "32px 36px",
-        boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.2), 0 8px 10px -6px rgba(0, 0, 0, 0.1)",
+        boxShadow: "0 10px 30px rgba(85, 0, 0, 0.35)",
         color: "white",
         position: "relative",
         overflow: "hidden"
@@ -330,14 +330,14 @@ export default function IbadahHarianPage() {
                 display: "flex",
                 alignItems: "center",
                 gap: "8px",
-                backgroundColor: saving || data.length === 0 ? "#94a3b8" : "#0284c7",
+                backgroundColor: saving || data.length === 0 ? "#94a3b8" : "#550000",
                 color: "white",
                 padding: "10px 18px",
                 borderRadius: "14px",
                 fontWeight: "bold",
                 border: "none",
                 cursor: saving || data.length === 0 ? "not-allowed" : "pointer",
-                boxShadow: saving || data.length === 0 ? "none" : "0 4px 6px -1px rgba(2, 132, 199, 0.4)",
+                boxShadow: saving || data.length === 0 ? "none" : "0 4px 6px -1px rgba(85, 0, 0, 0.4)",
                 transition: "all 0.2s"
               }}
             >

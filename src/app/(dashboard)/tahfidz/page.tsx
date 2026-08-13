@@ -273,11 +273,11 @@ export default function TahfidzPage() {
         display: "flex",
         justifyContent: "space-between",
         alignItems: "center",
-        background: "linear-gradient(135deg, #0f172a 0%, #1e293b 60%, #f59e0b 100%)",
+        background: "linear-gradient(135deg, #550000 0%, #7a0000 100%)",
         borderRadius: "24px",
         padding: "32px 36px",
         color: "white",
-        boxShadow: "0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05)"
+        boxShadow: "0 10px 30px rgba(85, 0, 0, 0.35)"
       }}>
         <div>
           <h1 style={{ fontSize: "28px", fontWeight: "bold", margin: 0, display: "flex", alignItems: "center", gap: "8px" }}>
@@ -337,7 +337,7 @@ export default function TahfidzPage() {
 
           <button
             style={{
-              background: (!selectedKelas || !tanggal || loadingSantri) ? "#94a3b8" : "#0f172a",
+              background: (!selectedKelas || !tanggal || loadingSantri) ? "#94a3b8" : "#550000",
               color: "white",
               padding: "12px 24px",
               borderRadius: "14px",
@@ -514,7 +514,7 @@ export default function TahfidzPage() {
           <div style={{ display: "flex", justifyContent: "flex-end" }}>
             <button
               style={{
-                background: "#0f172a",
+                background: "#550000",
                 color: "white",
                 padding: "14px 28px",
                 borderRadius: "14px",

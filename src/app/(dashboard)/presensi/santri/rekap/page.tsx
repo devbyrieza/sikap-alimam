@@ -33,8 +33,8 @@ interface RekapSummary {
 
 const STATUS_COLORS: Record<string, { bg: string; color: string; short: string }> = {
   hadir: { bg: "#dcfce7", color: "#15803d", short: "H" },
-  sakit: { bg: "#fef9c3", color: "#a16207", short: "S" },
-  izin:  { bg: "#dbeafe", color: "#1d4ed8", short: "I" },
+  sakit: { bg: "#dbeafe", color: "#1d4ed8", short: "S" },
+  izin:  { bg: "#fef3c7", color: "#d97706", short: "I" },
   alpha: { bg: "#fee2e2", color: "#b91c1c", short: "A" },
 };
 

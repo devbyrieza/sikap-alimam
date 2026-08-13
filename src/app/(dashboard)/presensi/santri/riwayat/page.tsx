@@ -68,8 +68,8 @@ const BULAN_NAMA = [
 
 const STATUS_CONFIG: Record<string, { label: string; color: string; bg: string; border: string; icon: any }> = {
   hadir: { label: "Hadir", color: "#15803d", bg: "#f0fdf4", border: "#bbf7d0", icon: CheckCircle2 },
-  sakit: { label: "Sakit", color: "#a16207", bg: "#fefce8", border: "#fef08a", icon: AlertCircle },
-  izin: { label: "Izin", color: "#1d4ed8", bg: "#eff6ff", border: "#bfdbfe", icon: Clock },
+  sakit: { label: "Sakit", color: "#1d4ed8", bg: "#eff6ff", border: "#bfdbfe", icon: AlertCircle },
+  izin: { label: "Izin", color: "#d97706", bg: "#fffbeb", border: "#fde68a", icon: Clock },
   alpha: { label: "Alpha", color: "#b91c1c", bg: "#fef2f2", border: "#fecaca", icon: XCircle },
 };
 

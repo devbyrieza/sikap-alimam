@@ -364,8 +364,8 @@ export default function PresensiAsatidz({
           {([
             { label: "Hadir", value: stats.hadir, color: "#15803d", bg: "#f0fdf4", border: "#bbf7d0" },
             { label: "Telat", value: stats.telat, color: "#c2410c", bg: "#fff7ed", border: "#fed7aa" },
-            { label: "Sakit", value: stats.sakit, color: "#a16207", bg: "#fefce8", border: "#fef08a" },
-            { label: "Izin", value: stats.izin, color: "#1d4ed8", bg: "#eff6ff", border: "#bfdbfe" },
+            { label: "Sakit", value: stats.sakit, color: "#1d4ed8", bg: "#eff6ff", border: "#bfdbfe" },
+            { label: "Izin", value: stats.izin, color: "#d97706", bg: "#fffbeb", border: "#fde68a" },
             { label: "Alpha", value: stats.alpha, color: "#b91c1c", bg: "#fef2f2", border: "#fecaca" },
             { label: "Belum Absen", value: stats.belum, color: "#550000", bg: "#fdf8f0", border: "#ebdcc3" },
           ] as const).map((s) => (
@@ -471,9 +471,9 @@ export default function PresensiAsatidz({
                             fontWeight: 800,
                             padding: "3px 10px",
                             borderRadius: 14,
-                            background: p.status === 'hadir' ? '#f0fdf4' : p.status === 'telat' ? '#fff7ed' : '#fef2f2',
-                            color: p.status === 'hadir' ? '#15803d' : p.status === 'telat' ? '#c2410c' : '#b91c1c',
-                            border: `1px solid ${p.status === 'hadir' ? '#bbf7d0' : p.status === 'telat' ? '#fed7aa' : '#fecaca'}`,
+                            background: p.status === 'hadir' ? '#f0fdf4' : p.status === 'telat' ? '#fff7ed' : p.status === 'sakit' ? '#eff6ff' : p.status === 'izin' ? '#fffbeb' : '#fef2f2',
+                            color: p.status === 'hadir' ? '#15803d' : p.status === 'telat' ? '#c2410c' : p.status === 'sakit' ? '#1d4ed8' : p.status === 'izin' ? '#d97706' : '#b91c1c',
+                            border: `1px solid ${p.status === 'hadir' ? '#bbf7d0' : p.status === 'telat' ? '#fed7aa' : p.status === 'sakit' ? '#bfdbfe' : p.status === 'izin' ? '#fde68a' : '#fecaca'}`,
                             textTransform: "capitalize",
                           }}
                         >

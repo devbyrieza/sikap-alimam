@@ -99,12 +99,12 @@ export default function FilterNilaiPage() {
           background-color: #f8fafc !important;
         }
       `}</style>
-      <div style={{ background: "linear-gradient(135deg, #0f172a 0%, #1e293b 60%, #2563eb 100%)", borderRadius: "24px", padding: "32px 36px", display: "flex", justifyContent: "space-between", alignItems: "center", boxShadow: "0 20px 25px -5px rgba(37, 99, 235, 0.2), 0 10px 10px -5px rgba(37, 99, 235, 0.1)" }}>
+      <div style={{ background: "linear-gradient(135deg, #550000 0%, #7a0000 100%)", borderRadius: "24px", padding: "32px 36px", display: "flex", justifyContent: "space-between", alignItems: "center", boxShadow: "0 10px 30px rgba(85, 0, 0, 0.35)" }}>
         <div>
           <h1 style={{ fontSize: "1.875rem", fontWeight: "bold", color: "white", margin: "0 0 8px 0", display: "flex", alignItems: "center", gap: "8px" }}>
             <BookOpen size={24} /> Pusat Data Nilai Akademik
           </h1>
-          <p style={{ color: "#bfdbfe", margin: 0 }}>Filter, pantau, dan unduh data nilai santri per jenjang dan mata pelajaran.</p>
+          <p style={{ color: "rgba(255, 255, 255, 0.9)", margin: 0 }}>Filter, pantau, dan unduh data nilai santri per jenjang dan mata pelajaran.</p>
         </div>
       </div>
 
@@ -157,7 +157,7 @@ export default function FilterNilaiPage() {
           />
         </div>
 
-        <button onClick={handleFilter} style={{ background: "#2563eb", color: "white", padding: "10px 18px", borderRadius: "14px", fontWeight: "bold", border: "none", display: "flex", alignItems: "center", gap: "8px", cursor: "pointer", boxShadow: "0 4px 6px -1px rgba(37, 99, 235, 0.2)", height: "42px" }}>
+        <button onClick={handleFilter} style={{ background: "#550000", color: "white", padding: "10px 18px", borderRadius: "14px", fontWeight: "bold", border: "none", display: "flex", alignItems: "center", gap: "8px", cursor: "pointer", boxShadow: "0 4px 6px -1px rgba(85, 0, 0, 0.2)", height: "42px" }}>
           <Filter size={18} />
           Terapkan Filter
         </button>

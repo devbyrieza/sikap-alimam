@@ -190,11 +190,11 @@ export default function TahfidzDetailPage() {
           justifyContent: "space-between",
           alignItems: "center",
           gap: "16px",
-          background: "linear-gradient(135deg, #0f172a 0%, #1e293b 60%, #f59e0b 100%)",
+          background: "linear-gradient(135deg, #550000 0%, #440000 60%, #ddc192 100%)",
           borderRadius: "24px",
           padding: "32px 36px",
           color: "white",
-          boxShadow: "0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05)"
+          boxShadow: "0 10px 15px -3px rgba(85,0,0,0.1), 0 4px 6px -2px rgba(85,0,0,0.05)"
         }}>
           <div>
             <div style={{ fontSize: "12px", textTransform: "uppercase", letterSpacing: "1px", color: "#fcd34d", fontWeight: 600, marginBottom: "4px" }}>Nama Santri</div>
@@ -212,7 +212,7 @@ export default function TahfidzDetailPage() {
             }}
             style={{
               background: "white",
-              color: "#0f172a",
+              color: "#550000",
               padding: "14px 24px",
               borderRadius: "14px",
               fontWeight: "bold",
@@ -355,10 +355,10 @@ export default function TahfidzDetailPage() {
         <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.5)", backdropFilter: "blur(4px)", display: "flex", alignItems: "center", justifyContent: "center", padding: "16px", zIndex: 50 }}>
           <div style={{ background: "white", borderRadius: "24px", boxShadow: "0 25px 50px -12px rgba(0,0,0,0.25)", border: "1px solid #f1f5f9", width: "100%", maxWidth: "500px", overflow: "hidden" }}>
             {/* Modal Header */}
-            <div style={{ background: "#0f172a", color: "white", padding: "24px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <div style={{ background: "#550000", color: "white", padding: "24px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
               <div>
                 <h3 style={{ fontWeight: "bold", fontSize: "18px", margin: 0 }}>Catat Mutabaah Tahfidz</h3>
-                <p style={{ color: "#94a3b8", fontSize: "13px", marginTop: "4px" }}>Input perkembangan Al-Quran santri</p>
+                <p style={{ color: "rgba(255,255,255,0.7)", fontSize: "13px", marginTop: "4px" }}>Input perkembangan Al-Quran santri</p>
               </div>
               <button 
                 onClick={() => setShowModal(false)}
@@ -508,7 +508,7 @@ export default function TahfidzDetailPage() {
                 </button>
                 <button
                   type="submit"
-                  style={{ background: "#0f172a", color: "white", padding: "12px 24px", borderRadius: "12px", fontWeight: "bold", border: "none", cursor: "pointer", display: "flex", alignItems: "center", gap: "8px", fontSize: "14px", boxShadow: "0 4px 6px rgba(0,0,0,0.1)" }}
+                  style={{ background: "#550000", color: "white", padding: "12px 24px", borderRadius: "12px", fontWeight: "bold", border: "none", cursor: "pointer", display: "flex", alignItems: "center", gap: "8px", fontSize: "14px", boxShadow: "0 4px 6px rgba(85,0,0,0.1)" }}
                 >
                   <Save size={18} /> Simpan
                 </button>

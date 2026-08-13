@@ -45,14 +45,14 @@ const STATUS_LABEL: Record<StatusType, string> = {
 };
 const STATUS_COLOR: Record<StatusType, string> = {
   hadir: "#15803d",
-  sakit: "#a16207",
-  izin: "#1d4ed8",
+  sakit: "#1d4ed8",
+  izin: "#d97706",
   alpha: "#b91c1c",
 };
 const STATUS_BG: Record<StatusType, string> = {
   hadir: "rgba(21,128,61,0.10)",
-  sakit: "rgba(161,98,7,0.10)",
-  izin: "rgba(29,78,216,0.10)",
+  sakit: "rgba(29,78,216,0.10)",
+  izin: "rgba(217,119,6,0.10)",
   alpha: "rgba(185,28,28,0.10)",
 };
 

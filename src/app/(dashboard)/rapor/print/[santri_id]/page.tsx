@@ -95,10 +95,10 @@ export default function CetakRaporPage() {
         display: "flex",
         alignItems: "center",
         justifyContent: "space-between",
-        background: "linear-gradient(135deg, #0f172a 0%, #1e293b 60%, #8b5cf6 100%)",
+        background: "linear-gradient(135deg, #550000 0%, #7a0000 100%)",
         borderRadius: "24px",
         padding: "32px 36px",
-        boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)",
+        boxShadow: "0 10px 30px rgba(85, 0, 0, 0.35)",
         color: "white"
       }}>
         <div>
@@ -114,7 +114,7 @@ export default function CetakRaporPage() {
           style={{ 
             padding: "10px 18px", 
             borderRadius: "14px", 
-            backgroundColor: "#10b981", 
+            backgroundColor: "#550000", 
             color: "white", 
             border: "none", 
             cursor: "pointer", 
