@@ -203,7 +203,7 @@ export default function HalaqohDashboardPage() {
 
 
   return (
-    <div style={{ maxWidth: 1100, margin: "0 auto", padding: "24px 16px", fontFamily: "inherit" }}>
+    <div style={{ maxWidth: 1100, width: "100%", overflowX: "hidden", margin: "0 auto", padding: "24px 16px", fontFamily: "inherit", boxSizing: "border-box" }}>
       {/* Header Banner */}
       <div style={{
         background: "linear-gradient(135deg, #550000 0%, #7a0000 100%)",
