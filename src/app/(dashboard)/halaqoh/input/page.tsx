@@ -612,20 +612,22 @@ export default function HalaqohInputPage() {
                   )}
 
                   {/* Preview Nilai Akhir */}
-                  {entry.kehadiran === "hadir" && (
-                    <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 10 }}>
-                      <div style={{ display: "flex", flexDirection: "column" }}>
-                        <span style={{ fontSize: 12, color: "#64748b", fontWeight: 600 }}>Nilai Akhir:</span>
-                        <span style={{ fontSize: 10, color: "#94a3b8" }}>(Rata-rata Sikap & Setoran)</span>
+                  {entry.kehadiran === "hadir" && (() => {
+                    const nSikap = indikatorToNilai(entry.nilai_sikap_label);
+                    const nBacaan = indikatorToNilai(entry.nilai_bacaan_label);
+                    const nAkhir = Math.round((nSikap + nBacaan) / 2);
+                    return (
+                      <div style={{ background: "#f8fafc", borderRadius: 12, padding: "12px 16px", marginBottom: 14, border: "1px dashed #cbd5e1" }}>
+                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
+                          <span style={{ fontSize: 12, color: "#64748b", fontWeight: 600 }}>Kalkulasi Nilai Akhir:</span>
+                          <span style={{ fontWeight: 800, fontSize: 16, color: "#550000" }}>{nAkhir}</span>
+                        </div>
+                        <div style={{ fontSize: 12, color: "#475569", fontFamily: "monospace", background: "#f1f5f9", padding: "8px 12px", borderRadius: 8 }}>
+                          (Sikap: <strong>{nSikap}</strong> + Setoran: <strong>{nBacaan}</strong>) ÷ 2 = <strong>{nAkhir}</strong>
+                        </div>
                       </div>
-                      <span style={{
-                        fontWeight: 800, fontSize: 15, color: "#550000",
-                        background: "#fff1f2", padding: "3px 12px", borderRadius: 8
-                      }}>
-                        {Math.round((indikatorToNilai(entry.nilai_sikap_label) + indikatorToNilai(entry.nilai_bacaan_label)) / 2)}
-                      </span>
-                    </div>
-                  )}
+                    );
+                  })()}
 
                   {/* Catatan */}
                   <div>

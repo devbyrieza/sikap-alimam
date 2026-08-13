@@ -409,20 +409,19 @@ export default function UjianTahfidzPage() {
 
         {/* Total Skor Preview */}
         <div style={{
-          background: "#f8fafc", border: "1px solid #e2e8f0", borderRadius: 14, padding: "14px 20px",
-          display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 20
+          background: "#f8fafc", border: "1px dashed #cbd5e1", borderRadius: 14, padding: "16px 20px",
+          marginBottom: 20
         }}>
-          <div>
-            <div style={{ fontSize: 13, color: "#64748b", fontWeight: 600 }}>Total Nilai Ujian:</div>
-            <div style={{ fontSize: 11, color: "#94a3b8", marginTop: 2 }}>(Rata-rata Kelancaran & Adab)</div>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 10 }}>
+            <span style={{ fontSize: 13, color: "#64748b", fontWeight: 600 }}>Kalkulasi Nilai Ujian:</span>
+            <span style={{ fontSize: 24, fontWeight: 900, color: "#550000" }}>{finalNilai}</span>
           </div>
-          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+          <div style={{ fontSize: 12, color: "#475569", fontFamily: "monospace", background: "#f1f5f9", padding: "8px 12px", borderRadius: 8 }}>
+            (Kelancaran: <strong>{nilaiBacaan}</strong> + Adab: <strong>{nilaiSikap}</strong>) ÷ 2 
             {jenisUjian === "ujian_itqon" && isLulus && (
-              <span style={{ background: "#ecfeff", color: "#0e7490", padding: "3px 8px", borderRadius: 6, fontSize: 11, fontWeight: 800 }}>
-                +10 Bonus Itqon
-              </span>
+              <span style={{ color: "#059669" }}> + <strong>10</strong> (Bonus Itqon)</span>
             )}
-            <span style={{ fontSize: 22, fontWeight: 900, color: "#550000" }}>{finalNilai}</span>
+            {" "} = <strong>{finalNilai}</strong>
           </div>
         </div>
 
