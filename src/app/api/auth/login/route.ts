@@ -105,9 +105,12 @@ export async function POST(req: NextRequest) {
       role: user.role,
       originalRole: user.role,
       asatidz_id: asatidzId,
+      spp_access_blocked: (user as any).spp_access_blocked ?? false,
+      spp_blocked_reason: (user as any).spp_blocked_reason ?? undefined,
     });
 
     return NextResponse.json({ success: true, role: user.role, nama: formattedNama });
+
   } catch (err) {
     console.error("Login error:", err);
     return NextResponse.json(

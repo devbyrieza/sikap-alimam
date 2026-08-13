@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getSession } from "@/lib/auth";
 
 // Halaman yang tidak perlu login
-const PUBLIC_PATHS = ["/login", "/absen"];
+const PUBLIC_PATHS = ["/login", "/absen", "/akses-diblokir"];
 
 export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
@@ -23,7 +23,17 @@ export async function middleware(req: NextRequest) {
     return NextResponse.redirect(new URL("/login", req.url));
   }
 
-  return NextResponse.next(); 
+  // Blokir Wali Santri yang belum lunas SPP (flag manual oleh Admin Keuangan)
+  if (
+    session.role?.toLowerCase() === "wali_santri" &&
+    (session as any).spp_access_blocked === true
+  ) {
+    if (!pathname.startsWith("/akses-diblokir")) {
+      return NextResponse.redirect(new URL("/akses-diblokir", req.url));
+    }
+  }
+
+  return NextResponse.next();
 }
 
 export const config = {

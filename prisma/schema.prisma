@@ -17,6 +17,8 @@ model User {
   nama           String
   role           String   @default("guru") // ADMIN_SUPER | ADMIN_KEUANGAN | MUDIR | KEPALA_SEKOLAH | KABID_PENGASUHAN | KABID_ASRAMA | KABID_KEDISIPLINAN | KABID_KURIKULUM | GURU | MUSYRIF | WALI_SANTRI
   is_active      Boolean  @default(true)
+  spp_access_blocked  Boolean  @default(false) // jika true, Wali Santri tidak bisa akses SIKAP
+  spp_blocked_reason  String?  // contoh: "SPP Agustus 2026 belum lunas"
   created_at     DateTime @default(now()) @db.Timestamptz(6)
 
   pegawai               Pegawai?
