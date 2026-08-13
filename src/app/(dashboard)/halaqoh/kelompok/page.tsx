@@ -42,21 +42,32 @@ export default function HalaqohKelompokPage() {
     kelas_id: "",
   });
 
+  const [profile, setProfile] = useState<any>(null);
+
+  const canManage = () => {
+    const role = (profile?.role || "").toLowerCase();
+    return role.includes("admin_super") || role.includes("mudir") || role.includes("kabid_pengasuhan");
+  };
+
   const fetchAll = useCallback(async () => {
     setLoading(true);
     try {
-      const [kRes, sRes] = await Promise.all([
+      const [kRes, sRes, pRes] = await Promise.all([
         fetch("/api/halaqoh/kelompok"),
         fetch("/api/halaqoh/master"),
+        fetch("/api/profile"),
       ]);
       const kData = await kRes.json();
       const sData = await sRes.json();
+      const pData = await pRes.json();
       setKelompokList(Array.isArray(kData) ? kData : kData.kelompok || []);
       setAllSantri(sData.santri || []);
+      setProfile(pData?.user);
     } finally {
       setLoading(false);
     }
   }, []);
+
 
   useEffect(() => { fetchAll(); }, [fetchAll]);
 
@@ -248,21 +259,23 @@ export default function HalaqohKelompokPage() {
                       <span style={{ fontSize: 12, fontWeight: 700, color: "#475569", textTransform: "uppercase", letterSpacing: "0.05em" }}>
                         Daftar Anggota
                       </span>
-                      <button
-                        onClick={() => { setAddSantriFor(isAddingHere ? null : kelompok.id); setSearchSantri(""); }}
-                        style={{
-                          display: "flex", alignItems: "center", gap: 6, background: "#f8fafc",
-                          border: "1px solid #e2e8f0", color: "#475569", padding: "6px 12px",
-                          borderRadius: 8, cursor: "pointer", fontSize: 12, fontWeight: 600
-                        }}
-                      >
-                        {isAddingHere ? <X size={12} /> : <Plus size={12} />}
-                        {isAddingHere ? "Batal" : "Tambah Santri"}
-                      </button>
+                      {canManage() && (
+                        <button
+                          onClick={() => { setAddSantriFor(isAddingHere ? null : kelompok.id); setSearchSantri(""); }}
+                          style={{
+                            display: "flex", alignItems: "center", gap: 6, background: "#f8fafc",
+                            border: "1px solid #e2e8f0", color: "#475569", padding: "6px 12px",
+                            borderRadius: 8, cursor: "pointer", fontSize: 12, fontWeight: 600
+                          }}
+                        >
+                          {isAddingHere ? <X size={12} /> : <Plus size={12} />}
+                          {isAddingHere ? "Batal" : "Tambah Santri"}
+                        </button>
+                      )}
                     </div>
 
                     {/* Search Santri */}
-                    {isAddingHere && (
+                    {isAddingHere && canManage() && (
                       <div style={{ marginBottom: 12 }}>
                         <div style={{ position: "relative", marginBottom: 8 }}>
                           <Search size={14} style={{ position: "absolute", left: 12, top: "50%", transform: "translateY(-50%)", color: "#94a3b8" }} />
@@ -320,17 +333,20 @@ export default function HalaqohKelompokPage() {
                               <div style={{ fontSize: 12, fontWeight: 600, color: "#1e293b" }}>{anggota.santri.nama_lengkap}</div>
                               <div style={{ fontSize: 11, color: "#94a3b8" }}>{anggota.santri.nis || "—"}</div>
                             </div>
-                            <button
-                              onClick={() => handleRemoveAnggota(kelompok.id, anggota.santri.id)}
-                              style={{ background: "none", border: "none", cursor: "pointer", color: "#ef4444", padding: 4 }}
-                              title="Hapus dari kelompok"
-                            >
-                              <Trash2 size={13} />
-                            </button>
+                            {canManage() && (
+                              <button
+                                onClick={() => handleRemoveAnggota(kelompok.id, anggota.santri.id)}
+                                style={{ background: "none", border: "none", cursor: "pointer", color: "#ef4444", padding: 4 }}
+                                title="Hapus dari kelompok"
+                              >
+                                <Trash2 size={13} />
+                              </button>
+                            )}
                           </div>
                         ))}
                       </div>
                     )}
+
                   </div>
                 )}
               </div>
