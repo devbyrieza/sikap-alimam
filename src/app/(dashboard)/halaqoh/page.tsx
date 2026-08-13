@@ -93,6 +93,9 @@ export default function HalaqohDashboardPage() {
   const [search, setSearch] = useState("");
   const [kelasFilter, setKelasFilter] = useState("all");
 
+  const [scopeFilter, setScopeFilter] = useState<"mine" | "all">("mine");
+  const [pegawaiName, setPegawaiName] = useState<string>("");
+
   const getSesiAktifHariIni = (): string[] => {
     if (hariIni === "Ahad") return [];
     const sesi: string[] = [];
@@ -119,7 +122,19 @@ export default function HalaqohDashboardPage() {
       fetch("/api/profile").then(r => r.json()),
     ]).then(([kData, pData]) => {
       setKelompokList(Array.isArray(kData) ? kData : []);
-      setProfile(pData?.user);
+      const u = pData?.user;
+      const p = pData?.pegawai;
+      setProfile(u);
+      const name = p?.nama_lengkap || u?.nama || "";
+      setPegawaiName(name);
+
+      const r = (u?.role || "").toLowerCase();
+      // If admin/mudir/kabid/wali_kelas, default to "all", else default to "mine"
+      if (r.includes("admin") || r.includes("mudir") || r.includes("kabid") || r.includes("wali")) {
+        setScopeFilter("all");
+      } else {
+        setScopeFilter("mine");
+      }
     }).finally(() => setLoading(false));
   }, []);
 
@@ -157,6 +172,14 @@ export default function HalaqohDashboardPage() {
     return <span style={{ background: "#fef2f2", color: "#dc2626", border: "1px solid #fecaca", padding: "2px 8px", borderRadius: 8, fontSize: 11, fontWeight: 700 }}>{nilai} · Perlu Bimbingan</span>;
   };
 
+  const isMySantri = (s: SantriMutabaah) => {
+    if (!pegawaiName) return false;
+    const musyrif = (s.kelompok_halaqoh?.musyrif || "").toLowerCase();
+    const pName = pegawaiName.toLowerCase();
+    const parts = pName.split(" ").filter(w => w.length > 2);
+    return musyrif.includes(pName) || (parts.length > 0 && parts.some(part => musyrif.includes(part)));
+  };
+
   const uniqueKelas = Array.from(new Set(santriList.map((s) => s.kelas).filter(Boolean)));
   const filteredSantri = santriList.filter((s) => {
     const matchSearch =
@@ -165,8 +188,11 @@ export default function HalaqohDashboardPage() {
       (s.kelompok_halaqoh?.musyrif && s.kelompok_halaqoh.musyrif.toLowerCase().includes(search.toLowerCase()));
 
     const matchKelas = kelasFilter === "all" || s.kelas === kelasFilter;
-    return matchSearch && matchKelas;
+    const matchScope = scopeFilter === "all" || isMySantri(s);
+
+    return matchSearch && matchKelas && matchScope;
   });
+
 
   return (
     <div style={{ maxWidth: 1100, margin: "0 auto", padding: "24px 16px", fontFamily: "inherit" }}>
@@ -440,7 +466,18 @@ export default function HalaqohDashboardPage() {
             </div>
 
             <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-              <Filter size={16} color="#64748b" />
+              <select
+                value={scopeFilter}
+                onChange={(e) => setScopeFilter(e.target.value as "mine" | "all")}
+                style={{
+                  padding: "10px 14px", borderRadius: 12, border: "1.5px solid #0284c7",
+                  fontSize: 13, fontWeight: 700, color: "#0369a1", background: "#f0f9ff"
+                }}
+              >
+                <option value="mine">🟢 Kelompok Saya ({santriList.filter(isMySantri).length} Santri)</option>
+                <option value="all">🌐 Semua Kelompok ({santriList.length} Santri)</option>
+              </select>
+
               <select
                 value={kelasFilter}
                 onChange={(e) => setKelasFilter(e.target.value)}
@@ -468,6 +505,7 @@ export default function HalaqohDashboardPage() {
               </Link>
             </div>
           </div>
+
 
           {/* Table Mutabaah */}
           {loadingMutabaah ? (
