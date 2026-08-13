@@ -105,25 +105,43 @@ export function sortKelasNames(names: string[]): string[] {
 
 export function normalizeKelasList<T extends { id: string, nama: string, jenjang?: string | null, _count?: { santri: number } }>(kelasList: T[]): T[] {
   const result: T[] = [];
+  const seenKeys = new Set<string>();
   
   for (const k of kelasList) {
-    let rawName = k.nama || "";
+    let rawName = (k.nama || "").trim();
     let jenjang = getJenjangFromKelas(rawName, k.jenjang);
     
-    // Normalize nama: remove "(MTs)", "(MA)", "(Islamiyah)", etc if present
     let cleanName = rawName.replace(/\s*\([^)]*\)/g, "").trim();
-    // Strip redundant " MTs", " MA" at the end of the class name
-    cleanName = cleanName.replace(/\s*(MTs|MA|IL)$/i, "").trim();
 
-    // Specific normalize for IL
-    if (jenjang === "IL" || cleanName.toUpperCase().includes("I'DAD") || cleanName.toUpperCase().includes("IDAD")) {
-      // If the name is too long, we can simplify it, but we MUST keep distinguishing words.
-      // For now, let's just ensure jenjang is IL
+    // Normalisasi khusus untuk IL: Sesuai instruksi user, nama hanya "IL"
+    if (
+      jenjang === "IL" ||
+      cleanName.toUpperCase().includes("I'DAD") ||
+      cleanName.toUpperCase().includes("IDAD") ||
+      cleanName.toUpperCase().includes("LUGHOWY") ||
+      cleanName.toUpperCase() === "IL"
+    ) {
       jenjang = "IL";
+      cleanName = "IL";
+    } else {
+      // Hapus akhiran redundant "(MTs)" / "(MA)" hanya jika nama tidak menjadi kosong
+      const stripped = cleanName.replace(/\s*(MTs|MA)$/i, "").trim();
+      if (stripped && stripped.length > 0) {
+        cleanName = stripped;
+      }
     }
 
-    result.push({ ...k, nama: cleanName, jenjang });
+    if (!cleanName) {
+      cleanName = rawName || "IL";
+    }
+
+    const key = `${jenjang}_${cleanName.toUpperCase()}`;
+    if (!seenKeys.has(key)) {
+      seenKeys.add(key);
+      result.push({ ...k, nama: cleanName, jenjang });
+    }
   }
 
   return sortKelas(result);
 }
+

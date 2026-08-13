@@ -15,9 +15,40 @@ export async function GET(req: NextRequest) {
 
     const tanggalDate = new Date(tanggal);
 
-    // Ambil semua santri aktif di kelas tersebut
+    // Ambil info kelas yang dipilih
+    const selectedKelasInfo = await prisma.kelas.findUnique({ where: { id: kelas_id } });
+
+    let allowedKelasIds = [kelas_id];
+    if (selectedKelasInfo) {
+      const isIL = selectedKelasInfo.jenjang === "IL" || 
+                   selectedKelasInfo.nama.toUpperCase().includes("IL") || 
+                   selectedKelasInfo.nama.toUpperCase().includes("I'DAD") || 
+                   selectedKelasInfo.nama.toUpperCase().includes("IDAD") ||
+                   selectedKelasInfo.nama.toUpperCase().includes("LUGHOWY");
+      
+      if (isIL) {
+        const ilKelasRecords = await prisma.kelas.findMany({
+          where: {
+            OR: [
+              { jenjang: "IL" },
+              { nama: { contains: "IL", mode: "insensitive" } },
+              { nama: { contains: "I'dad", mode: "insensitive" } },
+              { nama: { contains: "Idad", mode: "insensitive" } },
+              { nama: { contains: "Lughow", mode: "insensitive" } }
+            ]
+          },
+          select: { id: true }
+        });
+        allowedKelasIds = Array.from(new Set([kelas_id, ...ilKelasRecords.map(k => k.id)]));
+      }
+    }
+
+    // Ambil semua santri aktif di kelas-kelas sepadan tersebut
     const santri = await prisma.santriAktif.findMany({
-      where: { kelas_id, is_active: true },
+      where: {
+        kelas_id: { in: allowedKelasIds },
+        is_active: true
+      },
       orderBy: { nama_lengkap: "asc" },
       select: { id: true, nama_lengkap: true, nis: true },
     });
@@ -25,13 +56,14 @@ export async function GET(req: NextRequest) {
     // Ambil presensi yang sudah ada untuk tanggal tersebut
     const presensiAda = await prisma.presensiSiswa.findMany({
       where: {
-        kelas_id,
+        kelas_id: { in: allowedKelasIds },
         tanggal: tanggalDate,
         ...(mapel_id ? { mapel_id } : { mapel_id: null }),
         ...(jam_ke ? { jam_ke } : { jam_ke: null }),
       },
       select: { santri_id: true, status: true, keterangan: true, id: true },
     });
+
 
     // Map presensi ke santri_id
     const presensiMap = new Map(presensiAda.map((p) => [p.santri_id, p]));
