@@ -164,6 +164,11 @@ export default function HalaqohDashboardPage() {
     return role.includes("admin_super") || role.includes("musyrif") || role.includes("mudir") || role.includes("guru") || role.includes("pengampu");
   };
 
+  const isPimpinan = () => {
+    const role = (profile?.role || "").toLowerCase();
+    return role.includes("admin") || role.includes("mudir") || role.includes("kabid") || role.includes("wali_kelas");
+  };
+
   const getNilaiBadge = (nilai?: number | null) => {
     if (!nilai) return <span style={{ fontSize: 11, color: "#94a3b8" }}>Belum ada setoran</span>;
     if (nilai >= 90) return <span style={{ background: "#ecfdf5", color: "#059669", border: "1px solid #a7f3d0", padding: "2px 8px", borderRadius: 8, fontSize: 11, fontWeight: 700 }}>{nilai} · Sangat Baik</span>;
@@ -466,17 +471,32 @@ export default function HalaqohDashboardPage() {
             </div>
 
             <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-              <select
-                value={scopeFilter}
-                onChange={(e) => setScopeFilter(e.target.value as "mine" | "all")}
-                style={{
-                  padding: "10px 14px", borderRadius: 12, border: "1.5px solid #0284c7",
-                  fontSize: 13, fontWeight: 700, color: "#0369a1", background: "#f0f9ff"
-                }}
-              >
-                <option value="mine">🟢 Kelompok Saya ({santriList.filter(isMySantri).length} Santri)</option>
-                <option value="all">🌐 Semua Kelompok ({santriList.length} Santri)</option>
-              </select>
+              {isPimpinan() ? (
+                /* Pimpinan: dropdown bebas pilih scope */
+                <select
+                  value={scopeFilter}
+                  onChange={(e) => setScopeFilter(e.target.value as "mine" | "all")}
+                  style={{
+                    padding: "10px 14px", borderRadius: 12, border: "1.5px solid #0284c7",
+                    fontSize: 13, fontWeight: 700, color: "#0369a1", background: "#f0f9ff"
+                  }}
+                >
+                  <option value="all">🌐 Semua Kelompok ({santriList.length} Santri)</option>
+                  <option value="mine">🟢 Kelompok Saya</option>
+                </select>
+              ) : (
+                /* Pengampu: terkunci hanya tampil santri bimbingannya */
+                <div style={{
+                  display: "flex", alignItems: "center", gap: 8,
+                  background: "#f0fdf4", border: "1.5px solid #86efac",
+                  borderRadius: 12, padding: "8px 14px"
+                }}>
+                  <span style={{ fontSize: 16 }}>🟢</span>
+                  <span style={{ fontSize: 13, fontWeight: 700, color: "#15803d" }}>
+                    Kelompok Saya — {filteredSantri.length} Santri Bimbingan
+                  </span>
+                </div>
+              )}
 
               <select
                 value={kelasFilter}
