@@ -23,8 +23,9 @@ export default function LaporanHalaqohPage() {
 
   useEffect(() => {
     fetch("/api/halaqoh/master").then(r => r.json()).then(d => {
-      setAllSantri(d.santri || []);
-      if (d.santri?.length > 0) setSelectedSantriId(d.santri[0].id);
+      const dataSantri = d.santriAktif || d.santri || [];
+      setAllSantri(dataSantri);
+      if (dataSantri.length > 0) setSelectedSantriId(dataSantri[0].id);
     });
   }, []);
 
@@ -69,7 +70,7 @@ export default function LaporanHalaqohPage() {
 
         {/* Header */}
         <div style={{
-          background: "linear-gradient(135deg, #1e293b 0%, #334155 100%)",
+          background: "linear-gradient(135deg, #550000 0%, #7a0000 100%)",
           borderRadius: 20, padding: "22px 28px", marginBottom: 24, color: "white",
           display: "flex", alignItems: "center", justifyContent: "space-between"
         }}>
