@@ -541,27 +541,27 @@ export default function HalaqohDashboardPage() {
               overflow: "hidden", boxShadow: "0 4px 16px rgba(0,0,0,0.03)"
             }}>
               <div style={{ overflowX: "auto" }}>
-                <table style={{ width: "100%", borderCollapse: "collapse", textAlign: "left", fontSize: 13 }}>
+                <table style={{ width: "100%", borderCollapse: "collapse", textAlign: "left", fontSize: 13, minWidth: 1000 }}>
                   <thead>
-                    <tr style={{ background: "#f8fafc", borderBottom: "1.5px solid #e2e8f0", color: "#475569" }}>
-                      <th style={{ padding: "14px 16px" }}>No</th>
-                      <th style={{ padding: "14px 16px" }}>Santri / NIS</th>
-                      <th style={{ padding: "14px 16px" }}>Kelas</th>
-                      <th style={{ padding: "14px 16px" }}>Kelompok & Pengampu</th>
-                      <th style={{ padding: "14px 16px" }}>Setoran Ziyadah Terakhir</th>
-                      <th style={{ padding: "14px 16px" }}>Setoran Murojaah Terakhir</th>
-                      <th style={{ padding: "14px 16px" }}>Ujian Pekanan</th>
+                    <tr style={{ background: "#f8fafc", borderBottom: "1.5px solid #e2e8f0", color: "#64748b", fontSize: 11, textTransform: "uppercase", letterSpacing: "0.05em" }}>
+                      <th style={{ padding: "16px", whiteSpace: "nowrap" }}>No</th>
+                      <th style={{ padding: "16px", whiteSpace: "nowrap" }}>Santri / NIS</th>
+                      <th style={{ padding: "16px", whiteSpace: "nowrap" }}>Kelas</th>
+                      <th style={{ padding: "16px", whiteSpace: "nowrap" }}>Kelompok & Pengampu</th>
+                      <th style={{ padding: "16px", whiteSpace: "nowrap" }}>Setoran Ziyadah Terakhir</th>
+                      <th style={{ padding: "16px", whiteSpace: "nowrap" }}>Setoran Murojaah Terakhir</th>
+                      <th style={{ padding: "16px", whiteSpace: "nowrap" }}>Ujian Pekanan</th>
                     </tr>
                   </thead>
                   <tbody>
                     {filteredSantri.map((s, idx) => (
                       <tr key={s.id} style={{ borderBottom: "1px solid #f1f5f9" }}>
-                        <td style={{ padding: "14px 16px", fontWeight: 700, color: "#94a3b8" }}>{idx + 1}</td>
-                        <td style={{ padding: "14px 16px" }}>
+                        <td style={{ padding: "16px", fontWeight: 700, color: "#94a3b8", whiteSpace: "nowrap" }}>{idx + 1}</td>
+                        <td style={{ padding: "16px", whiteSpace: "nowrap" }}>
                           <div style={{ fontWeight: 700, color: "#0f172a" }}>{s.nama_lengkap}</div>
                           <div style={{ fontSize: 11, color: "#94a3b8" }}>NIS: {s.nis || "-"}</div>
                         </td>
-                        <td style={{ padding: "14px 16px" }}>
+                        <td style={{ padding: "16px", whiteSpace: "nowrap" }}>
                           <span style={{
                             background: "#f1f5f9", color: "#334155", padding: "3px 10px",
                             borderRadius: 8, fontSize: 12, fontWeight: 700
@@ -569,7 +569,7 @@ export default function HalaqohDashboardPage() {
                             {s.kelas || "-"}
                           </span>
                         </td>
-                        <td style={{ padding: "14px 16px" }}>
+                        <td style={{ padding: "16px", whiteSpace: "nowrap" }}>
                           {s.kelompok_halaqoh ? (
                             <div>
                               <div style={{ fontWeight: 600, color: "#334155" }}>{s.kelompok_halaqoh.nama}</div>
@@ -580,7 +580,7 @@ export default function HalaqohDashboardPage() {
                           )}
 
                         </td>
-                        <td style={{ padding: "14px 16px" }}>
+                        <td style={{ padding: "16px", whiteSpace: "nowrap" }}>
                           {s.last_ziyadah ? (
                             <div>
                               <div style={{ fontWeight: 600, color: "#1e293b" }}>{s.last_ziyadah.surah} (Ayat {s.last_ziyadah.ayat_dari}-{s.last_ziyadah.ayat_ke})</div>
@@ -590,7 +590,7 @@ export default function HalaqohDashboardPage() {
                             getNilaiBadge(null)
                           )}
                         </td>
-                        <td style={{ padding: "14px 16px" }}>
+                        <td style={{ padding: "16px", whiteSpace: "nowrap" }}>
                           {s.last_murojaah ? (
                             <div>
                               <div style={{ fontWeight: 600, color: "#1e293b" }}>{s.last_murojaah.surah} (Ayat {s.last_murojaah.ayat_dari}-{s.last_murojaah.ayat_ke})</div>
@@ -600,7 +600,7 @@ export default function HalaqohDashboardPage() {
                             getNilaiBadge(null)
                           )}
                         </td>
-                        <td style={{ padding: "14px 16px" }}>
+                        <td style={{ padding: "16px", whiteSpace: "nowrap" }}>
                           {s.last_ujian ? (
                             <span style={{
                               background: s.last_ujian.is_lulus ? "#ecfdf5" : "#fef2f2",
