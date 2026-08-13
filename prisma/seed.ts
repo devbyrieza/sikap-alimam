@@ -85,7 +85,9 @@ const SANTRI_IL = [
   { nis: "2602070016", nama: "Muhammad Rizky", jk: "L" },
   { nis: "2602070017", nama: "Nurcahya Eka Putra", jk: "L" },
   { nis: "2602070018", nama: "Panji Ahmad", jk: "L" },
+  { nis: "2602070019", nama: "Iman Prayogo", jk: "L" },
   { nis: "2602070020", nama: "Syeh Al Bani Irsyad Amrulloh", jk: "L" },
+
   { nis: "2602070021", nama: "Wahyu Hidayat", jk: "L" },
   { nis: "2602070022", nama: "Zakaria Reynaldo", jk: "L" },
 ];

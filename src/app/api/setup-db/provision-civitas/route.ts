@@ -121,12 +121,42 @@ export async function GET() {
       });
     }
 
+    // Pastikan Santri IL Pindahan (Iman Prayogo - NIS 2602070019) terdaftar
+    const kelasIL = await prisma.kelas.findFirst({
+      where: {
+        OR: [
+          { jenjang: "IL" },
+          { nama: { contains: "IL", mode: "insensitive" } },
+          { nama: { contains: "I'dad", mode: "insensitive" } }
+        ]
+      }
+    });
+
+    if (kelasIL) {
+      const imanExist = await prisma.santriAktif.findFirst({
+        where: { nama_lengkap: { contains: "Iman Prayogo", mode: "insensitive" } }
+      });
+      if (!imanExist) {
+        await prisma.santriAktif.create({
+          data: {
+            nis: "2602070019",
+            nama_lengkap: "Iman Prayogo",
+            kelas_id: kelasIL.id,
+            jenis_kelamin: "L",
+            is_active: true
+          }
+        });
+        results.push({ santriAdded: "Iman Prayogo (NIS 2602070019)" });
+      }
+    }
+
     return NextResponse.json({
       success: true,
-      message: 'Berhasil membuat dan mengonfigurasi seluruh akun Civitas Guru (Dinamis dari Database)!',
+      message: 'Berhasil membuat dan mengonfigurasi seluruh akun Civitas Guru & Santri (Termasuk Iman Prayogo - 22 Santri IL)!',
       total: results.length,
       data: results,
     });
+
   } catch (error: any) {
     console.error('Error provisioning civitas accounts:', error);
     return NextResponse.json(
