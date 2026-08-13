@@ -131,49 +131,23 @@ INSERT INTO santri_aktif (id, nis, nama_lengkap, kelas_id, jenis_kelamin)
 SELECT gen_random_uuid(), '2602070022', 'Zakaria Reynaldo', (SELECT id FROM kelas WHERE nama = 'IL'), 'L'
 WHERE NOT EXISTS (SELECT 1 FROM santri_aktif WHERE nama_lengkap = 'Zakaria Reynaldo');
 
--- Data Asatidz
-INSERT INTO asatidz (id, user_id, nama_lengkap, jenis)
-SELECT gen_random_uuid(), NULL, 'Abdul Azis, S.Pd', 'guru'
-WHERE NOT EXISTS (SELECT 1 FROM asatidz WHERE nama_lengkap = 'Abdul Azis, S.Pd');
-INSERT INTO asatidz (id, user_id, nama_lengkap, jenis)
-SELECT gen_random_uuid(), NULL, 'Jumardi, S.Pd', 'guru'
-WHERE NOT EXISTS (SELECT 1 FROM asatidz WHERE nama_lengkap = 'Jumardi, S.Pd');
-INSERT INTO asatidz (id, user_id, nama_lengkap, jenis)
-SELECT gen_random_uuid(), NULL, 'Gusri Ramli, S.Pd', 'guru'
-WHERE NOT EXISTS (SELECT 1 FROM asatidz WHERE nama_lengkap = 'Gusri Ramli, S.Pd');
-INSERT INTO asatidz (id, user_id, nama_lengkap, jenis)
-SELECT gen_random_uuid(), NULL, 'Ahmad Hidayat, Lc', 'guru'
-WHERE NOT EXISTS (SELECT 1 FROM asatidz WHERE nama_lengkap = 'Ahmad Hidayat, Lc');
-INSERT INTO asatidz (id, user_id, nama_lengkap, jenis)
-SELECT gen_random_uuid(), NULL, 'Tri Harianto, S.Pd', 'guru'
-WHERE NOT EXISTS (SELECT 1 FROM asatidz WHERE nama_lengkap = 'Tri Harianto, S.Pd');
-INSERT INTO asatidz (id, user_id, nama_lengkap, jenis)
-SELECT gen_random_uuid(), NULL, 'Imam Syarifuddin', 'guru'
-WHERE NOT EXISTS (SELECT 1 FROM asatidz WHERE nama_lengkap = 'Imam Syarifuddin');
-INSERT INTO asatidz (id, user_id, nama_lengkap, jenis)
-SELECT gen_random_uuid(), NULL, 'Rieza R', 'guru'
-WHERE NOT EXISTS (SELECT 1 FROM asatidz WHERE nama_lengkap = 'Rieza R');
-INSERT INTO asatidz (id, user_id, nama_lengkap, jenis)
-SELECT gen_random_uuid(), NULL, 'Ade Alamsyah, S.Pd', 'guru'
-WHERE NOT EXISTS (SELECT 1 FROM asatidz WHERE nama_lengkap = 'Ade Alamsyah, S.Pd');
-INSERT INTO asatidz (id, user_id, nama_lengkap, jenis)
-SELECT gen_random_uuid(), NULL, 'Ubaidillah, Lc', 'guru'
-WHERE NOT EXISTS (SELECT 1 FROM asatidz WHERE nama_lengkap = 'Ubaidillah, Lc');
-INSERT INTO asatidz (id, user_id, nama_lengkap, jenis)
-SELECT gen_random_uuid(), NULL, 'Joko Purnomo, Lc', 'guru'
-WHERE NOT EXISTS (SELECT 1 FROM asatidz WHERE nama_lengkap = 'Joko Purnomo, Lc');
-INSERT INTO asatidz (id, user_id, nama_lengkap, jenis)
-SELECT gen_random_uuid(), NULL, 'Supriadi, S.Pd', 'guru'
-WHERE NOT EXISTS (SELECT 1 FROM asatidz WHERE nama_lengkap = 'Supriadi, S.Pd');
-INSERT INTO asatidz (id, user_id, nama_lengkap, jenis)
-SELECT gen_random_uuid(), NULL, 'Ahmad Budi, S.Pd', 'guru'
-WHERE NOT EXISTS (SELECT 1 FROM asatidz WHERE nama_lengkap = 'Ahmad Budi, S.Pd');
-INSERT INTO asatidz (id, user_id, nama_lengkap, jenis)
-SELECT gen_random_uuid(), NULL, 'Hasan, Lc', 'guru'
-WHERE NOT EXISTS (SELECT 1 FROM asatidz WHERE nama_lengkap = 'Hasan, Lc');
-INSERT INTO asatidz (id, user_id, nama_lengkap, jenis)
-SELECT gen_random_uuid(), NULL, 'Fauzi, S.Pd', 'guru'
-WHERE NOT EXISTS (SELECT 1 FROM asatidz WHERE nama_lengkap = 'Fauzi, S.Pd');
-INSERT INTO asatidz (id, user_id, nama_lengkap, jenis)
-SELECT gen_random_uuid(), NULL, 'Lukman, Lc', 'guru'
-WHERE NOT EXISTS (SELECT 1 FROM asatidz WHERE nama_lengkap = 'Lukman, Lc');
+-- Data Asatidz Resmi (Sinkron 100% dengan Master Data Guru)
+INSERT INTO pegawai (id, nip, nama_lengkap, no_hp, email, kategori_pegawai, jabatan, mata_pelajaran) VALUES
+(gen_random_uuid(), '3322183101990002', 'Abdil Aziz, S.Pd, B.A', '085856160862', 'abdilaziz3101@gmail.com', 'GURU', 'Kabid Kurikulum & Pengajar', 'Bahasa Arab'),
+(gen_random_uuid(), '3202082102690001', 'Ade Supyana S. Pd. I', '085775053526', 'supyanaade33@gmail.com', 'GURU', 'Pengajar / Guru', 'Bahasa Indonesia'),
+(gen_random_uuid(), '6408012910950001', 'Agus Cahyono', '081251971250', 'aguscahyono2921@gmail.com', 'GURU', 'Wali Kelas MTs & Musyrif', 'Khitobah, Tadribat Alal Anmath'),
+(gen_random_uuid(), '3511110204810005', 'Arifin Saefullah, A.Ma, Dpl, Lc, M.M, M.Pd', '087836270966', 'abahjawiy@gmail.com', 'GURU', 'Pengajar / Guru', 'Akidah'),
+(gen_random_uuid(), '1402011503990001', 'Hardiansyah, S. Pd', '082272804497', 'hardiansyahhd51@gmail.com', 'GURU', 'Pengajar / Guru', 'IPA Terpadu'),
+(gen_random_uuid(), '3301022411900005', 'Imron Abdillah', '081234566408', 'imr.abd.99@gmail.com', 'GURU', 'Kabid Kurikulum & Wali Kelas IL', 'Nahwu, Tahsin Al-Quran'),
+(gen_random_uuid(), '3172020212840005', 'Maulidin Bachtiar', '0895332071063', 'thiarz17@gmail.com', 'GURU', 'Pengajar / Guru', 'Bahasa Inggris'),
+(gen_random_uuid(), '3211051605920001', 'Muhammad Iqbal, S.Pd', '085777919274', 'muhammadiqbal.mi118@gmail.com', 'GURU', 'Musyrif & Guru', 'Shorf, Tahsin Al-Quran'),
+(gen_random_uuid(), '2026089826', 'Muhammad Maulana Rizki', NULL, 'muhammad@pesantren-alimam.com', 'GURU', 'Pengajar / Guru', 'Bahasa Inggris'),
+(gen_random_uuid(), '3202290106940002', 'Muhammad Thoriq Ibn Ziyad, Lc, M.Ag', '085797220373', 'biezie.sundanese@gmail.com', 'GURU', 'Pengajar / Guru', 'Hadis, Siroh Nabi'),
+(gen_random_uuid(), '3202091101990007', 'Ramdan', '085703459162', 'Marjinal145@gmail.com', 'GURU', 'Pengajar / Guru', 'TIK'),
+(gen_random_uuid(), '1609010706970003', 'Rieza Eka Tomara, S.Kom', '081271414441', 'riezaekatomara@gmail.com', 'GURU', 'Kabid IT & Pengajar', 'Matematika'),
+(gen_random_uuid(), '2026087393', 'Teguh Hudaya, Lc, M.M', '081398225358', 'teguh.hudaya@gmail.com', 'GURU', 'Pengajar / Guru', 'Entrepreneurship'),
+(gen_random_uuid(), '2026089999', 'Ust. Presentasi (Resmi), Lc.', NULL, 'presentasi.guru@pesantren-alimam.com', 'GURU', 'Pengajar / Guru', 'Bahasa Arab, Tahfidz'),
+(gen_random_uuid(), '2026086778', 'Wahab Rajasam, M.Pd', '081326611671', 'prof.wahabrajasam35@gmail.com', 'GURU', 'Mudir Pesantren & Pengajar', 'Fiqh'),
+(gen_random_uuid(), '1901072302950001', 'Wahyudi Pranata, Lc', '082316228728', 'wahyudipra95@gmail.com', 'GURU', 'Kabid Pengasuhan & Musyrif', 'Bahasa Arab')
+ON CONFLICT (nama_lengkap) DO NOTHING;
+
