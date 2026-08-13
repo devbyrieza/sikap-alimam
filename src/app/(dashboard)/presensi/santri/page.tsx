@@ -248,12 +248,15 @@ export default function PresensiSantriPage() {
     return list;
   }, [selectedKelas, asatidId, master, isAdminSuper]);
 
-  // Auto-select Mapel jika hanya ada 1 mapel
+  // Auto-select Mapel jika hanya ada 1 mapel, atau reset jika kelas berganti
   useEffect(() => {
     if (mapelList.length === 1) {
       setMapelId(mapelList[0].id);
+    } else if (mapelId && !mapelList.some((m) => m.id === mapelId)) {
+      setMapelId("");
     }
-  }, [mapelList]);
+  }, [mapelList, mapelId]);
+
 
   const jamKeString = useMemo(() => {
     if (!Array.isArray(jamKe) || jamKe.length === 0) return "";
@@ -588,7 +591,13 @@ export default function PresensiSantriPage() {
                 className="w-full min-w-0 box-border"
                 style={{ padding: "11px 14px", borderRadius: "12px", border: "1px solid #ebdcc3", background: "#fdf8f0", fontSize: "14px", outline: "none", fontWeight: 600 }}
                 value={selectedKelas}
-                onChange={(e) => setSelectedKelas(e.target.value)}
+                onChange={(e) => {
+                  setSelectedKelas(e.target.value);
+                  setMapelId("");
+                  setSantri([]);
+                  setStatusMap({});
+                  setKeteranganMap({});
+                }}
                 disabled={!selectedJenjang}
               >
                 <option value="">— Pilih Kelas —</option>
@@ -608,7 +617,15 @@ export default function PresensiSantriPage() {
               className="w-full min-w-0 box-border"
               style={{ padding: "11px 14px", borderRadius: "12px", border: "1px solid #ebdcc3", background: !selectedKelas ? "#f1f5f9" : "#fdf8f0", fontSize: "14px", outline: "none", fontWeight: 600 }}
               value={mapelId}
-              onChange={(e) => setMapelId(e.target.value)}
+              onChange={(e) => {
+                const val = e.target.value;
+                setMapelId(val);
+                if (!val) {
+                  setSantri([]);
+                  setStatusMap({});
+                  setKeteranganMap({});
+                }
+              }}
               disabled={!selectedKelas}
             >
               <option value="">{selectedKelas ? "- Pilih Mapel -" : "- Pilih Kelas -"}</option>
@@ -619,6 +636,7 @@ export default function PresensiSantriPage() {
               ))}
             </select>
           </div>
+
         </div>
 
         {/* Component Jam ke- (KBM Kelas) */}
@@ -752,8 +770,9 @@ export default function PresensiSantriPage() {
         </div>
       </div>
 
-      {/* Step 2: Daftar Santri */}
-      {santri.length > 0 && (
+      {/* Step 2: Daftar Santri (Hanya tampil jika seluruh parameter terisi lengkap & santri termuat) */}
+      {Boolean(selectedKelas && mapelId && jamKeString && santri.length > 0) && (
+
         <div style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
           {/* Progress & Summary Indicator */}
           <div
