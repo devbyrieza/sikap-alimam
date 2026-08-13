@@ -156,25 +156,29 @@ export default function InputNilaiPage() {
   // Mapel List
   const mapelList = useMemo(() => {
     let list = (kelas_id && master?.mapel?.[kelas_id]) || [];
-    if (!isAdminSuper && asatidId && master?.asatidzmMapel && list.length > 0) {
+    if (asatidId && master?.asatidzmMapel && list.length > 0) {
       const allowedMapelIds = master.asatidzmMapel
-        .filter((am) => am.pegawai_id === asatidId && am.kelas_id === kelas_id)
+        .filter((am) => am.pegawai_id === asatidId)
         .map((am) => am.mapel_id);
       if (allowedMapelIds.length > 0) {
-        list = list.filter((m) => allowedMapelIds.includes(m.id));
-      } else {
-        list = [];
+        const filtered = list.filter((m) => allowedMapelIds.includes(m.id));
+        if (filtered.length > 0) {
+          list = filtered;
+        }
       }
     }
     return list;
-  }, [kelas_id, asatidId, master, isAdminSuper]);
+  }, [kelas_id, asatidId, master]);
 
   // Auto-select Mapel jika hanya ada 1 mapel
   useEffect(() => {
     if (mapelList.length === 1) {
       setMapelId(mapelList[0].id);
+    } else if (mapel_id && !mapelList.some((m) => m.id === mapel_id)) {
+      setMapelId("");
     }
-  }, [mapelList]);
+  }, [mapelList, mapel_id]);
+
 
   // AUTOSAVE: Load Draft from localStorage on mount (for Step 2)
   useEffect(() => {

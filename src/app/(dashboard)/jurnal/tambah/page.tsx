@@ -325,8 +325,11 @@ export default function TambahJurnalPage() {
   useEffect(() => {
     if (mapelList.length === 1) {
       setMapelId(mapelList[0].id);
+    } else if (mapelId && !mapelList.some((m: any) => m.id === mapelId)) {
+      setMapelId("");
     }
-  }, [mapelList]);
+  }, [mapelList, mapelId]);
+
 
   const handleTextareaResize = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     e.target.style.height = "auto";

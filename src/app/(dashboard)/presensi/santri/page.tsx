@@ -235,18 +235,21 @@ export default function PresensiSantriPage() {
 
   const mapelList = useMemo(() => {
     let list = (selectedKelas && master?.mapel?.[selectedKelas]) || [];
-    if (!isAdminSuper && asatidId && master?.asatidzmMapel && list.length > 0) {
+    if (asatidId && master?.asatidzmMapel && list.length > 0) {
       const allowedMapelIds = master.asatidzmMapel
-        .filter(am => am.pegawai_id === asatidId && am.kelas_id === selectedKelas)
-        .map(am => am.mapel_id);
+        .filter((am) => am.pegawai_id === asatidId)
+        .map((am) => am.mapel_id);
+
       if (allowedMapelIds.length > 0) {
-        list = list.filter(m => allowedMapelIds.includes(m.id));
-      } else {
-        list = [];
+        const filtered = list.filter((m) => allowedMapelIds.includes(m.id));
+        if (filtered.length > 0) {
+          list = filtered;
+        }
       }
     }
     return list;
-  }, [selectedKelas, asatidId, master, isAdminSuper]);
+  }, [selectedKelas, asatidId, master]);
+
 
   // Auto-select Mapel jika hanya ada 1 mapel, atau reset jika kelas berganti
   useEffect(() => {
