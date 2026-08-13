@@ -79,13 +79,14 @@ export default function InputNilaiPage() {
       fetch("/api/master").then((r) => r.json()),
     ])
       .then(([profileRes, masterRes]) => {
-        if (profileRes.data) {
-          const role = (profileRes.data.role || "").toLowerCase();
-          const isAdmin = role.includes("admin_super");
-          setIsAdminSuper(isAdmin);
-          if (profileRes.data.asatidz_id) {
-            setAsatidId(profileRes.data.asatidz_id);
-          }
+        const pegawaiObj = profileRes?.pegawai;
+        const userObj = profileRes?.user;
+        if (pegawaiObj?.id) {
+          setAsatidId(pegawaiObj.id);
+        }
+        if (userObj?.role) {
+          const role = (userObj.role || "").toLowerCase();
+          setIsAdminSuper(role.includes("admin_super"));
         }
         if (masterRes) {
           setMaster(masterRes);
@@ -93,6 +94,7 @@ export default function InputNilaiPage() {
       })
       .catch(() => {})
       .finally(() => setLoadingKelas(false));
+
   }, []);
 
   // Available Jenjang

@@ -136,17 +136,19 @@ export default function PresensiSantriPage() {
     fetch("/api/profile")
       .then((r) => r.json())
       .then((profileData) => {
-        if (profileData.data) {
-          const role = (profileData.data.role || "").toLowerCase();
-          const isAdmin = role.includes("admin_super");
-          setIsAdminSuper(isAdmin);
-          if (profileData.data.asatidz_id) {
-            setAsatidId(profileData.data.asatidz_id);
-          }
+        const pegawaiObj = profileData?.pegawai;
+        const userObj = profileData?.user;
+        if (pegawaiObj?.id) {
+          setAsatidId(pegawaiObj.id);
+        }
+        if (userObj?.role) {
+          const role = (userObj.role || "").toLowerCase();
+          setIsAdminSuper(role.includes("admin_super"));
         }
       })
       .catch(() => {});
   }, []);
+
 
   // Autosave draft ke localStorage
   useEffect(() => {
