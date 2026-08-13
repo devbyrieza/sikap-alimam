@@ -6,7 +6,35 @@ const prisma = new PrismaClient();
 // Ambil daftar santri aktif beserta info tahfidz terakhir
 export async function GET(req: NextRequest) {
   try {
+    // Auto-ensure Iman Prayogo (NIS: 2602070019) terdaftar di database
+    const imanCheck = await prisma.santriAktif.findFirst({
+      where: { nama_lengkap: { contains: "Iman Prayogo", mode: "insensitive" } }
+    });
+    if (!imanCheck) {
+      const kelasIL = await prisma.kelas.findFirst({
+        where: {
+          OR: [
+            { jenjang: "IL" },
+            { nama: { contains: "IL", mode: "insensitive" } },
+            { nama: { contains: "I'dad", mode: "insensitive" } }
+          ]
+        }
+      });
+      if (kelasIL) {
+        await prisma.santriAktif.create({
+          data: {
+            nis: "2602070019",
+            nama_lengkap: "Iman Prayogo",
+            kelas_id: kelasIL.id,
+            jenis_kelamin: "L",
+            is_active: true
+          }
+        });
+      }
+    }
+
     const santriList = await prisma.santriAktif.findMany({
+
       where: { is_active: true },
       include: {
         kelas: true,

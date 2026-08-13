@@ -40,8 +40,25 @@ export async function GET(req: NextRequest) {
           select: { id: true }
         });
         allowedKelasIds = Array.from(new Set([kelas_id, ...ilKelasRecords.map(k => k.id)]));
+
+        // Auto-ensure Iman Prayogo (NIS: 2602070019) terdaftar di database
+        const imanExist = await prisma.santriAktif.findFirst({
+          where: { nama_lengkap: { contains: "Iman Prayogo", mode: "insensitive" } }
+        });
+        if (!imanExist) {
+          await prisma.santriAktif.create({
+            data: {
+              nis: "2602070019",
+              nama_lengkap: "Iman Prayogo",
+              kelas_id: allowedKelasIds[0],
+              jenis_kelamin: "L",
+              is_active: true
+            }
+          });
+        }
       }
     }
+
 
     // Ambil semua santri aktif di kelas-kelas sepadan tersebut
     const santri = await prisma.santriAktif.findMany({
