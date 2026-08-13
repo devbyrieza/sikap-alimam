@@ -375,7 +375,10 @@ export default function UjianTahfidzPage() {
           background: "#f8fafc", border: "1px solid #e2e8f0", borderRadius: 14, padding: "14px 20px",
           display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 20
         }}>
-          <span style={{ fontSize: 13, color: "#64748b", fontWeight: 600 }}>Total Nilai Ujian:</span>
+          <div>
+            <div style={{ fontSize: 13, color: "#64748b", fontWeight: 600 }}>Total Nilai Ujian:</div>
+            <div style={{ fontSize: 11, color: "#94a3b8", marginTop: 2 }}>(Rata-rata Kelancaran & Adab)</div>
+          </div>
           <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
             {jenisUjian === "ujian_itqon" && isLulus && (
               <span style={{ background: "#ecfeff", color: "#0e7490", padding: "3px 8px", borderRadius: 6, fontSize: 11, fontWeight: 800 }}>

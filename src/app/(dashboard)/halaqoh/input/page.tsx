@@ -614,7 +614,10 @@ export default function HalaqohInputPage() {
                   {/* Preview Nilai Akhir */}
                   {entry.kehadiran === "hadir" && (
                     <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 10 }}>
-                      <span style={{ fontSize: 11, color: "#94a3b8" }}>Nilai Akhir:</span>
+                      <div style={{ display: "flex", flexDirection: "column" }}>
+                        <span style={{ fontSize: 12, color: "#64748b", fontWeight: 600 }}>Nilai Akhir:</span>
+                        <span style={{ fontSize: 10, color: "#94a3b8" }}>(Rata-rata Sikap & Setoran)</span>
+                      </div>
                       <span style={{
                         fontWeight: 800, fontSize: 15, color: "#550000",
                         background: "#fff1f2", padding: "3px 12px", borderRadius: 8

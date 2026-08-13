@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Bahan Ajar Final Ustaz Rieza - Bab 2 Aljabar</title>
+<style>
+  :root {
+    --primary: #064e3b;
+    --primary-light: #047857;
+    --accent: #b45309;
+    --bg-card: #ffffff;
+    --bg-page: #f8fafc;
+    --text-dark: #0f172a;
+    --text-muted: #475569;
+    --border: #e2e8f0;
+  }
+  
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background-color: var(--bg-page);
+    color: var(--text-dark);
+    margin: 0;
+    padding: 12px;
+    line-height: 1.6;
+    font-size: 16px;
+  }
+
+  /* Header Sticky HP */
+  .mobile-header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: linear-gradient(135deg, #064e3b 0%, #047857 100%);
+    color: white;
+    padding: 16px;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(6, 78, 59, 0.25);
+    margin-bottom: 16px;
+  }
+  .mobile-header h1 {
+    font-size: 18px;
+    margin: 0 0 4px 0;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .mobile-header p {
+    font-size: 12px;
+    margin: 0;
+    opacity: 0.9;
+  }
+
+  /* Filosofi Banner */
+  .filosofi-box {
+    background: linear-gradient(135deg, #fdf8f0 0%, #fef3c7 100%);
+    border: 1px solid #fde68a;
+    border-radius: 16px;
+    padding: 14px 16px;
+    margin-bottom: 16px;
+    font-size: 14px;
+  }
+  .filosofi-title {
+    font-weight: 800;
+    color: #b45309;
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .flow-steps {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 8px;
+  }
+  .flow-step {
+    background: #ffffff;
+    border: 1px solid #d97706;
+    color: #92400e;
+    font-weight: 700;
+    font-size: 12px;
+    padding: 4px 10px;
+    border-radius: 20px;
+  }
+
+  /* Card Component for HP */
+  .card {
+    background: var(--bg-card);
+    border-radius: 16px;
+    padding: 18px;
+    margin-bottom: 16px;
+    border: 1px solid var(--border);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+  }
+  .card-title {
+    font-size: 16px;
+    font-weight: 800;
+    color: var(--primary);
+    margin-top: 0;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 2px solid #f1f5f9;
+    padding-bottom: 8px;
+  }
+  
+  .badge {
+    background: #ecfdf5;
+    color: var(--primary-light);
+    font-size: 11px;
+    font-weight: 800;
+    padding: 4px 8px;
+    border-radius: 20px;
+    border: 1px solid #a7f3d0;
+  }
+
+  .badge-blue {
+    background: #eff6ff;
+    color: #1d4ed8;
+    font-size: 11px;
+    font-weight: 800;
+    padding: 4px 8px;
+    border-radius: 20px;
+    border: 1px solid #bfdbfe;
+  }
+
+  /* Formula & Box Styles */
+  .formula-box {
+    background: #fdf8f0;
+    border-left: 4px solid var(--accent);
+    padding: 12px 14px;
+    border-radius: 0 12px 12px 0;
+    margin: 12px 0;
+    font-weight: bold;
+    font-size: 15px;
+    color: #78350f;
+  }
+
+  .example-box {
+    background: #f8fafc;
+    border: 1px dashed #cbd5e1;
+    border-radius: 12px;
+    padding: 12px 14px;
+    margin: 10px 0;
+  }
+
+  .balance-box {
+    background: #f0fdf4;
+    border: 1px solid #bbf7d0;
+    border-radius: 12px;
+    padding: 12px 14px;
+    margin: 10px 0;
+    color: #166534;
+  }
+
+  .footer-hp {
+    text-align: center;
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: 24px;
+    padding-bottom: 24px;
+  }
+</style>
+</head>
+<body>
+
+<!-- STICKY HEADER HP -->
+<div class="mobile-header">
+  <h1>📱 Rangkuman Final Ustaz Rieza</h1>
+  <p>BAB 2 ALJABAR · KELAS 7 MTs · 80 MENIT KBM (07.00 - 08.20 WIB)</p>
+</div>
+
+<!-- BANNER FILOSOFI ALUR -->
+<div class="filosofi-box">
+  <div class="filosofi-title">🧠 FILOSOFI PERJALANAN KONSEP (1 ALUR UTAMA)</div>
+  <div>Pembelajaran besok harus terasa sebagai 1 perjalanan konsep yang runtut:</div>
+  <div class="flow-steps">
+    <span class="flow-step">1. Kenal x</span>
+    <span>➔</span>
+    <span class="flow-step">2. Operasikan x</span>
+    <span>➔</span>
+    <span class="flow-step">3. Hitung dengan x</span>
+    <span>➔</span>
+    <span class="flow-step">4. Cari x</span>
+  </div>
+</div>
+
+<!-- MATERI 1: BENTUK ALJABAR -->
+<div class="card">
+  <div class="card-title">
+    <span>1️⃣ Kenal x: Bentuk Aljabar</span>
+    <span class="badge">15 Menit</span>
+  </div>
+  
+  <p style="margin-top:0;"><strong>Definisi:</strong> Aljabar adalah bahasa matematika yang menggunakan huruf/simbol untuk mewakili nilai yang belum diketahui secara pasti.</p>
+
+  <div class="formula-box">
+    Unsur Utama: 3x + 5
+  </div>
+
+  <ul style="padding-left: 20px; margin: 8px 0;">
+    <li><strong>Variabel (x):</strong> Huruf/simbol peubah (misal $x, y, a, b$).</li>
+    <li><strong>Koefisien (3):</strong> Angka di depan variabel yang menunjukkan <strong>banyaknya variabel</strong> ($3x = 3 \times x = x + x + x$).</li>
+    <li><strong>Konstanta (+5):</strong> Angka murni berdiri sendiri yang nilainya <strong>sudah pasti/konkret</strong>.</li>
+    <li><strong>Suku:</strong> Bagian aljabar yang dipisahkan oleh tanda $+$ atau $-$. (Contoh: $3x + 5$ memiliki 2 suku, yaitu $3x$ dan $5$).</li>
+  </ul>
+
+  <div class="example-box">
+    <strong>📦 Analogi Kardus Mi:</strong><br>
+    <em>"Ustaz beli 3 kardus mi (isinya belum dibuka = 3x) + 2 bungkus mi eceran di lemari."</em><br>
+    ➔ Bentuk Aljabarnya: <strong>3x + 2</strong>
+  </div>
+
+  <div style="background: #fef2f2; border-left: 4px solid #ef4444; padding: 8px 12px; border-radius: 0 8px 8px 0; font-size: 14px; margin-top: 8px;">
+    <strong>⚠️ Catatan Penting:</strong> Jika tertulis <strong>x</strong>, koefisiennya adalah <strong>1</strong> ($x = 1x$).
+  </div>
+</div>
+
+<!-- MATERI 2: SUKU SEJENIS & MENYEDERHANAKAN -->
+<div class="card">
+  <div class="card-title">
+    <span>2️⃣ Operasikan x: Suku Sejenis</span>
+    <span class="badge">20 Menit</span>
+  </div>
+
+  <p style="margin-top:0;"><strong>Aturan Emas Suku Sejenis:</strong><br>
+  Suku yang mempunyai <strong>variabel (huruf) sama</strong> dapat dijumlahkan atau dikurangkan.</p>
+
+  <div class="example-box">
+    <strong>🍎 Analogi Apel & Jeruk:</strong><br>
+    • 🍎 + 🍎 ➔ Bisa digabung ($3x + 5x = 8x$).<br>
+    • 🍊 + 🍊 ➔ Bisa digabung.<br>
+    • 🍎 + 🍊 ➔ <strong>TIDAK BISA DIGABUNG</strong> ($3x + 5y$ tetap $3x + 5y$).
+  </div>
+
+  <p><strong>Contoh Operasi Hitung:</strong></p>
+  <ul style="padding-left: 20px;">
+    <li><strong>Penjumlahan:</strong> $2x + 3x = 5x$ (karena $(x+x) + (x+x+x) = 5x$).</li>
+    <li><strong>Pengurangan:</strong> $7x - 2x = 5x$ (punya 7x diambil 2x).</li>
+    <li><strong>Beberapa Variabel:</strong> $3x + 4y + 2x = (3x + 2x) + 4y = \mathbf{5x + 4y}$.</li>
+  </ul>
+
+  <div class="formula-box" style="font-size: 14px;">
+    Contoh Utama:<br>
+    5x + 3y + 2x - y<br>
+    = (5x + 2x) + (3y - y)<br>
+    = <strong>7x + 2y</strong>
+  </div>
+</div>
+
+<!-- MATERI 3: SUBSTITUSI NILAI -->
+<div class="card">
+  <div class="card-title">
+    <span>3️⃣ Hitung dengan x: Substitusi</span>
+    <span class="badge-blue">15 Menit</span>
+  </div>
+
+  <p style="margin-top:0;"><strong>Konsep Utama:</strong><br>
+  Kalau nilai variabel sudah diketahui, kita ganti huruf variabel tersebut dengan angkanya menggunakan <strong>tanda kurung ( )</strong>.</p>
+
+  <div class="example-box">
+    <strong>Mengapa Pakai Tanda Kurung?</strong><br>
+    $3x$ artinya $3 \times x$. Kalau $x = 4$, ditulis <strong>3(4)</strong> agar jelas bahwa 3 dikali 4.<br>
+    $3(4) + 5 = 12 + 5 = \mathbf{17}$.
+  </div>
+
+  <p><strong>Latihan Bertingkat:</strong></p>
+  <ul style="padding-left: 20px; font-size: 14px;">
+    <li><strong>Level 1:</strong> $2x + 3$ jika $x = 5 \rightarrow 2(5) + 3 = \mathbf{13}$.</li>
+    <li><strong>Level 2:</strong> $4x + 2y$ jika $x = 3, y = 5 \rightarrow 4(3) + 2(5) = 12 + 10 = \mathbf{22}$.</li>
+    <li><strong>Level 3 (Tantangan):</strong> $5x + 3y - 2x + y$ jika $x = 4, y = 2$<br>
+    <em>Sederhanakan dulu:</em> $3x + 4y \rightarrow 3(4) + 4(2) = 12 + 8 = \mathbf{20}$.</li>
+  </ul>
+</div>
+
+<!-- MATERI 4: PERSAMAAN LINEAR SATU VARIABEL (PLSV) -->
+<div class="card">
+  <div class="card-title">
+    <span>4️⃣ Cari x: Persamaan PLSV</span>
+    <span class="badge-blue">20 Menit</span>
+  </div>
+
+  <p style="margin-top:0;"><strong>Konsep Utama (Dibalik):</strong><br>
+  Di materi sebelumnya: <em>Kita tahu x ➔ hitung hasilnya.</em><br>
+  Sekarang dibalik: <strong>Kita tahu hasilnya ➔ mencari nilai x!</strong></p>
+
+  <div class="example-box">
+    <strong>1. Soal Sederhana:</strong><br>
+    $x + 5 = 12$ ➔ <em>"Angka berapa jika ditambah 5 hasilnya 12?"</em> ➔ $\mathbf{x = 7}$.<br><br>
+    <strong>2. Soal Perkalian:</strong><br>
+    $3x = 15$ ➔ $x = 15 \div 3$ ➔ $\mathbf{x = 5}$.
+  </div>
+
+  <div class="balance-box">
+    <strong>⚖️ KONSEP MENJAGA KESEIMBANGAN (BUKAN SEPADAN PINDAH RUAS HAFALAN):</strong><br>
+    Selesaikan $2x + 3 = 11$:<br>
+    1. Kurangi 3 dari kedua sisi agar seimbang:<br>
+       $2x + 3 - 3 = 11 - 3 \rightarrow \mathbf{2x = 8}$<br>
+    2. Bagi kedua sisi dengan 2:<br>
+       $2x \div 2 = 8 \div 2 \rightarrow \mathbf{x = 4}$
+  </div>
+</div>
+
+<!-- TIMELINE 80 MENIT -->
+<div class="card">
+  <div class="card-title">
+    <span>⏰ Timeline 80 Menit KBM</span>
+    <span class="badge">07.00 - 08.20</span>
+  </div>
+
+  <div style="font-size: 14px;">
+    <p><strong>07.00 – 07.05 (5m):</strong> Pembukaan, Doa, Presensi 19 Santri.</p>
+    <p><strong>07.05 – 07.20 (15m):</strong> Materi 1: Bentuk Aljabar (Kenal x).</p>
+    <p><strong>07.20 – 07.40 (20m):</strong> Materi 2: Suku Sejenis & Menyederhanakan (Operasikan x).</p>
+    <p><strong>07.40 – 07.55 (15m):</strong> Materi 3: Substitusi Nilai (Hitung dengan x).</p>
+    <p><strong>07.55 – 08.15 (20m):</strong> Materi 4: Persamaan PLSV (Cari x).</p>
+    <p><strong>08.15 – 08.20 (5m):</strong> Penutup, Review Singkat, Kesimpulan.</p>
+  </div>
+</div>
+
+<div class="footer-hp">
+  Semangat Belajar Malam Ini, Ustaz Rieza! 🚀<br>
+  <em>SIKAP Al-Imam Academic Assistant</em>
+</div>
+
+</body>
+</html>

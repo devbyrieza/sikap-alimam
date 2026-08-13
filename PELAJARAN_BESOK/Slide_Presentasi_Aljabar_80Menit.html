@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Slide Presentasi Bab 2 Aljabar - TV Kelas MTs 7</title>
+<style>
+  :root {
+    --bg-dark: #064e3b;
+    --bg-card: #ffffff;
+    --primary: #047857;
+    --accent: #d97706;
+    --text-main: #0f172a;
+    --text-muted: #475569;
+    --gold: #f59e0b;
+  }
+
+  * { box-sizing: border-box; }
+  body, html {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background-color: #022c22;
+    color: var(--text-main);
+    overflow: hidden;
+  }
+
+  /* Slide Wrapper */
+  .slide-container {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    padding: 20px;
+  }
+
+  .slide {
+    width: 100%;
+    max-width: 1240px;
+    height: calc(100vh - 80px);
+    background: #ffffff;
+    border-radius: 24px;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+    padding: 36px 48px;
+    display: none;
+    flex-direction: column;
+    justify-content: space-between;
+    animation: fadeIn 0.4s ease-in-out;
+    border: 4px solid #10b981;
+    position: relative;
+    overflow-y: auto;
+  }
+
+  .slide.active {
+    display: flex;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.98); }
+    to { opacity: 1; transform: scale(1); }
+  }
+
+  /* Slide Header */
+  .slide-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 3px double #e2e8f0;
+    padding-bottom: 14px;
+  }
+
+  .slide-title-group h2 {
+    margin: 0;
+    color: var(--bg-dark);
+    font-size: 30px;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+  }
+
+  .slide-subtitle {
+    margin-top: 4px;
+    color: var(--primary);
+    font-size: 16px;
+    font-weight: 700;
+  }
+
+  .badge-tag {
+    background: #ecfdf5;
+    color: #047857;
+    border: 2px solid #a7f3d0;
+    font-size: 16px;
+    font-weight: 800;
+    padding: 6px 16px;
+    border-radius: 30px;
+  }
+
+  /* Slide Body Content */
+  .slide-body {
+    flex: 1;
+    margin: 16px 0;
+    font-size: 22px;
+    line-height: 1.6;
+  }
+
+  /* Cards Layout */
+  .grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    height: 100%;
+    align-items: center;
+  }
+
+  .content-card {
+    background: #f8fafc;
+    border: 2px solid #cbd5e1;
+    border-radius: 16px;
+    padding: 24px;
+  }
+
+  .highlight-box {
+    background: #fdf8f0;
+    border-left: 6px solid var(--accent);
+    padding: 18px 24px;
+    border-radius: 0 16px 16px 0;
+    font-size: 26px;
+    font-weight: bold;
+    color: #78350f;
+    margin: 16px 0;
+  }
+
+  .balance-box {
+    background: #f0fdf4;
+    border: 2px solid #86efac;
+    border-radius: 16px;
+    padding: 20px;
+    color: #14532d;
+    font-size: 20px;
+  }
+
+  /* Hero Banner */
+  .hero-banner {
+    background: linear-gradient(135deg, #064e3b 0%, #047857 100%);
+    color: white;
+    padding: 32px;
+    border-radius: 20px;
+    text-align: center;
+    box-shadow: 0 10px 25px rgba(6, 78, 59, 0.2);
+    margin-bottom: 20px;
+  }
+  .hero-banner h1 {
+    font-size: 38px;
+    margin: 0 0 12px 0;
+    font-weight: 900;
+    color: #fef08a;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+  }
+
+  /* Controls Footer */
+  .controls-bar {
+    position: absolute;
+    bottom: 12px;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    z-index: 200;
+  }
+
+  .btn-nav {
+    background: linear-gradient(135deg, #047857 0%, #064e3b 100%);
+    color: white;
+    border: none;
+    padding: 10px 26px;
+    font-size: 17px;
+    font-weight: bold;
+    border-radius: 30px;
+    cursor: pointer;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.3);
+    transition: all 0.2s;
+  }
+
+  .btn-nav:hover {
+    transform: translateY(-2px);
+    background: #059669;
+  }
+
+  .slide-counter {
+    color: white;
+    font-size: 17px;
+    font-weight: bold;
+    background: rgba(0,0,0,0.5);
+    padding: 8px 18px;
+    border-radius: 20px;
+  }
+</style>
+</head>
+<body>
+
+<div class="slide-container">
+
+  <!-- SLIDE 1: DEFINISI UTAMA LENGKAP & UTUH -->
+  <div class="slide active" id="slide-1">
+    <div class="slide-header">
+      <div class="slide-title-group">
+        <h2>BAB 2: ALJABAR</h2>
+        <div class="slide-subtitle">Matematika Kelas 7 MTs Al-Imam · Pengampu: Ust. Rieza Eka Tomara, S.Kom</div>
+      </div>
+      <div class="badge-tag">80 Menit KBM</div>
+    </div>
+
+    <div class="slide-body" style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
+      
+      <div class="hero-banner" style="width: 100%; max-width: 1100px; padding: 32px 28px;">
+        <h1 style="font-size: 40px; margin-bottom: 12px;">✨ APA ITULAH ALJABAR? ✨</h1>
+        <div style="background: rgba(255,255,255,0.12); border: 2px solid #fde68a; border-radius: 16px; padding: 22px;">
+          <p style="font-size: 26px; color: #fef08a; font-style: italic; font-weight: 800; margin: 0; line-height: 1.5;">
+            “Aljabar adalah BAHASA MATEMATIKA yang menggunakan HURUF atau SIMBOL untuk menggantikan ANGKA yang belum diketahui nilainya, sehingga masalah yang rumit dapat ditulis secara singkat dan diselesaikan dengan mudah.”
+          </p>
+        </div>
+      </div>
+
+      <!-- 3 FUNGSI UTAMA ALJABAR -->
+      <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; width: 100%; max-width: 1100px;">
+        <div style="background: #fdf8f0; border: 2px solid #d97706; padding: 14px; border-radius: 14px; text-align: center;">
+          <div style="font-size: 24px; margin-bottom: 4px;">🔤</div>
+          <div style="font-weight: 800; font-size: 18px; color: #78350f;">1. Pakai Simbol/Huruf</div>
+          <div style="font-size: 14px; color: #92400e; margin-top: 2px;">Wadah pengganti angka rahasia (misal $x, y$).</div>
+        </div>
+
+        <div style="background: #ecfdf5; border: 2px solid #059669; padding: 14px; border-radius: 14px; text-align: center;">
+          <div style="font-size: 24px; margin-bottom: 4px;">📦</div>
+          <div style="font-weight: 800; font-size: 18px; color: #064e3b;">2. Menyederhanakan</div>
+          <div style="font-size: 14px; color: #047857; margin-top: 2px;">Mengubah soal cerita panjang jadi rumus singkat ($3x+2$).</div>
+        </div>
+
+        <div style="background: #eff6ff; border: 2px solid #2563eb; padding: 14px; border-radius: 14px; text-align: center;">
+          <div style="font-size: 24px; margin-bottom: 4px;">🔍</div>
+          <div style="font-weight: 800; font-size: 18px; color: #1e40af;">3. Menemukan Solusi</div>
+          <div style="font-size: 14px; color: #1d4ed8; margin-top: 2px;">Mencari tahu nilai asli angka yang tersembunyi.</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- SLIDE 2: FILOSOFI PERJALANAN KONSEP (BERKENALAN x & y) -->
+  <div class="slide" id="slide-2">
+    <div class="slide-header">
+      <div class="slide-title-group">
+        <h2>BAB 2: ALJABAR</h2>
+        <div class="slide-subtitle">Matematika Kelas 7 MTs Al-Imam · Pengampu: Ust. Rieza Eka Tomara, S.Kom</div>
+      </div>
+      <div class="badge-tag">80 Menit KBM</div>
+    </div>
+
+    <div class="slide-body" style="display: flex; flex-direction: column; justify-content: center;">
+      
+      <div class="hero-banner" style="padding: 20px 24px; margin-bottom: 20px;">
+        <h1 style="font-size: 32px; margin-bottom: 4px;">✨ BERKENALAN DENGAN 'x' & 'y' ✨</h1>
+        <p style="font-size: 18px;">Bahasa Rahasia Matematika: Menemukan Nilai yang Belum Ketahuan</p>
+      </div>
+
+      <h3 style="font-size: 22px; color: var(--bg-dark); text-align: center; margin-top: 0; margin-bottom: 14px;">
+        🧠 FILOSOFI PERJALANAN KONSEP KITA HARI INI:
+      </h3>
+      
+      <div style="display: flex; justify-content: center; align-items: center; gap: 14px;">
+        <!-- Step 1 -->
+        <div style="flex: 1; background: #fdf8f0; border: 3px solid #d97706; padding: 16px 12px; border-radius: 18px; text-align: center;">
+          <div style="background: #d97706; color: white; border-radius: 20px; padding: 2px 10px; display: inline-block; font-size: 12px; font-weight: bold; margin-bottom: 4px;">TAHAP 1</div>
+          <div style="font-weight: 800; font-size: 19px; color: #78350f;">1️⃣ Kenal x & y</div>
+          <div style="font-size: 13px; color: #92400e; font-weight: 600; margin-top: 2px;">(Bentuk Aljabar)</div>
+        </div>
+
+        <div style="font-size: 22px; color: var(--gold); font-weight: bold;">➔</div>
+
+        <!-- Step 2 -->
+        <div style="flex: 1; background: #ecfdf5; border: 3px solid #059669; padding: 16px 12px; border-radius: 18px; text-align: center;">
+          <div style="background: #059669; color: white; border-radius: 20px; padding: 2px 10px; display: inline-block; font-size: 12px; font-weight: bold; margin-bottom: 4px;">TAHAP 2</div>
+          <div style="font-weight: 800; font-size: 19px; color: #064e3b;">2️⃣ Operasikan x & y</div>
+          <div style="font-size: 13px; color: #047857; font-weight: 600; margin-top: 2px;">(Suku Sejenis)</div>
+        </div>
+
+        <div style="font-size: 22px; color: var(--gold); font-weight: bold;">➔</div>
+
+        <!-- Step 3 -->
+        <div style="flex: 1; background: #eff6ff; border: 3px solid #2563eb; padding: 16px 12px; border-radius: 18px; text-align: center;">
+          <div style="background: #2563eb; color: white; border-radius: 20px; padding: 2px 10px; display: inline-block; font-size: 12px; font-weight: bold; margin-bottom: 4px;">TAHAP 3</div>
+          <div style="font-weight: 800; font-size: 19px; color: #1e40af;">3️⃣ Hitung x & y</div>
+          <div style="font-size: 13px; color: #1d4ed8; font-weight: 600; margin-top: 2px;">(Substitusi Nilai)</div>
+        </div>
+
+        <div style="font-size: 22px; color: var(--gold); font-weight: bold;">➔</div>
+
+        <!-- Step 4 -->
+        <div style="flex: 1; background: #fef2f2; border: 3px solid #dc2626; padding: 16px 12px; border-radius: 18px; text-align: center;">
+          <div style="background: #dc2626; color: white; border-radius: 20px; padding: 2px 10px; display: inline-block; font-size: 12px; font-weight: bold; margin-bottom: 4px;">TAHAP 4</div>
+          <div style="font-weight: 800; font-size: 19px; color: #991b1b;">4️⃣ Cari Nilai x</div>
+          <div style="font-size: 13px; color: #b91c1c; font-weight: 600; margin-top: 2px;">(Persamaan PLSV)</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- SLIDE 3: MATERI 1 - BENTUK ALJABAR -->
+  <div class="slide" id="slide-3">
+    <div class="slide-header">
+      <div class="slide-title-group">
+        <h2>1️⃣ KENAL x & y: BENTUK ALJABAR</h2>
+        <div class="slide-subtitle">Sub-bab 1 · Durasi: 15 Menit</div>
+      </div>
+      <div class="badge-tag">Materi 1</div>
+    </div>
+
+    <div class="slide-body grid-2">
+      <div class="content-card">
+        <h3 style="margin-top:0; color: var(--bg-dark);">Unsur Utama Aljabar:</h3>
+        <div class="highlight-box" style="text-align: center; font-size: 36px;">
+          3x + 5
+        </div>
+        <ul style="font-size: 20px; line-height: 1.8;">
+          <li><strong>Variabel (x, y):</strong> Huruf peubah pengganti angka rahasia.</li>
+          <li><strong>Koefisien (3):</strong> Angka di depan huruf (menunjukkan <strong>jumlah hurufnya</strong>: 3x = x + x + x).</li>
+          <li><strong>Konstanta (+5):</strong> Angka pasti tanpa huruf.</li>
+          <li><strong>Suku:</strong> 3x dan 5 (ada 2 suku).</li>
+        </ul>
+      </div>
+
+      <div class="content-card" style="background: #fdf8f0; border-color: #fde68a;">
+        <h3 style="margin-top:0; color: #b45309;">📦 Analogi Kardus Mi:</h3>
+        <p style="font-size: 22px;">"Ustaz beli <strong>3 kardus mi</strong> (isinya belum dibuka = 3x) + <strong>2 bungkus mi eceran</strong> di lemari."</p>
+        <div style="background: white; border: 2px solid #d97706; padding: 16px; border-radius: 12px; font-size: 28px; font-weight: bold; text-align: center; color: #b45309;">
+          Bentuk Aljabar: 3x + 2
+        </div>
+        <p style="font-size: 18px; color: #dc2626; font-weight: bold; margin-top: 16px;">
+          ⚠️ Ingat: Jika hanya tertulis <u>x</u>, artinya koefisiennya adalah <u>1</u> (x = 1x).
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 4: MATERI 2 - SUKU SEJENIS -->
+  <div class="slide" id="slide-4">
+    <div class="slide-header">
+      <div class="slide-title-group">
+        <h2>2️⃣ OPERASIKAN x & y: SUKU SEJENIS</h2>
+        <div class="slide-subtitle">Sub-bab 2 · Menyederhanakan Aljabar · Durasi: 20 Menit</div>
+      </div>
+      <div class="badge-tag">Materi 2</div>
+    </div>
+
+    <div class="slide-body grid-2">
+      <div class="content-card">
+        <h3 style="margin-top:0; color: var(--bg-dark);">🍎 Analogi Apel & Jeruk:</h3>
+        <ul style="font-size: 22px; line-height: 1.8;">
+          <li>🍎 + 🍎 ➔ <strong>Bisa digabung!</strong><br>($2x + 3x = 5x$)</li>
+          <li>🍊 + 🍊 ➔ <strong>Bisa digabung!</strong><br>($7y - 2y = 5y$)</li>
+          <li>🍎 + 🍊 ➔ <strong style="color: #dc2626;">TIDAK BISA DIGABUNG!</strong><br>($3x + 5y$ tetap $3x + 5y$)</li>
+        </ul>
+      </div>
+
+      <div class="content-card" style="background: #ecfdf5; border-color: #a7f3d0;">
+        <h3 style="margin-top:0; color: #047857;">🔥 Contoh Utama Papan Tulis:</h3>
+        <div style="font-size: 24px; font-weight: bold; margin-bottom: 12px;">
+          Sederhanakan: 5x + 3y + 2x - y
+        </div>
+        <div style="background: white; border: 2px solid #059669; padding: 16px; border-radius: 12px; font-size: 22px;">
+          1. Kelompokkan sejenis:<br>
+          &nbsp;&nbsp;&nbsp;= (5x + 2x) + (3y - y)<br>
+          2. Hasil Akhir:<br>
+          &nbsp;&nbsp;&nbsp;= <strong style="font-size: 32px; color: #047857;">7x + 2y</strong>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 5: MATERI 3 - SUBSTITUSI NILAI -->
+  <div class="slide" id="slide-5">
+    <div class="slide-header">
+      <div class="slide-title-group">
+        <h2>3️⃣ HITUNG x & y: SUBSTITUSI NILAI</h2>
+        <div class="slide-subtitle">Mengganti Huruf dengan Angka (Gunakan Kurung) · Durasi: 15 Menit</div>
+      </div>
+      <div class="badge-tag">Materi 3</div>
+    </div>
+
+    <div class="slide-body grid-2">
+      <div class="content-card">
+        <h3 style="margin-top:0; color: var(--bg-dark);">Konsep Substitusi:</h3>
+        <p style="font-size: 22px;">Jika nilai variabel sudah diketahui, ganti huruf dengan angkanya menggunakan <strong>tanda kurung ( )</strong>.</p>
+        <div class="highlight-box" style="font-size: 24px;">
+          Contoh: 3x + 5 &nbsp;(jika x = 4)<br>
+          ➔ 3(4) + 5<br>
+          ➔ 12 + 5 = <span style="color: #047857; font-size: 32px;">17</span>
+        </div>
+      </div>
+
+      <div class="content-card" style="background: #eff6ff; border-color: #bfdbfe;">
+        <h3 style="margin-top:0; color: #1d4ed8;">🎯 Latihan Bertingkat:</h3>
+        <div style="font-size: 20px; line-height: 1.8;">
+          <strong>Level 1:</strong> 2x + 3 (jika x = 5)<br>
+          ➔ 2(5) + 3 = <strong style="color: #1d4ed8;">13</strong><br><br>
+          <strong>Level 2:</strong> 4x + 2y (jika x = 3, y = 5)<br>
+          ➔ 4(3) + 2(5) = 12 + 10 = <strong style="color: #1d4ed8;">22</strong>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 6: MATERI 4 - PLSV -->
+  <div class="slide" id="slide-6">
+    <div class="slide-header">
+      <div class="slide-title-group">
+        <h2>4️⃣ CARI NILAI x: PERSAMAAN PLSV</h2>
+        <div class="slide-subtitle">Konsep Menjaga Keseimbangan Timbangan · Durasi: 20 Menit</div>
+      </div>
+      <div class="badge-tag">Materi 4</div>
+    </div>
+
+    <div class="slide-body grid-2">
+      <div class="content-card">
+        <h3 style="margin-top:0; color: var(--bg-dark);">Dibalik: Mencari Nilai x!</h3>
+        <p style="font-size: 22px;"><strong>Soal 1:</strong> x + 5 = 12<br><em>"Angka berapa jika ditambah 5 hasilnya 12?"</em> ➔ <strong style="color: #047857; font-size: 28px;">x = 7</strong></p>
+        <p style="font-size: 22px;"><strong>Soal 2:</strong> 3x = 15<br>➔ x = 15 ÷ 3 ➔ <strong style="color: #047857; font-size: 28px;">x = 5</strong></p>
+      </div>
+
+      <div class="balance-box">
+        <h3 style="margin-top:0; color: #14532d;">⚖️ Menjaga Keseimbangan Sisi:</h3>
+        <p style="font-size: 22px; margin-bottom: 8px;"><strong>Selesaikan: 2x + 3 = 11</strong></p>
+        <ol style="font-size: 20px; line-height: 1.6; margin: 0; padding-left: 24px;">
+          <li>Kurangi 3 dari kedua sisi:<br>2x + 3 - 3 = 11 - 3 ➔ <strong>2x = 8</strong></li>
+          <li>Bagi kedua sisi dengan 2:<br>2x ÷ 2 = 8 ÷ 2 ➔ <strong style="font-size: 32px; color: #047857;">x = 4</strong></li>
+        </ol>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 7: MINI CHALLENGE LATIHAN SANTRI -->
+  <div class="slide" id="slide-7">
+    <div class="slide-header">
+      <div class="slide-title-group">
+        <h2>📝 MINI CHALLENGE LATIHAN SANTRI</h2>
+        <div class="slide-subtitle">Kerjakan di Buku Tulis Mandiri/Berpasangan · Waktu: 10 Menit</div>
+      </div>
+      <div class="badge-tag">Latihan</div>
+    </div>
+
+    <div class="slide-body">
+      <div class="content-card" style="font-size: 22px; line-height: 1.8;">
+        <ol>
+          <li>Tentukan variabel, koefisien, dan konstanta dari: <strong>7x + 4</strong></li>
+          <li>Identifikasi sejenis atau tidak: <strong>(3x dan 5x)</strong> & <strong>(3x dan 5y)</strong></li>
+          <li>Sederhanakan: <strong>3x + 5x = .....</strong></li>
+          <li>Sederhanakan: <strong>5x + 3y + 2x - y = .....</strong></li>
+          <li>Hitung nilai dari <strong>3x + 5</strong> jika <strong>x = 4</strong>!</li>
+          <li>Cari nilai x dari persamaan: <strong>x + 5 = 12</strong> & <strong>2x + 3 = 11</strong>!</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 8: KUNCI JAWABAN & PENUTUP -->
+  <div class="slide" id="slide-8">
+    <div class="slide-header">
+      <div class="slide-title-group">
+        <h2>🔑 KUNCI JAWABAN & REKAP KESIMPULAN</h2>
+        <div class="slide-subtitle">KBM Bab 2 Aljabar Tuntas 80 Menit · MTs Al-Imam</div>
+      </div>
+      <div class="badge-tag">Penutup</div>
+    </div>
+
+    <div class="slide-body grid-2">
+      <div class="content-card" style="background: #fdf8f0; border-color: #fde68a;">
+        <h3 style="margin-top:0; color: #b45309;">Kunci Jawaban:</h3>
+        <ol style="font-size: 18px; line-height: 1.6;">
+          <li>Variabel = x, Koefisien = 7, Konstanta = 4</li>
+          <li>3x & 5x (Sejenis ✅) | 3x & 5y (Beda ❌)</li>
+          <li>3x + 5x = <strong>8x</strong></li>
+          <li>5x + 3y + 2x - y = <strong>7x + 2y</strong></li>
+          <li>3(4) + 5 = 12 + 5 = <strong>17</strong></li>
+          <li>x = <strong>7</strong> & x = <strong>4</strong></li>
+        </ol>
+      </div>
+
+      <div class="content-card" style="background: #ecfdf5; border-color: #a7f3d0; text-align: center; display: flex; flex-direction: column; justify-content: center;">
+        <h3 style="color: #047857; font-size: 28px; margin-bottom: 12px;">Barakallahu Fiikum! 🎓</h3>
+        <p style="font-size: 22px;">"Matematika adalah bahasa logika. Aljabar membuka pintu untuk menyelesaikan masalah kehidupan!"</p>
+        <div style="font-size: 18px; font-weight: bold; color: #064e3b; margin-top: 16px;">
+          Ust. Rieza Eka Tomara, S.Kom · MTs Al-Imam
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- CONTROLS FOOTER -->
+<div class="controls-bar">
+  <button class="btn-nav" onclick="prevSlide()">◀ Sebelumnya</button>
+  <span class="slide-counter" id="slide-num">Slide 1 dari 8</span>
+  <button class="btn-nav" onclick="nextSlide()">Berikutnya ▶</button>
+</div>
+
+<script>
+  let currentSlide = 1;
+  const totalSlides = 8;
+
+  function showSlide(n) {
+    document.querySelectorAll('.slide').forEach(s => s.classList.remove('active'));
+    document.getElementById(`slide-${n}`).classList.add('active');
+    document.getElementById('slide-num').innerText = `Slide ${n} dari ${totalSlides}`;
+  }
+
+  function nextSlide() {
+    if (currentSlide < totalSlides) {
+      currentSlide++;
+      showSlide(currentSlide);
+    }
+  }
+
+  function prevSlide() {
+    if (currentSlide > 1) {
+      currentSlide--;
+      showSlide(currentSlide);
+    }
+  }
+
+  // Keyboard Arrow Controls
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'ArrowRight' || e.key === 'Space') {
+      nextSlide();
+    } else if (e.key === 'ArrowLeft') {
+      prevSlide();
+    }
+  });
+</script>
+
+</body>
+</html>
