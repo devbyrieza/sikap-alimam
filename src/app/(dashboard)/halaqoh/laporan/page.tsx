@@ -254,7 +254,7 @@ export default function LaporanHalaqohPage() {
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 40, marginTop: 40, fontSize: 12, textAlign: "center" }}>
               <div>
                 <div>Mengetahui,</div>
-                <div style={{ fontWeight: 700, color: "#1e293b", marginTop: 2 }}>Musyrif / Pengampu Halaqoh</div>
+                <div style={{ fontWeight: 700, color: "#1e293b", marginTop: 2 }}>Pengampu Halaqoh</div>
                 <div style={{ height: 50 }} />
                 <div style={{ fontWeight: 700 }}>( ___________________ )</div>
               </div>
