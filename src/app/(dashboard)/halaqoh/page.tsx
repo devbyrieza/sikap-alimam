@@ -262,7 +262,7 @@ export default function HalaqohDashboardPage() {
             boxShadow: activeTab === "mutabaah" ? "0 2px 8px rgba(0,0,0,0.06)" : "none"
           }}
         >
-          <BookOpen size={18} /> Rekap Mutabaah & Laporan Santri
+          <BookOpen size={18} /> Database Santri & Rapor
         </button>
       </div>
 
@@ -429,8 +429,8 @@ export default function HalaqohDashboardPage() {
                 <FileText size={18} color="#7c3aed" />
               </div>
               <div>
-                <div style={{ fontSize: 13, fontWeight: 700 }}>Cetak Laporan</div>
-                <div style={{ fontSize: 11, color: "#64748b" }}>Rekap Pekanan & Rapor</div>
+                <div style={{ fontSize: 13, fontWeight: 700 }}>Cetak Rapor Santri</div>
+                <div style={{ fontSize: 11, color: "#64748b" }}>Rapor Pekanan & Bulanan</div>
               </div>
             </Link>
             <Link href="/halaqoh/rekap" style={{
@@ -442,15 +442,15 @@ export default function HalaqohDashboardPage() {
                 <CalendarDays size={18} color="#0284c7" />
               </div>
               <div>
-                <div style={{ fontSize: 13, fontWeight: 700 }}>Rekap Catatan</div>
-                <div style={{ fontSize: 11, color: "#64748b" }}>Riwayat & statistik</div>
+                <div style={{ fontSize: 13, fontWeight: 700 }}>Jurnal / Log Harian</div>
+                <div style={{ fontSize: 11, color: "#64748b" }}>Tabel riwayat setoran</div>
               </div>
             </Link>
           </div>
         </>
       )}
 
-      {/* ─── TAB 2: REKAP MUTABAAH & LAPORAN SANTRI ────────────────────────── */}
+      {/* ─── TAB 2: DATABASE SANTRI & RAPOR ────────────────────────── */}
       {activeTab === "mutabaah" && (
         <div>
           {/* Filter & Search Bar */}
