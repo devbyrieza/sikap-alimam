@@ -105,7 +105,7 @@ export default function LaporanHalaqohPage() {
               <select value={selectedSantriId} onChange={e => setSelectedSantriId(e.target.value)}
                 style={{ width: "100%", padding: "9px 12px", borderRadius: 10, border: "1.5px solid #e2e8f0", fontSize: 13, background: "white" }}>
                 {allSantri.map(s => (
-                  <option key={s.id} value={s.id}>{s.nama_lengkap} ({s.kelas?.nama})</option>
+                  <option key={s.id} value={s.id}>{s.nama_lengkap}{s.kelas?.nama ? ` (${s.kelas.nama})` : ""}</option>
                 ))}
               </select>
             </div>
