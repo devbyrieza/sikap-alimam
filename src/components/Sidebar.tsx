@@ -66,17 +66,12 @@ const NAV: NavItem[] = [
     roles: ["wali_kelas", "WALI_KELAS", "admin_super", "ADMIN_SUPER"],
   },
   {
-    href: "/tahfidz/mutabaah",
-    label: "Mutabaah Tahfidz",
-    icon: <BookOpen size={18} />,
-    roles: ["guru", "GURU", "musyrif", "MUSYRIF", "wali_kelas", "WALI_KELAS", "admin_wali_kelas", "ADMIN_WALI_KELAS", "admin_super", "ADMIN_SUPER", "kabid_pengasuhan", "KABID_PENGASUHAN", "mudir", "MUDIR"],
-  },
-  {
     href: "/halaqoh",
-    label: "Halaqoh",
+    label: "Halaqoh & Mutabaah",
     icon: <BookHeart size={18} />,
-    roles: ["guru", "GURU", "musyrif", "MUSYRIF", "wali_kelas", "WALI_KELAS", "admin_super", "ADMIN_SUPER", "mudir", "MUDIR", "kabid_pengasuhan", "KABID_PENGASUHAN"],
+    roles: ["guru", "GURU", "musyrif", "MUSYRIF", "pengampu", "PENGAMPU", "wali_kelas", "WALI_KELAS", "admin_wali_kelas", "ADMIN_WALI_KELAS", "admin_super", "ADMIN_SUPER", "kabid_pengasuhan", "KABID_PENGASUHAN", "mudir", "MUDIR"],
   },
+
   {
     href: "/presensi/asatidz",
     label: "Absensi Guru",
