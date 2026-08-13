@@ -733,142 +733,159 @@ export default function TambahJurnalPage() {
               </div>
             </div>
 
-            {/* Card 2: Isi Jurnal */}
-            <div style={{ background: "white", borderRadius: "16px", padding: "24px", boxShadow: "0 4px 6px -1px rgba(0,0,0,0.1)", display: "flex", flexDirection: "column", gap: "20px" }}>
-              <div style={{ fontWeight: "bold", fontSize: "18px", color: "#1e293b", display: "flex", alignItems: "center", gap: "8px", borderBottom: "1px solid #f1f5f9", paddingBottom: "16px", margin: 0 }}>
-                <FileText size={20} color="#f59e0b" /> Isi Jurnal
-              </div>
-
-              {/* Topik Jurnal */}
-              <div>
-                <label style={{ display: "block", fontSize: "13px", fontWeight: 600, color: "#475569", marginBottom: "8px" }}>
-                  Topik Jurnal <span style={{ color: "#ef4444" }}>*</span>
-                </label>
-                <textarea
-                  rows={3}
-                  placeholder="Tuliskan topik jurnal hari ini..."
-                  value={materi}
-                  onChange={(e) => {
-                    setMateri(e.target.value);
-                    handleTextareaResize(e);
-                  }}
-                  style={{ minHeight: "80px", width: "100%", padding: "14px 16px", borderRadius: "12px", border: "1px solid #cbd5e1", fontSize: "15px", outline: "none", fontFamily: "inherit", resize: "none" }}
-                  required
-                />
-              </div>
-
-              {/* Sub Topik Jurnal */}
-              <div>
-                <label style={{ display: "block", fontSize: "13px", fontWeight: 600, color: "#475569", marginBottom: "8px" }}>
-                  Sub Topik Jurnal <span style={{ color: "#ef4444" }}>*</span>
-                </label>
-                <textarea
-                  rows={2}
-                  placeholder="Tuliskan sub topik yang spesifik..."
-                  value={subMateri}
-                  onChange={(e) => {
-                    setSubMateri(e.target.value);
-                    handleTextareaResize(e);
-                  }}
-                  style={{ minHeight: "60px", width: "100%", padding: "14px 16px", borderRadius: "12px", border: "1px solid #cbd5e1", fontSize: "15px", outline: "none", fontFamily: "inherit", resize: "none" }}
-                  required
-                />
-              </div>
-
-              <div>
-                <label style={{ display: "block", fontSize: "13px", fontWeight: 600, color: "#475569", marginBottom: "8px" }}>
-                  Learning Objective (LO) / Tujuan Pembelajaran <span style={{ color: "#ef4444" }}>*</span>
-                </label>
-                <textarea
-                  rows={3}
-                  placeholder="Tuliskan learning objective atau tujuan pembelajaran yang ingin dicapai..."
-                  value={learningOutcome}
-                  onChange={(e) => {
-                    setLearningOutcome(e.target.value);
-                    handleTextareaResize(e);
-                  }}
-                  style={{ minHeight: "80px", width: "100%", padding: "14px 16px", borderRadius: "12px", border: "1px solid #cbd5e1", fontSize: "15px", outline: "none", fontFamily: "inherit", resize: "none" }}
-                  required
-                />
-              </div>
-
-              <div>
-                <label style={{ display: "block", fontSize: "13px", fontWeight: 600, color: "#475569", marginBottom: "8px" }}>
-                  Strategi Pembelajaran <span style={{ color: "#ef4444" }}>*</span>
-                </label>
-                <textarea
-                  rows={4}
-                  placeholder="Deskripsikan strategi untuk mencapai target/tujuan pembelajaran..."
-                  value={kegiatan}
-                  onChange={(e) => {
-                    setKegiatan(e.target.value);
-                    handleTextareaResize(e);
-                  }}
-                  style={{ minHeight: "100px", width: "100%", padding: "14px 16px", borderRadius: "12px", border: "1px solid #cbd5e1", fontSize: "15px", outline: "none", fontFamily: "inherit", resize: "none" }}
-                  required
-                />
-              </div>
-
-              <div>
-                <label style={{ display: "block", fontSize: "13px", fontWeight: 600, color: "#475569", marginBottom: "8px" }}>
-                  Catatan Lainnya (Opsional)
-                </label>
-                <textarea
-                  rows={3}
-                  placeholder="Catatan tambahan, kendala, atau evaluasi..."
-                  value={catatan}
-                  onChange={(e) => {
-                    setCatatan(e.target.value);
-                    handleTextareaResize(e);
-                  }}
-                  style={{ minHeight: "80px", width: "100%", padding: "14px 16px", borderRadius: "12px", border: "1px solid #cbd5e1", fontSize: "15px", outline: "none", fontFamily: "inherit", resize: "none" }}
-                />
-              </div>
-            </div>
-
-            {/* Actions */}
-            <div style={{ display: "flex", gap: "16px", justifyContent: "flex-end", alignItems: "center" }}>
-              {lastSaved && (
-                <span style={{ fontSize: "13px", color: "#64748b", display: "flex", alignItems: "center", gap: "6px", fontWeight: 500 }}>
-                  <Save size={14} /> Draft tersimpan pukul {lastSaved}
-                </span>
-              )}
-              <Link href="/jurnal" style={{ background: "transparent", color: "#475569", padding: "14px 24px", borderRadius: "14px", fontWeight: 600, textDecoration: "none", border: "1px solid #cbd5e1" }}>
-                Batal
-              </Link>
-              <button
-                type="submit"
-                disabled={submitting}
-                style={{
-                  background: "#550000",
-                  color: "white",
-                  padding: "14px 28px",
-                  borderRadius: "14px",
-                  fontWeight: "bold",
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "10px",
-                  border: "none",
-                  cursor: submitting ? "not-allowed" : "pointer",
-                  opacity: submitting ? 0.7 : 1,
-                  fontSize: "15px",
-                  boxShadow: "0 4px 14px rgba(85,0,0,0.25)",
-                  transition: "all 0.2s"
-                }}
+            {/* Card 2: Isi Jurnal / Validation Warning */}
+            {(!kelasId || !mapelId || jamKe.length === 0 || !asatidId || !tanggal) ? (
+              <div
+                style={{ background: "#fffbeb", borderRadius: "16px", padding: "36px 24px", border: "1.5px solid #fef08a", textAlign: "center", color: "#92400e", boxShadow: "0 2px 10px rgba(217, 119, 6, 0.05)" }}
               >
-                {submitting ? (
-                  <>
-                    <Loader2 size={18} style={{ animation: "spin 1s linear infinite" }} />
-                    Menyimpan...
-                  </>
-                ) : (
-                  <>
-                    <BookOpen size={18} />
-                    Simpan Jurnal
-                  </>
-                )}
-              </button>
-            </div>
+                <div style={{ width: 48, height: 48, background: "#fef3c7", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 12px", color: "#d97706" }}>
+                  <AlertCircle size={24} />
+                </div>
+                <div style={{ fontSize: 16, fontWeight: 800, color: "#92400e", marginBottom: 4 }}>Informasi Mengajar Belum Lengkap</div>
+                <p style={{ fontSize: 13, color: "#b45309", margin: 0, maxWidth: 520, marginLeft: "auto", marginRight: "auto", lineHeight: 1.5 }}>
+                  {!kelasId ? "⚠️ Silakan pilih Kelas terlebih dahulu." : !mapelId ? "⚠️ Silakan pilih Mata Pelajaran terlebih dahulu." : "⚠️ Silakan pilih Jam Ke- KBM terlebih dahulu."} Form pengisian jurnal mengajar tidak dapat diisi sebelum informasi mengajar terisi lengkap.
+                </p>
+              </div>
+            ) : (
+              <>
+                <div style={{ background: "white", borderRadius: "16px", padding: "24px", boxShadow: "0 4px 6px -1px rgba(0,0,0,0.1)", display: "flex", flexDirection: "column", gap: "20px" }}>
+                  <div style={{ fontWeight: "bold", fontSize: "18px", color: "#1e293b", display: "flex", alignItems: "center", gap: "8px", borderBottom: "1px solid #f1f5f9", paddingBottom: "16px", margin: 0 }}>
+                    <FileText size={20} color="#f59e0b" /> Isi Jurnal
+                  </div>
+
+                  {/* Topik Jurnal */}
+                  <div>
+                    <label style={{ display: "block", fontSize: "13px", fontWeight: 600, color: "#475569", marginBottom: "8px" }}>
+                      Topik Jurnal <span style={{ color: "#ef4444" }}>*</span>
+                    </label>
+                    <textarea
+                      rows={3}
+                      placeholder="Tuliskan topik jurnal hari ini..."
+                      value={materi}
+                      onChange={(e) => {
+                        setMateri(e.target.value);
+                        handleTextareaResize(e);
+                      }}
+                      style={{ minHeight: "80px", width: "100%", padding: "14px 16px", borderRadius: "12px", border: "1px solid #cbd5e1", fontSize: "15px", outline: "none", fontFamily: "inherit", resize: "none" }}
+                      required
+                    />
+                  </div>
+
+                  {/* Sub Topik Jurnal */}
+                  <div>
+                    <label style={{ display: "block", fontSize: "13px", fontWeight: 600, color: "#475569", marginBottom: "8px" }}>
+                      Sub Topik Jurnal <span style={{ color: "#ef4444" }}>*</span>
+                    </label>
+                    <textarea
+                      rows={2}
+                      placeholder="Tuliskan sub topik yang spesifik..."
+                      value={subMateri}
+                      onChange={(e) => {
+                        setSubMateri(e.target.value);
+                        handleTextareaResize(e);
+                      }}
+                      style={{ minHeight: "60px", width: "100%", padding: "14px 16px", borderRadius: "12px", border: "1px solid #cbd5e1", fontSize: "15px", outline: "none", fontFamily: "inherit", resize: "none" }}
+                      required
+                    />
+                  </div>
+
+                  <div>
+                    <label style={{ display: "block", fontSize: "13px", fontWeight: 600, color: "#475569", marginBottom: "8px" }}>
+                      Learning Objective (LO) / Tujuan Pembelajaran <span style={{ color: "#ef4444" }}>*</span>
+                    </label>
+                    <textarea
+                      rows={3}
+                      placeholder="Tuliskan learning objective atau tujuan pembelajaran yang ingin dicapai..."
+                      value={learningOutcome}
+                      onChange={(e) => {
+                        setLearningOutcome(e.target.value);
+                        handleTextareaResize(e);
+                      }}
+                      style={{ minHeight: "80px", width: "100%", padding: "14px 16px", borderRadius: "12px", border: "1px solid #cbd5e1", fontSize: "15px", outline: "none", fontFamily: "inherit", resize: "none" }}
+                      required
+                    />
+                  </div>
+
+                  <div>
+                    <label style={{ display: "block", fontSize: "13px", fontWeight: 600, color: "#475569", marginBottom: "8px" }}>
+                      Strategi Pembelajaran <span style={{ color: "#ef4444" }}>*</span>
+                    </label>
+                    <textarea
+                      rows={4}
+                      placeholder="Deskripsikan strategi untuk mencapai target/tujuan pembelajaran..."
+                      value={kegiatan}
+                      onChange={(e) => {
+                        setKegiatan(e.target.value);
+                        handleTextareaResize(e);
+                      }}
+                      style={{ minHeight: "100px", width: "100%", padding: "14px 16px", borderRadius: "12px", border: "1px solid #cbd5e1", fontSize: "15px", outline: "none", fontFamily: "inherit", resize: "none" }}
+                      required
+                    />
+                  </div>
+
+                  <div>
+                    <label style={{ display: "block", fontSize: "13px", fontWeight: 600, color: "#475569", marginBottom: "8px" }}>
+                      Catatan Lainnya (Opsional)
+                    </label>
+                    <textarea
+                      rows={3}
+                      placeholder="Catatan tambahan, kendala, atau evaluasi..."
+                      value={catatan}
+                      onChange={(e) => {
+                        setCatatan(e.target.value);
+                        handleTextareaResize(e);
+                      }}
+                      style={{ minHeight: "80px", width: "100%", padding: "14px 16px", borderRadius: "12px", border: "1px solid #cbd5e1", fontSize: "15px", outline: "none", fontFamily: "inherit", resize: "none" }}
+                    />
+                  </div>
+                </div>
+
+                {/* Actions */}
+                <div style={{ display: "flex", gap: "16px", justifyContent: "flex-end", alignItems: "center" }}>
+                  {lastSaved && (
+                    <span style={{ fontSize: "13px", color: "#64748b", display: "flex", alignItems: "center", gap: "6px", fontWeight: 500 }}>
+                      <Save size={14} /> Draft tersimpan pukul {lastSaved}
+                    </span>
+                  )}
+                  <Link href="/jurnal" style={{ background: "transparent", color: "#475569", padding: "14px 24px", borderRadius: "14px", fontWeight: 600, textDecoration: "none", border: "1px solid #cbd5e1" }}>
+                    Batal
+                  </Link>
+                  <button
+                    type="submit"
+                    disabled={submitting}
+                    style={{
+                      background: "#550000",
+                      color: "white",
+                      padding: "14px 28px",
+                      borderRadius: "14px",
+                      fontWeight: "bold",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "10px",
+                      border: "none",
+                      cursor: submitting ? "not-allowed" : "pointer",
+                      opacity: submitting ? 0.7 : 1,
+                      fontSize: "15px",
+                      boxShadow: "0 4px 14px rgba(85,0,0,0.25)",
+                      transition: "all 0.2s"
+                    }}
+                  >
+                    {submitting ? (
+                      <>
+                        <Loader2 size={18} style={{ animation: "spin 1s linear infinite" }} />
+                        Menyimpan...
+                      </>
+                    ) : (
+                      <>
+                        <BookOpen size={18} />
+                        Simpan Jurnal
+                      </>
+                    )}
+                  </button>
+                </div>
+              </>
+            )}
+
           </form>
         )}
       </div>

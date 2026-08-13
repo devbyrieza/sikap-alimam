@@ -12,8 +12,10 @@ import {
   Lightbulb,
   BarChart3,
   ArrowLeft,
-  Trash2
+  Trash2,
+  AlertCircle
 } from "lucide-react";
+
 import ModuleTabs from "@/components/ModuleTabs";
 
 interface Kelas {
@@ -620,6 +622,16 @@ export default function InputNilaiPage() {
             </div>
           </div>
 
+          {/* Mandatory Parameter Warning Banner */}
+          {(!kelas_id || !mapel_id) && (
+            <div style={{ background: "#fffbeb", borderRadius: "16px", padding: "16px 20px", border: "1.5px solid #fef08a", display: "flex", alignItems: "center", gap: "12px", color: "#92400e" }}>
+              <AlertCircle size={22} style={{ color: "#d97706", flexShrink: 0 }} />
+              <div style={{ fontSize: "13px", fontWeight: "600", color: "#b45309" }}>
+                {!kelas_id ? "⚠️ Silakan pilih Kelas terlebih dahulu." : "⚠️ Silakan pilih Mata Pelajaran terlebih dahulu."} Lembar nilai baru dapat dibuka setelah parameter terisi lengkap.
+              </div>
+            </div>
+          )}
+
           {/* Submit Action */}
           <div className="flex justify-end mt-2 w-full">
             <button
@@ -637,8 +649,20 @@ export default function InputNilaiPage() {
                 transition: "all 0.2s",
               }}
               disabled={!kelas_id || !mapel_id}
-              onClick={() => setStep(2)}
+              onClick={() => {
+                if (!kelas_id || !mapel_id) {
+                  Swal.fire({
+                    icon: "warning",
+                    title: "Parameter Belum Lengkap",
+                    text: "Silakan pilih Kelas dan Mata Pelajaran terlebih dahulu.",
+                    confirmButtonColor: "var(--primary)",
+                  });
+                  return;
+                }
+                setStep(2);
+              }}
             >
+
               <span>Lanjut ke Lembar Nilai</span>
               <svg width="18" height="18" fill="none" viewBox="0 0 24 24">
                 <path stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" d="M9 18l6-6-6-6" />
