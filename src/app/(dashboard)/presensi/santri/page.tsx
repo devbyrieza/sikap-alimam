@@ -17,7 +17,10 @@ import {
   Clock,
   Check,
   Calendar,
+  BookOpen,
+  AlertCircle,
 } from "lucide-react";
+
 
 type Kelas = { id: string; nama: string; jenjang: string | null };
 type Mapel = { id: string; nama: string };
@@ -322,13 +325,16 @@ export default function PresensiSantriPage() {
     }
   }, [selectedKelas, tanggal, mapelId, jamKeString]);
 
-  // Otomatis muat daftar santri ketika seluruh filter (Kelas, Tanggal, Mapel, Jam Ke-) terisi lengkap
+  // Otomatis muat daftar santri HANYA ketika seluruh filter (Kelas, Tanggal, Mapel, Jam Ke-) terisi lengkap
   useEffect(() => {
     if (selectedKelas && tanggal && mapelId && jamKeString) {
       loadPresensi(false);
+    } else {
+      setSantri([]);
+      setStatusMap({});
+      setKeteranganMap({});
     }
   }, [selectedKelas, tanggal, mapelId, jamKeString, loadPresensi]);
-
 
   const setStatus = (santriId: string, status: StatusType) => {
     setStatusMap((prev) => ({ ...prev, [santriId]: status }));
@@ -371,7 +377,18 @@ export default function PresensiSantriPage() {
   ).length;
 
   const handleSimpan = async () => {
-    if (!selectedKelas || !tanggal || !mapelId || !jamKe || santri.length === 0) return;
+    if (!mapelId) {
+      Swal.fire({
+        icon: "warning",
+        title: "Mata Pelajaran Belum Dipilih",
+        text: "Silakan pilih Mata Pelajaran terlebih dahulu sebelum menyimpan presensi.",
+        confirmButtonColor: "var(--primary)",
+      });
+      return;
+    }
+
+    if (!selectedKelas || !tanggal || !jamKe || santri.length === 0) return;
+
 
     // (Confirmation alert for missing attendance removed because default is now Hadir)
 
@@ -1004,8 +1021,23 @@ export default function PresensiSantriPage() {
         </div>
       )}
 
-      {/* Empty state */}
-      {!loadingSantri && selectedKelas && tanggal && santri.length === 0 && !loadingMaster && (
+      {/* Warning State jika Mapel atau filter belum terisi lengkap */}
+      {!loadingSantri && (!mapelId || !selectedKelas || jamKe.length === 0) && (
+        <div
+          style={{ background: "#fffbeb", borderRadius: "20px", padding: "36px 24px", border: "1.5px solid #fef08a", textAlign: "center", color: "#92400e", boxShadow: "0 2px 10px rgba(217, 119, 6, 0.05)" }}
+        >
+          <div style={{ width: 48, height: 48, background: "#fef3c7", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 12px", color: "#d97706" }}>
+            <BookOpen size={24} />
+          </div>
+          <div style={{ fontSize: 15, fontWeight: 800, color: "#92400e", marginBottom: 4 }}>Isian Filter Belum Lengkap</div>
+          <p style={{ fontSize: 13, color: "#b45309", margin: 0, maxWidth: 520, marginLeft: "auto", marginRight: "auto", lineHeight: 1.5 }}>
+            {!mapelId ? "⚠️ Mata Pelajaran belum dipilih. Silakan tentukan Mata Pelajaran terlebih dahulu." : "Silakan lengkapi pilihan Kelas dan Jam Ke- terlebih dahulu."} Daftar presensi santri tidak akan ditampilkan sebelum isian terisi lengkap.
+          </p>
+        </div>
+      )}
+
+      {/* Empty state ketika filter terisi lengkap namun tidak ada santri */}
+      {!loadingSantri && selectedKelas && mapelId && jamKe.length > 0 && santri.length === 0 && !loadingMaster && (
         <div
           style={{ background: "white", borderRadius: "20px", padding: "48px 24px", border: "1px dashed #ebdcc3", textAlign: "center", color: "#64748b" }}
         >
@@ -1015,6 +1047,7 @@ export default function PresensiSantriPage() {
           </p>
         </div>
       )}
+
     </div>
   );
 }
