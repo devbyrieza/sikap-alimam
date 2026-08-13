@@ -159,14 +159,17 @@ export default function HalaqohDashboardPage() {
   const formatTanggal = (d: Date) =>
     d.toLocaleDateString("id-ID", { weekday: "long", day: "numeric", month: "long", year: "numeric" });
 
-  const isAdminOrMusyrif = () => {
+  // Pengampu Halaqoh: guru sekaligus pengampu (Iqbal, Agus, Imron, Wahyudi)
+  // + pengabdian/musyrif pengampu (Ikhwan)
+  const isPengampuHalaqoh = () => {
     const role = (profile?.role || "").toLowerCase();
-    return role.includes("admin_super") || role.includes("musyrif") || role.includes("mudir") || role.includes("guru") || role.includes("pengampu");
+    return role.includes("guru") || role.includes("musyrif") || role.includes("pengampu");
   };
 
+  // Pimpinan: Admin Super, Mudir, dan Kabid Pengasuhan
   const isPimpinan = () => {
     const role = (profile?.role || "").toLowerCase();
-    return role.includes("admin") || role.includes("mudir") || role.includes("kabid") || role.includes("wali_kelas");
+    return role.includes("admin_super") || role.includes("mudir") || role.includes("kabid_pengasuhan");
   };
 
   const getNilaiBadge = (nilai?: number | null) => {
@@ -365,7 +368,7 @@ export default function HalaqohDashboardPage() {
                           <div style={{ fontSize: 12, color: "#94a3b8", marginBottom: 14 }}>
                             Belum ada kelompok halaqoh untuk sesi ini.
                           </div>
-                          {isAdminOrMusyrif() && (
+                          {isPengampuHalaqoh() && (
                             <Link
                               href="/halaqoh/kelompok"
                               style={{
@@ -389,7 +392,7 @@ export default function HalaqohDashboardPage() {
 
           {/* Quick Links */}
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))", gap: 14 }}>
-            {isAdminOrMusyrif() && (
+            {isPengampuHalaqoh() && (
               <Link href="/halaqoh/kelompok" style={{
                 display: "flex", alignItems: "center", gap: 12, background: "white",
                 border: "1.5px solid #e2e8f0", borderRadius: 16, padding: "16px 20px",
