@@ -127,10 +127,9 @@ export default function InputNilaiPage() {
 
   // Filtered Kelas List
   const filteredKelasList = useMemo(() => {
+    if (!jenjangFilter) return [];
     let list = master?.kelas || [];
-    if (jenjangFilter) {
-      list = list.filter((k) => k.jenjang === jenjangFilter);
-    }
+    list = list.filter((k) => k.jenjang === jenjangFilter);
 
     if (!isAdminSuper && asatidId && master?.asatidzmMapel) {
       const teacherKelasIds = master.asatidzmMapel
@@ -144,6 +143,7 @@ export default function InputNilaiPage() {
 
     return list;
   }, [jenjangFilter, asatidId, master, isAdminSuper]);
+
 
   // Auto-select Kelas jika hanya ada 1 kelas
   useEffect(() => {
@@ -544,10 +544,14 @@ export default function InputNilaiPage() {
                 className="w-full min-w-0 box-border"
                 style={{ padding: "12px 14px", borderRadius: "12px", border: "1px solid #ebdcc3", background: "#fdf8f0", fontSize: "14px", outline: "none", fontWeight: 600 }}
                 value={jenjangFilter}
-                onChange={(e) => setJenjangFilter(e.target.value)}
+                onChange={(e) => {
+                  setJenjangFilter(e.target.value);
+                  setKelasId("");
+                  setMapelId("");
+                }}
                 disabled={loadingKelas}
               >
-                {availableJenjangs.length > 1 && <option value="">— Semua Jenjang —</option>}
+                {availableJenjangs.length > 1 && <option value="">— Pilih Jenjang —</option>}
                 {availableJenjangs.map((j) => (
                   <option key={j} value={j}>
                     {j}
@@ -560,12 +564,15 @@ export default function InputNilaiPage() {
               <label style={{ fontSize: "13px", fontWeight: "700", color: "#550000" }}>Kelas</label>
               <select
                 className="w-full min-w-0 box-border"
-                style={{ padding: "12px 14px", borderRadius: "12px", border: "1px solid #ebdcc3", background: "#fdf8f0", fontSize: "14px", outline: "none", fontWeight: 600 }}
+                style={{ padding: "12px 14px", borderRadius: "12px", border: "1px solid #ebdcc3", background: !jenjangFilter ? "#f1f5f9" : "#fdf8f0", fontSize: "14px", outline: "none", fontWeight: 600 }}
                 value={kelas_id}
-                onChange={(e) => setKelasId(e.target.value)}
-                disabled={loadingKelas || (jenjangFilter !== "" && filteredKelasList.length === 0)}
+                onChange={(e) => {
+                  setKelasId(e.target.value);
+                  setMapelId("");
+                }}
+                disabled={loadingKelas || !jenjangFilter || filteredKelasList.length === 0}
               >
-                <option value="">— Pilih Kelas —</option>
+                <option value="">{jenjangFilter ? "— Pilih Kelas —" : "— Pilih Jenjang Terlebih Dahulu —"}</option>
                 {filteredKelasList.map((k) => (
                   <option key={k.id} value={k.id}>
                     {k.nama}
@@ -580,12 +587,12 @@ export default function InputNilaiPage() {
             <label style={{ fontSize: "13px", fontWeight: "700", color: "#550000" }}>Mata Pelajaran</label>
             <select
               className="w-full min-w-0 box-border"
-              style={{ padding: "12px 14px", borderRadius: "12px", border: "1px solid #ebdcc3", background: "#fdf8f0", fontSize: "14px", outline: "none", fontWeight: 600 }}
+              style={{ padding: "12px 14px", borderRadius: "12px", border: "1px solid #ebdcc3", background: !kelas_id ? "#f1f5f9" : "#fdf8f0", fontSize: "14px", outline: "none", fontWeight: 600 }}
               value={mapel_id}
               onChange={(e) => setMapelId(e.target.value)}
               disabled={!kelas_id || loadingKelas}
             >
-              <option value="">— Pilih Mapel —</option>
+              <option value="">{kelas_id ? "— Pilih Mata Pelajaran —" : "— Pilih Kelas Terlebih Dahulu —"}</option>
               {mapelList.map((m) => (
                 <option key={m.id} value={m.id}>
                   {m.nama}
@@ -593,6 +600,7 @@ export default function InputNilaiPage() {
               ))}
             </select>
           </div>
+
 
           {/* Semester & Tahun Ajaran */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full">

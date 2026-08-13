@@ -207,10 +207,9 @@ export default function PresensiSantriPage() {
   }, [availableJenjangs]);
 
   const filteredKelasList = useMemo(() => {
+    if (!selectedJenjang) return [];
     let list = master?.kelas || [];
-    if (selectedJenjang) {
-      list = list.filter((k) => k.jenjang === selectedJenjang);
-    }
+    list = list.filter((k) => k.jenjang === selectedJenjang);
 
     if (!isAdminSuper && asatidId && master?.asatidzmMapel) {
       const teacherKelasIds = master.asatidzmMapel
@@ -233,7 +232,8 @@ export default function PresensiSantriPage() {
       const exists = filteredKelasList.find((k) => k.id === selectedKelas);
       if (!exists) setSelectedKelas("");
     }
-  }, [filteredKelasList]);
+  }, [filteredKelasList, selectedKelas]);
+
 
   const mapelList = useMemo(() => {
     let list = (selectedKelas && master?.mapel?.[selectedKelas]) || [];
@@ -570,7 +570,7 @@ export default function PresensiSantriPage() {
                   setSelectedKelas("");
                 }}
               >
-                {availableJenjangs.length > 1 && <option value="">— Semua Jenjang —</option>}
+                {availableJenjangs.length > 1 && <option value="">— Pilih Jenjang —</option>}
                 {availableJenjangs.map((j) => (
                   <option key={j} value={j}>
                     {j}
@@ -594,7 +594,7 @@ export default function PresensiSantriPage() {
             ) : (
               <select
                 className="w-full min-w-0 box-border"
-                style={{ padding: "11px 14px", borderRadius: "12px", border: "1px solid #ebdcc3", background: "#fdf8f0", fontSize: "14px", outline: "none", fontWeight: 600 }}
+                style={{ padding: "11px 14px", borderRadius: "12px", border: "1px solid #ebdcc3", background: !selectedJenjang ? "#f1f5f9" : "#fdf8f0", fontSize: "14px", outline: "none", fontWeight: 600 }}
                 value={selectedKelas}
                 onChange={(e) => {
                   setSelectedKelas(e.target.value);
@@ -605,7 +605,7 @@ export default function PresensiSantriPage() {
                 }}
                 disabled={!selectedJenjang}
               >
-                <option value="">— Pilih Kelas —</option>
+                <option value="">{selectedJenjang ? "— Pilih Kelas —" : "— Pilih Jenjang Terlebih Dahulu —"}</option>
                 {filteredKelasList.map((k) => (
                   <option key={k.id} value={k.id}>
                     {k.nama}
@@ -633,7 +633,7 @@ export default function PresensiSantriPage() {
               }}
               disabled={!selectedKelas}
             >
-              <option value="">{selectedKelas ? "- Pilih Mapel -" : "- Pilih Kelas -"}</option>
+              <option value="">{selectedKelas ? "— Pilih Mata Pelajaran —" : "— Pilih Kelas Terlebih Dahulu —"}</option>
               {mapelList.map((m) => (
                 <option key={m.id} value={m.id}>
                   {m.nama}
@@ -641,6 +641,7 @@ export default function PresensiSantriPage() {
               ))}
             </select>
           </div>
+
 
         </div>
 

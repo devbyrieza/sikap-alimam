@@ -218,10 +218,9 @@ export default function TambahJurnalPage() {
   }, [availableJenjangs]);
 
   const filteredKelasList = useMemo(() => {
+    if (!jenjangFilter) return [];
     let list = master?.kelas || [];
-    if (jenjangFilter) {
-      list = list.filter((k) => k.jenjang === jenjangFilter);
-    }
+    list = list.filter((k) => k.jenjang === jenjangFilter);
 
     if (asatidId && master?.asatidzmMapel) {
       const teacherKelasIds = master.asatidzmMapel
@@ -235,6 +234,7 @@ export default function TambahJurnalPage() {
 
     return list;
   }, [jenjangFilter, asatidId, master]);
+
 
   // Auto-select Kelas jika hanya ada 1 kelas
   useEffect(() => {
@@ -673,10 +673,14 @@ export default function TambahJurnalPage() {
                   </label>
                   <select
                     value={jenjangFilter}
-                    onChange={(e) => setJenjangFilter(e.target.value)}
+                    onChange={(e) => {
+                      setJenjangFilter(e.target.value);
+                      setKelasId("");
+                      setMapelId("");
+                    }}
                     style={{ padding: "12px 16px", borderRadius: "12px", border: "1px solid #cbd5e1", fontSize: "15px", outline: "none", width: "100%", backgroundColor: "white" }}
                   >
-                    {availableJenjangs.length > 1 && <option value="">— Semua Jenjang —</option>}
+                    {availableJenjangs.length > 1 && <option value="">— Pilih Jenjang —</option>}
                     {availableJenjangs.map((j) => (
                       <option key={j} value={j}>
                         {j}
@@ -692,12 +696,15 @@ export default function TambahJurnalPage() {
                   </label>
                   <select
                     value={kelasId}
-                    onChange={(e) => setKelasId(e.target.value)}
+                    onChange={(e) => {
+                      setKelasId(e.target.value);
+                      setMapelId("");
+                    }}
                     required
-                    disabled={jenjangFilter !== "" && filteredKelasList.length === 0}
-                    style={{ padding: "12px 16px", borderRadius: "12px", border: "1px solid #cbd5e1", fontSize: "15px", outline: "none", width: "100%", backgroundColor: (jenjangFilter !== "" && filteredKelasList.length === 0) ? "#f1f5f9" : "white" }}
+                    disabled={!jenjangFilter || filteredKelasList.length === 0}
+                    style={{ padding: "12px 16px", borderRadius: "12px", border: "1px solid #cbd5e1", fontSize: "15px", outline: "none", width: "100%", backgroundColor: (!jenjangFilter || filteredKelasList.length === 0) ? "#f1f5f9" : "white" }}
                   >
-                    <option value="">— Pilih Kelas —</option>
+                    <option value="">{jenjangFilter ? "— Pilih Kelas —" : "— Pilih Jenjang Terlebih Dahulu —"}</option>
                     {filteredKelasList.map((k) => (
                       <option key={k.id} value={k.id}>
                         {k.nama || (k.jenjang ? `Kelas ${k.jenjang}` : "Tanpa Nama")}
@@ -719,7 +726,7 @@ export default function TambahJurnalPage() {
                     style={{ padding: "12px 16px", borderRadius: "12px", border: "1px solid #cbd5e1", fontSize: "15px", outline: "none", width: "100%", backgroundColor: !kelasId ? "#f1f5f9" : "white" }}
                   >
                     <option value="">
-                      {kelasId ? "— Pilih Mata Pelajaran —" : "— Pilih kelas terlebih dahulu —"}
+                      {kelasId ? "— Pilih Mata Pelajaran —" : "— Pilih Kelas Terlebih Dahulu —"}
                     </option>
                     {mapelList.map((m) => (
                       <option key={m.id} value={m.id}>
@@ -727,6 +734,7 @@ export default function TambahJurnalPage() {
                       </option>
                     ))}
                   </select>
+
                   {kelasId && mapelList.length === 0 && (
                     <p style={{ fontSize: "13px", color: "#d97706", marginTop: "8px", fontWeight: 500, margin: 0 }}>
                       Belum ada mapel untuk kelas ini
