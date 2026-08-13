@@ -120,16 +120,41 @@ export default async function DashboardPage() {
       });
 
       if (teacherMapel.length > 0) {
-        jadwalHariIni = teacherMapel.map((tm, idx) => ({
-          id: `dyn-${idx}`,
-          jam_ke: idx + 3,
-          waktu_mulai: idx === 0 ? "07:00" : "07:40",
-          waktu_selesai: idx === 0 ? "07:40" : "08:20",
-          mapel: { nama: tm.mapel.nama },
-          kelas: { nama: tm.kelas.nama }
-        }));
+        const ilItem = teacherMapel.find(t => t.kelas.nama.toUpperCase().includes("IL") || t.kelas.nama.toUpperCase().includes("I'DAD"));
+        const mtsItem = teacherMapel.find(t => t.kelas.nama.toUpperCase().includes("MTS") || t.kelas.nama.includes("7"));
+
+        if (ilItem && mtsItem) {
+          jadwalHariIni = [
+            {
+              id: "dyn-il",
+              jam_ke: "3 - 4",
+              waktu_mulai: "07:00",
+              waktu_selesai: "08:20",
+              mapel: { nama: ilItem.mapel.nama },
+              kelas: { nama: ilItem.kelas.nama }
+            },
+            {
+              id: "dyn-mts",
+              jam_ke: "5 - 6",
+              waktu_mulai: "08:20",
+              waktu_selesai: "09:40",
+              mapel: { nama: mtsItem.mapel.nama },
+              kelas: { nama: mtsItem.kelas.nama }
+            }
+          ];
+        } else {
+          jadwalHariIni = teacherMapel.map((tm, idx) => ({
+            id: `dyn-${idx}`,
+            jam_ke: idx === 0 ? "3 - 4" : "5 - 6",
+            waktu_mulai: idx === 0 ? "07:00" : "08:20",
+            waktu_selesai: idx === 0 ? "08:20" : "09:40",
+            mapel: { nama: tm.mapel.nama },
+            kelas: { nama: tm.kelas.nama }
+          }));
+        }
       }
     }
+
   } catch (err) {
     console.error("DashboardPage: error fetching stats:", err);
   }
