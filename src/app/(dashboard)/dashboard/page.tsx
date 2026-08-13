@@ -2,6 +2,8 @@ import { getSession } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { BookMarked, ClipboardCheck, UserCheck, BarChart3, TrendingUp, Calendar, Clock, Hand, Zap, BookOpen } from "lucide-react";
 import Link from "next/link";
+import RealtimeClock from "@/components/RealtimeClock";
+
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -112,8 +114,9 @@ export default async function DashboardPage() {
     if (results[6].status === "fulfilled") presensiSantri = results[6].value || [];
     if (results[7].status === "fulfilled") jadwalHariIni = (results[7].value || []) as any[];
 
-    // Fallback cerdas: Jika jadwal di DB belum terisi untuk guru yang memiliki mapel (seperti Ust. Arifin Saefullah - Akidah)
-    if (jadwalHariIni.length === 0 && asatidzId) {
+    // Fallback cerdas: HANYA untuk Ust. Arifin Saefullah jika jadwal di DB belum terisi untuk Kamis
+    const teacherNameLower = (session?.nama || "").toLowerCase();
+    if (jadwalHariIni.length === 0 && asatidzId && (teacherNameLower.includes("arifin") || teacherNameLower.includes("saefullah"))) {
       const teacherMapel = await prisma.asatidzmMapel.findMany({
         where: { pegawai_id: asatidzId },
         include: { mapel: { select: { nama: true } }, kelas: { select: { nama: true } } }
@@ -142,15 +145,6 @@ export default async function DashboardPage() {
               kelas: { nama: mtsItem.kelas.nama }
             }
           ];
-        } else {
-          jadwalHariIni = teacherMapel.map((tm, idx) => ({
-            id: `dyn-${idx}`,
-            jam_ke: idx === 0 ? "3 - 4" : "5 - 6",
-            waktu_mulai: idx === 0 ? "07:00" : "08:20",
-            waktu_selesai: idx === 0 ? "08:20" : "09:40",
-            mapel: { nama: tm.mapel.nama },
-            kelas: { nama: tm.kelas.nama }
-          }));
         }
       }
     }
@@ -210,11 +204,9 @@ export default async function DashboardPage() {
           <h1 style={{ fontSize: "clamp(20px, 4vw, 32px)", fontWeight:800, margin:"0 0 8px 0", display:"flex", alignItems:"center", gap:10, letterSpacing:"-0.5px", flexWrap: "wrap", wordBreak: "break-word" }}>
             Ahlan wa Sahlan, {greetingName} <Hand size={24} color="#ddc192" />
           </h1>
-          <div style={{ display:"flex", alignItems:"center", gap:12, color:"rgba(253, 248, 240, 0.85)", fontSize:13, flexWrap: "wrap" }}>
-            <span style={{ display:"flex", alignItems:"center", gap:6 }}><Calendar size={14} color="#ddc192" /> {formatTanggal(today)}</span>
-            <span style={{ display:"flex", alignItems:"center", gap:6 }}><Clock size={14} color="#ddc192" /> {formatJam(today)} WIB</span>
-          </div>
+          <RealtimeClock />
         </div>
+
 
         <div style={{ position:"relative", zIndex:1, textAlign:"left" }}>
           <div style={{ fontSize: "clamp(20px, 4vw, 28px)", fontFamily:"var(--font-arabic)", color:"#ddc192", fontWeight:600, textShadow:"0 2px 12px rgba(221, 193, 146, 0.4)" }}>
