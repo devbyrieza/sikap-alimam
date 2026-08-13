@@ -5,10 +5,10 @@ import { BookHeart, ArrowLeft, Search, CalendarDays, Award, CheckCircle2, AlertC
 import Link from "next/link";
 
 const JENIS_UJIAN_OPT = [
-  { val: "ujian_pekanan", label: "Ujian Pekanan", target: "2 Halaman", icon: <Clock size={16} />, color: "#d97706", bg: "#fffbeb", border: "#fde68a" },
-  { val: "ujian_bulanan", label: "Ujian Bulanan", target: "10 Halaman", icon: <CalendarDays size={16} />, color: "#0284c7", bg: "#eff6ff", border: "#bfdbfe" },
-  { val: "ujian_target",  label: "Ujian Target",  target: "20 Halaman", icon: <Award size={16} />, color: "#7c3aed", bg: "#f5f3ff", border: "#ddd6fe" },
-  { val: "ujian_itqon",   label: "Ujian Itqon",   target: "per 5 Juz (Bonus +10)", icon: <Star size={16} />, color: "#059669", bg: "#ecfdf5", border: "#a7f3d0" },
+  { val: "ujian_pekanan", label: "Ujian Pekanan", target: "2 Halaman",             icon: <Clock size={16} />,       color: "#b45309", bg: "#fffbeb", border: "#fde68a" },
+  { val: "ujian_bulanan", label: "Ujian Bulanan", target: "10 Halaman",            icon: <CalendarDays size={16} />, color: "#0369a1", bg: "#eff6ff", border: "#bfdbfe" },
+  { val: "ujian_target",  label: "Ujian Target",  target: "20 Halaman",            icon: <Award size={16} />,        color: "#6d28d9", bg: "#f5f3ff", border: "#ddd6fe" },
+  { val: "ujian_itqon",   label: "Ujian Itqon",   target: "per 5 Juz (Bonus +10)", icon: <Star size={16} />,         color: "#0e7490", bg: "#ecfeff", border: "#a5f3fc" },
 ];
 
 const NILAI_INDIKATOR = [
@@ -154,11 +154,11 @@ export default function UjianTahfidzPage() {
         <ArrowLeft size={14} /> Kembali ke Halaqoh
       </Link>
 
-      {/* Header */}
+      {/* Header — warna palet khas Al-Imam */}
       <div style={{
-        background: "linear-gradient(135deg, #065f46 0%, #047857 100%)",
+        background: "linear-gradient(135deg, #550000 0%, #7a0000 100%)",
         borderRadius: 20, padding: "24px 28px", marginBottom: 24, color: "white",
-        boxShadow: "0 8px 32px rgba(4,120,87,0.3)"
+        boxShadow: "0 8px 32px rgba(85,0,0,0.35)"
       }}>
         <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 6 }}>
           <Award size={22} />
@@ -188,7 +188,7 @@ export default function UjianTahfidzPage() {
       {/* Form Input Ujian */}
       <div style={{ background: "white", borderRadius: 18, padding: 24, marginBottom: 24, border: "1.5px solid #e2e8f0", boxShadow: "0 2px 8px rgba(0,0,0,0.04)" }}>
         <h2 style={{ margin: "0 0 20px 0", fontSize: 16, fontWeight: 700, color: "#1e293b", display: "flex", alignItems: "center", gap: 8 }}>
-          <Award size={18} color="#047857" /> Form Penginputan Ujian
+          <Award size={18} color="#7a0000" /> Form Penginputan Ujian
         </h2>
 
         {/* 1. Pilih Jenis Ujian */}
@@ -225,15 +225,15 @@ export default function UjianTahfidzPage() {
           {selectedSantri ? (
             <div style={{
               display: "flex", alignItems: "center", justifyContent: "space-between",
-              background: "#ecfdf5", border: "1.5px solid #a7f3d0", borderRadius: 12, padding: "12px 16px"
+              background: "#fff5f5", border: "1.5px solid #fca5a5", borderRadius: 12, padding: "12px 16px"
             }}>
               <div>
-                <div style={{ fontWeight: 700, color: "#065f46", fontSize: 14 }}>{selectedSantri.nama_lengkap}</div>
-                <div style={{ fontSize: 11, color: "#047857" }}>{selectedSantri.nis || "NIS —"} · {selectedSantri.kelas?.nama}</div>
+                <div style={{ fontWeight: 700, color: "#7a0000", fontSize: 14 }}>{selectedSantri.nama_lengkap}</div>
+                <div style={{ fontSize: 11, color: "#991b1b" }}>{selectedSantri.nis || "NIS —"} · {selectedSantri.kelas?.nama}</div>
               </div>
               <button
                 onClick={() => setSelectedSantriId("")}
-                style={{ background: "none", border: "none", cursor: "pointer", color: "#047857", fontWeight: 700, fontSize: 12 }}
+                style={{ background: "none", border: "none", cursor: "pointer", color: "#7a0000", fontWeight: 700, fontSize: 12 }}
               >
                 Ganti Santri
               </button>
@@ -266,7 +266,7 @@ export default function UjianTahfidzPage() {
                       <div style={{ fontWeight: 600, fontSize: 13, color: "#1e293b" }}>{s.nama_lengkap}</div>
                       <div style={{ fontSize: 11, color: "#94a3b8" }}>{s.nis} · {s.kelas?.nama}</div>
                     </div>
-                    <CheckCircle2 size={16} color="#047857" />
+                    <CheckCircle2 size={16} color="#7a0000" />
                   </div>
                 ))}
               </div>
@@ -353,17 +353,17 @@ export default function UjianTahfidzPage() {
         {/* Khusus Ujian Itqon: Checkbox Lulus + Bonus */}
         {jenisUjian === "ujian_itqon" && (
           <div style={{
-            background: "#ecfdf5", border: "1.5px solid #a7f3d0", borderRadius: 14, padding: "14px 18px",
+            background: "#ecfeff", border: "1.5px solid #a5f3fc", borderRadius: 14, padding: "14px 18px",
             marginBottom: 20, display: "flex", alignItems: "center", justifyContent: "space-between"
           }}>
             <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-              <ShieldCheck size={20} color="#059669" />
+              <ShieldCheck size={20} color="#0e7490" />
               <div>
-                <div style={{ fontWeight: 800, fontSize: 13, color: "#065f46" }}>Status Kelulusan Ujian Itqon</div>
-                <div style={{ fontSize: 11, color: "#047857" }}>Jika LULUS, santri secara otomatis memperoleh **Bonus +10 Poin** di Raport!</div>
+                <div style={{ fontWeight: 800, fontSize: 13, color: "#164e63" }}>Status Kelulusan Ujian Itqon</div>
+                <div style={{ fontSize: 11, color: "#0e7490" }}>Jika LULUS, santri secara otomatis memperoleh **Bonus +10 Poin** di Raport!</div>
               </div>
             </div>
-            <label style={{ display: "flex", alignItems: "center", gap: 8, cursor: "pointer", fontWeight: 700, fontSize: 13, color: "#065f46" }}>
+            <label style={{ display: "flex", alignItems: "center", gap: 8, cursor: "pointer", fontWeight: 700, fontSize: 13, color: "#164e63" }}>
               <input type="checkbox" checked={isLulus} onChange={e => setIsLulus(e.target.checked)} style={{ width: 18, height: 18 }} />
               Dinyatakan Lulus
             </label>
@@ -378,11 +378,11 @@ export default function UjianTahfidzPage() {
           <span style={{ fontSize: 13, color: "#64748b", fontWeight: 600 }}>Total Nilai Ujian:</span>
           <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
             {jenisUjian === "ujian_itqon" && isLulus && (
-              <span style={{ background: "#ecfdf5", color: "#059669", padding: "3px 8px", borderRadius: 6, fontSize: 11, fontWeight: 800 }}>
+              <span style={{ background: "#ecfeff", color: "#0e7490", padding: "3px 8px", borderRadius: 6, fontSize: 11, fontWeight: 800 }}>
                 +10 Bonus Itqon
               </span>
             )}
-            <span style={{ fontSize: 22, fontWeight: 900, color: "#047857" }}>{finalNilai}</span>
+            <span style={{ fontSize: 22, fontWeight: 900, color: "#550000" }}>{finalNilai}</span>
           </div>
         </div>
 
@@ -410,10 +410,10 @@ export default function UjianTahfidzPage() {
           disabled={saving || !selectedSantriId}
           style={{
             width: "100%", padding: "14px", borderRadius: 14, border: "none",
-            background: saving ? "#94a3b8" : "#047857", color: "white",
+            background: saving ? "#94a3b8" : "#550000", color: "white",
             fontWeight: 800, fontSize: 15, cursor: saving ? "wait" : "pointer",
             display: "flex", alignItems: "center", justifyContent: "center", gap: 10,
-            boxShadow: "0 4px 16px rgba(4,120,87,0.25)"
+            boxShadow: "0 4px 16px rgba(85,0,0,0.3)"
           }}
         >
           <Save size={18} /> {saving ? "Menyimpan..." : "Simpan Nilai Ujian"}
