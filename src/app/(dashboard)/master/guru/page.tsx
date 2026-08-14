@@ -355,7 +355,7 @@ export default function MasterGuruPage() {
             <div style={{ display:"flex", flexWrap:"wrap", gap:12 }}>
               {[
                 { value: "GURU", label: "Guru Mapel" },
-                { value: "MUSYRIF", label: "Musyrif Halaqoh / Asrama" },
+                { value: "MUSYRIF", label: "Pengampu Halaqoh" },
                 { value: "WALI_KELAS", label: "Wali Kelas" },
                 { value: "MUDIR", label: "Mudir Pesantren" },
                 { value: "KEPALA_SEKOLAH", label: "Kepala Sekolah" },

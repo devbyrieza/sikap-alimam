@@ -118,7 +118,7 @@ export default function Sidebar({ user }: SidebarProps) {
     const mapping: Record<string, string> = {
       ADMIN_SUPER: "Admin Super",
       GURU: "Guru Mapel",
-      MUSYRIF: "Musyrif",
+      MUSYRIF: "Pengampu Halaqoh",
       WALI_KELAS: "Wali Kelas",
       MUDIR: "Mudir Pesantren",
       KEPALA_SEKOLAH: "Kepala Sekolah",
