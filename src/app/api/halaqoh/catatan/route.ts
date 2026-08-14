@@ -80,7 +80,7 @@ export async function POST(request: Request) {
     const parsedTanggal = new Date(tanggal);
 
     const upserts = entries.map((entry: any) => {
-      const nilai_akhir = Math.round((entry.nilai_sikap + entry.nilai_bacaan) / 2);
+      const nilai_akhir = Math.round((entry.nilai_bacaan + entry.nilai_kelancaran) / 2);
 
       return prisma.catatanHalaqoh.upsert({
         where: {
@@ -104,6 +104,7 @@ export async function POST(request: Request) {
           alasan: entry.alasan,
           nilai_sikap: entry.nilai_sikap,
           nilai_bacaan: entry.nilai_bacaan,
+          nilai_kelancaran: entry.nilai_kelancaran,
           nilai_akhir,
           catatan: entry.catatan,
         },
@@ -124,6 +125,7 @@ export async function POST(request: Request) {
           alasan: entry.alasan,
           nilai_sikap: entry.nilai_sikap,
           nilai_bacaan: entry.nilai_bacaan,
+          nilai_kelancaran: entry.nilai_kelancaran,
           nilai_akhir,
           catatan: entry.catatan,
         },

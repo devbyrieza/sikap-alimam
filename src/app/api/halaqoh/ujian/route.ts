@@ -59,12 +59,13 @@ export async function POST(request: Request) {
       ayat_ke,
       jumlah_halaman,
       nilai_bacaan,
+      nilai_kelancaran = 90,
       nilai_sikap = 82,
       is_lulus = true,
       catatan
     } = body;
 
-    let nilai_akhir = Math.round((Number(nilai_bacaan) + Number(nilai_sikap)) / 2);
+    let nilai_akhir = Math.round((Number(nilai_bacaan) + Number(nilai_kelancaran)) / 2);
     
     if (jenis_ujian === 'ujian_itqon' && is_lulus !== false) {
       nilai_akhir += 10;
@@ -85,6 +86,7 @@ export async function POST(request: Request) {
         ayat_ke: ayat_ke ? Number(ayat_ke) : null,
         jumlah_halaman: jumlah_halaman ? Number(jumlah_halaman) : null,
         nilai_bacaan: Number(nilai_bacaan),
+        nilai_kelancaran: Number(nilai_kelancaran),
         nilai_sikap: Number(nilai_sikap),
         nilai_akhir,
         is_lulus: Boolean(is_lulus),
@@ -103,6 +105,7 @@ export async function POST(request: Request) {
         ayat_ke: ayat_ke ? Number(ayat_ke) : null,
         jumlah_halaman: jumlah_halaman ? Number(jumlah_halaman) : null,
         nilai_bacaan: Number(nilai_bacaan),
+        nilai_kelancaran: Number(nilai_kelancaran),
         nilai_sikap: Number(nilai_sikap),
         nilai_akhir,
         is_lulus: Boolean(is_lulus),

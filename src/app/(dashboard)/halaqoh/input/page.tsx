@@ -39,6 +39,7 @@ interface SantriEntry {
   alasan: string;
   nilai_sikap: number;
   nilai_bacaan: number;
+  nilai_kelancaran: number;
   // Per-santri override untuk surat (jika berbeda dari default kelompok)
   override_surah?: boolean;
   override_surah_nomor?: number;
@@ -209,6 +210,53 @@ function NumericScoreSelector({
   );
 }
 
+const OPSI_SIKAP = [
+  { value: 100, label: "Sangat Baik" },
+  { value: 90, label: "Baik" },
+  { value: 80, label: "Cukup" },
+  { value: 70, label: "Kurang" },
+  { value: 60, label: "Sangat Kurang" },
+];
+
+function TextScoreSelector({
+  label,
+  value,
+  onChange,
+}: {
+  label: string;
+  value: number;
+  onChange: (v: number) => void;
+}) {
+  const predikat = getPredikat(value);
+  return (
+    <div>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
+        <div style={{ fontSize: 11, fontWeight: 600, color: "#64748b" }}>{label}</div>
+        <div style={{ fontSize: 10, fontWeight: 700, padding: "3px 8px", borderRadius: 6, background: predikat.bg, color: predikat.color, border: `1px solid ${predikat.border}` }}>
+          {predikat.label} {value >= 85 ? "✅" : "⚠️"}
+        </div>
+      </div>
+      <div style={{ display: "flex", gap: 4, flexWrap: "wrap" }}>
+        {OPSI_SIKAP.map(opsi => (
+          <button
+            key={opsi.value}
+            onClick={() => onChange(opsi.value)}
+            style={{
+              padding: "4px 10px", borderRadius: 8, fontSize: 12, fontWeight: 700, cursor: "pointer",
+              border: `1.5px solid ${value === opsi.value ? predikat.color : "#e2e8f0"}`,
+              background: value === opsi.value ? predikat.bg : "white",
+              color: value === opsi.value ? predikat.color : "#64748b",
+              transition: "all 0.15s"
+            }}
+          >
+            {opsi.label}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 // ─── MAIN PAGE ───────────────────────────────────────────────────────────────
 export default function HalaqohInputPage() {
   const searchParams = useSearchParams();
@@ -278,6 +326,7 @@ export default function HalaqohInputPage() {
           alasan: ex?.alasan || "",
           nilai_sikap: ex?.nilai_sikap ?? 90,
           nilai_bacaan: ex?.nilai_bacaan ?? 90,
+          nilai_kelancaran: ex?.nilai_kelancaran ?? 90,
           catatan: ex?.catatan || "",
         };
       });
@@ -373,6 +422,7 @@ export default function HalaqohInputPage() {
           alasan: e.alasan || null,
           nilai_sikap: e.nilai_sikap,
           nilai_bacaan: e.nilai_bacaan,
+          nilai_kelancaran: e.nilai_kelancaran,
           catatan: e.catatan || null,
         })),
       };
@@ -608,25 +658,30 @@ export default function HalaqohInputPage() {
 
                   {/* Nilai (hanya jika hadir) */}
                   {entry.kehadiran === "hadir" && (
-                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 12 }}>
+                    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 16, marginBottom: 12 }}>
                       <NumericScoreSelector
+                        label="Nilai Bacaan"
+                        value={entry.nilai_bacaan}
+                        onChange={v => updateEntry(idx, "nilai_bacaan", v)}
+                      />
+                      <NumericScoreSelector
+                        label="Nilai Kelancaran"
+                        value={entry.nilai_kelancaran}
+                        onChange={v => updateEntry(idx, "nilai_kelancaran", v)}
+                      />
+                      <TextScoreSelector
                         label="Nilai Sikap"
                         value={entry.nilai_sikap}
                         onChange={v => updateEntry(idx, "nilai_sikap", v)}
-                      />
-                      <NumericScoreSelector
-                        label="Nilai Bacaan / Setoran"
-                        value={entry.nilai_bacaan}
-                        onChange={v => updateEntry(idx, "nilai_bacaan", v)}
                       />
                     </div>
                   )}
 
                   {/* Preview Nilai Akhir */}
                   {entry.kehadiran === "hadir" && (() => {
-                    const nSikap = entry.nilai_sikap;
                     const nBacaan = entry.nilai_bacaan;
-                    const nAkhir = Math.round((nSikap + nBacaan) / 2);
+                    const nKelancaran = entry.nilai_kelancaran;
+                    const nAkhir = Math.round((nBacaan + nKelancaran) / 2);
                     return (
                       <div style={{ background: "#f8fafc", borderRadius: 12, padding: "12px 16px", marginBottom: 14, border: "1px dashed #cbd5e1" }}>
                         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
@@ -634,7 +689,7 @@ export default function HalaqohInputPage() {
                           <span style={{ fontWeight: 800, fontSize: 16, color: "#550000" }}>{nAkhir}</span>
                         </div>
                         <div style={{ fontSize: 12, color: "#475569", fontFamily: "monospace", background: "#f1f5f9", padding: "8px 12px", borderRadius: 8 }}>
-                          (Sikap: <strong>{nSikap}</strong> + Setoran: <strong>{nBacaan}</strong>) ÷ 2 = <strong>{nAkhir}</strong>
+                          (Bacaan: <strong>{nBacaan}</strong> + Kelancaran: <strong>{nKelancaran}</strong>) ÷ 2 = <strong>{nAkhir}</strong>
                         </div>
                       </div>
                     );

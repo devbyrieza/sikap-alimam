@@ -60,6 +60,53 @@ function NumericScoreSelector({
   );
 }
 
+const OPSI_SIKAP = [
+  { value: 100, label: "Sangat Baik" },
+  { value: 90, label: "Baik" },
+  { value: 80, label: "Cukup" },
+  { value: 70, label: "Kurang" },
+  { value: 60, label: "Sangat Kurang" },
+];
+
+function TextScoreSelector({
+  label,
+  value,
+  onChange,
+}: {
+  label: string;
+  value: number;
+  onChange: (v: number) => void;
+}) {
+  const predikat = getPredikat(value);
+  return (
+    <div>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
+        <div style={{ fontSize: 11, fontWeight: 600, color: "#64748b" }}>{label}</div>
+        <div style={{ fontSize: 10, fontWeight: 700, padding: "3px 8px", borderRadius: 6, background: predikat.bg, color: predikat.color, border: `1px solid ${predikat.border}` }}>
+          {predikat.label} {value >= 85 ? "✅" : "⚠️"}
+        </div>
+      </div>
+      <div style={{ display: "flex", gap: 4, flexWrap: "wrap" }}>
+        {OPSI_SIKAP.map(opsi => (
+          <button
+            key={opsi.value}
+            onClick={() => onChange(opsi.value)}
+            style={{
+              padding: "4px 10px", borderRadius: 8, fontSize: 12, fontWeight: 700, cursor: "pointer",
+              border: `1.5px solid ${value === opsi.value ? predikat.color : "#e2e8f0"}`,
+              background: value === opsi.value ? predikat.bg : "white",
+              color: value === opsi.value ? predikat.color : "#64748b",
+              transition: "all 0.15s"
+            }}
+          >
+            {opsi.label}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 interface Santri {
   id: string;
   nama_lengkap: string;
@@ -166,6 +213,7 @@ export default function UjianTahfidzPage() {
   const [ayatKe, setAyatKe] = useState(10);
   const [jumlahHalaman, setJumlahHalaman] = useState(2);
   const [nilaiBacaan, setNilaiBacaan] = useState(90);
+  const [nilaiKelancaran, setNilaiKelancaran] = useState(90);
   const [nilaiSikap, setNilaiSikap] = useState(90);
   const [isLulus, setIsLulus] = useState(true);
   const [catatan, setCatatan] = useState("");
@@ -207,6 +255,7 @@ export default function UjianTahfidzPage() {
         if (d.ayatKe) setAyatKe(d.ayatKe);
         if (d.jumlahHalaman) setJumlahHalaman(d.jumlahHalaman);
         if (typeof d.nilaiBacaan === "number") setNilaiBacaan(d.nilaiBacaan);
+        if (typeof d.nilaiKelancaran === "number") setNilaiKelancaran(d.nilaiKelancaran);
         if (typeof d.nilaiSikap === "number") setNilaiSikap(d.nilaiSikap);
         if (typeof d.isLulus === "boolean") setIsLulus(d.isLulus);
         if (d.catatan) setCatatan(d.catatan);
@@ -220,10 +269,10 @@ export default function UjianTahfidzPage() {
   useEffect(() => {
     const draft = {
       selectedSantriId, jenisUjian, juz, surahNama, ayatDari, ayatKe,
-      jumlahHalaman, nilaiBacaan, nilaiSikap, isLulus, catatan
+      jumlahHalaman, nilaiBacaan, nilaiKelancaran, nilaiSikap, isLulus, catatan
     };
     localStorage.setItem(draftKey, JSON.stringify(draft));
-  }, [selectedSantriId, jenisUjian, juz, surahNama, ayatDari, ayatKe, jumlahHalaman, nilaiBacaan, nilaiSikap, isLulus, catatan]);
+  }, [selectedSantriId, jenisUjian, juz, surahNama, ayatDari, ayatKe, jumlahHalaman, nilaiBacaan, nilaiKelancaran, nilaiSikap, isLulus, catatan]);
   // ----------------------------
 
   const selectedSantri = allSantri.find(s => s.id === selectedSantriId);
@@ -235,7 +284,7 @@ export default function UjianTahfidzPage() {
   );
 
 
-  const baseNilai = Math.round((nilaiBacaan + nilaiSikap) / 2);
+  const baseNilai = Math.round((nilaiBacaan + nilaiKelancaran) / 2);
   const finalNilai = (jenisUjian === "ujian_itqon" && isLulus) ? Math.min(100, baseNilai + 10) : baseNilai;
 
   const handleSave = async () => {
@@ -253,6 +302,7 @@ export default function UjianTahfidzPage() {
         ayat_ke: ayatKe,
         jumlah_halaman: jumlahHalaman,
         nilai_bacaan: nilaiBacaan,
+        nilai_kelancaran: nilaiKelancaran,
         nilai_sikap: nilaiSikap,
         is_lulus: isLulus,
         catatan: catatan || undefined,
@@ -447,14 +497,19 @@ export default function UjianTahfidzPage() {
         </div>
 
         {/* 4. Penilaian */}
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 20 }}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 16, marginBottom: 20 }}>
           <NumericScoreSelector
-            label="Nilai Kelancaran & Tajwid"
+            label="Nilai Bacaan"
             value={nilaiBacaan}
             onChange={setNilaiBacaan}
           />
           <NumericScoreSelector
-            label="Nilai Adab & Sikap"
+            label="Nilai Kelancaran"
+            value={nilaiKelancaran}
+            onChange={setNilaiKelancaran}
+          />
+          <TextScoreSelector
+            label="Nilai Sikap"
             value={nilaiSikap}
             onChange={setNilaiSikap}
           />
@@ -490,7 +545,7 @@ export default function UjianTahfidzPage() {
             <span style={{ fontSize: 24, fontWeight: 900, color: "#550000" }}>{finalNilai}</span>
           </div>
           <div style={{ fontSize: 12, color: "#475569", fontFamily: "monospace", background: "#f1f5f9", padding: "8px 12px", borderRadius: 8 }}>
-            (Kelancaran: <strong>{nilaiBacaan}</strong> + Adab: <strong>{nilaiSikap}</strong>) ÷ 2 
+            (Bacaan: <strong>{nilaiBacaan}</strong> + Kelancaran: <strong>{nilaiKelancaran}</strong>) ÷ 2 
             {jenisUjian === "ujian_itqon" && isLulus && (
               <span style={{ color: "#059669" }}> + <strong>10</strong> (Bonus Itqon)</span>
             )}
