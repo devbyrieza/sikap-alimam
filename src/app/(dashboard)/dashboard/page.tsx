@@ -134,7 +134,9 @@ export default async function DashboardPage() {
   const isSuperAdmin = (session?.role || "").toLowerCase().includes("admin_super");
 
   let greetingName = "Ust. User";
-  if (session?.nama) {
+  if (session?.nama_panggilan) {
+    greetingName = `Ust. ${session.nama_panggilan}`;
+  } else if (session?.nama) {
     const parts = session.nama.split(" ");
     if (parts[0].toLowerCase().startsWith("ust")) {
       greetingName = `${parts[0]} ${parts[1] || ""}`.trim();

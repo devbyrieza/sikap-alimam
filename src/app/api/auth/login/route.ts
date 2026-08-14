@@ -21,7 +21,7 @@ export async function POST(req: NextRequest) {
           { email: { equals: identifier, mode: "insensitive" } },
         ],
       },
-      include: { pegawai: { select: { id: true, nama_lengkap: true } } },
+      include: { pegawai: { select: { id: true, nama_lengkap: true, nama_panggilan: true } } },
     });
 
     // Jika tidak ditemukan via User email, coba cari di tabel Pegawai (via NIK, NIP, HP, atau Email)
@@ -45,7 +45,7 @@ export async function POST(req: NextRequest) {
             { email: { equals: identifier, mode: "insensitive" } },
           ],
         },
-        include: { user: { include: { pegawai: { select: { id: true, nama_lengkap: true } } } } },
+        include: { user: { include: { pegawai: { select: { id: true, nama_lengkap: true, nama_panggilan: true } } } } },
       });
 
       if (pegawai?.user) {
@@ -89,6 +89,7 @@ export async function POST(req: NextRequest) {
       });
       if (linkedPegawai) {
         asatidzId = linkedPegawai.id;
+        user.pegawai = linkedPegawai as any;
       }
     }
 
@@ -102,6 +103,7 @@ export async function POST(req: NextRequest) {
       userId: user.id,
       email: user.email,
       nama: formattedNama,
+      nama_panggilan: user.pegawai?.nama_panggilan || undefined,
       role: user.role,
       originalRole: user.role,
       asatidz_id: asatidzId,

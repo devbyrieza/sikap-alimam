@@ -46,13 +46,14 @@ export async function PUT(
   try {
     const { id } = await params;
     const body = await req.json();
-    const { nik, nama_lengkap, no_hp, email, mata_pelajaran, foto_url, roles, wali_kelas_id } = body;
+    const { nik, nama_lengkap, nama_panggilan, no_hp, email, mata_pelajaran, foto_url, roles, wali_kelas_id } = body;
 
     const updatedGuru = await prisma.pegawai.update({
       where: { id },
       data: { 
         nik: nik?.trim() || null, 
         nama_lengkap, 
+        nama_panggilan: nama_panggilan !== undefined ? (nama_panggilan?.trim() || null) : undefined,
         no_hp: no_hp?.trim() || null, 
         email: email?.trim() || null, 
         mata_pelajaran: mata_pelajaran || null,

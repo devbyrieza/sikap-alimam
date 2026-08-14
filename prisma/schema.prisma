@@ -48,6 +48,7 @@ model Pegawai {
   nip                 String?   @unique
   nik                 String?   @unique
   nama_lengkap        String
+  nama_panggilan      String?
   jenis_kelamin       String?
   tempat_lahir        String?
   tanggal_lahir       DateTime? @db.Date

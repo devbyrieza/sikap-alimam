@@ -27,7 +27,7 @@ export default function MasterGuruPage() {
   // Form State
   const [isAdding, setIsAdding] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
-  const emptyForm = { nik: "", nama_lengkap: "", no_hp: "", email: "", mata_pelajaran: "", foto_url: "", roles: [] as string[], wali_kelas_id: "" };
+  const emptyForm = { nik: "", nama_lengkap: "", nama_panggilan: "", no_hp: "", email: "", mata_pelajaran: "", foto_url: "", roles: [] as string[], wali_kelas_id: "" };
   const [form, setForm] = useState(emptyForm);
 
   // Mapel Builder State
@@ -165,6 +165,7 @@ export default function MasterGuruPage() {
     setForm({ 
       nik: g.nik || "", 
       nama_lengkap: g.nama_lengkap || "", 
+      nama_panggilan: g.nama_panggilan || "", 
       no_hp: g.no_hp || "", 
       email: g.email || "", 
       mata_pelajaran: g.mata_pelajaran || "", 
@@ -254,6 +255,10 @@ export default function MasterGuruPage() {
             <div>
               <label style={{ display:"block", fontSize:13, fontWeight:600, color:"#334155", marginBottom:6 }}>Nama Lengkap & Gelar *</label>
               <input type="text" className="form-control" placeholder="Ust. Fulan, Lc." value={form.nama_lengkap} onChange={e => setForm({ ...form, nama_lengkap: e.target.value })} />
+            </div>
+            <div>
+              <label style={{ display:"block", fontSize:13, fontWeight:600, color:"#334155", marginBottom:6 }}>Nama Panggilan</label>
+              <input type="text" className="form-control" placeholder="Iqbal" value={form.nama_panggilan} onChange={e => setForm({ ...form, nama_panggilan: e.target.value })} />
             </div>
             <div>
               <label style={{ display:"block", fontSize:13, fontWeight:600, color:"#334155", marginBottom:6 }}>No. WhatsApp</label>
