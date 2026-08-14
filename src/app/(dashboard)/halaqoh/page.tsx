@@ -100,8 +100,8 @@ export default function HalaqohDashboardPage() {
     if (hariIni === "Ahad") return [];
     const sesi: string[] = [];
     if (hariIni !== "Selasa") sesi.push("subuh");
+    sesi.push("dhuha");
     sesi.push("maghrib");
-    if (hariIni === "Rabu" || hariIni === "Sabtu") sesi.push("dhuha");
     return sesi;
   };
 
