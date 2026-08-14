@@ -46,7 +46,7 @@ export default function HalaqohKelompokPage() {
 
   const canManage = () => {
     const role = (profile?.role || "").toLowerCase();
-    return role.includes("admin_super") || role.includes("mudir") || role.includes("kabid_pengasuhan");
+    return role.includes("admin_super") || role.includes("kabid_pengasuhan");
   };
 
   const fetchAll = useCallback(async () => {
@@ -140,16 +140,21 @@ export default function HalaqohKelompokPage() {
             </h1>
             <p style={{ margin: "4px 0 0 0", fontSize: 13, color: "#64748b" }}>Kelola kelompok dan anggota halaqoh pengampu</p>
           </div>
-          <button
-            onClick={() => setShowAddKelompok(true)}
-            style={{
-              display: "flex", alignItems: "center", gap: 8, background: "#550000", color: "white",
-              border: "none", borderRadius: 12, padding: "10px 18px", cursor: "pointer", fontWeight: 700, fontSize: 13
-            }}
-          >
-            <Plus size={16} /> Buat Kelompok
-          </button>
+          <div style={{ display: "flex", gap: 10 }}>
+          {canManage() && (
+            <button
+              onClick={() => setShowAddKelompok(!showAddKelompok)}
+              style={{
+                padding: "10px 18px", borderRadius: 12, border: "none", background: "#550000", color: "white",
+                display: "flex", alignItems: "center", gap: 8, cursor: "pointer", fontSize: 13, fontWeight: 700,
+                boxShadow: "0 4px 12px rgba(85,0,0,0.15)", transition: "all 0.2s"
+              }}
+            >
+              <Plus size={16} /> Buat Kelompok
+            </button>
+          )}
         </div>
+      </div>
       </div>
 
       {/* Form Tambah Kelompok */}
