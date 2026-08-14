@@ -7,7 +7,7 @@ import Link from "next/link";
 const JENIS_UJIAN_OPT = [
   { val: "ujian_pekanan", label: "Ujian Pekanan", target: "2 Halaman",             icon: <Clock size={16} />,       color: "#b45309", bg: "#fffbeb", border: "#fde68a" },
   { val: "ujian_bulanan", label: "Ujian Bulanan", target: "10 Halaman",            icon: <CalendarDays size={16} />, color: "#0369a1", bg: "#eff6ff", border: "#bfdbfe" },
-  { val: "ujian_target",  label: "Ujian Target",  target: "20 Halaman",            icon: <Award size={16} />,        color: "#6d28d9", bg: "#f5f3ff", border: "#ddd6fe" },
+  { val: "ujian_target",  label: "Ujian Target",  target: "Sesuai Target Kelas",   icon: <Award size={16} />,        color: "#6d28d9", bg: "#f5f3ff", border: "#ddd6fe" },
   { val: "ujian_itqon",   label: "Ujian Itqon",   target: "per 5 Juz (Bonus +10)", icon: <Star size={16} />,         color: "#0e7490", bg: "#ecfeff", border: "#a5f3fc" },
 ];
 
@@ -83,6 +83,68 @@ interface UjianRecord {
   catatan?: string;
   santri: { nama_lengkap: string; nis?: string };
   pegawai: { nama_lengkap: string };
+}
+
+function renderTargetBanner(santri: Santri) {
+  if (!santri || !santri.kelas?.nama) return null;
+  const kelas = santri.kelas.nama.toLowerCase();
+  
+  let targetNode = null;
+  
+  if (kelas.includes("7 mts")) {
+    targetNode = <span><strong>1 Juz</strong> (Juz 30)</span>;
+  } else if (kelas.includes("8 mts")) {
+    targetNode = <span><strong>3 Juz</strong> (Juz 28, 29, 30)</span>;
+  } else if (kelas.includes("9 mts")) {
+    targetNode = <span><strong>6 Juz</strong> (Juz 25-30)</span>;
+  } else if (kelas.includes("il") || kelas.includes("i'dad")) {
+    targetNode = <span><strong>4 Juz</strong> (Juz 27-30)</span>;
+  } else if (kelas.includes("10 ma")) {
+    targetNode = (
+      <ul style={{ margin: "4px 0 0 16px", padding: 0 }}>
+        <li>Jalur internal MTs: <strong>10 Juz</strong> (+4 Juz dari Kls 9)</li>
+        <li>Jalur eksternal IL: <strong>8 Juz</strong> (+4 Juz dari IL)</li>
+      </ul>
+    );
+  } else if (kelas.includes("11 ma")) {
+    targetNode = (
+      <ul style={{ margin: "4px 0 0 16px", padding: 0 }}>
+        <li>Jalur internal MTs: <strong>13 Juz</strong> (+3 Juz dari Kls 10)</li>
+        <li>Jalur eksternal IL: <strong>10 Juz</strong> (+2 Juz dari Kls 10)</li>
+      </ul>
+    );
+  } else if (kelas.includes("12 ma")) {
+    targetNode = (
+      <ul style={{ margin: "4px 0 0 16px", padding: 0 }}>
+        <li>Jalur internal MTs: <strong>15 Juz</strong> (+2 Juz dari Kls 11)</li>
+        <li>Jalur eksternal IL: <strong>12 Juz</strong> (+2 Juz dari Kls 11)</li>
+      </ul>
+    );
+  } else {
+    targetNode = <span>Belum ada standar target untuk kelas ini.</span>;
+  }
+
+  return (
+    <div style={{
+      background: "linear-gradient(135deg, #f5f3ff 0%, #ede9fe 100%)",
+      border: "1.5px solid #c4b5fd", borderRadius: 14, padding: "16px 20px",
+      marginTop: 14, color: "#4c1d95"
+    }}>
+      <div style={{ display: "flex", alignItems: "flex-start", gap: 12 }}>
+        <div style={{ background: "#6d28d9", color: "white", padding: 8, borderRadius: 10, flexShrink: 0 }}>
+          <Award size={20} />
+        </div>
+        <div>
+          <div style={{ fontWeight: 800, fontSize: 13, marginBottom: 4 }}>
+            🎯 Target Hafalan Lulus Kelas {santri.kelas.nama}
+          </div>
+          <div style={{ fontSize: 13, lineHeight: 1.5 }}>
+            {targetNode}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 }
 
 export default function UjianTahfidzPage() {
@@ -348,6 +410,7 @@ export default function UjianTahfidzPage() {
               </div>
             </div>
           )}
+          {jenisUjian === "ujian_target" && selectedSantri && renderTargetBanner(selectedSantri)}
         </div>
 
         {/* 3. Detail Ujian */}

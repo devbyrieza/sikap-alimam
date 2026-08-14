@@ -19,6 +19,7 @@ export async function GET(request: Request) {
           nama_lengkap: true,
           kelas_id: true,
           nis: true,
+          kelas: { select: { nama: true } },
         },
       }),
       prisma.halaqohKelompok.findMany({
