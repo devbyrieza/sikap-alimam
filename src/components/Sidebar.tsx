@@ -39,50 +39,49 @@ const NAV: NavItem[] = [
     href: "/keuangan",
     label: "Keuangan",
     icon: <CreditCard size={18} />,
-    roles: ["admin_super", "ADMIN_SUPER", "mudir", "MUDIR", "admin_keuangan", "ADMIN_KEUANGAN"],
+    roles: ["admin_keuangan", "ADMIN_KEUANGAN", "admin_super", "ADMIN_SUPER", "mudir", "MUDIR"],
   },
   {
     href: "/presensi/santri",
     label: "Presensi Santri",
     icon: <ClipboardCheck size={18} />,
-    roles: ["guru", "GURU", "wali_kelas", "WALI_KELAS", "admin_wali_kelas", "ADMIN_WALI_KELAS", "admin", "admin_super", "ADMIN_SUPER", "mudir", "MUDIR", "kepala", "KEPALA_SEKOLAH"],
+    roles: ["guru", "GURU", "wali_kelas", "WALI_KELAS", "kabid_kedisiplinan", "KABID_KEDISIPLINAN", "kabid_kurikulum", "KABID_KURIKULUM", "kepala_sekolah", "KEPALA_SEKOLAH", "admin_super", "ADMIN_SUPER", "mudir", "MUDIR"],
   },
   {
     href: "/jurnal",
     label: "Jurnal Mengajar",
     icon: <BookMarked size={18} />,
-    roles: ["guru", "GURU", "admin_super", "ADMIN_SUPER"],
+    roles: ["guru", "GURU", "kabid_kurikulum", "KABID_KURIKULUM", "kepala_sekolah", "KEPALA_SEKOLAH", "admin_super", "ADMIN_SUPER", "mudir", "MUDIR"],
   },
   {
     href: "/nilai",
     label: "Input Nilai",
     icon: <BarChart3 size={18} />,
-    roles: ["guru", "GURU", "wali_kelas", "WALI_KELAS", "admin_wali_kelas", "ADMIN_WALI_KELAS", "admin_super", "ADMIN_SUPER"],
+    roles: ["guru", "GURU", "wali_kelas", "WALI_KELAS", "kabid_kurikulum", "KABID_KURIKULUM", "kepala_sekolah", "KEPALA_SEKOLAH", "admin_super", "ADMIN_SUPER", "mudir", "MUDIR"],
   },
   {
     href: "/wali-kelas",
     label: "Hub Wali Kelas",
     icon: <Users size={18} />,
-    roles: ["wali_kelas", "WALI_KELAS", "admin_super", "ADMIN_SUPER"],
+    roles: ["wali_kelas", "WALI_KELAS", "kabid_kurikulum", "KABID_KURIKULUM", "kepala_sekolah", "KEPALA_SEKOLAH", "admin_super", "ADMIN_SUPER", "mudir", "MUDIR"],
   },
   {
     href: "/halaqoh",
     label: "Halaqoh & Mutabaah",
     icon: <BookHeart size={18} />,
-    roles: ["guru", "GURU", "musyrif", "MUSYRIF", "pengampu", "PENGAMPU", "wali_kelas", "WALI_KELAS", "admin_wali_kelas", "ADMIN_WALI_KELAS", "admin_super", "ADMIN_SUPER", "kabid_pengasuhan", "KABID_PENGASUHAN", "mudir", "MUDIR"],
+    roles: ["musyrif", "MUSYRIF", "pengampu", "PENGAMPU", "wali_kelas", "WALI_KELAS", "kabid_pengasuhan", "KABID_PENGASUHAN", "kabid_asrama", "KABID_ASRAMA", "admin_super", "ADMIN_SUPER", "mudir", "MUDIR"],
   },
-
   {
     href: "/presensi/asatidz",
     label: "Absensi Guru",
     icon: <UserCheck size={18} />,
-    roles: ["guru", "GURU", "admin", "admin_super", "ADMIN_SUPER", "mudir", "MUDIR"],
+    roles: ["guru", "GURU", "musyrif", "MUSYRIF", "wali_kelas", "WALI_KELAS", "kepala_sekolah", "KEPALA_SEKOLAH", "kabid_kurikulum", "KABID_KURIKULUM", "kabid_pengasuhan", "KABID_PENGASUHAN", "admin_super", "ADMIN_SUPER", "mudir", "MUDIR"],
   },
   {
     href: "/master",
     label: "Master Data",
     icon: <Database size={18} />,
-    roles: ["admin_super", "ADMIN_SUPER"],
+    roles: ["admin_super", "ADMIN_SUPER", "mudir", "MUDIR"],
   },
 ];
 
