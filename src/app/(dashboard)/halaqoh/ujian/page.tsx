@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useState, useEffect, useCallback } from "react";
-import { BookHeart, ArrowLeft, Search, CalendarDays, Award, CheckCircle2, AlertCircle, Save, Star, ShieldCheck, Clock } from "lucide-react";
+import React, { useState, useEffect, useMemo, useCallback, useRef } from "react";
+import { BookHeart, ArrowLeft, Search, CalendarDays, Award, CheckCircle2, AlertCircle, Save, Star, ShieldCheck, Clock, ChevronDown } from "lucide-react";
 import Link from "next/link";
 
 const JENIS_UJIAN_OPT = [
@@ -112,6 +112,124 @@ interface Santri {
   nama_lengkap: string;
   nis?: string;
   kelas?: { nama: string };
+  pengampu_id?: string;
+}
+
+interface Surah {
+  nomor: number;
+  nama_latin: string;
+  nama_arab: string;
+  total_ayat: number;
+}
+
+function SurahPicker({
+  surahList,
+  selected,
+  onSelect,
+  label = "Pilih Surah",
+}: {
+  surahList: Surah[];
+  selected: Surah | null;
+  onSelect: (s: Surah) => void;
+  label?: string;
+}) {
+  const [open, setOpen] = useState(false);
+  const [query, setQuery] = useState("");
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handler(e: MouseEvent) {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+    }
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, []);
+
+  const filtered = surahList.filter(s =>
+    query === "" ||
+    s.nama_latin.toLowerCase().includes(query.toLowerCase()) ||
+    s.nama_arab.includes(query) ||
+    String(s.nomor) === query
+  ).slice(0, 20);
+
+  return (
+    <div ref={ref} style={{ position: "relative" }}>
+      <label style={{ fontSize: 12, fontWeight: 600, color: "#475569", display: "block", marginBottom: 6 }}>{label}</label>
+      <div
+        onClick={() => setOpen(!open)}
+        style={{
+          display: "flex", alignItems: "center", justifyContent: "space-between",
+          padding: "10px 14px", borderRadius: 12, border: "1.5px solid #e2e8f0",
+          background: "white", cursor: "pointer", fontSize: 13, userSelect: "none"
+        }}
+      >
+        {selected ? (
+          <div style={{ display: "flex", alignItems: "baseline", gap: 8 }}>
+            <span style={{ fontWeight: 700, color: "#1e293b" }}>
+              {selected.nomor}. {selected.nama_latin}
+            </span>
+            <span style={{ fontSize: 15, color: "#94a3b8", fontFamily: "serif" }}>{selected.nama_arab}</span>
+          </div>
+        ) : (
+          <span style={{ color: "#94a3b8" }}>Cari surah...</span>
+        )}
+        <ChevronDown size={15} color="#94a3b8" />
+      </div>
+
+      {open && (
+        <div style={{
+          position: "absolute", top: "calc(100% + 4px)", left: 0, right: 0, zIndex: 200,
+          background: "white", borderRadius: 14, border: "1.5px solid #e2e8f0",
+          boxShadow: "0 12px 40px rgba(0,0,0,0.12)", overflow: "hidden"
+        }}>
+          <div style={{ padding: "10px 12px", borderBottom: "1px solid #f1f5f9" }}>
+            <div style={{ position: "relative" }}>
+              <Search size={13} style={{ position: "absolute", left: 10, top: "50%", transform: "translateY(-50%)", color: "#94a3b8" }} />
+              <input
+                autoFocus
+                type="text"
+                value={query}
+                onChange={e => setQuery(e.target.value)}
+                placeholder="Ketik nama surah atau nomor..."
+                style={{ width: "100%", padding: "8px 10px 8px 30px", border: "1px solid #e2e8f0", borderRadius: 8, fontSize: 13, boxSizing: "border-box" }}
+              />
+            </div>
+          </div>
+          <div style={{ maxHeight: 260, overflowY: "auto" }}>
+            {filtered.map(s => (
+              <div
+                key={s.nomor}
+                onClick={() => { onSelect(s); setOpen(false); setQuery(""); }}
+                style={{
+                  padding: "10px 16px", cursor: "pointer", borderBottom: "1px solid #f8fafc",
+                  display: "flex", alignItems: "center", gap: 14, transition: "background 0.1s"
+                }}
+                onMouseEnter={e => (e.currentTarget.style.background = "#f8fafc")}
+                onMouseLeave={e => (e.currentTarget.style.background = "white")}
+              >
+                <div style={{
+                  width: 30, height: 30, background: "#f1f5f9", borderRadius: 8, display: "flex",
+                  alignItems: "center", justifyContent: "center", fontSize: 11, fontWeight: 700, color: "#550000", flexShrink: 0
+                }}>
+                  {s.nomor}
+                </div>
+                <div style={{ flex: 1 }}>
+                  <div style={{ fontSize: 13, fontWeight: 700, color: "#1e293b" }}>{s.nama_latin}</div>
+                  <div style={{ fontSize: 11, color: "#94a3b8" }}>{s.total_ayat} ayat</div>
+                </div>
+                <div style={{ fontSize: 16, color: "#64748b", fontFamily: "serif" }}>{s.nama_arab}</div>
+              </div>
+            ))}
+            {filtered.length === 0 && (
+              <div style={{ padding: 20, textAlign: "center", color: "#94a3b8", fontSize: 13 }}>
+                Surah tidak ditemukan
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+    </div>
+  );
 }
 
 interface UjianRecord {
@@ -202,13 +320,13 @@ export default function UjianTahfidzPage() {
   const [saved, setSaved] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Form state
   const [selectedSantriId, setSelectedSantriId] = useState("");
   const [searchSantri, setSearchSantri] = useState("");
   const [jenisUjian, setJenisUjian] = useState("ujian_pekanan");
   const [tanggal, setTanggal] = useState(() => new Date().toISOString().split("T")[0]);
   const [juz, setJuz] = useState(1);
-  const [surahNama, setSurahNama] = useState("");
+  const [surahList, setSurahList] = useState<Surah[]>([]);
+  const [selectedSurah, setSelectedSurah] = useState<Surah | null>(null);
   const [ayatDari, setAyatDari] = useState(1);
   const [ayatKe, setAyatKe] = useState(10);
   const [jumlahHalaman, setJumlahHalaman] = useState(2);
@@ -223,14 +341,26 @@ export default function UjianTahfidzPage() {
   const fetchData = useCallback(async () => {
     setLoading(true);
     try {
-      const [sRes, uRes] = await Promise.all([
-        fetch("/api/halaqoh/master"),
+      const [kRes, uRes, qRes] = await Promise.all([
+        fetch("/api/halaqoh/kelompok"),
         fetch("/api/halaqoh/ujian"),
+        fetch("/api/quran/surah"),
       ]);
-      const sData = await sRes.json();
+      const kData = await kRes.json();
       const uData = await uRes.json();
-      setAllSantri(sData.santri || []);
+      const qData = await qRes.json();
+      
+      const uniqueSantri = new Map();
+      if (Array.isArray(kData)) {
+        kData.forEach((k: any) => {
+          k.anggota?.forEach((a: any) => {
+            if (a.santri) uniqueSantri.set(a.santri.id, { ...a.santri, pengampu_id: k.pegawai_id });
+          });
+        });
+      }
+      setAllSantri(Array.from(uniqueSantri.values()));
       setHistory(Array.isArray(uData) ? uData : uData.ujian || []);
+      setSurahList(Array.isArray(qData) ? qData : qData.surah || []);
     } finally {
       setLoading(false);
     }
@@ -238,10 +368,7 @@ export default function UjianTahfidzPage() {
 
   useEffect(() => { fetchData(); }, [fetchData]);
 
-  // --- AUTOSAVE DRAFT LOGIC ---
   const draftKey = "sikap_ujian_draft";
-
-  // Restore draft
   useEffect(() => {
     try {
       const saved = localStorage.getItem(draftKey);
@@ -250,7 +377,7 @@ export default function UjianTahfidzPage() {
         if (d.selectedSantriId) setSelectedSantriId(d.selectedSantriId);
         if (d.jenisUjian) setJenisUjian(d.jenisUjian);
         if (d.juz) setJuz(d.juz);
-        if (d.surahNama) setSurahNama(d.surahNama);
+        if (d.selectedSurah) setSelectedSurah(d.selectedSurah);
         if (d.ayatDari) setAyatDari(d.ayatDari);
         if (d.ayatKe) setAyatKe(d.ayatKe);
         if (d.jumlahHalaman) setJumlahHalaman(d.jumlahHalaman);
@@ -265,15 +392,25 @@ export default function UjianTahfidzPage() {
     }
   }, []);
 
-  // Save draft
   useEffect(() => {
     const draft = {
-      selectedSantriId, jenisUjian, juz, surahNama, ayatDari, ayatKe,
+      selectedSantriId, jenisUjian, juz, selectedSurah, ayatDari, ayatKe,
       jumlahHalaman, nilaiBacaan, nilaiKelancaran, nilaiSikap, isLulus, catatan
     };
     localStorage.setItem(draftKey, JSON.stringify(draft));
-  }, [selectedSantriId, jenisUjian, juz, surahNama, ayatDari, ayatKe, jumlahHalaman, nilaiBacaan, nilaiKelancaran, nilaiSikap, isLulus, catatan]);
-  // ----------------------------
+  }, [selectedSantriId, jenisUjian, juz, selectedSurah, ayatDari, ayatKe, jumlahHalaman, nilaiBacaan, nilaiKelancaran, nilaiSikap, isLulus, catatan]);
+
+  useEffect(() => {
+    if (!selectedSurah) return;
+    const t = setTimeout(() => {
+      fetch(`/api/quran/halaman?surah=${selectedSurah.nomor}&dari=${ayatDari}&sampai=${ayatKe}`)
+        .then(r => r.json())
+        .then(d => {
+          if (d.halaman) setJumlahHalaman(d.halaman);
+        });
+    }, 300);
+    return () => clearTimeout(t);
+  }, [selectedSurah, ayatDari, ayatKe]);
 
   const selectedSantri = allSantri.find(s => s.id === selectedSantriId);
 
@@ -282,7 +419,6 @@ export default function UjianTahfidzPage() {
     s.nama_lengkap.toLowerCase().includes(searchSantri.toLowerCase()) ||
     (s.nis || "").toLowerCase().includes(searchSantri.toLowerCase())
   );
-
 
   const baseNilai = Math.round((nilaiBacaan + nilaiKelancaran) / 2);
   const finalNilai = (jenisUjian === "ujian_itqon" && isLulus) ? Math.min(100, baseNilai + 10) : baseNilai;
@@ -297,13 +433,15 @@ export default function UjianTahfidzPage() {
         tanggal,
         jenis_ujian: jenisUjian,
         juz: jenisUjian === "ujian_itqon" ? juz : undefined,
-        surah_nama: surahNama || undefined,
+        surah_nomor: selectedSurah?.nomor,
+        surah_nama: selectedSurah?.nama_latin,
         ayat_dari: ayatDari,
         ayat_ke: ayatKe,
         jumlah_halaman: jumlahHalaman,
         nilai_bacaan: nilaiBacaan,
         nilai_kelancaran: nilaiKelancaran,
         nilai_sikap: nilaiSikap,
+        nilai_akhir: finalNilai,
         is_lulus: isLulus,
         catatan: catatan || undefined,
       };
@@ -323,7 +461,7 @@ export default function UjianTahfidzPage() {
       setTimeout(() => setSaved(false), 4000);
       setSelectedSantriId("");
       setCatatan("");
-      localStorage.removeItem(draftKey); // Clear draft on success
+      localStorage.removeItem(draftKey);
       await fetchData();
     } catch (e: any) {
       setError(e.message || "Terjadi kesalahan");
@@ -337,12 +475,10 @@ export default function UjianTahfidzPage() {
 
   return (
     <div style={{ maxWidth: 960, margin: "0 auto", padding: "24px 16px", fontFamily: "inherit" }}>
-      {/* Back */}
       <Link href="/halaqoh" style={{ display: "flex", alignItems: "center", gap: 6, color: "#64748b", textDecoration: "none", fontSize: 13, marginBottom: 16, fontWeight: 500 }}>
         <ArrowLeft size={14} /> Kembali ke Halaqoh
       </Link>
 
-      {/* Header — warna palet khas Al-Imam */}
       <div style={{
         background: "linear-gradient(135deg, #550000 0%, #7a0000 100%)",
         borderRadius: 20, padding: "24px 28px", marginBottom: 24, color: "white",
@@ -357,29 +493,11 @@ export default function UjianTahfidzPage() {
         </p>
       </div>
 
-      {/* Special Saturday Banner */}
-      {isSaturday && (
-        <div style={{
-          background: "#fffbeb", border: "1.5px solid #fde68a", borderRadius: 16, padding: "16px 20px",
-          marginBottom: 24, display: "flex", alignItems: "center", gap: 14, color: "#92400e"
-        }}>
-          <Clock size={22} color="#d97706" />
-          <div>
-            <div style={{ fontWeight: 800, fontSize: 14 }}>Hari Sabtu — Waktu Ujian Pekanan!</div>
-            <div style={{ fontSize: 12, marginTop: 2, color: "#78350f" }}>
-              Disarankan menginput nilai Ujian Pekanan setelah Halaqoh Dhuha (sebelum 12.00). Batas akhir penginputan: 15.15 WIB.
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Form Input Ujian */}
       <div style={{ background: "white", borderRadius: 18, padding: 24, marginBottom: 24, border: "1.5px solid #e2e8f0", boxShadow: "0 2px 8px rgba(0,0,0,0.04)" }}>
         <h2 style={{ margin: "0 0 20px 0", fontSize: 16, fontWeight: 700, color: "#1e293b", display: "flex", alignItems: "center", gap: 8 }}>
           <Award size={18} color="#7a0000" /> Form Penginputan Ujian
         </h2>
 
-        {/* 1. Pilih Jenis Ujian */}
         <div style={{ marginBottom: 20 }}>
           <label style={{ fontSize: 12, fontWeight: 700, color: "#475569", display: "block", marginBottom: 10, textTransform: "uppercase", letterSpacing: "0.05em" }}>
             1. Pilih Jenis Ujian
@@ -405,7 +523,6 @@ export default function UjianTahfidzPage() {
           </div>
         </div>
 
-        {/* 2. Pilih Santri */}
         <div style={{ marginBottom: 20 }}>
           <label style={{ fontSize: 12, fontWeight: 700, color: "#475569", display: "block", marginBottom: 8, textTransform: "uppercase", letterSpacing: "0.05em" }}>
             2. Pilih Santri
@@ -463,8 +580,7 @@ export default function UjianTahfidzPage() {
           {jenisUjian === "ujian_target" && selectedSantri && renderTargetBanner(selectedSantri)}
         </div>
 
-        {/* 3. Detail Ujian */}
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 14, marginBottom: 20 }}>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14, marginBottom: 20 }}>
           <div>
             <label style={{ fontSize: 12, fontWeight: 600, color: "#475569", display: "block", marginBottom: 6 }}>Tanggal Ujian</label>
             <input type="date" value={tanggal} onChange={e => setTanggal(e.target.value)}
@@ -482,21 +598,59 @@ export default function UjianTahfidzPage() {
               </select>
             </div>
           ) : (
-            <div>
-              <label style={{ fontSize: 12, fontWeight: 600, color: "#475569", display: "block", marginBottom: 6 }}>Nama Surah / Materi</label>
-              <input type="text" value={surahNama} onChange={e => setSurahNama(e.target.value)} placeholder="Cth: Al-Baqarah"
-                style={{ width: "100%", padding: "10px 12px", borderRadius: 10, border: "1.5px solid #e2e8f0", fontSize: 13, boxSizing: "border-box" }} />
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+              <div>
+                <SurahPicker surahList={surahList} selected={selectedSurah} onSelect={setSelectedSurah} label="Nama Surah / Materi" />
+              </div>
+              <div>
+                <label style={{ fontSize: 12, fontWeight: 600, color: "#475569", display: "block", marginBottom: 6 }}>Jumlah Halaman</label>
+                <input type="number" min={1} value={jumlahHalaman || ""} onChange={e => setJumlahHalaman(Number(e.target.value) || 0)}
+                  style={{ width: "100%", padding: "10px 12px", borderRadius: 10, border: "1.5px solid #e2e8f0", fontSize: 13, boxSizing: "border-box" }} />
+              </div>
+            </div>
+          )}
+        </div>
+
+        {selectedSurah && jenisUjian !== "ujian_itqon" && (
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 20 }}>
+              <div>
+                <label style={{ fontSize: 12, fontWeight: 600, color: "#475569", display: "block", marginBottom: 6 }}>Dari Ayat</label>
+                <input
+                  type="number" min={1} max={selectedSurah.total_ayat}
+                  value={ayatDari || ""}
+                  onChange={e => {
+                    const strVal = e.target.value;
+                    if (strVal === "") setAyatDari(0);
+                    else setAyatDari(parseInt(strVal));
+                  }}
+                  onBlur={() => {
+                    let clamped = Math.max(1, Math.min(ayatDari || 1, selectedSurah.total_ayat));
+                    setAyatDari(clamped);
+                    if (ayatKe < clamped) setAyatKe(clamped);
+                  }}
+                  style={{ width: "100%", padding: "10px 12px", borderRadius: 10, border: "1.5px solid #e2e8f0", fontSize: 13, boxSizing: "border-box" }}
+                />
+              </div>
+              <div>
+                <label style={{ fontSize: 12, fontWeight: 600, color: "#475569", display: "block", marginBottom: 6 }}>Sampai Ayat</label>
+                <input
+                  type="number" min={ayatDari || 1} max={selectedSurah.total_ayat}
+                  value={ayatKe || ""}
+                  onChange={e => {
+                    const strVal = e.target.value;
+                    if (strVal === "") setAyatKe(0);
+                    else setAyatKe(parseInt(strVal));
+                  }}
+                  onBlur={() => {
+                    let clamped = Math.max(ayatDari || 1, Math.min(ayatKe || 1, selectedSurah.total_ayat));
+                    setAyatKe(clamped);
+                  }}
+                  style={{ width: "100%", padding: "10px 12px", borderRadius: 10, border: "1.5px solid #e2e8f0", fontSize: 13, boxSizing: "border-box" }}
+                />
+              </div>
             </div>
           )}
 
-          <div>
-            <label style={{ fontSize: 12, fontWeight: 600, color: "#475569", display: "block", marginBottom: 6 }}>Jumlah Halaman</label>
-            <input type="number" min={0.5} step={0.5} value={jumlahHalaman} onChange={e => setJumlahHalaman(Number(e.target.value))}
-              style={{ width: "100%", padding: "10px 12px", borderRadius: 10, border: "1.5px solid #e2e8f0", fontSize: 13, boxSizing: "border-box" }} />
-          </div>
-        </div>
-
-        {/* 4. Penilaian */}
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 16, marginBottom: 20 }}>
           <NumericScoreSelector
             label="Nilai Bacaan"
