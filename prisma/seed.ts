@@ -87,9 +87,22 @@ const SANTRI_IL = [
   { nis: "2602070018", nama: "Panji Ahmad", jk: "L" },
   { nis: "2602070019", nama: "Iman Prayogo", jk: "L" },
   { nis: "2602070020", nama: "Syeh Al Bani Irsyad Amrulloh", jk: "L" },
-
   { nis: "2602070021", nama: "Wahyu Hidayat", jk: "L" },
   { nis: "2602070022", nama: "Zakaria Reynaldo", jk: "L" },
+];
+
+const SANTRI_11_MA = [
+  { nis: "121232020034222003", nama: "Pandi Rianto", jk: "L" },
+  { nis: "510032020813221", nama: "Salman Abdulrahim Uran", jk: "L" },
+  { nis: "131232020011241007", nama: "Radil", jk: "L" },
+];
+
+const SANTRI_12_MA = [
+  { nis: "510032020813211029", nama: "Muhammad Abdul Rahman", jk: "L" },
+  { nis: "510032020813211030", nama: "Muhammad Abdul Rohim", jk: "L" },
+  { nis: "131232020011241006", nama: "Yasser Ali Nurdin", jk: "L" },
+  { nis: "510032020813211031", nama: "Syafiq Karimalai", jk: "L" },
+  { nis: "131232020011222010", nama: "Dicky Dwy AP", jk: "L" },
 ];
 
 async function main() {
@@ -120,7 +133,17 @@ async function main() {
     update: {},
     create: { nama: "IL", jenjang: "Islamiyah" },
   });
-  console.log("✅ Kelas created: 7 MTs, IL");
+  const kelas11 = await prisma.kelas.upsert({
+    where: { nama: "11 MA" },
+    update: {},
+    create: { nama: "11 MA", jenjang: "MA" },
+  });
+  const kelas12 = await prisma.kelas.upsert({
+    where: { nama: "12 MA" },
+    update: {},
+    create: { nama: "12 MA", jenjang: "MA" },
+  });
+  console.log("✅ Kelas created: 7 MTs, IL, 11 MA, 12 MA");
 
   // 3. Mata Pelajaran Kelas 7
   for (const nama of MAPEL_7MTS) {
@@ -205,7 +228,41 @@ async function main() {
     }
   }
   console.log(`✅ ${SANTRI_IL.length} santri IL`);
+  // 8. Santri 11 MA
+  for (const s of SANTRI_11_MA) {
+    const existing = await prisma.santriAktif.findFirst({
+      where: { nama_lengkap: s.nama },
+    });
+    if (!existing) {
+      await prisma.santriAktif.create({
+        data: {
+          nis: s.nis || null,
+          nama_lengkap: s.nama,
+          kelas_id: kelas11.id,
+          jenis_kelamin: s.jk,
+        },
+      });
+    }
+  }
+  console.log(`✅ ${SANTRI_11_MA.length} santri 11 MA`);
 
+  // 9. Santri 12 MA
+  for (const s of SANTRI_12_MA) {
+    const existing = await prisma.santriAktif.findFirst({
+      where: { nama_lengkap: s.nama },
+    });
+    if (!existing) {
+      await prisma.santriAktif.create({
+        data: {
+          nis: s.nis || null,
+          nama_lengkap: s.nama,
+          kelas_id: kelas12.id,
+          jenis_kelamin: s.jk,
+        },
+      });
+    }
+  }
+  console.log(`✅ ${SANTRI_12_MA.length} santri 12 MA`);
   console.log("\n🎉 Seeding selesai!");
 }
 
