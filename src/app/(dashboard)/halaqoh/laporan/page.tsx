@@ -117,6 +117,8 @@ export default function LaporanHalaqohPage() {
                 <option value="pekanan">Laporan Pekanan</option>
                 <option value="bulanan">Laporan Bulanan</option>
                 <option value="semesteran">Laporan Semester</option>
+                <option value="ujian_target">Laporan Ujian Target</option>
+                <option value="ujian_itqon">Laporan Ujian Itqon</option>
               </select>
             </div>
 
@@ -168,7 +170,7 @@ export default function LaporanHalaqohPage() {
             LAPORAN CAPAIAN TAHFIDZ & KEHADIRAN HALAQOH
           </div>
           <div style={{ fontSize: 12, color: "#64748b", marginTop: 2 }}>
-            Periode: {periode.toUpperCase()} · {BULAN_NAMES[bulan - 1]} {tahun} {periode === "pekanan" ? `(Pekan ${pekanKe})` : ""}
+            Periode: {periode.replace("_", " ").toUpperCase()} · {BULAN_NAMES[bulan - 1]} {tahun} {periode === "pekanan" ? `(Pekan ${pekanKe})` : ""}
           </div>
         </div>
 
@@ -220,9 +222,17 @@ export default function LaporanHalaqohPage() {
               <div style={{ background: "#f5f3ff", border: "1.5px solid #ddd6fe", borderRadius: 14, padding: 14, textAlign: "center" }}>
                 <div style={{ fontSize: 11, fontWeight: 700, color: "#7c3aed" }}>NILAI UJIAN</div>
                 <div style={{ fontSize: 22, fontWeight: 900, color: "#6d28d9", marginTop: 4 }}>
-                  {summary.ujian_pekanan_nilai || summary.ujian_bulanan_nilai || "—"}
+                  {periode === "ujian_target" ? (summary.ujian_target_nilai || "—") :
+                   periode === "ujian_itqon" ? (summary.ujian_itqon_nilai || "—") :
+                   (summary.ujian_pekanan_nilai || summary.ujian_bulanan_nilai || "—")}
                 </div>
-                <div style={{ fontSize: 10, color: "#7c3aed", marginTop: 2 }}>{periode === "pekanan" ? "Ujian Pekanan Sabtu" : "Ujian Bulanan"}</div>
+                <div style={{ fontSize: 10, color: "#7c3aed", marginTop: 2 }}>
+                  {periode === "pekanan" ? "Ujian Pekanan Sabtu" : 
+                   periode === "bulanan" ? "Ujian Bulanan" : 
+                   periode === "ujian_target" ? "Ujian Target Capaian" :
+                   periode === "ujian_itqon" ? "Ujian Itqon (Kelulusan)" :
+                   "Ujian Semester"}
+                </div>
               </div>
             </div>
 
