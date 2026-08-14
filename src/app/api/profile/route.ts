@@ -96,6 +96,7 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     const {
       nama_lengkap,
+      nama_panggilan,
       nik,
       jenis_kelamin,
       tempat_lahir,
@@ -148,6 +149,7 @@ export async function POST(req: NextRequest) {
 
     const dataPayload: any = {
       nama_lengkap: nama_lengkap.trim(),
+      nama_panggilan: nama_panggilan?.trim() || null,
       nik: nik?.trim() || null,
       jenis_kelamin: jenis_kelamin || null,
       tempat_lahir: tempat_lahir?.trim() || null,

@@ -14,6 +14,7 @@ import Swal from "sweetalert2";
 interface PegawaiProfile {
   id?: string;
   nama_lengkap?: string;
+  nama_panggilan?: string | null;
   nik?: string | null;
   jenis_kelamin?: string | null;
   tempat_lahir?: string | null;
@@ -94,6 +95,7 @@ export default function TeacherMapelSetupModal({
 
   const [formData, setFormData] = useState({
     nama_lengkap: initialPegawai?.nama_lengkap || userName || "",
+    nama_panggilan: initialPegawai?.nama_panggilan || "",
     nik: initialPegawai?.nik || "",
     jenis_kelamin: initialPegawai?.jenis_kelamin || "LAKI_LAKI",
     tempat_lahir: initialPegawai?.tempat_lahir || "",
@@ -471,16 +473,29 @@ export default function TeacherMapelSetupModal({
 
                   {/* Nama & Jabatan */}
                   <div style={{ flex: 1, minWidth: 240, display: "flex", flexDirection: "column", gap: "0.85rem" }}>
-                    <div>
-                      <label className={labelCls}>Nama Lengkap & Gelar Akademik <span style={{ color: "#ef4444" }}>*</span></label>
-                      <input
-                        type="text"
-                        value={formData.nama_lengkap}
-                        onChange={e => setFormData({ ...formData, nama_lengkap: e.target.value })}
-                        placeholder="Contoh: Ustadz Abdil Aziz, S.Pd"
-                        className={inputCls}
-                        style={{ fontWeight: 700, fontSize: "0.95rem" }}
-                      />
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <div>
+                        <label className={labelCls}>Nama Lengkap & Gelar <span style={{ color: "#ef4444" }}>*</span></label>
+                        <input
+                          type="text"
+                          value={formData.nama_lengkap}
+                          onChange={e => setFormData({ ...formData, nama_lengkap: e.target.value })}
+                          placeholder="Contoh: Ustadz Abdil Aziz, S.Pd"
+                          className={inputCls}
+                          style={{ fontWeight: 700, fontSize: "0.95rem" }}
+                        />
+                      </div>
+                      <div>
+                        <label className={labelCls}>Nama Panggilan</label>
+                        <input
+                          type="text"
+                          value={formData.nama_panggilan}
+                          onChange={e => setFormData({ ...formData, nama_panggilan: e.target.value })}
+                          placeholder="Contoh: Ust. Aziz"
+                          className={inputCls}
+                          style={{ fontWeight: 700, fontSize: "0.95rem" }}
+                        />
+                      </div>
                     </div>
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                       <div>
