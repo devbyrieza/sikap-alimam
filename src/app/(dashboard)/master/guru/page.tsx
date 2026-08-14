@@ -258,7 +258,7 @@ export default function MasterGuruPage() {
             </div>
             <div>
               <label style={{ display:"block", fontSize:13, fontWeight:600, color:"#334155", marginBottom:6 }}>Nama Panggilan</label>
-              <input type="text" className="form-control" placeholder="Iqbal" value={form.nama_panggilan} onChange={e => setForm({ ...form, nama_panggilan: e.target.value })} />
+              <input type="text" className="form-control" placeholder="Contoh: Ust. Aziz" value={form.nama_panggilan} onChange={e => setForm({ ...form, nama_panggilan: e.target.value })} />
             </div>
             <div>
               <label style={{ display:"block", fontSize:13, fontWeight:600, color:"#334155", marginBottom:6 }}>No. WhatsApp</label>
