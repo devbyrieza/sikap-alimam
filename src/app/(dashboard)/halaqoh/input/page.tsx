@@ -492,9 +492,14 @@ export default function HalaqohInputPage() {
               <label style={{ fontSize: 12, fontWeight: 600, color: "#475569", display: "block", marginBottom: 6 }}>Dari Ayat</label>
               <input
                 type="number" min={1} max={selectedSurah.total_ayat}
-                value={ayatDari}
+                value={ayatDari || ""}
                 onChange={e => {
-                  const v = Math.max(1, Math.min(Number(e.target.value), ayatKe));
+                  const val = e.target.value;
+                  setAyatDari(val === "" ? 0 : Number(val));
+                }}
+                onBlur={() => {
+                  let v = Math.max(1, Math.min(ayatDari, ayatKe));
+                  if (!ayatDari) v = 1;
                   setAyatDari(v);
                 }}
                 style={{ width: "100%", padding: "10px 12px", borderRadius: 10, border: "1.5px solid #e2e8f0", fontSize: 14, fontWeight: 700, boxSizing: "border-box" }}
@@ -503,10 +508,15 @@ export default function HalaqohInputPage() {
             <div>
               <label style={{ fontSize: 12, fontWeight: 600, color: "#475569", display: "block", marginBottom: 6 }}>Sampai Ayat</label>
               <input
-                type="number" min={ayatDari} max={selectedSurah.total_ayat}
-                value={ayatKe}
+                type="number" min={ayatDari || 1} max={selectedSurah.total_ayat}
+                value={ayatKe || ""}
                 onChange={e => {
-                  const v = Math.min(selectedSurah.total_ayat, Math.max(Number(e.target.value), ayatDari));
+                  const val = e.target.value;
+                  setAyatKe(val === "" ? 0 : Number(val));
+                }}
+                onBlur={() => {
+                  let v = Math.min(selectedSurah.total_ayat, Math.max(ayatKe, ayatDari || 1));
+                  if (!ayatKe) v = ayatDari || 1;
                   setAyatKe(v);
                 }}
                 style={{ width: "100%", padding: "10px 12px", borderRadius: 10, border: "1.5px solid #e2e8f0", fontSize: 14, fontWeight: 700, boxSizing: "border-box" }}
