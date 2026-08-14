@@ -612,44 +612,44 @@ export default function UjianTahfidzPage() {
         </div>
 
         {selectedSurah && jenisUjian !== "ujian_itqon" && (
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 20 }}>
-              <div>
-                <label style={{ fontSize: 12, fontWeight: 600, color: "#475569", display: "block", marginBottom: 6 }}>Dari Ayat</label>
-                <input
-                  type="number" min={1} max={selectedSurah.total_ayat}
-                  value={ayatDari || ""}
-                  onChange={e => {
-                    const strVal = e.target.value;
-                    if (strVal === "") setAyatDari(0);
-                    else setAyatDari(parseInt(strVal));
-                  }}
-                  onBlur={() => {
-                    let clamped = Math.max(1, Math.min(ayatDari || 1, selectedSurah.total_ayat));
-                    setAyatDari(clamped);
-                    if (ayatKe < clamped) setAyatKe(clamped);
-                  }}
-                  style={{ width: "100%", padding: "10px 12px", borderRadius: 10, border: "1.5px solid #e2e8f0", fontSize: 13, boxSizing: "border-box" }}
-                />
-              </div>
-              <div>
-                <label style={{ fontSize: 12, fontWeight: 600, color: "#475569", display: "block", marginBottom: 6 }}>Sampai Ayat</label>
-                <input
-                  type="number" min={ayatDari || 1} max={selectedSurah.total_ayat}
-                  value={ayatKe || ""}
-                  onChange={e => {
-                    const strVal = e.target.value;
-                    if (strVal === "") setAyatKe(0);
-                    else setAyatKe(parseInt(strVal));
-                  }}
-                  onBlur={() => {
-                    let clamped = Math.max(ayatDari || 1, Math.min(ayatKe || 1, selectedSurah.total_ayat));
-                    setAyatKe(clamped);
-                  }}
-                  style={{ width: "100%", padding: "10px 12px", borderRadius: 10, border: "1.5px solid #e2e8f0", fontSize: 13, boxSizing: "border-box" }}
-                />
-              </div>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 20 }}>
+            <div>
+              <label style={{ fontSize: 12, fontWeight: 600, color: "#475569", display: "block", marginBottom: 6 }}>Dari Ayat</label>
+              <input
+                type="number" min={1} max={selectedSurah.total_ayat}
+                value={ayatDari || ""}
+                onChange={e => {
+                  const strVal = e.target.value;
+                  if (strVal === "") setAyatDari(0);
+                  else setAyatDari(parseInt(strVal));
+                }}
+                onBlur={() => {
+                  let clamped = Math.max(1, Math.min(ayatDari || 1, selectedSurah.total_ayat));
+                  setAyatDari(clamped);
+                  if (ayatKe < clamped) setAyatKe(clamped);
+                }}
+                style={{ width: "100%", padding: "10px 12px", borderRadius: 10, border: "1.5px solid #e2e8f0", fontSize: 13, boxSizing: "border-box" }}
+              />
             </div>
-          )}
+            <div>
+              <label style={{ fontSize: 12, fontWeight: 600, color: "#475569", display: "block", marginBottom: 6 }}>Sampai Ayat</label>
+              <input
+                type="number" min={ayatDari || 1} max={selectedSurah.total_ayat}
+                value={ayatKe || ""}
+                onChange={e => {
+                  const strVal = e.target.value;
+                  if (strVal === "") setAyatKe(0);
+                  else setAyatKe(parseInt(strVal));
+                }}
+                onBlur={() => {
+                  let clamped = Math.max(ayatDari || 1, Math.min(ayatKe || 1, selectedSurah.total_ayat));
+                  setAyatKe(clamped);
+                }}
+                style={{ width: "100%", padding: "10px 12px", borderRadius: 10, border: "1.5px solid #e2e8f0", fontSize: 13, boxSizing: "border-box" }}
+              />
+            </div>
+          </div>
+        )}
 
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 16, marginBottom: 20 }}>
           <NumericScoreSelector
