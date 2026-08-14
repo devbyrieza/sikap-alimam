@@ -439,7 +439,7 @@ export default function MasterGuruPage() {
               <div style={{ position:"absolute", top:-30, right:-30, width:120, height:120, background:"rgba(16,185,129,0.05)", borderRadius:"50%", pointerEvents:"none" }} />
               
               <div style={{ display: "flex", gap: 16, alignItems: "flex-start" }}>
-                {g.foto_url && g.foto_url !== "null" && g.foto_url.trim() !== "" ? (
+                {g.foto_url && g.foto_url !== "null" && g.foto_url !== "undefined" && g.foto_url.trim() !== "" ? (
                   <img
                     src={g.foto_url}
                     alt={g.nama_lengkap}
@@ -528,7 +528,7 @@ export default function MasterGuruPage() {
                 </div>
 
                 <div style={{ display: "flex", gap: 6, flexShrink: 0 }}>
-                  {g.foto_url && g.foto_url !== "null" && g.foto_url.trim() !== "" && (
+                  {g.foto_url && g.foto_url !== "null" && g.foto_url !== "undefined" && g.foto_url.trim() !== "" && (
                     <a
                       href={g.foto_url}
                       download={`Foto_${formatName(g.nama_lengkap).replace(/\s+/g, '_')}`}
