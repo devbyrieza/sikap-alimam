@@ -29,7 +29,8 @@ interface CatatanRow {
   jumlah_halaman: number;
   kehadiran: string;
   alasan?: string;
-  nilai_sikap: number;
+  nilai_sikap: string;
+  nilai_kelancaran: number;
   nilai_bacaan: number;
   nilai_akhir: number;
   catatan?: string;
@@ -197,7 +198,7 @@ export default function HalaqohRekapPage() {
           <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
             <thead>
               <tr style={{ background: "#f8fafc", borderBottom: "2px solid #e2e8f0" }}>
-                {["Tanggal", "Santri", "Sesi", "Jenis", "Bacaan", "Hlm.", "Kehadiran", "Sikap", "Bacaan", "Akhir"].map((h, i) => (
+                {["Tanggal", "Santri", "Sesi", "Jenis", "Materi", "Hlm.", "Kehadiran", "Lancar", "Bacaan", "Sikap", "Akhir"].map((h, i) => (
                   <th key={i} style={{ padding: "12px 14px", textAlign: "left", fontSize: 11, fontWeight: 700, color: "#475569", textTransform: "uppercase", letterSpacing: "0.05em", whiteSpace: "nowrap" }}>
                     {h}
                   </th>
@@ -207,11 +208,11 @@ export default function HalaqohRekapPage() {
             <tbody>
               {loading ? (
                 <tr>
-                  <td colSpan={10} style={{ textAlign: "center", padding: 40, color: "#94a3b8" }}>Memuat catatan...</td>
+                  <td colSpan={11} style={{ textAlign: "center", padding: 40, color: "#94a3b8" }}>Memuat catatan...</td>
                 </tr>
               ) : filtered.length === 0 ? (
                 <tr>
-                  <td colSpan={10} style={{ textAlign: "center", padding: 48, color: "#94a3b8" }}>
+                  <td colSpan={11} style={{ textAlign: "center", padding: 48, color: "#94a3b8" }}>
                     <BookHeart size={32} style={{ marginBottom: 10, opacity: 0.3, display: "block", margin: "0 auto 10px" }} />
                     Belum ada catatan halaqoh
                   </td>
@@ -247,8 +248,9 @@ export default function HalaqohRekapPage() {
                         {had.label}
                       </span>
                     </td>
-                    <td style={{ padding: "11px 14px", fontWeight: 700, color: "#475569", textAlign: "center" }}>{row.nilai_sikap}</td>
+                    <td style={{ padding: "11px 14px", fontWeight: 700, color: "#475569", textAlign: "center" }}>{row.nilai_kelancaran}</td>
                     <td style={{ padding: "11px 14px", fontWeight: 700, color: "#475569", textAlign: "center" }}>{row.nilai_bacaan}</td>
+                    <td style={{ padding: "11px 14px", fontWeight: 700, color: "#475569", textAlign: "center", fontSize: 11 }}>{row.nilai_sikap}</td>
                     <td style={{ padding: "11px 14px", textAlign: "center" }}>
                       <span style={{ fontWeight: 800, fontSize: 14, color: nilaiColor, background: nilaiColor + "15", padding: "4px 10px", borderRadius: 8 }}>
                         {row.nilai_akhir}

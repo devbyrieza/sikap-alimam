@@ -214,7 +214,7 @@ export default function LaporanHalaqohPage() {
                 <div style={{ fontSize: 22, fontWeight: 900, color: "#b45309", marginTop: 4 }}>
                   {summary.avg_nilai_harian || "—"}
                 </div>
-                <div style={{ fontSize: 10, color: "#d97706", marginTop: 2 }}>Nilai Sikap + Bacaan</div>
+                <div style={{ fontSize: 10, color: "#d97706", marginTop: 2 }}>Nilai Bacaan + Kelancaran</div>
               </div>
 
               <div style={{ background: "#f5f3ff", border: "1.5px solid #ddd6fe", borderRadius: 14, padding: 14, textAlign: "center" }}>

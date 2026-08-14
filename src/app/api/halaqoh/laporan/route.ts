@@ -62,7 +62,7 @@ export async function GET(request: Request) {
     let total_alfa = 0;
     let total_halaman = 0;
 
-    let sum_sikap = 0;
+    let sum_kelancaran = 0;
     let sum_bacaan = 0;
     let sum_harian = 0;
 
@@ -73,13 +73,13 @@ export async function GET(request: Request) {
       else if (c.kehadiran === 'alfa') total_alfa++;
 
       total_halaman += (c.jumlah_halaman || 0);
-      sum_sikap += (c.nilai_sikap || 0);
+      sum_kelancaran += (c.nilai_kelancaran || 0);
       sum_bacaan += (c.nilai_bacaan || 0);
       sum_harian += (c.nilai_akhir || 0);
     });
 
     const catatanCount = catatanList.length || 1;
-    const avg_nilai_sikap = Math.round((sum_sikap / catatanCount) * 100) / 100;
+    const avg_nilai_kelancaran = Math.round((sum_kelancaran / catatanCount) * 100) / 100;
     const avg_nilai_bacaan = Math.round((sum_bacaan / catatanCount) * 100) / 100;
     const avg_nilai_harian = Math.round((sum_harian / catatanCount) * 100) / 100;
 
@@ -112,7 +112,7 @@ export async function GET(request: Request) {
         total_izin,
         total_alfa,
         total_halaman,
-        avg_nilai_sikap: catatanList.length === 0 ? 0 : avg_nilai_sikap,
+        avg_nilai_kelancaran: catatanList.length === 0 ? 0 : avg_nilai_kelancaran,
         avg_nilai_bacaan: catatanList.length === 0 ? 0 : avg_nilai_bacaan,
         avg_nilai_harian: catatanList.length === 0 ? 0 : avg_nilai_harian,
         ujian_pekanan_nilai,
