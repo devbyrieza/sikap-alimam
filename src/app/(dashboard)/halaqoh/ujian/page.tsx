@@ -11,13 +11,54 @@ const JENIS_UJIAN_OPT = [
   { val: "ujian_itqon",   label: "Ujian Itqon",   target: "per 5 Juz (Bonus +10)", icon: <Star size={16} />,         color: "#0e7490", bg: "#ecfeff", border: "#a5f3fc" },
 ];
 
-const NILAI_INDIKATOR = [
-  { label: "Sangat Baik", nilai: 95, warna: "#059669", bg: "#ecfdf5" },
-  { label: "Baik",        nilai: 82, warna: "#0284c7", bg: "#eff6ff" },
-  { label: "Cukup",       nilai: 70, warna: "#d97706", bg: "#fffbeb" },
-  { label: "Kurang",      nilai: 55, warna: "#dc2626", bg: "#fef2f2" },
-  { label: "Buruk",       nilai: 40, warna: "#7c3aed", bg: "#f5f3ff" },
-];
+const OPSI_NILAI = [100, 98, 95, 90, 85, 80, 75, 70, 65, 60] as const;
+
+function getPredikat(nilai: number) {
+  if (nilai >= 98) return { label: "Sangat Baik", color: "#059669", bg: "#ecfdf5", border: "#a7f3d0" };
+  if (nilai >= 90) return { label: "Baik", color: "#0284c7", bg: "#eff6ff", border: "#bfdbfe" };
+  if (nilai === 85) return { label: "Cukup", color: "#16a34a", bg: "#f0fdf4", border: "#bbf7d0" };
+  if (nilai >= 75) return { label: "Kurang", color: "#d97706", bg: "#fffbeb", border: "#fde68a" };
+  return { label: "Sangat Kurang", color: "#dc2626", bg: "#fef2f2", border: "#fecaca" };
+}
+
+function NumericScoreSelector({
+  label,
+  value,
+  onChange,
+}: {
+  label: string;
+  value: number;
+  onChange: (v: number) => void;
+}) {
+  const predikat = getPredikat(value);
+  return (
+    <div>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
+        <div style={{ fontSize: 11, fontWeight: 600, color: "#64748b" }}>{label}</div>
+        <div style={{ fontSize: 10, fontWeight: 700, padding: "3px 8px", borderRadius: 6, background: predikat.bg, color: predikat.color, border: `1px solid ${predikat.border}` }}>
+          {predikat.label} {value >= 85 ? "✅" : "⚠️"}
+        </div>
+      </div>
+      <div style={{ display: "flex", gap: 4, flexWrap: "wrap" }}>
+        {OPSI_NILAI.map(num => (
+          <button
+            key={num}
+            onClick={() => onChange(num)}
+            style={{
+              padding: "4px 8px", borderRadius: 8, fontSize: 12, fontWeight: 700, cursor: "pointer",
+              border: `1.5px solid ${value === num ? predikat.color : "#e2e8f0"}`,
+              background: value === num ? predikat.bg : "white",
+              color: value === num ? predikat.color : "#64748b",
+              transition: "all 0.15s"
+            }}
+          >
+            {num}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
 
 interface Santri {
   id: string;
@@ -62,8 +103,8 @@ export default function UjianTahfidzPage() {
   const [ayatDari, setAyatDari] = useState(1);
   const [ayatKe, setAyatKe] = useState(10);
   const [jumlahHalaman, setJumlahHalaman] = useState(2);
-  const [nilaiBacaanLabel, setNilaiBacaanLabel] = useState("Baik");
-  const [nilaiSikapLabel, setNilaiSikapLabel] = useState("Baik");
+  const [nilaiBacaan, setNilaiBacaan] = useState(90);
+  const [nilaiSikap, setNilaiSikap] = useState(90);
   const [isLulus, setIsLulus] = useState(true);
   const [catatan, setCatatan] = useState("");
 
@@ -103,8 +144,8 @@ export default function UjianTahfidzPage() {
         if (d.ayatDari) setAyatDari(d.ayatDari);
         if (d.ayatKe) setAyatKe(d.ayatKe);
         if (d.jumlahHalaman) setJumlahHalaman(d.jumlahHalaman);
-        if (d.nilaiBacaanLabel) setNilaiBacaanLabel(d.nilaiBacaanLabel);
-        if (d.nilaiSikapLabel) setNilaiSikapLabel(d.nilaiSikapLabel);
+        if (typeof d.nilaiBacaan === "number") setNilaiBacaan(d.nilaiBacaan);
+        if (typeof d.nilaiSikap === "number") setNilaiSikap(d.nilaiSikap);
         if (typeof d.isLulus === "boolean") setIsLulus(d.isLulus);
         if (d.catatan) setCatatan(d.catatan);
       }
@@ -117,10 +158,10 @@ export default function UjianTahfidzPage() {
   useEffect(() => {
     const draft = {
       selectedSantriId, jenisUjian, juz, surahNama, ayatDari, ayatKe,
-      jumlahHalaman, nilaiBacaanLabel, nilaiSikapLabel, isLulus, catatan
+      jumlahHalaman, nilaiBacaan, nilaiSikap, isLulus, catatan
     };
     localStorage.setItem(draftKey, JSON.stringify(draft));
-  }, [selectedSantriId, jenisUjian, juz, surahNama, ayatDari, ayatKe, jumlahHalaman, nilaiBacaanLabel, nilaiSikapLabel, isLulus, catatan]);
+  }, [selectedSantriId, jenisUjian, juz, surahNama, ayatDari, ayatKe, jumlahHalaman, nilaiBacaan, nilaiSikap, isLulus, catatan]);
   // ----------------------------
 
   const selectedSantri = allSantri.find(s => s.id === selectedSantriId);
@@ -131,9 +172,7 @@ export default function UjianTahfidzPage() {
     (s.nis || "").toLowerCase().includes(searchSantri.toLowerCase())
   );
 
-  const getNilai = (label: string) => NILAI_INDIKATOR.find(i => i.label === label)?.nilai || 82;
-  const nilaiBacaan = getNilai(nilaiBacaanLabel);
-  const nilaiSikap = getNilai(nilaiSikapLabel);
+
   const baseNilai = Math.round((nilaiBacaan + nilaiSikap) / 2);
   const finalNilai = (jenisUjian === "ujian_itqon" && isLulus) ? Math.min(100, baseNilai + 10) : baseNilai;
 
@@ -346,45 +385,16 @@ export default function UjianTahfidzPage() {
 
         {/* 4. Penilaian */}
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 20 }}>
-          <div>
-            <label style={{ fontSize: 12, fontWeight: 600, color: "#475569", display: "block", marginBottom: 8 }}>Nilai Kelancaran & Tajwid</label>
-            <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
-              {NILAI_INDIKATOR.map(ind => (
-                <button
-                  key={ind.label}
-                  onClick={() => setNilaiBacaanLabel(ind.label)}
-                  style={{
-                    padding: "6px 12px", borderRadius: 8, fontSize: 12, fontWeight: 700, cursor: "pointer",
-                    border: `1.5px solid ${nilaiBacaanLabel === ind.label ? ind.warna : "#e2e8f0"}`,
-                    background: nilaiBacaanLabel === ind.label ? ind.bg : "white",
-                    color: nilaiBacaanLabel === ind.label ? ind.warna : "#64748b"
-                  }}
-                >
-                  {ind.label}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          <div>
-            <label style={{ fontSize: 12, fontWeight: 600, color: "#475569", display: "block", marginBottom: 8 }}>Nilai Adab & Sikap</label>
-            <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
-              {NILAI_INDIKATOR.map(ind => (
-                <button
-                  key={ind.label}
-                  onClick={() => setNilaiSikapLabel(ind.label)}
-                  style={{
-                    padding: "6px 12px", borderRadius: 8, fontSize: 12, fontWeight: 700, cursor: "pointer",
-                    border: `1.5px solid ${nilaiSikapLabel === ind.label ? ind.warna : "#e2e8f0"}`,
-                    background: nilaiSikapLabel === ind.label ? ind.bg : "white",
-                    color: nilaiSikapLabel === ind.label ? ind.warna : "#64748b"
-                  }}
-                >
-                  {ind.label}
-                </button>
-              ))}
-            </div>
-          </div>
+          <NumericScoreSelector
+            label="Nilai Kelancaran & Tajwid"
+            value={nilaiBacaan}
+            onChange={setNilaiBacaan}
+          />
+          <NumericScoreSelector
+            label="Nilai Adab & Sikap"
+            value={nilaiSikap}
+            onChange={setNilaiSikap}
+          />
         </div>
 
         {/* Khusus Ujian Itqon: Checkbox Lulus + Bonus */}

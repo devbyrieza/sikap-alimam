@@ -5,14 +5,15 @@ import { BookHeart, ArrowLeft, Search, ChevronDown, BookOpen, Users, Save, Check
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 
-// ─── NILAI INDIKATOR ────────────────────────────────────────────────────────
-const NILAI_INDIKATOR = [
-  { label: "Sangat Baik", nilai: 95, warna: "#059669", bg: "#ecfdf5", border: "#a7f3d0" },
-  { label: "Baik",        nilai: 82, warna: "#0284c7", bg: "#eff6ff", border: "#bfdbfe" },
-  { label: "Cukup",       nilai: 70, warna: "#d97706", bg: "#fffbeb", border: "#fde68a" },
-  { label: "Kurang",      nilai: 55, warna: "#dc2626", bg: "#fef2f2", border: "#fecaca" },
-  { label: "Buruk",       nilai: 40, warna: "#7c3aed", bg: "#f5f3ff", border: "#ddd6fe" },
-] as const;
+const OPSI_NILAI = [100, 98, 95, 90, 85, 80, 75, 70, 65, 60] as const;
+
+function getPredikat(nilai: number) {
+  if (nilai >= 98) return { label: "Sangat Baik", color: "#059669", bg: "#ecfdf5", border: "#a7f3d0" };
+  if (nilai >= 90) return { label: "Baik", color: "#0284c7", bg: "#eff6ff", border: "#bfdbfe" };
+  if (nilai === 85) return { label: "Cukup", color: "#16a34a", bg: "#f0fdf4", border: "#bbf7d0" };
+  if (nilai >= 75) return { label: "Kurang", color: "#d97706", bg: "#fffbeb", border: "#fde68a" };
+  return { label: "Sangat Kurang", color: "#dc2626", bg: "#fef2f2", border: "#fecaca" };
+}
 
 const KEHADIRAN_OPT = [
   { label: "Hadir",  val: "hadir",  warna: "#059669", bg: "#ecfdf5" },
@@ -36,8 +37,8 @@ interface SantriEntry {
   nis?: string;
   kehadiran: "hadir" | "sakit" | "izin" | "alfa";
   alasan: string;
-  nilai_sikap_label: string;
-  nilai_bacaan_label: string;
+  nilai_sikap: number;
+  nilai_bacaan: number;
   // Per-santri override untuk surat (jika berbeda dari default kelompok)
   override_surah?: boolean;
   override_surah_nomor?: number;
@@ -55,9 +56,7 @@ function getDraftKey(userId: string, kelompokId: string, sesi: string, tanggal: 
   return `${DRAFT_KEY_PREFIX}_${userId}_${kelompokId}_${sesi}_${tanggal}`;
 }
 
-function indikatorToNilai(label: string): number {
-  return NILAI_INDIKATOR.find(i => i.label === label)?.nilai ?? 68;
-}
+
 
 // ─── SURAH SEARCH COMPONENT ─────────────────────────────────────────────────
 function SurahPicker({
@@ -171,33 +170,38 @@ function SurahPicker({
 }
 
 // ─── INDIKATOR SELECTOR ──────────────────────────────────────────────────────
-function IndikatorSelector({
+function NumericScoreSelector({
   label,
   value,
   onChange,
 }: {
   label: string;
-  value: string;
-  onChange: (v: string) => void;
+  value: number;
+  onChange: (v: number) => void;
 }) {
+  const predikat = getPredikat(value);
   return (
     <div>
-      <div style={{ fontSize: 11, fontWeight: 600, color: "#64748b", marginBottom: 5 }}>{label}</div>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
+        <div style={{ fontSize: 11, fontWeight: 600, color: "#64748b" }}>{label}</div>
+        <div style={{ fontSize: 10, fontWeight: 700, padding: "3px 8px", borderRadius: 6, background: predikat.bg, color: predikat.color, border: `1px solid ${predikat.border}` }}>
+          {predikat.label} {value >= 85 ? "✅" : "⚠️"}
+        </div>
+      </div>
       <div style={{ display: "flex", gap: 4, flexWrap: "wrap" }}>
-        {NILAI_INDIKATOR.map(ind => (
+        {OPSI_NILAI.map(num => (
           <button
-            key={ind.label}
-            onClick={() => onChange(ind.label)}
+            key={num}
+            onClick={() => onChange(num)}
             style={{
-              padding: "4px 8px", borderRadius: 8, fontSize: 11, fontWeight: 600, cursor: "pointer",
-              border: `1.5px solid ${value === ind.label ? ind.warna : "#e2e8f0"}`,
-              background: value === ind.label ? ind.bg : "white",
-              color: value === ind.label ? ind.warna : "#64748b",
+              padding: "4px 8px", borderRadius: 8, fontSize: 12, fontWeight: 700, cursor: "pointer",
+              border: `1.5px solid ${value === num ? predikat.color : "#e2e8f0"}`,
+              background: value === num ? predikat.bg : "white",
+              color: value === num ? predikat.color : "#64748b",
               transition: "all 0.15s"
             }}
-            title={`${ind.label} (${ind.nilai})`}
           >
-            {ind.label}
+            {num}
           </button>
         ))}
       </div>
@@ -264,19 +268,16 @@ export default function HalaqohInputPage() {
       });
 
       const initialEntries: SantriEntry[] = anggotaList.map((a: any) => {
-        const ex = existingMap[a.santri.id];
+        const s = a.santri;
+        const ex = existingMap[s.id] as any;
         return {
-          santri_id: a.santri.id,
-          nama: a.santri.nama_lengkap,
-          nis: a.santri.nis,
+          santri_id: s.id,
+          nama: s.nama_lengkap,
+          nis: s.nis,
           kehadiran: ex?.kehadiran || "hadir",
           alasan: ex?.alasan || "",
-          nilai_sikap_label: ex ? (
-            NILAI_INDIKATOR.find(i => i.nilai === ex.nilai_sikap)?.label || "Baik"
-          ) : "Baik",
-          nilai_bacaan_label: ex ? (
-            NILAI_INDIKATOR.find(i => i.nilai === ex.nilai_bacaan)?.label || "Baik"
-          ) : "Baik",
+          nilai_sikap: ex?.nilai_sikap ?? 90,
+          nilai_bacaan: ex?.nilai_bacaan ?? 90,
           catatan: ex?.catatan || "",
         };
       });
@@ -370,8 +371,8 @@ export default function HalaqohInputPage() {
           santri_id: e.santri_id,
           kehadiran: e.kehadiran,
           alasan: e.alasan || null,
-          nilai_sikap: indikatorToNilai(e.nilai_sikap_label),
-          nilai_bacaan: indikatorToNilai(e.nilai_bacaan_label),
+          nilai_sikap: e.nilai_sikap,
+          nilai_bacaan: e.nilai_bacaan,
           catatan: e.catatan || null,
         })),
       };
@@ -598,23 +599,23 @@ export default function HalaqohInputPage() {
                   {/* Nilai (hanya jika hadir) */}
                   {entry.kehadiran === "hadir" && (
                     <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 12 }}>
-                      <IndikatorSelector
+                      <NumericScoreSelector
                         label="Nilai Sikap"
-                        value={entry.nilai_sikap_label}
-                        onChange={v => updateEntry(idx, "nilai_sikap_label", v)}
+                        value={entry.nilai_sikap}
+                        onChange={v => updateEntry(idx, "nilai_sikap", v)}
                       />
-                      <IndikatorSelector
+                      <NumericScoreSelector
                         label="Nilai Bacaan / Setoran"
-                        value={entry.nilai_bacaan_label}
-                        onChange={v => updateEntry(idx, "nilai_bacaan_label", v)}
+                        value={entry.nilai_bacaan}
+                        onChange={v => updateEntry(idx, "nilai_bacaan", v)}
                       />
                     </div>
                   )}
 
                   {/* Preview Nilai Akhir */}
                   {entry.kehadiran === "hadir" && (() => {
-                    const nSikap = indikatorToNilai(entry.nilai_sikap_label);
-                    const nBacaan = indikatorToNilai(entry.nilai_bacaan_label);
+                    const nSikap = entry.nilai_sikap;
+                    const nBacaan = entry.nilai_bacaan;
                     const nAkhir = Math.round((nSikap + nBacaan) / 2);
                     return (
                       <div style={{ background: "#f8fafc", borderRadius: 12, padding: "12px 16px", marginBottom: 14, border: "1px dashed #cbd5e1" }}>
