@@ -102,21 +102,6 @@ function TextScoreSelector({
     </div>
   );
 }
-        {OPSI_SIKAP.map(opsi => (
-          <button
-            key={opsi.value}
-            onClick={() => onChange(opsi.value)}
-            className={`px-2.5 py-1 rounded-lg text-xs font-bold cursor-pointer border-[1.5px] transition-all duration-150 ${
-              value === opsi.value ? `${predikat.bg} ${predikat.color} ${predikat.borderActive}` : "bg-white text-slate-500 border-slate-200 hover:bg-slate-50"
-            }`}
-          >
-            {opsi.label}
-          </button>
-        ))}
-      </div>
-    </div>
-  );
-}
 
 interface Santri {
   id: string;
