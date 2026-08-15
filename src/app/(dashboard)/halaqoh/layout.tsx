@@ -6,7 +6,11 @@ export default async function HalaqohLayout({ children }: { children: ReactNode 
   const session = await getSession();
   const userRoles = (session?.role || "").toLowerCase().split(",").map(r => r.trim());
   
-  const allowedRoles = ["musyrif", "pengampu", "wali_kelas", "kabid_pengasuhan", "kabid_asrama", "admin_super", "mudir"];
+  const allowedRoles = [
+    "musyrif", "pengampu", "guru",
+    "wali_kelas", "kabid_pengasuhan", "kabid_asrama",
+    "kabid_kurikulum", "admin_super", "mudir",
+  ];
   const hasAccess = userRoles.some(role => allowedRoles.includes(role));
   
   if (!hasAccess) {
