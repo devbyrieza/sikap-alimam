@@ -310,7 +310,7 @@ export default function MasterGuruPage() {
                       
                       return (
                         <option key={k.id} value={k.id}>
-                          {k.nama} {k.jenjang ? `(${k.jenjang})` : ""} 👉 [{tagPrefix}]
+                          {k.nama} {k.jenjang ? `(${k.jenjang})` : ""} - [{tagPrefix}]
                         </option>
                       );
                     })}

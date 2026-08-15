@@ -13,7 +13,8 @@ import {
   BarChart3,
   ArrowLeft,
   Trash2,
-  AlertCircle
+  AlertCircle,
+  AlertTriangle
 } from "lucide-react";
 
 import ModuleTabs from "@/components/ModuleTabs";
@@ -644,7 +645,12 @@ export default function InputNilaiPage() {
             <div style={{ background: "#fffbeb", borderRadius: "16px", padding: "16px 20px", border: "1.5px solid #fef08a", display: "flex", alignItems: "center", gap: "12px", color: "#92400e" }}>
               <AlertCircle size={22} style={{ color: "#d97706", flexShrink: 0 }} />
               <div style={{ fontSize: "13px", fontWeight: "600", color: "#b45309" }}>
-                {!kelas_id ? "⚠️ Silakan pilih Kelas terlebih dahulu." : "⚠️ Silakan pilih Mata Pelajaran terlebih dahulu."} Lembar nilai baru dapat dibuka setelah parameter terisi lengkap.
+                <div className="flex items-start gap-2">
+              <AlertTriangle className="w-5 h-5 text-amber-500 shrink-0" />
+              <span>
+                {!kelas_id ? "Silakan pilih Kelas terlebih dahulu." : "Silakan pilih Mata Pelajaran terlebih dahulu."} Lembar nilai baru dapat dibuka setelah parameter terisi lengkap.
+              </span>
+            </div>
               </div>
             </div>
           )}

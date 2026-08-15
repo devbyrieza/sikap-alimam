@@ -3,7 +3,7 @@
 import { useState, useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import Swal from "sweetalert2";
-import { BookOpen, ChevronLeft, Loader2, FileText, Zap, Clock, Save, Calendar, MessageSquare, Microscope, BookMarked, Edit3, Check, Trash2, RotateCcw, AlertCircle } from "lucide-react";
+import { BookOpen, ChevronLeft, Loader2, FileText, Zap, Clock, Save, Calendar, MessageSquare, Microscope, BookMarked, Edit3, Check, Trash2, RotateCcw, AlertCircle, AlertTriangle } from "lucide-react";
 import Link from "next/link";
 
 type Kelas = { id: string; nama: string; jenjang: string | null };
@@ -757,7 +757,12 @@ export default function TambahJurnalPage() {
                 </div>
                 <div style={{ fontSize: 16, fontWeight: 800, color: "#92400e", marginBottom: 4 }}>Informasi Mengajar Belum Lengkap</div>
                 <p style={{ fontSize: 13, color: "#b45309", margin: 0, maxWidth: 520, marginLeft: "auto", marginRight: "auto", lineHeight: 1.5 }}>
-                  {!kelasId ? "⚠️ Silakan pilih Kelas terlebih dahulu." : !mapelId ? "⚠️ Silakan pilih Mata Pelajaran terlebih dahulu." : "⚠️ Silakan pilih Jam Ke- KBM terlebih dahulu."} Form pengisian jurnal mengajar tidak dapat diisi sebelum informasi mengajar terisi lengkap.
+                  <div className="flex items-start gap-2">
+                    <AlertTriangle className="w-5 h-5 text-amber-500 shrink-0" />
+                    <span>
+                      {!kelasId ? "Silakan pilih Kelas terlebih dahulu." : !mapelId ? "Silakan pilih Mata Pelajaran terlebih dahulu." : "Silakan pilih Jam Ke- KBM terlebih dahulu."} Form pengisian jurnal mengajar tidak dapat diisi sebelum informasi mengajar terisi lengkap.
+                    </span>
+                  </div>
                 </p>
               </div>
             ) : (

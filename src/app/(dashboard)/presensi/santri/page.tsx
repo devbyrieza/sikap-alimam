@@ -19,6 +19,7 @@ import {
   Calendar,
   BookOpen,
   AlertCircle,
+  AlertTriangle,
 } from "lucide-react";
 
 
@@ -1045,7 +1046,12 @@ export default function PresensiSantriPage() {
           </div>
           <div style={{ fontSize: 15, fontWeight: 800, color: "#92400e", marginBottom: 4 }}>Isian Filter Belum Lengkap</div>
           <p style={{ fontSize: 13, color: "#b45309", margin: 0, maxWidth: 520, marginLeft: "auto", marginRight: "auto", lineHeight: 1.5 }}>
-            {!mapelId ? "⚠️ Mata Pelajaran belum dipilih. Silakan tentukan Mata Pelajaran terlebih dahulu." : "Silakan lengkapi pilihan Kelas dan Jam Ke- terlebih dahulu."} Daftar presensi santri tidak akan ditampilkan sebelum isian terisi lengkap.
+            <div className="flex items-start gap-2">
+              <AlertTriangle className="w-5 h-5 text-amber-500 shrink-0" />
+              <span>
+                {!mapelId ? "Mata Pelajaran belum dipilih. Silakan tentukan Mata Pelajaran terlebih dahulu." : "Silakan lengkapi pilihan Kelas dan Jam Ke- terlebih dahulu."} Daftar presensi santri tidak akan ditampilkan sebelum isian terisi lengkap.
+              </span>
+            </div>
           </p>
         </div>
       )}

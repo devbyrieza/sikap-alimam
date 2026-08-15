@@ -84,7 +84,7 @@ export default function AksesDiblokirPage() {
         </a>
 
         <p style={{ margin: 0, fontSize: 12, color: "#94a3b8" }}>
-          Pesantren Al-Imam Al-Islami · Semoga segera terselesaikan 🤲
+          Pesantren Al-Imam Al-Islami · Semoga segera terselesaikan.
         </p>
 
         {/* Logout link */}

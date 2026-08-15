@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect, useCallback } from "react";
-import { ShieldCheck, ShieldOff, Users, Search, RefreshCw, CreditCard } from "lucide-react";
+import { ShieldCheck, ShieldOff, Users, Search, RefreshCw, CreditCard, CheckCircle2, Lock } from "lucide-react";
 
 interface WaliSantri {
   id: string;
@@ -126,10 +126,11 @@ export default function SppAccessPage() {
           {(["semua", "aktif", "diblokir"] as const).map(f => (
             <button key={f} onClick={() => setFilterBlokir(f)} style={{
               padding: "8px 14px", borderRadius: 10, border: "none", cursor: "pointer", fontSize: 12, fontWeight: 700,
+              display: "flex", alignItems: "center", gap: 6,
               background: filterBlokir === f ? "#550000" : "#f1f5f9",
               color: filterBlokir === f ? "white" : "#64748b"
             }}>
-              {f === "semua" ? "Semua" : f === "aktif" ? "✅ Aktif" : "🔒 Diblokir"}
+              {f === "semua" ? "Semua" : f === "aktif" ? <><CheckCircle2 size={14} /> Aktif</> : <><Lock size={14} /> Diblokir</>}
             </button>
           ))}
         </div>
@@ -184,12 +185,12 @@ export default function SppAccessPage() {
                   </td>
                   <td style={{ padding: "14px 16px", textAlign: "center" }}>
                     {w.spp_access_blocked ? (
-                      <span style={{ background: "#fef2f2", color: "#dc2626", border: "1px solid #fecaca", padding: "4px 10px", borderRadius: 8, fontSize: 11, fontWeight: 700 }}>
-                        🔒 Diblokir
+                      <span style={{ display: "inline-flex", alignItems: "center", gap: 4, background: "#fef2f2", color: "#dc2626", border: "1px solid #fecaca", padding: "4px 10px", borderRadius: 8, fontSize: 11, fontWeight: 700 }}>
+                        <Lock size={11} /> Diblokir
                       </span>
                     ) : (
-                      <span style={{ background: "#f0fdf4", color: "#16a34a", border: "1px solid #bbf7d0", padding: "4px 10px", borderRadius: 8, fontSize: 11, fontWeight: 700 }}>
-                        ✅ Aktif
+                      <span style={{ display: "inline-flex", alignItems: "center", gap: 4, background: "#f0fdf4", color: "#16a34a", border: "1px solid #bbf7d0", padding: "4px 10px", borderRadius: 8, fontSize: 11, fontWeight: 700 }}>
+                        <CheckCircle2 size={11} /> Aktif
                       </span>
                     )}
                   </td>
