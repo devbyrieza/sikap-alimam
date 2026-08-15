@@ -356,13 +356,13 @@ export default function TahfidzMutabaahPage() {
                       <div style={{ fontSize: 11, color: "#64748b" }}>NIS: {s.nis || "—"}</div>
                     </td>
 
-                    <td style={{ padding: "14px 18px" }}>
-                      {s.kelas ? (
-                        <span style={{ background: "#eff6ff", color: "#1d4ed8", border: "1px solid #bfdbfe", padding: "3px 10px", borderRadius: 9, fontSize: 12, fontWeight: 700 }}>
-                          {s.kelas}
-                        </span>
-                      ) : <span style={{ color: "#94a3b8", fontSize: 12 }}>—</span>}
-                    </td>
+                        <td style={{ padding: "14px 18px", textAlign: "center" }}>
+                          {s.kelas ? (
+                            <span style={{ background: "#eff6ff", color: "#1d4ed8", border: "1px solid #bfdbfe", padding: "4px 10px", borderRadius: 9, fontSize: 12, fontWeight: 700, whiteSpace: "nowrap", display: "inline-block" }}>
+                              {s.kelas}
+                            </span>
+                          ) : <span style={{ color: "#94a3b8", fontSize: 12 }}>—</span>}
+                        </td>
 
                     <td style={{ padding: "14px 18px" }}>
                       {s.kelompok_halaqoh ? (

@@ -496,13 +496,15 @@ export default function HalaqohDashboardPage() {
                           <div style={{ fontSize: 11, color: "#64748b" }}>NIS: {s.nis || "—"}</div>
                         </td>
                         <td style={{ padding: "13px 16px", textAlign: "center" }}>
-                          <span style={{ background: "#fdf8f0", color: "#550000", border: "1px solid #ebdcc3", padding: "3px 10px", borderRadius: 9, fontSize: 12, fontWeight: 700 }}>{s.kelas || "—"}</span>
+                          <span style={{ background: "#fdf8f0", color: "#550000", border: "1px solid #ebdcc3", padding: "4px 10px", borderRadius: 9, fontSize: 12, fontWeight: 700, whiteSpace: "nowrap", display: "inline-block" }}>
+                            {s.kelas || "—"}
+                          </span>
                         </td>
                         <td style={{ padding: "13px 16px" }}>
                           {s.kelompok_halaqoh ? (
                             <>
                               <div style={{ fontWeight: 700, color: "#1e293b", fontSize: 12, marginBottom: 2 }}>{s.kelompok_halaqoh.nama}</div>
-                              <div style={{ fontSize: 11, color: "#550000", fontWeight: 700 }}>↳ {s.kelompok_halaqoh.musyrif}</div>
+                              <div style={{ fontSize: 11, color: "#64748b" }}>Pengampu: <strong style={{ color: "#334155" }}>{s.kelompok_halaqoh.musyrif}</strong></div>
                             </>
                           ) : <span style={{ fontSize: 11, color: "#94a3b8", fontStyle: "italic" }}>Belum diplot</span>}
                         </td>
