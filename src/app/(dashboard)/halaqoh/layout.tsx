@@ -13,5 +13,9 @@ export default async function HalaqohLayout({ children }: { children: ReactNode 
     redirect("/dashboard");
   }
 
-  return <>{children}</>;
+  return (
+    <div className="w-full min-h-screen">
+      {children}
+    </div>
+  );
 }
