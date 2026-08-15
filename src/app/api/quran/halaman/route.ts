@@ -7,7 +7,7 @@ export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const surahNomor = parseInt(searchParams.get('surah') || '0');
   const ayatDari = parseInt(searchParams.get('dari') || '1');
-  const ayatKe = parseInt(searchParams.get('ke') || '1');
+  const ayatKe = parseInt(searchParams.get('ke') || searchParams.get('sampai') || '1');
 
   if (!surahNomor || surahNomor < 1 || surahNomor > 114) {
     return NextResponse.json({ error: 'Nomor surah tidak valid' }, { status: 400 });
