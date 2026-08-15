@@ -199,7 +199,7 @@ export default function HalaqohDashboardPage() {
   });
 
   return (
-    <div className="w-full max-w-7xl mx-auto px-4 sm:px-8 py-8 space-y-8 font-sans">
+    <div className="w-full max-w-7xl mx-auto px-4 sm:px-8 py-6 sm:py-8 flex flex-col gap-6 sm:gap-8 font-sans">
       {/* Header Banner */}
       <div className="relative overflow-hidden bg-gradient-to-br from-[#550000] via-[#751414] to-[#3a0000] rounded-3xl p-6 sm:p-8 text-white shadow-[0_12px_40px_rgba(85,0,0,0.35)] border border-red-500/20">
         <div className="absolute -top-12 -right-12 w-60 h-60 bg-amber-500/10 rounded-full blur-3xl"></div>

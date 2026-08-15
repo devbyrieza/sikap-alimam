@@ -450,7 +450,7 @@ export default function UjianTahfidzPage() {
     new Date(s).toLocaleDateString("id-ID", { day: "numeric", month: "short", year: "numeric" });
 
   return (
-    <div className="w-full max-w-7xl mx-auto px-4 sm:px-8 py-8 space-y-8 font-sans">
+    <div className="w-full max-w-7xl mx-auto px-4 sm:px-8 py-6 sm:py-8 flex flex-col gap-6 sm:gap-8 font-sans">
       <Link href="/halaqoh" className="inline-flex items-center gap-2 text-slate-500 hover:text-slate-800 text-sm font-semibold transition-colors">
         <ArrowLeft size={16} /> Kembali ke Halaqoh
       </Link>
@@ -473,12 +473,12 @@ export default function UjianTahfidzPage() {
         </div>
       </div>
 
-      <div className="bg-white/95 backdrop-blur-xl rounded-3xl p-6 sm:p-8 border border-slate-200/80 shadow-[0_10px_35px_rgba(85,0,0,0.06)] space-y-6">
+      <div className="bg-white/95 backdrop-blur-xl rounded-3xl p-6 sm:p-8 border border-slate-200/80 shadow-[0_10px_35px_rgba(85,0,0,0.06)] flex flex-col gap-6">
         <h2 className="m-0 text-lg font-black text-slate-800 flex items-center gap-2.5">
           <Award size={20} className="text-[#751414]" /> Form Penginputan Ujian
         </h2>
 
-        <div className="space-y-3">
+        <div className="flex flex-col gap-3">
           <label className="text-xs font-black text-slate-600 block uppercase tracking-wider">
             1. Pilih Jenis Ujian
           </label>
