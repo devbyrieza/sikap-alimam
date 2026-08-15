@@ -2,9 +2,10 @@
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Amiri:wght@400;700&display=swap');
 
 @import "tailwindcss";
-@source "../**/*";
-@source "../app/(dashboard)/**/*";
-@source "../app/\\(dashboard\\)/**/*";
+@source "../**/*.{ts,tsx,js,jsx}";
+@source "../app/[(]dashboard[)]/**/*.{ts,tsx}";
+@source "../components/**/*.{ts,tsx}";
+@source "../lib/**/*.{ts,tsx}";
 
 .custom-scrollbar {
   scrollbar-width: thin;
