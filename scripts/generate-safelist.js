@@ -187,22 +187,25 @@ for (const file of allFiles) {
 
 // Filter hanya yang terlihat seperti Tailwind class
 const tailwindClasses = Array.from(allClasses)
-  .filter(isLikelyTailwindClass)
-  .sort();
+const foundClasses = new Set(Array.from(allClasses).filter(isLikelyTailwindClass));
 
-console.log(`   Extracted ${tailwindClasses.length} unique Tailwind classes`);
+console.log(`   Extracted ${foundClasses.size} unique Tailwind classes`);
 
 // ──────────────────────────────────────────────────────────────────────────────
-// Update safelist.tsx
+// Update safelist.tsx (Tailwind v4 butuh TSX agar discan sebagai file source)
 // ──────────────────────────────────────────────────────────────────────────────
-const SAFELIST_TSX = path.join(ROOT, 'src', 'safelist.tsx');
+const SAFELIST_PATH = path.join(ROOT, 'src', 'safelist.tsx');
+let uniqueClasses = Array.from(foundClasses).sort();
 
-// Tulis semua kelas ke dalam safelist.tsx sebagai string kosong agar discan oleh Tailwind v4
-const safelistContent = `// AUTO-GENERATED SAFELIST - DO NOT EDIT MANUALLY
-export const SAFELIST = "${tailwindClasses.join(' ')}";
+// Hapus string kosong jika ada
+uniqueClasses = uniqueClasses.filter(c => c.trim().length > 0);
+
+const fileContent = `// AUTO-GENERATED SAFELIST - DO NOT EDIT MANUALLY
+export const SAFELIST = [
+${uniqueClasses.map(c => `  "${c}",`).join('\n')}
+];
 `;
-fs.writeFileSync(SAFELIST_TSX, safelistContent, 'utf8');
 
-console.log(`✅ [generate-safelist] src/safelist.tsx updated with ${tailwindClasses.length} classes`);
+fs.writeFileSync(SAFELIST_PATH, fileContent, 'utf-8');
+console.log(`✅ [generate-safelist] src/safelist.tsx updated with ${uniqueClasses.length} classes`);
 console.log('');
-
