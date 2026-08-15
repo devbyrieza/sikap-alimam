@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "prebuild": "node scripts/generate-safelist.js",
+    "safelist": "node scripts/generate-safelist.js",
     "build": "npx prisma generate && next build",
     "start": "next start",
     "lint": "biome check",
