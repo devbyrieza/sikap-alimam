@@ -199,28 +199,29 @@ export default function HalaqohDashboardPage() {
   });
 
   return (
-    <div className="w-full max-w-7xl mx-auto px-4 sm:px-8 py-6 sm:py-8 flex flex-col gap-6 sm:gap-8 font-sans">
-      {/* Header Banner */}
-      <div className="relative overflow-hidden bg-gradient-to-br from-[#550000] via-[#751414] to-[#3a0000] rounded-3xl p-6 sm:p-8 text-white shadow-[0_12px_40px_rgba(85,0,0,0.35)] border border-red-500/20">
-        <div className="absolute -top-12 -right-12 w-60 h-60 bg-amber-500/10 rounded-full blur-3xl"></div>
-        <div className="absolute -bottom-10 right-20 w-40 h-40 bg-white/10 rounded-full blur-2xl"></div>
-        
-        <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-6">
-          <div className="flex items-center gap-4 sm:gap-6">
-            <div className="bg-white/10 backdrop-blur-md p-4 rounded-2xl border border-white/20 shadow-inner">
-              <BookHeart className="w-8 h-8 text-amber-300" />
-            </div>
-            <div>
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs font-semibold text-amber-200 mb-2">
-                <span>Pusat Operasional Halaqoh</span>
-              </div>
-              <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-white m-0">Halaqoh & Mutabaah Tahfidz</h1>
-              <p className="text-red-100 text-xs sm:text-sm font-medium mt-1 opacity-90">Rekapitulasi Capaian & Harian Tahfizh Al-Qur'an Pesantren Al-Imam</p>
-            </div>
+    <div className="page-container">
+      {/* ── Al-Imam Platinum Hero Banner ── */}
+      <div className="hero-banner">
+        <div style={{ position: "absolute", top: 0, right: 0, width: 256, height: 256, background: "rgba(221, 193, 146, 0.15)", borderRadius: "50%", filter: "blur(40px)", transform: "translate(30%, -50%)", pointerEvents: "none" }}></div>
+        <div style={{ position: "absolute", bottom: 0, left: 0, width: 192, height: 192, background: "rgba(221, 193, 146, 0.1)", borderRadius: "50%", filter: "blur(40px)", transform: "translate(-25%, 50%)", pointerEvents: "none" }}></div>
+
+        <div style={{ position: "relative", zIndex: 1, flex: 1, minWidth: 0 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 6, background: "rgba(221, 193, 146, 0.18)", padding: "5px 12px", borderRadius: 20, border: "1px solid rgba(221, 193, 146, 0.4)", width: "fit-content", marginBottom: 8 }}>
+            <div style={{ width: 7, height: 7, borderRadius: "50%", background: "#ddc192", boxShadow: "0 0 6px rgba(221, 193, 146, 0.9)" }}></div>
+            <span style={{ fontSize: 11, fontWeight: 800, letterSpacing: "0.5px", color: "#fdf8f0", textTransform: "uppercase" }}>Pusat Operasional Halaqoh</span>
           </div>
-          <div className="flex items-center gap-2.5 bg-black/25 backdrop-blur-md px-5 py-2.5 rounded-2xl border border-white/15 w-fit">
-            <CalendarDays className="w-4 h-4 text-amber-300" />
-            <span className="text-xs sm:text-sm font-bold text-white tracking-wide">{formatTanggal(today)}</span>
+          <h1 style={{ fontSize: "clamp(20px, 4vw, 30px)", fontWeight: 800, margin: 0, display: "flex", alignItems: "center", gap: "10px", color: "white" }}>
+            <BookHeart size={26} color="#ddc192" /> Halaqoh &amp; Mutabaah Tahfidz
+          </h1>
+          <p style={{ marginTop: "6px", color: "rgba(253, 248, 240, 0.9)", fontSize: "14px", margin: "6px 0 0 0" }}>
+            Rekapitulasi Capaian &amp; Harian Tahfizh Al-Qur'an Pesantren Al-Imam
+          </p>
+        </div>
+
+        <div style={{ display: "flex", gap: "10px", alignItems: "center", flexWrap: "wrap", position: "relative", zIndex: 2 }}>
+          <div style={{ background: "rgba(253,248,240,0.15)", color: "#fdf8f0", padding: "10px 18px", borderRadius: "14px", border: "1px solid rgba(221,193,146,0.35)", fontWeight: 700, display: "inline-flex", alignItems: "center", gap: "8px" }}>
+            <CalendarDays size={16} color="#ddc192" />
+            <span>{formatTanggal(today)}</span>
           </div>
         </div>
       </div>

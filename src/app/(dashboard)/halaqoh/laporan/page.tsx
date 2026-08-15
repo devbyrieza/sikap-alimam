@@ -60,9 +60,9 @@ export default function LaporanHalaqohPage() {
   const BULAN_NAMES = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
 
   return (
-    <div className="w-full max-w-7xl mx-auto px-4 sm:px-8 py-8 font-sans space-y-6">
+    <div className="page-container">
       {/* Hide on print */}
-      <div className="no-print space-y-6">
+      <div className="no-print flex flex-col gap-6">
         {/* Back */}
         <Link 
           href="/halaqoh" 
@@ -71,28 +71,32 @@ export default function LaporanHalaqohPage() {
           <ArrowLeft size={16} /> Kembali ke Halaqoh
         </Link>
 
-        {/* Header */}
-        <div className="relative overflow-hidden bg-gradient-to-br from-[#550000] via-[#751414] to-[#3a0000] rounded-3xl p-6 sm:p-8 text-white shadow-[0_12px_40px_rgba(85,0,0,0.35)] border border-red-500/20 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
-          <div className="flex items-center gap-4 sm:gap-6">
-            <div className="bg-white/10 backdrop-blur-md p-4 rounded-2xl border border-white/20 shadow-inner">
-              <FileText className="w-8 h-8 text-amber-300" />
+        {/* ── Al-Imam Platinum Hero Banner ── */}
+        <div className="hero-banner">
+          <div style={{ position: "absolute", top: 0, right: 0, width: 256, height: 256, background: "rgba(221, 193, 146, 0.15)", borderRadius: "50%", filter: "blur(40px)", transform: "translate(30%, -50%)", pointerEvents: "none" }}></div>
+          <div style={{ position: "absolute", bottom: 0, left: 0, width: 192, height: 192, background: "rgba(221, 193, 146, 0.1)", borderRadius: "50%", filter: "blur(40px)", transform: "translate(-25%, 50%)", pointerEvents: "none" }}></div>
+
+          <div style={{ position: "relative", zIndex: 1, flex: 1, minWidth: 0 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 6, background: "rgba(221, 193, 146, 0.18)", padding: "5px 12px", borderRadius: 20, border: "1px solid rgba(221, 193, 146, 0.4)", width: "fit-content", marginBottom: 8 }}>
+              <div style={{ width: 7, height: 7, borderRadius: "50%", background: "#ddc192", boxShadow: "0 0 6px rgba(221, 193, 146, 0.9)" }}></div>
+              <span style={{ fontSize: 11, fontWeight: 800, letterSpacing: "0.5px", color: "#fdf8f0", textTransform: "uppercase" }}>Rekapitulasi &amp; Rapor</span>
             </div>
-            <div>
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs font-semibold text-amber-200 mb-2">
-                <span>Rekapitulasi & Rapor</span>
-              </div>
-              <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-white m-0">Laporan & Rekap Tahfidz</h1>
-              <p className="text-red-100 text-xs sm:text-sm font-medium mt-1 opacity-90">
-                Cetak Laporan Pekanan, Bulanan, & Semesteran Santri
-              </p>
-            </div>
+            <h1 style={{ fontSize: "clamp(20px, 4vw, 30px)", fontWeight: 800, margin: 0, display: "flex", alignItems: "center", gap: "10px", color: "white" }}>
+              <FileText size={26} color="#ddc192" /> Laporan &amp; Rekap Tahfidz
+            </h1>
+            <p style={{ marginTop: "6px", color: "rgba(253, 248, 240, 0.9)", fontSize: "14px", margin: "6px 0 0 0" }}>
+              Cetak Laporan Pekanan, Bulanan, &amp; Semesteran Santri
+            </p>
           </div>
-          <button
-            onClick={handlePrint}
-            className="flex items-center gap-2.5 bg-amber-400 hover:bg-amber-300 text-slate-900 font-extrabold rounded-2xl px-6 py-3.5 text-sm transition-all shadow-md shadow-amber-900/30 hover:shadow-lg w-full md:w-auto justify-center cursor-pointer"
-          >
-            <Printer size={18} /> Cetak Laporan
-          </button>
+
+          <div style={{ position: "relative", zIndex: 2 }}>
+            <button
+              onClick={handlePrint}
+              style={{ background: "#ddc192", color: "#550000", padding: "11px 22px", borderRadius: "14px", border: "none", fontWeight: 800, fontSize: "14px", display: "inline-flex", alignItems: "center", gap: "8px", cursor: "pointer", boxShadow: "0 4px 14px rgba(0,0,0,0.15)" }}
+            >
+              <Printer size={18} /> Cetak Laporan
+            </button>
+          </div>
         </div>
 
         {/* Filters */}

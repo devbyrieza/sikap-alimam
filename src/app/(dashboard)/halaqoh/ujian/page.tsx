@@ -450,26 +450,27 @@ export default function UjianTahfidzPage() {
     new Date(s).toLocaleDateString("id-ID", { day: "numeric", month: "short", year: "numeric" });
 
   return (
-    <div className="w-full max-w-7xl mx-auto px-4 sm:px-8 py-6 sm:py-8 flex flex-col gap-6 sm:gap-8 font-sans">
+    <div className="page-container">
       <Link href="/halaqoh" className="inline-flex items-center gap-2 text-slate-500 hover:text-slate-800 text-sm font-semibold transition-colors">
         <ArrowLeft size={16} /> Kembali ke Halaqoh
       </Link>
 
-      <div className="relative overflow-hidden bg-gradient-to-br from-[#550000] via-[#751414] to-[#3a0000] rounded-3xl p-6 sm:p-8 text-white shadow-[0_12px_40px_rgba(85,0,0,0.35)] border border-red-500/20">
-        <div className="absolute -top-12 -right-12 w-60 h-60 bg-amber-500/10 rounded-full blur-3xl"></div>
-        <div className="flex items-center gap-4 sm:gap-6 relative z-10">
-          <div className="bg-white/10 backdrop-blur-md p-4 rounded-2xl border border-white/20 shadow-inner">
-            <Award className="w-8 h-8 text-amber-300" />
+      {/* ── Al-Imam Platinum Hero Banner ── */}
+      <div className="hero-banner">
+        <div style={{ position: "absolute", top: 0, right: 0, width: 256, height: 256, background: "rgba(221, 193, 146, 0.15)", borderRadius: "50%", filter: "blur(40px)", transform: "translate(30%, -50%)", pointerEvents: "none" }}></div>
+        <div style={{ position: "absolute", bottom: 0, left: 0, width: 192, height: 192, background: "rgba(221, 193, 146, 0.1)", borderRadius: "50%", filter: "blur(40px)", transform: "translate(-25%, 50%)", pointerEvents: "none" }}></div>
+
+        <div style={{ position: "relative", zIndex: 1, flex: 1, minWidth: 0 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 6, background: "rgba(221, 193, 146, 0.18)", padding: "5px 12px", borderRadius: 20, border: "1px solid rgba(221, 193, 146, 0.4)", width: "fit-content", marginBottom: 8 }}>
+            <div style={{ width: 7, height: 7, borderRadius: "50%", background: "#ddc192", boxShadow: "0 0 6px rgba(221, 193, 146, 0.9)" }}></div>
+            <span style={{ fontSize: 11, fontWeight: 800, letterSpacing: "0.5px", color: "#fdf8f0", textTransform: "uppercase" }}>Pengujian Tahfidz Santri</span>
           </div>
-          <div>
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs font-semibold text-amber-200 mb-2">
-              <span>Pengujian Tahfidz Santri</span>
-            </div>
-            <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-white m-0">Ujian Tahfidz & Itqon</h1>
-            <p className="text-red-100 text-xs sm:text-sm font-medium mt-1 opacity-90">
-              Penilaian Ujian Pekanan, Bulanan, Target, & Ujian Itqon (Bonus +10)
-            </p>
-          </div>
+          <h1 style={{ fontSize: "clamp(20px, 4vw, 30px)", fontWeight: 800, margin: 0, display: "flex", alignItems: "center", gap: "10px", color: "white" }}>
+            <Award size={26} color="#ddc192" /> Ujian Tahfidz &amp; Itqon
+          </h1>
+          <p style={{ marginTop: "6px", color: "rgba(253, 248, 240, 0.9)", fontSize: "14px", margin: "6px 0 0 0" }}>
+            Penilaian Ujian Pekanan, Bulanan, Target, &amp; Ujian Itqon (Bonus +10)
+          </p>
         </div>
       </div>
 
