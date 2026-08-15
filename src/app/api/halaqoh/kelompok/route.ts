@@ -45,7 +45,9 @@ export async function GET(request: Request) {
       include: {
         anggota: {
           include: {
-            santri: true,
+            santri: {
+              include: { kelas: true }
+            },
           },
         },
       },

@@ -348,7 +348,9 @@ export default function HalaqohKelompokPage() {
                               </div>
                               <div>
                                 <div style={{ fontWeight: 800, color: "#1e293b", fontSize: 13 }}>{a.santri?.nama_lengkap}</div>
-                                <div style={{ fontSize: 11, color: "#64748b" }}>{a.santri?.kelas?.nama || "—"}</div>
+                                <div style={{ fontSize: 11, color: "#64748b" }}>
+                                  {a.santri?.kelas?.nama ? `Kelas ${a.santri.kelas.nama}` : (a.santri?.nis ? `NIS: ${a.santri.nis}` : "")}
+                                </div>
                               </div>
                             </div>
                             <button
