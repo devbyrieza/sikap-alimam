@@ -39,7 +39,6 @@ const IGNORED_CLASS_PATTERNS = [
   /^__/,           // next.js internal
   /^:/,            // CSS pseudo selector
   /^\./,           // relative paths
-  /\//,            // paths (e.g. file paths)
   /\n/,            // newlines
   /^\{/,           // object syntax
   /^import/,       // import keyword
