@@ -50,10 +50,10 @@ function NumericScoreSelector({
               key={num}
               type="button"
               onClick={() => onChange(num)}
-              className={`w-[38px] h-[38px] sm:w-[44px] sm:h-[44px] rounded-full flex items-center justify-center text-[13px] sm:text-[14px] font-black cursor-pointer transition-all duration-300 outline-none
+              className={`w-[38px] h-[38px] sm:w-[46px] sm:h-[46px] rounded-full flex items-center justify-center text-[13px] sm:text-[15px] font-black cursor-pointer transition-all duration-300 outline-none
                 ${isSelected 
-                  ? `bg-gradient-to-br ${predikat.bgGradient} text-white shadow-lg ${predikat.shadow} scale-110 ring-2 ring-white ring-offset-1` 
-                  : `bg-slate-50 text-slate-500 border border-slate-200 hover:bg-white hover:border-slate-300 hover:shadow-md hover:scale-105 hover:text-slate-800`
+                  ? `bg-gradient-to-br ${predikat.bgGradient} text-white shadow-[0_8px_20px_rgba(0,0,0,0.12)] ${predikat.shadow} scale-110 ring-2 ring-white ring-offset-1` 
+                  : `bg-slate-50 text-slate-500 border border-slate-200 hover:bg-white hover:border-slate-300 hover:shadow-lg hover:scale-105 hover:text-slate-800`
                 }
               `}
             >
@@ -95,7 +95,7 @@ function TextScoreSelector({
           {value >= 85 ? <CheckCircle2 className="w-3.5 h-3.5" /> : <AlertCircle className="w-3.5 h-3.5" />}
         </div>
       </div>
-      <div className="flex gap-2 sm:gap-2.5 flex-wrap relative z-10">
+      <div className="flex gap-2.5 sm:gap-3 flex-wrap relative z-10">
         {OPSI_SIKAP.map(item => {
           const isSelected = value === item.value;
           return (
@@ -103,10 +103,10 @@ function TextScoreSelector({
               key={item.value}
               type="button"
               onClick={() => onChange(item.value)}
-              className={`px-4 py-2 sm:px-5 sm:py-2.5 rounded-full text-xs sm:text-[13px] font-black cursor-pointer transition-all duration-300 outline-none
+              className={`px-4 sm:px-6 py-2.5 sm:py-3 rounded-2xl flex items-center justify-center text-[13px] sm:text-[14px] font-black cursor-pointer transition-all duration-300 outline-none
                 ${isSelected 
-                  ? `bg-gradient-to-br ${predikat.bgGradient} text-white shadow-lg ${predikat.shadow} scale-105 ring-2 ring-white ring-offset-1` 
-                  : `bg-slate-50 text-slate-500 border border-slate-200 hover:bg-white hover:border-slate-300 hover:shadow-md hover:scale-105 hover:text-slate-800`
+                  ? `bg-gradient-to-br ${predikat.bgGradient} text-white shadow-[0_8px_20px_rgba(0,0,0,0.12)] ${predikat.shadow} scale-105 ring-2 ring-white ring-offset-1` 
+                  : `bg-slate-50 text-slate-500 border border-slate-200 hover:bg-white hover:border-slate-300 hover:shadow-lg hover:scale-[1.02] hover:text-slate-800`
                 }
               `}
             >
@@ -313,7 +313,7 @@ export default function UjianTahfidzPage() {
   const [error, setError] = useState<string | null>(null);
 
   const [selectedSantriId, setSelectedSantriId] = useState("");
-  const [searchSantri, setSearchSantri] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
   const [jenisUjian, setJenisUjian] = useState("ujian_pekanan");
   const [tanggal, setTanggal] = useState(() => new Date().toISOString().split("T")[0]);
   const [juz, setJuz] = useState(1);
@@ -407,9 +407,9 @@ export default function UjianTahfidzPage() {
   const selectedSantri = allSantri.find(s => s.id === selectedSantriId);
 
   const filteredSantri = allSantri.filter(s =>
-    searchSantri === "" ||
-    s.nama_lengkap.toLowerCase().includes(searchSantri.toLowerCase()) ||
-    (s.nis || "").toLowerCase().includes(searchSantri.toLowerCase())
+    searchQuery === "" ||
+    s.nama_lengkap.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    (s.nis || "").toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   const baseNilai = Math.round((nilaiBacaan + nilaiKelancaran) / 2);
@@ -490,74 +490,82 @@ export default function UjianTahfidzPage() {
         </div>
       </div>
 
-      <div className="bg-white/95 backdrop-blur-xl rounded-3xl p-6 sm:p-8 border border-slate-200/80 shadow-[0_10px_35px_rgba(85,0,0,0.06)] flex flex-col gap-6">
-        <h2 className="m-0 text-lg font-black text-slate-800 flex items-center gap-2.5">
-          <Award size={20} className="text-[#751414]" /> Form Penginputan Ujian
+      <div className="bg-white/95 backdrop-blur-xl rounded-[2.5rem] p-7 sm:p-10 border border-slate-200/80 shadow-[0_12px_40px_rgba(85,0,0,0.08)] flex flex-col gap-8">
+        <h2 className="m-0 text-xl font-black text-slate-800 flex items-center gap-3">
+          <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-red-50 to-red-100 border border-red-200 flex items-center justify-center shadow-inner">
+            <Award size={22} className="text-[#751414]" />
+          </div>
+          Form Penginputan Ujian
         </h2>
 
-        <div className="flex flex-col gap-3">
-          <label className="text-xs font-black text-slate-600 block uppercase tracking-wider">
-            1. Pilih Jenis Ujian
+        <div className="flex flex-col gap-4">
+          <label className="text-[13px] font-black text-slate-700 block uppercase tracking-widest flex items-center gap-2">
+            <span className="w-6 h-6 rounded-full bg-slate-100 text-slate-600 flex items-center justify-center text-xs">1</span> 
+            Pilih Jenis Ujian
           </label>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
             {JENIS_UJIAN_OPT.map(j => (
               <div
                 key={j.val}
                 onClick={() => setJenisUjian(j.val)}
-                className={`p-4 sm:p-5 rounded-2xl cursor-pointer border-2 transition-all duration-200 ${
-                  jenisUjian === j.val ? `${j.borderActive} ${j.bg} shadow-md scale-[1.02]` : 'border-slate-200 bg-white hover:border-slate-300 hover:shadow-sm'
+                className={`relative overflow-hidden p-5 sm:p-6 rounded-2xl cursor-pointer border-[2.5px] transition-all duration-300 ${
+                  jenisUjian === j.val ? `${j.borderActive} ${j.bg} shadow-[0_8px_24px_rgba(0,0,0,0.08)] scale-[1.02] ring-4 ring-offset-0 ring-${j.color.split('-')[1]}-50` : 'border-slate-100 bg-slate-50 hover:border-slate-300 hover:shadow-lg hover:bg-white'
                 }`}
               >
-                <div className={`flex items-center gap-2.5 font-extrabold text-sm mb-1.5 ${j.color}`}>
-                  {j.icon} {j.label}
+                <div className={`flex items-center gap-3 font-extrabold text-[15px] mb-2 ${j.color}`}>
+                  <div className={`p-2 rounded-xl bg-white shadow-sm border border-${j.color.split('-')[1]}-100`}>
+                    {j.icon}
+                  </div>
+                  {j.label}
                 </div>
-                <div className="text-xs text-slate-500 font-medium">Cakupan: {j.target}</div>
+                <div className="text-[13px] text-slate-500 font-bold leading-relaxed opacity-80">Cakupan: {j.target}</div>
               </div>
             ))}
           </div>
         </div>
 
-        <div className="mb-5">
-          <label className="text-xs font-bold text-slate-600 block mb-2 uppercase tracking-wider">
-            2. Pilih Santri
+        <div className="mb-2">
+          <label className="text-[13px] font-black text-slate-700 block mb-3 uppercase tracking-widest flex items-center gap-2">
+            <span className="w-6 h-6 rounded-full bg-slate-100 text-slate-600 flex items-center justify-center text-xs">2</span>
+            Pilih Santri
           </label>
           {selectedSantri ? (
-            <div className="flex items-center justify-between bg-red-50 border-[1.5px] border-red-200 rounded-2xl px-4 py-3 shadow-sm">
+            <div className="flex items-center justify-between bg-red-50 border-[1.5px] border-red-200 rounded-[1.25rem] px-5 py-4 shadow-sm">
               <div>
-                <div className="font-bold text-red-900 text-sm">{selectedSantri.nama_lengkap}</div>
-                <div className="text-[11px] text-red-700">{selectedSantri.nis || "NIS —"} · {selectedSantri.kelas?.nama}</div>
+                <div className="font-extrabold text-red-900 text-[15px]">{selectedSantri.nama_lengkap}</div>
+                <div className="text-xs text-red-700 font-medium mt-0.5">{selectedSantri.nis || "NIS —"} · {selectedSantri.kelas?.nama}</div>
               </div>
               <button
                 onClick={() => setSelectedSantriId("")}
-                className="bg-transparent border-none cursor-pointer text-red-900 font-bold text-xs hover:text-red-700 transition-colors"
+                className="bg-white border border-red-200 rounded-xl px-4 py-2 cursor-pointer text-red-900 font-bold text-xs hover:bg-red-100 transition-colors shadow-sm"
               >
                 Ganti Santri
               </button>
             </div>
           ) : (
             <div>
-              <div className="relative mb-2">
-                <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+              <div className="relative mb-3">
+                <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
                 <input
                   type="text"
-                  value={searchSantri}
-                  onChange={e => setSearchSantri(e.target.value)}
+                  value={searchQuery}
+                  onChange={e => setSearchQuery(e.target.value)}
                   placeholder="Ketik nama atau NIS santri..."
-                  className="w-full py-2.5 pr-3 pl-8 rounded-2xl border-[1.5px] border-slate-200 text-[13px] box-border focus:outline-none focus:border-red-900 focus:ring-1 focus:ring-red-900 transition-all"
+                  className="w-full py-3.5 pr-4 pl-11 rounded-2xl border-[1.5px] border-slate-200 text-[14px] font-medium box-border focus:outline-none focus:border-red-900 focus:ring-4 focus:ring-red-900/10 transition-all shadow-sm"
                 />
               </div>
-              <div className="max-h-[180px] overflow-y-auto custom-scrollbar border border-slate-200 rounded-2xl">
+              <div className="max-h-[250px] overflow-y-auto custom-scrollbar border border-slate-200 rounded-2xl shadow-lg">
                 {filteredSantri.slice(0, 20).map(s => (
                   <div
                     key={s.id}
                     onClick={() => setSelectedSantriId(s.id)}
-                    className="px-3.5 py-2.5 cursor-pointer border-b border-slate-50 flex items-center justify-between hover:bg-slate-50 transition-colors"
+                    className="px-5 py-3.5 cursor-pointer border-b border-slate-100 flex items-center justify-between hover:bg-slate-50 transition-colors group"
                   >
                     <div>
-                      <div className="font-semibold text-[13px] text-slate-800">{s.nama_lengkap}</div>
-                      <div className="text-[11px] text-slate-400">{s.nis} · {s.kelas?.nama}</div>
+                      <div className="font-extrabold text-[14px] text-slate-800 group-hover:text-red-900 transition-colors">{s.nama_lengkap}</div>
+                      <div className="text-[12px] text-slate-500 font-medium mt-0.5">{s.nis} · {s.kelas?.nama}</div>
                     </div>
-                    <CheckCircle2 size={16} className="text-red-900" />
+                    <CheckCircle2 size={18} className="text-red-900 opacity-0 group-hover:opacity-100 transition-opacity" />
                   </div>
                 ))}
               </div>
@@ -566,24 +574,24 @@ export default function UjianTahfidzPage() {
           {jenisUjian === "ujian_target" && selectedSantri && renderTargetBanner(selectedSantri)}
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5 mb-5">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 mb-2">
           <div>
-            <label className="text-xs font-semibold text-slate-600 block mb-1.5">Tanggal Ujian</label>
+            <label className="text-[13px] font-extrabold text-slate-700 block mb-2.5">Tanggal Ujian</label>
             <input 
               type="date" 
               value={tanggal} 
               onChange={e => setTanggal(e.target.value)}
-              className="w-full px-3 py-2.5 rounded-xl border-[1.5px] border-slate-200 text-[13px] box-border focus:outline-none focus:border-red-900 focus:ring-1 focus:ring-red-900 transition-all"
+              className="w-full px-4 py-3.5 rounded-2xl border-[1.5px] border-slate-200 text-[14px] font-semibold box-border focus:outline-none focus:border-red-900 focus:ring-4 focus:ring-red-900/10 transition-all shadow-sm bg-white"
             />
           </div>
 
           {jenisUjian === "ujian_itqon" ? (
             <div>
-              <label className="text-xs font-semibold text-slate-600 block mb-1.5">Tuntas Juz Ke-</label>
+              <label className="text-[13px] font-extrabold text-slate-700 block mb-2.5">Tuntas Juz Ke-</label>
               <select 
                 value={juz} 
                 onChange={e => setJuz(Number(e.target.value))}
-                className="w-full px-3 py-2.5 rounded-xl border-[1.5px] border-slate-200 text-[13px] box-border bg-white focus:outline-none focus:border-red-900 focus:ring-1 focus:ring-red-900 transition-all"
+                className="w-full px-4 py-3.5 rounded-2xl border-[1.5px] border-slate-200 text-[14px] font-semibold box-border focus:outline-none focus:border-red-900 focus:ring-4 focus:ring-red-900/10 transition-all shadow-sm bg-white"
               >
                 {[1, 2, 3, 4, 5, 6].map(j => (
                   <option key={j} value={j * 5}>Per 5 Juz (Juz 1–{j * 5})</option>
@@ -591,28 +599,28 @@ export default function UjianTahfidzPage() {
               </select>
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <>
               <div>
                 <SurahPicker surahList={surahList} selected={selectedSurah} onSelect={setSelectedSurah} label="Nama Surah / Materi" />
               </div>
               <div>
-                <label className="text-xs font-semibold text-slate-600 block mb-1.5">Jumlah Halaman</label>
+                <label className="text-[13px] font-extrabold text-slate-700 block mb-2.5">Jumlah Halaman</label>
                 <input 
                   type="number" 
                   min={1} 
                   value={jumlahHalaman || ""} 
                   onChange={e => setJumlahHalaman(Number(e.target.value) || 0)}
-                  className="w-full px-3 py-2.5 rounded-xl border-[1.5px] border-slate-200 text-[13px] box-border focus:outline-none focus:border-red-900 focus:ring-1 focus:ring-red-900 transition-all"
+                  className="w-full px-4 py-3.5 rounded-2xl border-[1.5px] border-slate-200 text-[14px] font-semibold box-border focus:outline-none focus:border-red-900 focus:ring-4 focus:ring-red-900/10 transition-all shadow-sm bg-white"
                 />
               </div>
-            </div>
+            </>
           )}
         </div>
 
         {selectedSurah && jenisUjian !== "ujian_itqon" && (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-5">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-5 p-5 bg-slate-50 border border-slate-200 rounded-[1.25rem]">
             <div>
-              <label className="text-xs font-semibold text-slate-600 block mb-1.5">Dari Ayat</label>
+              <label className="text-[13px] font-extrabold text-slate-700 block mb-2.5">Dari Ayat</label>
               <input
                 type="number" min={1} max={selectedSurah.total_ayat}
                 value={ayatDari || ""}
@@ -626,11 +634,11 @@ export default function UjianTahfidzPage() {
                   setAyatDari(clamped);
                   if (ayatKe < clamped) setAyatKe(clamped);
                 }}
-                className="w-full px-3 py-2.5 rounded-xl border-[1.5px] border-slate-200 text-[13px] box-border focus:outline-none focus:border-red-900 focus:ring-1 focus:ring-red-900 transition-all"
+                className="w-full px-4 py-3.5 rounded-2xl border-[1.5px] border-slate-200 text-[14px] font-semibold box-border focus:outline-none focus:border-red-900 focus:ring-4 focus:ring-red-900/10 transition-all bg-white shadow-sm"
               />
             </div>
             <div>
-              <label className="text-xs font-semibold text-slate-600 block mb-1.5">Sampai Ayat</label>
+              <label className="text-[13px] font-extrabold text-slate-700 block mb-2.5">Sampai Ayat</label>
               <input
                 type="number" min={ayatDari || 1} max={selectedSurah.total_ayat}
                 value={ayatKe || ""}
@@ -643,61 +651,61 @@ export default function UjianTahfidzPage() {
                   let clamped = Math.max(ayatDari || 1, Math.min(ayatKe || 1, selectedSurah.total_ayat));
                   setAyatKe(clamped);
                 }}
-                className="w-full px-3 py-2.5 rounded-xl border-[1.5px] border-slate-200 text-[13px] box-border focus:outline-none focus:border-red-900 focus:ring-1 focus:ring-red-900 transition-all"
+                className="w-full px-4 py-3.5 rounded-2xl border-[1.5px] border-slate-200 text-[14px] font-semibold box-border focus:outline-none focus:border-red-900 focus:ring-4 focus:ring-red-900/10 transition-all bg-white shadow-sm"
               />
             </div>
           </div>
         )}
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-5">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
           <NumericScoreSelector label="Nilai Bacaan" value={nilaiBacaan} onChange={setNilaiBacaan} />
           <NumericScoreSelector label="Nilai Kelancaran" value={nilaiKelancaran} onChange={setNilaiKelancaran} />
           <TextScoreSelector label="Nilai Sikap" value={nilaiSikap} onChange={setNilaiSikap} />
         </div>
 
         {jenisUjian === "ujian_itqon" && (
-          <div className="bg-cyan-50 border-[1.5px] border-cyan-200 rounded-2xl px-4 py-3.5 mb-5 flex flex-col md:flex-row md:items-center justify-between gap-3 shadow-sm">
-            <div className="flex items-center gap-2.5">
-              <ShieldCheck size={20} className="text-cyan-700 shrink-0" />
+          <div className="bg-cyan-50 border-[1.5px] border-cyan-200 rounded-2xl px-5 py-4 mb-5 flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-sm">
+            <div className="flex items-center gap-3.5">
+              <ShieldCheck size={24} className="text-cyan-700 shrink-0" />
               <div>
-                <div className="font-extrabold text-[13px] text-cyan-900">Status Kelulusan Ujian Itqon</div>
-                <div className="text-[11px] text-cyan-700">Jika LULUS, santri secara otomatis memperoleh **Bonus +10 Poin** di Raport!</div>
+                <div className="font-extrabold text-[15px] text-cyan-900 mb-0.5">Status Kelulusan Ujian Itqon</div>
+                <div className="text-xs text-cyan-700 font-medium leading-relaxed">Jika LULUS, santri secara otomatis memperoleh **Bonus +10 Poin** di Raport!</div>
               </div>
             </div>
-            <label className="flex items-center gap-2 cursor-pointer font-bold text-[13px] text-cyan-900">
+            <label className="flex items-center gap-2.5 cursor-pointer font-bold text-[14px] text-cyan-900 bg-white px-4 py-2 rounded-xl border border-cyan-200 shadow-sm hover:bg-cyan-100 transition-colors">
               <input 
                 type="checkbox" 
                 checked={isLulus} 
                 onChange={e => setIsLulus(e.target.checked)} 
-                className="w-[18px] h-[18px] text-cyan-700 rounded focus:ring-cyan-600" 
+                className="w-5 h-5 text-cyan-700 rounded focus:ring-cyan-600 transition-all" 
               />
               Dinyatakan Lulus
             </label>
           </div>
         )}
 
-        <div className="bg-slate-50 border border-dashed border-slate-300 rounded-2xl p-4 mb-5">
-          <div className="flex items-center justify-between mb-2.5">
-            <span className="text-[13px] text-slate-500 font-semibold">Kalkulasi Nilai Ujian:</span>
-            <span className="text-2xl font-black text-red-900">{finalNilai}</span>
+        <div className="bg-slate-50 border border-dashed border-slate-300 rounded-2xl p-5 mb-5 shadow-sm">
+          <div className="flex items-center justify-between mb-3">
+            <span className="text-[14px] text-slate-600 font-bold tracking-wide uppercase">Kalkulasi Nilai Ujian:</span>
+            <span className="text-3xl font-black text-red-900">{finalNilai}</span>
           </div>
-          <div className="text-xs text-slate-600 font-mono bg-slate-100 px-3 py-2 rounded-xl">
-            (Bacaan: <strong>{nilaiBacaan}</strong> + Kelancaran: <strong>{nilaiKelancaran}</strong>) ÷ 2 
+          <div className="text-[13px] text-slate-600 font-mono bg-white border border-slate-200 px-4 py-3 rounded-xl shadow-inner font-medium">
+            (Bacaan: <strong className="text-slate-800">{nilaiBacaan}</strong> + Kelancaran: <strong className="text-slate-800">{nilaiKelancaran}</strong>) ÷ 2 
             {jenisUjian === "ujian_itqon" && isLulus && (
-              <span className="text-emerald-600"> + <strong>10</strong> (Bonus Itqon)</span>
+              <span className="text-emerald-600"> + <strong className="text-emerald-700">10</strong> (Bonus Itqon)</span>
             )}
-            {" "} = <strong>{finalNilai}</strong>
+            {" "} = <strong className="text-red-900 text-[14px]">{finalNilai}</strong>
           </div>
         </div>
 
-        <div className="mb-5">
-          <label className="text-xs font-semibold text-slate-600 block mb-1.5">Catatan Penguji (Opsional)</label>
+        <div className="mb-8">
+          <label className="text-[13px] font-extrabold text-slate-700 block mb-2.5">Catatan Penguji (Opsional)</label>
           <input 
             type="text" 
             value={catatan} 
             onChange={e => setCatatan(e.target.value)} 
             placeholder="Catatan evaluasi kelancaran hafalan..."
-            className="w-full px-3 py-2.5 rounded-xl border-[1.5px] border-slate-200 text-[13px] box-border focus:outline-none focus:border-red-900 focus:ring-1 focus:ring-red-900 transition-all" 
+            className="w-full px-4 py-3.5 rounded-2xl border-[1.5px] border-slate-200 text-[14px] font-medium box-border focus:outline-none focus:border-red-900 focus:ring-4 focus:ring-red-900/10 transition-all shadow-sm" 
           />
         </div>
 
@@ -715,11 +723,11 @@ export default function UjianTahfidzPage() {
         <button
           onClick={handleSave}
           disabled={saving || !selectedSantriId}
-          className={`w-full p-3.5 rounded-2xl border-none text-white font-extrabold text-[15px] flex items-center justify-center gap-2.5 transition-all shadow-md ${
-            saving ? "bg-slate-400 cursor-wait" : "bg-red-900 hover:bg-red-800 cursor-pointer shadow-red-900/30 hover:shadow-lg"
+          className={`w-full p-4 sm:p-5 rounded-2xl border-none text-white font-extrabold text-[15px] sm:text-[16px] flex items-center justify-center gap-3 transition-all shadow-lg ${
+            saving ? "bg-slate-400 cursor-wait" : "bg-gradient-to-r from-red-900 to-red-800 hover:from-red-800 hover:to-red-700 cursor-pointer hover:shadow-xl hover:scale-[1.01] hover:-translate-y-0.5"
           }`}
         >
-          <Save size={18} /> {saving ? "Menyimpan..." : "Simpan Nilai Ujian"}
+          <Save size={20} /> {saving ? "Menyimpan..." : "Simpan Nilai Ujian"}
         </button>
       </div>
 

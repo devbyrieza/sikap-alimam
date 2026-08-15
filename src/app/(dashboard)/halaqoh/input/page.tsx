@@ -494,7 +494,7 @@ export default function HalaqohInputPage() {
       </div>
 
       {/* Bagian 1: Jenis + Surah */}
-      <div className="bg-white/95 backdrop-blur-xl rounded-3xl p-6 sm:p-8 border border-slate-200/80 shadow-[0_10px_35px_rgba(85,0,0,0.06)] space-y-6">
+      <div className="bg-white/95 backdrop-blur-xl rounded-[2.5rem] p-7 sm:p-10 border border-slate-200/80 shadow-[0_12px_40px_rgba(85,0,0,0.08)] space-y-8">
         <h2 className="m-0 text-lg font-black text-slate-800 flex items-center gap-2.5">
           <BookOpen size={20} className="text-[#751414]" /> Bacaan Sesi Ini
         </h2>
@@ -583,7 +583,7 @@ export default function HalaqohInputPage() {
 
       {/* Bagian 2: Tabel Santri */}
       {entries.length > 0 && (
-        <div className="bg-white/90 backdrop-blur-md rounded-2xl md:rounded-3xl p-5 md:p-7 border-[1.5px] border-slate-200 shadow-sm mb-5">
+        <div className="bg-white/90 backdrop-blur-xl rounded-[2.5rem] p-7 md:p-10 border-[1.5px] border-slate-200 shadow-[0_12px_40px_rgba(0,0,0,0.06)] mb-8">
           <h2 className="m-0 mb-5 text-base font-bold text-slate-800 flex items-center gap-2">
             <Users size={18} className="text-red-950" /> Penilaian Santri
             <span className="text-xs font-normal text-slate-400 ml-1">({entries.length} santri)</span>
