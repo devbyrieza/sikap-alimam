@@ -5,20 +5,20 @@ import { BookHeart, ArrowLeft, Search, CalendarDays, Award, CheckCircle2, AlertC
 import Link from "next/link";
 
 const JENIS_UJIAN_OPT = [
-  { val: "ujian_pekanan", label: "Ujian Pekanan", target: "2 Halaman",             icon: <Clock size={16} />,       color: "#b45309", bg: "#fffbeb", border: "#fde68a" },
-  { val: "ujian_bulanan", label: "Ujian Bulanan", target: "10 Halaman",            icon: <CalendarDays size={16} />, color: "#0369a1", bg: "#eff6ff", border: "#bfdbfe" },
-  { val: "ujian_target",  label: "Ujian Target",  target: "Sesuai Target Kelas",   icon: <Award size={16} />,        color: "#6d28d9", bg: "#f5f3ff", border: "#ddd6fe" },
-  { val: "ujian_itqon",   label: "Ujian Itqon",   target: "per 5 Juz (Bonus +10)", icon: <Star size={16} />,         color: "#0e7490", bg: "#ecfeff", border: "#a5f3fc" },
+  { val: "ujian_pekanan", label: "Ujian Pekanan", target: "2 Halaman",             icon: <Clock size={16} />,       color: "text-amber-700", bg: "bg-amber-50", border: "border-amber-200", borderActive: "border-amber-500" },
+  { val: "ujian_bulanan", label: "Ujian Bulanan", target: "10 Halaman",            icon: <CalendarDays size={16} />, color: "text-sky-700", bg: "bg-blue-50", border: "border-blue-200", borderActive: "border-sky-500" },
+  { val: "ujian_target",  label: "Ujian Target",  target: "Sesuai Target Kelas",   icon: <Award size={16} />,        color: "text-violet-700", bg: "bg-violet-50", border: "border-violet-200", borderActive: "border-violet-500" },
+  { val: "ujian_itqon",   label: "Ujian Itqon",   target: "per 5 Juz (Bonus +10)", icon: <Star size={16} />,         color: "text-cyan-700", bg: "bg-cyan-50", border: "border-cyan-200", borderActive: "border-cyan-500" },
 ];
 
 const OPSI_NILAI = [100, 98, 95, 90, 85, 80, 75, 70, 65, 60] as const;
 
 function getPredikat(nilai: number) {
-  if (nilai >= 98) return { label: "Sangat Baik", color: "#059669", bg: "#ecfdf5", border: "#a7f3d0" };
-  if (nilai >= 90) return { label: "Baik", color: "#0284c7", bg: "#eff6ff", border: "#bfdbfe" };
-  if (nilai === 85) return { label: "Cukup", color: "#16a34a", bg: "#f0fdf4", border: "#bbf7d0" };
-  if (nilai >= 75) return { label: "Kurang", color: "#d97706", bg: "#fffbeb", border: "#fde68a" };
-  return { label: "Sangat Kurang", color: "#dc2626", bg: "#fef2f2", border: "#fecaca" };
+  if (nilai >= 98) return { label: "Sangat Baik", color: "text-emerald-700", bg: "bg-emerald-50", border: "border-emerald-200", borderActive: "border-emerald-500" };
+  if (nilai >= 90) return { label: "Baik", color: "text-sky-700", bg: "bg-blue-50", border: "border-blue-200", borderActive: "border-sky-500" };
+  if (nilai === 85) return { label: "Cukup", color: "text-green-700", bg: "bg-green-50", border: "border-green-200", borderActive: "border-green-500" };
+  if (nilai >= 75) return { label: "Kurang", color: "text-amber-700", bg: "bg-amber-50", border: "border-amber-200", borderActive: "border-amber-500" };
+  return { label: "Sangat Kurang", color: "text-red-700", bg: "bg-red-50", border: "border-red-200", borderActive: "border-red-500" };
 }
 
 function NumericScoreSelector({
@@ -33,24 +33,20 @@ function NumericScoreSelector({
   const predikat = getPredikat(value);
   return (
     <div>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
-        <div style={{ fontSize: 11, fontWeight: 600, color: "#64748b" }}>{label}</div>
-        <div style={{ fontSize: 10, fontWeight: 700, padding: "3px 8px", borderRadius: 6, background: predikat.bg, color: predikat.color, border: `1px solid ${predikat.border}` }}>
+      <div className="flex justify-between items-center mb-1.5">
+        <div className="text-[11px] font-semibold text-slate-500">{label}</div>
+        <div className={`text-[10px] font-bold px-2 py-[3px] rounded-md border ${predikat.bg} ${predikat.color} ${predikat.border}`}>
           {predikat.label} {value >= 85 ? "✅" : "⚠️"}
         </div>
       </div>
-      <div style={{ display: "flex", gap: 4, flexWrap: "wrap" }}>
+      <div className="flex gap-1 flex-wrap">
         {OPSI_NILAI.map(num => (
           <button
             key={num}
             onClick={() => onChange(num)}
-            style={{
-              padding: "4px 8px", borderRadius: 8, fontSize: 12, fontWeight: 700, cursor: "pointer",
-              border: `1.5px solid ${value === num ? predikat.color : "#e2e8f0"}`,
-              background: value === num ? predikat.bg : "white",
-              color: value === num ? predikat.color : "#64748b",
-              transition: "all 0.15s"
-            }}
+            className={`px-2 py-1 rounded-lg text-xs font-bold cursor-pointer border-[1.5px] transition-all duration-150 ${
+              value === num ? `${predikat.bg} ${predikat.color} ${predikat.borderActive}` : "bg-white text-slate-500 border-slate-200 hover:bg-slate-50"
+            }`}
           >
             {num}
           </button>
@@ -80,24 +76,20 @@ function TextScoreSelector({
   const predikat = getPredikat(value);
   return (
     <div>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
-        <div style={{ fontSize: 11, fontWeight: 600, color: "#64748b" }}>{label}</div>
-        <div style={{ fontSize: 10, fontWeight: 700, padding: "3px 8px", borderRadius: 6, background: predikat.bg, color: predikat.color, border: `1px solid ${predikat.border}` }}>
+      <div className="flex justify-between items-center mb-1.5">
+        <div className="text-[11px] font-semibold text-slate-500">{label}</div>
+        <div className={`text-[10px] font-bold px-2 py-[3px] rounded-md border ${predikat.bg} ${predikat.color} ${predikat.border}`}>
           {predikat.label} {value >= 85 ? "✅" : "⚠️"}
         </div>
       </div>
-      <div style={{ display: "flex", gap: 4, flexWrap: "wrap" }}>
+      <div className="flex gap-1 flex-wrap">
         {OPSI_SIKAP.map(opsi => (
           <button
             key={opsi.value}
             onClick={() => onChange(opsi.value)}
-            style={{
-              padding: "4px 10px", borderRadius: 8, fontSize: 12, fontWeight: 700, cursor: "pointer",
-              border: `1.5px solid ${value === opsi.value ? predikat.color : "#e2e8f0"}`,
-              background: value === opsi.value ? predikat.bg : "white",
-              color: value === opsi.value ? predikat.color : "#64748b",
-              transition: "all 0.15s"
-            }}
+            className={`px-2.5 py-1 rounded-lg text-xs font-bold cursor-pointer border-[1.5px] transition-all duration-150 ${
+              value === opsi.value ? `${predikat.bg} ${predikat.color} ${predikat.borderActive}` : "bg-white text-slate-500 border-slate-200 hover:bg-slate-50"
+            }`}
           >
             {opsi.label}
           </button>
@@ -153,75 +145,59 @@ function SurahPicker({
   ).slice(0, 20);
 
   return (
-    <div ref={ref} style={{ position: "relative" }}>
-      <label style={{ fontSize: 12, fontWeight: 600, color: "#475569", display: "block", marginBottom: 6 }}>{label}</label>
+    <div ref={ref} className="relative">
+      <label className="text-xs font-semibold text-slate-600 block mb-1.5">{label}</label>
       <div
         onClick={() => setOpen(!open)}
-        style={{
-          display: "flex", alignItems: "center", justifyContent: "space-between",
-          padding: "10px 14px", borderRadius: 12, border: "1.5px solid #e2e8f0",
-          background: "white", cursor: "pointer", fontSize: 13, userSelect: "none"
-        }}
+        className="flex items-center justify-between px-3.5 py-2.5 rounded-xl border-[1.5px] border-slate-200 bg-white cursor-pointer text-[13px] select-none hover:border-slate-300 transition-colors"
       >
         {selected ? (
-          <div style={{ display: "flex", alignItems: "baseline", gap: 8 }}>
-            <span style={{ fontWeight: 700, color: "#1e293b" }}>
+          <div className="flex items-baseline gap-2">
+            <span className="font-bold text-slate-800">
               {selected.nomor}. {selected.nama_latin}
             </span>
-            <span style={{ fontSize: 15, color: "#94a3b8", fontFamily: "serif" }}>{selected.nama_arab}</span>
+            <span className="text-[15px] text-slate-400 font-serif">{selected.nama_arab}</span>
           </div>
         ) : (
-          <span style={{ color: "#94a3b8" }}>Cari surah...</span>
+          <span className="text-slate-400">Cari surah...</span>
         )}
-        <ChevronDown size={15} color="#94a3b8" />
+        <ChevronDown size={15} className="text-slate-400" />
       </div>
 
       {open && (
-        <div style={{
-          position: "absolute", top: "calc(100% + 4px)", left: 0, right: 0, zIndex: 200,
-          background: "white", borderRadius: 14, border: "1.5px solid #e2e8f0",
-          boxShadow: "0 12px 40px rgba(0,0,0,0.12)", overflow: "hidden"
-        }}>
-          <div style={{ padding: "10px 12px", borderBottom: "1px solid #f1f5f9" }}>
-            <div style={{ position: "relative" }}>
-              <Search size={13} style={{ position: "absolute", left: 10, top: "50%", transform: "translateY(-50%)", color: "#94a3b8" }} />
+        <div className="absolute top-[calc(100%+4px)] left-0 right-0 z-50 bg-white rounded-2xl border-[1.5px] border-slate-200 shadow-[0_12px_40px_rgba(0,0,0,0.12)] overflow-hidden">
+          <div className="p-2.5 border-b border-slate-100">
+            <div className="relative">
+              <Search size={13} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400" />
               <input
                 autoFocus
                 type="text"
                 value={query}
                 onChange={e => setQuery(e.target.value)}
                 placeholder="Ketik nama surah atau nomor..."
-                style={{ width: "100%", padding: "8px 10px 8px 30px", border: "1px solid #e2e8f0", borderRadius: 8, fontSize: 13, boxSizing: "border-box" }}
+                className="w-full py-2 pr-2.5 pl-8 border border-slate-200 rounded-lg text-[13px] focus:outline-none focus:border-red-800 focus:ring-1 focus:ring-red-800 transition-all"
               />
             </div>
           </div>
-          <div style={{ maxHeight: 260, overflowY: "auto" }}>
+          <div className="max-h-[260px] overflow-y-auto custom-scrollbar">
             {filtered.map(s => (
               <div
                 key={s.nomor}
                 onClick={() => { onSelect(s); setOpen(false); setQuery(""); }}
-                style={{
-                  padding: "10px 16px", cursor: "pointer", borderBottom: "1px solid #f8fafc",
-                  display: "flex", alignItems: "center", gap: 14, transition: "background 0.1s"
-                }}
-                onMouseEnter={e => (e.currentTarget.style.background = "#f8fafc")}
-                onMouseLeave={e => (e.currentTarget.style.background = "white")}
+                className="px-4 py-2.5 cursor-pointer border-b border-slate-50 flex items-center gap-3.5 transition-colors hover:bg-slate-50"
               >
-                <div style={{
-                  width: 30, height: 30, background: "#f1f5f9", borderRadius: 8, display: "flex",
-                  alignItems: "center", justifyContent: "center", fontSize: 11, fontWeight: 700, color: "#550000", flexShrink: 0
-                }}>
+                <div className="w-[30px] h-[30px] bg-slate-100 rounded-lg flex items-center justify-center text-[11px] font-bold text-red-900 shrink-0">
                   {s.nomor}
                 </div>
-                <div style={{ flex: 1 }}>
-                  <div style={{ fontSize: 13, fontWeight: 700, color: "#1e293b" }}>{s.nama_latin}</div>
-                  <div style={{ fontSize: 11, color: "#94a3b8" }}>{s.total_ayat} ayat</div>
+                <div className="flex-1">
+                  <div className="text-[13px] font-bold text-slate-800">{s.nama_latin}</div>
+                  <div className="text-[11px] text-slate-400">{s.total_ayat} ayat</div>
                 </div>
-                <div style={{ fontSize: 16, color: "#64748b", fontFamily: "serif" }}>{s.nama_arab}</div>
+                <div className="text-base text-slate-500 font-serif">{s.nama_arab}</div>
               </div>
             ))}
             {filtered.length === 0 && (
-              <div style={{ padding: 20, textAlign: "center", color: "#94a3b8", fontSize: 13 }}>
+              <div className="p-5 text-center text-slate-400 text-[13px]">
                 Surah tidak ditemukan
               </div>
             )}
@@ -266,21 +242,21 @@ function renderTargetBanner(santri: Santri) {
     targetNode = <span><strong>4 Juz</strong> (Juz 27-30)</span>;
   } else if (kelas.includes("10 ma")) {
     targetNode = (
-      <ul style={{ margin: "4px 0 0 16px", padding: 0 }}>
+      <ul className="mt-1 ml-4 list-disc p-0">
         <li>Jalur internal MTs: <strong>10 Juz</strong> (+4 Juz dari Kls 9)</li>
         <li>Jalur eksternal IL: <strong>8 Juz</strong> (+4 Juz dari IL)</li>
       </ul>
     );
   } else if (kelas.includes("11 ma")) {
     targetNode = (
-      <ul style={{ margin: "4px 0 0 16px", padding: 0 }}>
+      <ul className="mt-1 ml-4 list-disc p-0">
         <li>Jalur internal MTs: <strong>13 Juz</strong> (+3 Juz dari Kls 10)</li>
         <li>Jalur eksternal IL: <strong>10 Juz</strong> (+2 Juz dari Kls 10)</li>
       </ul>
     );
   } else if (kelas.includes("12 ma")) {
     targetNode = (
-      <ul style={{ margin: "4px 0 0 16px", padding: 0 }}>
+      <ul className="mt-1 ml-4 list-disc p-0">
         <li>Jalur internal MTs: <strong>15 Juz</strong> (+2 Juz dari Kls 11)</li>
         <li>Jalur eksternal IL: <strong>12 Juz</strong> (+2 Juz dari Kls 11)</li>
       </ul>
@@ -290,20 +266,16 @@ function renderTargetBanner(santri: Santri) {
   }
 
   return (
-    <div style={{
-      background: "linear-gradient(135deg, #f5f3ff 0%, #ede9fe 100%)",
-      border: "1.5px solid #c4b5fd", borderRadius: 14, padding: "16px 20px",
-      marginTop: 14, color: "#4c1d95"
-    }}>
-      <div style={{ display: "flex", alignItems: "flex-start", gap: 12 }}>
-        <div style={{ background: "#6d28d9", color: "white", padding: 8, borderRadius: 10, flexShrink: 0 }}>
+    <div className="bg-gradient-to-br from-violet-50 to-violet-100 border-[1.5px] border-violet-200 rounded-2xl p-4 mt-3.5 text-violet-900 shadow-sm">
+      <div className="flex items-start gap-3">
+        <div className="bg-violet-700 text-white p-2 rounded-xl shrink-0">
           <Award size={20} />
         </div>
         <div>
-          <div style={{ fontWeight: 800, fontSize: 13, marginBottom: 4 }}>
+          <div className="font-extrabold text-[13px] mb-1">
             🎯 Target Hafalan Lulus Kelas {santri.kelas.nama}
           </div>
-          <div style={{ fontSize: 13, lineHeight: 1.5 }}>
+          <div className="text-[13px] leading-relaxed">
             {targetNode}
           </div>
         </div>
@@ -474,104 +446,89 @@ export default function UjianTahfidzPage() {
     new Date(s).toLocaleDateString("id-ID", { day: "numeric", month: "short", year: "numeric" });
 
   return (
-    <div style={{ maxWidth: 960, margin: "0 auto", padding: "24px 16px", fontFamily: "inherit" }}>
-      <Link href="/halaqoh" style={{ display: "flex", alignItems: "center", gap: 6, color: "#64748b", textDecoration: "none", fontSize: 13, marginBottom: 16, fontWeight: 500 }}>
+    <div className="max-w-[960px] mx-auto px-4 py-6 font-sans">
+      <Link href="/halaqoh" className="flex items-center gap-1.5 text-slate-500 hover:text-slate-700 no-underline text-[13px] mb-4 font-medium transition-colors">
         <ArrowLeft size={14} /> Kembali ke Halaqoh
       </Link>
 
-      <div style={{
-        background: "linear-gradient(135deg, #550000 0%, #7a0000 100%)",
-        borderRadius: 20, padding: "24px 28px", marginBottom: 24, color: "white",
-        boxShadow: "0 8px 32px rgba(85,0,0,0.35)"
-      }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 6 }}>
-          <Award size={22} />
-          <h1 style={{ margin: 0, fontSize: 20, fontWeight: 800 }}>Ujian Tahfidz & Itqon</h1>
+      <div className="bg-gradient-to-br from-red-900 to-red-950 rounded-3xl p-6 mb-6 text-white shadow-[0_8px_32px_rgba(85,0,0,0.35)]">
+        <div className="flex items-center gap-2.5 mb-1.5">
+          <Award size={22} className="text-red-200" />
+          <h1 className="m-0 text-xl font-extrabold">Ujian Tahfidz & Itqon</h1>
         </div>
-        <p style={{ margin: 0, fontSize: 13, opacity: 0.8 }}>
+        <p className="m-0 text-[13px] text-red-100 opacity-90">
           Penilaian Ujian Pekanan, Bulanan, Target, & Ujian Itqon (Bonus +10)
         </p>
       </div>
 
-      <div style={{ background: "white", borderRadius: 18, padding: 24, marginBottom: 24, border: "1.5px solid #e2e8f0", boxShadow: "0 2px 8px rgba(0,0,0,0.04)" }}>
-        <h2 style={{ margin: "0 0 20px 0", fontSize: 16, fontWeight: 700, color: "#1e293b", display: "flex", alignItems: "center", gap: 8 }}>
-          <Award size={18} color="#7a0000" /> Form Penginputan Ujian
+      <div className="bg-white/90 backdrop-blur rounded-3xl p-6 mb-6 border-[1.5px] border-slate-200 shadow-xl">
+        <h2 className="m-0 mb-5 text-base font-bold text-slate-800 flex items-center gap-2">
+          <Award size={18} className="text-red-900" /> Form Penginputan Ujian
         </h2>
 
-        <div style={{ marginBottom: 20 }}>
-          <label style={{ fontSize: 12, fontWeight: 700, color: "#475569", display: "block", marginBottom: 10, textTransform: "uppercase", letterSpacing: "0.05em" }}>
+        <div className="mb-5">
+          <label className="text-xs font-bold text-slate-600 block mb-2.5 uppercase tracking-wider">
             1. Pilih Jenis Ujian
           </label>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))", gap: 10 }}>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2.5">
             {JENIS_UJIAN_OPT.map(j => (
               <div
                 key={j.val}
                 onClick={() => setJenisUjian(j.val)}
-                style={{
-                  padding: "14px 16px", borderRadius: 14, cursor: "pointer", border: "1.5px solid",
-                  borderColor: jenisUjian === j.val ? j.color : "#e2e8f0",
-                  background: jenisUjian === j.val ? j.bg : "white",
-                  transition: "all 0.15s"
-                }}
+                className={`px-4 py-3.5 rounded-2xl cursor-pointer border-[1.5px] transition-all duration-150 ${
+                  jenisUjian === j.val ? `${j.borderActive} ${j.bg} shadow-sm` : 'border-slate-200 bg-white hover:border-slate-300'
+                }`}
               >
-                <div style={{ display: "flex", alignItems: "center", gap: 8, color: j.color, fontWeight: 700, fontSize: 13, marginBottom: 4 }}>
+                <div className={`flex items-center gap-2 font-bold text-[13px] mb-1 ${j.color}`}>
                   {j.icon} {j.label}
                 </div>
-                <div style={{ fontSize: 11, color: "#64748b" }}>Cakupan: {j.target}</div>
+                <div className="text-[11px] text-slate-500">Cakupan: {j.target}</div>
               </div>
             ))}
           </div>
         </div>
 
-        <div style={{ marginBottom: 20 }}>
-          <label style={{ fontSize: 12, fontWeight: 700, color: "#475569", display: "block", marginBottom: 8, textTransform: "uppercase", letterSpacing: "0.05em" }}>
+        <div className="mb-5">
+          <label className="text-xs font-bold text-slate-600 block mb-2 uppercase tracking-wider">
             2. Pilih Santri
           </label>
           {selectedSantri ? (
-            <div style={{
-              display: "flex", alignItems: "center", justifyContent: "space-between",
-              background: "#fff5f5", border: "1.5px solid #fca5a5", borderRadius: 12, padding: "12px 16px"
-            }}>
+            <div className="flex items-center justify-between bg-red-50 border-[1.5px] border-red-200 rounded-2xl px-4 py-3 shadow-sm">
               <div>
-                <div style={{ fontWeight: 700, color: "#7a0000", fontSize: 14 }}>{selectedSantri.nama_lengkap}</div>
-                <div style={{ fontSize: 11, color: "#991b1b" }}>{selectedSantri.nis || "NIS —"} · {selectedSantri.kelas?.nama}</div>
+                <div className="font-bold text-red-900 text-sm">{selectedSantri.nama_lengkap}</div>
+                <div className="text-[11px] text-red-700">{selectedSantri.nis || "NIS —"} · {selectedSantri.kelas?.nama}</div>
               </div>
               <button
                 onClick={() => setSelectedSantriId("")}
-                style={{ background: "none", border: "none", cursor: "pointer", color: "#7a0000", fontWeight: 700, fontSize: 12 }}
+                className="bg-transparent border-none cursor-pointer text-red-900 font-bold text-xs hover:text-red-700 transition-colors"
               >
                 Ganti Santri
               </button>
             </div>
           ) : (
             <div>
-              <div style={{ position: "relative", marginBottom: 8 }}>
-                <Search size={14} style={{ position: "absolute", left: 12, top: "50%", transform: "translateY(-50%)", color: "#94a3b8" }} />
+              <div className="relative mb-2">
+                <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
                 <input
                   type="text"
                   value={searchSantri}
                   onChange={e => setSearchSantri(e.target.value)}
                   placeholder="Ketik nama atau NIS santri..."
-                  style={{ width: "100%", padding: "10px 12px 10px 34px", borderRadius: 12, border: "1.5px solid #e2e8f0", fontSize: 13, boxSizing: "border-box" }}
+                  className="w-full py-2.5 pr-3 pl-8 rounded-2xl border-[1.5px] border-slate-200 text-[13px] box-border focus:outline-none focus:border-red-900 focus:ring-1 focus:ring-red-900 transition-all"
                 />
               </div>
-              <div style={{ maxHeight: 180, overflowY: "auto", border: "1px solid #e2e8f0", borderRadius: 12 }}>
+              <div className="max-h-[180px] overflow-y-auto custom-scrollbar border border-slate-200 rounded-2xl">
                 {filteredSantri.slice(0, 20).map(s => (
                   <div
                     key={s.id}
                     onClick={() => setSelectedSantriId(s.id)}
-                    style={{
-                      padding: "10px 14px", cursor: "pointer", borderBottom: "1px solid #f8fafc",
-                      display: "flex", alignItems: "center", justifyContent: "space-between"
-                    }}
-                    onMouseEnter={e => (e.currentTarget.style.background = "#f8fafc")}
-                    onMouseLeave={e => (e.currentTarget.style.background = "white")}
+                    className="px-3.5 py-2.5 cursor-pointer border-b border-slate-50 flex items-center justify-between hover:bg-slate-50 transition-colors"
                   >
                     <div>
-                      <div style={{ fontWeight: 600, fontSize: 13, color: "#1e293b" }}>{s.nama_lengkap}</div>
-                      <div style={{ fontSize: 11, color: "#94a3b8" }}>{s.nis} · {s.kelas?.nama}</div>
+                      <div className="font-semibold text-[13px] text-slate-800">{s.nama_lengkap}</div>
+                      <div className="text-[11px] text-slate-400">{s.nis} · {s.kelas?.nama}</div>
                     </div>
-                    <CheckCircle2 size={16} color="#7a0000" />
+                    <CheckCircle2 size={16} className="text-red-900" />
                   </div>
                 ))}
               </div>
@@ -580,41 +537,53 @@ export default function UjianTahfidzPage() {
           {jenisUjian === "ujian_target" && selectedSantri && renderTargetBanner(selectedSantri)}
         </div>
 
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14, marginBottom: 20 }}>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5 mb-5">
           <div>
-            <label style={{ fontSize: 12, fontWeight: 600, color: "#475569", display: "block", marginBottom: 6 }}>Tanggal Ujian</label>
-            <input type="date" value={tanggal} onChange={e => setTanggal(e.target.value)}
-              style={{ width: "100%", padding: "10px 12px", borderRadius: 10, border: "1.5px solid #e2e8f0", fontSize: 13, boxSizing: "border-box" }} />
+            <label className="text-xs font-semibold text-slate-600 block mb-1.5">Tanggal Ujian</label>
+            <input 
+              type="date" 
+              value={tanggal} 
+              onChange={e => setTanggal(e.target.value)}
+              className="w-full px-3 py-2.5 rounded-xl border-[1.5px] border-slate-200 text-[13px] box-border focus:outline-none focus:border-red-900 focus:ring-1 focus:ring-red-900 transition-all"
+            />
           </div>
 
           {jenisUjian === "ujian_itqon" ? (
             <div>
-              <label style={{ fontSize: 12, fontWeight: 600, color: "#475569", display: "block", marginBottom: 6 }}>Tuntas Juz Ke-</label>
-              <select value={juz} onChange={e => setJuz(Number(e.target.value))}
-                style={{ width: "100%", padding: "10px 12px", borderRadius: 10, border: "1.5px solid #e2e8f0", fontSize: 13, boxSizing: "border-box", background: "white" }}>
+              <label className="text-xs font-semibold text-slate-600 block mb-1.5">Tuntas Juz Ke-</label>
+              <select 
+                value={juz} 
+                onChange={e => setJuz(Number(e.target.value))}
+                className="w-full px-3 py-2.5 rounded-xl border-[1.5px] border-slate-200 text-[13px] box-border bg-white focus:outline-none focus:border-red-900 focus:ring-1 focus:ring-red-900 transition-all"
+              >
                 {[1, 2, 3, 4, 5, 6].map(j => (
                   <option key={j} value={j * 5}>Per 5 Juz (Juz 1–{j * 5})</option>
                 ))}
               </select>
             </div>
           ) : (
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <SurahPicker surahList={surahList} selected={selectedSurah} onSelect={setSelectedSurah} label="Nama Surah / Materi" />
               </div>
               <div>
-                <label style={{ fontSize: 12, fontWeight: 600, color: "#475569", display: "block", marginBottom: 6 }}>Jumlah Halaman</label>
-                <input type="number" min={1} value={jumlahHalaman || ""} onChange={e => setJumlahHalaman(Number(e.target.value) || 0)}
-                  style={{ width: "100%", padding: "10px 12px", borderRadius: 10, border: "1.5px solid #e2e8f0", fontSize: 13, boxSizing: "border-box" }} />
+                <label className="text-xs font-semibold text-slate-600 block mb-1.5">Jumlah Halaman</label>
+                <input 
+                  type="number" 
+                  min={1} 
+                  value={jumlahHalaman || ""} 
+                  onChange={e => setJumlahHalaman(Number(e.target.value) || 0)}
+                  className="w-full px-3 py-2.5 rounded-xl border-[1.5px] border-slate-200 text-[13px] box-border focus:outline-none focus:border-red-900 focus:ring-1 focus:ring-red-900 transition-all"
+                />
               </div>
             </div>
           )}
         </div>
 
         {selectedSurah && jenisUjian !== "ujian_itqon" && (
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 20 }}>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-5">
             <div>
-              <label style={{ fontSize: 12, fontWeight: 600, color: "#475569", display: "block", marginBottom: 6 }}>Dari Ayat</label>
+              <label className="text-xs font-semibold text-slate-600 block mb-1.5">Dari Ayat</label>
               <input
                 type="number" min={1} max={selectedSurah.total_ayat}
                 value={ayatDari || ""}
@@ -628,11 +597,11 @@ export default function UjianTahfidzPage() {
                   setAyatDari(clamped);
                   if (ayatKe < clamped) setAyatKe(clamped);
                 }}
-                style={{ width: "100%", padding: "10px 12px", borderRadius: 10, border: "1.5px solid #e2e8f0", fontSize: 13, boxSizing: "border-box" }}
+                className="w-full px-3 py-2.5 rounded-xl border-[1.5px] border-slate-200 text-[13px] box-border focus:outline-none focus:border-red-900 focus:ring-1 focus:ring-red-900 transition-all"
               />
             </div>
             <div>
-              <label style={{ fontSize: 12, fontWeight: 600, color: "#475569", display: "block", marginBottom: 6 }}>Sampai Ayat</label>
+              <label className="text-xs font-semibold text-slate-600 block mb-1.5">Sampai Ayat</label>
               <input
                 type="number" min={ayatDari || 1} max={selectedSurah.total_ayat}
                 value={ayatKe || ""}
@@ -645,83 +614,71 @@ export default function UjianTahfidzPage() {
                   let clamped = Math.max(ayatDari || 1, Math.min(ayatKe || 1, selectedSurah.total_ayat));
                   setAyatKe(clamped);
                 }}
-                style={{ width: "100%", padding: "10px 12px", borderRadius: 10, border: "1.5px solid #e2e8f0", fontSize: 13, boxSizing: "border-box" }}
+                className="w-full px-3 py-2.5 rounded-xl border-[1.5px] border-slate-200 text-[13px] box-border focus:outline-none focus:border-red-900 focus:ring-1 focus:ring-red-900 transition-all"
               />
             </div>
           </div>
         )}
 
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 16, marginBottom: 20 }}>
-          <NumericScoreSelector
-            label="Nilai Bacaan"
-            value={nilaiBacaan}
-            onChange={setNilaiBacaan}
-          />
-          <NumericScoreSelector
-            label="Nilai Kelancaran"
-            value={nilaiKelancaran}
-            onChange={setNilaiKelancaran}
-          />
-          <TextScoreSelector
-            label="Nilai Sikap"
-            value={nilaiSikap}
-            onChange={setNilaiSikap}
-          />
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-5">
+          <NumericScoreSelector label="Nilai Bacaan" value={nilaiBacaan} onChange={setNilaiBacaan} />
+          <NumericScoreSelector label="Nilai Kelancaran" value={nilaiKelancaran} onChange={setNilaiKelancaran} />
+          <TextScoreSelector label="Nilai Sikap" value={nilaiSikap} onChange={setNilaiSikap} />
         </div>
 
-        {/* Khusus Ujian Itqon: Checkbox Lulus + Bonus */}
         {jenisUjian === "ujian_itqon" && (
-          <div style={{
-            background: "#ecfeff", border: "1.5px solid #a5f3fc", borderRadius: 14, padding: "14px 18px",
-            marginBottom: 20, display: "flex", alignItems: "center", justifyContent: "space-between"
-          }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-              <ShieldCheck size={20} color="#0e7490" />
+          <div className="bg-cyan-50 border-[1.5px] border-cyan-200 rounded-2xl px-4 py-3.5 mb-5 flex flex-col md:flex-row md:items-center justify-between gap-3 shadow-sm">
+            <div className="flex items-center gap-2.5">
+              <ShieldCheck size={20} className="text-cyan-700 shrink-0" />
               <div>
-                <div style={{ fontWeight: 800, fontSize: 13, color: "#164e63" }}>Status Kelulusan Ujian Itqon</div>
-                <div style={{ fontSize: 11, color: "#0e7490" }}>Jika LULUS, santri secara otomatis memperoleh **Bonus +10 Poin** di Raport!</div>
+                <div className="font-extrabold text-[13px] text-cyan-900">Status Kelulusan Ujian Itqon</div>
+                <div className="text-[11px] text-cyan-700">Jika LULUS, santri secara otomatis memperoleh **Bonus +10 Poin** di Raport!</div>
               </div>
             </div>
-            <label style={{ display: "flex", alignItems: "center", gap: 8, cursor: "pointer", fontWeight: 700, fontSize: 13, color: "#164e63" }}>
-              <input type="checkbox" checked={isLulus} onChange={e => setIsLulus(e.target.checked)} style={{ width: 18, height: 18 }} />
+            <label className="flex items-center gap-2 cursor-pointer font-bold text-[13px] text-cyan-900">
+              <input 
+                type="checkbox" 
+                checked={isLulus} 
+                onChange={e => setIsLulus(e.target.checked)} 
+                className="w-[18px] h-[18px] text-cyan-700 rounded focus:ring-cyan-600" 
+              />
               Dinyatakan Lulus
             </label>
           </div>
         )}
 
-        {/* Total Skor Preview */}
-        <div style={{
-          background: "#f8fafc", border: "1px dashed #cbd5e1", borderRadius: 14, padding: "16px 20px",
-          marginBottom: 20
-        }}>
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 10 }}>
-            <span style={{ fontSize: 13, color: "#64748b", fontWeight: 600 }}>Kalkulasi Nilai Ujian:</span>
-            <span style={{ fontSize: 24, fontWeight: 900, color: "#550000" }}>{finalNilai}</span>
+        <div className="bg-slate-50 border border-dashed border-slate-300 rounded-2xl p-4 mb-5">
+          <div className="flex items-center justify-between mb-2.5">
+            <span className="text-[13px] text-slate-500 font-semibold">Kalkulasi Nilai Ujian:</span>
+            <span className="text-2xl font-black text-red-900">{finalNilai}</span>
           </div>
-          <div style={{ fontSize: 12, color: "#475569", fontFamily: "monospace", background: "#f1f5f9", padding: "8px 12px", borderRadius: 8 }}>
+          <div className="text-xs text-slate-600 font-mono bg-slate-100 px-3 py-2 rounded-xl">
             (Bacaan: <strong>{nilaiBacaan}</strong> + Kelancaran: <strong>{nilaiKelancaran}</strong>) ÷ 2 
             {jenisUjian === "ujian_itqon" && isLulus && (
-              <span style={{ color: "#059669" }}> + <strong>10</strong> (Bonus Itqon)</span>
+              <span className="text-emerald-600"> + <strong>10</strong> (Bonus Itqon)</span>
             )}
             {" "} = <strong>{finalNilai}</strong>
           </div>
         </div>
 
-        {/* Catatan */}
-        <div style={{ marginBottom: 20 }}>
-          <label style={{ fontSize: 12, fontWeight: 600, color: "#475569", display: "block", marginBottom: 6 }}>Catatan Penguji (Opsional)</label>
-          <input type="text" value={catatan} onChange={e => setCatatan(e.target.value)} placeholder="Catatan evaluasi kelancaran hafalan..."
-            style={{ width: "100%", padding: "10px 12px", borderRadius: 10, border: "1.5px solid #e2e8f0", fontSize: 13, boxSizing: "border-box" }} />
+        <div className="mb-5">
+          <label className="text-xs font-semibold text-slate-600 block mb-1.5">Catatan Penguji (Opsional)</label>
+          <input 
+            type="text" 
+            value={catatan} 
+            onChange={e => setCatatan(e.target.value)} 
+            placeholder="Catatan evaluasi kelancaran hafalan..."
+            className="w-full px-3 py-2.5 rounded-xl border-[1.5px] border-slate-200 text-[13px] box-border focus:outline-none focus:border-red-900 focus:ring-1 focus:ring-red-900 transition-all" 
+          />
         </div>
 
-        {/* Alerts & Save */}
         {error && (
-          <div style={{ display: "flex", alignItems: "center", gap: 8, background: "#fef2f2", color: "#dc2626", padding: "12px 16px", borderRadius: 10, marginBottom: 14, fontSize: 13 }}>
+          <div className="flex items-center gap-2 bg-red-50 text-red-600 px-4 py-3 rounded-xl mb-3.5 text-[13px] shadow-sm">
             <AlertCircle size={16} /> {error}
           </div>
         )}
         {saved && (
-          <div style={{ display: "flex", alignItems: "center", gap: 8, background: "#ecfdf5", color: "#059669", padding: "12px 16px", borderRadius: 10, marginBottom: 14, fontSize: 13 }}>
+          <div className="flex items-center gap-2 bg-emerald-50 text-emerald-600 px-4 py-3 rounded-xl mb-3.5 text-[13px] shadow-sm">
             <CheckCircle2 size={16} /> Data ujian berhasil disimpan!
           </div>
         )}
@@ -729,30 +686,25 @@ export default function UjianTahfidzPage() {
         <button
           onClick={handleSave}
           disabled={saving || !selectedSantriId}
-          style={{
-            width: "100%", padding: "14px", borderRadius: 14, border: "none",
-            background: saving ? "#94a3b8" : "#550000", color: "white",
-            fontWeight: 800, fontSize: 15, cursor: saving ? "wait" : "pointer",
-            display: "flex", alignItems: "center", justifyContent: "center", gap: 10,
-            boxShadow: "0 4px 16px rgba(85,0,0,0.3)"
-          }}
+          className={`w-full p-3.5 rounded-2xl border-none text-white font-extrabold text-[15px] flex items-center justify-center gap-2.5 transition-all shadow-md ${
+            saving ? "bg-slate-400 cursor-wait" : "bg-red-900 hover:bg-red-800 cursor-pointer shadow-red-900/30 hover:shadow-lg"
+          }`}
         >
           <Save size={18} /> {saving ? "Menyimpan..." : "Simpan Nilai Ujian"}
         </button>
       </div>
 
-      {/* History Tabel Ujian */}
-      <div style={{ background: "white", borderRadius: 18, padding: 24, border: "1.5px solid #e2e8f0", boxShadow: "0 2px 8px rgba(0,0,0,0.04)" }}>
-        <h2 style={{ margin: "0 0 16px 0", fontSize: 15, fontWeight: 700, color: "#1e293b" }}>Riwayat Ujian Tahfidz</h2>
+      <div className="bg-white/90 backdrop-blur rounded-3xl p-6 border-[1.5px] border-slate-200 shadow-xl">
+        <h2 className="m-0 mb-4 text-[15px] font-bold text-slate-800">Riwayat Ujian Tahfidz</h2>
         {history.length === 0 ? (
-          <div style={{ textAlign: "center", padding: 30, color: "#94a3b8", fontSize: 13 }}>Belum ada riwayat ujian</div>
+          <div className="text-center p-8 text-slate-400 text-[13px]">Belum ada riwayat ujian</div>
         ) : (
-          <div style={{ overflowX: "auto" }}>
-            <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
+          <div className="overflow-x-auto custom-scrollbar">
+            <table className="w-full border-collapse text-[13px]">
               <thead>
-                <tr style={{ background: "#f8fafc", borderBottom: "2px solid #e2e8f0" }}>
+                <tr className="bg-slate-50 border-b-2 border-slate-200">
                   {["Tanggal", "Santri", "Jenis Ujian", "Materi", "Nilai Akhir", "Penguji"].map((h, i) => (
-                    <th key={i} style={{ padding: "10px 12px", textAlign: "left", fontSize: 11, fontWeight: 700, color: "#475569", textTransform: "uppercase" }}>{h}</th>
+                    <th key={i} className="px-3 py-2.5 text-left text-[11px] font-bold text-slate-600 uppercase tracking-wider whitespace-nowrap">{h}</th>
                   ))}
                 </tr>
               </thead>
@@ -760,21 +712,21 @@ export default function UjianTahfidzPage() {
                 {history.map((row, i) => {
                   const info = JENIS_UJIAN_OPT.find(j => j.val === row.jenis_ujian) || JENIS_UJIAN_OPT[0];
                   return (
-                    <tr key={row.id} style={{ borderBottom: "1px solid #f1f5f9", background: i % 2 === 0 ? "white" : "#fafafa" }}>
-                      <td style={{ padding: "10px 12px", color: "#64748b" }}>{formatTanggal(row.tanggal)}</td>
-                      <td style={{ padding: "10px 12px", fontWeight: 700, color: "#1e293b" }}>{row.santri.nama_lengkap}</td>
-                      <td style={{ padding: "10px 12px" }}>
-                        <span style={{ background: info.bg, color: info.color, border: `1px solid ${info.border}`, padding: "3px 8px", borderRadius: 20, fontSize: 11, fontWeight: 700 }}>
+                    <tr key={row.id} className={`border-b border-slate-100 ${i % 2 === 0 ? "bg-white" : "bg-slate-50/50"} hover:bg-slate-50 transition-colors`}>
+                      <td className="px-3 py-2.5 text-slate-500 whitespace-nowrap">{formatTanggal(row.tanggal)}</td>
+                      <td className="px-3 py-2.5 font-bold text-slate-800 whitespace-nowrap">{row.santri.nama_lengkap}</td>
+                      <td className="px-3 py-2.5 whitespace-nowrap">
+                        <span className={`px-2 py-1 rounded-full text-[11px] font-bold border ${info.bg} ${info.color} ${info.border}`}>
                           {info.label}
                         </span>
                       </td>
-                      <td style={{ padding: "10px 12px", color: "#475569" }}>
+                      <td className="px-3 py-2.5 text-slate-600 min-w-[150px]">
                         {row.jenis_ujian === "ujian_itqon" ? `Juz 1–${row.juz || 5}` : row.surah_nama || "—"}
                       </td>
-                      <td style={{ padding: "10px 12px" }}>
-                        <span style={{ fontWeight: 800, fontSize: 14, color: "#047857" }}>{row.nilai_akhir}</span>
+                      <td className="px-3 py-2.5">
+                        <span className="font-extrabold text-sm text-emerald-700">{row.nilai_akhir}</span>
                       </td>
-                      <td style={{ padding: "10px 12px", color: "#64748b", fontSize: 12 }}>{row.pegawai.nama_lengkap}</td>
+                      <td className="px-3 py-2.5 text-slate-500 text-xs whitespace-nowrap">{row.pegawai.nama_lengkap}</td>
                     </tr>
                   );
                 })}

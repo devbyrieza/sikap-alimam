@@ -60,50 +60,46 @@ export default function LaporanHalaqohPage() {
   const BULAN_NAMES = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
 
   return (
-    <div style={{ maxWidth: 900, margin: "0 auto", padding: "24px 16px", fontFamily: "inherit" }}>
+    <div className="w-full max-w-5xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
       {/* Hide on print */}
-      <div className="no-print">
+      <div className="no-print mb-6">
         {/* Back */}
-        <Link href="/halaqoh" style={{ display: "flex", alignItems: "center", gap: 6, color: "#64748b", textDecoration: "none", fontSize: 13, marginBottom: 16, fontWeight: 500 }}>
-          <ArrowLeft size={14} /> Kembali ke Halaqoh
+        <Link 
+          href="/halaqoh" 
+          className="inline-flex items-center gap-2 text-slate-500 hover:text-slate-700 text-sm font-medium mb-4 transition-colors"
+        >
+          <ArrowLeft size={16} /> Kembali ke Halaqoh
         </Link>
 
         {/* Header */}
-        <div style={{
-          background: "linear-gradient(135deg, #550000 0%, #7a0000 100%)",
-          borderRadius: 20, padding: "22px 28px", marginBottom: 24, color: "white",
-          display: "flex", alignItems: "center", justifyContent: "space-between"
-        }}>
+        <div className="bg-gradient-to-br from-[#550000] to-[#7a0000] rounded-3xl p-6 md:p-8 mb-6 text-white shadow-xl shadow-red-900/20 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
           <div>
-            <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 4 }}>
-              <FileText size={22} />
-              <h1 style={{ margin: 0, fontSize: 20, fontWeight: 800 }}>Laporan & Rekap Tahfidz</h1>
+            <div className="flex items-center gap-3 mb-2">
+              <FileText size={24} className="text-red-100" />
+              <h1 className="text-xl md:text-2xl font-extrabold m-0">Laporan & Rekap Tahfidz</h1>
             </div>
-            <p style={{ margin: 0, fontSize: 13, opacity: 0.8 }}>
+            <p className="text-sm text-red-100/80 m-0 font-medium">
               Cetak Laporan Pekanan, Bulanan, & Semesteran Santri
             </p>
           </div>
           <button
             onClick={handlePrint}
-            style={{
-              display: "flex", alignItems: "center", gap: 8, background: "#550000", color: "white",
-              border: "none", borderRadius: 12, padding: "10px 18px", cursor: "pointer", fontWeight: 700, fontSize: 13
-            }}
+            className="flex items-center gap-2 bg-white/10 hover:bg-white/20 backdrop-blur-md text-white border border-white/20 rounded-xl px-5 py-2.5 font-bold text-sm transition-all shadow-sm w-full md:w-auto justify-center"
           >
-            <Printer size={16} /> Cetak Laporan
+            <Printer size={18} /> Cetak Laporan
           </button>
         </div>
 
         {/* Filters */}
-        <div style={{
-          background: "white", borderRadius: 18, padding: 20, marginBottom: 24,
-          border: "1.5px solid #e2e8f0", boxShadow: "0 2px 8px rgba(0,0,0,0.04)"
-        }}>
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr 1fr", gap: 12 }}>
+        <div className="bg-white/90 backdrop-blur rounded-2xl p-5 md:p-6 mb-6 border border-slate-200/60 shadow-lg shadow-slate-200/50">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-5">
             <div>
-              <label style={{ fontSize: 11, fontWeight: 700, color: "#475569", display: "block", marginBottom: 5 }}>Santri</label>
-              <select value={selectedSantriId} onChange={e => setSelectedSantriId(e.target.value)}
-                style={{ width: "100%", padding: "9px 12px", borderRadius: 10, border: "1.5px solid #e2e8f0", fontSize: 13, background: "white" }}>
+              <label className="text-xs font-bold text-slate-600 block mb-2 uppercase tracking-wide">Santri</label>
+              <select 
+                value={selectedSantriId} 
+                onChange={e => setSelectedSantriId(e.target.value)}
+                className="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:border-red-500 focus:ring-2 focus:ring-red-200 text-sm bg-white transition-all outline-none"
+              >
                 {allSantri.map(s => (
                   <option key={s.id} value={s.id}>{s.nama_lengkap}{s.kelas?.nama ? ` (${s.kelas.nama})` : ""}</option>
                 ))}
@@ -111,9 +107,12 @@ export default function LaporanHalaqohPage() {
             </div>
 
             <div>
-              <label style={{ fontSize: 11, fontWeight: 700, color: "#475569", display: "block", marginBottom: 5 }}>Jenis Laporan</label>
-              <select value={periode} onChange={e => setPeriode(e.target.value)}
-                style={{ width: "100%", padding: "9px 12px", borderRadius: 10, border: "1.5px solid #e2e8f0", fontSize: 13, background: "white" }}>
+              <label className="text-xs font-bold text-slate-600 block mb-2 uppercase tracking-wide">Jenis Laporan</label>
+              <select 
+                value={periode} 
+                onChange={e => setPeriode(e.target.value)}
+                className="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:border-red-500 focus:ring-2 focus:ring-red-200 text-sm bg-white transition-all outline-none"
+              >
                 <option value="pekanan">Laporan Pekanan</option>
                 <option value="bulanan">Laporan Bulanan</option>
                 <option value="semesteran">Laporan Semester</option>
@@ -123,16 +122,22 @@ export default function LaporanHalaqohPage() {
             </div>
 
             <div>
-              <label style={{ fontSize: 11, fontWeight: 700, color: "#475569", display: "block", marginBottom: 5 }}>Bulan & Tahun</label>
-              <div style={{ display: "flex", gap: 6 }}>
-                <select value={bulan} onChange={e => setBulan(Number(e.target.value))}
-                  style={{ width: "100%", padding: "9px 8px", borderRadius: 10, border: "1.5px solid #e2e8f0", fontSize: 12, background: "white" }}>
+              <label className="text-xs font-bold text-slate-600 block mb-2 uppercase tracking-wide">Bulan & Tahun</label>
+              <div className="flex gap-2">
+                <select 
+                  value={bulan} 
+                  onChange={e => setBulan(Number(e.target.value))}
+                  className="w-full px-3 py-2.5 rounded-xl border border-slate-300 focus:border-red-500 focus:ring-2 focus:ring-red-200 text-sm bg-white transition-all outline-none"
+                >
                   {BULAN_NAMES.map((m, i) => (
                     <option key={i} value={i + 1}>{m}</option>
                   ))}
                 </select>
-                <select value={tahun} onChange={e => setTahun(Number(e.target.value))}
-                  style={{ padding: "9px 8px", borderRadius: 10, border: "1.5px solid #e2e8f0", fontSize: 12, background: "white" }}>
+                <select 
+                  value={tahun} 
+                  onChange={e => setTahun(Number(e.target.value))}
+                  className="w-full px-3 py-2.5 rounded-xl border border-slate-300 focus:border-red-500 focus:ring-2 focus:ring-red-200 text-sm bg-white transition-all outline-none"
+                >
                   {[2025, 2026, 2027].map(y => (
                     <option key={y} value={y}>{y}</option>
                   ))}
@@ -142,9 +147,12 @@ export default function LaporanHalaqohPage() {
 
             {periode === "pekanan" && (
               <div>
-                <label style={{ fontSize: 11, fontWeight: 700, color: "#475569", display: "block", marginBottom: 5 }}>Pekan Ke-</label>
-                <select value={pekanKe} onChange={e => setPekanKe(Number(e.target.value))}
-                  style={{ width: "100%", padding: "9px 12px", borderRadius: 10, border: "1.5px solid #e2e8f0", fontSize: 13, background: "white" }}>
+                <label className="text-xs font-bold text-slate-600 block mb-2 uppercase tracking-wide">Pekan Ke-</label>
+                <select 
+                  value={pekanKe} 
+                  onChange={e => setPekanKe(Number(e.target.value))}
+                  className="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:border-red-500 focus:ring-2 focus:ring-red-200 text-sm bg-white transition-all outline-none"
+                >
                   <option value={1}>Pekan 1 (Tgl 1–7)</option>
                   <option value={2}>Pekan 2 (Tgl 8–14)</option>
                   <option value={3}>Pekan 3 (Tgl 15–21)</option>
@@ -157,76 +165,70 @@ export default function LaporanHalaqohPage() {
       </div>
 
       {/* Report Paper View (Printable) */}
-      <div style={{
-        background: "white", border: "2px solid #e2e8f0", borderRadius: 20, padding: 36,
-        boxShadow: "0 8px 30px rgba(0,0,0,0.06)", position: "relative"
-      }}>
+      <div className="bg-white border-2 border-slate-200 rounded-3xl p-6 md:p-10 shadow-xl relative w-full overflow-x-auto custom-scrollbar">
         {/* Kop Surat Header */}
-        <div style={{ textAlign: "center", borderBottom: "3px double #550000", paddingBottom: 16, marginBottom: 24 }}>
-          <div style={{ fontSize: 18, fontWeight: 900, color: "#550000", letterSpacing: "0.05em" }}>
+        <div className="text-center border-b-[3px] border-double border-[#550000] pb-5 mb-8">
+          <div className="text-lg md:text-xl font-black text-[#550000] tracking-wider">
             PESANTREN AL-ANDALUS / AL-IMAM
           </div>
-          <div style={{ fontSize: 13, fontWeight: 700, color: "#1e293b", marginTop: 2 }}>
+          <div className="text-sm md:text-base font-bold text-slate-800 mt-1">
             LAPORAN CAPAIAN TAHFIDZ & KEHADIRAN HALAQOH
           </div>
-          <div style={{ fontSize: 12, color: "#64748b", marginTop: 2 }}>
+          <div className="text-xs md:text-sm font-medium text-slate-500 mt-1">
             Periode: {periode.replace("_", " ").toUpperCase()} · {BULAN_NAMES[bulan - 1]} {tahun} {periode === "pekanan" ? `(Pekan ${pekanKe})` : ""}
           </div>
         </div>
 
         {/* Identitas Santri */}
-        <div style={{
-          background: "#f8fafc", borderRadius: 14, padding: "16px 20px", marginBottom: 24,
-          display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, fontSize: 13
-        }}>
-          <div>
-            <span style={{ color: "#64748b" }}>Nama Santri: </span>
-            <strong style={{ color: "#1e293b" }}>{selectedSantri?.nama_lengkap || "—"}</strong>
+        <div className="bg-slate-50 rounded-2xl p-4 md:p-5 mb-8 grid grid-cols-1 md:grid-cols-2 gap-3 text-sm border border-slate-100">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
+            <span className="text-slate-500">Nama Santri:</span>
+            <strong className="text-slate-800 font-bold">{selectedSantri?.nama_lengkap || "—"}</strong>
           </div>
-          <div>
-            <span style={{ color: "#64748b" }}>NIS / Kelas: </span>
-            <strong style={{ color: "#1e293b" }}>{selectedSantri?.nis || "—"} · {selectedSantri?.kelas?.nama || "—"}</strong>
+          <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
+            <span className="text-slate-500">NIS / Kelas:</span>
+            <strong className="text-slate-800 font-bold">{selectedSantri?.nis || "—"} · {selectedSantri?.kelas?.nama || "—"}</strong>
           </div>
         </div>
 
         {loading ? (
-          <div style={{ textAlign: "center", padding: 40, color: "#94a3b8" }}>Memuat data laporan...</div>
+          <div className="text-center py-12 text-slate-400 font-medium">Memuat data laporan...</div>
         ) : report ? (
-          <div>
+          <div className="flex flex-col gap-8">
             {/* Grid 4 Stats */}
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 12, marginBottom: 24 }}>
-              <div style={{ background: "#ecfdf5", border: "1.5px solid #a7f3d0", borderRadius: 14, padding: 14, textAlign: "center" }}>
-                <div style={{ fontSize: 11, fontWeight: 700, color: "#047857" }}>KEHADIRAN</div>
-                <div style={{ fontSize: 22, fontWeight: 900, color: "#065f46", marginTop: 4 }}>
-                  {summary.total_hadir || 0} <span style={{ fontSize: 12, fontWeight: 500 }}>sesi</span>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              <div className="bg-emerald-50 border-2 border-emerald-200 rounded-2xl p-5 text-center shadow-sm">
+                <div className="text-xs font-bold text-emerald-700 uppercase tracking-wide">KEHADIRAN</div>
+                <div className="text-3xl font-black text-emerald-800 mt-2">
+                  {summary.total_hadir || 0} <span className="text-sm font-semibold">sesi</span>
                 </div>
-                <div style={{ fontSize: 10, color: "#047857", marginTop: 2 }}>Sakit: {summary.total_sakit || 0} · Izin: {summary.total_izin || 0} · Alfa: {summary.total_alfa || 0}</div>
+                <div className="text-[11px] font-medium text-emerald-700 mt-2">Sakit: {summary.total_sakit || 0} · Izin: {summary.total_izin || 0} · Alfa: {summary.total_alfa || 0}</div>
               </div>
 
-              <div style={{ background: "#eff6ff", border: "1.5px solid #bfdbfe", borderRadius: 14, padding: 14, textAlign: "center" }}>
-                <div style={{ fontSize: 11, fontWeight: 700, color: "#0284c7" }}>TOTAL CAPAIAN</div>
-                <div style={{ fontSize: 22, fontWeight: 900, color: "#0369a1", marginTop: 4 }}>
-                  {summary.total_halaman || 0} <span style={{ fontSize: 12, fontWeight: 500 }}>hal.</span>
+              <div className="bg-blue-50 border-2 border-blue-200 rounded-2xl p-5 text-center shadow-sm">
+                <div className="text-xs font-bold text-blue-700 uppercase tracking-wide">TOTAL CAPAIAN</div>
+                <div className="text-3xl font-black text-blue-800 mt-2">
+                  {summary.total_halaman || 0} <span className="text-sm font-semibold">hal.</span>
                 </div>
-                <div style={{ fontSize: 10, color: "#0284c7", marginTop: 2 }}>Mushaf Madinah</div>
+                <div className="text-[11px] font-medium text-blue-700 mt-2">Mushaf Madinah</div>
               </div>
 
-              <div style={{ background: "#fffbeb", border: "1.5px solid #fde68a", borderRadius: 14, padding: 14, textAlign: "center" }}>
-                <div style={{ fontSize: 11, fontWeight: 700, color: "#d97706" }}>RATA HARIAN</div>
-                <div style={{ fontSize: 22, fontWeight: 900, color: "#b45309", marginTop: 4 }}>
+              <div className="bg-amber-50 border-2 border-amber-200 rounded-2xl p-5 text-center shadow-sm">
+                <div className="text-xs font-bold text-amber-700 uppercase tracking-wide">RATA HARIAN</div>
+                <div className="text-3xl font-black text-amber-800 mt-2">
                   {summary.avg_nilai_harian || "—"}
                 </div>
-                <div style={{ fontSize: 10, color: "#d97706", marginTop: 2 }}>Nilai Bacaan + Kelancaran</div>
+                <div className="text-[11px] font-medium text-amber-700 mt-2">Nilai Bacaan + Kelancaran</div>
               </div>
 
-              <div style={{ background: "#f5f3ff", border: "1.5px solid #ddd6fe", borderRadius: 14, padding: 14, textAlign: "center" }}>
-                <div style={{ fontSize: 11, fontWeight: 700, color: "#7c3aed" }}>NILAI UJIAN</div>
-                <div style={{ fontSize: 22, fontWeight: 900, color: "#6d28d9", marginTop: 4 }}>
+              <div className="bg-violet-50 border-2 border-violet-200 rounded-2xl p-5 text-center shadow-sm">
+                <div className="text-xs font-bold text-violet-700 uppercase tracking-wide">NILAI UJIAN</div>
+                <div className="text-3xl font-black text-violet-800 mt-2">
                   {periode === "ujian_target" ? (summary.ujian_target_nilai || "—") :
                    periode === "ujian_itqon" ? (summary.ujian_itqon_nilai || "—") :
                    (summary.ujian_pekanan_nilai || summary.ujian_bulanan_nilai || "—")}
                 </div>
-                <div style={{ fontSize: 10, color: "#7c3aed", marginTop: 2 }}>
+                <div className="text-[11px] font-medium text-violet-700 mt-2">
                   {periode === "pekanan" ? "Ujian Pekanan Sabtu" : 
                    periode === "bulanan" ? "Ujian Bulanan" : 
                    periode === "ujian_target" ? "Ujian Target Capaian" :
@@ -237,47 +239,43 @@ export default function LaporanHalaqohPage() {
             </div>
 
             {/* Nilai Akhir Raport Estimasi */}
-            <div style={{
-              background: "linear-gradient(135deg, #550000 0%, #7a0000 100%)",
-              borderRadius: 16, padding: "20px 24px", color: "white",
-              display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 24
-            }}>
-              <div>
-                <div style={{ fontSize: 12, opacity: 0.8, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.05em" }}>
+            <div className="bg-gradient-to-br from-[#550000] to-[#7a0000] rounded-2xl p-6 md:p-8 text-white shadow-lg flex flex-col sm:flex-row items-center justify-between gap-6">
+              <div className="text-center sm:text-left">
+                <div className="text-sm font-bold uppercase tracking-wider text-red-100">
                   ESTIMASI NILAI RAPORT TAHFIDZ
                 </div>
-                <div style={{ fontSize: 11, opacity: 0.7, marginTop: 2 }}>
+                <div className="text-xs font-medium text-red-200/80 mt-1.5">
                   Formula: (Rata Harian + Nilai Ujian) / 2 {summary.ujian_itqon_count > 0 ? "+ 10 Bonus Itqon" : ""}
                 </div>
               </div>
-              <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+              <div className="flex items-center gap-4">
                 {summary.ujian_itqon_count > 0 && (
-                  <span style={{ background: "#ecfdf5", color: "#059669", padding: "4px 10px", borderRadius: 8, fontSize: 11, fontWeight: 800 }}>
+                  <span className="bg-emerald-50 text-emerald-700 px-3 py-1.5 rounded-lg text-xs font-black shadow-sm">
                     +10 ITQON
                   </span>
                 )}
-                <span style={{ fontSize: 28, fontWeight: 900 }}>{summary.nilai_raport_estimasi || "—"}</span>
+                <span className="text-4xl md:text-5xl font-black drop-shadow-md">{summary.nilai_raport_estimasi || "—"}</span>
               </div>
             </div>
 
             {/* Signature Area */}
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 40, marginTop: 40, fontSize: 12, textAlign: "center" }}>
-              <div>
-                <div>Mengetahui,</div>
-                <div style={{ fontWeight: 700, color: "#1e293b", marginTop: 2 }}>Pengampu Halaqoh</div>
-                <div style={{ height: 50 }} />
-                <div style={{ fontWeight: 700 }}>( ___________________ )</div>
+            <div className="grid grid-cols-2 gap-8 mt-8 text-xs md:text-sm text-center">
+              <div className="flex flex-col items-center">
+                <div className="text-slate-600">Mengetahui,</div>
+                <div className="font-bold text-slate-800 mt-1">Pengampu Halaqoh</div>
+                <div className="h-20"></div>
+                <div className="font-bold text-slate-800">( ___________________ )</div>
               </div>
-              <div>
-                <div>Mengetahui,</div>
-                <div style={{ fontWeight: 700, color: "#1e293b", marginTop: 2 }}>Kabid Pengasuhan</div>
-                <div style={{ height: 50 }} />
-                <div style={{ fontWeight: 700 }}>( ___________________ )</div>
+              <div className="flex flex-col items-center">
+                <div className="text-slate-600">Mengetahui,</div>
+                <div className="font-bold text-slate-800 mt-1">Kabid Pengasuhan</div>
+                <div className="h-20"></div>
+                <div className="font-bold text-slate-800">( ___________________ )</div>
               </div>
             </div>
           </div>
         ) : (
-          <div style={{ textAlign: "center", padding: 40, color: "#94a3b8" }}>Pilih santri untuk melihat laporan</div>
+          <div className="text-center py-12 text-slate-400 font-medium">Pilih santri untuk melihat laporan</div>
         )}
       </div>
     </div>

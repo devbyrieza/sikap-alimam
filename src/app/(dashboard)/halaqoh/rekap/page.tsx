@@ -100,159 +100,158 @@ export default function HalaqohRekapPage() {
     new Date(s).toLocaleDateString("id-ID", { day: "2-digit", month: "short", year: "numeric" });
 
   return (
-    <div style={{ maxWidth: 1100, margin: "0 auto", padding: "24px 16px", fontFamily: "inherit" }}>
+    <div className="max-w-[1100px] mx-auto px-4 py-6 font-sans">
       {/* Back */}
-      <Link href="/halaqoh" style={{ display: "flex", alignItems: "center", gap: 6, color: "#64748b", textDecoration: "none", fontSize: 13, marginBottom: 16, fontWeight: 500 }}>
+      <Link href="/halaqoh" className="inline-flex items-center gap-1.5 text-slate-500 hover:text-slate-700 text-sm mb-4 font-medium transition-colors">
         <ArrowLeft size={14} /> Kembali ke Halaqoh
       </Link>
 
       {/* Header */}
-      <div style={{
-        background: "linear-gradient(135deg, #550000 0%, #7a0000 100%)",
-        borderRadius: 20, padding: "22px 28px", marginBottom: 24, color: "white",
-        boxShadow: "0 8px 32px rgba(85,0,0,0.3)"
-      }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-          <TrendingUp size={20} />
-          <h1 style={{ margin: 0, fontSize: 18, fontWeight: 800 }}>Rekap Catatan Halaqoh</h1>
+      <div className="bg-gradient-to-br from-[#550000] to-[#7a0000] rounded-2xl md:rounded-3xl p-6 md:p-7 mb-6 text-white shadow-xl shadow-[#550000]/30 relative overflow-hidden">
+        <div className="absolute inset-0 bg-white/5 backdrop-blur-sm"></div>
+        <div className="relative z-10">
+          <div className="flex items-center gap-2.5">
+            <TrendingUp size={24} className="text-white/90" />
+            <h1 className="m-0 text-xl md:text-2xl font-extrabold tracking-tight">Rekap Catatan Halaqoh</h1>
+          </div>
+          <p className="mt-2 text-sm text-white/80 font-medium">
+            Riwayat & statistik setoran santri
+          </p>
         </div>
-        <p style={{ margin: "6px 0 0 0", fontSize: 13, opacity: 0.75 }}>
-          Riwayat & statistik setoran santri
-        </p>
       </div>
 
       {/* Stats Cards */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 14, marginBottom: 24 }}>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
         {[
-          { label: "Total Catatan", value: filtered.length, color: "#550000", icon: <BookHeart size={18} /> },
-          { label: "Hadir", value: totalHadir, color: "#059669", icon: <Users size={18} /> },
-          { label: "Alfa", value: totalAlfa, color: "#dc2626", icon: <Users size={18} /> },
-          { label: "Total Halaman", value: totalHalaman, color: "#0284c7", icon: <CalendarDays size={18} /> },
+          { label: "Total Catatan", value: filtered.length, color: "text-[#550000]", icon: <BookHeart size={20} /> },
+          { label: "Hadir", value: totalHadir, color: "text-emerald-600", icon: <Users size={20} /> },
+          { label: "Alfa", value: totalAlfa, color: "text-red-600", icon: <Users size={20} /> },
+          { label: "Total Halaman", value: totalHalaman, color: "text-sky-600", icon: <CalendarDays size={20} /> },
         ].map((s, i) => (
-          <div key={i} style={{
-            background: "white", borderRadius: 16, padding: "16px 20px",
-            border: "1.5px solid #e2e8f0", boxShadow: "0 2px 8px rgba(0,0,0,0.04)"
-          }}>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+          <div key={i} className="rounded-2xl p-5 border border-slate-200 shadow-sm hover:shadow-md transition-shadow bg-white/90 backdrop-blur">
+            <div className="flex justify-between items-start">
               <div>
-                <div style={{ fontSize: 11, color: "#94a3b8", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.05em" }}>{s.label}</div>
-                <div style={{ fontSize: 26, fontWeight: 800, color: s.color, marginTop: 4 }}>{s.value}</div>
+                <div className="text-xs text-slate-400 font-bold uppercase tracking-wider">{s.label}</div>
+                <div className={`text-3xl font-extrabold mt-1 ${s.color}`}>{s.value}</div>
               </div>
-              <div style={{ color: s.color, opacity: 0.6 }}>{s.icon}</div>
+              <div className={`${s.color} opacity-70`}>{s.icon}</div>
             </div>
           </div>
         ))}
       </div>
 
       {/* Filters */}
-      <div style={{
-        background: "white", borderRadius: 18, padding: "18px 24px", marginBottom: 20,
-        border: "1.5px solid #e2e8f0", boxShadow: "0 2px 8px rgba(0,0,0,0.04)"
-      }}>
-        <div style={{ display: "flex", gap: 12, flexWrap: "wrap", alignItems: "end" }}>
-          <div>
-            <label style={{ fontSize: 11, fontWeight: 600, color: "#475569", display: "block", marginBottom: 5 }}>Dari Tanggal</label>
+      <div className="bg-white/90 backdrop-blur rounded-2xl md:rounded-3xl p-5 md:p-6 mb-5 border border-slate-200 shadow-sm">
+        <div className="flex flex-col md:flex-row gap-4 items-end flex-wrap">
+          <div className="w-full md:w-auto">
+            <label className="text-xs font-semibold text-slate-600 block mb-1.5">Dari Tanggal</label>
             <input type="date" value={filterDari} onChange={e => setFilterDari(e.target.value)}
-              style={{ padding: "8px 12px", borderRadius: 10, border: "1.5px solid #e2e8f0", fontSize: 13 }} />
+              className="w-full md:w-auto px-3 py-2 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#550000]/20 focus:border-[#550000] transition-all bg-white" />
           </div>
-          <div>
-            <label style={{ fontSize: 11, fontWeight: 600, color: "#475569", display: "block", marginBottom: 5 }}>Sampai Tanggal</label>
+          <div className="w-full md:w-auto">
+            <label className="text-xs font-semibold text-slate-600 block mb-1.5">Sampai Tanggal</label>
             <input type="date" value={filterSampai} onChange={e => setFilterSampai(e.target.value)}
-              style={{ padding: "8px 12px", borderRadius: 10, border: "1.5px solid #e2e8f0", fontSize: 13 }} />
+              className="w-full md:w-auto px-3 py-2 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#550000]/20 focus:border-[#550000] transition-all bg-white" />
           </div>
-          <div>
-            <label style={{ fontSize: 11, fontWeight: 600, color: "#475569", display: "block", marginBottom: 5 }}>Kelompok</label>
+          <div className="w-full md:w-auto">
+            <label className="text-xs font-semibold text-slate-600 block mb-1.5">Kelompok</label>
             <select value={filterKelompok} onChange={e => setFilterKelompok(e.target.value)}
-              style={{ padding: "8px 12px", borderRadius: 10, border: "1.5px solid #e2e8f0", fontSize: 13, background: "white", minWidth: 160 }}>
+              className="w-full md:w-auto px-3 py-2 rounded-xl border border-slate-200 text-sm bg-white md:min-w-[160px] focus:outline-none focus:ring-2 focus:ring-[#550000]/20 focus:border-[#550000] transition-all">
               <option value="">Semua Kelompok</option>
               {kelompokList.map(k => (
                 <option key={k.id} value={k.id}>{k.nama_kelompok}</option>
               ))}
             </select>
           </div>
-          <div>
-            <label style={{ fontSize: 11, fontWeight: 600, color: "#475569", display: "block", marginBottom: 5 }}>Sesi</label>
+          <div className="w-full md:w-auto">
+            <label className="text-xs font-semibold text-slate-600 block mb-1.5">Sesi</label>
             <select value={filterSesi} onChange={e => setFilterSesi(e.target.value)}
-              style={{ padding: "8px 12px", borderRadius: 10, border: "1.5px solid #e2e8f0", fontSize: 13, background: "white" }}>
+              className="w-full md:w-auto px-3 py-2 rounded-xl border border-slate-200 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#550000]/20 focus:border-[#550000] transition-all">
               <option value="">Semua Sesi</option>
               <option value="subuh">Subuh</option>
               <option value="maghrib">Maghrib</option>
               <option value="dhuha">Dhuha</option>
             </select>
           </div>
-          <div style={{ flex: 1, minWidth: 200 }}>
-            <label style={{ fontSize: 11, fontWeight: 600, color: "#475569", display: "block", marginBottom: 5 }}>Cari Santri</label>
-            <div style={{ position: "relative" }}>
-              <Search size={13} style={{ position: "absolute", left: 10, top: "50%", transform: "translateY(-50%)", color: "#94a3b8" }} />
+          <div className="w-full md:flex-1 md:min-w-[200px]">
+            <label className="text-xs font-semibold text-slate-600 block mb-1.5">Cari Santri</label>
+            <div className="relative w-full">
+              <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
               <input type="text" value={filterSearch} onChange={e => setFilterSearch(e.target.value)}
                 placeholder="Nama atau NIS..."
-                style={{ width: "100%", padding: "8px 12px 8px 30px", borderRadius: 10, border: "1.5px solid #e2e8f0", fontSize: 13, boxSizing: "border-box" }} />
+                className="w-full pl-9 pr-4 py-2 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#550000]/20 focus:border-[#550000] transition-all bg-white" />
             </div>
           </div>
         </div>
       </div>
 
       {/* Table */}
-      <div style={{ background: "white", borderRadius: 18, border: "1.5px solid #e2e8f0", overflow: "hidden", boxShadow: "0 2px 8px rgba(0,0,0,0.04)" }}>
-        <div style={{ overflowX: "auto" }}>
-          <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
+      <div className="bg-white/90 backdrop-blur rounded-2xl md:rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
+        <div className="overflow-x-auto custom-scrollbar w-full">
+          <table className="w-full text-sm border-collapse">
             <thead>
-              <tr style={{ background: "#f8fafc", borderBottom: "2px solid #e2e8f0" }}>
+              <tr className="bg-slate-50 border-b-2 border-slate-200">
                 {["Tanggal", "Santri", "Sesi", "Jenis", "Materi", "Hlm.", "Kehadiran", "Lancar", "Bacaan", "Sikap", "Akhir"].map((h, i) => (
-                  <th key={i} style={{ padding: "12px 14px", textAlign: "left", fontSize: 11, fontWeight: 700, color: "#475569", textTransform: "uppercase", letterSpacing: "0.05em", whiteSpace: "nowrap" }}>
+                  <th key={i} className="px-4 py-3.5 text-left text-xs font-bold text-slate-600 uppercase tracking-wider whitespace-nowrap">
                     {h}
                   </th>
                 ))}
               </tr>
             </thead>
-            <tbody>
+            <tbody className="divide-y divide-slate-100">
               {loading ? (
                 <tr>
-                  <td colSpan={11} style={{ textAlign: "center", padding: 40, color: "#94a3b8" }}>Memuat catatan...</td>
+                  <td colSpan={11} className="text-center py-12 text-slate-400 font-medium">Memuat catatan...</td>
                 </tr>
               ) : filtered.length === 0 ? (
                 <tr>
-                  <td colSpan={11} style={{ textAlign: "center", padding: 48, color: "#94a3b8" }}>
-                    <BookHeart size={32} style={{ marginBottom: 10, opacity: 0.3, display: "block", margin: "0 auto 10px" }} />
-                    Belum ada catatan halaqoh
+                  <td colSpan={11} className="text-center py-14 text-slate-400">
+                    <BookHeart size={36} className="mx-auto mb-3 opacity-30 text-slate-400" />
+                    <span className="font-medium text-sm">Belum ada catatan halaqoh</span>
                   </td>
                 </tr>
               ) : filtered.map((row, i) => {
                 const sesi = SESI_BADGE[row.sesi] || SESI_BADGE.subuh;
                 const had = KEHADIRAN_BADGE[row.kehadiran] || KEHADIRAN_BADGE.hadir;
-                const nilaiColor = row.nilai_akhir >= 85 ? "#059669" : row.nilai_akhir >= 70 ? "#0284c7" : row.nilai_akhir >= 55 ? "#d97706" : "#dc2626";
+                const isExcellent = row.nilai_akhir >= 85;
+                const isGood = row.nilai_akhir >= 70 && row.nilai_akhir < 85;
+                const isFair = row.nilai_akhir >= 55 && row.nilai_akhir < 70;
+                const isPoor = row.nilai_akhir < 55;
+                
+                let nilaiStyle = isExcellent ? "text-emerald-600 bg-emerald-50" : isGood ? "text-sky-600 bg-sky-50" : isFair ? "text-amber-600 bg-amber-50" : "text-red-600 bg-red-50";
+
                 return (
-                  <tr key={row.id} style={{ borderBottom: "1px solid #f1f5f9", background: i % 2 === 0 ? "white" : "#fafafa" }}>
-                    <td style={{ padding: "11px 14px", whiteSpace: "nowrap", color: "#475569" }}>{formatTanggal(row.tanggal)}</td>
-                    <td style={{ padding: "11px 14px" }}>
-                      <div style={{ fontWeight: 600, color: "#1e293b" }}>{row.santri.nama_lengkap}</div>
-                      {row.santri.nis && <div style={{ fontSize: 11, color: "#94a3b8" }}>{row.santri.nis}</div>}
+                  <tr key={row.id} className={`${i % 2 === 0 ? "bg-white" : "bg-slate-50/50"} hover:bg-slate-50 transition-colors`}>
+                    <td className="px-4 py-3.5 whitespace-nowrap text-slate-600 font-medium">{formatTanggal(row.tanggal)}</td>
+                    <td className="px-4 py-3.5 whitespace-nowrap">
+                      <div className="font-semibold text-slate-900">{row.santri.nama_lengkap}</div>
+                      {row.santri.nis && <div className="text-xs text-slate-400">{row.santri.nis}</div>}
                     </td>
-                    <td style={{ padding: "11px 14px" }}>
-                      <span style={{ background: sesi.bg, color: sesi.color, padding: "3px 8px", borderRadius: 20, fontSize: 11, fontWeight: 700 }}>
+                    <td className="px-4 py-3.5 whitespace-nowrap">
+                      <span className="px-2.5 py-1 rounded-full text-xs font-bold" style={{ backgroundColor: sesi.bg, color: sesi.color }}>
                         {sesi.label}
                       </span>
                     </td>
-                    <td style={{ padding: "11px 14px" }}>
-                      <span style={{ fontSize: 12, fontWeight: 600, color: row.jenis === "ziyadah" ? "#059669" : "#7c3aed", textTransform: "capitalize" }}>
+                    <td className="px-4 py-3.5 whitespace-nowrap">
+                      <span className={`text-xs font-bold capitalize ${row.jenis === "ziyadah" ? "text-emerald-600" : "text-violet-600"}`}>
                         {row.jenis}
                       </span>
                     </td>
-                    <td style={{ padding: "11px 14px" }}>
-                      <div style={{ fontWeight: 600, color: "#1e293b", fontSize: 12 }}>{row.surah_nama}</div>
-                      <div style={{ fontSize: 11, color: "#94a3b8" }}>Ayat {row.ayat_dari}–{row.ayat_ke}</div>
+                    <td className="px-4 py-3.5 whitespace-nowrap">
+                      <div className="font-semibold text-slate-900 text-xs">{row.surah_nama}</div>
+                      <div className="text-xs text-slate-400 mt-0.5">Ayat {row.ayat_dari}–{row.ayat_ke}</div>
                     </td>
-                    <td style={{ padding: "11px 14px", fontWeight: 700, color: "#0284c7" }}>{row.jumlah_halaman}</td>
-                    <td style={{ padding: "11px 14px" }}>
-                      <span style={{ background: had.bg, color: had.color, padding: "3px 8px", borderRadius: 20, fontSize: 11, fontWeight: 700 }}>
+                    <td className="px-4 py-3.5 whitespace-nowrap font-bold text-sky-600">{row.jumlah_halaman}</td>
+                    <td className="px-4 py-3.5 whitespace-nowrap">
+                      <span className="px-2.5 py-1 rounded-full text-xs font-bold" style={{ backgroundColor: had.bg, color: had.color }}>
                         {had.label}
                       </span>
                     </td>
-                    <td style={{ padding: "11px 14px", fontWeight: 700, color: "#475569", textAlign: "center" }}>{row.nilai_kelancaran}</td>
-                    <td style={{ padding: "11px 14px", fontWeight: 700, color: "#475569", textAlign: "center" }}>{row.nilai_bacaan}</td>
-                    <td style={{ padding: "11px 14px", fontWeight: 700, color: "#475569", textAlign: "center", fontSize: 11 }}>{row.nilai_sikap}</td>
-                    <td style={{ padding: "11px 14px", textAlign: "center" }}>
-                      <span style={{ fontWeight: 800, fontSize: 14, color: nilaiColor, background: nilaiColor + "15", padding: "4px 10px", borderRadius: 8 }}>
+                    <td className="px-4 py-3.5 whitespace-nowrap font-bold text-slate-600 text-center">{row.nilai_kelancaran}</td>
+                    <td className="px-4 py-3.5 whitespace-nowrap font-bold text-slate-600 text-center">{row.nilai_bacaan}</td>
+                    <td className="px-4 py-3.5 whitespace-nowrap font-bold text-slate-600 text-center text-xs">{row.nilai_sikap}</td>
+                    <td className="px-4 py-3.5 whitespace-nowrap text-center">
+                      <span className={`font-extrabold text-sm px-3 py-1 rounded-lg ${nilaiStyle}`}>
                         {row.nilai_akhir}
                       </span>
                     </td>
@@ -263,9 +262,9 @@ export default function HalaqohRekapPage() {
           </table>
         </div>
         {filtered.length > 0 && (
-          <div style={{ padding: "12px 20px", borderTop: "1px solid #f1f5f9", fontSize: 12, color: "#94a3b8", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-            <span>Menampilkan {filtered.length} catatan</span>
-            <span>Rata-rata nilai: <strong style={{ color: "#550000" }}>{avgNilai}</strong></span>
+          <div className="px-5 py-3.5 border-t border-slate-100 text-xs text-slate-500 flex justify-between items-center bg-slate-50/50">
+            <span className="font-medium">Menampilkan {filtered.length} catatan</span>
+            <span className="font-medium">Rata-rata nilai: <strong className="text-[#550000] font-bold text-sm ml-1">{avgNilai}</strong></span>
           </div>
         )}
       </div>

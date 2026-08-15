@@ -5,9 +5,9 @@ import { Users, Plus, Trash2, BookHeart, ArrowLeft, ChevronDown, ChevronUp, Sear
 import Link from "next/link";
 
 const SESI_INFO: Record<string, { label: string; icon: React.ReactNode; color: string; bg: string }> = {
-  subuh:   { label: "Subuh",          icon: <Sun size={15} />,   color: "#d97706", bg: "#fffbeb" },
-  maghrib: { label: "Ba'da Maghrib",  icon: <Moon size={15} />,  color: "#7c3aed", bg: "#f5f3ff" },
-  dhuha:   { label: "Dhuha",          icon: <Cloud size={15} />, color: "#0284c7", bg: "#eff6ff" },
+  subuh:   { label: "Subuh",          icon: <Sun size={15} />,   color: "text-amber-600", bg: "bg-amber-50" },
+  maghrib: { label: "Ba'da Maghrib",  icon: <Moon size={15} />,  color: "text-violet-600", bg: "bg-violet-50" },
+  dhuha:   { label: "Dhuha",          icon: <Cloud size={15} />, color: "text-sky-600", bg: "bg-sky-50" },
 };
 
 interface Santri {
@@ -68,7 +68,6 @@ export default function HalaqohKelompokPage() {
     }
   }, []);
 
-
   useEffect(() => { fetchAll(); }, [fetchAll]);
 
   const handleAddKelompok = async () => {
@@ -127,60 +126,53 @@ export default function HalaqohKelompokPage() {
   };
 
   return (
-    <div style={{ maxWidth: 860, margin: "0 auto", padding: "24px 16px", fontFamily: "inherit" }}>
+    <div className="max-w-[860px] mx-auto px-4 py-6 font-sans">
       {/* Header */}
-      <div style={{ marginBottom: 24 }}>
-        <Link href="/halaqoh" style={{ display: "flex", alignItems: "center", gap: 6, color: "#64748b", textDecoration: "none", fontSize: 13, marginBottom: 12, fontWeight: 500 }}>
+      <div className="mb-6">
+        <Link href="/halaqoh" className="inline-flex items-center gap-1.5 text-slate-500 hover:text-slate-700 text-sm font-medium mb-3 transition-colors">
           <ArrowLeft size={14} /> Kembali ke Halaqoh
         </Link>
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
-            <h1 style={{ margin: 0, fontSize: 22, fontWeight: 800, color: "#1e293b", display: "flex", alignItems: "center", gap: 10 }}>
-              <BookHeart size={22} color="#550000" /> Kelompok Halaqoh
+            <h1 className="text-2xl font-extrabold text-slate-900 flex items-center gap-2.5 m-0">
+              <BookHeart size={24} className="text-[#550000]" /> Kelompok Halaqoh
             </h1>
-            <p style={{ margin: "4px 0 0 0", fontSize: 13, color: "#64748b" }}>Kelola kelompok dan anggota halaqoh pengampu</p>
+            <p className="mt-1 text-sm text-slate-500 m-0">Kelola kelompok dan anggota halaqoh pengampu</p>
           </div>
-          <div style={{ display: "flex", gap: 10 }}>
+          <div className="flex gap-2.5">
           {canManage() && (
             <button
               onClick={() => setShowAddKelompok(!showAddKelompok)}
-              style={{
-                padding: "10px 18px", borderRadius: 12, border: "none", background: "#550000", color: "white",
-                display: "flex", alignItems: "center", gap: 8, cursor: "pointer", fontSize: 13, fontWeight: 700,
-                boxShadow: "0 4px 12px rgba(85,0,0,0.15)", transition: "all 0.2s"
-              }}
+              className="px-4 py-2.5 rounded-2xl bg-[#550000] hover:bg-[#6a0000] text-white flex items-center gap-2 text-sm font-bold shadow-lg shadow-[#550000]/20 transition-all hover:-translate-y-0.5 active:translate-y-0"
             >
               <Plus size={16} /> Buat Kelompok
             </button>
           )}
+          </div>
         </div>
-      </div>
       </div>
 
       {/* Form Tambah Kelompok */}
       {showAddKelompok && (
-        <div style={{
-          background: "#fff", border: "1.5px solid #e2e8f0", borderRadius: 18, padding: 24,
-          marginBottom: 24, boxShadow: "0 4px 20px rgba(0,0,0,0.06)"
-        }}>
-          <h3 style={{ margin: "0 0 16px 0", fontSize: 15, fontWeight: 700, color: "#1e293b" }}>Buat Kelompok Baru</h3>
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14, marginBottom: 16 }}>
+        <div className="bg-white/90 backdrop-blur border-[1.5px] border-slate-200 rounded-3xl p-6 mb-6 shadow-xl shadow-slate-200/50">
+          <h3 className="m-0 mb-4 text-base font-bold text-slate-900">Buat Kelompok Baru</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
             <div>
-              <label style={{ fontSize: 12, fontWeight: 600, color: "#475569", display: "block", marginBottom: 6 }}>Nama Kelompok *</label>
+              <label className="text-xs font-semibold text-slate-600 block mb-1.5">Nama Kelompok *</label>
               <input
                 type="text"
                 value={formKelompok.nama_kelompok}
                 onChange={e => setFormKelompok(f => ({ ...f, nama_kelompok: e.target.value }))}
                 placeholder="Cth: Kelompok A Subuh MTs"
-                style={{ width: "100%", padding: "10px 12px", borderRadius: 10, border: "1.5px solid #e2e8f0", fontSize: 13, boxSizing: "border-box" }}
+                className="w-full px-3 py-2.5 rounded-xl border-[1.5px] border-slate-200 text-sm bg-white focus:outline-none focus:border-[#550000] focus:ring-2 focus:ring-[#550000]/10 transition-all"
               />
             </div>
             <div>
-              <label style={{ fontSize: 12, fontWeight: 600, color: "#475569", display: "block", marginBottom: 6 }}>Sesi *</label>
+              <label className="text-xs font-semibold text-slate-600 block mb-1.5">Sesi *</label>
               <select
                 value={formKelompok.sesi}
                 onChange={e => setFormKelompok(f => ({ ...f, sesi: e.target.value }))}
-                style={{ width: "100%", padding: "10px 12px", borderRadius: 10, border: "1.5px solid #e2e8f0", fontSize: 13, boxSizing: "border-box", background: "white" }}
+                className="w-full px-3 py-2.5 rounded-xl border-[1.5px] border-slate-200 text-sm bg-white focus:outline-none focus:border-[#550000] focus:ring-2 focus:ring-[#550000]/10 transition-all"
               >
                 <option value="subuh">Subuh (04.50–06.10)</option>
                 <option value="maghrib">Ba'da Maghrib</option>
@@ -188,20 +180,19 @@ export default function HalaqohKelompokPage() {
               </select>
             </div>
           </div>
-          <div style={{ display: "flex", gap: 10, justifyContent: "flex-end" }}>
+          <div className="flex gap-2.5 justify-end">
             <button
               onClick={() => setShowAddKelompok(false)}
-              style={{ padding: "9px 16px", borderRadius: 10, border: "1.5px solid #e2e8f0", background: "white", cursor: "pointer", fontSize: 13, fontWeight: 600, color: "#475569" }}
+              className="px-4 py-2 rounded-xl border-[1.5px] border-slate-200 bg-white text-slate-600 text-sm font-semibold hover:bg-slate-50 transition-colors"
             >
               Batal
             </button>
             <button
               onClick={handleAddKelompok}
               disabled={saving || !formKelompok.nama_kelompok}
-              style={{
-                padding: "9px 18px", borderRadius: 10, border: "none", background: "#550000", color: "white",
-                cursor: saving ? "wait" : "pointer", fontSize: 13, fontWeight: 700, opacity: saving ? 0.7 : 1
-              }}
+              className={`px-4 py-2 rounded-xl border-none bg-[#550000] text-white text-sm font-bold shadow-md shadow-[#550000]/20 transition-all ${
+                saving || !formKelompok.nama_kelompok ? "opacity-70 cursor-wait" : "hover:bg-[#6a0000] hover:-translate-y-0.5 cursor-pointer"
+              }`}
             >
               {saving ? "Menyimpan..." : "Buat Kelompok"}
             </button>
@@ -211,69 +202,58 @@ export default function HalaqohKelompokPage() {
 
       {/* Daftar Kelompok */}
       {loading ? (
-        <div style={{ textAlign: "center", padding: 40, color: "#94a3b8" }}>Memuat data kelompok...</div>
+        <div className="text-center p-10 text-slate-400 font-medium">Memuat data kelompok...</div>
       ) : kelompokList.length === 0 ? (
-        <div style={{
-          background: "white", border: "1.5px dashed #e2e8f0", borderRadius: 18,
-          padding: 48, textAlign: "center", color: "#94a3b8"
-        }}>
-          <BookHeart size={40} style={{ marginBottom: 12, opacity: 0.4 }} />
-          <div style={{ fontSize: 15, fontWeight: 600, marginBottom: 6 }}>Belum ada kelompok halaqoh</div>
-          <div style={{ fontSize: 13 }}>Klik "Buat Kelompok" untuk memulai</div>
+        <div className="bg-white/90 backdrop-blur border-[1.5px] border-dashed border-slate-200 rounded-3xl p-12 text-center text-slate-400">
+          <BookHeart size={40} className="mb-3 opacity-40 mx-auto" />
+          <div className="text-base font-semibold mb-1.5 text-slate-500">Belum ada kelompok halaqoh</div>
+          <div className="text-sm">Klik "Buat Kelompok" untuk memulai</div>
         </div>
       ) : (
-        <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+        <div className="flex flex-col gap-4">
           {kelompokList.map(kelompok => {
             const sesiInfo = SESI_INFO[kelompok.sesi] || SESI_INFO.subuh;
             const isExpanded = expandedId === kelompok.id;
             const isAddingHere = addSantriFor === kelompok.id;
 
             return (
-              <div key={kelompok.id} style={{
-                background: "white", border: "1.5px solid #e2e8f0", borderRadius: 18,
-                overflow: "hidden", boxShadow: "0 2px 8px rgba(0,0,0,0.04)"
-              }}>
+              <div key={kelompok.id} className="bg-white/90 backdrop-blur border-[1.5px] border-slate-200 rounded-3xl overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300">
                 {/* Card Header */}
                 <div
                   onClick={() => setExpandedId(isExpanded ? null : kelompok.id)}
-                  style={{ display: "flex", alignItems: "center", padding: "16px 20px", cursor: "pointer", gap: 14 }}
+                  className="flex items-center p-4 md:px-5 md:py-4 cursor-pointer gap-3.5 group"
                 >
-                  <div style={{
-                    background: sesiInfo.bg, color: sesiInfo.color, borderRadius: 10, padding: 8,
-                    display: "flex", alignItems: "center", justifyContent: "center"
-                  }}>
+                  <div className={`${sesiInfo.bg} ${sesiInfo.color} rounded-2xl p-2.5 flex items-center justify-center shrink-0`}>
                     {sesiInfo.icon}
                   </div>
-                  <div style={{ flex: 1 }}>
-                    <div style={{ fontSize: 14, fontWeight: 700, color: "#1e293b" }}>{kelompok.nama_kelompok}</div>
-                    <div style={{ fontSize: 12, color: "#64748b", display: "flex", gap: 10, marginTop: 2 }}>
-                      <span style={{ background: sesiInfo.bg, color: sesiInfo.color, padding: "2px 8px", borderRadius: 20, fontWeight: 600 }}>
+                  <div className="flex-1 min-w-0">
+                    <div className="text-sm font-bold text-slate-900 truncate group-hover:text-[#550000] transition-colors">{kelompok.nama_kelompok}</div>
+                    <div className="text-xs text-slate-500 flex flex-wrap items-center gap-2 mt-1">
+                      <span className={`${sesiInfo.bg} ${sesiInfo.color} px-2.5 py-0.5 rounded-full font-semibold`}>
                         {sesiInfo.label}
                       </span>
-                      <span><Users size={11} style={{ display: "inline", marginRight: 3 }} />{kelompok.anggota?.length || 0} santri</span>
-                      {kelompok.kelas && <span>· {kelompok.kelas.nama}</span>}
+                      <span className="flex items-center whitespace-nowrap"><Users size={12} className="mr-1" />{kelompok.anggota?.length || 0} santri</span>
+                      {kelompok.kelas && <span className="whitespace-nowrap">· {kelompok.kelas.nama}</span>}
                     </div>
                   </div>
-                  {isExpanded ? <ChevronUp size={18} color="#94a3b8" /> : <ChevronDown size={18} color="#94a3b8" />}
+                  <div className="shrink-0">
+                    {isExpanded ? <ChevronUp size={20} className="text-slate-400" /> : <ChevronDown size={20} className="text-slate-400 group-hover:text-slate-600 transition-colors" />}
+                  </div>
                 </div>
 
                 {/* Expanded: Daftar Anggota */}
                 {isExpanded && (
-                  <div style={{ padding: "0 20px 20px 20px", borderTop: "1px solid #f1f5f9" }}>
-                    <div style={{ padding: "14px 0 10px 0", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                      <span style={{ fontSize: 12, fontWeight: 700, color: "#475569", textTransform: "uppercase", letterSpacing: "0.05em" }}>
+                  <div className="px-5 pb-5 pt-0 border-t border-slate-100 bg-slate-50/50">
+                    <div className="py-3.5 flex flex-col md:flex-row md:items-center justify-between gap-3">
+                      <span className="text-xs font-bold text-slate-600 uppercase tracking-wider">
                         Daftar Anggota
                       </span>
                       {canManage() && (
                         <button
                           onClick={() => { setAddSantriFor(isAddingHere ? null : kelompok.id); setSearchSantri(""); }}
-                          style={{
-                            display: "flex", alignItems: "center", gap: 6, background: "#f8fafc",
-                            border: "1px solid #e2e8f0", color: "#475569", padding: "6px 12px",
-                            borderRadius: 8, cursor: "pointer", fontSize: 12, fontWeight: 600
-                          }}
+                          className="inline-flex items-center justify-center gap-1.5 bg-white border border-slate-200 text-slate-600 px-3 py-1.5 rounded-xl cursor-pointer text-xs font-semibold hover:bg-slate-50 hover:border-slate-300 transition-colors w-full md:w-auto shadow-sm"
                         >
-                          {isAddingHere ? <X size={12} /> : <Plus size={12} />}
+                          {isAddingHere ? <X size={14} /> : <Plus size={14} />}
                           {isAddingHere ? "Batal" : "Tambah Santri"}
                         </button>
                       )}
@@ -281,40 +261,36 @@ export default function HalaqohKelompokPage() {
 
                     {/* Search Santri */}
                     {isAddingHere && canManage() && (
-                      <div style={{ marginBottom: 12 }}>
-                        <div style={{ position: "relative", marginBottom: 8 }}>
-                          <Search size={14} style={{ position: "absolute", left: 12, top: "50%", transform: "translateY(-50%)", color: "#94a3b8" }} />
+                      <div className="mb-4">
+                        <div className="relative mb-2">
+                          <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
                           <input
                             autoFocus
                             type="text"
                             value={searchSantri}
                             onChange={e => setSearchSantri(e.target.value)}
                             placeholder="Cari nama atau NIS santri..."
-                            style={{ width: "100%", padding: "9px 12px 9px 34px", borderRadius: 10, border: "1.5px solid #e2e8f0", fontSize: 13, boxSizing: "border-box" }}
+                            className="w-full py-2.5 pr-3 pl-9 rounded-xl border-[1.5px] border-slate-200 text-sm focus:outline-none focus:border-[#550000] focus:ring-2 focus:ring-[#550000]/10 transition-all bg-white"
                           />
                         </div>
-                        <div style={{ maxHeight: 200, overflowY: "auto", border: "1px solid #e2e8f0", borderRadius: 10 }}>
+                        <div className="max-h-[240px] overflow-y-auto custom-scrollbar border border-slate-200 rounded-xl bg-white shadow-inner">
                           {filteredSantri(kelompok.id).slice(0, 30).map(santri => (
                             <div
                               key={santri.id}
                               onClick={() => handleAddAnggota(kelompok.id, santri.id)}
-                              style={{
-                                padding: "10px 14px", cursor: "pointer", fontSize: 13,
-                                display: "flex", alignItems: "center", justifyContent: "space-between",
-                                borderBottom: "1px solid #f8fafc", transition: "background 0.1s"
-                              }}
-                              onMouseEnter={e => (e.currentTarget.style.background = "#f8fafc")}
-                              onMouseLeave={e => (e.currentTarget.style.background = "white")}
+                              className="p-3 cursor-pointer text-sm flex items-center justify-between border-b border-slate-50 hover:bg-slate-50 transition-colors group"
                             >
                               <div>
-                                <div style={{ fontWeight: 600, color: "#1e293b" }}>{santri.nama_lengkap}</div>
-                                <div style={{ fontSize: 11, color: "#94a3b8" }}>{santri.nis} · {santri.kelas?.nama}</div>
+                                <div className="font-semibold text-slate-900">{santri.nama_lengkap}</div>
+                                <div className="text-xs text-slate-500 mt-0.5">{santri.nis} · {santri.kelas?.nama}</div>
                               </div>
-                              <Plus size={14} color="#550000" />
+                              <div className="bg-slate-100 p-1.5 rounded-lg group-hover:bg-[#550000]/10 transition-colors">
+                                <Plus size={16} className="text-[#550000]" />
+                              </div>
                             </div>
                           ))}
                           {filteredSantri(kelompok.id).length === 0 && (
-                            <div style={{ padding: 16, textAlign: "center", color: "#94a3b8", fontSize: 13 }}>
+                            <div className="p-6 text-center text-slate-400 text-sm">
                               {searchSantri ? "Tidak ditemukan" : "Semua santri sudah ditambahkan"}
                             </div>
                           )}
@@ -324,27 +300,24 @@ export default function HalaqohKelompokPage() {
 
                     {/* Anggota List */}
                     {kelompok.anggota.length === 0 ? (
-                      <div style={{ fontSize: 13, color: "#94a3b8", textAlign: "center", padding: "16px 0" }}>
+                      <div className="text-sm text-slate-400 text-center py-6 bg-white rounded-2xl border border-dashed border-slate-200">
                         Belum ada anggota. Tambahkan santri ke kelompok ini.
                       </div>
                     ) : (
-                      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))", gap: 8 }}>
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2.5">
                         {kelompok.anggota.map(anggota => (
-                          <div key={anggota.id} style={{
-                            display: "flex", alignItems: "center", justifyContent: "space-between",
-                            background: "#f8fafc", borderRadius: 10, padding: "8px 12px", border: "1px solid #f1f5f9"
-                          }}>
-                            <div>
-                              <div style={{ fontSize: 12, fontWeight: 600, color: "#1e293b" }}>{anggota.santri.nama_lengkap}</div>
-                              <div style={{ fontSize: 11, color: "#94a3b8" }}>{anggota.santri.nis || "—"}</div>
+                          <div key={anggota.id} className="flex items-center justify-between bg-white rounded-2xl p-3 border border-slate-100 shadow-sm hover:shadow-md hover:border-slate-200 transition-all group">
+                            <div className="min-w-0 pr-2">
+                              <div className="text-sm font-semibold text-slate-900 truncate">{anggota.santri.nama_lengkap}</div>
+                              <div className="text-xs text-slate-500 mt-0.5">{anggota.santri.nis || "—"}</div>
                             </div>
                             {canManage() && (
                               <button
                                 onClick={() => handleRemoveAnggota(kelompok.id, anggota.santri.id)}
-                                style={{ background: "none", border: "none", cursor: "pointer", color: "#ef4444", padding: 4 }}
+                                className="shrink-0 p-1.5 text-slate-300 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all cursor-pointer opacity-100 md:opacity-0 md:group-hover:opacity-100"
                                 title="Hapus dari kelompok"
                               >
-                                <Trash2 size={13} />
+                                <Trash2 size={16} />
                               </button>
                             )}
                           </div>
