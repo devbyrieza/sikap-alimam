@@ -194,41 +194,14 @@ const tailwindClasses = Array.from(allClasses)
 console.log(`   Extracted ${tailwindClasses.length} unique Tailwind classes`);
 
 // ──────────────────────────────────────────────────────────────────────────────
-// Update globals.css
+// Update safelist.txt
 // ──────────────────────────────────────────────────────────────────────────────
-let cssContent = fs.readFileSync(GLOBALS_CSS, 'utf8');
+const SAFELIST_TXT = path.join(ROOT, 'src', 'safelist.txt');
 
-// Marker komentar untuk blok safelist yang di-generate
-const MARKER_START = '/* [AUTO-GENERATED SAFELIST START] */';
-const MARKER_END   = '/* [AUTO-GENERATED SAFELIST END] */';
+// Tulis semua kelas ke dalam safelist.txt dipisahkan oleh spasi
+const safelistContent = tailwindClasses.join(' ');
+fs.writeFileSync(SAFELIST_TXT, safelistContent, 'utf8');
 
-const newBlock = [
-  MARKER_START,
-  `/* Generated at ${new Date().toISOString()} — ${tailwindClasses.length} classes */`,
-  `@source inline("${tailwindClasses.join(' ')}");`,
-  MARKER_END,
-].join('\n');
-
-if (cssContent.includes(MARKER_START)) {
-  // Replace existing block
-  const startIdx = cssContent.indexOf(MARKER_START);
-  const endIdx   = cssContent.indexOf(MARKER_END) + MARKER_END.length;
-  cssContent = cssContent.slice(0, startIdx) + newBlock + cssContent.slice(endIdx);
-} else {
-  // Append before first @layer or at end of @source section
-  // Find the END of existing @source inline blocks
-  const lastSourceIdx = cssContent.lastIndexOf('@source inline(');
-  if (lastSourceIdx !== -1) {
-    // Find end of that line
-    const lineEnd = cssContent.indexOf('\n', lastSourceIdx);
-    cssContent = cssContent.slice(0, lineEnd + 1) + '\n' + newBlock + '\n' + cssContent.slice(lineEnd + 1);
-  } else {
-    // Append at very end
-    cssContent = cssContent + '\n\n' + newBlock + '\n';
-  }
-}
-
-fs.writeFileSync(GLOBALS_CSS, cssContent, 'utf8');
-
-console.log(`✅ [generate-safelist] globals.css updated with ${tailwindClasses.length} classes`);
+console.log(`✅ [generate-safelist] src/safelist.txt updated with ${tailwindClasses.length} classes`);
 console.log('');
+

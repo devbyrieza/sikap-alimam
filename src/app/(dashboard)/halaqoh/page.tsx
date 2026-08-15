@@ -20,7 +20,9 @@ import {
   Search,
   ChevronRight,
   BarChart3,
-  Filter
+  Filter,
+  Megaphone,
+  AlertTriangle
 } from "lucide-react";
 import Link from "next/link";
 import { useSearchParams, useRouter } from "next/navigation";
@@ -259,12 +261,18 @@ export default function HalaqohDashboardPage() {
               <CalendarDays className="w-5 h-5" />
             </div>
             <div>
-              <h3 className="text-sm font-bold text-blue-900 mb-1.5">📌 Pengumuman Resmi Pengisian Mutabaah Tahfidz</h3>
+              <h3 className="text-sm font-bold text-blue-900 mb-1.5 flex items-center gap-2">
+                <Megaphone className="w-4 h-4 text-blue-700 shrink-0" /> 
+                Pengumuman Resmi Pengisian Mutabaah Tahfidz
+              </h3>
               <p className="text-xs sm:text-sm text-blue-800 leading-relaxed">
                 Pengisian <strong className="font-bold">Catatan Mutabaah Sesi Harian (Subuh, Magrib, Dhuha)</strong> secara efektif dimulai pada <strong className="font-bold">Senin Subuh, 17 Agustus 2026</strong>.
                 <br className="hidden sm:block" />
-                <span className="mt-1 block sm:inline">
-                  ⚡ <strong className="font-bold">Penting:</strong> Input <strong className="font-bold">Ujian Pekanan</strong> yang telah lewat dan Ujian Pekanan hari <strong className="font-bold">Sabtu, 15 Agustus 2026</strong> <u className="font-bold">TETAP WAJIB UNTUK DIISI</u> oleh seluruh Pengampu.
+                <span className="mt-1 flex items-start sm:items-center gap-1.5 sm:inline-flex">
+                  <AlertTriangle className="w-4 h-4 text-amber-500 shrink-0 mt-0.5 sm:mt-0" />
+                  <span>
+                    <strong className="font-bold">Penting:</strong> Input <strong className="font-bold">Ujian Pekanan</strong> yang telah lewat dan Ujian Pekanan hari <strong className="font-bold">Sabtu, 15 Agustus 2026</strong> <u className="font-bold">TETAP WAJIB UNTUK DIISI</u> oleh seluruh Pengampu.
+                  </span>
                 </span>
               </p>
             </div>
