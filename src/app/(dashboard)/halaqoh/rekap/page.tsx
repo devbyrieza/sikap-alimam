@@ -100,41 +100,46 @@ export default function HalaqohRekapPage() {
     new Date(s).toLocaleDateString("id-ID", { day: "2-digit", month: "short", year: "numeric" });
 
   return (
-    <div className="max-w-[1100px] mx-auto px-4 py-6 font-sans">
+    <div className="w-full max-w-7xl mx-auto px-4 sm:px-8 py-8 space-y-8 font-sans">
       {/* Back */}
-      <Link href="/halaqoh" className="inline-flex items-center gap-1.5 text-slate-500 hover:text-slate-700 text-sm mb-4 font-medium transition-colors">
-        <ArrowLeft size={14} /> Kembali ke Halaqoh
+      <Link href="/halaqoh" className="inline-flex items-center gap-2 text-slate-500 hover:text-slate-800 text-sm font-semibold transition-colors">
+        <ArrowLeft size={16} /> Kembali ke Halaqoh
       </Link>
 
       {/* Header */}
-      <div className="bg-gradient-to-br from-[#550000] to-[#7a0000] rounded-2xl md:rounded-3xl p-6 md:p-7 mb-6 text-white shadow-xl shadow-[#550000]/30 relative overflow-hidden">
-        <div className="absolute inset-0 bg-white/5 backdrop-blur-sm"></div>
-        <div className="relative z-10">
-          <div className="flex items-center gap-2.5">
-            <TrendingUp size={24} className="text-white/90" />
-            <h1 className="m-0 text-xl md:text-2xl font-extrabold tracking-tight">Rekap Catatan Halaqoh</h1>
+      <div className="relative overflow-hidden bg-gradient-to-br from-[#550000] via-[#751414] to-[#3a0000] rounded-3xl p-6 sm:p-8 text-white shadow-[0_12px_40px_rgba(85,0,0,0.35)] border border-red-500/20">
+        <div className="absolute -top-12 -right-12 w-60 h-60 bg-amber-500/10 rounded-full blur-3xl"></div>
+        <div className="flex items-center gap-4 sm:gap-6 relative z-10">
+          <div className="bg-white/10 backdrop-blur-md p-4 rounded-2xl border border-white/20 shadow-inner">
+            <TrendingUp className="w-8 h-8 text-amber-300" />
           </div>
-          <p className="mt-2 text-sm text-white/80 font-medium">
-            Riwayat & statistik setoran santri
-          </p>
+          <div>
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs font-semibold text-amber-200 mb-2">
+              <span>Statistik & History</span>
+            </div>
+            <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-white m-0">Rekap Catatan Halaqoh</h1>
+            <p className="text-red-100 text-xs sm:text-sm font-medium mt-1 opacity-90">
+              Riwayat & statistik setoran santri secara komprehensif
+            </p>
+          </div>
         </div>
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
         {[
-          { label: "Total Catatan", value: filtered.length, color: "text-[#550000]", icon: <BookHeart size={20} /> },
-          { label: "Hadir", value: totalHadir, color: "text-emerald-600", icon: <Users size={20} /> },
-          { label: "Alfa", value: totalAlfa, color: "text-red-600", icon: <Users size={20} /> },
-          { label: "Total Halaman", value: totalHalaman, color: "text-sky-600", icon: <CalendarDays size={20} /> },
+          { label: "Total Catatan", value: filtered.length, color: "text-[#550000]", icon: <BookHeart size={22} /> },
+          { label: "Hadir", value: totalHadir, color: "text-emerald-600", icon: <Users size={22} /> },
+          { label: "Alfa", value: totalAlfa, color: "text-red-600", icon: <Users size={22} /> },
+          { label: "Total Halaman", value: totalHalaman, color: "text-sky-600", icon: <CalendarDays size={22} /> },
         ].map((s, i) => (
-          <div key={i} className="rounded-2xl p-5 border border-slate-200 shadow-sm hover:shadow-md transition-shadow bg-white/90 backdrop-blur">
+          <div key={i} className="rounded-3xl p-6 border border-slate-200/80 shadow-[0_8px_30px_rgba(0,0,0,0.04)] bg-white/95 backdrop-blur-xl">
             <div className="flex justify-between items-start">
               <div>
-                <div className="text-xs text-slate-400 font-bold uppercase tracking-wider">{s.label}</div>
-                <div className={`text-3xl font-extrabold mt-1 ${s.color}`}>{s.value}</div>
+                <div className="text-xs text-slate-500 font-bold uppercase tracking-wider">{s.label}</div>
+                <div className={`text-3xl font-black mt-2 ${s.color}`}>{s.value}</div>
               </div>
-              <div className={`${s.color} opacity-70`}>{s.icon}</div>
+              <div className={`p-3 rounded-2xl bg-slate-50 ${s.color}`}>{s.icon}</div>
             </div>
           </div>
         ))}

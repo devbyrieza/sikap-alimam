@@ -199,47 +199,50 @@ export default function HalaqohDashboardPage() {
   });
 
   return (
-    <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 font-sans">
+    <div className="w-full max-w-7xl mx-auto px-4 sm:px-8 py-8 space-y-8 font-sans">
       {/* Header Banner */}
-      <div className="relative overflow-hidden bg-gradient-to-br from-indigo-900 via-indigo-800 to-indigo-900 rounded-3xl p-6 sm:p-8 mb-6 sm:mb-8 text-white shadow-[0_8px_30px_rgb(49,46,129,0.3)]">
-        <div className="absolute -top-10 -right-10 w-48 h-48 sm:w-64 sm:h-64 bg-white/10 rounded-full blur-3xl"></div>
-        <div className="absolute -bottom-10 right-20 w-32 h-32 bg-indigo-500/20 rounded-full blur-2xl"></div>
+      <div className="relative overflow-hidden bg-gradient-to-br from-[#550000] via-[#751414] to-[#3a0000] rounded-3xl p-6 sm:p-8 text-white shadow-[0_12px_40px_rgba(85,0,0,0.35)] border border-red-500/20">
+        <div className="absolute -top-12 -right-12 w-60 h-60 bg-amber-500/10 rounded-full blur-3xl"></div>
+        <div className="absolute -bottom-10 right-20 w-40 h-40 bg-white/10 rounded-full blur-2xl"></div>
         
-        <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-4 sm:gap-6">
-          <div className="flex items-center gap-4 sm:gap-5">
-            <div className="bg-white/10 backdrop-blur-md p-3 sm:p-3.5 rounded-2xl border border-white/10">
-              <BookHeart className="w-7 h-7 sm:w-8 sm:h-8 text-indigo-50" />
+        <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-6">
+          <div className="flex items-center gap-4 sm:gap-6">
+            <div className="bg-white/10 backdrop-blur-md p-4 rounded-2xl border border-white/20 shadow-inner">
+              <BookHeart className="w-8 h-8 text-amber-300" />
             </div>
             <div>
-              <h1 className="text-xl sm:text-2xl font-black tracking-tight text-white mb-1">Halaqoh & Mutabaah</h1>
-              <p className="text-indigo-200 text-xs sm:text-sm font-medium">Pusat Operational & Rekapitulasi Tahfizh Al-Qur'an</p>
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs font-semibold text-amber-200 mb-2">
+                <span>Pusat Operasional Halaqoh</span>
+              </div>
+              <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-white m-0">Halaqoh & Mutabaah Tahfidz</h1>
+              <p className="text-red-100 text-xs sm:text-sm font-medium mt-1 opacity-90">Rekapitulasi Capaian & Harian Tahfizh Al-Qur'an Pesantren Al-Imam</p>
             </div>
           </div>
-          <div className="flex items-center gap-2 bg-indigo-950/40 backdrop-blur-sm px-4 py-2 rounded-xl border border-indigo-500/20 w-fit">
-            <CalendarDays className="w-4 h-4 text-indigo-300" />
-            <span className="text-xs sm:text-sm font-semibold text-indigo-100">{formatTanggal(today)}</span>
+          <div className="flex items-center gap-2.5 bg-black/25 backdrop-blur-md px-5 py-2.5 rounded-2xl border border-white/15 w-fit">
+            <CalendarDays className="w-4 h-4 text-amber-300" />
+            <span className="text-xs sm:text-sm font-bold text-white tracking-wide">{formatTanggal(today)}</span>
           </div>
         </div>
       </div>
 
       {/* ─── TAB NAVIGATION SWITCHER ────────────────────────────────────────── */}
-      <div className="flex flex-col sm:flex-row gap-2 bg-slate-100 p-1.5 rounded-2xl mb-6 sm:mb-8 border border-slate-200">
+      <div className="flex flex-col sm:flex-row gap-3 bg-slate-100/80 p-2 rounded-2xl border border-slate-200/80 shadow-inner">
         <button
           onClick={() => handleTabChange("sesi")}
-          className={`flex-1 flex items-center justify-center gap-2.5 px-4 py-3 sm:py-3.5 rounded-xl text-sm font-bold transition-all duration-200 ${
+          className={`flex-1 flex items-center justify-center gap-2.5 px-6 py-3.5 rounded-xl text-sm font-extrabold transition-all duration-200 cursor-pointer ${
             activeTab === "sesi"
-              ? "bg-white text-indigo-700 shadow-sm border border-slate-200/50"
-              : "text-slate-500 hover:text-slate-700 hover:bg-slate-200/50"
+              ? "bg-[#550000] text-white shadow-md shadow-red-950/20 border border-red-900"
+              : "text-slate-600 hover:text-slate-900 hover:bg-white/60"
           }`}
         >
           <Sun className="w-4 h-4" /> Sesi & Kelompok Pengampu
         </button>
         <button
           onClick={() => handleTabChange("mutabaah")}
-          className={`flex-1 flex items-center justify-center gap-2.5 px-4 py-3 sm:py-3.5 rounded-xl text-sm font-bold transition-all duration-200 ${
+          className={`flex-1 flex items-center justify-center gap-2.5 px-6 py-3.5 rounded-xl text-sm font-extrabold transition-all duration-200 cursor-pointer ${
             activeTab === "mutabaah"
-              ? "bg-white text-indigo-700 shadow-sm border border-slate-200/50"
-              : "text-slate-500 hover:text-slate-700 hover:bg-slate-200/50"
+              ? "bg-[#550000] text-white shadow-md shadow-red-950/20 border border-red-900"
+              : "text-slate-600 hover:text-slate-900 hover:bg-white/60"
           }`}
         >
           <BookOpen className="w-4 h-4" /> Database Santri & Rapor

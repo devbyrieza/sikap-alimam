@@ -126,28 +126,34 @@ export default function HalaqohKelompokPage() {
   };
 
   return (
-    <div className="max-w-[860px] mx-auto px-4 py-6 font-sans">
+    <div className="w-full max-w-7xl mx-auto px-4 sm:px-8 py-8 space-y-8 font-sans">
       {/* Header */}
-      <div className="mb-6">
-        <Link href="/halaqoh" className="inline-flex items-center gap-1.5 text-slate-500 hover:text-slate-700 text-sm font-medium mb-3 transition-colors">
-          <ArrowLeft size={14} /> Kembali ke Halaqoh
+      <div className="space-y-4">
+        <Link href="/halaqoh" className="inline-flex items-center gap-2 text-slate-500 hover:text-slate-800 text-sm font-semibold transition-colors">
+          <ArrowLeft size={16} /> Kembali ke Halaqoh
         </Link>
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div>
-            <h1 className="text-2xl font-extrabold text-slate-900 flex items-center gap-2.5 m-0">
-              <BookHeart size={24} className="text-[#550000]" /> Kelompok Halaqoh
-            </h1>
-            <p className="mt-1 text-sm text-slate-500 m-0">Kelola kelompok dan anggota halaqoh pengampu</p>
+        <div className="relative overflow-hidden bg-gradient-to-br from-[#550000] via-[#751414] to-[#3a0000] rounded-3xl p-6 sm:p-8 text-white shadow-[0_12px_40px_rgba(85,0,0,0.35)] border border-red-500/20 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+          <div className="flex items-center gap-4 sm:gap-6 relative z-10">
+            <div className="bg-white/10 backdrop-blur-md p-4 rounded-2xl border border-white/20 shadow-inner">
+              <Users className="w-8 h-8 text-amber-300" />
+            </div>
+            <div>
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs font-semibold text-amber-200 mb-2">
+                <span>Manajemen Halaqoh</span>
+              </div>
+              <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-white m-0">Kelompok Halaqoh</h1>
+              <p className="text-red-100 text-xs sm:text-sm font-medium mt-1 opacity-90">Kelola kelompok dan anggota halaqoh pengampu</p>
+            </div>
           </div>
-          <div className="flex gap-2.5">
-          {canManage() && (
-            <button
-              onClick={() => setShowAddKelompok(!showAddKelompok)}
-              className="px-4 py-2.5 rounded-2xl bg-[#550000] hover:bg-[#6a0000] text-white flex items-center gap-2 text-sm font-bold shadow-lg shadow-[#550000]/20 transition-all hover:-translate-y-0.5 active:translate-y-0"
-            >
-              <Plus size={16} /> Buat Kelompok
-            </button>
-          )}
+          <div className="flex gap-2.5 relative z-10 w-full md:w-auto">
+            {canManage() && (
+              <button
+                onClick={() => setShowAddKelompok(!showAddKelompok)}
+                className="px-6 py-3.5 rounded-2xl bg-amber-400 hover:bg-amber-300 text-slate-900 flex items-center justify-center gap-2.5 text-sm font-extrabold shadow-md shadow-amber-900/30 transition-all hover:shadow-lg w-full md:w-auto cursor-pointer"
+              >
+                <Plus size={18} /> Buat Kelompok Baru
+              </button>
+            )}
           </div>
         </div>
       </div>

@@ -460,28 +460,36 @@ export default function HalaqohInputPage() {
   }
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-6 font-sans">
+    <div className="w-full max-w-7xl mx-auto px-4 sm:px-8 py-8 space-y-8 font-sans">
       {/* Back */}
-      <Link href="/halaqoh" className="flex items-center gap-1.5 text-slate-500 hover:text-slate-700 transition-colors no-underline text-sm mb-4 font-medium">
-        <ArrowLeft size={14} /> Kembali ke Dashboard Halaqoh
+      <Link href="/halaqoh" className="inline-flex items-center gap-2 text-slate-500 hover:text-slate-800 text-sm font-semibold transition-colors">
+        <ArrowLeft size={16} /> Kembali ke Dashboard Halaqoh
       </Link>
 
       {/* Header */}
-      <div className="bg-gradient-to-br from-red-950 to-red-900 rounded-3xl p-6 md:p-8 mb-6 text-white shadow-xl shadow-red-950/20 backdrop-blur-md">
-        <div className="flex items-center gap-2.5 mb-1.5">
-          <BookHeart size={24} />
-          <h1 className="m-0 text-xl md:text-2xl font-extrabold tracking-tight">Input Catatan Halaqoh</h1>
-        </div>
-        <div className="text-sm opacity-90 font-medium">
-          {SESI_LABEL[sesiParam]} &middot; {formatTanggal(tanggalParam)}
-          {kelompokInfo && <span> &middot; {kelompokInfo.nama_kelompok}</span>}
+      <div className="relative overflow-hidden bg-gradient-to-br from-[#550000] via-[#751414] to-[#3a0000] rounded-3xl p-6 sm:p-8 text-white shadow-[0_12px_40px_rgba(85,0,0,0.35)] border border-red-500/20">
+        <div className="absolute -top-12 -right-12 w-60 h-60 bg-amber-500/10 rounded-full blur-3xl"></div>
+        <div className="flex items-center gap-4 sm:gap-6 relative z-10">
+          <div className="bg-white/10 backdrop-blur-md p-4 rounded-2xl border border-white/20 shadow-inner">
+            <BookHeart className="w-8 h-8 text-amber-300" />
+          </div>
+          <div>
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs font-semibold text-amber-200 mb-2">
+              <span>Pengisian Mutabaah Harian</span>
+            </div>
+            <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-white m-0">Input Catatan Halaqoh</h1>
+            <p className="text-red-100 text-xs sm:text-sm font-medium mt-1 opacity-90">
+              {SESI_LABEL[sesiParam]} &middot; {formatTanggal(tanggalParam)}
+              {kelompokInfo && <span> &middot; {kelompokInfo.nama_kelompok}</span>}
+            </p>
+          </div>
         </div>
       </div>
 
       {/* Bagian 1: Jenis + Surah */}
-      <div className="bg-white/90 backdrop-blur-md rounded-2xl md:rounded-3xl p-5 md:p-7 mb-5 border-[1.5px] border-slate-200 shadow-sm">
-        <h2 className="m-0 mb-4 text-base font-bold text-slate-800 flex items-center gap-2">
-          <BookOpen size={18} className="text-red-950" /> Bacaan Sesi Ini
+      <div className="bg-white/95 backdrop-blur-xl rounded-3xl p-6 sm:p-8 border border-slate-200/80 shadow-[0_10px_35px_rgba(85,0,0,0.06)] space-y-6">
+        <h2 className="m-0 text-lg font-black text-slate-800 flex items-center gap-2.5">
+          <BookOpen size={20} className="text-[#751414]" /> Bacaan Sesi Ini
         </h2>
 
         {/* Jenis Setoran */}

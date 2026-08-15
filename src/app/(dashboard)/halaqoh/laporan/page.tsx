@@ -60,39 +60,45 @@ export default function LaporanHalaqohPage() {
   const BULAN_NAMES = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
 
   return (
-    <div className="w-full max-w-5xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+    <div className="w-full max-w-7xl mx-auto px-4 sm:px-8 py-8 font-sans space-y-6">
       {/* Hide on print */}
-      <div className="no-print mb-6">
+      <div className="no-print space-y-6">
         {/* Back */}
         <Link 
           href="/halaqoh" 
-          className="inline-flex items-center gap-2 text-slate-500 hover:text-slate-700 text-sm font-medium mb-4 transition-colors"
+          className="inline-flex items-center gap-2 text-slate-500 hover:text-slate-800 text-sm font-semibold transition-colors"
         >
           <ArrowLeft size={16} /> Kembali ke Halaqoh
         </Link>
 
         {/* Header */}
-        <div className="bg-gradient-to-br from-[#550000] to-[#7a0000] rounded-3xl p-6 md:p-8 mb-6 text-white shadow-xl shadow-red-900/20 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-          <div>
-            <div className="flex items-center gap-3 mb-2">
-              <FileText size={24} className="text-red-100" />
-              <h1 className="text-xl md:text-2xl font-extrabold m-0">Laporan & Rekap Tahfidz</h1>
+        <div className="relative overflow-hidden bg-gradient-to-br from-[#550000] via-[#751414] to-[#3a0000] rounded-3xl p-6 sm:p-8 text-white shadow-[0_12px_40px_rgba(85,0,0,0.35)] border border-red-500/20 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+          <div className="flex items-center gap-4 sm:gap-6">
+            <div className="bg-white/10 backdrop-blur-md p-4 rounded-2xl border border-white/20 shadow-inner">
+              <FileText className="w-8 h-8 text-amber-300" />
             </div>
-            <p className="text-sm text-red-100/80 m-0 font-medium">
-              Cetak Laporan Pekanan, Bulanan, & Semesteran Santri
-            </p>
+            <div>
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs font-semibold text-amber-200 mb-2">
+                <span>Rekapitulasi & Rapor</span>
+              </div>
+              <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-white m-0">Laporan & Rekap Tahfidz</h1>
+              <p className="text-red-100 text-xs sm:text-sm font-medium mt-1 opacity-90">
+                Cetak Laporan Pekanan, Bulanan, & Semesteran Santri
+              </p>
+            </div>
           </div>
           <button
             onClick={handlePrint}
-            className="flex items-center gap-2 bg-white/10 hover:bg-white/20 backdrop-blur-md text-white border border-white/20 rounded-xl px-5 py-2.5 font-bold text-sm transition-all shadow-sm w-full md:w-auto justify-center"
+            className="flex items-center gap-2.5 bg-amber-400 hover:bg-amber-300 text-slate-900 font-extrabold rounded-2xl px-6 py-3.5 text-sm transition-all shadow-md shadow-amber-900/30 hover:shadow-lg w-full md:w-auto justify-center cursor-pointer"
           >
             <Printer size={18} /> Cetak Laporan
           </button>
         </div>
 
         {/* Filters */}
-        <div className="bg-white/90 backdrop-blur rounded-2xl p-5 md:p-6 mb-6 border border-slate-200/60 shadow-lg shadow-slate-200/50">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-5">
+        <div className="bg-white/95 backdrop-blur-xl rounded-3xl p-6 sm:p-8 border border-slate-200/80 shadow-[0_10px_35px_rgba(85,0,0,0.06)] space-y-4">
+          <div className="text-xs font-black text-slate-700 uppercase tracking-wider mb-2">Filter & Parameter Laporan</div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
             <div>
               <label className="text-xs font-bold text-slate-600 block mb-2 uppercase tracking-wide">Santri</label>
               <select 

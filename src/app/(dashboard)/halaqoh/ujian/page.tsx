@@ -32,20 +32,22 @@ function NumericScoreSelector({
 }) {
   const predikat = getPredikat(value);
   return (
-    <div>
-      <div className="flex justify-between items-center mb-1.5">
-        <div className="text-[11px] font-semibold text-slate-500">{label}</div>
-        <div className={`text-[10px] font-bold px-2 py-[3px] rounded-md border ${predikat.bg} ${predikat.color} ${predikat.border}`}>
-          {predikat.label} {value >= 85 ? "✅" : "⚠️"}
+    <div className="bg-slate-50/80 p-4 sm:p-5 rounded-2xl border border-slate-200/80 space-y-3">
+      <div className="flex justify-between items-center">
+        <div className="text-xs font-bold text-slate-700 uppercase tracking-wider">{label}</div>
+        <div className={`text-xs font-extrabold px-3 py-1 rounded-xl border flex items-center gap-1.5 ${predikat.bg} ${predikat.color} ${predikat.border}`}>
+          <span>{predikat.label}</span>
+          {value >= 85 ? <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" /> : <AlertCircle className="w-3.5 h-3.5 text-amber-600" />}
         </div>
       </div>
-      <div className="flex gap-1 flex-wrap">
+      <div className="flex gap-1.5 sm:gap-2 flex-wrap">
         {OPSI_NILAI.map(num => (
           <button
             key={num}
+            type="button"
             onClick={() => onChange(num)}
-            className={`px-2 py-1 rounded-lg text-xs font-bold cursor-pointer border-[1.5px] transition-all duration-150 ${
-              value === num ? `${predikat.bg} ${predikat.color} ${predikat.borderActive}` : "bg-white text-slate-500 border-slate-200 hover:bg-slate-50"
+            className={`px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl text-xs sm:text-sm font-black cursor-pointer border-2 transition-all duration-150 transform active:scale-95 ${
+              value === num ? `${predikat.bg} ${predikat.color} ${predikat.borderActive} shadow-sm scale-105` : "bg-white text-slate-600 border-slate-200 hover:bg-slate-100/80"
             }`}
           >
             {num}
@@ -75,14 +77,31 @@ function TextScoreSelector({
 }) {
   const predikat = getPredikat(value);
   return (
-    <div>
-      <div className="flex justify-between items-center mb-1.5">
-        <div className="text-[11px] font-semibold text-slate-500">{label}</div>
-        <div className={`text-[10px] font-bold px-2 py-[3px] rounded-md border ${predikat.bg} ${predikat.color} ${predikat.border}`}>
-          {predikat.label} {value >= 85 ? "✅" : "⚠️"}
+    <div className="bg-slate-50/80 p-4 sm:p-5 rounded-2xl border border-slate-200/80 space-y-3">
+      <div className="flex justify-between items-center">
+        <div className="text-xs font-bold text-slate-700 uppercase tracking-wider">{label}</div>
+        <div className={`text-xs font-extrabold px-3 py-1 rounded-xl border flex items-center gap-1.5 ${predikat.bg} ${predikat.color} ${predikat.border}`}>
+          <span>{predikat.label}</span>
+          {value >= 85 ? <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" /> : <AlertCircle className="w-3.5 h-3.5 text-amber-600" />}
         </div>
       </div>
-      <div className="flex gap-1 flex-wrap">
+      <div className="flex gap-1.5 sm:gap-2 flex-wrap">
+        {OPSI_SIKAP.map(item => (
+          <button
+            key={item.value}
+            type="button"
+            onClick={() => onChange(item.value)}
+            className={`px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl text-xs sm:text-sm font-black cursor-pointer border-2 transition-all duration-150 transform active:scale-95 ${
+              value === item.value ? `${predikat.bg} ${predikat.color} ${predikat.borderActive} shadow-sm scale-105` : "bg-white text-slate-600 border-slate-200 hover:bg-slate-100/80"
+            }`}
+          >
+            {item.label}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
         {OPSI_SIKAP.map(opsi => (
           <button
             key={opsi.value}
@@ -446,43 +465,51 @@ export default function UjianTahfidzPage() {
     new Date(s).toLocaleDateString("id-ID", { day: "numeric", month: "short", year: "numeric" });
 
   return (
-    <div className="max-w-[960px] mx-auto px-4 py-6 font-sans">
-      <Link href="/halaqoh" className="flex items-center gap-1.5 text-slate-500 hover:text-slate-700 no-underline text-[13px] mb-4 font-medium transition-colors">
-        <ArrowLeft size={14} /> Kembali ke Halaqoh
+    <div className="w-full max-w-7xl mx-auto px-4 sm:px-8 py-8 space-y-8 font-sans">
+      <Link href="/halaqoh" className="inline-flex items-center gap-2 text-slate-500 hover:text-slate-800 text-sm font-semibold transition-colors">
+        <ArrowLeft size={16} /> Kembali ke Halaqoh
       </Link>
 
-      <div className="bg-gradient-to-br from-red-900 to-red-950 rounded-3xl p-6 mb-6 text-white shadow-[0_8px_32px_rgba(85,0,0,0.35)]">
-        <div className="flex items-center gap-2.5 mb-1.5">
-          <Award size={22} className="text-red-200" />
-          <h1 className="m-0 text-xl font-extrabold">Ujian Tahfidz & Itqon</h1>
+      <div className="relative overflow-hidden bg-gradient-to-br from-[#550000] via-[#751414] to-[#3a0000] rounded-3xl p-6 sm:p-8 text-white shadow-[0_12px_40px_rgba(85,0,0,0.35)] border border-red-500/20">
+        <div className="absolute -top-12 -right-12 w-60 h-60 bg-amber-500/10 rounded-full blur-3xl"></div>
+        <div className="flex items-center gap-4 sm:gap-6 relative z-10">
+          <div className="bg-white/10 backdrop-blur-md p-4 rounded-2xl border border-white/20 shadow-inner">
+            <Award className="w-8 h-8 text-amber-300" />
+          </div>
+          <div>
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs font-semibold text-amber-200 mb-2">
+              <span>Pengujian Tahfidz Santri</span>
+            </div>
+            <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-white m-0">Ujian Tahfidz & Itqon</h1>
+            <p className="text-red-100 text-xs sm:text-sm font-medium mt-1 opacity-90">
+              Penilaian Ujian Pekanan, Bulanan, Target, & Ujian Itqon (Bonus +10)
+            </p>
+          </div>
         </div>
-        <p className="m-0 text-[13px] text-red-100 opacity-90">
-          Penilaian Ujian Pekanan, Bulanan, Target, & Ujian Itqon (Bonus +10)
-        </p>
       </div>
 
-      <div className="bg-white/90 backdrop-blur rounded-3xl p-6 mb-6 border-[1.5px] border-slate-200 shadow-xl">
-        <h2 className="m-0 mb-5 text-base font-bold text-slate-800 flex items-center gap-2">
-          <Award size={18} className="text-red-900" /> Form Penginputan Ujian
+      <div className="bg-white/95 backdrop-blur-xl rounded-3xl p-6 sm:p-8 border border-slate-200/80 shadow-[0_10px_35px_rgba(85,0,0,0.06)] space-y-6">
+        <h2 className="m-0 text-lg font-black text-slate-800 flex items-center gap-2.5">
+          <Award size={20} className="text-[#751414]" /> Form Penginputan Ujian
         </h2>
 
-        <div className="mb-5">
-          <label className="text-xs font-bold text-slate-600 block mb-2.5 uppercase tracking-wider">
+        <div className="space-y-3">
+          <label className="text-xs font-black text-slate-600 block uppercase tracking-wider">
             1. Pilih Jenis Ujian
           </label>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2.5">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             {JENIS_UJIAN_OPT.map(j => (
               <div
                 key={j.val}
                 onClick={() => setJenisUjian(j.val)}
-                className={`px-4 py-3.5 rounded-2xl cursor-pointer border-[1.5px] transition-all duration-150 ${
-                  jenisUjian === j.val ? `${j.borderActive} ${j.bg} shadow-sm` : 'border-slate-200 bg-white hover:border-slate-300'
+                className={`p-4 sm:p-5 rounded-2xl cursor-pointer border-2 transition-all duration-200 ${
+                  jenisUjian === j.val ? `${j.borderActive} ${j.bg} shadow-md scale-[1.02]` : 'border-slate-200 bg-white hover:border-slate-300 hover:shadow-sm'
                 }`}
               >
-                <div className={`flex items-center gap-2 font-bold text-[13px] mb-1 ${j.color}`}>
+                <div className={`flex items-center gap-2.5 font-extrabold text-sm mb-1.5 ${j.color}`}>
                   {j.icon} {j.label}
                 </div>
-                <div className="text-[11px] text-slate-500">Cakupan: {j.target}</div>
+                <div className="text-xs text-slate-500 font-medium">Cakupan: {j.target}</div>
               </div>
             ))}
           </div>
