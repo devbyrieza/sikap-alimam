@@ -282,16 +282,18 @@ export default function HalaqohKelompokPage() {
                       <div style={{ fontWeight: 800, color: "#550000", fontSize: 13, textTransform: "uppercase", letterSpacing: "0.04em" }}>
                         Daftar Santri Anggota ({k.anggota.length})
                       </div>
-                      <button
-                        onClick={() => setAddSantriFor(isAdding ? null : k.id)}
-                        style={{ display: "inline-flex", alignItems: "center", gap: 6, background: "#550000", color: "white", padding: "7px 14px", borderRadius: 10, fontSize: 12, fontWeight: 700, border: "none", cursor: "pointer" }}
-                      >
-                        <Plus size={14} /> Tambah Santri
-                      </button>
+                      {canManage() && (
+                        <button
+                          onClick={() => setAddSantriFor(isAdding ? null : k.id)}
+                          style={{ display: "inline-flex", alignItems: "center", gap: 6, background: "#550000", color: "white", padding: "7px 14px", borderRadius: 10, fontSize: 12, fontWeight: 700, border: "none", cursor: "pointer" }}
+                        >
+                          <Plus size={14} /> Tambah Santri
+                        </button>
+                      )}
                     </div>
 
                     {/* Add Santri Form */}
-                    {isAdding && (
+                    {canManage() && isAdding && (
                       <div style={{ background: "#f8fafc", borderRadius: 16, padding: 16, border: "1.5px solid #e2e8f0", marginBottom: 16 }}>
                         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
                           <span style={{ fontSize: 12, fontWeight: 800, color: "#1e293b" }}>PILIH SANTRI UNTUK DITAMBAHKAN</span>
@@ -353,13 +355,15 @@ export default function HalaqohKelompokPage() {
                                 </div>
                               </div>
                             </div>
-                            <button
-                              onClick={() => handleRemoveSantri(k.id, a.santri?.id)}
-                              title="Lepas dari kelompok"
-                              style={{ background: "#fef2f2", color: "#dc2626", border: "1px solid #fecaca", borderRadius: 8, width: 28, height: 28, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}
-                            >
-                              <X size={14} />
-                            </button>
+                            {canManage() && (
+                              <button
+                                onClick={() => handleRemoveSantri(k.id, a.santri?.id)}
+                                title="Lepas dari kelompok"
+                                style={{ background: "#fef2f2", color: "#dc2626", border: "1px solid #fecaca", borderRadius: 8, width: 28, height: 28, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}
+                              >
+                                <X size={14} />
+                              </button>
+                            )}
                           </div>
                         ))}
                       </div>

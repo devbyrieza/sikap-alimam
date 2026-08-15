@@ -12,6 +12,12 @@ export async function POST(
   const session = await getSession();
   if (!session) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
+  const role = (session.role || "").toLowerCase();
+  const isAllowed = role.includes("admin_super") || role.includes("kabid_pengasuhan");
+  if (!isAllowed) {
+    return NextResponse.json({ error: "Akses ditolak. Hanya Admin Super dan Kabid Pengasuhan yang berhak mengelola anggota kelompok." }, { status: 403 });
+  }
+
   try {
     const body = await request.json();
     const { santri_id } = body;
@@ -44,6 +50,12 @@ export async function DELETE(
   const params = await props.params;
   const session = await getSession();
   if (!session) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+
+  const role = (session.role || "").toLowerCase();
+  const isAllowed = role.includes("admin_super") || role.includes("kabid_pengasuhan");
+  if (!isAllowed) {
+    return NextResponse.json({ error: "Akses ditolak. Hanya Admin Super dan Kabid Pengasuhan yang berhak mengelola anggota kelompok." }, { status: 403 });
+  }
 
   const { searchParams } = new URL(request.url);
   const santri_id = searchParams.get('santri_id');
