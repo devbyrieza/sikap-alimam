@@ -69,7 +69,17 @@ const NAV: NavItem[] = [
     href: "/halaqoh",
     label: "Halaqoh & Mutabaah",
     icon: <BookHeart size={18} />,
-    roles: ["musyrif", "MUSYRIF", "pengampu", "PENGAMPU", "wali_kelas", "WALI_KELAS", "kabid_pengasuhan", "KABID_PENGASUHAN", "kabid_asrama", "KABID_ASRAMA", "admin_super", "ADMIN_SUPER", "mudir", "MUDIR"],
+    roles: [
+      "musyrif", "MUSYRIF",
+      "pengampu", "PENGAMPU",
+      "guru", "GURU",
+      "wali_kelas", "WALI_KELAS",
+      "kabid_pengasuhan", "KABID_PENGASUHAN",
+      "kabid_asrama", "KABID_ASRAMA",
+      "kabid_kurikulum", "KABID_KURIKULUM",
+      "admin_super", "ADMIN_SUPER",
+      "mudir", "MUDIR",
+    ],
   },
   {
     href: "/presensi/asatidz",
