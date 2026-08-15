@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useMemo, useCallback, useRef } from "react";
-import { BookHeart, ArrowLeft, Search, CalendarDays, Award, CheckCircle2, AlertCircle, Save, Star, ShieldCheck, Clock, ChevronDown, Target, BookOpen, Map, XCircle, Check, Zap, Globe, UserCircle2 } from "lucide-react";
+import { BookHeart, ArrowLeft, Search, CalendarDays, Award, CheckCircle2, AlertCircle, Save, Star, ShieldCheck, Clock, ChevronDown, Target, BookOpen, Map as MapIcon, XCircle, Check, Zap, Globe, UserCircle2 } from "lucide-react";
 import Link from "next/link";
 
 const JENIS_UJIAN_OPT = [
@@ -342,7 +342,7 @@ export default function UjianTahfidzPage() {
       const uData = await uRes.json();
       const qData = await qRes.json();
       
-      const uniqueSantri = new Map();
+      const uniqueSantri = new Map<string, any>();
       if (Array.isArray(kData)) {
         kData.forEach((k: any) => {
           k.anggota?.forEach((a: any) => {
