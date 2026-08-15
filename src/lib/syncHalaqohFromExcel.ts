@@ -205,6 +205,14 @@ export async function syncHalaqohFromExcel() {
         });
         totalGroupsCreated++;
 
+        const isMTsGroup = groupDef.namaKelompok.includes("(MTs)");
+        const isILGroup = groupDef.namaKelompok.includes("(IL)");
+        const targetKelas = isMTsGroup
+          ? kelasList.find((k) => k.nama.toLowerCase().includes("mts") || k.jenjang === "MTS")
+          : isILGroup
+          ? kelasList.find((k) => k.nama.toLowerCase().includes("il") || k.jenjang === "IL")
+          : null;
+
         for (const santriName of groupDef.santriNames) {
           let s = findSantri(santriName);
           if (!s) {
@@ -214,13 +222,23 @@ export async function syncHalaqohFromExcel() {
                   nama_lengkap: santriName,
                   nis: `SAN-${Math.floor(100000 + Math.random() * 900000)}`,
                   jenis_kelamin: "L",
-                  kelas_id: kelasList[0]?.id || "",
+                  kelas_id: targetKelas?.id || kelasList[0]?.id || "",
                   is_active: true,
                 },
               });
               santriList.push(s);
             } catch (e) {
               continue;
+            }
+          } else if (targetKelas && s.kelas_id !== targetKelas.id) {
+            try {
+              await prisma.santriAktif.update({
+                where: { id: s.id },
+                data: { kelas_id: targetKelas.id },
+              });
+              s.kelas_id = targetKelas.id;
+            } catch (e) {
+              /* ignore */
             }
           }
 
