@@ -3,6 +3,8 @@
 
 @import "tailwindcss";
 @source "../**/*";
+@source "../app/(dashboard)/**/*";
+@source "../app/\\(dashboard\\)/**/*";
 
 .custom-scrollbar {
   scrollbar-width: thin;
