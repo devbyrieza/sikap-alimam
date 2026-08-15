@@ -194,14 +194,16 @@ const tailwindClasses = Array.from(allClasses)
 console.log(`   Extracted ${tailwindClasses.length} unique Tailwind classes`);
 
 // ──────────────────────────────────────────────────────────────────────────────
-// Update safelist.txt
+// Update safelist.tsx
 // ──────────────────────────────────────────────────────────────────────────────
-const SAFELIST_TXT = path.join(ROOT, 'src', 'safelist.txt');
+const SAFELIST_TSX = path.join(ROOT, 'src', 'safelist.tsx');
 
-// Tulis semua kelas ke dalam safelist.txt dipisahkan oleh spasi
-const safelistContent = tailwindClasses.join(' ');
-fs.writeFileSync(SAFELIST_TXT, safelistContent, 'utf8');
+// Tulis semua kelas ke dalam safelist.tsx sebagai string kosong agar discan oleh Tailwind v4
+const safelistContent = `// AUTO-GENERATED SAFELIST - DO NOT EDIT MANUALLY
+export const SAFELIST = "${tailwindClasses.join(' ')}";
+`;
+fs.writeFileSync(SAFELIST_TSX, safelistContent, 'utf8');
 
-console.log(`✅ [generate-safelist] src/safelist.txt updated with ${tailwindClasses.length} classes`);
+console.log(`✅ [generate-safelist] src/safelist.tsx updated with ${tailwindClasses.length} classes`);
 console.log('');
 

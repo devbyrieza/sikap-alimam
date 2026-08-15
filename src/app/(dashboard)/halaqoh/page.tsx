@@ -22,7 +22,9 @@ import {
   BarChart3,
   Filter,
   Megaphone,
-  AlertTriangle
+  AlertTriangle,
+  Globe,
+  UserCircle2
 } from "lucide-react";
 import Link from "next/link";
 import { useSearchParams, useRouter } from "next/navigation";
@@ -428,12 +430,12 @@ export default function HalaqohDashboardPage() {
                   onChange={(e) => setScopeFilter(e.target.value as "mine" | "all")}
                   className="px-3.5 py-2.5 rounded-xl border border-[#ebdcc3] text-sm font-bold text-[#550000] bg-[#fdf8f0] focus:outline-none cursor-pointer"
                 >
-                  <option value="all">🌐 Semua Kelompok ({santriList.length} Santri)</option>
-                  <option value="mine">🟢 Kelompok Saya</option>
+                  <option value="all">Semua Kelompok ({santriList.length} Santri)</option>
+                  <option value="mine">Kelompok Saya</option>
                 </select>
               ) : (
                 <div className="flex items-center gap-2 bg-emerald-50 border border-emerald-200 rounded-xl px-3.5 py-2">
-                  <span className="text-sm">🟢</span>
+                  <UserCircle2 className="w-4 h-4 text-emerald-600" />
                   <span className="text-xs sm:text-sm font-bold text-emerald-700 whitespace-nowrap">
                     Kelompok Saya — {filteredSantri.length} Santri
                   </span>

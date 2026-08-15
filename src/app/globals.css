@@ -10,7 +10,7 @@
    Dibutuhkan karena folder (dashboard) mengandung tanda kurung yang
    menyebabkan glob scanner gagal di Linux/Docker.
    ═══════════════════════════════════════════════════════════════════════════ */
-@source "../safelist.txt";
+@source "../safelist.tsx";
 
 
 .custom-scrollbar {

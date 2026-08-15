@@ -1,6 +1,6 @@
 import { getSession } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { BookMarked, ClipboardCheck, UserCheck, BarChart3, TrendingUp, Calendar, Clock, Hand, Zap, BookOpen } from "lucide-react";
+import { BookMarked, ClipboardCheck, UserCheck, BarChart3, TrendingUp, Calendar, Clock, Hand, Zap, BookOpen, AlertTriangle, ArrowRight } from "lucide-react";
 import Link from "next/link";
 import RealtimeClock from "@/components/RealtimeClock";
 import { syncScheduleFromPDF } from "@/lib/syncScheduleFromPDF";
@@ -149,14 +149,16 @@ export default async function DashboardPage() {
     <div className="page-container">
       
       {isDefaultPassword && (
-        <div style={{ background: "#fef3c7", borderLeft: "4px solid #f59e0b", padding: "12px 16px", marginBottom: "20px", borderRadius: "8px", display: "flex", justifyContent: "space-between", alignItems: "center", gap: "16px", flexWrap: "wrap" }}>
-          <div>
-            <h3 style={{ margin: 0, color: "#92400e", fontSize: "14px", fontWeight: "bold" }}>⚠️ Peringatan Keamanan</h3>
-            <p style={{ margin: "4px 0 0 0", color: "#b45309", fontSize: "13px" }}>Anda masih menggunakan kata sandi default. Segera ganti kata sandi Anda demi keamanan akun.</p>
+        <div style={{ background: "#fef3c7", border: "1px solid #fde68a", padding: "12px 16px", borderRadius: "12px", marginBottom: "20px" }}>
+          <h3 style={{ margin: 0, color: "#92400e", fontSize: "14px", fontWeight: "bold", display: "flex", alignItems: "center", gap: "6px" }}>
+            <AlertTriangle size={16} /> Peringatan Keamanan
+          </h3>
+          <p style={{ margin: "4px 0 0", color: "#92400e", fontSize: "13px" }}>Anda masih menggunakan kata sandi default. Segera ganti kata sandi Anda demi keamanan akun.</p>
+          <div style={{ marginTop: "12px" }}>
+            <Link href="/profile" style={{ background: "#f59e0b", color: "white", padding: "8px 16px", borderRadius: "6px", fontSize: "12px", fontWeight: "bold", textDecoration: "none" }}>
+              Ganti Password
+            </Link>
           </div>
-          <Link href="/profile" style={{ background: "#f59e0b", color: "white", padding: "8px 16px", borderRadius: "6px", fontSize: "12px", fontWeight: "bold", textDecoration: "none" }}>
-            Ganti Password
-          </Link>
         </div>
       )}
 
@@ -323,7 +325,7 @@ export default async function DashboardPage() {
             <h3 style={{ margin:0, fontSize:16, fontWeight:700, color:"#1a1a1a", display:"flex", alignItems:"center", gap:8 }}>
               <BookOpen size={18} color="#550000" /> Jurnal Terbaru
             </h3>
-            <Link href="/jurnal" style={{ fontSize:12, fontWeight:700, color:"#550000", textDecoration:"none" }}>Lihat Semua →</Link>
+            <Link href="/jurnal" style={{ fontSize:12, fontWeight:700, color:"#550000", textDecoration:"none", display: "flex", alignItems: "center", gap: "4px" }}>Lihat Semua <ArrowRight size={14} /></Link>
           </div>
           
           {jurnalTerbaru.length === 0 ? (
@@ -355,7 +357,7 @@ export default async function DashboardPage() {
             <h3 style={{ margin:0, fontSize:16, fontWeight:700, color:"#1a1a1a", display:"flex", alignItems:"center", gap:8 }}>
               <BarChart3 size={18} color="#b89758" /> Presensi Santri (Hari Ini)
             </h3>
-            <Link href="/presensi/santri" style={{ fontSize:12, fontWeight:700, color:"#550000", textDecoration:"none" }}>Kelola →</Link>
+            <Link href="/presensi/santri" style={{ fontSize:12, fontWeight:700, color:"#550000", textDecoration:"none", display: "flex", alignItems: "center", gap: "4px" }}>Kelola <ArrowRight size={14} /></Link>
           </div>
 
           {totalPresensiSantri === 0 ? (
@@ -411,7 +413,7 @@ export default async function DashboardPage() {
             <h3 style={{ margin:0, fontSize:16, fontWeight:700, color:"#1a1a1a", display:"flex", alignItems:"center", gap:8 }}>
               <Clock size={18} color="#550000" /> Log Kehadiran Guru
             </h3>
-            <Link href="/presensi/asatidz" style={{ fontSize:12, fontWeight:700, color:"#550000", textDecoration:"none" }}>Lihat Semua →</Link>
+            <Link href="/presensi/asatidz" style={{ fontSize:12, fontWeight:700, color:"#550000", textDecoration:"none", display: "flex", alignItems: "center", gap: "4px" }}>Lihat Semua <ArrowRight size={14} /></Link>
           </div>
 
           {absenHariIni.length === 0 ? (

@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useMemo, useCallback, useRef } from "react";
-import { BookHeart, ArrowLeft, Search, CalendarDays, Award, CheckCircle2, AlertCircle, Save, Star, ShieldCheck, Clock, ChevronDown } from "lucide-react";
+import { BookHeart, ArrowLeft, Search, CalendarDays, Award, CheckCircle2, AlertCircle, Save, Star, ShieldCheck, Clock, ChevronDown, Target, BookOpen, Map, XCircle, Check, Zap, Globe, UserCircle2 } from "lucide-react";
 import Link from "next/link";
 
 const JENIS_UJIAN_OPT = [
@@ -277,7 +277,7 @@ function renderTargetBanner(santri: Santri) {
         </div>
         <div>
           <div className="font-extrabold text-[13px] mb-1">
-            🎯 Target Hafalan Lulus Kelas {santri.kelas.nama}
+            <Target className="w-4 h-4 inline mr-1" /> Target Hafalan Lulus Kelas {santri.kelas.nama}
           </div>
           <div className="text-[13px] leading-relaxed">
             {targetNode}

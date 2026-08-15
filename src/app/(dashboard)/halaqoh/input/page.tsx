@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useCallback, useRef } from "react";
-import { BookHeart, ArrowLeft, Search, ChevronDown, BookOpen, Users, Save, CheckCircle2, AlertCircle, RotateCcw, Award } from "lucide-react";
+import { BookHeart, ArrowLeft, Search, ChevronDown, BookOpen, Users, Save, CheckCircle2, AlertCircle, RotateCcw, Award, AlertTriangle } from "lucide-react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 
@@ -170,10 +170,10 @@ function NumericScoreSelector({
       <div className="flex justify-between items-center mb-1.5">
         <div className="text-[11px] font-semibold text-slate-500">{label}</div>
         <div 
-          className="text-[10px] font-bold px-2 py-0.5 rounded-md border"
+          className="text-[10px] font-bold px-2 py-0.5 rounded-md border flex items-center gap-1"
           style={{ background: predikat.bg, color: predikat.color, borderColor: predikat.border }}
         >
-          {predikat.label} {value >= 85 ? "✅" : "⚠️"}
+          {predikat.label} {value >= 85 ? <CheckCircle2 size={12} /> : <AlertTriangle size={12} />}
         </div>
       </div>
       <div className="flex gap-1 flex-wrap">
@@ -219,10 +219,10 @@ function TextScoreSelector({
       <div className="flex justify-between items-center mb-1.5">
         <div className="text-[11px] font-semibold text-slate-500">{label}</div>
         <div 
-          className="text-[10px] font-bold px-2 py-0.5 rounded-md border"
+          className="text-[10px] font-bold px-2 py-0.5 rounded-md border flex items-center gap-1"
           style={{ background: predikat.bg, color: predikat.color, borderColor: predikat.border }}
         >
-          {predikat.label} {value >= 85 ? "✅" : "⚠️"}
+          {predikat.label} {value >= 85 ? <CheckCircle2 size={12} /> : <AlertTriangle size={12} />}
         </div>
       </div>
       <div className="flex gap-1 flex-wrap">
