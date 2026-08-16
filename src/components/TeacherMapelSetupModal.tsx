@@ -113,40 +113,57 @@ export default function TeacherMapelSetupModal({
     foto_url: initialPegawai?.foto_url || null as string | null,
   });
 
+  const userDraftKey = useMemo(() => {
+    const identifier = initialPegawai?.id || initialPegawai?.email || userName || "user";
+    return `sikap_civitas_profile_draft_${identifier.replace(/[^a-zA-Z0-9]/g, "_")}`;
+  }, [initialPegawai, userName]);
+
   const [customKategoriInput, setCustomKategoriInput] = useState("");
 
-  // Draft restore (Mandatory UX Rule)
+  // Draft restore (Mandatory UX Rule with User Isolation Safety)
   useEffect(() => {
     if (needsSetup) {
       setIsOpen(true);
       setIsForced(true);
       try {
-        const saved = localStorage.getItem(DRAFT_KEY);
+        // Clear old legacy shared draft key to prevent cross-account leaks
+        localStorage.removeItem(DRAFT_KEY);
+
+        const saved = localStorage.getItem(userDraftKey);
         if (saved) {
           const parsed = JSON.parse(saved);
           if (parsed && typeof parsed === "object") {
-            setFormData(prev => {
-              const merged = { ...prev };
-              // Hanya ambil draft jika nilainya ada (truthy), agar draft kosong tidak menimpa data asli dari database
-              for (const key in parsed) {
-                if (parsed[key] !== "" && parsed[key] !== null && parsed[key] !== undefined) {
-                  merged[key as keyof typeof prev] = parsed[key];
+            const draftName = (parsed.nama_lengkap || "").toLowerCase().trim();
+            const currentName = (initialPegawai?.nama_lengkap || userName || "").toLowerCase().trim();
+
+            // Validate that draft name matches current user before applying
+            const isMatch = !draftName || !currentName || draftName.includes(currentName) || currentName.includes(draftName);
+            if (isMatch) {
+              setFormData(prev => {
+                const merged = { ...prev };
+                for (const key in parsed) {
+                  if (parsed[key] !== "" && parsed[key] !== null && parsed[key] !== undefined) {
+                    merged[key as keyof typeof prev] = parsed[key];
+                  }
                 }
-              }
-              return merged;
-            });
+                return merged;
+              });
+            } else {
+              // Draft belongs to a different user, purge it!
+              localStorage.removeItem(userDraftKey);
+            }
           }
         }
       } catch { /* ignore */ }
     }
-  }, [needsSetup]);
+  }, [needsSetup, initialPegawai, userName, userDraftKey]);
 
   // Draft autosave (Mandatory UX Rule)
   useEffect(() => {
     if (isOpen) {
-      try { localStorage.setItem(DRAFT_KEY, JSON.stringify(formData)); } catch { /* ignore */ }
+      try { localStorage.setItem(userDraftKey, JSON.stringify(formData)); } catch { /* ignore */ }
     }
-  }, [formData, isOpen]);
+  }, [formData, isOpen, userDraftKey]);
 
   // Open via event
   useEffect(() => {
@@ -208,10 +225,12 @@ export default function TeacherMapelSetupModal({
     } finally { setUploadingFoto(false); }
   };
 
-  // Logout: save draft first so data is preserved when user returns
+  // Logout handler
   const handleLogout = async () => {
-    // Save current draft explicitly so it persists across sessions
-    try { localStorage.setItem(DRAFT_KEY, JSON.stringify(formData)); } catch { /* ignore */ }
+    try {
+      localStorage.removeItem(DRAFT_KEY);
+      localStorage.removeItem(userDraftKey);
+    } catch { /* ignore */ }
 
     setIsLoggingOut(true);
     try {
@@ -241,7 +260,10 @@ export default function TeacherMapelSetupModal({
       });
       const json = await res.json();
       if (res.ok) {
-        try { localStorage.removeItem(DRAFT_KEY); } catch { /* ignore */ }
+        try {
+          localStorage.removeItem(DRAFT_KEY);
+          localStorage.removeItem(userDraftKey);
+        } catch { /* ignore */ }
         setIsForced(false);
         setIsOpen(false);
         await Swal.fire({
