@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Users, Plus, Trash2, Edit2, Save, Mail, Phone, RefreshCw, BookOpen, X, Sparkles, Eye, EyeOff, Download, KeyRound } from "lucide-react";
+import { Users, Plus, Trash2, Edit2, Save, Mail, Phone, RefreshCw, BookOpen, X, Sparkles, Eye, EyeOff, Download, KeyRound, AlertTriangle } from "lucide-react";
 import Swal from "sweetalert2";
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -659,8 +659,8 @@ export default function MasterGuruPage() {
             </div>
 
             {/* Info */}
-            <div style={{ background: "#fffbeb", border: "1px solid #fcd34d", borderRadius: 10, padding: "10px 14px", marginBottom: 20, fontSize: 12, color: "#92400e", display: "flex", gap: 8 }}>
-              <span>⚠️</span>
+            <div style={{ background: "#fffbeb", border: "1px solid #fcd34d", borderRadius: 10, padding: "10px 14px", marginBottom: 20, fontSize: 12, color: "#92400e", display: "flex", gap: 8, alignItems: "flex-start" }}>
+              <AlertTriangle size={14} style={{ flexShrink: 0, marginTop: 1 }} />
               <span>Password baru akan langsung aktif. Ustaz yang bersangkutan perlu login ulang menggunakan password baru ini.</span>
             </div>
 
@@ -701,7 +701,9 @@ export default function MasterGuruPage() {
                 </button>
               </div>
               {resetPwdConfirm && resetPwdConfirm !== resetPwdVal && (
-                <p style={{ fontSize: 11, color: "#dc2626", marginTop: 4 }}>⚠️ Password tidak cocok</p>
+                <p style={{ fontSize: 11, color: "#dc2626", marginTop: 4, display: "flex", alignItems: "center", gap: 4 }}>
+                  <AlertTriangle size={11} /> Password tidak cocok
+                </p>
               )}
             </div>
 
