@@ -7,23 +7,25 @@ export async function GET() {
   try {
     console.log("=== PERBAIKAN SANTRI HALAQOH UST. IKHWAN ===");
 
-    // 1. Dapatkan referensi kelas 11 MA dan 12 MA
-    const kelas11 = await prisma.kelas.findFirst({
-      where: {
-        is_active: true,
-        OR: [{ nama: { equals: "11 MA", mode: "insensitive" } }],
-      },
+    // 1. Dapatkan referensi kelas 11 MA dan 12 MA dengan pencarian yang lebih fleksibel
+    let kelas11 = await prisma.kelas.findFirst({
+      where: { nama: { contains: "11", mode: "insensitive" } },
+    });
+    
+    if (!kelas11) {
+      kelas11 = await prisma.kelas.create({
+        data: { nama: "11 MA", jenjang: "MA", is_active: true }
+      });
+    }
+
+    let kelas12 = await prisma.kelas.findFirst({
+      where: { nama: { contains: "12", mode: "insensitive" } },
     });
 
-    const kelas12 = await prisma.kelas.findFirst({
-      where: {
-        is_active: true,
-        OR: [{ nama: { equals: "12 MA", mode: "insensitive" } }],
-      },
-    });
-
-    if (!kelas11 || !kelas12) {
-      return NextResponse.json({ error: "Kelas 11 MA atau 12 MA tidak ditemukan di database" }, { status: 400 });
+    if (!kelas12) {
+      kelas12 = await prisma.kelas.create({
+        data: { nama: "12 MA", jenjang: "MA", is_active: true }
+      });
     }
 
     const updates = [
