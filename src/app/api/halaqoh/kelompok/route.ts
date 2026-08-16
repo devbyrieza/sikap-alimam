@@ -20,7 +20,8 @@ export async function GET(request: Request) {
     }
 
     // Resolution for logged in teacher / pengampu
-    if (!pegawai_id && session.role !== "admin_super" && session.role !== "mudir") {
+    const userRole = (session.role || "").toLowerCase();
+    if (!pegawai_id && !userRole.includes("admin_super") && !userRole.includes("mudir") && !userRole.includes("kabid_pengasuhan")) {
       if (session.asatidz_id) {
         pegawai_id = session.asatidz_id;
       } else if (session.userId) {
@@ -43,6 +44,7 @@ export async function GET(request: Request) {
         ...(sesi && { sesi }),
       },
       include: {
+        pegawai: { select: { nama_lengkap: true } },
         anggota: {
           include: {
             santri: {
