@@ -46,7 +46,7 @@ export async function PUT(
   try {
     const { id } = await params;
     const body = await req.json();
-    const { nik, nama_lengkap, nama_panggilan, no_hp, email, mata_pelajaran, foto_url, roles, wali_kelas_id } = body;
+    const { nik, nama_lengkap, nama_panggilan, no_hp, email, mata_pelajaran, foto_url, ttd_url, roles, wali_kelas_id } = body;
 
     const updatedGuru = await prisma.pegawai.update({
       where: { id },
@@ -58,6 +58,7 @@ export async function PUT(
         email: email?.trim() || null, 
         mata_pelajaran: mata_pelajaran || null,
         foto_url: foto_url !== undefined ? (foto_url?.trim() || null) : undefined,
+        ttd_url: ttd_url !== undefined ? (ttd_url?.trim() || null) : undefined,
       },
     });
 
