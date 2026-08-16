@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Users, Plus, Trash2, Edit2, Save, Mail, Phone, RefreshCw, BookOpen, X, Sparkles, Eye, EyeOff, Download } from "lucide-react";
+import { Users, Plus, Trash2, Edit2, Save, Mail, Phone, RefreshCw, BookOpen, X, Sparkles, Eye, EyeOff, Download, KeyRound } from "lucide-react";
 import Swal from "sweetalert2";
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -23,6 +23,14 @@ export default function MasterGuruPage() {
   const [loading, setLoading] = useState(false);
   const [isSyncing, setIsSyncing] = useState(false);
   const [showPwd, setShowPwd] = useState<Record<string, boolean>>({});
+
+  // Reset Password State (Admin Super)
+  const [resetPwdModal, setResetPwdModal] = useState<{ open: boolean; userId: string; nama: string }>({ open: false, userId: "", nama: "" });
+  const [resetPwdVal, setResetPwdVal] = useState("");
+  const [resetPwdConfirm, setResetPwdConfirm] = useState("");
+  const [showResetPwd, setShowResetPwd] = useState(false);
+  const [showResetPwdConfirm, setShowResetPwdConfirm] = useState(false);
+  const [resetPwdLoading, setResetPwdLoading] = useState(false);
 
   // Form State
   const [isAdding, setIsAdding] = useState(false);
@@ -190,6 +198,41 @@ export default function MasterGuruPage() {
           fetchGuru();
         } else { Swal.fire("Gagal", "Gagal menghapus data", "error"); }
       } catch { Swal.fire("Gagal", "Terjadi kesalahan server", "error"); }
+    }
+  };
+
+  const handleResetPassword = async () => {
+    if (!resetPwdVal || !resetPwdConfirm) {
+      Swal.fire({ icon: "warning", title: "Perhatian", text: "Password baru dan konfirmasi password wajib diisi.", confirmButtonColor: "#059669" });
+      return;
+    }
+    if (resetPwdVal.length < 8) {
+      Swal.fire({ icon: "warning", title: "Perhatian", text: "Password minimal 8 karakter.", confirmButtonColor: "#059669" });
+      return;
+    }
+    if (resetPwdVal !== resetPwdConfirm) {
+      Swal.fire({ icon: "warning", title: "Password Tidak Cocok", text: "Password baru dan konfirmasi tidak sama.", confirmButtonColor: "#059669" });
+      return;
+    }
+    setResetPwdLoading(true);
+    try {
+      const res = await fetch("/api/admin/reset-password", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ user_id: resetPwdModal.userId, new_password: resetPwdVal }),
+      });
+      const data = await res.json();
+      if (res.ok && data.success) {
+        setResetPwdModal({ open: false, userId: "", nama: "" });
+        setResetPwdVal(""); setResetPwdConfirm("");
+        Swal.fire({ icon: "success", title: "Berhasil!", text: data.message, confirmButtonColor: "#059669", timer: 2500, showConfirmButton: false });
+      } else {
+        Swal.fire("Gagal", data.error || "Gagal mereset password.", "error");
+      }
+    } catch {
+      Swal.fire("Gagal", "Terjadi kesalahan server.", "error");
+    } finally {
+      setResetPwdLoading(false);
     }
   };
 
@@ -568,6 +611,14 @@ export default function MasterGuruPage() {
                   }} onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = "#fef9c3"; (e.currentTarget as HTMLElement).style.borderColor = "#fcd34d"; (e.currentTarget as HTMLElement).style.color = "#92400e"; }} onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = "#f8fafc"; (e.currentTarget as HTMLElement).style.borderColor = "#e2e8f0"; (e.currentTarget as HTMLElement).style.color = "#64748b"; }}>
                     <Edit2 size={14} />
                   </button>
+                  {g.user?.id && (
+                    <button onClick={() => { setResetPwdModal({ open: true, userId: g.user.id, nama: g.nama_lengkap }); setResetPwdVal(""); setResetPwdConfirm(""); }} title="Reset Password" style={{
+                      width: 32, height: 32, borderRadius: 10, background: "#f8fafc", border: "1px solid #e2e8f0", color: "#64748b",
+                      display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", transition: "all 0.2s"
+                    }} onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = "#eff6ff"; (e.currentTarget as HTMLElement).style.borderColor = "#93c5fd"; (e.currentTarget as HTMLElement).style.color = "#2563eb"; }} onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = "#f8fafc"; (e.currentTarget as HTMLElement).style.borderColor = "#e2e8f0"; (e.currentTarget as HTMLElement).style.color = "#64748b"; }}>
+                      <KeyRound size={14} />
+                    </button>
+                  )}
                   <button onClick={() => handleDelete(g.id, g.nama_lengkap)} title="Hapus" style={{
                     width: 32, height: 32, borderRadius: 10, background: "#f8fafc", border: "1px solid #e2e8f0", color: "#64748b",
                     display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", transition: "all 0.2s"
@@ -578,6 +629,99 @@ export default function MasterGuruPage() {
               </div>
             </div>
           ))}
+        </div>
+      )}
+
+      {/* ── Modal Reset Password (Admin Super) ─────────────────────────────── */}
+      {resetPwdModal.open && (
+        <div style={{
+          position: "fixed", inset: 0, zIndex: 1000, background: "rgba(15,23,42,0.55)",
+          display: "flex", alignItems: "center", justifyContent: "center",
+          backdropFilter: "blur(4px)", padding: 16
+        }} onClick={() => setResetPwdModal({ open: false, userId: "", nama: "" })}>
+          <div style={{
+            background: "#fff", borderRadius: 20, padding: 32, width: "100%", maxWidth: 440,
+            boxShadow: "0 24px 60px rgba(37,99,235,0.18)", position: "relative"
+          }} onClick={e => e.stopPropagation()}>
+
+            {/* Header */}
+            <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 24 }}>
+              <div style={{ width: 44, height: 44, borderRadius: 14, background: "linear-gradient(135deg,#eff6ff,#dbeafe)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, border: "1px solid #bfdbfe" }}>
+                <KeyRound size={20} color="#2563eb" />
+              </div>
+              <div>
+                <div style={{ fontSize: 16, fontWeight: 800, color: "#1e293b" }}>Reset Password Akun</div>
+                <div style={{ fontSize: 12, color: "#64748b", marginTop: 2 }}>Ustaz <strong>{resetPwdModal.nama}</strong></div>
+              </div>
+              <button onClick={() => setResetPwdModal({ open: false, userId: "", nama: "" })} style={{ marginLeft: "auto", background: "none", border: "none", cursor: "pointer", color: "#94a3b8", padding: 4 }}>
+                <X size={20} />
+              </button>
+            </div>
+
+            {/* Info */}
+            <div style={{ background: "#fffbeb", border: "1px solid #fcd34d", borderRadius: 10, padding: "10px 14px", marginBottom: 20, fontSize: 12, color: "#92400e", display: "flex", gap: 8 }}>
+              <span>⚠️</span>
+              <span>Password baru akan langsung aktif. Ustaz yang bersangkutan perlu login ulang menggunakan password baru ini.</span>
+            </div>
+
+            {/* Input Password Baru */}
+            <div style={{ marginBottom: 16 }}>
+              <label style={{ display: "block", fontSize: 12, fontWeight: 700, color: "#374151", marginBottom: 6 }}>Password Baru <span style={{ color: "#dc2626" }}>*</span></label>
+              <div style={{ position: "relative" }}>
+                <input
+                  type={showResetPwd ? "text" : "password"}
+                  value={resetPwdVal}
+                  onChange={e => setResetPwdVal(e.target.value)}
+                  placeholder="Minimal 8 karakter"
+                  style={{ width: "100%", padding: "10px 40px 10px 14px", borderRadius: 10, border: "1.5px solid #e2e8f0", fontSize: 14, outline: "none", boxSizing: "border-box", fontFamily: "inherit" }}
+                  onFocus={e => (e.currentTarget.style.borderColor = "#2563eb")}
+                  onBlur={e => (e.currentTarget.style.borderColor = "#e2e8f0")}
+                />
+                <button type="button" onClick={() => setShowResetPwd(!showResetPwd)} style={{ position: "absolute", right: 12, top: "50%", transform: "translateY(-50%)", background: "none", border: "none", cursor: "pointer", color: "#94a3b8" }}>
+                  {showResetPwd ? <EyeOff size={16} /> : <Eye size={16} />}
+                </button>
+              </div>
+            </div>
+
+            {/* Input Konfirmasi */}
+            <div style={{ marginBottom: 24 }}>
+              <label style={{ display: "block", fontSize: 12, fontWeight: 700, color: "#374151", marginBottom: 6 }}>Konfirmasi Password Baru <span style={{ color: "#dc2626" }}>*</span></label>
+              <div style={{ position: "relative" }}>
+                <input
+                  type={showResetPwdConfirm ? "text" : "password"}
+                  value={resetPwdConfirm}
+                  onChange={e => setResetPwdConfirm(e.target.value)}
+                  placeholder="Ulangi password baru"
+                  style={{ width: "100%", padding: "10px 40px 10px 14px", borderRadius: 10, border: `1.5px solid ${resetPwdConfirm && resetPwdConfirm !== resetPwdVal ? "#dc2626" : "#e2e8f0"}`, fontSize: 14, outline: "none", boxSizing: "border-box", fontFamily: "inherit" }}
+                  onFocus={e => (e.currentTarget.style.borderColor = resetPwdConfirm !== resetPwdVal ? "#dc2626" : "#2563eb")}
+                  onBlur={e => (e.currentTarget.style.borderColor = resetPwdConfirm && resetPwdConfirm !== resetPwdVal ? "#dc2626" : "#e2e8f0")}
+                />
+                <button type="button" onClick={() => setShowResetPwdConfirm(!showResetPwdConfirm)} style={{ position: "absolute", right: 12, top: "50%", transform: "translateY(-50%)", background: "none", border: "none", cursor: "pointer", color: "#94a3b8" }}>
+                  {showResetPwdConfirm ? <EyeOff size={16} /> : <Eye size={16} />}
+                </button>
+              </div>
+              {resetPwdConfirm && resetPwdConfirm !== resetPwdVal && (
+                <p style={{ fontSize: 11, color: "#dc2626", marginTop: 4 }}>⚠️ Password tidak cocok</p>
+              )}
+            </div>
+
+            {/* Actions */}
+            <div style={{ display: "flex", gap: 10 }}>
+              <button onClick={() => setResetPwdModal({ open: false, userId: "", nama: "" })} style={{
+                flex: 1, padding: "11px 0", borderRadius: 10, border: "1.5px solid #e2e8f0", background: "#f8fafc",
+                fontSize: 13, fontWeight: 700, color: "#64748b", cursor: "pointer"
+              }}>Batal</button>
+              <button onClick={handleResetPassword} disabled={resetPwdLoading} style={{
+                flex: 2, padding: "11px 0", borderRadius: 10, border: "none",
+                background: resetPwdLoading ? "#93c5fd" : "linear-gradient(135deg,#2563eb,#1d4ed8)",
+                fontSize: 13, fontWeight: 800, color: "#fff", cursor: resetPwdLoading ? "not-allowed" : "pointer",
+                display: "flex", alignItems: "center", justifyContent: "center", gap: 8
+              }}>
+                <KeyRound size={14} />
+                {resetPwdLoading ? "Menyimpan..." : "Simpan Password Baru"}
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>
