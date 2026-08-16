@@ -21,11 +21,20 @@ export default function LaporanHalaqohPage() {
   const [report, setReport] = useState<any>(null);
   const [loading, setLoading] = useState(false);
 
+  // Dynamic signature names
+  const [pengampuNama, setPengampuNama] = useState("Ust. Muhammad Iqbal, S.Pd");
+  const [kabidNama, setKabidNama] = useState("Ust. Agus Cahyono, S.Pd.I");
+
   useEffect(() => {
-    fetch("/api/halaqoh/master").then(r => r.json()).then(d => {
-      const dataSantri = d.santriAktif || d.santri || [];
+    fetch("/api/tahfidz/mutabaah").then(r => r.json()).then(d => {
+      const dataSantri = Array.isArray(d) ? d : [];
       setAllSantri(dataSantri);
-      if (dataSantri.length > 0) setSelectedSantriId(dataSantri[0].id);
+      if (dataSantri.length > 0) {
+        setSelectedSantriId(dataSantri[0].id);
+        if (dataSantri[0].kelompok_halaqoh?.musyrif) {
+          setPengampuNama(dataSantri[0].kelompok_halaqoh.musyrif);
+        }
+      }
     });
   }, []);
 
@@ -139,9 +148,20 @@ export default function LaporanHalaqohPage() {
             {/* Santri */}
             <div>
               <label style={labelStyle}>Santri</label>
-              <select value={selectedSantriId} onChange={e => setSelectedSantriId(e.target.value)} style={selectStyle}>
+              <select
+                value={selectedSantriId}
+                onChange={e => {
+                  const id = e.target.value;
+                  setSelectedSantriId(id);
+                  const s = allSantri.find(item => item.id === id);
+                  if (s?.kelompok_halaqoh?.musyrif) {
+                    setPengampuNama(s.kelompok_halaqoh.musyrif);
+                  }
+                }}
+                style={selectStyle}
+              >
                 {allSantri.map(s => (
-                  <option key={s.id} value={s.id}>{s.nama_lengkap} ({s.kelas?.nama || "—"})</option>
+                  <option key={s.id} value={s.id}>{s.nama_lengkap} ({s.kelas || "—"})</option>
                 ))}
               </select>
             </div>
@@ -185,6 +205,28 @@ export default function LaporanHalaqohPage() {
               </div>
             )}
           </div>
+
+          {/* Edit Nama TTD */}
+          <div style={{ marginTop: 14, paddingTop: 14, borderTop: "1px dashed #e2e8f0", display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 14 }}>
+            <div>
+              <label style={labelStyle}>Nama Pengampu Halaqoh (TTD)</label>
+              <input
+                type="text"
+                value={pengampuNama}
+                onChange={e => setPengampuNama(e.target.value)}
+                style={{ ...selectStyle, background: "white" }}
+              />
+            </div>
+            <div>
+              <label style={labelStyle}>Nama Kabid Pengasuhan (TTD)</label>
+              <input
+                type="text"
+                value={kabidNama}
+                onChange={e => setKabidNama(e.target.value)}
+                style={{ ...selectStyle, background: "white" }}
+              />
+            </div>
+          </div>
         </div>
       </div>
 
@@ -220,7 +262,7 @@ export default function LaporanHalaqohPage() {
                 <div style={{ textAlign: "right" }}>
                   <span style={{ fontSize: 11, color: "#94a3b8", fontWeight: 700, textTransform: "uppercase" }}>NIS / Kelas</span>
                   <div style={{ fontWeight: 800, color: "#550000", fontSize: 15 }}>
-                    {selectedSantri.nis || "—"} · {selectedSantri.kelas?.nama || "—"}
+                    {selectedSantri.nis || "—"} · {typeof selectedSantri.kelas === "string" ? selectedSantri.kelas : selectedSantri.kelas?.nama || "—"}
                   </div>
                 </div>
               </div>
@@ -245,14 +287,14 @@ export default function LaporanHalaqohPage() {
               {/* Rata Harian */}
               <div style={{ background: "#fffbeb", border: "1.5px solid #fde68a", borderRadius: 16, padding: "16px 20px", textAlign: "center" }}>
                 <div style={{ fontSize: 11, fontWeight: 800, color: "#d97706", textTransform: "uppercase", letterSpacing: "0.04em", marginBottom: 4 }}>Rata Harian</div>
-                <div style={{ fontSize: 26, fontWeight: 900, color: "#92400e" }}>{summary.rata_harian ?? "—"}</div>
+                <div style={{ fontSize: 26, fontWeight: 900, color: "#92400e" }}>{summary.avg_nilai_harian ?? "—"}</div>
                 <div style={{ fontSize: 11, color: "#b45309", marginTop: 4 }}>Nilai Bacaan + Kelancaran</div>
               </div>
 
               {/* Nilai Ujian */}
               <div style={{ background: "#f5f3ff", border: "1.5px solid #ede9fe", borderRadius: 16, padding: "16px 20px", textAlign: "center" }}>
                 <div style={{ fontSize: 11, fontWeight: 800, color: "#7c3aed", textTransform: "uppercase", letterSpacing: "0.04em", marginBottom: 4 }}>Nilai Ujian</div>
-                <div style={{ fontSize: 26, fontWeight: 900, color: "#5b21b6" }}>{summary.nilai_ujian ?? "—"}</div>
+                <div style={{ fontSize: 26, fontWeight: 900, color: "#5b21b6" }}>{summary.ujian_pekanan_nilai || summary.nilai_ujian || "—"}</div>
                 <div style={{ fontSize: 11, color: "#6d28d9", marginTop: 4 }}>Ujian Pekanan Sabtu</div>
               </div>
             </div>
@@ -264,23 +306,33 @@ export default function LaporanHalaqohPage() {
                 <div style={{ fontSize: 11, color: "rgba(255,255,255,0.7)", marginTop: 2 }}>Formula: (Rata Harian + Nilai Ujian) / 2</div>
               </div>
               <div style={{ fontSize: 32, fontWeight: 900, color: "white" }}>
-                {summary.estimasi_rapor ?? "—"}
+                {summary.nilai_raport_estimasi ?? summary.estimasi_rapor ?? "—"}
               </div>
             </div>
 
             {/* Tanda Tangan */}
-            <div style={{ display: "flex", justifyContent: "space-around", textAlign: "center", marginTop: 48, paddingTop: 24, borderTop: "1px solid #f1f5f9" }}>
-              <div>
+            <div style={{ display: "flex", justifyContent: "space-around", textAlign: "center", marginTop: 48, paddingTop: 24, borderTop: "1.5px solid #e2e8f0" }}>
+              <div style={{ minWidth: 220 }}>
                 <div style={{ fontSize: 12, color: "#64748b", fontWeight: 600 }}>Mengetahui,</div>
-                <div style={{ fontSize: 13, fontWeight: 800, color: "#1e293b", marginTop: 4 }}>Pengampu Halaqoh</div>
-                <div style={{ marginTop: 56, fontWeight: 700, color: "#475569" }}>( ___________________ )</div>
+                <div style={{ fontSize: 14, fontWeight: 800, color: "#1e293b", marginTop: 4 }}>Pengampu Halaqoh</div>
+                <div style={{ height: 64 }} />
+                <div style={{ fontWeight: 800, color: "#1e293b", fontSize: 14, textDecoration: "underline" }}>
+                  {pengampuNama || "___________________"}
+                </div>
+                <div style={{ fontSize: 11, color: "#64748b", marginTop: 2 }}>Musyrif Halaqoh</div>
               </div>
-              <div>
+              <div style={{ minWidth: 220 }}>
                 <div style={{ fontSize: 12, color: "#64748b", fontWeight: 600 }}>Mengetahui,</div>
                 <div style={{ fontSize: 13, fontWeight: 800, color: "#1e293b", marginTop: 4 }}>Kabid Pengasuhan</div>
-                <div style={{ marginTop: 56, fontWeight: 700, color: "#475569" }}>( ___________________ )</div>
+                <div style={{ height: 64 }} />
+                <div style={{ fontWeight: 800, color: "#1e293b", fontSize: 14, textDecoration: "underline" }}>
+                  {kabidNama || "___________________"}
+                </div>
+                <div style={{ fontSize: 11, color: "#64748b", marginTop: 2 }}>Kabid Pengasuhan Pesantren</div>
               </div>
             </div>
+          </div>
+        )}
           </div>
         )}
       </div>
