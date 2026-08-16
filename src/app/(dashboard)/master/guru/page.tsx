@@ -476,11 +476,28 @@ export default function MasterGuruPage() {
                     <div style={{ display:"flex", flexWrap:"wrap", gap:4, marginTop:8, alignItems: "center" }}>
                       {g.user?.role ? (
                         <>
-                          {g.user.role.split(",").map((r: string, i: number) => (
-                            <span key={i} style={{ fontSize:9, fontWeight:800, letterSpacing:"0.5px", background:"#eff6ff", color:"#2563eb", padding:"2px 6px", borderRadius:4, border:"1px solid #bfdbfe" }}>
-                              {r.trim().toUpperCase()}
-                            </span>
-                          ))}
+                          {g.user.role.split(",").map((r: string, i: number) => {
+                            const roleMap: Record<string, string> = {
+                              GURU: "Guru Mapel",
+                              MUSYRIF: "Pengampu Halaqoh",
+                              WALI_KELAS: "Wali Kelas",
+                              MUDIR: "Mudir Pesantren",
+                              KEPALA_SEKOLAH: "Kepala Sekolah",
+                              KABID_PENGASUHAN: "Kabid Pengasuhan",
+                              KABID_ASRAMA: "Kabid Asrama",
+                              KABID_KEDISIPLINAN: "Kabid Kedisiplinan",
+                              KABID_KURIKULUM: "Kabid Kurikulum",
+                              ADMIN_KEUANGAN: "Admin Keuangan",
+                              ADMIN_SUPER: "Admin Super",
+                            };
+                            const roleKey = r.trim().toUpperCase();
+                            const labelText = roleMap[roleKey] || roleKey;
+                            return (
+                              <span key={i} style={{ fontSize:9, fontWeight:800, letterSpacing:"0.5px", background:"#eff6ff", color:"#2563eb", padding:"2px 6px", borderRadius:4, border:"1px solid #bfdbfe" }}>
+                                {labelText.toUpperCase()}
+                              </span>
+                            );
+                          })}
                           
                           {/* TOMBOL LIHAT SANDI (KHUSUS ADMIN SUPER) */}
                           <div style={{ display: "flex", alignItems: "center", gap: "6px", marginLeft: "4px" }}>
