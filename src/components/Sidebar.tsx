@@ -85,7 +85,7 @@ const NAV: NavItem[] = [
     href: "/presensi/asatidz",
     label: "Absensi Guru",
     icon: <UserCheck size={18} />,
-    roles: ["guru", "GURU", "musyrif", "MUSYRIF", "wali_kelas", "WALI_KELAS", "kepala_sekolah", "KEPALA_SEKOLAH", "kabid_kurikulum", "KABID_KURIKULUM", "kabid_pengasuhan", "KABID_PENGASUHAN", "admin_super", "ADMIN_SUPER", "mudir", "MUDIR"],
+    roles: ["guru", "GURU", "wali_kelas", "WALI_KELAS", "kepala_sekolah", "KEPALA_SEKOLAH", "kabid_kurikulum", "KABID_KURIKULUM", "kabid_pengasuhan", "KABID_PENGASUHAN", "admin_super", "ADMIN_SUPER", "mudir", "MUDIR"],
   },
   {
     href: "/master",
