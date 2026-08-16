@@ -26,8 +26,8 @@ export default function LaporanHalaqohPage() {
   const [loading, setLoading] = useState(false);
 
   // Dynamic signature names & TTD Digital
-  const [pengampuNama, setPengampuNama] = useState("Ust. Muhammad Iqbal, S.Pd");
-  const [kabidNama, setKabidNama] = useState("Ust. Agus Cahyono, S.Pd.I");
+  const [pengampuNama, setPengampuNama] = useState("Muhammad Iqbal, S.Pd");
+  const [kabidNama, setKabidNama] = useState("Wahyudi Pranata, Lc");
   const [showDigitalSignature, setShowDigitalSignature] = useState(true);
 
   useEffect(() => {
