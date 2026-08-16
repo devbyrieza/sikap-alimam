@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import SplashScreen from "@/components/ui/SplashScreen";
+
 import "./globals.css";
 
 export const dynamic = "force-dynamic";
@@ -33,7 +35,8 @@ export default function RootLayout({
         <meta name="theme-color" content="#7b0f14" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
       </head>
-      <body suppressHydrationWarning>{children}</body>
+      <body suppressHydrationWarning>
+        <SplashScreen />{children}</body>
     </html>
   );
 }
