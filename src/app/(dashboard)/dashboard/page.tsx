@@ -32,6 +32,7 @@ export default async function DashboardPage() {
   const currentUser = session?.userId ? await prisma.user.findUnique({ where: { id: session.userId } }) : null;
   const isDefaultPassword = currentUser?.plain_password === "GuruAlimam2026!" || 
                             currentUser?.plain_password === "AdminAlimam2026!" || 
+                            currentUser?.plain_password === "HalaqohAlimam2026!" || 
                             currentUser?.plain_password === "Sikap2026!";
 
   const today = new Date();
