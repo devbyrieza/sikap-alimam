@@ -202,7 +202,7 @@ export default function HalaqohDashboardPage() {
             <span style={{ fontSize: 11, fontWeight: 800, letterSpacing: "0.5px", color: "#fdf8f0", textTransform: "uppercase" }}>Pusat Operasional Halaqoh</span>
           </div>
           <h1 style={{ fontSize: "clamp(20px,4vw,30px)", fontWeight: 800, margin: 0, display: "flex", alignItems: "center", gap: 10, color: "white" }}>
-            <BookHeart size={26} color="#ddc192" /> Halaqoh &amp; Mutabaah Tahfidz
+            <BookHeart size={26} color="#ddc192" /> Halaqoh &amp; Mutabaah
           </h1>
           <p style={{ color: "rgba(253,248,240,0.85)", fontSize: 14, margin: "6px 0 0" }}>
             Rekapitulasi Capaian &amp; Harian Tahfizh Al-Qur&#39;an Pesantren Al-Imam
