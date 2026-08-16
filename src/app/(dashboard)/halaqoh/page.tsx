@@ -86,6 +86,7 @@ export default function HalaqohDashboardPage() {
   const [loading, setLoading] = useState(true);
   const [profile, setProfile] = useState<any>(null);
   const [pegawaiName, setPegawaiName] = useState<string>("");
+  const [pegawaiId, setPegawaiId] = useState<string>("");
   const [scopeFilter, setScopeFilter] = useState<"mine" | "all">("mine");
 
   // Mutabaah tab state
@@ -125,6 +126,7 @@ export default function HalaqohDashboardPage() {
       const p = pData?.pegawai;
       setProfile(u);
       setPegawaiName(p?.nama_lengkap || u?.nama || "");
+      setPegawaiId(p?.id || "");
       const r = (u?.role || "").toLowerCase();
       setScopeFilter(r.includes("admin") || r.includes("mudir") || r.includes("kabid") || r.includes("wali") ? "all" : "mine");
     }).finally(() => setLoading(false));
@@ -148,12 +150,12 @@ export default function HalaqohDashboardPage() {
 
   const isPengampu = () => {
     const r = (profile?.role || "").toLowerCase();
-    return r.includes("guru") || r.includes("musyrif") || r.includes("pengampu");
+    return r.includes("guru") || r.includes("musyrif") || r.includes("pengampu") || r.includes("admin") || r.includes("mudir") || r.includes("kabid");
   };
 
   const isPimpinan = () => {
     const r = (profile?.role || "").toLowerCase();
-    return r.includes("admin_super") || r.includes("mudir") || r.includes("kabid_pengasuhan");
+    return r.includes("admin") || r.includes("mudir") || r.includes("kabid");
   };
 
   const isMySantri = (s: SantriMutabaah) => {
@@ -289,7 +291,8 @@ export default function HalaqohDashboardPage() {
               <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: 16 }}>
                 {sesiAktif.map(sesi => {
                   const cfg = SESI_CONFIG[sesi];
-                  const kel = kelompokList.find(k => k.sesi === sesi);
+                  // Filter to ONLY show the logged-in user's own group for this session
+                  const kel = kelompokList.find(k => k.sesi === sesi && (k as any).pegawai_id === pegawaiId);
                   return (
                     <div
                       key={sesi}
@@ -351,7 +354,7 @@ export default function HalaqohDashboardPage() {
             </h2>
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 12 }}>
               {[
-                ...(isPengampu() ? [{ href: "/halaqoh/kelompok", icon: <Users size={18} />, label: "Kelompok Saya", sub: "Atur santri bimbingan", bg: "#fdf8f0", color: "#550000" }] : []),
+                ...(isPengampu() ? [{ href: "/halaqoh/kelompok", icon: <Users size={18} />, label: isPimpinan() ? "Semua Kelompok" : "Kelompok Saya", sub: isPimpinan() ? "Manajemen semua kelompok" : "Atur santri bimbingan", bg: "#fdf8f0", color: "#550000" }] : []),
                 { href: "/halaqoh/ujian", icon: <Award size={18} />, label: "Ujian Tahfidz", sub: "Pekanan & Bulanan", bg: "#fffbeb", color: "#d97706" },
                 { href: "/halaqoh/laporan", icon: <FileText size={18} />, label: "Cetak Rapor", sub: "Rapor Pekanan & Bulanan", bg: "#ecfdf5", color: "#059669" },
                 { href: "/halaqoh/rekap", icon: <CalendarDays size={18} />, label: "Jurnal Harian", sub: "Tabel riwayat setoran", bg: "#eff6ff", color: "#0284c7" },
