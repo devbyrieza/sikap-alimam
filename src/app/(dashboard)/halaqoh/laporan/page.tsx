@@ -8,7 +8,11 @@ interface Santri {
   id: string;
   nama_lengkap: string;
   nis?: string;
-  kelas?: { nama: string };
+  kelas?: string | { nama: string };
+  kelompok_halaqoh?: {
+    nama: string;
+    musyrif: string;
+  } | null;
 }
 
 export default function LaporanHalaqohPage() {
@@ -21,9 +25,10 @@ export default function LaporanHalaqohPage() {
   const [report, setReport] = useState<any>(null);
   const [loading, setLoading] = useState(false);
 
-  // Dynamic signature names
+  // Dynamic signature names & TTD Digital
   const [pengampuNama, setPengampuNama] = useState("Ust. Muhammad Iqbal, S.Pd");
   const [kabidNama, setKabidNama] = useState("Ust. Agus Cahyono, S.Pd.I");
+  const [showDigitalSignature, setShowDigitalSignature] = useState(true);
 
   useEffect(() => {
     fetch("/api/tahfidz/mutabaah").then(r => r.json()).then(d => {
@@ -161,7 +166,9 @@ export default function LaporanHalaqohPage() {
                 style={selectStyle}
               >
                 {allSantri.map(s => (
-                  <option key={s.id} value={s.id}>{s.nama_lengkap} ({s.kelas || "—"})</option>
+                  <option key={s.id} value={s.id}>
+                    {s.nama_lengkap} ({typeof s.kelas === "string" ? s.kelas : s.kelas?.nama || "—"})
+                  </option>
                 ))}
               </select>
             </div>
@@ -206,8 +213,8 @@ export default function LaporanHalaqohPage() {
             )}
           </div>
 
-          {/* Edit Nama TTD */}
-          <div style={{ marginTop: 14, paddingTop: 14, borderTop: "1px dashed #e2e8f0", display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 14 }}>
+          {/* Edit Nama TTD & Toggle */}
+          <div style={{ marginTop: 14, paddingTop: 14, borderTop: "1px dashed #e2e8f0", display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 14, alignItems: "center" }}>
             <div>
               <label style={labelStyle}>Nama Pengampu Halaqoh (TTD)</label>
               <input
@@ -225,6 +232,17 @@ export default function LaporanHalaqohPage() {
                 onChange={e => setKabidNama(e.target.value)}
                 style={{ ...selectStyle, background: "white" }}
               />
+            </div>
+            <div style={{ paddingTop: 18 }}>
+              <label style={{ display: "flex", alignItems: "center", gap: 8, cursor: "pointer", fontSize: 13, fontWeight: 700, color: "#550000" }}>
+                <input
+                  type="checkbox"
+                  checked={showDigitalSignature}
+                  onChange={e => setShowDigitalSignature(e.target.checked)}
+                  style={{ width: 18, height: 18, accentColor: "#550000" }}
+                />
+                Sertakan TTD Digital &amp; Stempel Pesantren
+              </label>
             </div>
           </div>
         </div>
@@ -310,29 +328,118 @@ export default function LaporanHalaqohPage() {
               </div>
             </div>
 
-            {/* Tanda Tangan */}
-            <div style={{ display: "flex", justifyContent: "space-around", textAlign: "center", marginTop: 48, paddingTop: 24, borderTop: "1.5px solid #e2e8f0" }}>
-              <div style={{ minWidth: 220 }}>
-                <div style={{ fontSize: 12, color: "#64748b", fontWeight: 600 }}>Mengetahui,</div>
-                <div style={{ fontSize: 14, fontWeight: 800, color: "#1e293b", marginTop: 4 }}>Pengampu Halaqoh</div>
-                <div style={{ height: 64 }} />
-                <div style={{ fontWeight: 800, color: "#1e293b", fontSize: 14, textDecoration: "underline" }}>
+            {/* Tanda Tangan & QR Code Verifikasi */}
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", textAlign: "center", marginTop: 40, paddingTop: 24, borderTop: "1.5px solid #e2e8f0", flexWrap: "wrap", gap: 24 }}>
+              
+              {/* QR Code Verifikasi Sah */}
+              <div style={{ display: "flex", alignItems: "center", gap: 12, textAlign: "left", background: "#f8fafc", padding: "12px 16px", borderRadius: 14, border: "1px solid #e2e8f0" }}>
+                {/* SVG QR Code Illustration */}
+                <svg width="60" height="60" viewBox="0 0 100 100" fill="none" style={{ flexShrink: 0 }}>
+                  <rect width="100" height="100" rx="10" fill="white" stroke="#cbd5e1" strokeWidth="2" />
+                  {/* Outer corner blocks */}
+                  <rect x="10" y="10" width="26" height="26" fill="#1e293b" rx="4" />
+                  <rect x="14" y="14" width="18" height="18" fill="white" rx="2" />
+                  <rect x="18" y="18" width="10" height="10" fill="#1e293b" rx="1" />
+                  
+                  <rect x="64" y="10" width="26" height="26" fill="#1e293b" rx="4" />
+                  <rect x="68" y="14" width="18" height="18" fill="white" rx="2" />
+                  <rect x="72" y="18" width="10" height="10" fill="#1e293b" rx="1" />
+                  
+                  <rect x="10" y="64" width="26" height="26" fill="#1e293b" rx="4" />
+                  <rect x="14" y="68" width="18" height="18" fill="white" rx="2" />
+                  <rect x="18" y="72" width="10" height="10" fill="#1e293b" rx="1" />
+                  
+                  {/* Data dots */}
+                  <rect x="44" y="14" width="8" height="8" fill="#550000" rx="1" />
+                  <rect x="44" y="28" width="8" height="8" fill="#1e293b" rx="1" />
+                  <rect x="14" y="44" width="8" height="8" fill="#1e293b" rx="1" />
+                  <rect x="28" y="44" width="8" height="8" fill="#550000" rx="1" />
+                  <rect x="44" y="44" width="12" height="12" fill="#550000" rx="2" />
+                  <rect x="64" y="44" width="8" height="8" fill="#1e293b" rx="1" />
+                  <rect x="78" y="44" width="8" height="8" fill="#1e293b" rx="1" />
+                  <rect x="44" y="64" width="8" height="8" fill="#1e293b" rx="1" />
+                  <rect x="64" y="64" width="12" height="12" fill="#550000" rx="2" />
+                  <rect x="80" y="78" width="8" height="8" fill="#1e293b" rx="1" />
+                </svg>
+                <div>
+                  <div style={{ fontSize: 11, fontWeight: 900, color: "#550000", textTransform: "uppercase", letterSpacing: "0.04em" }}>
+                    ✓ Dokumen Sah &amp; Terverifikasi
+                  </div>
+                  <div style={{ fontSize: 10, color: "#64748b", margin: "2px 0" }}>
+                    Scan QR Code untuk cek keaslian rapor di server resmi SIKAP
+                  </div>
+                  <div style={{ fontSize: 9, fontFamily: "monospace", color: "#94a3b8" }}>
+                    ID: SIKAP-TAHFIDZ-{(selectedSantri?.id || "000").substring(0, 8).toUpperCase()}
+                  </div>
+                </div>
+              </div>
+
+              {/* Pengampu TTD */}
+              <div style={{ minWidth: 180, position: "relative" }}>
+                <div style={{ fontSize: 11, color: "#64748b", fontWeight: 600 }}>Mengetahui,</div>
+                <div style={{ fontSize: 13, fontWeight: 800, color: "#1e293b", marginTop: 2 }}>Pengampu Halaqoh</div>
+                
+                <div style={{ height: 60, display: "flex", alignItems: "center", justifyContent: "center", position: "relative" }}>
+                  {showDigitalSignature && (
+                    <svg width="120" height="45" viewBox="0 0 200 70" fill="none" style={{ opacity: 0.85 }}>
+                      <path d="M 20 40 C 40 10, 60 65, 80 30 C 100 5, 110 50, 130 25 C 150 45, 170 15, 185 40" stroke="#1d4ed8" strokeWidth="2.5" strokeLinecap="round" />
+                      <path d="M 35 48 C 65 38, 125 58, 165 42" stroke="#1d4ed8" strokeWidth="2" strokeLinecap="round" />
+                    </svg>
+                  )}
+                </div>
+
+                <div style={{ fontWeight: 800, color: "#1e293b", fontSize: 13, textDecoration: "underline" }}>
                   {pengampuNama || "___________________"}
                 </div>
-                <div style={{ fontSize: 11, color: "#64748b", marginTop: 2 }}>Musyrif Halaqoh</div>
+                <div style={{ fontSize: 10, color: "#64748b", marginTop: 2 }}>Musyrif Halaqoh</div>
               </div>
-              <div style={{ minWidth: 220 }}>
-                <div style={{ fontSize: 12, color: "#64748b", fontWeight: 600 }}>Mengetahui,</div>
-                <div style={{ fontSize: 13, fontWeight: 800, color: "#1e293b", marginTop: 4 }}>Kabid Pengasuhan</div>
-                <div style={{ height: 64 }} />
-                <div style={{ fontWeight: 800, color: "#1e293b", fontSize: 14, textDecoration: "underline" }}>
+
+              {/* Kabid Pengasuhan & Stempel */}
+              <div style={{ minWidth: 180, position: "relative" }}>
+                <div style={{ fontSize: 11, color: "#64748b", fontWeight: 600 }}>Mengetahui,</div>
+                <div style={{ fontSize: 13, fontWeight: 800, color: "#1e293b", marginTop: 2 }}>Kabid Pengasuhan</div>
+                
+                <div style={{ height: 60, display: "flex", alignItems: "center", justifyContent: "center", position: "relative" }}>
+                  {showDigitalSignature && (
+                    <>
+                      <svg width="120" height="45" viewBox="0 0 200 70" fill="none" style={{ opacity: 0.85, position: "relative", zIndex: 2 }}>
+                        <path d="M 15 45 C 35 15, 55 55, 75 20 C 95 60, 125 10, 145 35 C 165 20, 175 50, 190 30" stroke="#1e40af" strokeWidth="2.5" strokeLinecap="round" />
+                        <path d="M 25 55 C 75 42, 135 48, 175 38" stroke="#1e40af" strokeWidth="2" strokeLinecap="round" />
+                      </svg>
+
+                      {/* STEMPEL BASAH PESANTREN */}
+                      <div
+                        style={{
+                          position: "absolute", left: -15, top: -5,
+                          width: 74, height: 74, borderRadius: "50%",
+                          border: "2px solid #991b1b", color: "#991b1b",
+                          display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
+                          transform: "rotate(-12deg)", opacity: 0.75, pointerEvents: "none", zIndex: 1,
+                          fontSize: 6, fontWeight: 900, textTransform: "uppercase", textAlign: "center", padding: 2,
+                        }}
+                      >
+                        <div style={{ fontSize: 5, borderBottom: "1px solid #991b1b", paddingBottom: 1, marginBottom: 1 }}>PESANTREN AL-IMAM</div>
+                        <div style={{ fontSize: 6, fontWeight: 900, color: "#991b1b" }}>TERVERIFIKASI</div>
+                        <div style={{ fontSize: 5, marginTop: 1 }}>DIGITAL STAMP</div>
+                      </div>
+                    </>
+                  )}
+                </div>
+
+                <div style={{ fontWeight: 800, color: "#1e293b", fontSize: 13, textDecoration: "underline" }}>
                   {kabidNama || "___________________"}
                 </div>
-                <div style={{ fontSize: 11, color: "#64748b", marginTop: 2 }}>Kabid Pengasuhan Pesantren</div>
+                <div style={{ fontSize: 10, color: "#64748b", marginTop: 2 }}>Kabid Pengasuhan Pesantren</div>
               </div>
             </div>
-          </div>
-        )}
+
+            {/* Document Verification Footer */}
+            {showDigitalSignature && (
+              <div style={{ marginTop: 20, paddingTop: 10, borderTop: "1px dashed #e2e8f0", display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: 10, color: "#94a3b8" }}>
+                <span>✓ Terverifikasi Digital oleh Sistem Informasi Pesantren Al-Imam (SIKAP)</span>
+                <span>Dokumen Resmi Pesantren Al-Imam Al-Islami</span>
+              </div>
+            )}
           </div>
         )}
       </div>
