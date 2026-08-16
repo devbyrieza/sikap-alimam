@@ -1,6 +1,6 @@
 import { getSession } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { BookMarked, ClipboardCheck, UserCheck, BarChart3, TrendingUp, Calendar, Clock, Hand, Zap, BookOpen, AlertTriangle, ArrowRight, FileText, Award } from "lucide-react";
+import { BookMarked, ClipboardCheck, UserCheck, BarChart3, TrendingUp, Calendar, Clock, Hand, Zap, BookOpen, AlertTriangle, ArrowRight, FileText, Award, Users } from "lucide-react";
 import Link from "next/link";
 import RealtimeClock from "@/components/RealtimeClock";
 import { syncScheduleFromPDF } from "@/lib/syncScheduleFromPDF";
@@ -135,7 +135,10 @@ export default async function DashboardPage() {
   const userRolesStr = (session?.role || "").toUpperCase();
   const isSuperAdmin = userRolesStr.includes("ADMIN_SUPER");
   const isGuru = userRolesStr.includes("GURU") || userRolesStr.includes("TEACHER");
-  const isMusyrifOnly = (userRolesStr.includes("MUSYRIF") || userRolesStr.includes("PENGAMPU")) && !isGuru && !isSuperAdmin && !userRolesStr.includes("WALI_KELAS") && !userRolesStr.includes("KABID");
+  const isMusyrif = userRolesStr.includes("MUSYRIF") || userRolesStr.includes("PENGAMPU");
+  const isWaliKelas = userRolesStr.includes("WALI_KELAS");
+  const isKabidKurikulum = userRolesStr.includes("KABID_KURIKULUM");
+  const isKabidPengasuhan = userRolesStr.includes("KABID_PENGASUHAN");
 
   let greetingName = "Ust. User";
   if (session?.nama_panggilan) {
@@ -300,41 +303,55 @@ export default async function DashboardPage() {
           <Zap size={18} color="#b89758" /> Aksi Cepat
         </h3>
         <div style={{ display:"flex", flexWrap:"wrap", gap:12 }}>
-          {isMusyrifOnly ? (
-            <>
-              <Link href="/halaqoh/input" style={{ display:"inline-flex", alignItems:"center", gap:8, background:"#550000", color:"white", border:"1px solid #751414", padding:"10px 20px", borderRadius:12, fontSize:13, fontWeight:700, textDecoration:"none", transition:"all 0.2s", boxShadow:"0 4px 14px rgba(85,0,0,0.25)" }}>
-                <BookOpen size={16} color="#ddc192" /> Input Setoran Sesi
-              </Link>
-              <Link href="/halaqoh/ujian" style={{ display:"inline-flex", alignItems:"center", gap:8, background:"#fdf8f0", color:"#550000", border:"1px solid #ebdcc3", padding:"10px 20px", borderRadius:12, fontSize:13, fontWeight:700, textDecoration:"none", transition:"all 0.2s", boxShadow:"0 2px 8px rgba(85,0,0,0.04)" }}>
-                <Award size={16} color="#550000" /> Input Ujian Tahfidz
-              </Link>
-              <Link href="/halaqoh/rekap" style={{ display:"inline-flex", alignItems:"center", gap:8, background:"#fdf8f0", color:"#550000", border:"1px solid #ebdcc3", padding:"10px 20px", borderRadius:12, fontSize:13, fontWeight:700, textDecoration:"none", transition:"all 0.2s", boxShadow:"0 2px 8px rgba(85,0,0,0.04)" }}>
-                <ClipboardCheck size={16} color="#b89758" /> Rekap Mutabaah
-              </Link>
-              <Link href="/halaqoh/laporan" style={{ display:"inline-flex", alignItems:"center", gap:8, background:"#fdf5f5", color:"#550000", border:"1px solid #ebdcc3", padding:"10px 20px", borderRadius:12, fontSize:13, fontWeight:700, textDecoration:"none", transition:"all 0.2s", boxShadow:"0 2px 8px rgba(85,0,0,0.04)" }}>
-                <FileText size={16} color="#550000" /> Laporan Capaian Santri
-              </Link>
-            </>
-          ) : (
+          {/* Tombol Guru Mapel */}
+          {(isGuru || isSuperAdmin) && (
             <>
               <Link href="/jurnal/tambah" style={{ display:"inline-flex", alignItems:"center", gap:8, background:"#550000", color:"white", border:"1px solid #751414", padding:"10px 20px", borderRadius:12, fontSize:13, fontWeight:700, textDecoration:"none", transition:"all 0.2s", boxShadow:"0 4px 14px rgba(85,0,0,0.25)" }}>
                 <BookMarked size={16} color="#ddc192" /> Tambah Jurnal
               </Link>
               <Link href="/presensi/santri" style={{ display:"inline-flex", alignItems:"center", gap:8, background:"#fdf5f5", color:"#550000", border:"1px solid #ebdcc3", padding:"10px 20px", borderRadius:12, fontSize:13, fontWeight:700, textDecoration:"none", transition:"all 0.2s", boxShadow:"0 2px 8px rgba(85,0,0,0.04)" }}>
-                <ClipboardCheck size={16} color="#550000" /> Input Presensi Santri
-              </Link>
-              <Link href="/presensi/asatidz" style={{ display:"inline-flex", alignItems:"center", gap:8, background:"#fdf8f0", color:"#550000", border:"1px solid #ebdcc3", padding:"10px 20px", borderRadius:12, fontSize:13, fontWeight:700, textDecoration:"none", transition:"all 0.2s", boxShadow:"0 2px 8px rgba(85,0,0,0.04)" }}>
-                <UserCheck size={16} color="#b89758" /> Absensi Guru
+                <ClipboardCheck size={16} color="#550000" /> Presensi Kelas
               </Link>
               <Link href="/nilai" style={{ display:"inline-flex", alignItems:"center", gap:8, background:"#fdf8f0", color:"#550000", border:"1px solid #ebdcc3", padding:"10px 20px", borderRadius:12, fontSize:13, fontWeight:700, textDecoration:"none", transition:"all 0.2s", boxShadow:"0 2px 8px rgba(85,0,0,0.04)" }}>
                 <BarChart3 size={16} color="#550000" /> Input Nilai
               </Link>
-              {isSuperAdmin && (
-                <Link href="/master/kelas" style={{ display:"inline-flex", alignItems:"center", gap:8, background:"#751414", color:"white", border:"1px solid #550000", padding:"10px 20px", borderRadius:12, fontSize:13, fontWeight:700, textDecoration:"none", transition:"all 0.2s", boxShadow:"0 4px 14px rgba(117,20,20,0.25)" }}>
-                  <UserCheck size={16} color="#ddc192" /> Assign Wali Kelas
-                </Link>
-              )}
             </>
+          )}
+
+          {/* Tombol Pengampu Halaqoh */}
+          {(isMusyrif || isSuperAdmin) && (
+            <>
+              <Link href="/halaqoh/input" style={{ display:"inline-flex", alignItems:"center", gap:8, background: isGuru ? "#fdf8f0" : "#550000", color: isGuru ? "#550000" : "white", border: isGuru ? "1px solid #ebdcc3" : "1px solid #751414", padding:"10px 20px", borderRadius:12, fontSize:13, fontWeight:700, textDecoration:"none", transition:"all 0.2s", boxShadow: isGuru ? "0 2px 8px rgba(85,0,0,0.04)" : "0 4px 14px rgba(85,0,0,0.25)" }}>
+                <BookOpen size={16} color={isGuru ? "#b89758" : "#ddc192"} /> Setoran Halaqoh
+              </Link>
+              <Link href="/halaqoh/ujian" style={{ display:"inline-flex", alignItems:"center", gap:8, background:"#fdf5f5", color:"#550000", border:"1px solid #ebdcc3", padding:"10px 20px", borderRadius:12, fontSize:13, fontWeight:700, textDecoration:"none", transition:"all 0.2s", boxShadow:"0 2px 8px rgba(85,0,0,0.04)" }}>
+                <Award size={16} color="#550000" /> Ujian Tahfidz
+              </Link>
+              <Link href="/halaqoh/laporan" style={{ display:"inline-flex", alignItems:"center", gap:8, background:"#fdf8f0", color:"#550000", border:"1px solid #ebdcc3", padding:"10px 20px", borderRadius:12, fontSize:13, fontWeight:700, textDecoration:"none", transition:"all 0.2s", boxShadow:"0 2px 8px rgba(85,0,0,0.04)" }}>
+                <FileText size={16} color="#550000" /> Laporan Halaqoh
+              </Link>
+            </>
+          )}
+
+          {/* Tombol Wali Kelas */}
+          {(isWaliKelas || isSuperAdmin) && (
+            <Link href="/wali-kelas" style={{ display:"inline-flex", alignItems:"center", gap:8, background:"#fdf5f5", color:"#550000", border:"1px solid #ebdcc3", padding:"10px 20px", borderRadius:12, fontSize:13, fontWeight:700, textDecoration:"none", transition:"all 0.2s", boxShadow:"0 2px 8px rgba(85,0,0,0.04)" }}>
+              <Users size={16} color="#550000" /> Hub Wali Kelas
+            </Link>
+          )}
+
+          {/* Tombol Absensi Guru (Check-in) */}
+          {(isGuru || isSuperAdmin) && (
+            <Link href="/presensi/asatidz" style={{ display:"inline-flex", alignItems:"center", gap:8, background:"#fdf8f0", color:"#550000", border:"1px solid #ebdcc3", padding:"10px 20px", borderRadius:12, fontSize:13, fontWeight:700, textDecoration:"none", transition:"all 0.2s", boxShadow:"0 2px 8px rgba(85,0,0,0.04)" }}>
+              <UserCheck size={16} color="#b89758" /> Absensi Guru
+            </Link>
+          )}
+
+          {/* Tombol Admin Super */}
+          {isSuperAdmin && (
+            <Link href="/master/kelas" style={{ display:"inline-flex", alignItems:"center", gap:8, background:"#751414", color:"white", border:"1px solid #550000", padding:"10px 20px", borderRadius:12, fontSize:13, fontWeight:700, textDecoration:"none", transition:"all 0.2s", boxShadow:"0 4px 14px rgba(117,20,20,0.25)" }}>
+              <UserCheck size={16} color="#ddc192" /> Assign Wali Kelas
+            </Link>
           )}
         </div>
       </div>
