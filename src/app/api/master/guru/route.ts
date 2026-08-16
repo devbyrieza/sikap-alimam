@@ -9,13 +9,16 @@ export async function GET() {
     let guru = await prisma.pegawai.findMany({
       where: {
         OR: [
-          { kategori_pegawai: { in: ["ASATIDZ", "GURU", "Guru", "asatidz", "guru", "PENGAJAR"] } },
+          { kategori_pegawai: { in: ["ASATIDZ", "GURU", "Guru", "asatidz", "guru", "PENGAJAR", "MUSYRIF", "musyrif"] } },
           { kategori_pegawai: { contains: "ASATIDZ", mode: "insensitive" } },
           { kategori_pegawai: { contains: "GURU", mode: "insensitive" } },
+          { kategori_pegawai: { contains: "MUSYRIF", mode: "insensitive" } },
           { jabatan: { contains: "Guru", mode: "insensitive" } },
           { jabatan: { contains: "Pengajar", mode: "insensitive" } },
           { jabatan: { contains: "Asatidz", mode: "insensitive" } },
           { jabatan: { contains: "Ustadz", mode: "insensitive" } },
+          { jabatan: { contains: "Musyrif", mode: "insensitive" } },
+          { jabatan: { contains: "Halaqoh", mode: "insensitive" } },
           { mata_pelajaran: { not: null } },
         ],
       },
