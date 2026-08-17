@@ -498,9 +498,9 @@ export default function HalaqohInputPage() {
             {(["tahsin", "ziyadah", "murojaah"] as const).map(j => {
               const isSelected = jenis === j;
               const meta: Record<string, { title: string; sub: string; icon: React.ReactNode }> = {
-                tahsin:   { title: "Tahsin / Binnazhor", sub: "Penguatan Bacaan", icon: <Award size={18} /> },
-                ziyadah:  { title: "Setoran Ziyadah",   sub: "Hafalan Baru", icon: <BookOpen size={18} /> },
-                murojaah: { title: "Setoran Murojaah",  sub: "Pengulangan Hafalan", icon: <RotateCcw size={18} /> },
+                tahsin:   { title: "Tahsin (Talaqqi Face-to-Face)", sub: "Penguatan Bacaan Awal (Non-Kitab)", icon: <Award size={18} /> },
+                ziyadah:  { title: "Setoran Ziyadah",             sub: "Setoran Hafalan Baru", icon: <BookOpen size={18} /> },
+                murojaah: { title: "Setoran Murojaah",            sub: "Pengulangan Hafalan", icon: <RotateCcw size={18} /> },
               };
               const item = meta[j];
               return (
