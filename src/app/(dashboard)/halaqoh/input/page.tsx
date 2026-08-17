@@ -166,17 +166,17 @@ function NumericScoreSelector({
 }) {
   const predikat = getPredikat(value);
   return (
-    <div className="bg-white p-3.5 sm:p-4 rounded-2xl border border-slate-200/70 shadow-sm relative overflow-hidden group hover:border-[#ddc192]/60 hover:shadow-md transition-all">
-      <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-slate-50 to-transparent rounded-full opacity-50 -mr-8 -mt-8 pointer-events-none"></div>
+    <div className="bg-white/80 backdrop-blur-xl p-5 sm:p-6 rounded-[2rem] border-[1.5px] border-slate-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] relative overflow-hidden group hover:shadow-[0_12px_40px_rgb(0,0,0,0.08)] hover:border-slate-200 transition-all duration-300">
+      <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-slate-50 to-transparent rounded-full opacity-50 -mr-10 -mt-10 pointer-events-none"></div>
       
-      <div className="flex flex-wrap justify-between items-start sm:items-center gap-2 mb-3 relative z-10">
-        <div className="text-[10px] sm:text-[11px] font-black text-slate-700 uppercase tracking-wider">{label}</div>
-        <div className={`text-[10px] font-extrabold px-2 py-0.5 rounded-full border flex items-center gap-1 ${predikat.bg} ${predikat.color} ${predikat.border}`}>
+      <div className="flex flex-wrap justify-between items-start sm:items-center gap-2 mb-5 relative z-10">
+        <div className="text-[11px] sm:text-[12px] font-black text-slate-800 uppercase tracking-widest">{label}</div>
+        <div className={`text-[11px] font-bold px-3 py-1.5 rounded-xl flex items-center gap-2 ${predikat.bg} ${predikat.color}`}>
+          <div className="w-1.5 h-1.5 rounded-full bg-current opacity-70" />
           <span>{predikat.label}</span>
-          {value >= 85 ? <CheckCircle2 className="w-[11px] h-[11px]" /> : <AlertTriangle className="w-[11px] h-[11px]" />}
         </div>
       </div>
-      <div className="grid grid-cols-5 gap-1.5 relative z-10">
+      <div className="grid grid-cols-5 gap-2 relative z-10">
         {OPSI_NILAI.map(num => {
           const isSelected = value === num;
           return (
@@ -184,10 +184,10 @@ function NumericScoreSelector({
               key={num}
               type="button"
               onClick={() => onChange(num)}
-              className={`h-[32px] sm:h-[34px] rounded-xl flex items-center justify-center text-xs sm:text-[13px] font-bold cursor-pointer transition-all duration-200 outline-none border
+              className={`h-[38px] sm:h-[42px] rounded-xl flex items-center justify-center text-[13px] sm:text-[14px] font-bold cursor-pointer transition-all duration-300 outline-none border-[1.5px]
                 ${isSelected 
-                  ? `bg-gradient-to-br ${predikat.bgGradient} text-white border-transparent shadow-[0_4px_10px_rgba(0,0,0,0.12)] scale-[1.02] ring-2 ring-white ring-offset-1` 
-                  : `bg-slate-50 text-slate-500 border-slate-200 hover:bg-slate-100 hover:border-slate-300 hover:text-slate-800`
+                  ? `bg-gradient-to-br ${predikat.bgGradient} text-white border-transparent shadow-[0_8px_20px_rgba(0,0,0,0.12)] scale-[1.05] ring-2 ring-white ring-offset-2` 
+                  : `bg-white text-slate-500 border-slate-200 hover:bg-slate-50 hover:border-slate-300 hover:text-slate-800 hover:scale-[1.02]`
                 }
               `}
             >
@@ -219,17 +219,17 @@ function TextScoreSelector({
 }) {
   const predikat = getPredikat(value);
   return (
-    <div className="bg-white p-3.5 sm:p-4 rounded-2xl border border-slate-200/70 shadow-sm relative overflow-hidden group hover:border-[#ddc192]/60 hover:shadow-md transition-all">
-      <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-slate-50 to-transparent rounded-full opacity-50 -mr-8 -mt-8 pointer-events-none"></div>
+    <div className="bg-white/80 backdrop-blur-xl p-5 sm:p-6 rounded-[2rem] border-[1.5px] border-slate-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] relative overflow-hidden group hover:shadow-[0_12px_40px_rgb(0,0,0,0.08)] hover:border-slate-200 transition-all duration-300">
+      <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-slate-50 to-transparent rounded-full opacity-50 -mr-10 -mt-10 pointer-events-none"></div>
 
-      <div className="flex flex-wrap justify-between items-start sm:items-center gap-2 mb-3 relative z-10">
-        <div className="text-[10px] sm:text-[11px] font-black text-slate-700 uppercase tracking-wider">{label}</div>
-        <div className={`text-[10px] font-extrabold px-2 py-0.5 rounded-full border flex items-center gap-1 ${predikat.bg} ${predikat.color} ${predikat.border}`}>
+      <div className="flex flex-wrap justify-between items-start sm:items-center gap-2 mb-5 relative z-10">
+        <div className="text-[11px] sm:text-[12px] font-black text-slate-800 uppercase tracking-widest">{label}</div>
+        <div className={`text-[11px] font-bold px-3 py-1.5 rounded-xl flex items-center gap-2 ${predikat.bg} ${predikat.color}`}>
+          <div className="w-1.5 h-1.5 rounded-full bg-current opacity-70" />
           <span>{predikat.label}</span>
-          {value >= 85 ? <CheckCircle2 className="w-[11px] h-[11px]" /> : <AlertTriangle className="w-[11px] h-[11px]" />}
         </div>
       </div>
-      <div className="flex flex-col gap-1.5 relative z-10">
+      <div className="flex flex-col gap-2 relative z-10">
         {OPSI_SIKAP.map(item => {
           const isSelected = value === item.value;
           return (
@@ -237,15 +237,15 @@ function TextScoreSelector({
               key={item.value}
               type="button"
               onClick={() => onChange(item.value)}
-              className={`w-full py-1 sm:py-1.5 px-2.5 sm:px-3 rounded-xl text-[11px] sm:text-[12px] font-bold cursor-pointer transition-all duration-200 outline-none border flex justify-between items-center
+              className={`w-full py-2.5 px-4 rounded-xl text-[12px] sm:text-[13px] font-bold cursor-pointer transition-all duration-300 outline-none border-[1.5px] flex justify-between items-center
                 ${isSelected 
-                  ? `bg-gradient-to-br ${predikat.bgGradient} text-white border-transparent shadow-[0_4px_10px_rgba(0,0,0,0.12)] ring-2 ring-white ring-offset-1` 
-                  : `bg-slate-50 text-slate-500 border-slate-200 hover:bg-slate-100 hover:border-slate-300 hover:text-slate-800`
+                  ? `bg-gradient-to-br ${predikat.bgGradient} text-white border-transparent shadow-[0_8px_20px_rgba(0,0,0,0.12)] scale-[1.02] ring-2 ring-white ring-offset-2` 
+                  : `bg-white text-slate-500 border-slate-200 hover:bg-slate-50 hover:border-slate-300 hover:text-slate-800`
                 }
               `}
             >
               <span>{item.label}</span>
-              <span className={`text-[10px] ${isSelected ? "text-white/80" : "text-slate-400"}`}>({item.value})</span>
+              <span className={`text-[11px] font-mono ${isSelected ? "text-white/90" : "text-slate-400"}`}>({item.value})</span>
             </button>
           );
         })}
@@ -590,30 +590,31 @@ export default function HalaqohInputPage() {
             <span className="text-xs font-normal text-slate-400 ml-1">({entries.length} santri)</span>
           </h2>
 
-          <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-6 md:gap-8">
             {entries.map((entry, idx) => (
               <div key={entry.santri_id} 
-                className={`border-[1.5px] rounded-2xl overflow-hidden transition-all ${
-                  entry.kehadiran !== "hadir" ? "border-amber-200 shadow-[inset_0_0_0_1px_#fde68a]" : "border-slate-200 hover:border-slate-300"
+                className={`border-[1.5px] rounded-[2rem] overflow-hidden transition-all ${
+                  entry.kehadiran !== "hadir" ? "border-amber-200 shadow-[inset_0_0_0_1px_#fde68a]" : "border-slate-200 hover:border-slate-300 shadow-sm"
                 }`}
               >
                 {/* Santri Header */}
-                <div className="bg-slate-50/80 p-3 md:p-4 flex flex-col md:flex-row md:items-center justify-between gap-3 border-b border-slate-100">
+                <div className="bg-slate-50/80 p-4 md:p-5 flex flex-col md:flex-row md:items-center justify-between gap-3 border-b border-slate-100">
                   <div>
-                    <div className="font-bold text-sm text-slate-800">{entry.nama}</div>
-                    {entry.nis && <div className="text-[11px] text-slate-500">{entry.nis}</div>}
+                    <div className="font-bold text-sm md:text-base text-slate-800">{entry.nama}</div>
+                    {entry.nis && <div className="text-[11px] md:text-xs text-slate-500 font-mono mt-0.5">{entry.nis}</div>}
                   </div>
                   {/* Kehadiran */}
-                  <div className="flex flex-wrap gap-1.5 md:gap-2">
+                  <div className="flex flex-wrap gap-2 md:gap-2.5">
                     {KEHADIRAN_OPT.map(k => (
                       <button
                         key={k.val}
                         onClick={() => updateEntry(idx, "kehadiran", k.val)}
-                        className="px-2.5 py-1.5 rounded-lg border-[1.5px] font-bold text-xs cursor-pointer transition-all duration-150 min-h-[36px] min-w-[56px]"
+                        className="px-3.5 py-1.5 rounded-xl border-[1.5px] font-bold text-xs cursor-pointer transition-all duration-200 min-h-[38px]"
                         style={{
                           borderColor: entry.kehadiran === k.val ? k.warna : "#e2e8f0",
                           background: entry.kehadiran === k.val ? k.bg : "white",
-                          color: entry.kehadiran === k.val ? k.warna : "#64748b"
+                          color: entry.kehadiran === k.val ? k.warna : "#64748b",
+                          boxShadow: entry.kehadiran === k.val ? `0 4px 12px ${k.warna}20` : "none"
                         }}
                       >
                         {k.label}
@@ -623,10 +624,10 @@ export default function HalaqohInputPage() {
                 </div>
 
                 {/* Body */}
-                <div className="p-4">
+                <div className="p-5 md:p-7 space-y-6">
                   {/* Alasan (jika tidak hadir) */}
                   {(entry.kehadiran === "sakit" || entry.kehadiran === "izin") && (
-                    <div className="mb-4">
+                    <div>
                       <label className="text-[11px] font-semibold text-amber-600 block mb-1.5">
                         Alasan {entry.kehadiran === "sakit" ? "Sakit" : "Izin"} *
                       </label>
@@ -642,7 +643,7 @@ export default function HalaqohInputPage() {
 
                   {/* Nilai (hanya jika hadir) */}
                   {entry.kehadiran === "hadir" && (
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                    <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-5 xl:gap-6">
                       <NumericScoreSelector
                         label="Nilai Bacaan"
                         value={entry.nilai_bacaan}
@@ -667,13 +668,15 @@ export default function HalaqohInputPage() {
                     const nKelancaran = entry.nilai_kelancaran;
                     const nAkhir = Math.round((nBacaan + nKelancaran) / 2);
                     return (
-                      <div className="bg-slate-50 rounded-xl p-3 mb-4 border border-dashed border-slate-300">
-                        <div className="flex justify-between items-center mb-2">
-                          <span className="text-xs text-slate-500 font-semibold">Kalkulasi Nilai Akhir:</span>
-                          <span className="font-extrabold text-base text-red-950">{nAkhir}</span>
+                      <div className="bg-slate-50/80 rounded-xl p-4 border-[1.5px] border-dashed border-slate-300 flex flex-col md:flex-row md:justify-between md:items-center gap-3">
+                        <div className="flex flex-col">
+                           <span className="text-xs text-slate-500 font-bold uppercase tracking-wider">Kalkulasi Akhir</span>
+                           <div className="text-[11px] text-slate-500 font-mono mt-1">
+                             (Bacaan: <strong>{nBacaan}</strong> + Lancar: <strong>{nKelancaran}</strong>) &divide; 2
+                           </div>
                         </div>
-                        <div className="text-xs text-slate-600 font-mono bg-slate-100/80 p-2 rounded-lg break-all md:break-normal">
-                          (Bacaan: <strong>{nBacaan}</strong> + Kelancaran: <strong>{nKelancaran}</strong>) &divide; 2 = <strong>{nAkhir}</strong>
+                        <div className="font-black text-2xl text-red-950 bg-white px-4 py-1.5 rounded-lg border border-slate-200 shadow-sm self-start md:self-auto">
+                          {nAkhir}
                         </div>
                       </div>
                     );
