@@ -166,14 +166,14 @@ function NumericScoreSelector({
 }) {
   const predikat = getPredikat(value);
   return (
-    <div className="bg-white p-4 rounded-2xl border border-slate-200/70 shadow-sm relative overflow-hidden group hover:border-[#ddc192]/60 hover:shadow-md transition-all">
+    <div className="bg-white p-3.5 sm:p-4 rounded-2xl border border-slate-200/70 shadow-sm relative overflow-hidden group hover:border-[#ddc192]/60 hover:shadow-md transition-all">
       <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-slate-50 to-transparent rounded-full opacity-50 -mr-8 -mt-8 pointer-events-none"></div>
       
-      <div className="flex justify-between items-center mb-3 relative z-10">
-        <div className="text-[11px] font-black text-slate-700 uppercase tracking-widest">{label}</div>
-        <div className={`text-[10px] font-extrabold px-2.5 py-0.5 rounded-full border flex items-center gap-1 ${predikat.bg} ${predikat.color} ${predikat.border}`}>
+      <div className="flex flex-wrap justify-between items-start sm:items-center gap-2 mb-3 relative z-10">
+        <div className="text-[10px] sm:text-[11px] font-black text-slate-700 uppercase tracking-wider">{label}</div>
+        <div className={`text-[10px] font-extrabold px-2 py-0.5 rounded-full border flex items-center gap-1 ${predikat.bg} ${predikat.color} ${predikat.border}`}>
           <span>{predikat.label}</span>
-          {value >= 85 ? <CheckCircle2 className="w-3 h-3" /> : <AlertTriangle className="w-3 h-3" />}
+          {value >= 85 ? <CheckCircle2 className="w-[11px] h-[11px]" /> : <AlertTriangle className="w-[11px] h-[11px]" />}
         </div>
       </div>
       <div className="grid grid-cols-5 gap-1.5 relative z-10">
@@ -184,7 +184,7 @@ function NumericScoreSelector({
               key={num}
               type="button"
               onClick={() => onChange(num)}
-              className={`h-[34px] rounded-xl flex items-center justify-center text-[13px] font-bold cursor-pointer transition-all duration-200 outline-none border
+              className={`h-[32px] sm:h-[34px] rounded-xl flex items-center justify-center text-xs sm:text-[13px] font-bold cursor-pointer transition-all duration-200 outline-none border
                 ${isSelected 
                   ? `bg-gradient-to-br ${predikat.bgGradient} text-white border-transparent shadow-[0_4px_10px_rgba(0,0,0,0.12)] scale-[1.02] ring-2 ring-white ring-offset-1` 
                   : `bg-slate-50 text-slate-500 border-slate-200 hover:bg-slate-100 hover:border-slate-300 hover:text-slate-800`
@@ -219,14 +219,14 @@ function TextScoreSelector({
 }) {
   const predikat = getPredikat(value);
   return (
-    <div className="bg-white p-4 rounded-2xl border border-slate-200/70 shadow-sm relative overflow-hidden group hover:border-[#ddc192]/60 hover:shadow-md transition-all">
+    <div className="bg-white p-3.5 sm:p-4 rounded-2xl border border-slate-200/70 shadow-sm relative overflow-hidden group hover:border-[#ddc192]/60 hover:shadow-md transition-all">
       <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-slate-50 to-transparent rounded-full opacity-50 -mr-8 -mt-8 pointer-events-none"></div>
 
-      <div className="flex justify-between items-center mb-3 relative z-10">
-        <div className="text-[11px] font-black text-slate-700 uppercase tracking-widest">{label}</div>
-        <div className={`text-[10px] font-extrabold px-2.5 py-0.5 rounded-full border flex items-center gap-1 ${predikat.bg} ${predikat.color} ${predikat.border}`}>
+      <div className="flex flex-wrap justify-between items-start sm:items-center gap-2 mb-3 relative z-10">
+        <div className="text-[10px] sm:text-[11px] font-black text-slate-700 uppercase tracking-wider">{label}</div>
+        <div className={`text-[10px] font-extrabold px-2 py-0.5 rounded-full border flex items-center gap-1 ${predikat.bg} ${predikat.color} ${predikat.border}`}>
           <span>{predikat.label}</span>
-          {value >= 85 ? <CheckCircle2 className="w-3 h-3" /> : <AlertTriangle className="w-3 h-3" />}
+          {value >= 85 ? <CheckCircle2 className="w-[11px] h-[11px]" /> : <AlertTriangle className="w-[11px] h-[11px]" />}
         </div>
       </div>
       <div className="flex flex-col gap-1.5 relative z-10">
@@ -237,7 +237,7 @@ function TextScoreSelector({
               key={item.value}
               type="button"
               onClick={() => onChange(item.value)}
-              className={`w-full py-1.5 px-3 rounded-xl text-[12px] font-bold cursor-pointer transition-all duration-200 outline-none border flex justify-between items-center
+              className={`w-full py-1 sm:py-1.5 px-2.5 sm:px-3 rounded-xl text-[11px] sm:text-[12px] font-bold cursor-pointer transition-all duration-200 outline-none border flex justify-between items-center
                 ${isSelected 
                   ? `bg-gradient-to-br ${predikat.bgGradient} text-white border-transparent shadow-[0_4px_10px_rgba(0,0,0,0.12)] ring-2 ring-white ring-offset-1` 
                   : `bg-slate-50 text-slate-500 border-slate-200 hover:bg-slate-100 hover:border-slate-300 hover:text-slate-800`
