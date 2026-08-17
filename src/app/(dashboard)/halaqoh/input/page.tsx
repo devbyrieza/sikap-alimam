@@ -498,7 +498,7 @@ export default function HalaqohInputPage() {
             {(["tahsin", "ziyadah", "murojaah"] as const).map(j => {
               const isSelected = jenis === j;
               const meta: Record<string, { title: string; sub: string; icon: React.ReactNode }> = {
-                tahsin:   { title: "Tahsin (Talaqqi Face-to-Face)", sub: "Penguatan Bacaan Awal (Non-Kitab)", icon: <Award size={18} /> },
+                tahsin:   { title: "Tahsin (Talaqqi Face-to-Face)", sub: "Penguatan Bacaan & Talaqqi", icon: <Award size={18} /> },
                 ziyadah:  { title: "Setoran Ziyadah",             sub: "Setoran Hafalan Baru", icon: <BookOpen size={18} /> },
                 murojaah: { title: "Setoran Murojaah",            sub: "Pengulangan Hafalan", icon: <RotateCcw size={18} /> },
               };
@@ -595,12 +595,12 @@ export default function HalaqohInputPage() {
             {/* Tanggal & Kehadiran */}
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 16 }}>
               <div>
-                <label style={labelStyle}>Tanggal Setoran</label>
+                <label style={labelStyle}>{jenis === "tahsin" ? "TANGGAL HALAQOH" : "TANGGAL SETORAN"}</label>
                 <input type="date" value={tanggal} onChange={e => setTanggal(e.target.value)} style={inputStyle}
                   onFocus={e => (e.currentTarget.style.borderColor = "#550000")} onBlur={e => (e.currentTarget.style.borderColor = "#e2e8f0")} />
               </div>
               <div>
-                <label style={labelStyle}>Status Kehadiran</label>
+                <label style={labelStyle}>STATUS KEHADIRAN</label>
                 <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
                   {KEHADIRAN_OPT.map(k => {
                     const isSel = kehadiran === k.val;
@@ -637,13 +637,13 @@ export default function HalaqohInputPage() {
               </div>
             )}
 
-            {/* Form Hafalan (Hanya jika Hadir) */}
+            {/* Form Hafalan / Tahsin (Hanya jika Hadir) */}
             {kehadiran === "hadir" && (
               <>
                 {jenis === "tahsin" ? (
                   <div style={{ background: "#fffbeb", border: "1.5px solid #fde68a", borderRadius: 16, padding: "14px 18px", color: "#b45309", fontSize: 13, fontWeight: 700, display: "flex", alignItems: "center", gap: 10 }}>
                     <Award size={18} color="#d97706" />
-                    <span>Mode <strong>Tahsin (Talaqqi Face-to-Face)</strong>: Presensi &amp; Evaluasi Bacaan santri secara lisan (non-kitab / tanpa setoran surah hafalan).</span>
+                    <span>Mode <strong>Tahsin (Talaqqi Face-to-Face)</strong>: Presensi &amp; Evaluasi Bacaan santri secara lisan.</span>
                   </div>
                 ) : (
                   <>
@@ -743,8 +743,8 @@ export default function HalaqohInputPage() {
 
                 {/* Score Selectors */}
                 <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: 16 }}>
-                  <NumericScoreSelector label="Nilai Bacaan" value={nilaiBacaan} onChange={setNilaiBacaan} />
-                  <NumericScoreSelector label="Nilai Kelancaran" value={nilaiKelancaran} onChange={setNilaiKelancaran} />
+                  <NumericScoreSelector label={jenis === "tahsin" ? "Nilai Tajwid" : "Nilai Bacaan"} value={nilaiBacaan} onChange={setNilaiBacaan} />
+                  <NumericScoreSelector label={jenis === "tahsin" ? "Nilai Makhraj" : "Nilai Kelancaran"} value={nilaiKelancaran} onChange={setNilaiKelancaran} />
                   <TextScoreSelector label="Nilai Sikap" value={nilaiSikap} onChange={setNilaiSikap} />
                 </div>
 
@@ -755,7 +755,11 @@ export default function HalaqohInputPage() {
                     <span style={{ fontSize: 32, fontWeight: 900, color: "#550000" }}>{finalNilai}</span>
                   </div>
                   <div style={{ fontSize: 13, color: "#475569", background: "white", padding: "10px 14px", borderRadius: 10, border: "1px solid #ebdcc3", fontWeight: 600 }}>
-                    (Bacaan: <strong>{nilaiBacaan}</strong> + Kelancaran: <strong>{nilaiKelancaran}</strong>) &divide; 2 = <strong style={{ color: "#550000" }}>{finalNilai}</strong>
+                    {jenis === "tahsin" ? (
+                      <>(Tajwid: <strong>{nilaiBacaan}</strong> + Makhraj: <strong>{nilaiKelancaran}</strong>) &divide; 2 = <strong style={{ color: "#550000" }}>{finalNilai}</strong></>
+                    ) : (
+                      <>(Bacaan: <strong>{nilaiBacaan}</strong> + Kelancaran: <strong>{nilaiKelancaran}</strong>) &divide; 2 = <strong style={{ color: "#550000" }}>{finalNilai}</strong></>
+                    )}
                   </div>
                 </div>
               </>
