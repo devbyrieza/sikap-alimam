@@ -1,7 +1,10 @@
 "use client";
 
 import React, { useState, useEffect, useCallback, useRef } from "react";
-import { BookHeart, ArrowLeft, Search, ChevronDown, BookOpen, Users, Save, CheckCircle2, AlertCircle, RotateCcw, Award, AlertTriangle } from "lucide-react";
+import {
+  BookHeart, ArrowLeft, Search, ChevronDown, BookOpen, Users, Save,
+  CheckCircle2, AlertCircle, RotateCcw, Award, AlertTriangle,
+} from "lucide-react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 
@@ -23,6 +26,12 @@ const KEHADIRAN_OPT = [
 ];
 
 // ─── TYPES ──────────────────────────────────────────────────────────────────
+interface Santri {
+  id: string;
+  nama_lengkap: string;
+  nis?: string;
+}
+
 interface Surah {
   nomor: number;
   nama_latin: string;
@@ -31,30 +40,28 @@ interface Surah {
   halaman_mulai: number;
 }
 
-interface SantriEntry {
-  santri_id: string;
-  nama: string;
-  nis?: string;
-  kehadiran: "hadir" | "sakit" | "izin" | "alfa";
-  alasan: string;
-  nilai_sikap: number;
+interface CatatanRecord {
+  id: string;
+  tanggal: string;
+  sesi: string;
+  jenis: string;
+  surah_nomor?: number;
+  surah_nama?: string;
+  ayat_dari?: number;
+  ayat_ke?: number;
+  jumlah_halaman?: number;
+  kehadiran: string;
+  alasan?: string;
   nilai_bacaan: number;
   nilai_kelancaran: number;
-  override_surah?: boolean;
-  override_surah_nomor?: number;
-  override_surah_nama?: string;
-  override_surah_nama_arab?: string;
-  override_ayat_dari?: number;
-  override_ayat_ke?: number;
-  override_halaman?: number;
-  catatan: string;
+  nilai_sikap: number;
+  nilai_akhir: number;
+  catatan?: string;
+  santri: { nama_lengkap: string; nis?: string };
+  pegawai?: { nama_lengkap: string };
 }
 
-const DRAFT_KEY_PREFIX = "siakad_halaqoh_draft";
-
-function getDraftKey(userId: string, kelompokId: string, sesi: string, tanggal: string) {
-  return `${DRAFT_KEY_PREFIX}_${userId}_${kelompokId}_${sesi}_${tanggal}`;
-}
+const DRAFT_KEY_PREFIX = "siakad_halaqoh_draft_v2";
 
 // ─── SURAH SEARCH COMPONENT ─────────────────────────────────────────────────
 function SurahPicker({
@@ -244,109 +251,77 @@ export default function HalaqohInputPage() {
 
   const [surahList, setSurahList] = useState<Surah[]>([]);
   const [kelompokInfo, setKelompokInfo] = useState<any>(null);
+  const [santriList, setSantriList] = useState<Santri[]>([]);
+  const [history, setHistory] = useState<CatatanRecord[]>([]);
+
   const [userId, setUserId] = useState<string>("");
   const [pegawaiId, setPegawaiId] = useState<string>("");
 
-  // Form state
+  // Form State (Per-Santri)
+  const [selectedSantriId, setSelectedSantriId] = useState<string>("");
+  const [searchQuery, setSearchQuery] = useState("");
   const [jenis, setJenis] = useState<"ziyadah" | "murojaah">("ziyadah");
+  const [tanggal, setTanggal] = useState(tanggalParam);
   const [selectedSurah, setSelectedSurah] = useState<Surah | null>(null);
   const [ayatDari, setAyatDari] = useState(1);
-  const [ayatKe, setAyatKe] = useState(1);
+  const [ayatKe, setAyatKe] = useState(10);
   const [halamanAuto, setHalamanAuto] = useState<number | null>(null);
 
-  const [entries, setEntries] = useState<SantriEntry[]>([]);
+  const [kehadiran, setKehadiran] = useState<"hadir" | "sakit" | "izin" | "alfa">("hadir");
+  const [alasan, setAlasan] = useState("");
+  const [nilaiBacaan, setNilaiBacaan] = useState(90);
+  const [nilaiKelancaran, setNilaiKelancaran] = useState(90);
+  const [nilaiSikap, setNilaiSikap] = useState(90);
+  const [catatan, setCatatan] = useState("");
+
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Draft key
-  const draftKey = userId ? getDraftKey(userId, kelompokId, sesiParam, tanggalParam) : null;
-
   // Fetch surah list
   useEffect(() => {
-    fetch("/api/quran/surah").then(r => r.json()).then(data => {
-      setSurahList(Array.isArray(data) ? data : data.surah || []);
-    });
+    fetch("/api/quran/surah")
+      .then(r => r.json())
+      .then(data => {
+        setSurahList(Array.isArray(data) ? data : data.surah || []);
+      });
   }, []);
 
-  // Fetch profile & kelompok
-  useEffect(() => {
+  const fetchData = useCallback(async () => {
     if (!kelompokId) { setLoading(false); return; }
-    Promise.all([
-      fetch("/api/profile").then(r => r.json()),
-      fetch(`/api/halaqoh/kelompok?id=${kelompokId}`).then(r => r.json()),
-      fetch(`/api/halaqoh/catatan?kelompok_id=${kelompokId}&tanggal=${tanggalParam}&sesi=${sesiParam}`).then(r => r.json()),
-    ]).then(([profileData, kData, cData]) => {
-      const uid = profileData?.user?.id || "";
-      const pid = profileData?.pegawai?.id || "";
-      setUserId(uid);
-      setPegawaiId(pid);
+    try {
+      const [profileRes, kelompokRes, catatanRes] = await Promise.all([
+        fetch("/api/profile").then(r => r.json()),
+        fetch(`/api/halaqoh/kelompok?id=${kelompokId}`).then(r => r.json()),
+        fetch(`/api/halaqoh/catatan?kelompok_id=${kelompokId}&tanggal=${tanggal}&sesi=${sesiParam}`).then(r => r.json()),
+      ]);
 
-      const kelompok = Array.isArray(kData) ? kData[0] : kData?.kelompok?.[0];
+      setUserId(profileRes?.user?.id || "");
+      setPegawaiId(profileRes?.pegawai?.id || "");
+
+      const kelompok = Array.isArray(kelompokRes) ? kelompokRes[0] : kelompokRes?.kelompok?.[0];
       setKelompokInfo(kelompok);
 
-      // Build entries from anggota
-      const anggotaList = kelompok?.anggota || [];
-      const existingMap: Record<string, any> = {};
-      (Array.isArray(cData) ? cData : cData?.catatan || []).forEach((c: any) => {
-        existingMap[c.santri_id] = c;
-      });
+      const sList = (kelompok?.anggota || []).map((a: any) => ({
+        id: a.santri.id,
+        nama_lengkap: a.santri.nama_lengkap,
+        nis: a.santri.nis,
+      }));
+      setSantriList(sList);
 
-      const initialEntries: SantriEntry[] = anggotaList.map((a: any) => {
-        const s = a.santri;
-        const ex = existingMap[s.id] as any;
-        return {
-          santri_id: s.id,
-          nama: s.nama_lengkap,
-          nis: s.nis,
-          kehadiran: ex?.kehadiran || "hadir",
-          alasan: ex?.alasan || "",
-          nilai_sikap: ex?.nilai_sikap ?? 90,
-          nilai_bacaan: ex?.nilai_bacaan ?? 90,
-          nilai_kelancaran: ex?.nilai_kelancaran ?? 90,
-          catatan: ex?.catatan || "",
-        };
-      });
+      const catList = Array.isArray(catatanRes) ? catatanRes : catatanRes?.catatan || [];
+      setHistory(catList);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setLoading(false);
+    }
+  }, [kelompokId, tanggal, sesiParam]);
 
-      // If existing catatan, pre-fill surah
-      const firstEntry = Object.values(existingMap)[0] as any;
-      if (firstEntry) {
-        const s = surahList.find(s => s.nomor === firstEntry.surah_nomor);
-        if (s) setSelectedSurah(s);
-        setAyatDari(firstEntry.ayat_dari);
-        setAyatKe(firstEntry.ayat_ke);
-        setHalamanAuto(firstEntry.jumlah_halaman);
-        setJenis(firstEntry.jenis);
-      }
-
-      setEntries(initialEntries);
-    }).finally(() => setLoading(false));
-  }, [kelompokId, tanggalParam, sesiParam, surahList.length]);
-
-  // Restore draft from localStorage
   useEffect(() => {
-    if (!draftKey) return;
-    try {
-      const saved = localStorage.getItem(draftKey);
-      if (saved) {
-        const draft = JSON.parse(saved);
-        if (draft.jenis) setJenis(draft.jenis);
-        if (draft.selectedSurah) setSelectedSurah(draft.selectedSurah);
-        if (draft.ayatDari) setAyatDari(draft.ayatDari);
-        if (draft.ayatKe) setAyatKe(draft.ayatKe);
-        if (draft.entries) setEntries(draft.entries);
-      }
-    } catch { /* ignore */ }
-  }, [draftKey]);
-
-  // Auto-save draft
-  useEffect(() => {
-    if (!draftKey || entries.length === 0) return;
-    try {
-      localStorage.setItem(draftKey, JSON.stringify({ jenis, selectedSurah, ayatDari, ayatKe, entries }));
-    } catch { /* ignore */ }
-  }, [draftKey, jenis, selectedSurah, ayatDari, ayatKe, entries]);
+    fetchData();
+  }, [fetchData]);
 
   // Auto-calculate halaman when surah/ayat changes
   useEffect(() => {
@@ -355,7 +330,6 @@ export default function HalaqohInputPage() {
       .then(r => r.json())
       .then(d => setHalamanAuto(d.halaman ?? null))
       .catch(() => {
-        // Fallback: proportional calculation
         const ratio = (ayatKe - ayatDari + 1) / selectedSurah.total_ayat;
         setHalamanAuto(parseFloat((ratio * 0.5).toFixed(1)));
       });
@@ -368,55 +342,66 @@ export default function HalaqohInputPage() {
     setAyatKe(Math.min(selectedSurah.total_ayat, 10));
   }, [selectedSurah?.nomor]);
 
-  const updateEntry = (idx: number, field: keyof SantriEntry, value: any) => {
-    setEntries(prev => {
-      const updated = [...prev];
-      updated[idx] = { ...updated[idx], [field]: value };
-      return updated;
-    });
-  };
+  const selectedSantri = santriList.find(s => s.id === selectedSantriId);
+
+  const filteredSantri = santriList.filter(s =>
+    searchQuery === "" ||
+    s.nama_lengkap.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    (s.nis && s.nis.includes(searchQuery))
+  );
+
+  const finalNilai = Math.round((nilaiBacaan + nilaiKelancaran) / 2);
 
   const handleSave = async () => {
-    if (!selectedSurah) { setError("Pilih surah terlebih dahulu"); return; }
-    if (!kelompokId || !pegawaiId) { setError("Data kelompok tidak ditemukan"); return; }
+    if (!selectedSantriId) { setError("Pilih santri terlebih dahulu"); return; }
+    if (!selectedSurah && kehadiran === "hadir") { setError("Pilih surah terlebih dahulu"); return; }
+    if (!kelompokId || !pegawaiId) { setError("Data kelompok / pengampu tidak ditemukan"); return; }
+
     setSaving(true);
     setError(null);
     try {
       const body = {
         kelompok_id: kelompokId,
         pegawai_id: pegawaiId,
-        tanggal: tanggalParam,
+        tanggal,
         sesi: sesiParam,
-        jenis,
-        surah_nomor: selectedSurah.nomor,
-        surah_nama: selectedSurah.nama_latin,
-        surah_nama_arab: selectedSurah.nama_arab,
-        ayat_dari: ayatDari,
-        ayat_ke: ayatKe,
-        jumlah_halaman: halamanAuto ?? 0,
-        entries: entries.map(e => ({
-          santri_id: e.santri_id,
-          kehadiran: e.kehadiran,
-          alasan: e.alasan || null,
-          nilai_sikap: e.nilai_sikap,
-          nilai_bacaan: e.nilai_bacaan,
-          nilai_kelancaran: e.nilai_kelancaran,
-          catatan: e.catatan || null,
-        })),
+        entries: [
+          {
+            santri_id: selectedSantriId,
+            jenis,
+            surah_nomor: selectedSurah?.nomor,
+            surah_nama: selectedSurah?.nama_latin,
+            surah_nama_arab: selectedSurah?.nama_arab,
+            ayat_dari: ayatDari,
+            ayat_ke: ayatKe,
+            jumlah_halaman: halamanAuto ?? 0,
+            kehadiran,
+            alasan: alasan || null,
+            nilai_sikap: nilaiSikap,
+            nilai_bacaan: nilaiBacaan,
+            nilai_kelancaran: nilaiKelancaran,
+            catatan: catatan || null,
+          },
+        ],
       };
+
       const res = await fetch("/api/halaqoh/catatan", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),
       });
+
       if (!res.ok) {
         const err = await res.json();
-        throw new Error(err.error || "Gagal menyimpan");
+        throw new Error(err.error || "Gagal menyimpan catatan");
       }
-      // Clear draft on success
-      if (draftKey) localStorage.removeItem(draftKey);
+
       setSaved(true);
       setTimeout(() => setSaved(false), 4000);
+      setSelectedSantriId("");
+      setCatatan("");
+      setAlasan("");
+      await fetchData();
     } catch (e: any) {
       setError(e.message || "Terjadi kesalahan");
     } finally {
@@ -441,14 +426,6 @@ export default function HalaqohInputPage() {
     return `${HARI[d.getDay()]}, ${d.getDate()} ${BULAN[d.getMonth()]} ${d.getFullYear()}`;
   };
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center h-[300px] text-slate-400">
-        <BookHeart size={24} className="mr-3 opacity-50" /> Memuat data halaqoh...
-      </div>
-    );
-  }
-
   const labelStyle: React.CSSProperties = {
     display: "block", fontSize: 12, fontWeight: 800, color: "#475569",
     textTransform: "uppercase", letterSpacing: "0.04em", marginBottom: 6,
@@ -459,6 +436,14 @@ export default function HalaqohInputPage() {
     padding: "11px 14px", fontSize: 14, fontWeight: 600, outline: "none",
     background: "#fdf8f0", color: "#1e293b", transition: "border-color 0.2s",
   };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-[300px] text-slate-400">
+        <BookHeart size={24} className="mr-3 opacity-50" /> Memuat data halaqoh...
+      </div>
+    );
+  }
 
   return (
     <div className="page-container">
@@ -491,246 +476,370 @@ export default function HalaqohInputPage() {
             <BookHeart size={26} color="#ddc192" /> Input Catatan Halaqoh
           </h1>
           <p style={{ marginTop: "6px", color: "rgba(253, 248, 240, 0.9)", fontSize: 14, margin: "6px 0 0" }}>
-            {SESI_LABEL[sesiParam] || sesiParam} · {formatTanggal(tanggalParam)} · Kelompok {kelompokInfo?.nama || "-"}
+            {SESI_LABEL[sesiParam] || sesiParam} · {formatTanggal(tanggal)} · Kelompok {kelompokInfo?.nama || "-"}
           </p>
         </div>
       </div>
 
-      {/* ── MAIN FORM CARD (UNIFIED LIKE UJIAN TAHFIDZ) ── */}
-      <div style={{ background: "white", borderRadius: 24, padding: "28px 32px", border: "1.5px solid #ebdcc3", boxShadow: "0 4px 20px rgba(85,0,0,0.03)", display: "flex", flexDirection: "column", gap: 28 }}>
+      {/* ── MAIN FORM CARD ── */}
+      <div style={{ background: "white", borderRadius: 24, padding: "28px 32px", border: "1.5px solid #ebdcc3", boxShadow: "0 4px 20px rgba(85,0,0,0.03)", display: "flex", flexDirection: "column", gap: 24 }}>
 
         <div style={{ fontSize: 18, fontWeight: 800, color: "#550000", display: "flex", alignItems: "center", gap: 10 }}>
           <BookHeart size={22} color="#550000" /> Form Catatan &amp; Mutabaah Halaqoh
         </div>
 
-        {/* STEP 1: Bacaan Sesi Ini */}
+        {/* STEP 1: Jenis Setoran */}
         <div>
           <label style={{ ...labelStyle, fontSize: 13, color: "#1e293b", marginBottom: 12 }}>
             <span style={{ background: "#550000", color: "white", width: 20, height: 20, borderRadius: "50%", display: "inline-flex", alignItems: "center", justifyContent: "center", fontSize: 11, marginRight: 8 }}>1</span>
-            MATERI BACAAN SESI INI
+            PILIH JENIS SETORAN
           </label>
-
-          <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-            {/* Jenis Setoran */}
-            <div>
-              <label style={labelStyle}>Jenis Setoran</label>
-              <div style={{ display: "flex", gap: 10 }}>
-                {(["ziyadah", "murojaah"] as const).map(j => {
-                  const isSelected = jenis === j;
-                  return (
-                    <button
-                      key={j}
-                      type="button"
-                      onClick={() => setJenis(j)}
-                      style={{
-                        padding: "10px 20px", borderRadius: 13, border: isSelected ? "none" : "1.5px solid #e2e8f0",
-                        background: isSelected ? "#550000" : "#f8fafc", color: isSelected ? "white" : "#475569",
-                        fontSize: 14, fontWeight: 800, cursor: "pointer", textTransform: "capitalize",
-                        display: "flex", alignItems: "center", gap: 8,
-                        boxShadow: isSelected ? "0 4px 12px rgba(85,0,0,0.25)" : "none",
-                        transition: "all 0.15s",
-                      }}
-                    >
-                      {j === "ziyadah" ? <BookOpen size={16} /> : <RotateCcw size={16} />}
-                      {j}
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* Surah Picker */}
-            <SurahPicker surahList={surahList} selected={selectedSurah} onSelect={setSelectedSurah} label="NAMA SURAH / MATERI" />
-
-            {/* Ayat Range & Halaman */}
-            {selectedSurah && (
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))", gap: 14, alignItems: "flex-end" }}>
-                <div>
-                  <label style={labelStyle}>Dari Ayat</label>
-                  <input
-                    type="number" min={1} max={selectedSurah.total_ayat}
-                    value={ayatDari || ""}
-                    onChange={e => {
-                      const val = e.target.value;
-                      setAyatDari(val === "" ? 0 : Number(val));
-                    }}
-                    onBlur={() => {
-                      let v = Math.max(1, Math.min(ayatDari, ayatKe));
-                      if (!ayatDari) v = 1;
-                      setAyatDari(v);
-                    }}
-                    style={inputStyle}
-                  />
-                </div>
-                <div>
-                  <label style={labelStyle}>Sampai Ayat</label>
-                  <input
-                    type="number" min={ayatDari || 1} max={selectedSurah.total_ayat}
-                    value={ayatKe || ""}
-                    onChange={e => {
-                      const val = e.target.value;
-                      setAyatKe(val === "" ? 0 : Number(val));
-                    }}
-                    onBlur={() => {
-                      let v = Math.min(selectedSurah.total_ayat, Math.max(ayatKe, ayatDari || 1));
-                      if (!ayatKe) v = ayatDari || 1;
-                      setAyatKe(v);
-                    }}
-                    style={inputStyle}
-                  />
-                </div>
-                <div>
-                  <label style={{ ...labelStyle, display: "flex", gap: 4, alignItems: "center" }}>
-                    Jumlah Halaman <span style={{ fontSize: 10, color: "#94a3b8", fontWeight: 500 }}>(Madinah)</span>
-                  </label>
-                  <div style={{ ...inputStyle, background: "#ecfdf5", border: "1.5px solid #a7f3d0", color: "#059669", fontWeight: 800, textAlign: "center", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                    {halamanAuto !== null ? `${halamanAuto.toFixed(1)} hal.` : "—"}
+          <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
+            {(["ziyadah", "murojaah"] as const).map(j => {
+              const isSelected = jenis === j;
+              return (
+                <div
+                  key={j}
+                  onClick={() => setJenis(j)}
+                  style={{
+                    padding: "16px 24px", borderRadius: 16, cursor: "pointer",
+                    border: isSelected ? "2px solid #550000" : "1.5px solid #e2e8f0",
+                    background: isSelected ? "#fff5f5" : "#f8fafc",
+                    boxShadow: isSelected ? "0 4px 12px rgba(85,0,0,0.12)" : "none",
+                    transition: "all 0.15s", display: "flex", alignItems: "center", gap: 10,
+                  }}
+                >
+                  <div style={{ width: 34, height: 34, borderRadius: 10, background: "white", display: "flex", alignItems: "center", justifyContent: "center", color: "#550000", border: "1px solid #ebdcc3" }}>
+                    {j === "ziyadah" ? <BookOpen size={18} /> : <RotateCcw size={18} />}
+                  </div>
+                  <div>
+                    <div style={{ fontWeight: 800, fontSize: 14, color: isSelected ? "#550000" : "#334155", textTransform: "capitalize" }}>Setoran {j}</div>
+                    <div style={{ fontSize: 12, color: "#64748b", fontWeight: 600 }}>{j === "ziyadah" ? "Hafalan Baru" : "Pengulangan Hafalan"}</div>
                   </div>
                 </div>
-              </div>
-            )}
+              );
+            })}
           </div>
         </div>
 
-        {/* STEP 2: Penilaian Santri */}
-        {entries.length > 0 && (
-          <div>
-            <label style={{ ...labelStyle, fontSize: 13, color: "#1e293b", marginBottom: 16 }}>
-              <span style={{ background: "#550000", color: "white", width: 20, height: 20, borderRadius: "50%", display: "inline-flex", alignItems: "center", justifyContent: "center", fontSize: 11, marginRight: 8 }}>2</span>
-              PENILAIAN &amp; PRESENSI SANTRI ({entries.length} SANTRI)
-            </label>
+        {/* STEP 2: Pilih Santri */}
+        <div>
+          <label style={{ ...labelStyle, fontSize: 13, color: "#1e293b", marginBottom: 12 }}>
+            <span style={{ background: "#550000", color: "white", width: 20, height: 20, borderRadius: "50%", display: "inline-flex", alignItems: "center", justifyContent: "center", fontSize: 11, marginRight: 8 }}>2</span>
+            PILIH SANTRI
+          </label>
 
-            <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
-              {entries.map((entry, idx) => (
-                <div
-                  key={entry.santri_id}
-                  style={{
-                    border: "1.5px solid #e2e8f0", borderRadius: 18, overflow: "hidden", background: "white",
-                    boxShadow: "0 2px 8px rgba(0,0,0,0.02)",
-                  }}
-                >
-                  {/* Header Bar */}
-                  <div style={{ background: "#f8fafc", padding: "14px 20px", borderBottom: "1.5px solid #e2e8f0", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, flexWrap: "wrap" }}>
+          {selectedSantri ? (
+            <div style={{ background: "#fff5f5", border: "1.5px solid #fecaca", borderRadius: 16, padding: "16px 20px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+              <div>
+                <div style={{ fontWeight: 900, color: "#550000", fontSize: 15 }}>{selectedSantri.nama_lengkap}</div>
+                <div style={{ fontSize: 12, color: "#64748b", fontWeight: 600, marginTop: 2 }}>
+                  NIS: {selectedSantri.nis || "—"} · Kelompok: {kelompokInfo?.nama || "—"}
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setSelectedSantriId("")}
+                style={{ background: "white", border: "1.5px solid #fecaca", borderRadius: 10, padding: "8px 16px", color: "#dc2626", fontWeight: 800, fontSize: 12, cursor: "pointer" }}
+              >
+                Ganti Santri
+              </button>
+            </div>
+          ) : (
+            <div>
+              <div style={{ position: "relative", marginBottom: 8 }}>
+                <Search size={16} color="#94a3b8" style={{ position: "absolute", left: 14, top: "50%", transform: "translateY(-50%)" }} />
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={e => setSearchQuery(e.target.value)}
+                  placeholder="Ketik nama atau NIS santri..."
+                  style={{ ...inputStyle, paddingLeft: 40 }}
+                  onFocus={e => (e.currentTarget.style.borderColor = "#550000")}
+                  onBlur={e => (e.currentTarget.style.borderColor = "#e2e8f0")}
+                />
+              </div>
+              <div className="custom-scrollbar" style={{ maxHeight: 200, overflowY: "auto", border: "1.5px solid #e2e8f0", borderRadius: 16, background: "white" }}>
+                {filteredSantri.map(s => (
+                  <div
+                    key={s.id}
+                    onClick={() => setSelectedSantriId(s.id)}
+                    style={{ padding: "12px 18px", borderBottom: "1px solid #f1f5f9", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "space-between", transition: "background 0.15s" }}
+                    onMouseEnter={e => (e.currentTarget.style.background = "#fdf8f0")}
+                    onMouseLeave={e => (e.currentTarget.style.background = "white")}
+                  >
                     <div>
-                      <div style={{ fontWeight: 900, color: "#550000", fontSize: 15 }}>{entry.nama}</div>
-                      {entry.nis && <div style={{ fontSize: 12, color: "#64748b", fontWeight: 600, marginTop: 2 }}>NIS: {entry.nis}</div>}
+                      <div style={{ fontWeight: 800, color: "#1e293b", fontSize: 13 }}>{s.nama_lengkap}</div>
+                      <div style={{ fontSize: 11, color: "#64748b" }}>NIS: {s.nis || "—"}</div>
                     </div>
-
-                    {/* Kehadiran Buttons */}
-                    <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
-                      {KEHADIRAN_OPT.map(k => {
-                        const isSel = entry.kehadiran === k.val;
-                        return (
-                          <button
-                            key={k.val}
-                            type="button"
-                            onClick={() => updateEntry(idx, "kehadiran", k.val)}
-                            style={{
-                              padding: "6px 14px", borderRadius: 10, border: isSel ? `1.5px solid ${k.warna}` : "1.5px solid #e2e8f0",
-                              background: isSel ? k.bg : "white", color: isSel ? k.warna : "#64748b",
-                              fontSize: 12, fontWeight: 800, cursor: "pointer", transition: "all 0.15s",
-                            }}
-                          >
-                            {k.label}
-                          </button>
-                        );
-                      })}
-                    </div>
+                    <CheckCircle2 size={16} color="#550000" />
                   </div>
+                ))}
+                {filteredSantri.length === 0 && (
+                  <div style={{ padding: 20, textAlign: "center", color: "#94a3b8", fontSize: 13 }}>Santri tidak ditemukan</div>
+                )}
+              </div>
+            </div>
+          )}
+        </div>
 
-                  {/* Body */}
-                  <div style={{ padding: 20, display: "flex", flexDirection: "column", gap: 18 }}>
-                    {/* Alasan jika tidak hadir */}
-                    {(entry.kehadiran === "sakit" || entry.kehadiran === "izin") && (
-                      <div>
-                        <label style={{ ...labelStyle, color: "#d97706" }}>Alasan {entry.kehadiran === "sakit" ? "Sakit" : "Izin"} *</label>
-                        <input
-                          type="text"
-                          value={entry.alasan}
-                          onChange={e => updateEntry(idx, "alasan", e.target.value)}
-                          placeholder={entry.kehadiran === "sakit" ? "Sakit apa?" : "Izin untuk keperluan apa?"}
-                          style={{ ...inputStyle, background: "#fffbeb", border: "1.5px solid #fde68a" }}
-                        />
-                      </div>
-                    )}
+        {/* STEP 3: Detail Setoran & Nilai */}
+        {selectedSantri && (
+          <>
+            {/* Tanggal & Kehadiran */}
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 16 }}>
+              <div>
+                <label style={labelStyle}>Tanggal Setoran</label>
+                <input type="date" value={tanggal} onChange={e => setTanggal(e.target.value)} style={inputStyle}
+                  onFocus={e => (e.currentTarget.style.borderColor = "#550000")} onBlur={e => (e.currentTarget.style.borderColor = "#e2e8f0")} />
+              </div>
+              <div>
+                <label style={labelStyle}>Status Kehadiran</label>
+                <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+                  {KEHADIRAN_OPT.map(k => {
+                    const isSel = kehadiran === k.val;
+                    return (
+                      <button
+                        key={k.val}
+                        type="button"
+                        onClick={() => setKehadiran(k.val as any)}
+                        style={{
+                          padding: "10px 16px", borderRadius: 12, border: isSel ? `1.5px solid ${k.warna}` : "1.5px solid #e2e8f0",
+                          background: isSel ? k.bg : "white", color: isSel ? k.warna : "#64748b",
+                          fontSize: 13, fontWeight: 800, cursor: "pointer", transition: "all 0.15s", flex: 1,
+                        }}
+                      >
+                        {k.label}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
 
-                    {/* Score Selectors */}
-                    {entry.kehadiran === "hadir" && (
-                      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: 14 }}>
-                        <NumericScoreSelector label="Nilai Bacaan" value={entry.nilai_bacaan} onChange={v => updateEntry(idx, "nilai_bacaan", v)} />
-                        <NumericScoreSelector label="Nilai Kelancaran" value={entry.nilai_kelancaran} onChange={v => updateEntry(idx, "nilai_kelancaran", v)} />
-                        <TextScoreSelector label="Nilai Sikap" value={entry.nilai_sikap} onChange={v => updateEntry(idx, "nilai_sikap", v)} />
-                      </div>
-                    )}
+            {/* Alasan jika tidak hadir */}
+            {(kehadiran === "sakit" || kehadiran === "izin") && (
+              <div>
+                <label style={{ ...labelStyle, color: "#d97706" }}>Alasan {kehadiran === "sakit" ? "Sakit" : "Izin"} *</label>
+                <input
+                  type="text"
+                  value={alasan}
+                  onChange={e => setAlasan(e.target.value)}
+                  placeholder={kehadiran === "sakit" ? "Sakit apa?" : "Izin untuk keperluan apa?"}
+                  style={{ ...inputStyle, background: "#fffbeb", border: "1.5px solid #fde68a" }}
+                />
+              </div>
+            )}
 
-                    {/* Kalkulasi Akhir Box */}
-                    {entry.kehadiran === "hadir" && (() => {
-                      const nBacaan = entry.nilai_bacaan;
-                      const nKelancaran = entry.nilai_kelancaran;
-                      const nAkhir = Math.round((nBacaan + nKelancaran) / 2);
-                      return (
-                        <div style={{ background: "#fff5f5", border: "1.5px solid #fecaca", borderRadius: 14, padding: "12px 18px", display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 8 }}>
-                          <div>
-                            <div style={{ fontSize: 11, fontWeight: 800, color: "#550000", textTransform: "uppercase", letterSpacing: "0.04em" }}>KALKULASI AKHIR</div>
-                            <div style={{ fontSize: 12, color: "#64748b", fontFamily: "monospace", marginTop: 2 }}>
-                              (Bacaan: {nBacaan} + Lancar: {nKelancaran}) &divide; 2
-                            </div>
-                          </div>
-                          <div style={{ fontSize: 22, fontWeight: 900, color: "#550000", background: "white", padding: "4px 16px", borderRadius: 10, border: "1px solid #fecaca" }}>
-                            {nAkhir}
-                          </div>
-                        </div>
-                      );
-                    })()}
-
-                    {/* Catatan Input */}
-                    <div>
-                      <label style={{ ...labelStyle, marginBottom: 4 }}>CATATAN HALAQOH SANTRI</label>
-                      <input
-                        type="text"
-                        value={entry.catatan}
-                        onChange={e => updateEntry(idx, "catatan", e.target.value)}
-                        placeholder="Catatan opsional untuk santri ini..."
-                        style={inputStyle}
-                      />
+            {/* Form Hafalan (Hanya jika Hadir) */}
+            {kehadiran === "hadir" && (
+              <>
+                {/* Surah & Halaman */}
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 16 }}>
+                  <div>
+                    <SurahPicker surahList={surahList} selected={selectedSurah} onSelect={setSelectedSurah} label="Nama Surah / Materi" />
+                  </div>
+                  <div>
+                    <label style={labelStyle}>Jumlah Halaman (Madinah)</label>
+                    <div style={{ ...inputStyle, background: "#ecfdf5", border: "1.5px solid #a7f3d0", color: "#059669", fontWeight: 800, textAlign: "center", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                      {halamanAuto !== null ? `${halamanAuto.toFixed(1)} hal.` : "—"}
                     </div>
                   </div>
                 </div>
-              ))}
+
+                {/* Ayat Range */}
+                {selectedSurah && (
+                  <div style={{ background: "#f8fafc", borderRadius: 16, padding: 18, border: "1.5px solid #e2e8f0", display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
+                    {/* Dari Ayat */}
+                    <div>
+                      <label style={labelStyle}>Dari Ayat</label>
+                      <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                        <button
+                          type="button"
+                          onClick={() => setAyatDari(prev => Math.max(1, (prev || 1) - 1))}
+                          style={{ width: 38, height: 38, borderRadius: 10, border: "1.5px solid #e2e8f0", background: "white", color: "#550000", fontWeight: 900, fontSize: 16, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}
+                        >-</button>
+                        <input
+                          type="number"
+                          min={1}
+                          max={selectedSurah.total_ayat}
+                          value={ayatDari === 0 ? "" : ayatDari}
+                          onChange={e => {
+                            const val = e.target.value;
+                            if (val === "") setAyatDari(0);
+                            else {
+                              const n = parseInt(val);
+                              if (!isNaN(n)) setAyatDari(n);
+                            }
+                          }}
+                          onBlur={() => {
+                            if (!ayatDari || ayatDari < 1) setAyatDari(1);
+                            else if (ayatDari > selectedSurah.total_ayat) setAyatDari(selectedSurah.total_ayat);
+                          }}
+                          style={{ ...inputStyle, background: "white", textAlign: "center", fontWeight: 800, fontSize: 15 }}
+                          onFocus={e => (e.currentTarget.style.borderColor = "#550000")}
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setAyatDari(prev => Math.min(selectedSurah.total_ayat, (prev || 0) + 1))}
+                          style={{ width: 38, height: 38, borderRadius: 10, border: "1.5px solid #e2e8f0", background: "white", color: "#550000", fontWeight: 900, fontSize: 16, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}
+                        >+</button>
+                      </div>
+                    </div>
+
+                    {/* Sampai Ayat */}
+                    <div>
+                      <label style={labelStyle}>Sampai Ayat (Maks: {selectedSurah.total_ayat})</label>
+                      <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                        <button
+                          type="button"
+                          onClick={() => setAyatKe(prev => Math.max(ayatDari || 1, (prev || 1) - 1))}
+                          style={{ width: 38, height: 38, borderRadius: 10, border: "1.5px solid #e2e8f0", background: "white", color: "#550000", fontWeight: 900, fontSize: 16, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}
+                        >-</button>
+                        <input
+                          type="number"
+                          min={ayatDari || 1}
+                          max={selectedSurah.total_ayat}
+                          value={ayatKe === 0 ? "" : ayatKe}
+                          onChange={e => {
+                            const val = e.target.value;
+                            if (val === "") setAyatKe(0);
+                            else {
+                              const n = parseInt(val);
+                              if (!isNaN(n)) setAyatKe(n);
+                            }
+                          }}
+                          onBlur={() => {
+                            if (!ayatKe || ayatKe < (ayatDari || 1)) setAyatKe(ayatDari || 1);
+                            else if (ayatKe > selectedSurah.total_ayat) setAyatKe(selectedSurah.total_ayat);
+                          }}
+                          style={{ ...inputStyle, background: "white", textAlign: "center", fontWeight: 800, fontSize: 15 }}
+                          onFocus={e => (e.currentTarget.style.borderColor = "#550000")}
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setAyatKe(prev => Math.min(selectedSurah.total_ayat, (prev || 0) + 1))}
+                          style={{ width: 38, height: 38, borderRadius: 10, border: "1.5px solid #e2e8f0", background: "white", color: "#550000", fontWeight: 900, fontSize: 16, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}
+                        >+</button>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Score Selectors */}
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: 16 }}>
+                  <NumericScoreSelector label="Nilai Bacaan" value={nilaiBacaan} onChange={setNilaiBacaan} />
+                  <NumericScoreSelector label="Nilai Kelancaran" value={nilaiKelancaran} onChange={setNilaiKelancaran} />
+                  <TextScoreSelector label="Nilai Sikap" value={nilaiSikap} onChange={setNilaiSikap} />
+                </div>
+
+                {/* Calculation Summary Box */}
+                <div style={{ background: "#fff5f5", borderRadius: 18, padding: "20px 24px", border: "1.5px solid #fecaca" }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
+                    <span style={{ fontSize: 13, fontWeight: 800, color: "#550000", textTransform: "uppercase", letterSpacing: "0.04em" }}>KALKULASI NILAI AKHIR:</span>
+                    <span style={{ fontSize: 32, fontWeight: 900, color: "#550000" }}>{finalNilai}</span>
+                  </div>
+                  <div style={{ fontSize: 13, color: "#475569", background: "white", padding: "10px 14px", borderRadius: 10, border: "1px solid #ebdcc3", fontWeight: 600 }}>
+                    (Bacaan: <strong>{nilaiBacaan}</strong> + Kelancaran: <strong>{nilaiKelancaran}</strong>) &divide; 2 = <strong style={{ color: "#550000" }}>{finalNilai}</strong>
+                  </div>
+                </div>
+              </>
+            )}
+
+            {/* Catatan */}
+            <div>
+              <label style={labelStyle}>Catatan Halaqoh Santri (Opsional)</label>
+              <input type="text" value={catatan} onChange={e => setCatatan(e.target.value)} placeholder="Catatan evaluasi setoran santri ini..." style={inputStyle}
+                onFocus={e => (e.currentTarget.style.borderColor = "#550000")} onBlur={e => (e.currentTarget.style.borderColor = "#e2e8f0")} />
             </div>
+
+            {error && (
+              <div style={{ background: "#fef2f2", color: "#dc2626", padding: "12px 18px", borderRadius: 12, border: "1px solid #fecaca", fontSize: 13, fontWeight: 700, display: "flex", alignItems: "center", gap: 8 }}>
+                <AlertCircle size={16} /> {error}
+              </div>
+            )}
+            {saved && (
+              <div style={{ background: "#ecfdf5", color: "#059669", padding: "12px 18px", borderRadius: 12, border: "1px solid #a7f3d0", fontSize: 13, fontWeight: 700, display: "flex", alignItems: "center", gap: 8 }}>
+                <CheckCircle2 size={16} /> Catatan halaqoh santri berhasil disimpan!
+              </div>
+            )}
+
+            {/* Submit button */}
+            <button
+              type="button"
+              onClick={handleSave}
+              disabled={saving || !selectedSantriId}
+              style={{
+                background: saving || !selectedSantriId ? "#cbd5e1" : "#550000",
+                color: "white", padding: "14px 28px", borderRadius: 16,
+                border: "none", fontWeight: 800, fontSize: 15, cursor: saving || !selectedSantriId ? "not-allowed" : "pointer",
+                display: "flex", alignItems: "center", justifyContent: "center", gap: 10,
+                boxShadow: saving || !selectedSantriId ? "none" : "0 4px 14px rgba(85,0,0,0.3)",
+                transition: "all 0.2s",
+              }}
+            >
+              <Save size={18} /> {saving ? "Menyimpan Catatan..." : "Simpan Catatan Santri Ini"}
+            </button>
+          </>
+        )}
+      </div>
+
+      {/* ── HISTORY TABLE ── */}
+      <div style={{ background: "white", borderRadius: 20, border: "1.5px solid #e2e8f0", boxShadow: "0 4px 20px rgba(0,0,0,0.05)", overflow: "hidden" }}>
+        <div style={{ padding: "16px 24px", borderBottom: "1.5px solid #f1f5f9", fontWeight: 800, color: "#1e293b", fontSize: 15, display: "flex", alignItems: "center", gap: 8 }}>
+          <BookHeart size={18} color="#550000" /> Riwayat Catatan Halaqoh ({SESI_LABEL[sesiParam] || sesiParam})
+        </div>
+
+        {history.length === 0 ? (
+          <div style={{ padding: 48, textAlign: "center", color: "#94a3b8", fontSize: 13 }}>Belum ada catatan halaqoh untuk sesi ini</div>
+        ) : (
+          <div className="custom-scrollbar" style={{ overflowX: "auto" }}>
+            <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13, minWidth: 800 }}>
+              <thead>
+                <tr style={{ background: "#f8fafc", borderBottom: "2px solid #e2e8f0" }}>
+                  {["Tanggal", "Santri", "Jenis", "Materi / Surah", "Ayat", "Halaman", "Nilai Akhir", "Kehadiran", "Catatan"].map((h, i) => (
+                    <th key={i} style={{ padding: "12px 16px", textAlign: "left", fontSize: 11, fontWeight: 800, color: "#475569", textTransform: "uppercase", letterSpacing: "0.06em", whiteSpace: "nowrap" }}>
+                      {h}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {history.map((row, i) => (
+                  <tr key={row.id} style={{ borderBottom: "1px solid #f1f5f9", background: i % 2 === 0 ? "white" : "#fafafa" }}>
+                    <td style={{ padding: "12px 16px", color: "#64748b", fontWeight: 600, whiteSpace: "nowrap" }}>{formatTanggal(row.tanggal)}</td>
+                    <td style={{ padding: "12px 16px", fontWeight: 800, color: "#1e293b", whiteSpace: "nowrap" }}>{row.santri?.nama_lengkap}</td>
+                    <td style={{ padding: "12px 16px", whiteSpace: "nowrap" }}>
+                      <span style={{ padding: "3px 10px", borderRadius: 8, fontSize: 11, fontWeight: 700, border: "1px solid #ebdcc3", background: row.jenis === "ziyadah" ? "#fff5f5" : "#fdf8f0", color: "#550000", textTransform: "capitalize" }}>
+                        {row.jenis}
+                      </span>
+                    </td>
+                    <td style={{ padding: "12px 16px", color: "#475569", fontWeight: 700 }}>
+                      {row.surah_nama || "—"}
+                    </td>
+                    <td style={{ padding: "12px 16px", color: "#64748b" }}>
+                      {row.ayat_dari && row.ayat_ke ? `Ayat ${row.ayat_dari}–${row.ayat_ke}` : "—"}
+                    </td>
+                    <td style={{ padding: "12px 16px", color: "#059669", fontWeight: 700 }}>
+                      {row.jumlah_halaman ? `${row.jumlah_halaman} hal.` : "—"}
+                    </td>
+                    <td style={{ padding: "12px 16px", fontWeight: 900, color: "#550000", fontSize: 14 }}>
+                      {row.nilai_akhir ?? "—"}
+                    </td>
+                    <td style={{ padding: "12px 16px", whiteSpace: "nowrap" }}>
+                      <span style={{ padding: "3px 10px", borderRadius: 8, fontSize: 11, fontWeight: 700, textTransform: "capitalize", background: row.kehadiran === "hadir" ? "#ecfdf5" : "#fffbeb", color: row.kehadiran === "hadir" ? "#059669" : "#d97706" }}>
+                        {row.kehadiran}
+                      </span>
+                    </td>
+                    <td style={{ padding: "12px 16px", color: "#64748b", fontSize: 12 }}>
+                      {row.catatan || "—"}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         )}
-
-        {/* Messages & Submit */}
-        {error && (
-          <div style={{ background: "#fef2f2", border: "1.5px solid #fecaca", color: "#dc2626", padding: "12px 16px", borderRadius: 14, fontSize: 13, fontWeight: 700, display: "flex", alignItems: "center", gap: 8 }}>
-            <AlertCircle size={18} /> {error}
-          </div>
-        )}
-
-        {saved && (
-          <div style={{ background: "#ecfdf5", border: "1.5px solid #a7f3d0", color: "#059669", padding: "12px 16px", borderRadius: 14, fontSize: 13, fontWeight: 700, display: "flex", alignItems: "center", gap: 8 }}>
-            <CheckCircle2 size={18} /> Catatan halaqoh berhasil disimpan!
-          </div>
-        )}
-
-        <button
-          type="button"
-          onClick={handleSave}
-          disabled={saving || !selectedSurah || entries.length === 0}
-          style={{
-            width: "100%", padding: 14, borderRadius: 14, border: "none",
-            background: saving || !selectedSurah || entries.length === 0 ? "#cbd5e1" : "#550000",
-            color: "white", fontSize: 15, fontWeight: 800,
-            cursor: saving || !selectedSurah || entries.length === 0 ? "not-allowed" : "pointer",
-            boxShadow: saving || !selectedSurah || entries.length === 0 ? "none" : "0 4px 14px rgba(85,0,0,0.3)",
-            display: "flex", alignItems: "center", justifyContent: "center", gap: 10,
-            transition: "all 0.15s",
-          }}
-        >
-          <Save size={18} />
-          {saving ? "Menyimpan Catatan..." : "Simpan Semua Catatan"}
-        </button>
       </div>
     </div>
   );
