@@ -42,6 +42,7 @@ interface Surah {
 
 interface CatatanRecord {
   id: string;
+  santri_id?: string;
   tanggal: string;
   sesi: string;
   jenis: string;
@@ -566,21 +567,35 @@ export default function HalaqohInputPage() {
                 />
               </div>
               <div className="custom-scrollbar" style={{ maxHeight: 200, overflowY: "auto", border: "1.5px solid #e2e8f0", borderRadius: 16, background: "white" }}>
-                {filteredSantri.map(s => (
-                  <div
-                    key={s.id}
-                    onClick={() => setSelectedSantriId(s.id)}
-                    style={{ padding: "12px 18px", borderBottom: "1px solid #f1f5f9", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "space-between", transition: "background 0.15s" }}
-                    onMouseEnter={e => (e.currentTarget.style.background = "#fdf8f0")}
-                    onMouseLeave={e => (e.currentTarget.style.background = "white")}
-                  >
-                    <div>
-                      <div style={{ fontWeight: 800, color: "#1e293b", fontSize: 13 }}>{s.nama_lengkap}</div>
-                      <div style={{ fontSize: 11, color: "#64748b" }}>NIS: {s.nis || "—"}</div>
+                {filteredSantri.map(s => {
+                  const isDone = history.some(h => h.santri_id === s.id || h.santri?.nama_lengkap === s.nama_lengkap);
+                  return (
+                    <div
+                      key={s.id}
+                      onClick={() => setSelectedSantriId(s.id)}
+                      style={{
+                        padding: "12px 18px", borderBottom: "1px solid #f1f5f9", cursor: "pointer",
+                        display: "flex", alignItems: "center", justifyContent: "space-between", transition: "background 0.15s",
+                        background: isDone ? "#f0fdf4" : "white",
+                      }}
+                      onMouseEnter={e => (e.currentTarget.style.background = isDone ? "#dcfce7" : "#fdf8f0")}
+                      onMouseLeave={e => (e.currentTarget.style.background = isDone ? "#f0fdf4" : "white")}
+                    >
+                      <div>
+                        <div style={{ fontWeight: 800, color: isDone ? "#166534" : "#1e293b", fontSize: 13, display: "flex", alignItems: "center", gap: 8 }}>
+                          {s.nama_lengkap}
+                          {isDone && (
+                            <span style={{ background: "#dcfce7", color: "#15803d", padding: "2px 8px", borderRadius: 10, fontSize: 10, fontWeight: 800, border: "1px solid #bbf7d0" }}>
+                              ✓ Sudah Diisi
+                            </span>
+                          )}
+                        </div>
+                        <div style={{ fontSize: 11, color: isDone ? "#15803d" : "#64748b" }}>NIS: {s.nis || "—"}</div>
+                      </div>
+                      <CheckCircle2 size={16} color={isDone ? "#166534" : "#550000"} />
                     </div>
-                    <CheckCircle2 size={16} color="#550000" />
-                  </div>
-                ))}
+                  );
+                })}
                 {filteredSantri.length === 0 && (
                   <div style={{ padding: 20, textAlign: "center", color: "#94a3b8", fontSize: 13 }}>Santri tidak ditemukan</div>
                 )}
