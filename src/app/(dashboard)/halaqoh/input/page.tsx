@@ -637,10 +637,10 @@ export default function HalaqohInputPage() {
                 {/* Surah & Halaman */}
                 <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 16 }}>
                   <div>
-                    <SurahPicker surahList={surahList} selected={selectedSurah} onSelect={setSelectedSurah} label="Nama Surah / Materi" />
+                    <SurahPicker surahList={surahList} selected={selectedSurah} onSelect={setSelectedSurah} label="NAMA SURAH" />
                   </div>
                   <div>
-                    <label style={labelStyle}>Jumlah Halaman (Madinah)</label>
+                    <label style={labelStyle}>JUMLAH HALAMAN (STANDAR MADINAH)</label>
                     <div style={{ ...inputStyle, background: "#ecfdf5", border: "1.5px solid #a7f3d0", color: "#059669", fontWeight: 800, textAlign: "center", display: "flex", alignItems: "center", justifyContent: "center" }}>
                       {halamanAuto !== null ? `${halamanAuto.toFixed(1)} hal.` : "—"}
                     </div>

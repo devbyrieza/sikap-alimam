@@ -490,168 +490,173 @@ export default function UjianTahfidzPage() {
           )}
         </div>
 
-        {/* Date & Details */}
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 16 }}>
-          <div>
-            <label style={labelStyle}>Tanggal Ujian</label>
-            <input type="date" value={tanggal} onChange={e => setTanggal(e.target.value)} style={inputStyle}
-              onFocus={e => (e.currentTarget.style.borderColor = "#550000")} onBlur={e => (e.currentTarget.style.borderColor = "#e2e8f0")} />
-          </div>
-
-          {jenisUjian === "ujian_itqon" ? (
-            <div>
-              <label style={labelStyle}>Tuntas Juz Ke-</label>
-              <select value={juz} onChange={e => setJuz(Number(e.target.value))} style={{ ...inputStyle, appearance: "none", cursor: "pointer" }}
-                onFocus={e => (e.currentTarget.style.borderColor = "#550000")} onBlur={e => (e.currentTarget.style.borderColor = "#e2e8f0")}>
-                {[1, 2, 3, 4, 5, 6].map(j => (
-                  <option key={j} value={j * 5}>Per 5 Juz (Juz 1–{j * 5})</option>
-                ))}
-              </select>
-            </div>
-          ) : (
-            <>
+        {/* STEP 3: Detail Ujian & Nilai (Hanya muncul jika santri sudah dipilih) */}
+        {selectedSantri && (
+          <>
+            {/* Date & Details */}
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 16 }}>
               <div>
-                <SurahPicker surahList={surahList} selected={selectedSurah} onSelect={setSelectedSurah} label="Nama Surah / Materi" />
-              </div>
-              <div>
-                <label style={labelStyle}>Jumlah Halaman</label>
-                <input type="number" min={1} value={jumlahHalaman || ""} onChange={e => setJumlahHalaman(Number(e.target.value) || 0)} style={inputStyle}
+                <label style={labelStyle}>Tanggal Ujian</label>
+                <input type="date" value={tanggal} onChange={e => setTanggal(e.target.value)} style={inputStyle}
                   onFocus={e => (e.currentTarget.style.borderColor = "#550000")} onBlur={e => (e.currentTarget.style.borderColor = "#e2e8f0")} />
               </div>
-            </>
-          )}
-        </div>
 
-        {/* Ayat Dari & Sampai */}
-        {selectedSurah && jenisUjian !== "ujian_itqon" && (
-          <div style={{ background: "#f8fafc", borderRadius: 16, padding: 18, border: "1.5px solid #e2e8f0", display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
-            {/* Dari Ayat */}
-            <div>
-              <label style={labelStyle}>Dari Ayat</label>
-              <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                <button
-                  type="button"
-                  onClick={() => setAyatDari(prev => Math.max(1, (prev || 1) - 1))}
-                  style={{ width: 38, height: 38, borderRadius: 10, border: "1.5px solid #e2e8f0", background: "white", color: "#550000", fontWeight: 900, fontSize: 16, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}
-                >-</button>
-                <input
-                  type="number"
-                  min={1}
-                  max={selectedSurah.total_ayat}
-                  value={ayatDari === 0 ? "" : ayatDari}
-                  onChange={e => {
-                    const val = e.target.value;
-                    if (val === "") setAyatDari(0);
-                    else {
-                      const n = parseInt(val);
-                      if (!isNaN(n)) setAyatDari(n);
-                    }
-                  }}
-                  onBlur={() => {
-                    if (!ayatDari || ayatDari < 1) setAyatDari(1);
-                    else if (ayatDari > selectedSurah.total_ayat) setAyatDari(selectedSurah.total_ayat);
-                  }}
-                  style={{ ...inputStyle, background: "white", textAlign: "center", fontWeight: 800, fontSize: 15 }}
-                  onFocus={e => (e.currentTarget.style.borderColor = "#550000")}
-                />
-                <button
-                  type="button"
-                  onClick={() => setAyatDari(prev => Math.min(selectedSurah.total_ayat, (prev || 0) + 1))}
-                  style={{ width: 38, height: 38, borderRadius: 10, border: "1.5px solid #e2e8f0", background: "white", color: "#550000", fontWeight: 900, fontSize: 16, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}
-                >+</button>
+              {jenisUjian === "ujian_itqon" ? (
+                <div>
+                  <label style={labelStyle}>Tuntas Juz Ke-</label>
+                  <select value={juz} onChange={e => setJuz(Number(e.target.value))} style={{ ...inputStyle, appearance: "none", cursor: "pointer" }}
+                    onFocus={e => (e.currentTarget.style.borderColor = "#550000")} onBlur={e => (e.currentTarget.style.borderColor = "#e2e8f0")}>
+                    {[1, 2, 3, 4, 5, 6].map(j => (
+                      <option key={j} value={j * 5}>Per 5 Juz (Juz 1–{j * 5})</option>
+                    ))}
+                  </select>
+                </div>
+              ) : (
+                <>
+                  <div>
+                    <SurahPicker surahList={surahList} selected={selectedSurah} onSelect={setSelectedSurah} label="Nama Surah" />
+                  </div>
+                  <div>
+                    <label style={labelStyle}>Jumlah Halaman (Standar Madinah)</label>
+                    <input type="number" min={1} value={jumlahHalaman || ""} onChange={e => setJumlahHalaman(Number(e.target.value) || 0)} style={inputStyle}
+                      onFocus={e => (e.currentTarget.style.borderColor = "#550000")} onBlur={e => (e.currentTarget.style.borderColor = "#e2e8f0")} />
+                  </div>
+                </>
+              )}
+            </div>
+
+            {/* Ayat Dari & Sampai */}
+            {selectedSurah && jenisUjian !== "ujian_itqon" && (
+              <div style={{ background: "#f8fafc", borderRadius: 16, padding: 18, border: "1.5px solid #e2e8f0", display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
+                {/* Dari Ayat */}
+                <div>
+                  <label style={labelStyle}>Dari Ayat</label>
+                  <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                    <button
+                      type="button"
+                      onClick={() => setAyatDari(prev => Math.max(1, (prev || 1) - 1))}
+                      style={{ width: 38, height: 38, borderRadius: 10, border: "1.5px solid #e2e8f0", background: "white", color: "#550000", fontWeight: 900, fontSize: 16, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}
+                    >-</button>
+                    <input
+                      type="number"
+                      min={1}
+                      max={selectedSurah.total_ayat}
+                      value={ayatDari === 0 ? "" : ayatDari}
+                      onChange={e => {
+                        const val = e.target.value;
+                        if (val === "") setAyatDari(0);
+                        else {
+                          const n = parseInt(val);
+                          if (!isNaN(n)) setAyatDari(n);
+                        }
+                      }}
+                      onBlur={() => {
+                        if (!ayatDari || ayatDari < 1) setAyatDari(1);
+                        else if (ayatDari > selectedSurah.total_ayat) setAyatDari(selectedSurah.total_ayat);
+                      }}
+                      style={{ ...inputStyle, background: "white", textAlign: "center", fontWeight: 800, fontSize: 15 }}
+                      onFocus={e => (e.currentTarget.style.borderColor = "#550000")}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setAyatDari(prev => Math.min(selectedSurah.total_ayat, (prev || 0) + 1))}
+                      style={{ width: 38, height: 38, borderRadius: 10, border: "1.5px solid #e2e8f0", background: "white", color: "#550000", fontWeight: 900, fontSize: 16, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}
+                    >+</button>
+                  </div>
+                </div>
+
+                {/* Sampai Ayat */}
+                <div>
+                  <label style={labelStyle}>Sampai Ayat (Maks: {selectedSurah.total_ayat})</label>
+                  <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                    <button
+                      type="button"
+                      onClick={() => setAyatKe(prev => Math.max(ayatDari || 1, (prev || 1) - 1))}
+                      style={{ width: 38, height: 38, borderRadius: 10, border: "1.5px solid #e2e8f0", background: "white", color: "#550000", fontWeight: 900, fontSize: 16, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}
+                    >-</button>
+                    <input
+                      type="number"
+                      min={ayatDari || 1}
+                      max={selectedSurah.total_ayat}
+                      value={ayatKe === 0 ? "" : ayatKe}
+                      onChange={e => {
+                        const val = e.target.value;
+                        if (val === "") setAyatKe(0);
+                        else {
+                          const n = parseInt(val);
+                          if (!isNaN(n)) setAyatKe(n);
+                        }
+                      }}
+                      onBlur={() => {
+                        if (!ayatKe || ayatKe < (ayatDari || 1)) setAyatKe(ayatDari || 1);
+                        else if (ayatKe > selectedSurah.total_ayat) setAyatKe(selectedSurah.total_ayat);
+                      }}
+                      style={{ ...inputStyle, background: "white", textAlign: "center", fontWeight: 800, fontSize: 15 }}
+                      onFocus={e => (e.currentTarget.style.borderColor = "#550000")}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setAyatKe(prev => Math.min(selectedSurah.total_ayat, (prev || 0) + 1))}
+                      style={{ width: 38, height: 38, borderRadius: 10, border: "1.5px solid #e2e8f0", background: "white", color: "#550000", fontWeight: 900, fontSize: 16, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}
+                    >+</button>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Score Selectors */}
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: 16 }}>
+              <NumericScoreSelector label="Nilai Bacaan" value={nilaiBacaan} onChange={setNilaiBacaan} />
+              <NumericScoreSelector label="Nilai Kelancaran" value={nilaiKelancaran} onChange={setNilaiKelancaran} />
+              <TextScoreSelector label="Nilai Sikap" value={nilaiSikap} onChange={setNilaiSikap} />
+            </div>
+
+            {/* Calculation Summary Box */}
+            <div style={{ background: "#fff5f5", borderRadius: 18, padding: "20px 24px", border: "1.5px solid #fecaca" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
+                <span style={{ fontSize: 13, fontWeight: 800, color: "#550000", textTransform: "uppercase", letterSpacing: "0.04em" }}>Kalkulasi Nilai Ujian:</span>
+                <span style={{ fontSize: 32, fontWeight: 900, color: "#550000" }}>{finalNilai}</span>
+              </div>
+              <div style={{ fontSize: 13, color: "#475569", background: "white", padding: "10px 14px", borderRadius: 10, border: "1px solid #ebdcc3", fontWeight: 600 }}>
+                (Bacaan: <strong>{nilaiBacaan}</strong> + Kelancaran: <strong>{nilaiKelancaran}</strong>) ÷ 2 = <strong style={{ color: "#550000" }}>{finalNilai}</strong>
               </div>
             </div>
 
-            {/* Sampai Ayat */}
+            {/* Catatan */}
             <div>
-              <label style={labelStyle}>Sampai Ayat (Maks: {selectedSurah.total_ayat})</label>
-              <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                <button
-                  type="button"
-                  onClick={() => setAyatKe(prev => Math.max(ayatDari || 1, (prev || 1) - 1))}
-                  style={{ width: 38, height: 38, borderRadius: 10, border: "1.5px solid #e2e8f0", background: "white", color: "#550000", fontWeight: 900, fontSize: 16, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}
-                >-</button>
-                <input
-                  type="number"
-                  min={ayatDari || 1}
-                  max={selectedSurah.total_ayat}
-                  value={ayatKe === 0 ? "" : ayatKe}
-                  onChange={e => {
-                    const val = e.target.value;
-                    if (val === "") setAyatKe(0);
-                    else {
-                      const n = parseInt(val);
-                      if (!isNaN(n)) setAyatKe(n);
-                    }
-                  }}
-                  onBlur={() => {
-                    if (!ayatKe || ayatKe < (ayatDari || 1)) setAyatKe(ayatDari || 1);
-                    else if (ayatKe > selectedSurah.total_ayat) setAyatKe(selectedSurah.total_ayat);
-                  }}
-                  style={{ ...inputStyle, background: "white", textAlign: "center", fontWeight: 800, fontSize: 15 }}
-                  onFocus={e => (e.currentTarget.style.borderColor = "#550000")}
-                />
-                <button
-                  type="button"
-                  onClick={() => setAyatKe(prev => Math.min(selectedSurah.total_ayat, (prev || 0) + 1))}
-                  style={{ width: 38, height: 38, borderRadius: 10, border: "1.5px solid #e2e8f0", background: "white", color: "#550000", fontWeight: 900, fontSize: 16, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}
-                >+</button>
-              </div>
+              <label style={labelStyle}>Catatan Penguji (Opsional)</label>
+              <input type="text" value={catatan} onChange={e => setCatatan(e.target.value)} placeholder="Catatan evaluasi kelancaran hafalan..." style={inputStyle}
+                onFocus={e => (e.currentTarget.style.borderColor = "#550000")} onBlur={e => (e.currentTarget.style.borderColor = "#e2e8f0")} />
             </div>
-          </div>
+
+            {error && (
+              <div style={{ background: "#fef2f2", color: "#dc2626", padding: "12px 18px", borderRadius: 12, border: "1px solid #fecaca", fontSize: 13, fontWeight: 700, display: "flex", alignItems: "center", gap: 8 }}>
+                <AlertCircle size={16} /> {error}
+              </div>
+            )}
+            {saved && (
+              <div style={{ background: "#ecfdf5", color: "#059669", padding: "12px 18px", borderRadius: 12, border: "1px solid #a7f3d0", fontSize: 13, fontWeight: 700, display: "flex", alignItems: "center", gap: 8 }}>
+                <CheckCircle2 size={16} /> Data ujian berhasil disimpan!
+              </div>
+            )}
+
+            {/* Submit button */}
+            <button
+              onClick={handleSave}
+              disabled={saving || !selectedSantriId}
+              style={{
+                background: saving || !selectedSantriId ? "#cbd5e1" : "#550000",
+                color: "white", padding: "14px 28px", borderRadius: 16,
+                border: "none", fontWeight: 800, fontSize: 15, cursor: saving || !selectedSantriId ? "not-allowed" : "pointer",
+                display: "flex", alignItems: "center", justifyContent: "center", gap: 10,
+                boxShadow: saving || !selectedSantriId ? "none" : "0 4px 14px rgba(85,0,0,0.3)",
+                transition: "all 0.2s",
+              }}
+            >
+              <Save size={18} /> {saving ? "Menyimpan..." : "Simpan Nilai Ujian"}
+            </button>
+          </>
         )}
-
-        {/* Score Selectors */}
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: 16 }}>
-          <NumericScoreSelector label="Nilai Bacaan" value={nilaiBacaan} onChange={setNilaiBacaan} />
-          <NumericScoreSelector label="Nilai Kelancaran" value={nilaiKelancaran} onChange={setNilaiKelancaran} />
-          <TextScoreSelector label="Nilai Sikap" value={nilaiSikap} onChange={setNilaiSikap} />
-        </div>
-
-        {/* Calculation Summary Box */}
-        <div style={{ background: "#fff5f5", borderRadius: 18, padding: "20px 24px", border: "1.5px solid #fecaca" }}>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
-            <span style={{ fontSize: 13, fontWeight: 800, color: "#550000", textTransform: "uppercase", letterSpacing: "0.04em" }}>Kalkulasi Nilai Ujian:</span>
-            <span style={{ fontSize: 32, fontWeight: 900, color: "#550000" }}>{finalNilai}</span>
-          </div>
-          <div style={{ fontSize: 13, color: "#475569", background: "white", padding: "10px 14px", borderRadius: 10, border: "1px solid #ebdcc3", fontWeight: 600 }}>
-            (Bacaan: <strong>{nilaiBacaan}</strong> + Kelancaran: <strong>{nilaiKelancaran}</strong>) ÷ 2 = <strong style={{ color: "#550000" }}>{finalNilai}</strong>
-          </div>
-        </div>
-
-        {/* Catatan */}
-        <div>
-          <label style={labelStyle}>Catatan Penguji (Opsional)</label>
-          <input type="text" value={catatan} onChange={e => setCatatan(e.target.value)} placeholder="Catatan evaluasi kelancaran hafalan..." style={inputStyle}
-            onFocus={e => (e.currentTarget.style.borderColor = "#550000")} onBlur={e => (e.currentTarget.style.borderColor = "#e2e8f0")} />
-        </div>
-
-        {error && (
-          <div style={{ background: "#fef2f2", color: "#dc2626", padding: "12px 18px", borderRadius: 12, border: "1px solid #fecaca", fontSize: 13, fontWeight: 700, display: "flex", alignItems: "center", gap: 8 }}>
-            <AlertCircle size={16} /> {error}
-          </div>
-        )}
-        {saved && (
-          <div style={{ background: "#ecfdf5", color: "#059669", padding: "12px 18px", borderRadius: 12, border: "1px solid #a7f3d0", fontSize: 13, fontWeight: 700, display: "flex", alignItems: "center", gap: 8 }}>
-            <CheckCircle2 size={16} /> Data ujian berhasil disimpan!
-          </div>
-        )}
-
-        {/* Submit button */}
-        <button
-          onClick={handleSave}
-          disabled={saving || !selectedSantriId}
-          style={{
-            background: saving || !selectedSantriId ? "#cbd5e1" : "#550000",
-            color: "white", padding: "14px 28px", borderRadius: 16,
-            border: "none", fontWeight: 800, fontSize: 15, cursor: saving || !selectedSantriId ? "not-allowed" : "pointer",
-            display: "flex", alignItems: "center", justifyContent: "center", gap: 10,
-            boxShadow: saving || !selectedSantriId ? "none" : "0 4px 14px rgba(85,0,0,0.3)",
-            transition: "all 0.2s",
-          }}
-        >
-          <Save size={18} /> {saving ? "Menyimpan..." : "Simpan Nilai Ujian"}
-        </button>
       </div>
 
       {/* ── HISTORY TABLE ── */}
