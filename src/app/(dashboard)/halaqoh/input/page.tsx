@@ -449,262 +449,289 @@ export default function HalaqohInputPage() {
     );
   }
 
+  const labelStyle: React.CSSProperties = {
+    display: "block", fontSize: 12, fontWeight: 800, color: "#475569",
+    textTransform: "uppercase", letterSpacing: "0.04em", marginBottom: 6,
+  };
+
+  const inputStyle: React.CSSProperties = {
+    width: "100%", borderRadius: 13, border: "1.5px solid #e2e8f0",
+    padding: "11px 14px", fontSize: 14, fontWeight: 600, outline: "none",
+    background: "#fdf8f0", color: "#1e293b", transition: "border-color 0.2s",
+  };
+
   return (
     <div className="page-container">
-      {/* Back */}
-      <Link href="/halaqoh" className="inline-flex items-center gap-2 text-slate-500 hover:text-slate-800 text-sm font-semibold transition-colors">
-        <ArrowLeft size={16} /> Kembali ke Dashboard Halaqoh
-      </Link>
+      {/* ── BACK BUTTON ── */}
+      <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+        <Link
+          href="/halaqoh"
+          style={{
+            width: 40, height: 40, background: "white", border: "1.5px solid #e2e8f0",
+            borderRadius: 13, display: "flex", alignItems: "center", justifyContent: "center",
+            color: "#475569", textDecoration: "none", boxShadow: "0 2px 6px rgba(0,0,0,0.04)",
+          }}
+        >
+          <ArrowLeft size={18} />
+        </Link>
+        <span style={{ fontSize: 13, fontWeight: 700, color: "#64748b" }}>Kembali ke Dashboard Halaqoh</span>
+      </div>
 
-      {/* ── Al-Imam Platinum Hero Banner ── */}
+      {/* ── HERO BANNER ── */}
       <div className="hero-banner">
-        <div style={{ position: "absolute", top: 0, right: 0, width: 256, height: 256, background: "rgba(221, 193, 146, 0.15)", borderRadius: "50%", filter: "blur(40px)", transform: "translate(30%, -50%)", pointerEvents: "none" }}></div>
-        <div style={{ position: "absolute", bottom: 0, left: 0, width: 192, height: 192, background: "rgba(221, 193, 146, 0.1)", borderRadius: "50%", filter: "blur(40px)", transform: "translate(-25%, 50%)", pointerEvents: "none" }}></div>
+        <div style={{ position: "absolute", top: 0, right: 0, width: 256, height: 256, background: "rgba(221, 193, 146, 0.15)", borderRadius: "50%", filter: "blur(40px)", transform: "translate(30%, -50%)", pointerEvents: "none" }} />
+        <div style={{ position: "absolute", bottom: 0, left: 0, width: 192, height: 192, background: "rgba(221, 193, 146, 0.1)", borderRadius: "50%", filter: "blur(40px)", transform: "translate(-25%, 50%)", pointerEvents: "none" }} />
 
         <div style={{ position: "relative", zIndex: 1, flex: 1, minWidth: 0 }}>
           <div style={{ display: "flex", alignItems: "center", gap: 6, background: "rgba(221, 193, 146, 0.18)", padding: "5px 12px", borderRadius: 20, border: "1px solid rgba(221, 193, 146, 0.4)", width: "fit-content", marginBottom: 8 }}>
-            <div style={{ width: 7, height: 7, borderRadius: "50%", background: "#ddc192", boxShadow: "0 0 6px rgba(221, 193, 146, 0.9)" }}></div>
+            <div style={{ width: 7, height: 7, borderRadius: "50%", background: "#ddc192", boxShadow: "0 0 6px rgba(221, 193, 146, 0.9)" }} />
             <span style={{ fontSize: 11, fontWeight: 800, letterSpacing: "0.5px", color: "#fdf8f0", textTransform: "uppercase" }}>Pengisian Mutabaah Harian</span>
           </div>
-          <h1 style={{ fontSize: "clamp(20px, 4vw, 30px)", fontWeight: 800, margin: 0, display: "flex", alignItems: "center", gap: "10px", color: "white" }}>
+          <h1 style={{ fontSize: "clamp(20px, 4vw, 30px)", fontWeight: 800, margin: 0, display: "flex", alignItems: "center", gap: 10, color: "white" }}>
             <BookHeart size={26} color="#ddc192" /> Input Catatan Halaqoh
           </h1>
-          <p style={{ marginTop: "6px", color: "rgba(253, 248, 240, 0.9)", fontSize: "14px", margin: "6px 0 0 0" }}>
+          <p style={{ marginTop: "6px", color: "rgba(253, 248, 240, 0.9)", fontSize: 14, margin: "6px 0 0" }}>
             {SESI_LABEL[sesiParam] || sesiParam} · {formatTanggal(tanggalParam)} · Kelompok {kelompokInfo?.nama || "-"}
           </p>
         </div>
       </div>
 
-      {/* Bagian 1: Jenis + Surah */}
-      <div className="bg-white/95 backdrop-blur-xl rounded-[2.5rem] p-7 sm:p-10 border border-slate-200/80 shadow-[0_12px_40px_rgba(85,0,0,0.08)] space-y-8">
-        <h2 className="m-0 text-lg font-black text-slate-800 flex items-center gap-2.5">
-          <BookOpen size={20} className="text-[#751414]" /> Bacaan Sesi Ini
-        </h2>
+      {/* ── MAIN FORM CARD (UNIFIED LIKE UJIAN TAHFIDZ) ── */}
+      <div style={{ background: "white", borderRadius: 24, padding: "28px 32px", border: "1.5px solid #ebdcc3", boxShadow: "0 4px 20px rgba(85,0,0,0.03)", display: "flex", flexDirection: "column", gap: 28 }}>
 
-        {/* Jenis Setoran */}
-        <div className="mb-5">
-          <label className="text-xs font-semibold text-slate-600 block mb-2">Jenis Setoran</label>
-          <div className="flex flex-wrap gap-2.5">
-            {(["ziyadah", "murojaah"] as const).map(j => (
-              <button
-                key={j}
-                onClick={() => setJenis(j)}
-                className={`px-5 py-2.5 rounded-xl border-[1.5px] font-bold text-sm cursor-pointer capitalize transition-all duration-200 min-h-[44px] flex items-center gap-1.5 ${
-                  jenis === j 
-                    ? "border-red-950 bg-red-950 text-white shadow-md" 
-                    : "border-slate-200 bg-white text-slate-500 hover:border-slate-300 hover:bg-slate-50"
-                }`}
-              >
-                {j === "ziyadah" ? <BookOpen size={16} /> : <RotateCcw size={16} />}
-                {j}
-              </button>
-            ))}
+        <div style={{ fontSize: 18, fontWeight: 800, color: "#550000", display: "flex", alignItems: "center", gap: 10 }}>
+          <BookHeart size={22} color="#550000" /> Form Catatan &amp; Mutabaah Halaqoh
+        </div>
+
+        {/* STEP 1: Bacaan Sesi Ini */}
+        <div>
+          <label style={{ ...labelStyle, fontSize: 13, color: "#1e293b", marginBottom: 12 }}>
+            <span style={{ background: "#550000", color: "white", width: 20, height: 20, borderRadius: "50%", display: "inline-flex", alignItems: "center", justifyContent: "center", fontSize: 11, marginRight: 8 }}>1</span>
+            MATERI BACAAN SESI INI
+          </label>
+
+          <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+            {/* Jenis Setoran */}
+            <div>
+              <label style={labelStyle}>Jenis Setoran</label>
+              <div style={{ display: "flex", gap: 10 }}>
+                {(["ziyadah", "murojaah"] as const).map(j => {
+                  const isSelected = jenis === j;
+                  return (
+                    <button
+                      key={j}
+                      type="button"
+                      onClick={() => setJenis(j)}
+                      style={{
+                        padding: "10px 20px", borderRadius: 13, border: isSelected ? "none" : "1.5px solid #e2e8f0",
+                        background: isSelected ? "#550000" : "#f8fafc", color: isSelected ? "white" : "#475569",
+                        fontSize: 14, fontWeight: 800, cursor: "pointer", textTransform: "capitalize",
+                        display: "flex", alignItems: "center", gap: 8,
+                        boxShadow: isSelected ? "0 4px 12px rgba(85,0,0,0.25)" : "none",
+                        transition: "all 0.15s",
+                      }}
+                    >
+                      {j === "ziyadah" ? <BookOpen size={16} /> : <RotateCcw size={16} />}
+                      {j}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Surah Picker */}
+            <SurahPicker surahList={surahList} selected={selectedSurah} onSelect={setSelectedSurah} label="NAMA SURAH / MATERI" />
+
+            {/* Ayat Range & Halaman */}
+            {selectedSurah && (
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))", gap: 14, alignItems: "flex-end" }}>
+                <div>
+                  <label style={labelStyle}>Dari Ayat</label>
+                  <input
+                    type="number" min={1} max={selectedSurah.total_ayat}
+                    value={ayatDari || ""}
+                    onChange={e => {
+                      const val = e.target.value;
+                      setAyatDari(val === "" ? 0 : Number(val));
+                    }}
+                    onBlur={() => {
+                      let v = Math.max(1, Math.min(ayatDari, ayatKe));
+                      if (!ayatDari) v = 1;
+                      setAyatDari(v);
+                    }}
+                    style={inputStyle}
+                  />
+                </div>
+                <div>
+                  <label style={labelStyle}>Sampai Ayat</label>
+                  <input
+                    type="number" min={ayatDari || 1} max={selectedSurah.total_ayat}
+                    value={ayatKe || ""}
+                    onChange={e => {
+                      const val = e.target.value;
+                      setAyatKe(val === "" ? 0 : Number(val));
+                    }}
+                    onBlur={() => {
+                      let v = Math.min(selectedSurah.total_ayat, Math.max(ayatKe, ayatDari || 1));
+                      if (!ayatKe) v = ayatDari || 1;
+                      setAyatKe(v);
+                    }}
+                    style={inputStyle}
+                  />
+                </div>
+                <div>
+                  <label style={{ ...labelStyle, display: "flex", gap: 4, alignItems: "center" }}>
+                    Jumlah Halaman <span style={{ fontSize: 10, color: "#94a3b8", fontWeight: 500 }}>(Madinah)</span>
+                  </label>
+                  <div style={{ ...inputStyle, background: "#ecfdf5", border: "1.5px solid #a7f3d0", color: "#059669", fontWeight: 800, textAlign: "center", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                    {halamanAuto !== null ? `${halamanAuto.toFixed(1)} hal.` : "—"}
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         </div>
 
-        {/* Surah Picker */}
-        <div className="mb-4">
-          <SurahPicker surahList={surahList} selected={selectedSurah} onSelect={setSelectedSurah} label="Surah" />
-        </div>
+        {/* STEP 2: Penilaian Santri */}
+        {entries.length > 0 && (
+          <div>
+            <label style={{ ...labelStyle, fontSize: 13, color: "#1e293b", marginBottom: 16 }}>
+              <span style={{ background: "#550000", color: "white", width: 20, height: 20, borderRadius: "50%", display: "inline-flex", alignItems: "center", justifyContent: "center", fontSize: 11, marginRight: 8 }}>2</span>
+              PENILAIAN &amp; PRESENSI SANTRI ({entries.length} SANTRI)
+            </label>
 
-        {/* Ayat Range */}
-        {selectedSurah && (
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4 items-end">
-            <div>
-              <label className="text-xs font-semibold text-slate-600 block mb-1.5">Dari Ayat</label>
-              <input
-                type="number" min={1} max={selectedSurah.total_ayat}
-                value={ayatDari || ""}
-                onChange={e => {
-                  const val = e.target.value;
-                  setAyatDari(val === "" ? 0 : Number(val));
-                }}
-                onBlur={() => {
-                  let v = Math.max(1, Math.min(ayatDari, ayatKe));
-                  if (!ayatDari) v = 1;
-                  setAyatDari(v);
-                }}
-                className="w-full px-3 py-2.5 rounded-xl border-[1.5px] border-slate-200 text-sm font-bold min-h-[44px] focus:outline-none focus:ring-2 focus:ring-red-950/20 focus:border-red-950/50"
-              />
-            </div>
-            <div>
-              <label className="text-xs font-semibold text-slate-600 block mb-1.5">Sampai Ayat</label>
-              <input
-                type="number" min={ayatDari || 1} max={selectedSurah.total_ayat}
-                value={ayatKe || ""}
-                onChange={e => {
-                  const val = e.target.value;
-                  setAyatKe(val === "" ? 0 : Number(val));
-                }}
-                onBlur={() => {
-                  let v = Math.min(selectedSurah.total_ayat, Math.max(ayatKe, ayatDari || 1));
-                  if (!ayatKe) v = ayatDari || 1;
-                  setAyatKe(v);
-                }}
-                className="w-full px-3 py-2.5 rounded-xl border-[1.5px] border-slate-200 text-sm font-bold min-h-[44px] focus:outline-none focus:ring-2 focus:ring-red-950/20 focus:border-red-950/50"
-              />
-              <div className="text-[11px] text-slate-400 mt-1">Maks: {selectedSurah.total_ayat} ayat</div>
-            </div>
-            <div className="col-span-2 md:col-span-1">
-              <label className="text-xs font-semibold text-slate-600 flex items-baseline gap-1 mb-1.5">
-                Jumlah Halaman
-                <span className="text-[10px] text-slate-400 font-normal">(Mushaf Madinah)</span>
-              </label>
-              <div className="px-3 py-2.5 rounded-xl bg-green-50 border-[1.5px] border-green-200 font-extrabold text-base text-green-700 text-center min-h-[44px] flex items-center justify-center">
-                {halamanAuto !== null ? (
-                  <>
-                    {halamanAuto.toFixed(1)}
-                    <span className="text-[11px] font-medium ml-1 text-green-500">hal.</span>
-                  </>
-                ) : "—"}
-              </div>
+            <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+              {entries.map((entry, idx) => (
+                <div
+                  key={entry.santri_id}
+                  style={{
+                    border: "1.5px solid #e2e8f0", borderRadius: 18, overflow: "hidden", background: "white",
+                    boxShadow: "0 2px 8px rgba(0,0,0,0.02)",
+                  }}
+                >
+                  {/* Header Bar */}
+                  <div style={{ background: "#f8fafc", padding: "14px 20px", borderBottom: "1.5px solid #e2e8f0", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, flexWrap: "wrap" }}>
+                    <div>
+                      <div style={{ fontWeight: 900, color: "#550000", fontSize: 15 }}>{entry.nama}</div>
+                      {entry.nis && <div style={{ fontSize: 12, color: "#64748b", fontWeight: 600, marginTop: 2 }}>NIS: {entry.nis}</div>}
+                    </div>
+
+                    {/* Kehadiran Buttons */}
+                    <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+                      {KEHADIRAN_OPT.map(k => {
+                        const isSel = entry.kehadiran === k.val;
+                        return (
+                          <button
+                            key={k.val}
+                            type="button"
+                            onClick={() => updateEntry(idx, "kehadiran", k.val)}
+                            style={{
+                              padding: "6px 14px", borderRadius: 10, border: isSel ? `1.5px solid ${k.warna}` : "1.5px solid #e2e8f0",
+                              background: isSel ? k.bg : "white", color: isSel ? k.warna : "#64748b",
+                              fontSize: 12, fontWeight: 800, cursor: "pointer", transition: "all 0.15s",
+                            }}
+                          >
+                            {k.label}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  {/* Body */}
+                  <div style={{ padding: 20, display: "flex", flexDirection: "column", gap: 18 }}>
+                    {/* Alasan jika tidak hadir */}
+                    {(entry.kehadiran === "sakit" || entry.kehadiran === "izin") && (
+                      <div>
+                        <label style={{ ...labelStyle, color: "#d97706" }}>Alasan {entry.kehadiran === "sakit" ? "Sakit" : "Izin"} *</label>
+                        <input
+                          type="text"
+                          value={entry.alasan}
+                          onChange={e => updateEntry(idx, "alasan", e.target.value)}
+                          placeholder={entry.kehadiran === "sakit" ? "Sakit apa?" : "Izin untuk keperluan apa?"}
+                          style={{ ...inputStyle, background: "#fffbeb", border: "1.5px solid #fde68a" }}
+                        />
+                      </div>
+                    )}
+
+                    {/* Score Selectors */}
+                    {entry.kehadiran === "hadir" && (
+                      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: 14 }}>
+                        <NumericScoreSelector label="Nilai Bacaan" value={entry.nilai_bacaan} onChange={v => updateEntry(idx, "nilai_bacaan", v)} />
+                        <NumericScoreSelector label="Nilai Kelancaran" value={entry.nilai_kelancaran} onChange={v => updateEntry(idx, "nilai_kelancaran", v)} />
+                        <TextScoreSelector label="Nilai Sikap" value={entry.nilai_sikap} onChange={v => updateEntry(idx, "nilai_sikap", v)} />
+                      </div>
+                    )}
+
+                    {/* Kalkulasi Akhir Box */}
+                    {entry.kehadiran === "hadir" && (() => {
+                      const nBacaan = entry.nilai_bacaan;
+                      const nKelancaran = entry.nilai_kelancaran;
+                      const nAkhir = Math.round((nBacaan + nKelancaran) / 2);
+                      return (
+                        <div style={{ background: "#fff5f5", border: "1.5px solid #fecaca", borderRadius: 14, padding: "12px 18px", display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 8 }}>
+                          <div>
+                            <div style={{ fontSize: 11, fontWeight: 800, color: "#550000", textTransform: "uppercase", letterSpacing: "0.04em" }}>KALKULASI AKHIR</div>
+                            <div style={{ fontSize: 12, color: "#64748b", fontFamily: "monospace", marginTop: 2 }}>
+                              (Bacaan: {nBacaan} + Lancar: {nKelancaran}) &divide; 2
+                            </div>
+                          </div>
+                          <div style={{ fontSize: 22, fontWeight: 900, color: "#550000", background: "white", padding: "4px 16px", borderRadius: 10, border: "1px solid #fecaca" }}>
+                            {nAkhir}
+                          </div>
+                        </div>
+                      );
+                    })()}
+
+                    {/* Catatan Input */}
+                    <div>
+                      <label style={{ ...labelStyle, marginBottom: 4 }}>CATATAN HALAQOH SANTRI</label>
+                      <input
+                        type="text"
+                        value={entry.catatan}
+                        onChange={e => updateEntry(idx, "catatan", e.target.value)}
+                        placeholder="Catatan opsional untuk santri ini..."
+                        style={inputStyle}
+                      />
+                    </div>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
         )}
-      </div>
 
-      {/* Bagian 2: Tabel Santri */}
-      {entries.length > 0 && (
-        <div className="bg-white/90 backdrop-blur-xl rounded-[2.5rem] p-7 md:p-10 border-[1.5px] border-slate-200 shadow-[0_12px_40px_rgba(0,0,0,0.06)] mb-8">
-          <h2 className="m-0 mb-5 text-base font-bold text-slate-800 flex items-center gap-2">
-            <Users size={18} className="text-red-950" /> Penilaian Santri
-            <span className="text-xs font-normal text-slate-400 ml-1">({entries.length} santri)</span>
-          </h2>
-
-          <div className="flex flex-col gap-6 md:gap-8">
-            {entries.map((entry, idx) => (
-              <div key={entry.santri_id} 
-                className={`border-[1.5px] rounded-[2rem] overflow-hidden transition-all ${
-                  entry.kehadiran !== "hadir" ? "border-amber-200 shadow-[inset_0_0_0_1px_#fde68a]" : "border-slate-200 hover:border-slate-300 shadow-sm"
-                }`}
-              >
-                {/* Santri Header */}
-                <div className="bg-slate-50/80 p-4 md:p-5 flex flex-col md:flex-row md:items-center justify-between gap-3 border-b border-slate-100">
-                  <div>
-                    <div className="font-bold text-sm md:text-base text-slate-800">{entry.nama}</div>
-                    {entry.nis && <div className="text-[11px] md:text-xs text-slate-500 font-mono mt-0.5">{entry.nis}</div>}
-                  </div>
-                  {/* Kehadiran */}
-                  <div className="flex flex-wrap gap-2 md:gap-2.5">
-                    {KEHADIRAN_OPT.map(k => (
-                      <button
-                        key={k.val}
-                        onClick={() => updateEntry(idx, "kehadiran", k.val)}
-                        className="px-3.5 py-1.5 rounded-xl border-[1.5px] font-bold text-xs cursor-pointer transition-all duration-200 min-h-[38px]"
-                        style={{
-                          borderColor: entry.kehadiran === k.val ? k.warna : "#e2e8f0",
-                          background: entry.kehadiran === k.val ? k.bg : "white",
-                          color: entry.kehadiran === k.val ? k.warna : "#64748b",
-                          boxShadow: entry.kehadiran === k.val ? `0 4px 12px ${k.warna}20` : "none"
-                        }}
-                      >
-                        {k.label}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Body */}
-                <div className="p-5 md:p-7 space-y-6">
-                  {/* Alasan (jika tidak hadir) */}
-                  {(entry.kehadiran === "sakit" || entry.kehadiran === "izin") && (
-                    <div>
-                      <label className="text-[11px] font-semibold text-amber-600 block mb-1.5">
-                        Alasan {entry.kehadiran === "sakit" ? "Sakit" : "Izin"} *
-                      </label>
-                      <input
-                        type="text"
-                        value={entry.alasan}
-                        onChange={e => updateEntry(idx, "alasan", e.target.value)}
-                        placeholder={entry.kehadiran === "sakit" ? "Sakit apa?" : "Izin untuk keperluan apa?"}
-                        className="w-full px-3 py-2 rounded-xl border-[1.5px] border-amber-200 text-sm bg-amber-50 focus:outline-none focus:ring-2 focus:ring-amber-400/20 min-h-[44px]"
-                      />
-                    </div>
-                  )}
-
-                  {/* Nilai (hanya jika hadir) */}
-                  {entry.kehadiran === "hadir" && (
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                      <NumericScoreSelector
-                        label="Nilai Bacaan"
-                        value={entry.nilai_bacaan}
-                        onChange={v => updateEntry(idx, "nilai_bacaan", v)}
-                      />
-                      <NumericScoreSelector
-                        label="Nilai Kelancaran"
-                        value={entry.nilai_kelancaran}
-                        onChange={v => updateEntry(idx, "nilai_kelancaran", v)}
-                      />
-                      <TextScoreSelector
-                        label="Nilai Sikap"
-                        value={entry.nilai_sikap}
-                        onChange={v => updateEntry(idx, "nilai_sikap", v)}
-                      />
-                    </div>
-                  )}
-
-                  {/* Preview Nilai Akhir */}
-                  {entry.kehadiran === "hadir" && (() => {
-                    const nBacaan = entry.nilai_bacaan;
-                    const nKelancaran = entry.nilai_kelancaran;
-                    const nAkhir = Math.round((nBacaan + nKelancaran) / 2);
-                    return (
-                      <div className="bg-slate-50/80 rounded-xl p-4 border-[1.5px] border-dashed border-slate-300 flex flex-col md:flex-row md:justify-between md:items-center gap-3">
-                        <div className="flex flex-col">
-                           <span className="text-xs text-slate-500 font-bold uppercase tracking-wider">Kalkulasi Akhir</span>
-                           <div className="text-[11px] text-slate-500 font-mono mt-1">
-                             (Bacaan: <strong>{nBacaan}</strong> + Lancar: <strong>{nKelancaran}</strong>) &divide; 2
-                           </div>
-                        </div>
-                        <div className="font-black text-2xl text-red-950 bg-white px-4 py-1.5 rounded-lg border border-slate-200 shadow-sm self-start md:self-auto">
-                          {nAkhir}
-                        </div>
-                      </div>
-                    );
-                  })()}
-
-                  {/* Catatan */}
-                  <div>
-                    <input
-                      type="text"
-                      value={entry.catatan}
-                      onChange={e => updateEntry(idx, "catatan", e.target.value)}
-                      placeholder="Catatan opsional untuk santri ini..."
-                      className="w-full px-3 py-2 rounded-xl border-[1.5px] border-slate-200 text-sm text-slate-600 focus:outline-none focus:ring-2 focus:ring-red-950/20 focus:border-red-950/50 min-h-[44px]"
-                    />
-                  </div>
-                </div>
-              </div>
-            ))}
+        {/* Messages & Submit */}
+        {error && (
+          <div style={{ background: "#fef2f2", border: "1.5px solid #fecaca", color: "#dc2626", padding: "12px 16px", borderRadius: 14, fontSize: 13, fontWeight: 700, display: "flex", alignItems: "center", gap: 8 }}>
+            <AlertCircle size={18} /> {error}
           </div>
-        </div>
-      )}
+        )}
 
-      {/* Error & Save */}
-      {error && (
-        <div className="flex items-center gap-2.5 bg-red-50 border border-red-200 rounded-xl p-3 mb-4 text-red-600 text-sm font-medium">
-          <AlertCircle size={18} className="shrink-0" /> {error}
-        </div>
-      )}
+        {saved && (
+          <div style={{ background: "#ecfdf5", border: "1.5px solid #a7f3d0", color: "#059669", padding: "12px 16px", borderRadius: 14, fontSize: 13, fontWeight: 700, display: "flex", alignItems: "center", gap: 8 }}>
+            <CheckCircle2 size={18} /> Catatan halaqoh berhasil disimpan!
+          </div>
+        )}
 
-      {saved && (
-        <div className="flex items-center gap-2.5 bg-green-50 border border-green-200 rounded-xl p-3 mb-4 text-green-700 text-sm font-medium">
-          <CheckCircle2 size={18} className="shrink-0" /> Catatan halaqoh berhasil disimpan!
-        </div>
-      )}
-
-      <button
-        onClick={handleSave}
-        disabled={saving || !selectedSurah || entries.length === 0}
-        className={`w-full py-3.5 px-6 rounded-2xl border-none font-extrabold text-base flex items-center justify-center gap-2.5 shadow-xl transition-all duration-200 min-h-[52px] ${
-          saving || !selectedSurah || entries.length === 0
-            ? "bg-slate-300 text-slate-500 cursor-not-allowed shadow-none" 
-            : "bg-red-950 hover:bg-red-900 text-white shadow-red-950/25 hover:shadow-red-900/40 hover:-translate-y-0.5 cursor-pointer"
-        }`}
-      >
-        <Save size={20} />
-        {saving ? "Menyimpan Catatan..." : "Simpan Semua Catatan"}
-      </button>
+        <button
+          type="button"
+          onClick={handleSave}
+          disabled={saving || !selectedSurah || entries.length === 0}
+          style={{
+            width: "100%", padding: 14, borderRadius: 14, border: "none",
+            background: saving || !selectedSurah || entries.length === 0 ? "#cbd5e1" : "#550000",
+            color: "white", fontSize: 15, fontWeight: 800,
+            cursor: saving || !selectedSurah || entries.length === 0 ? "not-allowed" : "pointer",
+            boxShadow: saving || !selectedSurah || entries.length === 0 ? "none" : "0 4px 14px rgba(85,0,0,0.3)",
+            display: "flex", alignItems: "center", justifyContent: "center", gap: 10,
+            transition: "all 0.15s",
+          }}
+        >
+          <Save size={18} />
+          {saving ? "Menyimpan Catatan..." : "Simpan Semua Catatan"}
+        </button>
+      </div>
     </div>
   );
 }
