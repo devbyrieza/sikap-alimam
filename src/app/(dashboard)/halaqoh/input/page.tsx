@@ -343,13 +343,26 @@ export default function HalaqohInputPage() {
     setAyatKe(Math.min(selectedSurah.total_ayat, 10));
   }, [selectedSurah?.nomor]);
 
+  const [statusFilter, setStatusFilter] = useState<"all" | "pending" | "done">("all");
+
   const selectedSantri = santriList.find(s => s.id === selectedSantriId);
 
-  const filteredSantri = santriList.filter(s =>
-    searchQuery === "" ||
-    s.nama_lengkap.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    (s.nis && s.nis.includes(searchQuery))
-  );
+  const completedCount = santriList.filter(s =>
+    history.some(h => h.santri_id === s.id || h.santri?.nama_lengkap === s.nama_lengkap)
+  ).length;
+
+  const filteredSantri = santriList.filter(s => {
+    const isDone = history.some(h => h.santri_id === s.id || h.santri?.nama_lengkap === s.nama_lengkap);
+    const matchSearch =
+      searchQuery === "" ||
+      s.nama_lengkap.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (s.nis && s.nis.includes(searchQuery));
+    const matchStatus =
+      statusFilter === "all" ||
+      (statusFilter === "done" && isDone) ||
+      (statusFilter === "pending" && !isDone);
+    return matchSearch && matchStatus;
+  });
 
   const finalNilai = Math.round((nilaiBacaan + nilaiKelancaran) / 2);
 
@@ -531,10 +544,15 @@ export default function HalaqohInputPage() {
 
         {/* STEP 2: Pilih Santri */}
         <div>
-          <label style={{ ...labelStyle, fontSize: 13, color: "#1e293b", marginBottom: 12 }}>
-            <span style={{ background: "#550000", color: "white", width: 20, height: 20, borderRadius: "50%", display: "inline-flex", alignItems: "center", justifyContent: "center", fontSize: 11, marginRight: 8 }}>2</span>
-            PILIH SANTRI
-          </label>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12, flexWrap: "wrap", gap: 8 }}>
+            <label style={{ ...labelStyle, fontSize: 13, color: "#1e293b", margin: 0 }}>
+              <span style={{ background: "#550000", color: "white", width: 20, height: 20, borderRadius: "50%", display: "inline-flex", alignItems: "center", justifyContent: "center", fontSize: 11, marginRight: 8 }}>2</span>
+              PILIH SANTRI
+            </label>
+            <div style={{ fontSize: 12, fontWeight: 800, color: completedCount === santriList.length && santriList.length > 0 ? "#059669" : "#550000", background: completedCount === santriList.length && santriList.length > 0 ? "#ecfdf5" : "#fff5f5", padding: "5px 14px", borderRadius: 12, border: completedCount === santriList.length && santriList.length > 0 ? "1px solid #a7f3d0" : "1px solid #fecaca" }}>
+              Progress: <strong>{completedCount}</strong> / {santriList.length} Santri {completedCount === santriList.length && santriList.length > 0 ? "✓ Selesai!" : ""}
+            </div>
+          </div>
 
           {selectedSantri ? (
             <div style={{ background: "#fff5f5", border: "1.5px solid #fecaca", borderRadius: 16, padding: "16px 20px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
@@ -554,6 +572,45 @@ export default function HalaqohInputPage() {
             </div>
           ) : (
             <div>
+              {/* Filter Tabs (Semua / Belum / Sudah) */}
+              <div style={{ background: "#f8fafc", borderRadius: 14, padding: "10px 14px", border: "1.5px solid #e2e8f0", marginBottom: 10, display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 8 }}>
+                <div style={{ fontSize: 12, fontWeight: 700, color: "#475569" }}>
+                  Filter Status Pengisian:
+                </div>
+                <div style={{ display: "flex", gap: 6 }}>
+                  {(["all", "pending", "done"] as const).map(f => {
+                    const counts = {
+                      all: santriList.length,
+                      pending: santriList.length - completedCount,
+                      done: completedCount,
+                    };
+                    const labels = {
+                      all: `Semua (${counts.all})`,
+                      pending: `Belum Diisi (${counts.pending})`,
+                      done: `Sudah Diisi (${counts.done})`,
+                    };
+                    const isSel = statusFilter === f;
+                    return (
+                      <button
+                        key={f}
+                        type="button"
+                        onClick={() => setStatusFilter(f)}
+                        style={{
+                          padding: "5px 12px", borderRadius: 10,
+                          border: isSel ? "1.5px solid #550000" : "1px solid #cbd5e1",
+                          background: isSel ? "#550000" : "white",
+                          color: isSel ? "white" : "#64748b",
+                          fontSize: 11, fontWeight: 800, cursor: "pointer", transition: "all 0.15s",
+                        }}
+                      >
+                        {labels[f]}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Search Box */}
               <div style={{ position: "relative", marginBottom: 8 }}>
                 <Search size={16} color="#94a3b8" style={{ position: "absolute", left: 14, top: "50%", transform: "translateY(-50%)" }} />
                 <input
@@ -566,9 +623,12 @@ export default function HalaqohInputPage() {
                   onBlur={e => (e.currentTarget.style.borderColor = "#e2e8f0")}
                 />
               </div>
-              <div className="custom-scrollbar" style={{ maxHeight: 200, overflowY: "auto", border: "1.5px solid #e2e8f0", borderRadius: 16, background: "white" }}>
+
+              {/* Santri List */}
+              <div className="custom-scrollbar" style={{ maxHeight: 220, overflowY: "auto", border: "1.5px solid #e2e8f0", borderRadius: 16, background: "white" }}>
                 {filteredSantri.map(s => {
-                  const isDone = history.some(h => h.santri_id === s.id || h.santri?.nama_lengkap === s.nama_lengkap);
+                  const record = history.find(h => h.santri_id === s.id || h.santri?.nama_lengkap === s.nama_lengkap);
+                  const isDone = !!record;
                   return (
                     <div
                       key={s.id}
@@ -584,20 +644,28 @@ export default function HalaqohInputPage() {
                       <div>
                         <div style={{ fontWeight: 800, color: isDone ? "#166534" : "#1e293b", fontSize: 13, display: "flex", alignItems: "center", gap: 8 }}>
                           {s.nama_lengkap}
-                          {isDone && (
+                          {isDone ? (
                             <span style={{ background: "#dcfce7", color: "#15803d", padding: "2px 8px", borderRadius: 10, fontSize: 10, fontWeight: 800, border: "1px solid #bbf7d0" }}>
-                              ✓ Sudah Diisi
+                              ✓ Sudah Diisi {record.nilai_akhir ? `(Nilai: ${record.nilai_akhir})` : ""}
+                            </span>
+                          ) : (
+                            <span style={{ background: "#f1f5f9", color: "#64748b", padding: "2px 8px", borderRadius: 10, fontSize: 10, fontWeight: 700, border: "1px solid #e2e8f0" }}>
+                              Belum Diisi
                             </span>
                           )}
                         </div>
                         <div style={{ fontSize: 11, color: isDone ? "#15803d" : "#64748b" }}>NIS: {s.nis || "—"}</div>
                       </div>
-                      <CheckCircle2 size={16} color={isDone ? "#166534" : "#550000"} />
+                      <CheckCircle2 size={16} color={isDone ? "#166534" : "#cbd5e1"} />
                     </div>
                   );
                 })}
                 {filteredSantri.length === 0 && (
-                  <div style={{ padding: 20, textAlign: "center", color: "#94a3b8", fontSize: 13 }}>Santri tidak ditemukan</div>
+                  <div style={{ padding: 20, textAlign: "center", color: "#94a3b8", fontSize: 13 }}>
+                    {statusFilter === "pending"
+                      ? "🎉 Semua santri sudah selesai dinilai!"
+                      : "Santri tidak ditemukan"}
+                  </div>
                 )}
               </div>
             </div>
