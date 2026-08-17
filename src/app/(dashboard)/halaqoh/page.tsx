@@ -244,25 +244,6 @@ export default function HalaqohDashboardPage() {
       {activeTab === "sesi" && (
         <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
 
-          {/* Announcement Banner */}
-          <div style={{ background: "#eff6ff", border: "1.5px solid #bfdbfe", borderRadius: 18, padding: "18px 22px", display: "flex", gap: 16, alignItems: "flex-start" }}>
-            <div style={{ width: 44, height: 44, background: "#1d4ed8", borderRadius: 14, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-              <Megaphone size={20} color="white" />
-            </div>
-            <div>
-              <h3 style={{ fontWeight: 800, color: "#1e3a8a", fontSize: 14, margin: "0 0 6px", display: "flex", alignItems: "center", gap: 6 }}>
-                Pengumuman Resmi Pengisian Mutabaah Tahfidz
-              </h3>
-              <p style={{ fontSize: 13, color: "#1e40af", margin: 0, lineHeight: 1.6 }}>
-                Pengisian <strong>Catatan Mutabaah Sesi Harian (Subuh, Magrib, Dhuha)</strong> secara efektif dimulai pada <strong>Senin Subuh, 17 Agustus 2026</strong>.
-              </p>
-              <p style={{ fontSize: 13, color: "#1e40af", margin: "6px 0 0", display: "flex", alignItems: "flex-start", gap: 6 }}>
-                <AlertTriangle size={14} color="#d97706" style={{ flexShrink: 0, marginTop: 2 }} />
-                <span><strong>Penting:</strong> Input <strong>Ujian Pekanan</strong> yang telah lewat dan hari <strong>Sabtu, 15 Agustus 2026</strong> <u>TETAP WAJIB UNTUK DIISI</u> oleh seluruh Pengampu.</span>
-              </p>
-            </div>
-          </div>
-
           {/* Hari Selasa info */}
           {hariIni === "Selasa" && (
             <div style={{ background: "#fffbeb", border: "1.5px solid #fde68a", borderRadius: 16, padding: "14px 20px", display: "flex", alignItems: "center", gap: 12 }}>

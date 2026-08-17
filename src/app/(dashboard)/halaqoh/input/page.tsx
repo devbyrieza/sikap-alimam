@@ -260,7 +260,7 @@ export default function HalaqohInputPage() {
   // Form State (Per-Santri)
   const [selectedSantriId, setSelectedSantriId] = useState<string>("");
   const [searchQuery, setSearchQuery] = useState("");
-  const [jenis, setJenis] = useState<"ziyadah" | "murojaah">("ziyadah");
+  const [jenis, setJenis] = useState<"tahsin" | "ziyadah" | "murojaah">("tahsin");
   const [tanggal, setTanggal] = useState(tanggalParam);
   const [selectedSurah, setSelectedSurah] = useState<Surah | null>(null);
   const [ayatDari, setAyatDari] = useState(1);
@@ -354,7 +354,7 @@ export default function HalaqohInputPage() {
 
   const handleSave = async () => {
     if (!selectedSantriId) { setError("Pilih santri terlebih dahulu"); return; }
-    if (!selectedSurah && kehadiran === "hadir") { setError("Pilih surah terlebih dahulu"); return; }
+    if (jenis !== "tahsin" && !selectedSurah && kehadiran === "hadir") { setError("Pilih surah terlebih dahulu"); return; }
     if (!kelompokId || !pegawaiId) { setError("Data kelompok / pengampu tidak ditemukan"); return; }
 
     setSaving(true);
@@ -488,33 +488,39 @@ export default function HalaqohInputPage() {
           <BookHeart size={22} color="#550000" /> Form Catatan &amp; Mutabaah Halaqoh
         </div>
 
-        {/* STEP 1: Jenis Setoran */}
+        {/* STEP 1: Pilih Jenis Setoran / Kegiatan */}
         <div>
           <label style={{ ...labelStyle, fontSize: 13, color: "#1e293b", marginBottom: 12 }}>
             <span style={{ background: "#550000", color: "white", width: 20, height: 20, borderRadius: "50%", display: "inline-flex", alignItems: "center", justifyContent: "center", fontSize: 11, marginRight: 8 }}>1</span>
-            PILIH JENIS SETORAN
+            PILIH JENIS KEGIATAN HALAQOH
           </label>
-          <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
-            {(["ziyadah", "murojaah"] as const).map(j => {
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: 12 }}>
+            {(["tahsin", "ziyadah", "murojaah"] as const).map(j => {
               const isSelected = jenis === j;
+              const meta: Record<string, { title: string; sub: string; icon: React.ReactNode }> = {
+                tahsin:   { title: "Tahsin / Binnazhor", sub: "Penguatan Bacaan", icon: <Award size={18} /> },
+                ziyadah:  { title: "Setoran Ziyadah",   sub: "Hafalan Baru", icon: <BookOpen size={18} /> },
+                murojaah: { title: "Setoran Murojaah",  sub: "Pengulangan Hafalan", icon: <RotateCcw size={18} /> },
+              };
+              const item = meta[j];
               return (
                 <div
                   key={j}
                   onClick={() => setJenis(j)}
                   style={{
-                    padding: "16px 24px", borderRadius: 16, cursor: "pointer",
+                    padding: "14px 18px", borderRadius: 16, cursor: "pointer",
                     border: isSelected ? "2px solid #550000" : "1.5px solid #e2e8f0",
                     background: isSelected ? "#fff5f5" : "#f8fafc",
                     boxShadow: isSelected ? "0 4px 12px rgba(85,0,0,0.12)" : "none",
                     transition: "all 0.15s", display: "flex", alignItems: "center", gap: 10,
                   }}
                 >
-                  <div style={{ width: 34, height: 34, borderRadius: 10, background: "white", display: "flex", alignItems: "center", justifyContent: "center", color: "#550000", border: "1px solid #ebdcc3" }}>
-                    {j === "ziyadah" ? <BookOpen size={18} /> : <RotateCcw size={18} />}
+                  <div style={{ width: 34, height: 34, borderRadius: 10, background: isSelected ? "#550000" : "white", display: "flex", alignItems: "center", justifyContent: "center", color: isSelected ? "white" : "#550000", border: "1px solid #ebdcc3", flexShrink: 0 }}>
+                    {item.icon}
                   </div>
                   <div>
-                    <div style={{ fontWeight: 800, fontSize: 14, color: isSelected ? "#550000" : "#334155", textTransform: "capitalize" }}>Setoran {j}</div>
-                    <div style={{ fontSize: 12, color: "#64748b", fontWeight: 600 }}>{j === "ziyadah" ? "Hafalan Baru" : "Pengulangan Hafalan"}</div>
+                    <div style={{ fontWeight: 800, fontSize: 13, color: isSelected ? "#550000" : "#334155" }}>{item.title}</div>
+                    <div style={{ fontSize: 11, color: "#64748b", fontWeight: 600 }}>{item.sub}</div>
                   </div>
                 </div>
               );
