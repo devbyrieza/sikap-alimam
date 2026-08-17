@@ -423,6 +423,27 @@ export default function HalaqohInputPage() {
     }
   };
 
+  const handleEditRow = (row: CatatanRecord) => {
+    const sId = row.santri_id || santriList.find(s => s.nama_lengkap === row.santri?.nama_lengkap)?.id;
+    if (sId) setSelectedSantriId(sId);
+    if (row.jenis) setJenis(row.jenis as any);
+    if (row.kehadiran) setKehadiran(row.kehadiran as any);
+    if (row.alasan) setAlasan(row.alasan || "");
+    if (row.nilai_bacaan) setNilaiBacaan(row.nilai_bacaan);
+    if (row.nilai_kelancaran) setNilaiKelancaran(row.nilai_kelancaran);
+    if (row.nilai_sikap) setNilaiSikap(row.nilai_sikap);
+    if (row.catatan) setCatatan(row.catatan || "");
+
+    if (row.surah_nomor) {
+      const sFound = surahList.find(s => s.nomor === row.surah_nomor);
+      if (sFound) setSelectedSurah(sFound);
+    }
+    if (row.ayat_dari) setAyatDari(row.ayat_dari);
+    if (row.ayat_ke) setAyatKe(row.ayat_ke);
+
+    window.scrollTo({ top: 320, behavior: "smooth" });
+  };
+
   const SESI_LABEL: Record<string, string> = {
     subuh: "Halaqoh Subuh",
     maghrib: "Ba'da Maghrib",
@@ -896,10 +917,10 @@ export default function HalaqohInputPage() {
           <div style={{ padding: 48, textAlign: "center", color: "#94a3b8", fontSize: 13 }}>Belum ada catatan halaqoh untuk sesi ini</div>
         ) : (
           <div className="custom-scrollbar" style={{ overflowX: "auto" }}>
-            <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13, minWidth: 800 }}>
+            <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13, minWidth: 850 }}>
               <thead>
                 <tr style={{ background: "#f8fafc", borderBottom: "2px solid #e2e8f0" }}>
-                  {["Tanggal", "Santri", "Jenis", "Materi / Surah", "Ayat", "Halaman", "Nilai Akhir", "Kehadiran", "Catatan"].map((h, i) => (
+                  {["Tanggal", "Santri", "Jenis", "Materi / Surah", "Ayat", "Halaman", "Nilai Akhir", "Kehadiran", "Catatan", "Aksi"].map((h, i) => (
                     <th key={i} style={{ padding: "12px 16px", textAlign: "left", fontSize: 11, fontWeight: 800, color: "#475569", textTransform: "uppercase", letterSpacing: "0.06em", whiteSpace: "nowrap" }}>
                       {h}
                     </th>
@@ -912,7 +933,7 @@ export default function HalaqohInputPage() {
                     <td style={{ padding: "12px 16px", color: "#64748b", fontWeight: 600, whiteSpace: "nowrap" }}>{formatTanggal(row.tanggal)}</td>
                     <td style={{ padding: "12px 16px", fontWeight: 800, color: "#1e293b", whiteSpace: "nowrap" }}>{row.santri?.nama_lengkap}</td>
                     <td style={{ padding: "12px 16px", whiteSpace: "nowrap" }}>
-                      <span style={{ padding: "3px 10px", borderRadius: 8, fontSize: 11, fontWeight: 700, border: "1px solid #ebdcc3", background: row.jenis === "ziyadah" ? "#fff5f5" : "#fdf8f0", color: "#550000", textTransform: "capitalize" }}>
+                      <span style={{ padding: "3px 10px", borderRadius: 8, fontSize: 11, fontWeight: 700, border: "1px solid #ebdcc3", background: row.jenis === "ziyadah" ? "#fff5f5" : row.jenis === "tahsin" ? "#fffbeb" : "#fdf8f0", color: row.jenis === "tahsin" ? "#d97706" : "#550000", textTransform: "capitalize" }}>
                         {row.jenis}
                       </span>
                     </td>
@@ -935,6 +956,19 @@ export default function HalaqohInputPage() {
                     </td>
                     <td style={{ padding: "12px 16px", color: "#64748b", fontSize: 12 }}>
                       {row.catatan || "—"}
+                    </td>
+                    <td style={{ padding: "12px 16px", whiteSpace: "nowrap" }}>
+                      <button
+                        type="button"
+                        onClick={() => handleEditRow(row)}
+                        style={{
+                          background: "#fff5f5", border: "1px solid #fecaca", color: "#550000",
+                          padding: "4px 12px", borderRadius: 8, fontWeight: 800, fontSize: 11,
+                          cursor: "pointer", transition: "all 0.15s",
+                        }}
+                      >
+                        ✏️ Edit Nilai
+                      </button>
                     </td>
                   </tr>
                 ))}
