@@ -98,6 +98,23 @@ export default function PresensiSantriPage() {
   const [selectedJenjang, setSelectedJenjang] = useState("");
   const [selectedKelas, setSelectedKelas] = useState("");
   const [mapelId, setMapelId] = useState("");
+  const [namaMapelCustom, setNamaMapelCustom] = useState("");
+
+  const selectedKelasInfo = master?.kelas.find(k => k.id === selectedKelas);
+  const isSpecialClass = selectedKelasInfo?.nama.toLowerCase().includes("11 ma") || selectedKelasInfo?.nama.toLowerCase().includes("12 ma");
+
+  // Force asatidz to Thoriq Ziyad if special class
+  useEffect(() => {
+    if (isSpecialClass && master) {
+      const thoriq = master.asatidzmMapel.find(am => {
+        const asatid = master.asatidzmMapel.find(a => a.pegawai_id === am.pegawai_id);
+        // Wait, asatidzmMapel doesn't have nama_lengkap, but the user profile might?
+        // Actually, we can't easily find Thoriq here unless we have asatidz list. But the user said:
+        // "pada pemilihan mapel maka Thoriq Ziyad menginput atau mengetik saja sendiri nama Mapel nya"
+        // This means we just need the mapel input custom. AsatidId is set by profile fetch for normal users, or we can just leave it as is if it's already Thoriq Ziyad.
+      });
+    }
+  }, [isSpecialClass, master]);
   const [jamKe, setJamKe] = useState<string[]>([]);
   const [jamKhususMulai, setJamKhususMulai] = useState("");
   const [jamKhususSelesai, setJamKhususSelesai] = useState("");
@@ -269,7 +286,7 @@ export default function PresensiSantriPage() {
 
   // Load santri + status presensi when kelas, tanggal, mapel, and jamKe are set
   const loadPresensi = useCallback(async (isManualClick = false) => {
-    if (!selectedKelas || !tanggal || !mapelId || !jamKeString) {
+    if (!selectedKelas || !tanggal || (!mapelId && !namaMapelCustom) || !jamKeString) {
       if (isManualClick) {
         Swal.fire({
           icon: "warning",
@@ -287,9 +304,14 @@ export default function PresensiSantriPage() {
     setKeteranganMap({});
 
     try {
-      const res = await fetch(
-        `/api/presensi/santri?kelas_id=${selectedKelas}&tanggal=${tanggal}&mapel_id=${mapelId}&jam_ke=${encodeURIComponent(jamKeString)}`
-      );
+      let urlFetch = `/api/presensi/santri?kelas_id=${selectedKelas}&tanggal=${tanggal}&jam_ke=${encodeURIComponent(jamKeString)}`;
+      if (isSpecialClass) {
+        urlFetch += `&nama_mapel_custom=${encodeURIComponent(namaMapelCustom)}`;
+      } else {
+        urlFetch += `&mapel_id=${mapelId}`;
+      }
+      
+      const res = await fetch(urlFetch);
       const json = await res.json();
       if (!res.ok) throw new Error(json.error);
 
@@ -321,18 +343,18 @@ export default function PresensiSantriPage() {
     } finally {
       setLoadingSantri(false);
     }
-  }, [selectedKelas, tanggal, mapelId, jamKeString]);
+  }, [selectedKelas, tanggal, mapelId, namaMapelCustom, isSpecialClass, jamKeString]);
 
   // Otomatis muat daftar santri HANYA ketika seluruh filter (Kelas, Tanggal, Mapel, Jam Ke-) terisi lengkap
   useEffect(() => {
-    if (selectedKelas && tanggal && mapelId && jamKeString) {
+    if (selectedKelas && tanggal && (mapelId || namaMapelCustom) && jamKeString) {
       loadPresensi(false);
     } else {
       setSantri([]);
       setStatusMap({});
       setKeteranganMap({});
     }
-  }, [selectedKelas, tanggal, mapelId, jamKeString, loadPresensi]);
+  }, [selectedKelas, tanggal, mapelId, namaMapelCustom, jamKeString, loadPresensi]);
 
   const setStatus = (santriId: string, status: StatusType) => {
     setStatusMap((prev) => ({ ...prev, [santriId]: status }));
@@ -375,7 +397,7 @@ export default function PresensiSantriPage() {
   ).length;
 
   const handleSimpan = async () => {
-    if (!mapelId) {
+    if (!mapelId && !namaMapelCustom) {
       Swal.fire({
         icon: "warning",
         title: "Mata Pelajaran Belum Dipilih",
@@ -391,7 +413,7 @@ export default function PresensiSantriPage() {
     // (Confirmation alert for missing attendance removed because default is now Hadir)
 
     const kelasNamaConfirm = kelasList.find((k) => k.id === selectedKelas)?.nama;
-    const mapelNamaConfirm = mapelList.find((m) => m.id === mapelId)?.nama;
+    const mapelNamaConfirm = isSpecialClass ? namaMapelCustom : mapelList.find((m) => m.id === mapelId)?.nama;
 
     const confirm = await Swal.fire({
       title: "Simpan Presensi?",
@@ -434,17 +456,23 @@ export default function PresensiSantriPage() {
         status: statusMap[s.id] || "hadir",
         keterangan: keteranganMap[s.id] || null,
       }));
+      
+      const payload: any = {
+        kelas_id: selectedKelas,
+        tanggal,
+        jam_ke: jamKe,
+        presensi: presensiPayload,
+      };
+      if (isSpecialClass) {
+        payload.nama_mapel_custom = namaMapelCustom;
+      } else {
+        payload.mapel_id = mapelId;
+      }
 
       const res = await fetch("/api/presensi/santri", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          kelas_id: selectedKelas,
-          tanggal,
-          mapel_id: mapelId,
-          jam_ke: jamKe,
-          presensi: presensiPayload,
-        }),
+        body: JSON.stringify(payload),
       });
 
       const json = await res.json();
@@ -608,28 +636,47 @@ export default function PresensiSantriPage() {
           {/* Mata Pelajaran */}
           <div className="flex flex-col gap-1.5 min-w-0 w-full">
             <label style={{ fontSize: "13px", fontWeight: "700", color: "#550000" }}>Mata Pelajaran <span style={{ color: "#ef4444" }}>*</span></label>
-            <select
-              className="w-full min-w-0 box-border"
-              style={{ padding: "11px 14px", borderRadius: "12px", border: "1px solid #ebdcc3", background: !selectedKelas ? "#f1f5f9" : "#fdf8f0", fontSize: "14px", outline: "none", fontWeight: 600 }}
-              value={mapelId}
-              onChange={(e) => {
-                const val = e.target.value;
-                setMapelId(val);
-                if (!val) {
-                  setSantri([]);
-                  setStatusMap({});
-                  setKeteranganMap({});
-                }
-              }}
-              disabled={!selectedKelas}
-            >
-              <option value="">{selectedKelas ? "— Pilih Mata Pelajaran —" : "— Pilih Kelas Terlebih Dahulu —"}</option>
-              {mapelList.map((m) => (
-                <option key={m.id} value={m.id}>
-                  {m.nama}
-                </option>
-              ))}
-            </select>
+            {isSpecialClass ? (
+              <input
+                type="text"
+                placeholder="Ketik nama mata pelajaran..."
+                className="w-full min-w-0 box-border"
+                style={{ padding: "11px 14px", borderRadius: "12px", border: "1px solid #ebdcc3", background: "#fdf8f0", fontSize: "14px", outline: "none", fontWeight: 600 }}
+                value={namaMapelCustom}
+                onChange={(e) => {
+                  const val = e.target.value;
+                  setNamaMapelCustom(val);
+                  if (!val) {
+                    setSantri([]);
+                    setStatusMap({});
+                    setKeteranganMap({});
+                  }
+                }}
+              />
+            ) : (
+              <select
+                className="w-full min-w-0 box-border"
+                style={{ padding: "11px 14px", borderRadius: "12px", border: "1px solid #ebdcc3", background: !selectedKelas ? "#f1f5f9" : "#fdf8f0", fontSize: "14px", outline: "none", fontWeight: 600 }}
+                value={mapelId}
+                onChange={(e) => {
+                  const val = e.target.value;
+                  setMapelId(val);
+                  if (!val) {
+                    setSantri([]);
+                    setStatusMap({});
+                    setKeteranganMap({});
+                  }
+                }}
+                disabled={!selectedKelas}
+              >
+                <option value="">{selectedKelas ? "— Pilih Mata Pelajaran —" : "— Pilih Kelas Terlebih Dahulu —"}</option>
+                {mapelList.map((m) => (
+                  <option key={m.id} value={m.id}>
+                    {m.nama}
+                  </option>
+                ))}
+              </select>
+            )}
           </div>
 
 

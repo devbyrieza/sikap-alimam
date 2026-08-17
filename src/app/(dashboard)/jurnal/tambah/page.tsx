@@ -60,6 +60,20 @@ export default function TambahJurnalPage() {
   const [kegiatan, setKegiatan] = useState("");
   const [catatan, setCatatan] = useState("");
   const [isDraftRestored, setIsDraftRestored] = useState(false);
+  const [namaMapelCustom, setNamaMapelCustom] = useState("");
+
+  const selectedKelasInfo = master?.kelas.find(k => k.id === kelasId);
+  const isSpecialClass = selectedKelasInfo?.nama.toLowerCase().includes("11 ma") || selectedKelasInfo?.nama.toLowerCase().includes("12 ma");
+
+  // Force asatidz to Thoriq Ziyad if special class
+  useEffect(() => {
+    if (isSpecialClass && master) {
+      const thoriq = master.asatidz.find(a => a.nama_lengkap.toLowerCase().includes("thoriq"));
+      if (thoriq && asatidId !== thoriq.id) {
+        setAsatidId(thoriq.id);
+      }
+    }
+  }, [isSpecialClass, master, asatidId]);
 
   // User-specific draft key helper
   const getDraftKey = () => {
@@ -342,7 +356,7 @@ export default function TambahJurnalPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!kelasId || !mapelId || !asatidId || !tanggal || !materi || !kegiatan) {
+    if (!kelasId || (!mapelId && !namaMapelCustom) || !asatidId || !tanggal || !materi || !kegiatan) {
       Swal.fire({
         icon: "warning",
         title: "Form Tidak Lengkap",
@@ -359,7 +373,8 @@ export default function TambahJurnalPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           pegawai_id: asatidId,
-          mapel_id: mapelId,
+          mapel_id: isSpecialClass ? undefined : mapelId,
+          nama_mapel_custom: isSpecialClass ? namaMapelCustom : undefined,
           kelas_id: kelasId,
           tanggal,
           jam_ke: jamKe.length > 0 ? jamKe.sort((a, b) => {
@@ -721,24 +736,35 @@ export default function TambahJurnalPage() {
                   <label style={{ display: "block", fontSize: "13px", fontWeight: 600, color: "#475569", marginBottom: "8px" }}>
                     Mata Pelajaran <span style={{ color: "#ef4444" }}>*</span>
                   </label>
-                  <select
-                    value={mapelId}
-                    onChange={(e) => setMapelId(e.target.value)}
-                    required
-                    disabled={!kelasId}
-                    style={{ padding: "12px 16px", borderRadius: "12px", border: "1px solid #cbd5e1", fontSize: "15px", outline: "none", width: "100%", backgroundColor: !kelasId ? "#f1f5f9" : "white" }}
-                  >
-                    <option value="">
-                      {kelasId ? "— Pilih Mata Pelajaran —" : "— Pilih Kelas Terlebih Dahulu —"}
-                    </option>
-                    {mapelList.map((m) => (
-                      <option key={m.id} value={m.id}>
-                        {m.nama}
+                  {isSpecialClass ? (
+                    <input
+                      type="text"
+                      placeholder="Ketik nama mata pelajaran..."
+                      value={namaMapelCustom}
+                      onChange={(e) => setNamaMapelCustom(e.target.value)}
+                      required
+                      style={{ padding: "12px 16px", borderRadius: "12px", border: "1px solid #cbd5e1", fontSize: "15px", outline: "none", width: "100%", backgroundColor: "white" }}
+                    />
+                  ) : (
+                    <select
+                      value={mapelId}
+                      onChange={(e) => setMapelId(e.target.value)}
+                      required
+                      disabled={!kelasId}
+                      style={{ padding: "12px 16px", borderRadius: "12px", border: "1px solid #cbd5e1", fontSize: "15px", outline: "none", width: "100%", backgroundColor: !kelasId ? "#f1f5f9" : "white" }}
+                    >
+                      <option value="">
+                        {kelasId ? "— Pilih Mata Pelajaran —" : "— Pilih Kelas Terlebih Dahulu —"}
                       </option>
-                    ))}
-                  </select>
+                      {mapelList.map((m) => (
+                        <option key={m.id} value={m.id}>
+                          {m.nama}
+                        </option>
+                      ))}
+                    </select>
+                  )}
 
-                  {kelasId && mapelList.length === 0 && (
+                  {kelasId && !isSpecialClass && mapelList.length === 0 && (
                     <p style={{ fontSize: "13px", color: "#d97706", marginTop: "8px", fontWeight: 500, margin: 0 }}>
                       Belum ada mapel untuk kelas ini
                     </p>
@@ -748,7 +774,7 @@ export default function TambahJurnalPage() {
             </div>
 
             {/* Card 2: Isi Jurnal / Validation Warning */}
-            {(!kelasId || !mapelId || jamKe.length === 0 || !asatidId || !tanggal) ? (
+            {(!kelasId || (!mapelId && !namaMapelCustom) || jamKe.length === 0 || !asatidId || !tanggal) ? (
               <div
                 style={{ background: "#fffbeb", borderRadius: "16px", padding: "36px 24px", border: "1.5px solid #fef08a", textAlign: "center", color: "#92400e", boxShadow: "0 2px 10px rgba(217, 119, 6, 0.05)" }}
               >

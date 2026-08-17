@@ -11,9 +11,19 @@ export async function DELETE(req: NextRequest) {
 
     const { searchParams } = new URL(req.url);
     const santri_id = searchParams.get("santri_id");
-    const mapel_id = searchParams.get("mapel_id");
+    let mapel_id = searchParams.get("mapel_id");
     const semester = searchParams.get("semester");
     const tahun_ajaran = searchParams.get("tahun_ajaran");
+    const nama_mapel_custom = searchParams.get("nama_mapel_custom");
+
+    if (!mapel_id && nama_mapel_custom) {
+      const existingMapel = await prisma.mataPelajaran.findFirst({
+        where: { nama: { equals: nama_mapel_custom, mode: "insensitive" } }
+      });
+      if (existingMapel) {
+        mapel_id = existingMapel.id;
+      }
+    }
 
     if (!santri_id || !mapel_id || !semester || !tahun_ajaran) {
       return NextResponse.json({ error: "Data tidak lengkap" }, { status: 400 });

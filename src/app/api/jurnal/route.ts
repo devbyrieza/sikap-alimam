@@ -35,16 +35,32 @@ export async function GET(req: NextRequest) {
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { pegawai_id, mapel_id, kelas_id, tanggal, jam_ke, materi, sub_materi, learning_outcome, kegiatan, catatan } = body;
+    const { pegawai_id, mapel_id, kelas_id, tanggal, jam_ke, materi, sub_materi, learning_outcome, kegiatan, catatan, nama_mapel_custom } = body;
 
-    if (!pegawai_id || !mapel_id || !kelas_id || !tanggal || !materi || !kegiatan) {
+    let finalMapelId = mapel_id;
+
+    if (!finalMapelId && nama_mapel_custom) {
+      const existing = await prisma.mataPelajaran.findFirst({
+        where: { nama: { equals: nama_mapel_custom, mode: "insensitive" }, kelas_id }
+      });
+      if (existing) {
+        finalMapelId = existing.id;
+      } else {
+        const newMapel = await prisma.mataPelajaran.create({
+          data: { nama: nama_mapel_custom.trim(), kelas_id, is_active: true }
+        });
+        finalMapelId = newMapel.id;
+      }
+    }
+
+    if (!pegawai_id || !finalMapelId || !kelas_id || !tanggal || !materi || !kegiatan) {
       return NextResponse.json({ error: "Field wajib tidak lengkap" }, { status: 400 });
     }
 
     const jurnal = await prisma.jurnalMengajar.create({
       data: {
         pegawai_id,
-        mapel_id,
+        mapel_id: finalMapelId,
         kelas_id,
         tanggal: new Date(tanggal),
         jam_ke: jam_ke || null,

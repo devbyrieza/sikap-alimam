@@ -5,10 +5,22 @@ import { getSession } from '@/lib/auth';
 // GET: list nilai by mapel_id + kelas_id + semester + tahun_ajaran
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
-  const mapel_id = searchParams.get('mapel_id');
+  let mapel_id = searchParams.get('mapel_id');
   const kelas_id = searchParams.get('kelas_id');
   const semester = searchParams.get('semester');
   const tahun_ajaran = searchParams.get('tahun_ajaran');
+  const nama_mapel_custom = searchParams.get('nama_mapel_custom');
+
+  if (!mapel_id && nama_mapel_custom) {
+    const existingMapel = await prisma.mataPelajaran.findFirst({
+      where: { nama: { equals: nama_mapel_custom, mode: "insensitive" }, ...(kelas_id ? { kelas_id } : {}) }
+    });
+    if (existingMapel) {
+      mapel_id = existingMapel.id;
+    } else {
+      return NextResponse.json({ nilai: [] });
+    }
+  }
 
   const where: Record<string, unknown> = {};
   if (mapel_id) where.mapel_id = mapel_id;
@@ -36,12 +48,27 @@ export async function POST(req: NextRequest) {
   }
 
   const body = await req.json();
-  const { data, mapel_id, kelas_id, semester, tahun_ajaran, periode } = body;
+  const { data, mapel_id, kelas_id, semester, tahun_ajaran, periode, nama_mapel_custom } = body;
+
+  let finalMapelId = mapel_id;
+  if (!finalMapelId && nama_mapel_custom) {
+    const existing = await prisma.mataPelajaran.findFirst({
+      where: { nama: { equals: nama_mapel_custom, mode: "insensitive" }, kelas_id }
+    });
+    if (existing) {
+      finalMapelId = existing.id;
+    } else {
+      const newMapel = await prisma.mataPelajaran.create({
+        data: { nama: nama_mapel_custom.trim(), kelas_id, is_active: true }
+      });
+      finalMapelId = newMapel.id;
+    }
+  }
 
   if (
     !data ||
     !Array.isArray(data) ||
-    !mapel_id ||
+    !finalMapelId ||
     !kelas_id ||
     !semester ||
     !tahun_ajaran ||
@@ -79,7 +106,7 @@ export async function POST(req: NextRequest) {
         const existing = await prisma.nilaiSantri.findFirst({
           where: {
             santri_id: item.santri_id,
-            mapel_id,
+            mapel_id: finalMapelId,
             kelas_id,
             semester,
             jenis,
@@ -99,7 +126,7 @@ export async function POST(req: NextRequest) {
           await prisma.nilaiSantri.create({
             data: {
               santri_id: item.santri_id,
-              mapel_id,
+              mapel_id: finalMapelId,
               kelas_id,
               semester,
               jenis,

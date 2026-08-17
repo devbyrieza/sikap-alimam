@@ -7,9 +7,18 @@ export default function SplashScreen() {
   const [show, setShow] = useState(true);
 
   useEffect(() => {
-    // Hide splash screen after window loaded and a slight delay for aesthetics
+    // Jika sudah pernah muncul di sesi ini, langsung sembunyikan
+    if (sessionStorage.getItem('splashShown')) {
+      setShow(false);
+      return;
+    }
+
+    // Hide splash screen after window loaded and a slight delay
     const hideSplash = () => {
-      setTimeout(() => setShow(false), 800);
+      setTimeout(() => {
+        setShow(false);
+        sessionStorage.setItem('splashShown', 'true');
+      }, 800);
     };
 
     if (document.readyState === 'complete') {

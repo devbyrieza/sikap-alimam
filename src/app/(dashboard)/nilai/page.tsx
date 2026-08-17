@@ -52,6 +52,7 @@ export default function InputNilaiPage() {
   const [jenjangFilter, setJenjangFilter] = useState("");
   const [kelas_id, setKelasId] = useState("");
   const [mapel_id, setMapelId] = useState("");
+  const [namaMapelCustom, setNamaMapelCustom] = useState("");
   const [semester, setSemester] = useState("Ganjil");
   const [tahun_ajaran, setTahunAjaran] = useState("2026/2027");
   const [periode, setPeriode] = useState("PTS"); // PTS | PAS
@@ -61,6 +62,11 @@ export default function InputNilaiPage() {
     mapel: Record<string, MapelItem[]>;
     asatidzmMapel: { id: string; pegawai_id: string; mapel_id: string; kelas_id: string }[];
   } | null>(null);
+
+  const isSpecialClass = useMemo(() => {
+    const selectedKelasInfo = master?.kelas.find(k => k.id === kelas_id);
+    return selectedKelasInfo?.nama.toLowerCase().includes("11 ma") || selectedKelasInfo?.nama.toLowerCase().includes("12 ma");
+  }, [kelas_id, master]);
   const [asatidId, setAsatidId] = useState("");
   const [isAdminSuper, setIsAdminSuper] = useState(false);
 
@@ -224,20 +230,22 @@ export default function InputNilaiPage() {
         })
       );
     }
-  }, [inputData, step, kelas_id, mapel_id, semester, tahun_ajaran, periode]);
+  }, [inputData, step, kelas_id, mapel_id, namaMapelCustom, isSpecialClass, semester, tahun_ajaran, periode]);
 
   // Fetch santri + nilai existing saat step 2
   const fetchStep2 = useCallback(async () => {
-    if (!kelas_id || !mapel_id || !semester || !tahun_ajaran) return;
+    if (!kelas_id || (!mapel_id && !namaMapelCustom) || !semester || !tahun_ajaran) return;
     setLoadingSantri(true);
     try {
+      let urlNilai = `/api/nilai?kelas_id=${kelas_id}&semester=${semester}&tahun_ajaran=${encodeURIComponent(tahun_ajaran)}`;
+      if (isSpecialClass) {
+        urlNilai += `&nama_mapel_custom=${encodeURIComponent(namaMapelCustom)}`;
+      } else {
+        urlNilai += `&mapel_id=${mapel_id}`;
+      }
       const [santriRes, nilaiRes] = await Promise.all([
         fetch(`/api/master/santri?kelas_id=${kelas_id}`),
-        fetch(
-          `/api/nilai?mapel_id=${mapel_id}&kelas_id=${kelas_id}&semester=${semester}&tahun_ajaran=${encodeURIComponent(
-            tahun_ajaran
-          )}`
-        ),
+        fetch(urlNilai),
       ]);
       const santriData = await santriRes.json();
       const nilaiData = await nilaiRes.json();
@@ -253,7 +261,7 @@ export default function InputNilaiPage() {
           const parsed = JSON.parse(draftStr);
           if (
             parsed.kelas === kelas_id &&
-            parsed.mapel === mapel_id &&
+            parsed.mapel === (isSpecialClass ? namaMapelCustom : mapel_id) &&
             parsed.semester === semester &&
             parsed.tahun === tahun_ajaran &&
             parsed.periode === periode
@@ -303,7 +311,7 @@ export default function InputNilaiPage() {
     } finally {
       setLoadingSantri(false);
     }
-  }, [kelas_id, mapel_id, semester, tahun_ajaran, periode]);
+  }, [kelas_id, mapel_id, namaMapelCustom, isSpecialClass, semester, tahun_ajaran, periode]);
 
   useEffect(() => {
     if (step === 2) fetchStep2();
@@ -351,7 +359,13 @@ export default function InputNilaiPage() {
 
     if (confirm.isConfirmed) {
       try {
-        const res = await fetch(`/api/nilai/hapus?santri_id=${santriId}&mapel_id=${mapel_id}&semester=${semester}&tahun_ajaran=${tahun_ajaran}`, {
+        let urlHapus = `/api/nilai/hapus?santri_id=${santriId}&semester=${semester}&tahun_ajaran=${tahun_ajaran}`;
+        if (isSpecialClass) {
+          urlHapus += `&nama_mapel_custom=${encodeURIComponent(namaMapelCustom)}`;
+        } else {
+          urlHapus += `&mapel_id=${mapel_id}`;
+        }
+        const res = await fetch(urlHapus, {
           method: "DELETE",
         });
         if (res.ok) {
@@ -400,17 +414,23 @@ export default function InputNilaiPage() {
 
     setSaving(true);
     try {
+      const payload: any = {
+        data: dataToSave,
+        kelas_id,
+        semester,
+        tahun_ajaran,
+        periode: periode.toLowerCase(),
+      };
+      if (isSpecialClass) {
+        payload.nama_mapel_custom = namaMapelCustom;
+      } else {
+        payload.mapel_id = mapel_id;
+      }
+      
       const res = await fetch("/api/nilai", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          data: dataToSave,
-          mapel_id,
-          kelas_id,
-          semester,
-          tahun_ajaran,
-          periode: periode.toLowerCase(),
-        }),
+        body: JSON.stringify(payload),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error);
@@ -589,20 +609,37 @@ export default function InputNilaiPage() {
           {/* Mata Pelajaran */}
           <div className="flex flex-col gap-1.5 min-w-0 w-full">
             <label style={{ fontSize: "13px", fontWeight: "700", color: "#550000" }}>Mata Pelajaran</label>
-            <select
-              className="w-full min-w-0 box-border"
-              style={{ padding: "12px 14px", borderRadius: "12px", border: "1px solid #ebdcc3", background: !kelas_id ? "#f1f5f9" : "#fdf8f0", fontSize: "14px", outline: "none", fontWeight: 600 }}
-              value={mapel_id}
-              onChange={(e) => setMapelId(e.target.value)}
-              disabled={!kelas_id || loadingKelas}
-            >
-              <option value="">{kelas_id ? "— Pilih Mata Pelajaran —" : "— Pilih Kelas Terlebih Dahulu —"}</option>
-              {mapelList.map((m) => (
-                <option key={m.id} value={m.id}>
-                  {m.nama}
-                </option>
-              ))}
-            </select>
+            {isSpecialClass ? (
+              <input
+                type="text"
+                placeholder="Ketik nama mata pelajaran..."
+                className="w-full min-w-0 box-border"
+                style={{ padding: "12px 14px", borderRadius: "12px", border: "1px solid #ebdcc3", background: "#fdf8f0", fontSize: "14px", outline: "none", fontWeight: 600 }}
+                value={namaMapelCustom}
+                onChange={(e) => setNamaMapelCustom(e.target.value)}
+              />
+            ) : (
+              <select
+                className="w-full min-w-0 box-border"
+                style={{ padding: "12px 14px", borderRadius: "12px", border: "1px solid #ebdcc3", background: !kelas_id ? "#f1f5f9" : "#fdf8f0", fontSize: "14px", outline: "none", fontWeight: 600 }}
+                value={mapel_id}
+                onChange={(e) => setMapelId(e.target.value)}
+                disabled={!kelas_id || loadingKelas}
+              >
+                <option value="">{kelas_id ? "— Pilih Mata Pelajaran —" : "— Pilih Kelas Terlebih Dahulu —"}</option>
+                {mapelList.map((m) => (
+                  <option key={m.id} value={m.id}>
+                    {m.nama}
+                  </option>
+                ))}
+              </select>
+            )}
+            
+            {kelas_id && !isSpecialClass && mapelList.length === 0 && (
+              <p style={{ fontSize: "12px", color: "#d97706", marginTop: "4px", fontWeight: 500, margin: 0 }}>
+                Belum ada mapel untuk kelas ini. Hubungi Admin.
+              </p>
+            )}
           </div>
 
 

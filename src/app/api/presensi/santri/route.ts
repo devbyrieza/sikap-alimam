@@ -6,11 +6,21 @@ export async function GET(req: NextRequest) {
     const { searchParams } = new URL(req.url);
     const kelas_id = searchParams.get("kelas_id");
     const tanggal = searchParams.get("tanggal");
-    const mapel_id = searchParams.get("mapel_id");
+    let mapel_id = searchParams.get("mapel_id");
     const jam_ke = searchParams.get("jam_ke");
+    const nama_mapel_custom = searchParams.get("nama_mapel_custom");
 
     if (!kelas_id || !tanggal) {
       return NextResponse.json({ error: "kelas_id dan tanggal wajib diisi" }, { status: 400 });
+    }
+
+    if (!mapel_id && nama_mapel_custom) {
+      const existingMapel = await prisma.mataPelajaran.findFirst({
+        where: { nama: { equals: nama_mapel_custom, mode: "insensitive" }, kelas_id }
+      });
+      if (existingMapel) {
+        mapel_id = existingMapel.id;
+      }
     }
 
     const tanggalDate = new Date(tanggal);
@@ -106,15 +116,31 @@ export async function GET(req: NextRequest) {
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { kelas_id, tanggal, mapel_id, jam_ke, presensi } = body as {
+    const { kelas_id, tanggal, mapel_id, jam_ke, presensi, nama_mapel_custom } = body as {
       kelas_id: string;
       tanggal: string;
       mapel_id: string;
       jam_ke: string | string[];
       presensi: { santri_id: string; status: string; keterangan?: string }[];
+      nama_mapel_custom?: string;
     };
 
-    if (!kelas_id || !tanggal || !mapel_id || !jam_ke || !Array.isArray(presensi) || presensi.length === 0) {
+    let finalMapelId = mapel_id;
+    if (!finalMapelId && nama_mapel_custom) {
+      const existing = await prisma.mataPelajaran.findFirst({
+        where: { nama: { equals: nama_mapel_custom, mode: "insensitive" }, kelas_id }
+      });
+      if (existing) {
+        finalMapelId = existing.id;
+      } else {
+        const newMapel = await prisma.mataPelajaran.create({
+          data: { nama: nama_mapel_custom.trim(), kelas_id, is_active: true }
+        });
+        finalMapelId = newMapel.id;
+      }
+    }
+
+    if (!kelas_id || !tanggal || !finalMapelId || !jam_ke || !Array.isArray(presensi) || presensi.length === 0) {
       return NextResponse.json({ error: "Data tidak lengkap" }, { status: 400 });
     }
 
@@ -127,7 +153,7 @@ export async function POST(req: NextRequest) {
     const existingPresensi = await prisma.presensiSiswa.findMany({
       where: {
         tanggal: tanggalDate,
-        mapel_id,
+        mapel_id: finalMapelId,
         jam_ke: jam_ke_str,
         santri_id: { in: presensi.map((p) => p.santri_id) },
       },
@@ -153,7 +179,7 @@ export async function POST(req: NextRequest) {
             santri_id: p.santri_id,
             kelas_id,
             tanggal: tanggalDate,
-            mapel_id,
+            mapel_id: finalMapelId,
             jam_ke: jam_ke_str,
             status: p.status,
             keterangan: p.keterangan ?? null,
