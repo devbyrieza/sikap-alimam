@@ -80,7 +80,9 @@ export async function POST(request: Request) {
     const parsedTanggal = new Date(tanggal);
 
     const upserts = entries.map((entry: any) => {
-      const nilai_akhir = Math.round((entry.nilai_bacaan + entry.nilai_kelancaran) / 2);
+      const nilai_bacaan = entry.nilai_bacaan ?? 90;
+      const nilai_kelancaran = entry.nilai_kelancaran ?? 90;
+      const nilai_akhir = Math.round((nilai_bacaan + nilai_kelancaran) / 2);
 
       return prisma.catatanHalaqoh.upsert({
         where: {
@@ -93,20 +95,20 @@ export async function POST(request: Request) {
         update: {
           kelompok_id,
           pegawai_id,
-          jenis: entry.jenis ?? jenis,
-          surah_nomor: entry.surah_nomor ?? surah_nomor,
-          surah_nama: entry.surah_nama ?? surah_nama,
-          surah_nama_arab: entry.surah_nama_arab ?? surah_nama_arab,
-          ayat_dari: entry.ayat_dari ?? ayat_dari,
-          ayat_ke: entry.ayat_ke ?? ayat_ke,
-          jumlah_halaman: entry.jumlah_halaman ?? jumlah_halaman,
-          kehadiran: entry.kehadiran,
-          alasan: entry.alasan,
-          nilai_sikap: entry.nilai_sikap,
-          nilai_bacaan: entry.nilai_bacaan,
-          nilai_kelancaran: entry.nilai_kelancaran,
+          jenis: entry.jenis ?? jenis ?? 'tahsin',
+          surah_nomor: entry.surah_nomor ?? surah_nomor ?? 0,
+          surah_nama: entry.surah_nama ?? surah_nama ?? 'Tahsin',
+          surah_nama_arab: entry.surah_nama_arab ?? surah_nama_arab ?? null,
+          ayat_dari: entry.ayat_dari ?? ayat_dari ?? 0,
+          ayat_ke: entry.ayat_ke ?? ayat_ke ?? 0,
+          jumlah_halaman: entry.jumlah_halaman ?? jumlah_halaman ?? 0,
+          kehadiran: entry.kehadiran ?? 'hadir',
+          alasan: entry.alasan ?? null,
+          nilai_sikap: entry.nilai_sikap ?? 90,
+          nilai_bacaan: nilai_bacaan,
+          nilai_kelancaran: nilai_kelancaran,
           nilai_akhir,
-          catatan: entry.catatan,
+          catatan: entry.catatan ?? null,
         },
         create: {
           santri_id: entry.santri_id,
@@ -114,20 +116,20 @@ export async function POST(request: Request) {
           pegawai_id,
           tanggal: parsedTanggal,
           sesi,
-          jenis: entry.jenis ?? jenis,
-          surah_nomor: entry.surah_nomor ?? surah_nomor,
-          surah_nama: entry.surah_nama ?? surah_nama,
-          surah_nama_arab: entry.surah_nama_arab ?? surah_nama_arab,
-          ayat_dari: entry.ayat_dari ?? ayat_dari,
-          ayat_ke: entry.ayat_ke ?? ayat_ke,
-          jumlah_halaman: entry.jumlah_halaman ?? jumlah_halaman,
-          kehadiran: entry.kehadiran,
-          alasan: entry.alasan,
-          nilai_sikap: entry.nilai_sikap,
-          nilai_bacaan: entry.nilai_bacaan,
-          nilai_kelancaran: entry.nilai_kelancaran,
+          jenis: entry.jenis ?? jenis ?? 'tahsin',
+          surah_nomor: entry.surah_nomor ?? surah_nomor ?? 0,
+          surah_nama: entry.surah_nama ?? surah_nama ?? 'Tahsin',
+          surah_nama_arab: entry.surah_nama_arab ?? surah_nama_arab ?? null,
+          ayat_dari: entry.ayat_dari ?? ayat_dari ?? 0,
+          ayat_ke: entry.ayat_ke ?? ayat_ke ?? 0,
+          jumlah_halaman: entry.jumlah_halaman ?? jumlah_halaman ?? 0,
+          kehadiran: entry.kehadiran ?? 'hadir',
+          alasan: entry.alasan ?? null,
+          nilai_sikap: entry.nilai_sikap ?? 90,
+          nilai_bacaan: nilai_bacaan,
+          nilai_kelancaran: nilai_kelancaran,
           nilai_akhir,
-          catatan: entry.catatan,
+          catatan: entry.catatan ?? null,
         },
       });
     });
@@ -135,7 +137,8 @@ export async function POST(request: Request) {
     const results = await prisma.$transaction(upserts);
 
     return NextResponse.json(results);
-  } catch (error) {
-    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+  } catch (error: any) {
+    console.error('Error saving catatan halaqoh:', error);
+    return NextResponse.json({ error: error?.message || 'Internal Server Error' }, { status: 500 });
   }
 }
