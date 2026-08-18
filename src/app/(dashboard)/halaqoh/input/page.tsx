@@ -745,9 +745,14 @@ export default function HalaqohInputPage() {
             {kehadiran === "hadir" && (
               <>
                 {jenis === "tahsin" ? (
-                  <div style={{ background: "#fffbeb", border: "1.5px solid #fde68a", borderRadius: 16, padding: "14px 18px", color: "#b45309", fontSize: 13, fontWeight: 700, display: "flex", alignItems: "center", gap: 10 }}>
-                    <Award size={18} color="#d97706" />
-                    <span>Mode <strong>Tahsin (Talaqqi Face-to-Face)</strong>: Presensi &amp; Evaluasi Bacaan santri secara lisan.</span>
+                  <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+                    <div style={{ background: "#fffbeb", border: "1.5px solid #fde68a", borderRadius: 16, padding: "14px 18px", color: "#b45309", fontSize: 13, fontWeight: 700, display: "flex", alignItems: "center", gap: 10 }}>
+                      <Award size={18} color="#d97706" />
+                      <span>Mode <strong>Tahsin (Talaqqi Face-to-Face)</strong>: Presensi &amp; Evaluasi Bacaan santri secara lisan.</span>
+                    </div>
+                    <div>
+                      <SurahPicker surahList={surahList} selected={selectedSurah} onSelect={setSelectedSurah} label="SURAH YANG DITAHSIN (OPSIONAL)" />
+                    </div>
                   </div>
                 ) : (
                   <>

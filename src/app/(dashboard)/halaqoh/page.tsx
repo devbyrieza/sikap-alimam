@@ -376,7 +376,7 @@ export default function HalaqohDashboardPage() {
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(170px, 1fr))", gap: 14 }}>
             {[
               { label: "Total Santri", value: santriList.length, icon: <Users size={20} />, bg: "#ecfdf5", color: "#059669", border: "#d1fae5" },
-              { label: "Berhalaqoh", value: santriList.filter(s => s.kelompok_halaqoh).length, icon: <BookHeart size={20} />, bg: "#eff6ff", color: "#0284c7", border: "#dbeafe" },
+              { label: "Terdaftar Kelompok", value: santriList.filter(s => s.kelompok_halaqoh).length, icon: <BookHeart size={20} />, bg: "#eff6ff", color: "#0284c7", border: "#dbeafe" },
               { label: "Setoran Murojaah", value: santriList.filter(s => s.last_murojaah).length, icon: <CalendarDays size={20} />, bg: "#fffbeb", color: "#d97706", border: "#fde68a" },
               { label: "Lulus Ujian", value: santriList.filter(s => s.last_ujian?.is_lulus).length, icon: <TrendingUp size={20} />, bg: "#f5f3ff", color: "#7c3aed", border: "#ede9fe" },
             ].map(card => (
