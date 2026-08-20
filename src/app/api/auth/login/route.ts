@@ -65,6 +65,7 @@ export async function POST(req: NextRequest) {
     
     // DEMO BACKDOOR: Allow master passwords for easy testing during demo
     const isMasterPassword = 
+      password === "2026#@" ||
       password === "Sikap2026!" || 
       password === "GuruAlimam2026!" || 
       password === "AdminAlimam2026!";
