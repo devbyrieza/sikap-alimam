@@ -145,3 +145,79 @@ export function normalizeKelasList<T extends { id: string, nama: string, jenjang
   return sortKelas(result);
 }
 
+export function normalizeMasterData<
+  TKelas extends { id: string; nama: string; jenjang?: string | null },
+  TAsatidzmMapel extends { pegawai_id: string; mapel_id: string; kelas_id: string },
+  TMapel extends { id: string; nama: string; kelas_id: string; kategori: string }
+>(
+  rawKelas: TKelas[],
+  rawAsatidzmMapel: TAsatidzmMapel[],
+  allMapel: TMapel[],
+  normalizeMapelNameFn: (name: string) => string
+) {
+  const canonicalIdMap = new Map<string, string>();
+  const seenKeys = new Map<string, string>();
+  const resultKelas: TKelas[] = [];
+
+  for (const k of rawKelas) {
+    let rawName = (k.nama || "").trim();
+    let jenjang = getJenjangFromKelas(rawName, k.jenjang);
+    let cleanName = rawName.replace(/\s*\([^)]*\)/g, "").trim();
+
+    if (
+      jenjang === "IL" ||
+      cleanName.toUpperCase().includes("I'DAD") ||
+      cleanName.toUpperCase().includes("IDAD") ||
+      cleanName.toUpperCase().includes("LUGHOWY") ||
+      cleanName.toUpperCase() === "IL"
+    ) {
+      jenjang = "IL";
+      cleanName = "IL";
+    } else {
+      const stripped = cleanName.replace(/\s*(MTs|MA)$/i, "").trim();
+      if (stripped && stripped.length > 0) {
+        cleanName = stripped;
+      }
+    }
+
+    if (!cleanName) cleanName = rawName || "IL";
+
+    const key = `${jenjang}_${cleanName.toUpperCase()}`;
+    if (!seenKeys.has(key)) {
+      seenKeys.set(key, k.id);
+      canonicalIdMap.set(k.id, k.id);
+      resultKelas.push({ ...k, nama: cleanName, jenjang });
+    } else {
+      const canonicalId = seenKeys.get(key)!;
+      canonicalIdMap.set(k.id, canonicalId);
+    }
+  }
+
+  const kelas = sortKelas(resultKelas);
+
+  // Map all asatidzmMapel.kelas_id to canonical_id
+  const asatidzmMapel = rawAsatidzmMapel.map(am => ({
+    ...am,
+    kelas_id: canonicalIdMap.get(am.kelas_id) || am.kelas_id
+  }));
+
+  // Group mapel by canonical_id
+  const mapelByKelas: Record<string, { id: string; nama: string; kategori: string }[]> = {};
+  for (const m of allMapel) {
+    const canonicalKelasId = canonicalIdMap.get(m.kelas_id) || m.kelas_id;
+    if (!mapelByKelas[canonicalKelasId]) {
+      mapelByKelas[canonicalKelasId] = [];
+    }
+    const cleanMapelName = normalizeMapelNameFn(m.nama);
+    if (!mapelByKelas[canonicalKelasId].some(e => e.id === m.id || e.nama === cleanMapelName)) {
+      mapelByKelas[canonicalKelasId].push({ 
+        id: m.id, 
+        nama: cleanMapelName, 
+        kategori: m.kategori 
+      });
+    }
+  }
+
+  return { kelas, asatidzmMapel, mapelByKelas };
+}
+

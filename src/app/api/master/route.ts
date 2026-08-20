@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { sortKelas, normalizeKelasList } from "@/lib/kelas";
+import { sortKelas, normalizeMasterData } from "@/lib/kelas";
 
 export const dynamic = "force-dynamic";
 
@@ -56,7 +56,12 @@ export async function GET() {
       }),
     ]);
 
-    const normalizedKelas = normalizeKelasList(rawKelas);
+    const { kelas, asatidzmMapel, mapelByKelas } = normalizeMasterData(
+      rawKelas,
+      rawAsatidzmMapel,
+      allMapel,
+      normalizeMapelName
+    );
 
     // Fallback jika belum terfilter spesifik, ambil semua pegawai
     let asatidz = rawAsatidz;
@@ -72,26 +77,11 @@ export async function GET() {
       nama_lengkap: formatName(a.nama_lengkap)
     }));
 
-    const kelas = sortKelas(normalizedKelas);
-
-    // Group mapel by kelas_id
-    const mapelByKelas: Record<string, { id: string; nama: string; kategori: string }[]> = {};
-    for (const m of allMapel) {
-      if (!mapelByKelas[m.kelas_id]) {
-        mapelByKelas[m.kelas_id] = [];
-      }
-      mapelByKelas[m.kelas_id].push({ 
-        id: m.id, 
-        nama: normalizeMapelName(m.nama), 
-        kategori: m.kategori 
-      });
-    }
-
     return NextResponse.json({ 
       kelas, 
       asatidz: formattedAsatidz, 
       mapel: mapelByKelas,
-      asatidzmMapel: rawAsatidzmMapel 
+      asatidzmMapel 
     });
   } catch (err) {
     console.error("[GET /api/master]", err);
