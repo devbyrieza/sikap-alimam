@@ -195,28 +195,40 @@ export function normalizeMasterData<
 
   const kelas = sortKelas(resultKelas);
 
-  // Map all asatidzmMapel.kelas_id to canonical_id
-  const asatidzmMapel = rawAsatidzmMapel.map(am => ({
-    ...am,
-    kelas_id: canonicalIdMap.get(am.kelas_id) || am.kelas_id
-  }));
-
-  // Group mapel by canonical_id
+  // Group mapel by canonical_id AND build canonical mapelIdMap
+  const canonicalMapelIdMap = new Map<string, string>();
+  const seenMapelKeys = new Map<string, string>();
   const mapelByKelas: Record<string, { id: string; nama: string; kategori: string }[]> = {};
+
   for (const m of allMapel) {
     const canonicalKelasId = canonicalIdMap.get(m.kelas_id) || m.kelas_id;
     if (!mapelByKelas[canonicalKelasId]) {
       mapelByKelas[canonicalKelasId] = [];
     }
+
     const cleanMapelName = normalizeMapelNameFn(m.nama);
-    if (!mapelByKelas[canonicalKelasId].some(e => e.id === m.id || e.nama === cleanMapelName)) {
+    const mapelKey = `${canonicalKelasId}_${cleanMapelName.trim().toLowerCase()}`;
+
+    if (!seenMapelKeys.has(mapelKey)) {
+      seenMapelKeys.set(mapelKey, m.id);
+      canonicalMapelIdMap.set(m.id, m.id);
       mapelByKelas[canonicalKelasId].push({ 
         id: m.id, 
         nama: cleanMapelName, 
         kategori: m.kategori 
       });
+    } else {
+      const canonicalMapelId = seenMapelKeys.get(mapelKey)!;
+      canonicalMapelIdMap.set(m.id, canonicalMapelId);
     }
   }
+
+  // Map all asatidzmMapel to canonical kelas_id AND canonical mapel_id
+  const asatidzmMapel = rawAsatidzmMapel.map(am => ({
+    ...am,
+    kelas_id: canonicalIdMap.get(am.kelas_id) || am.kelas_id,
+    mapel_id: canonicalMapelIdMap.get(am.mapel_id) || am.mapel_id
+  }));
 
   return { kelas, asatidzmMapel, mapelByKelas };
 }

@@ -245,12 +245,25 @@ export default function PresensiSantriPage() {
   const mapelList = useMemo(() => {
     let list = (selectedKelas && master?.mapel?.[selectedKelas]) || [];
     if (asatidId && master?.asatidzmMapel && list.length > 0) {
-      const allowedMapelIds = master.asatidzmMapel
-        .filter((am) => am.pegawai_id === asatidId)
-        .map((am) => am.mapel_id);
+      const allowedMapelIds = new Set(
+        master.asatidzmMapel
+          .filter((am) => am.pegawai_id === asatidId)
+          .map((am) => am.mapel_id)
+      );
 
-      if (allowedMapelIds.length > 0) {
-        const filtered = list.filter((m) => allowedMapelIds.includes(m.id));
+      const teacherMapelNames = new Set<string>();
+      if (master?.mapel) {
+        Object.values(master.mapel).flat().forEach((m: any) => {
+          if (allowedMapelIds.has(m.id)) {
+            teacherMapelNames.add(m.nama.trim().toLowerCase());
+          }
+        });
+      }
+
+      if (allowedMapelIds.size > 0 || teacherMapelNames.size > 0) {
+        const filtered = list.filter(
+          (m: any) => allowedMapelIds.has(m.id) || teacherMapelNames.has(m.nama.trim().toLowerCase())
+        );
         if (filtered.length > 0) {
           list = filtered;
         }
@@ -267,7 +280,7 @@ export default function PresensiSantriPage() {
     } else if (mapelId && !mapelList.some((m) => m.id === mapelId)) {
       setMapelId("");
     }
-  }, [mapelList, mapelId]);
+  }, [mapelList]);
 
 
   const jamKeString = useMemo(() => {
