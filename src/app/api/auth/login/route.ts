@@ -19,6 +19,7 @@ export async function POST(req: NextRequest) {
       where: {
         OR: [
           { email: { equals: identifier, mode: "insensitive" } },
+          { username: { equals: identifier, mode: "insensitive" } },
         ],
       },
       include: { pegawai: { select: { id: true, nama_lengkap: true, nama_panggilan: true } } },
