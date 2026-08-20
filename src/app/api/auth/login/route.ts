@@ -113,7 +113,9 @@ export async function POST(req: NextRequest) {
       spp_blocked_reason: (user as any).spp_blocked_reason ?? undefined,
     });
 
-    return NextResponse.json({ success: true, role: user.role, nama: formattedNama });
+    const isDefaultPassword = password === "2026#@" || user.plain_password === "2026#@";
+
+    return NextResponse.json({ success: true, role: user.role, nama: formattedNama, is_default_password: isDefaultPassword });
 
   } catch (err) {
     console.error("Login error:", err);
