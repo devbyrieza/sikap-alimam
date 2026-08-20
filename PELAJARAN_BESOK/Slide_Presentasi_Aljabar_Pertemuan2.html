@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Slide Presentasi Bab 2 Aljabar Pertemuan 2 - TV Kelas MTs 7</title>
+<style>
+  :root {
+    --bg-dark: #064e3b;
+    --bg-card: #ffffff;
+    --primary: #047857;
+    --accent: #d97706;
+    --text-main: #0f172a;
+    --text-muted: #475569;
+    --gold: #f59e0b;
+  }
+
+  * { box-sizing: border-box; }
+  body, html {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background-color: #022c22;
+    color: var(--text-main);
+    overflow: hidden;
+  }
+
+  /* Slide Wrapper */
+  .slide-container {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    padding: 20px;
+  }
+
+  .slide {
+    width: 100%;
+    max-width: 1240px;
+    height: calc(100vh - 80px);
+    background: #ffffff;
+    border-radius: 24px;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+    padding: 36px 48px;
+    display: none;
+    flex-direction: column;
+    justify-content: space-between;
+    animation: fadeIn 0.4s ease-in-out;
+    border: 4px solid #10b981;
+    position: relative;
+    overflow-y: auto;
+  }
+
+  .slide.active {
+    display: flex;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.98); }
+    to { opacity: 1; transform: scale(1); }
+  }
+
+  /* Slide Header */
+  .slide-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 3px double #e2e8f0;
+    padding-bottom: 14px;
+  }
+
+  .slide-title-group h2 {
+    margin: 0;
+    color: var(--bg-dark);
+    font-size: 30px;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+  }
+
+  .slide-subtitle {
+    margin-top: 4px;
+    color: var(--primary);
+    font-size: 16px;
+    font-weight: 700;
+  }
+
+  .badge-tag {
+    background: #ecfdf5;
+    color: #047857;
+    border: 2px solid #a7f3d0;
+    font-size: 16px;
+    font-weight: 800;
+    padding: 6px 16px;
+    border-radius: 30px;
+  }
+
+  /* Slide Body Content */
+  .slide-body {
+    flex: 1;
+    margin: 16px 0;
+    font-size: 22px;
+    line-height: 1.6;
+  }
+
+  /* Cards Layout */
+  .grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    height: 100%;
+    align-items: center;
+  }
+
+  .content-card {
+    background: #f8fafc;
+    border: 2px solid #cbd5e1;
+    border-radius: 16px;
+    padding: 24px;
+  }
+
+  .highlight-box {
+    background: #fdf8f0;
+    border-left: 6px solid var(--accent);
+    padding: 18px 24px;
+    border-radius: 0 16px 16px 0;
+    font-size: 26px;
+    font-weight: bold;
+    color: #78350f;
+    margin: 16px 0;
+  }
+
+  .balance-box {
+    background: #f0fdf4;
+    border: 2px solid #86efac;
+    border-radius: 16px;
+    padding: 20px;
+    color: #14532d;
+    font-size: 20px;
+  }
+
+  /* Hero Banner */
+  .hero-banner {
+    background: linear-gradient(135deg, #064e3b 0%, #047857 100%);
+    color: white;
+    padding: 32px;
+    border-radius: 20px;
+    text-align: center;
+    box-shadow: 0 10px 25px rgba(6, 78, 59, 0.2);
+    margin-bottom: 20px;
+  }
+  .hero-banner h1 {
+    font-size: 38px;
+    margin: 0 0 12px 0;
+    font-weight: 900;
+    color: #fef08a;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+  }
+
+  /* Controls Footer */
+  .controls-bar {
+    position: absolute;
+    bottom: 12px;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    z-index: 200;
+  }
+
+  .btn-nav {
+    background: linear-gradient(135deg, #047857 0%, #064e3b 100%);
+    color: white;
+    border: none;
+    padding: 10px 26px;
+    font-size: 17px;
+    font-weight: bold;
+    border-radius: 30px;
+    cursor: pointer;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.3);
+    transition: all 0.2s;
+  }
+
+  .btn-nav:hover {
+    transform: translateY(-2px);
+    background: #059669;
+  }
+
+  .slide-counter {
+    color: white;
+    font-size: 17px;
+    font-weight: bold;
+    background: rgba(0,0,0,0.5);
+    padding: 8px 18px;
+    border-radius: 20px;
+  }
+</style>
+</head>
+<body>
+
+<div class="slide-container">
+
+  <!-- SLIDE 1: HERO COVER PERTEMUAN 2 -->
+  <div class="slide active" id="slide-1">
+    <div class="slide-header">
+      <div class="slide-title-group">
+        <h2>BAB 2: ALJABAR (PERTEMUAN 2)</h2>
+        <div class="slide-subtitle">Matematika Kelas 7 MTs Al-Imam · Pengampu: Ust. Rieza Eka Tomara, S.Kom</div>
+      </div>
+      <div class="badge-tag">Materi Pertemuan 2</div>
+    </div>
+
+    <div class="slide-body" style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
+      
+      <div class="hero-banner" style="width: 100%; max-width: 1100px; padding: 36px 28px;">
+        <h1 style="font-size: 40px; margin-bottom: 12px;">✨ PERKALIAN, PEMBAGIAN & SOAL CERITA ALJABAR ✨</h1>
+        <div style="background: rgba(255,255,255,0.12); border: 2px solid #fde68a; border-radius: 16px; padding: 20px;">
+          <p style="font-size: 24px; color: #fef08a; font-style: italic; font-weight: 800; margin: 0; line-height: 1.5;">
+            “Dari Menghitung Huruf ke Menyelesaikan Masalah Kehidupan Nyata Santri!”
+          </p>
+        </div>
+      </div>
+
+      <!-- PETA TAHAP PERTEMUAN 2 -->
+      <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; width: 100%; max-width: 1100px;">
+        <div style="background: #fdf8f0; border: 2px solid #d97706; padding: 14px; border-radius: 14px; text-align: center;">
+          <div style="font-weight: 800; font-size: 16px; color: #78350f;">1️⃣ Perkalian Aljabar</div>
+          <div style="font-size: 13px; color: #92400e; margin-top: 2px;">(Sebar Paket Distribusi)</div>
+        </div>
+
+        <div style="background: #ecfdf5; border: 2px solid #059669; padding: 14px; border-radius: 14px; text-align: center;">
+          <div style="font-weight: 800; font-size: 16px; color: #064e3b;">2️⃣ Pembagian Aljabar</div>
+          <div style="font-size: 13px; color: #047857; margin-top: 2px;">(Membagi Sama Rata)</div>
+        </div>
+
+        <div style="background: #eff6ff; border: 2px solid #2563eb; padding: 14px; border-radius: 14px; text-align: center;">
+          <div style="font-weight: 800; font-size: 16px; color: #1e40af;">3️⃣ Soal Cerita PLSV</div>
+          <div style="font-size: 13px; color: #1d4ed8; margin-top: 2px;">(Aplikasi Nyata Santri)</div>
+        </div>
+
+        <div style="background: #fef2f2; border: 2px solid #dc2626; padding: 14px; border-radius: 14px; text-align: center;">
+          <div style="font-weight: 800; font-size: 16px; color: #991b1b;">4️⃣ Games TGT & PR</div>
+          <div style="font-size: 13px; color: #b91c1c; margin-top: 2px;">(Turnamen Seru & Latihan)</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- SLIDE 2: REVIEW SINGKAT (PEMANASAN) -->
+  <div class="slide" id="slide-2">
+    <div class="slide-header">
+      <div class="slide-title-group">
+        <h2>⚡ PEMANASAN INGATAN (REVIEW KILAT)</h2>
+        <div class="slide-subtitle">Mengingat Kembali Dasar Aljabar</div>
+      </div>
+      <div class="badge-tag">Pemanasan</div>
+    </div>
+
+    <div class="slide-body grid-2">
+      <div class="content-card">
+        <h3 style="margin-top:0; color: var(--bg-dark);">🍎 Suku Sejenis (Bisa Digabung):</h3>
+        <p style="font-size: 24px;">3x + 2x = .....</p>
+        <p style="font-size: 24px;">5y - 2y = .....</p>
+      </div>
+
+      <div class="content-card" style="background: #ecfdf5; border-color: #a7f3d0;">
+        <h3 style="margin-top:0; color: #047857;">🎯 Substitusi & PLSV Dasar:</h3>
+        <p style="font-size: 24px;">3x + 5 &nbsp;(jika x = 4) ➔ .....</p>
+        <p style="font-size: 24px;">x + 5 = 12 ➔ x = .....</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 3: MATERI 1 - PERKALIAN ALJABAR -->
+  <div class="slide" id="slide-3">
+    <div class="slide-header">
+      <div class="slide-title-group">
+        <h2>1️⃣ PERKALIAN ALJABAR: SIFAT DISTRIBUSI</h2>
+        <div class="slide-subtitle">Sub-bab 1 · Konsep "Sebar Paket ke Semua Suku"</div>
+      </div>
+      <div class="badge-tag">Materi 1</div>
+    </div>
+
+    <div class="slide-body grid-2">
+      <div class="content-card">
+        <h3 style="margin-top:0; color: var(--bg-dark);">📦 Analogi Paket Mi Toko Imla:</h3>
+        <p style="font-size: 22px;">Ustaz membeli <strong>2 kardus paket mi di Toko Imla</strong>. Setiap kardus berisi <strong>(x bungkus Indomie + 3 bungkus Mie Sedaap)</strong>.</p>
+        <div class="highlight-box" style="text-align: center; font-size: 30px;">
+          2(x + 3)
+        </div>
+      </div>
+
+      <div class="content-card" style="background: #fdf8f0; border-color: #fde68a;">
+        <h3 style="margin-top:0; color: #b45309;">🔥 Aturan Kunci Perkalian:</h3>
+        <p style="font-size: 22px;">Angka di luar kurung mengalikan <strong>Indomie (x)</strong> dan <strong>Mie Sedaap (3)</strong> di dalam kurung!</p>
+        <div style="background: white; border: 2px dashed #d97706; padding: 20px; border-radius: 12px; font-size: 26px; font-weight: bold; text-align: center; color: #b45309;">
+          2(x + 3) = .....<br><br>
+          3(2x + 4) = .....
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 4: MATERI 2 - PEMBAGIAN ALJABAR -->
+  <div class="slide" id="slide-4">
+    <div class="slide-header">
+      <div class="slide-title-group">
+        <h2>2️⃣ PEMBAGIAN ALJABAR: MEMBAGI SAMA RATA</h2>
+        <div class="slide-subtitle">Sub-bab 2 · Membagi Setiap Suku dengan Pembagi</div>
+      </div>
+      <div class="badge-tag">Materi 2</div>
+    </div>
+
+    <div class="slide-body grid-2">
+      <div class="content-card">
+        <h3 style="margin-top:0; color: var(--bg-dark);">🤝 Konsep Membagi Adil:</h3>
+        <p style="font-size: 22px;">Ustaz hendak membagikan paket <strong>(6x Indomie + 12 Mie Sedaap)</strong> kepada <strong>3 kelompok santri</strong> sama rata.</p>
+        <div class="highlight-box" style="text-align: center; font-size: 30px;">
+          (6x + 12) ÷ 3
+        </div>
+      </div>
+
+      <div class="content-card" style="background: #ecfdf5; border-color: #a7f3d0;">
+        <h3 style="margin-top:0; color: #047857;">🔥 Aturan Kunci Pembagian:</h3>
+        <p style="font-size: 22px;">Setiap suku di pembilang <strong>harus dibagi</strong> dengan angka pembagi!</p>
+        <div style="background: white; border: 2px dashed #059669; padding: 20px; border-radius: 12px; font-size: 26px; font-weight: bold; text-align: center; color: #047857;">
+          (6x + 12) ÷ 3 = .....<br><br>
+          (10x - 15) ÷ 5 = .....
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 5: MATERI 3 - 3 SOAL CERITA SERU DUNIA SANTRI -->
+  <div class="slide" id="slide-5">
+    <div class="slide-header">
+      <div class="slide-title-group">
+        <h2>3️⃣ SOAL CERITA PLSV: APLIKASI NYATA SANTRI</h2>
+        <div class="slide-subtitle">Sub-bab 3 · Mengubah Soal Cerita Menjadi Model Aljabar</div>
+      </div>
+      <div class="badge-tag">Materi 3</div>
+    </div>
+
+    <div class="slide-body" style="display: flex; flex-direction: column; gap: 16px; justify-content: center;">
+      
+      <!-- Soal 1 -->
+      <div class="content-card" style="background: #eff6ff; border-color: #bfdbfe; padding: 18px 24px;">
+        <h4 style="margin:0 0 6px 0; color: #1d4ed8; font-size: 20px;">📚 Masalah 1 (Buku Tulis di Toko Imla):</h4>
+        <p style="font-size: 20px; margin: 0;">
+          Ustaz Rieza membeli <strong>3 buah buku tulis</strong> di Toko Imla dan membayar uang <strong>Rp 14.000</strong>. Ustaz mendapat <strong>kembalian Rp 2.000</strong>. Berapakah harga 1 buah buku tulis?
+        </p>
+      </div>
+
+      <!-- Soal 2 -->
+      <div class="content-card" style="background: #fdf8f0; border-color: #fde68a; padding: 18px 24px;">
+        <h4 style="margin:0 0 6px 0; color: #b45309; font-size: 20px;">🖊️ Masalah 2 (Pensil Aziz di Toko Imla):</h4>
+        <p style="font-size: 20px; margin: 0;">
+          Santri <strong>Aziz</strong> membeli <strong>4 buah pensil</strong> di Toko Imla dan membayar uang <strong>Rp 10.000</strong>. Ia mendapat <strong>kembalian Rp 2.000</strong>. Berapakah harga 1 buah pensil?
+        </p>
+      </div>
+
+      <!-- Soal 3 -->
+      <div class="content-card" style="background: #ecfdf5; border-color: #a7f3d0; padding: 18px 24px;">
+        <h4 style="margin:0 0 6px 0; color: #047857; font-size: 20px;">🥤 Masalah 3 (Es Teh Kantin Hakim):</h4>
+        <p style="font-size: 20px; margin: 0;">
+          <strong>Hakim</strong> membeli <strong>2 gelas es teh</strong> dan jajan siomay seharga <strong>Rp 5.000</strong>. Total uang yang dikeluarkan Hakim adalah <strong>Rp 11.000</strong>. Berapakah harga 1 gelas es teh?
+        </p>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- SLIDE 6: GAME TURNAMEN TGT - ATURAN MAIN & PROFIL TOKOH ISLAM -->
+  <div class="slide" id="slide-6">
+    <div class="slide-header">
+      <div class="slide-title-group">
+        <h2>🎮 GAME REFRESHER TURNAMEN (TGT)</h2>
+        <div class="slide-subtitle">Game Estafet Sambung Huruf & Wawasan · 100% Fun & Refreshing!</div>
+      </div>
+      <div class="badge-tag" style="background: #fef3c7; color: #b45309; border-color: #fde68a;">Aturan Turnamen</div>
+    </div>
+
+    <div class="slide-body grid-2">
+      <!-- Card Kiri: Aturan Main Game -->
+      <div class="content-card" style="background: #ecfdf5; border-color: #a7f3d0;">
+        <h3 style="margin-top:0; color: #047857; font-size: 24px;">📜 Cara Main Game Estafet:</h3>
+        <ol style="font-size: 19px; line-height: 1.6; margin: 0; padding-left: 20px; color: #064e3b;">
+          <li>Kelas dibagi 3 Tim (*Khawarizmi, Biruni, Kindi*).</li>
+          <li>Ustaz tampilkan Soal Diskusi di TV.</li>
+          <li>Tim <strong>berdiskusikan 1 pilihan jawaban yang disepakati bersama</strong>.</li>
+          <li>Secara <strong>estafet bergantian</strong>, perwakilan tim berlari menuliskan 1 huruf di Papan Tulis!</li>
+          <li>Tim tercepat & paling tepat susunannya dapat <strong>100 Poin 💯!</strong></li>
+        </ol>
+      </div>
+
+      <!-- Card Kanan: Profil 3 Tokoh Muslim -->
+      <div class="content-card" style="background: #fdf8f0; border-color: #fde68a;">
+        <h3 style="margin-top:0; color: #b45309; font-size: 24px;">🌟 Profil 3 Tim Tokoh Muslim:</h3>
+        
+        <div style="margin-bottom: 12px; background: white; padding: 10px 14px; border-radius: 10px; border-left: 4px solid #d97706;">
+          <strong style="color: #b45309; font-size: 18px;">1. Tim Khawarizmi:</strong><br>
+          <span style="font-size: 15px; color: #78350f;">Penemu Utama Ilmu Aljabar & Angka Nol dunia Islam!</span>
+        </div>
+
+        <div style="margin-bottom: 12px; background: white; padding: 10px 14px; border-radius: 10px; border-left: 4px solid #059669;">
+          <strong style="color: #047857; font-size: 18px;">2. Tim Al-Biruni:</strong><br>
+          <span style="font-size: 15px; color: #064e3b;">Pakar Geometri yang pertama kali menghitung keliling Bumi!</span>
+        </div>
+
+        <div style="background: white; padding: 10px 14px; border-radius: 10px; border-left: 4px solid #2563eb;">
+          <strong style="color: #1d4ed8; font-size: 18px;">3. Tim Al-Kindi:</strong><br>
+          <span style="font-size: 15px; color: #1e3a8a;">Pakar Matematika pelopor Seni Pemecah Kode Rahasia!</span>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 7: 5 SOAL GAMES TGT (OPEN-ENDED & DISKUSI TIM SERU) -->
+  <div class="slide" id="slide-7">
+    <div class="slide-header">
+      <div class="slide-title-group">
+        <h2>🏆 TANTANGAN SOAL GAMES TGT (DISKUSI TIM)</h2>
+        <div class="slide-subtitle">Diskusikan 1 Jawaban Terbaik Pilihan Tim, Lalu Tuliskan Estafet di Papan Tulis!</div>
+      </div>
+      <div class="badge-tag">Tantangan Game</div>
+    </div>
+
+    <div class="slide-body">
+      <div class="content-card" style="font-size: 20px; line-height: 1.7; background: #faf5ff; border-color: #d8b4fe;">
+        <ol style="margin: 0; padding-left: 22px;">
+          <li style="margin-bottom: 10px;">
+            <strong>Hafalan & Sejarah Islam:</strong> Sebutkan NAMA SALAH SATU KHULAFAUR RASYIDIN (4 Sahabat Utama Nabi) atau NAMA NABI/RASUL yang kalian ingat!
+          </li>
+          <li style="margin-bottom: 10px;">
+            <strong>Wawasan & Geografi Islam:</strong> Sebutkan NAMA SALAH SATU KOTA SUCI atau NEGARA BERPENDUDUK MUSLIM di dunia!
+          </li>
+          <li style="margin-bottom: 10px;">
+            <strong>Istilah Aljabar:</strong> Sebutkan SALAH SATU ISTILAH MATEMATIKA / ALJABAR yang sudah kita pelajari!
+          </li>
+          <li style="margin-bottom: 10px;">
+            <strong>Dunia Santri Al-Imam:</strong> Sebutkan NAMA SALAH SATU BARANG / KEBUTUHAN SANTRI yang dijual di Toko Imla!
+          </li>
+          <li>
+            <strong>Hitung Cepat & Kombinasi:</strong> Sebutkan DUA ANGKA POSITIF yang jika DIJUMLAHKAN HASILNYA ADALAH 10!
+          </li>
+        </ol>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 8: LATIHAN MANDIRI / PR (MINI CHALLENGE 5 SOAL ALJABAR) -->
+  <div class="slide" id="slide-8">
+    <div class="slide-header">
+      <div class="slide-title-group">
+        <h2>📝 LATIHAN MANDIRI / PR BAB 2 ALJABAR</h2>
+        <div class="slide-subtitle">Kerjakan di Buku Tulis (Bisa Jadi PR Jika Waktu Kelas Habis)</div>
+      </div>
+      <div class="badge-tag" style="background: #eff6ff; color: #1d4ed8; border-color: #bfdbfe;">Latihan / PR</div>
+    </div>
+
+    <div class="slide-body">
+      <div class="content-card" style="font-size: 21px; line-height: 1.8;">
+        <ol>
+          <li>Hitung perkalian aljabar: <strong>3(x + 4) = .....</strong></li>
+          <li>Hitung perkalian aljabar: <strong>4(2x - 5) = .....</strong></li>
+          <li>Sederhanakan pembagian: <strong>(8x + 12) ÷ 4 = .....</strong></li>
+          <li>Sederhanakan pembagian: <strong>(15x - 10) ÷ 5 = .....</strong></li>
+          <li><strong>Soal Cerita:</strong> Santri <strong>Atqan</strong> membeli <strong>3 buah roti</strong> dan <strong>jus buah seharga Rp 5.000</strong>. Jika total uang yang dibayar Atqan adalah <strong>Rp 14.000</strong>, berapakah harga 1 buah roti?</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- CONTROLS FOOTER -->
+<div class="controls-bar">
+  <button class="btn-nav" onclick="prevSlide()">◀ Sebelumnya</button>
+  <span class="slide-counter" id="slide-num">Slide 1 dari 8</span>
+  <button class="btn-nav" onclick="nextSlide()">Berikutnya ▶</button>
+</div>
+
+<script>
+  let currentSlide = 1;
+  const totalSlides = 8;
+
+  function showSlide(n) {
+    document.querySelectorAll('.slide').forEach(s => s.classList.remove('active'));
+    document.getElementById(`slide-${n}`).classList.add('active');
+    document.getElementById('slide-num').innerText = `Slide ${n} dari ${totalSlides}`;
+  }
+
+  function nextSlide() {
+    if (currentSlide < totalSlides) {
+      currentSlide++;
+      showSlide(currentSlide);
+    }
+  }
+
+  function prevSlide() {
+    if (currentSlide > 1) {
+      currentSlide--;
+      showSlide(currentSlide);
+    }
+  }
+
+  // Keyboard Arrow Controls
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'ArrowRight' || e.key === 'Space') {
+      nextSlide();
+    } else if (e.key === 'ArrowLeft') {
+      prevSlide();
+    }
+  });
+</script>
+
+</body>
+</html>

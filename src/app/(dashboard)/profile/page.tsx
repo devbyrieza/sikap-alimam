@@ -42,8 +42,8 @@ export default function ProfilePage() {
       Swal.fire({ icon: "warning", title: "Peringatan", text: "Password baru minimal 8 karakter!" });
       return;
     }
-    if (!/[A-Za-z]/.test(newPassword) || !/[0-9]/.test(newPassword)) {
-      Swal.fire({ icon: "warning", title: "Peringatan", text: "Password baru harus mengandung kombinasi huruf dan angka!" });
+    if (!/[a-z]/.test(newPassword) || !/[A-Z]/.test(newPassword) || !/[0-9]/.test(newPassword) || !/[^a-zA-Z0-9]/.test(newPassword)) {
+      Swal.fire({ icon: "warning", title: "Peringatan", text: "Password baru harus mengandung kombinasi huruf besar, huruf kecil, angka, dan karakter khusus!" });
       return;
     }
 
@@ -240,9 +240,9 @@ export default function ProfilePage() {
                 <input
                   type="password"
                   required
-                  minLength={6}
+                  minLength={8}
                   style={{ width: "100%", padding: "8px 12px 8px 36px", border: "1px solid #cbd5e1", borderRadius: "12px", fontSize: "12px", outline: "none", boxSizing: "border-box" }}
-                  placeholder="Password baru (min. 6 karakter)"
+                  placeholder="Password baru (min. 8 karakter, huruf & angka)"
                   value={newPassword}
                   onChange={(e) => setNewPassword(e.target.value)}
                 />
@@ -256,7 +256,7 @@ export default function ProfilePage() {
                 <input
                   type="password"
                   required
-                  minLength={6}
+                  minLength={8}
                   style={{ width: "100%", padding: "8px 12px 8px 36px", border: "1px solid #cbd5e1", borderRadius: "12px", fontSize: "12px", outline: "none", boxSizing: "border-box" }}
                   placeholder="Ulangi password baru"
                   value={confirmPassword}

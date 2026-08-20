@@ -522,6 +522,8 @@ model Profile {
   TransaksiDompet        TransaksiDompet[]
   PerizinanSantri        PerizinanSantri[]
   surat_keluar           SuratKeluar[]     @relation("SuratDibuatOleh")
+  tanggal_lahir          DateTime?             @db.Date
+  must_change_password   Boolean               @default(false)
 
   @@map("profiles")
 }

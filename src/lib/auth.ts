@@ -15,6 +15,7 @@ export interface SessionPayload extends JWTPayload {
   asatidz_id?: string;
   spp_access_blocked?: boolean;
   spp_blocked_reason?: string;
+  is_default_password?: boolean;
 }
 
 export async function createSession(payload: SessionPayload) {

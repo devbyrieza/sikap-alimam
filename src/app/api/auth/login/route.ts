@@ -101,6 +101,8 @@ export async function POST(req: NextRequest) {
       formattedNama = "Ust. " + formattedNama;
     }
 
+    const isDefaultPassword = user.must_change_password === true || password === "2026#@" || user.plain_password === "2026#@";
+
     await createSession({
       userId: user.id,
       email: user.email,
@@ -111,9 +113,8 @@ export async function POST(req: NextRequest) {
       asatidz_id: asatidzId,
       spp_access_blocked: (user as any).spp_access_blocked ?? false,
       spp_blocked_reason: (user as any).spp_blocked_reason ?? undefined,
+      is_default_password: isDefaultPassword,
     });
-
-    const isDefaultPassword = password === "2026#@" || user.plain_password === "2026#@";
 
     return NextResponse.json({ success: true, role: user.role, nama: formattedNama, is_default_password: isDefaultPassword });
 
