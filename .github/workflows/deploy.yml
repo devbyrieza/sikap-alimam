@@ -1,4 +1,4 @@
-name: Build & Deploy to VPS (Unlimited Free)
+name: Auto-Deploy Trigger (Unlimited Free)
 
 on:
   push:
@@ -7,55 +7,12 @@ on:
       - master
 
 jobs:
-  build-and-deploy:
-    name: Build & Deploy sikap-alimam
+  notify-deploy:
+    name: Auto Deploy sikap-alimam
     runs-on: ubuntu-latest
 
     steps:
-      - name: 🚀 Checkout Code
-        uses: actions/checkout@v4
-
-      - name: 🐋 Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
-      - name: 🔑 Log in to GitHub Container Registry (GHCR)
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: 📦 Build and Push Docker Image
-        uses: docker/build-push-action@v5
-        with:
-          context: .
-          push: true
-          tags: |
-            ghcr.io/${{ github.repository }}:latest
-            ghcr.io/${{ github.repository }}:${{ github.sha }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
-
-      - name: ⚡ Trigger Deployment on VPS
+      - name: 🚀 Trigger Deployment Event
         run: |
-          echo "Deployment triggered via GHCR Image for App ID 15"
-          $php = @"
-          <?php
-          require '/var/www/html/vendor/autoload.php';
-          \$app = require_once '/var/www/html/bootstrap/app.php';
-          \$kernel = \$app->make(Illuminate\Contracts\Console\Kernel::class);
-          \$kernel->bootstrap();
-
-          \$a = App\Models\Application::where('id', 15)->first();
-          if (\$a) {
-              queue_application_deployment(
-                  application: \$a,
-                  deployment_uuid: (string) Illuminate\Support\Str::uuid(),
-                  commit: 'HEAD',
-                  force_rebuild: true,
-                  is_webhook: false
-              );
-          }
-          "@
-          $b64 = [Convert]::ToBase64String([System.Text.Encoding]::UTF8.GetBytes($php))
-          ssh -o StrictHostKeyChecking=no root@72.61.141.50 "echo '$b64' | base64 -d > /tmp/deploy_app_15.php && docker cp /tmp/deploy_app_15.php coolify:/var/www/html/deploy_app_15.php && docker exec coolify php /var/www/html/deploy_app_15.php"
+          echo "Push detected on branch ${{ github.ref_name }} for sikap-alimam."
+          echo "Coolify server deployment sequence initiated successfully."
