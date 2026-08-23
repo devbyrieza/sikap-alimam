@@ -684,7 +684,7 @@ export default function HalaqohInputPage() {
                 {filteredSantri.length === 0 && (
                   <div style={{ padding: 20, textAlign: "center", color: "#94a3b8", fontSize: 13 }}>
                     {statusFilter === "pending"
-                      ? "🎉 Semua santri sudah selesai dinilai!"
+                      ? "Semua santri sudah selesai dinilai!"
                       : "Santri tidak ditemukan"}
                   </div>
                 )}
