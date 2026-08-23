@@ -13,8 +13,7 @@ export async function PUT(req: NextRequest, { params }: Params) {
     const { nama, nama_arab, kategori, kelas_id, is_active } = body;
 
     const existing = await prisma.mataPelajaran.findUnique({
-      where: { id },
-    });
+      where: { id } });
 
     if (!existing) {
       return NextResponse.json({ error: "Mata pelajaran tidak ditemukan" }, { status: 404 });
@@ -27,12 +26,9 @@ export async function PUT(req: NextRequest, { params }: Params) {
         nama_arab: nama_arab !== undefined ? (nama_arab?.trim() || null) : existing.nama_arab,
         kategori: kategori !== undefined ? kategori : existing.kategori,
         kelas_id: kelas_id !== undefined ? kelas_id : existing.kelas_id,
-        is_active: is_active !== undefined ? Boolean(is_active) : existing.is_active,
-      },
+        is_active: is_active !== undefined ? Boolean(is_active) : existing.is_active },
       include: {
-        kelas: true,
-      },
-    });
+        kelas: true } });
 
     return NextResponse.json({ success: true, mapel: updated });
   } catch (error: any) {
@@ -55,11 +51,7 @@ export async function DELETE(req: NextRequest, { params }: Params) {
         _count: {
           select: {
             jurnal: true,
-            nilai: true,
-          },
-        },
-      },
-    });
+            nilai: true } } } });
 
     if (!existing) {
       return NextResponse.json({ error: "Mata pelajaran tidak ditemukan" }, { status: 404 });
@@ -71,24 +63,20 @@ export async function DELETE(req: NextRequest, { params }: Params) {
       // Nonaktifkan jika pernah dipakai di jurnal atau nilai
       await prisma.mataPelajaran.update({
         where: { id },
-        data: { is_active: false },
-      });
+        data: { is_active: false } });
 
       return NextResponse.json({
         success: true,
         deactivated: true,
-        message: `Mata pelajaran memiliki ${totalUsage} catatan KBM / nilai, sehingga statusnya dinonaktifkan agar data tetap aman.`,
-      });
+        message: `Mata pelajaran memiliki ${totalUsage} catatan KBM / nilai, sehingga statusnya dinonaktifkan agar data tetap aman.` });
     }
 
     await prisma.mataPelajaran.delete({
-      where: { id },
-    });
+      where: { id } });
 
     return NextResponse.json({
       success: true,
-      message: "Mata pelajaran berhasil dihapus.",
-    });
+      message: "Mata pelajaran berhasil dihapus." });
   } catch (error: any) {
     console.error("[DELETE /api/master/mapel/[id]]", error);
     return NextResponse.json(

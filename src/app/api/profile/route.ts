@@ -16,8 +16,7 @@ export async function GET() {
     let pegawai = null;
     if (session.asatidz_id) {
       pegawai = await prisma.pegawai.findUnique({
-        where: { id: session.asatidz_id },
-      });
+        where: { id: session.asatidz_id } });
     }
 
     if (!pegawai && session.userId) {
@@ -27,9 +26,7 @@ export async function GET() {
             { user_id: session.userId },
             { email: { equals: session.email, mode: "insensitive" } },
             { nama_lengkap: { equals: session.nama, mode: "insensitive" } },
-          ],
-        },
-      });
+          ] } });
 
       // Fallback: jika spasi/gelar sedikit berbeda, cari berdasarkan nama utama
       if (!pegawai && session.nama) {
@@ -37,9 +34,7 @@ export async function GET() {
         if (coreName.length >= 3) {
           pegawai = await prisma.pegawai.findFirst({
             where: {
-              nama_lengkap: { contains: coreName, mode: "insensitive" },
-            },
-          });
+              nama_lengkap: { contains: coreName, mode: "insensitive" } } });
         }
       }
 
@@ -47,8 +42,7 @@ export async function GET() {
       if (pegawai && (!pegawai.user_id || pegawai.user_id !== session.userId)) {
         await prisma.pegawai.update({
           where: { id: pegawai.id },
-          data: { user_id: session.userId },
-        }).catch(() => {});
+          data: { user_id: session.userId } }).catch(() => {});
       }
     }
 
@@ -74,12 +68,10 @@ export async function GET() {
         nama: session.nama,
         email: session.email,
         role: session.role,
-        foto_url: pegawai?.foto_url || null,
-      },
+        foto_url: pegawai?.foto_url || null },
       isComplete,
       missingFields,
-      isGuru: isCivitasGuru,
-    });
+      isGuru: isCivitasGuru });
   } catch (error: any) {
     console.error("Error fetching profile in SIKAP:", error);
     return NextResponse.json({ error: "Terjadi kesalahan pada server" }, { status: 500 });
@@ -111,8 +103,7 @@ export async function POST(req: NextRequest) {
       mata_pelajaran,
       pendidikan_terakhir,
       status_pernikahan,
-      foto_url,
-    } = body;
+      foto_url } = body;
 
     if (!nama_lengkap || !nama_lengkap.trim()) {
       return NextResponse.json({ error: "Nama lengkap wajib diisi." }, { status: 400 });
@@ -131,8 +122,7 @@ export async function POST(req: NextRequest) {
     let existingPegawai = null;
     if (session.asatidz_id) {
       existingPegawai = await prisma.pegawai.findUnique({
-        where: { id: session.asatidz_id },
-      });
+        where: { id: session.asatidz_id } });
     }
 
     if (!existingPegawai && session.userId) {
@@ -142,9 +132,7 @@ export async function POST(req: NextRequest) {
             { user_id: session.userId },
             { email: session.email },
             { nama_lengkap: { equals: session.nama, mode: "insensitive" } },
-          ],
-        },
-      });
+          ] } });
     }
 
     const dataPayload: any = {
@@ -165,8 +153,7 @@ export async function POST(req: NextRequest) {
       pendidikan_terakhir: pendidikan_terakhir || null,
       status_pernikahan: status_pernikahan || null,
       foto_url: foto_url || null,
-      updated_at: new Date(),
-    };
+      updated_at: new Date() };
 
     let savedPegawai;
     if (existingPegawai) {
@@ -174,16 +161,12 @@ export async function POST(req: NextRequest) {
         where: { id: existingPegawai.id },
         data: {
           ...dataPayload,
-          user_id: session.userId || existingPegawai.user_id,
-        },
-      });
+          user_id: session.userId || existingPegawai.user_id } });
     } else {
       savedPegawai = await prisma.pegawai.create({
         data: {
           ...dataPayload,
-          user_id: session.userId,
-        },
-      });
+          user_id: session.userId } });
     }
 
     // Synchronize relational asatidz_mapel if teacher
@@ -209,8 +192,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({
       success: true,
       message: "Data profil civitas berhasil disimpan!",
-      pegawai: savedPegawai,
-    });
+      pegawai: savedPegawai });
   } catch (error: any) {
     console.error("Error saving profile in SIKAP:", error);
     return NextResponse.json({ error: error.message || "Gagal menyimpan data profil" }, { status: 500 });

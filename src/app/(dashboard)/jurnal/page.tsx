@@ -28,8 +28,7 @@ const normalizeMapelName = (name: string) => {
 
 export const metadata = {
   title: "Jurnal Mengajar — SIAKAD Al-Imam",
-  description: "Daftar jurnal mengajar guru Pesantren Al-Imam Al-Islami",
-};
+  description: "Daftar jurnal mengajar guru Pesantren Al-Imam Al-Islami" };
 
 async function getJurnal() {
   const jurnal = await prisma.jurnalMengajar.findMany({
@@ -37,9 +36,7 @@ async function getJurnal() {
     include: {
       pegawai: { select: { id: true, nama_lengkap: true } },
       mapel: { select: { id: true, nama: true } },
-      kelas: { select: { id: true, nama: true, jenjang: true } },
-    },
-  });
+      kelas: { select: { id: true, nama: true, jenjang: true } } } });
   return jurnal;
 }
 
@@ -53,8 +50,7 @@ export default async function JurnalPage() {
   // 2. Fetch Kelas Aktif (Saat ini hanya 7 MTs dan IL, plus kelas yang ditambahkan Admin Super)
   const rawKelas = await prisma.kelas.findMany({
     where: { is_active: true },
-    select: { id: true, nama: true, jenjang: true },
-  });
+    select: { id: true, nama: true, jenjang: true } });
 
   // Normalisasi & eliminasi duplikasi / placeholder yang belum berjalan
   const seenKelas = new Set<string>();
@@ -100,18 +96,15 @@ export default async function JurnalPage() {
         { jabatan: { contains: "Asatidz", mode: "insensitive" } },
         { jabatan: { contains: "Ustadz", mode: "insensitive" } },
         { mata_pelajaran: { not: null } },
-      ],
-    },
+      ] },
     select: { id: true, nama_lengkap: true },
-    orderBy: { nama_lengkap: "asc" },
-  });
+    orderBy: { nama_lengkap: "asc" } });
 
   // Fallback 1: Jika kategori belum diset spesifik di DB, ambil seluruh pegawai SIMPEG
   if (asatidzData.length === 0) {
     asatidzData = await prisma.pegawai.findMany({
       select: { id: true, nama_lengkap: true },
-      orderBy: { nama_lengkap: "asc" },
-    });
+      orderBy: { nama_lengkap: "asc" } });
   }
 
   // Fallback 2: Jika pegawai kosong, cek user dengan role 'guru'
@@ -119,11 +112,9 @@ export default async function JurnalPage() {
     const userGurus = await prisma.user.findMany({
       where: {
         role: { in: ["guru", "GURU", "asatidz", "ASATIDZ"] },
-        is_active: true,
-      },
+        is_active: true },
       select: { id: true, nama: true },
-      orderBy: { nama: "asc" },
-    });
+      orderBy: { nama: "asc" } });
     asatidzData = userGurus.map((u) => ({ id: u.id, nama_lengkap: u.nama }));
   }
 
@@ -157,8 +148,7 @@ export default async function JurnalPage() {
       materi: j.materi,
       learning_outcome: j.learning_outcome ?? "",
       kegiatan: j.kegiatan,
-      catatan: j.catatan ?? "",
-    };
+      catatan: j.catatan ?? "" };
   });
 
   return (

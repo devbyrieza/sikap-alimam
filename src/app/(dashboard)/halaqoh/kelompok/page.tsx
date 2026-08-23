@@ -8,8 +8,7 @@ import Swal from "sweetalert2";
 const SESI_INFO: Record<string, { label: string; icon: React.ReactNode; color: string; bg: string; border: string }> = {
   subuh:   { label: "Subuh",          icon: <Sun size={15} />,   color: "#d97706", bg: "#fffbeb", border: "#fde68a" },
   maghrib: { label: "Ba'da Maghrib",  icon: <Moon size={15} />,  color: "#7c3aed", bg: "#f5f3ff", border: "#ede9fe" },
-  dhuha:   { label: "Dhuha",          icon: <Cloud size={15} />, color: "#0284c7", bg: "#eff6ff", border: "#bfdbfe" },
-};
+  dhuha:   { label: "Dhuha",          icon: <Cloud size={15} />, color: "#0284c7", bg: "#eff6ff", border: "#bfdbfe" } };
 
 interface Santri {
   id: string;
@@ -40,8 +39,7 @@ export default function HalaqohKelompokPage() {
   const [formKelompok, setFormKelompok] = useState({
     nama_kelompok: "",
     sesi: "subuh",
-    kelas_id: "",
-  });
+    kelas_id: "" });
 
   const [profile, setProfile] = useState<any>(null);
 
@@ -78,8 +76,7 @@ export default function HalaqohKelompokPage() {
       const res = await fetch("/api/halaqoh/kelompok", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formKelompok),
-      });
+        body: JSON.stringify(formKelompok) });
       if (res.ok) {
         setShowAddKelompok(false);
         setFormKelompok({ nama_kelompok: "", sesi: "subuh", kelas_id: "" });
@@ -99,8 +96,7 @@ export default function HalaqohKelompokPage() {
       showCancelButton: true,
       confirmButtonColor: "#dc2626",
       confirmButtonText: "Ya, Hapus",
-      cancelButtonText: "Batal",
-    });
+      cancelButtonText: "Batal" });
     if (!confirm.isConfirmed) return;
     try {
       const res = await fetch(`/api/halaqoh/kelompok?id=${id}`, { method: "DELETE" });
@@ -118,8 +114,7 @@ export default function HalaqohKelompokPage() {
       const res = await fetch(`/api/halaqoh/kelompok/${kelompokId}/anggota`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ santri_id: santriId }),
-      });
+        body: JSON.stringify({ santri_id: santriId }) });
       if (res.ok) fetchAll();
     } catch (e) {
       console.error(e);
@@ -138,13 +133,11 @@ export default function HalaqohKelompokPage() {
   const inputStyle: React.CSSProperties = {
     width: "100%", borderRadius: 13, border: "1.5px solid #e2e8f0",
     padding: "11px 14px", fontSize: 13, fontWeight: 600, outline: "none",
-    background: "#fdf8f0", color: "#1e293b",
-  };
+    background: "#fdf8f0", color: "#1e293b" };
 
   const labelStyle: React.CSSProperties = {
     display: "block", fontSize: 11, fontWeight: 800, color: "#64748b",
-    textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 6,
-  };
+    textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 6 };
 
   return (
     <div className="page-container">
@@ -155,8 +148,7 @@ export default function HalaqohKelompokPage() {
           style={{
             width: 40, height: 40, background: "white", border: "1.5px solid #e2e8f0",
             borderRadius: 13, display: "flex", alignItems: "center", justifyContent: "center",
-            color: "#475569", textDecoration: "none", boxShadow: "0 2px 6px rgba(0,0,0,0.04)",
-          }}
+            color: "#475569", textDecoration: "none", boxShadow: "0 2px 6px rgba(0,0,0,0.04)" }}
         >
           <ArrowLeft size={18} />
         </Link>
@@ -189,8 +181,7 @@ export default function HalaqohKelompokPage() {
                 background: "#550000", color: "white", padding: "11px 22px",
                 borderRadius: 14, border: "1px solid #ddc192", fontWeight: 800, fontSize: 14,
                 display: "inline-flex", alignItems: "center", gap: 8, cursor: "pointer",
-                boxShadow: "0 4px 14px rgba(85,0,0,0.3)",
-              }}
+                boxShadow: "0 4px 14px rgba(85,0,0,0.3)" }}
             >
               <Plus size={18} color="#ddc192" /> Buat Kelompok
             </button>
@@ -229,16 +220,14 @@ export default function HalaqohKelompokPage() {
                   background: "white", borderRadius: 20,
                   border: "1.5px solid #e8d5b7",
                   boxShadow: "0 2px 12px rgba(85,0,0,0.04)",
-                  overflow: "hidden", transition: "all 0.2s",
-                }}
+                  overflow: "hidden", transition: "all 0.2s" }}
               >
                 {/* Card Header */}
                 <div
                   style={{
                     padding: "20px 24px", display: "flex", justifyContent: "space-between",
                     alignItems: "center", flexWrap: "wrap", gap: 12, cursor: "pointer",
-                    background: isExpanded ? "#fdf8f0" : "white",
-                  }}
+                    background: isExpanded ? "#fdf8f0" : "white" }}
                   onClick={() => setExpandedId(isExpanded ? null : k.id)}
                 >
                   <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
@@ -341,8 +330,7 @@ export default function HalaqohKelompokPage() {
                             key={a.id}
                             style={{
                               padding: "10px 14px", borderRadius: 12, border: "1px solid #e2e8f0",
-                              background: "#fafafa", display: "flex", alignItems: "center", justifyContent: "space-between",
-                            }}
+                              background: "#fafafa", display: "flex", alignItems: "center", justifyContent: "space-between" }}
                           >
                             <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
                               <div style={{ width: 30, height: 30, background: "#f1f5f9", color: "#550000", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 12, fontWeight: 800, flexShrink: 0 }}>

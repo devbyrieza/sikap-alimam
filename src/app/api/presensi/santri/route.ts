@@ -77,8 +77,7 @@ export async function GET(req: NextRequest) {
         is_active: true
       },
       orderBy: { nama_lengkap: "asc" },
-      select: { id: true, nama_lengkap: true, nis: true },
-    });
+      select: { id: true, nama_lengkap: true, nis: true } });
 
     // Ambil presensi yang sudah ada untuk tanggal tersebut
     const presensiAda = await prisma.presensiSiswa.findMany({
@@ -86,10 +85,8 @@ export async function GET(req: NextRequest) {
         kelas_id: { in: allowedKelasIds },
         tanggal: tanggalDate,
         ...(mapel_id ? { mapel_id } : { mapel_id: null }),
-        ...(jam_ke ? { jam_ke } : { jam_ke: null }),
-      },
-      select: { santri_id: true, status: true, keterangan: true, id: true },
-    });
+        ...(jam_ke ? { jam_ke } : { jam_ke: null }) },
+      select: { santri_id: true, status: true, keterangan: true, id: true } });
 
 
     // Map presensi ke santri_id
@@ -102,8 +99,7 @@ export async function GET(req: NextRequest) {
         ...s,
         status: p?.status ?? null,
         keterangan: p?.keterangan ?? null,
-        presensi_id: p?.id ?? null,
-      };
+        presensi_id: p?.id ?? null };
     });
 
     return NextResponse.json({ data: result, tanggal });
@@ -155,10 +151,8 @@ export async function POST(req: NextRequest) {
         tanggal: tanggalDate,
         mapel_id: finalMapelId,
         jam_ke: jam_ke_str,
-        santri_id: { in: presensi.map((p) => p.santri_id) },
-      },
-      select: { id: true, santri_id: true },
-    });
+        santri_id: { in: presensi.map((p) => p.santri_id) } },
+      select: { id: true, santri_id: true } });
 
     const existingMap = new Map(existingPresensi.map((p) => [p.santri_id, p.id]));
 
@@ -170,9 +164,7 @@ export async function POST(req: NextRequest) {
           where: { id: existingId },
           data: {
             status: p.status,
-            keterangan: p.keterangan ?? null,
-          },
-        });
+            keterangan: p.keterangan ?? null } });
       } else {
         return prisma.presensiSiswa.create({
           data: {
@@ -182,9 +174,7 @@ export async function POST(req: NextRequest) {
             mapel_id: finalMapelId,
             jam_ke: jam_ke_str,
             status: p.status,
-            keterangan: p.keterangan ?? null,
-          },
-        });
+            keterangan: p.keterangan ?? null } });
       }
     });
 

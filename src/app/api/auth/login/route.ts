@@ -20,10 +20,8 @@ export async function POST(req: NextRequest) {
         OR: [
           { email: { equals: identifier, mode: "insensitive" } },
           { username: { equals: identifier, mode: "insensitive" } },
-        ],
-      },
-      include: { pegawai: { select: { id: true, nama_lengkap: true, nama_panggilan: true } } },
-    });
+        ] },
+      include: { pegawai: { select: { id: true, nama_lengkap: true, nama_panggilan: true } } } });
 
     // Jika tidak ditemukan via User email, coba cari di tabel Pegawai (via NIK, NIP, HP, atau Email)
     if (!user) {
@@ -44,10 +42,8 @@ export async function POST(req: NextRequest) {
             { nip: identifier },
             { no_hp: { in: phoneVariations } },
             { email: { equals: identifier, mode: "insensitive" } },
-          ],
-        },
-        include: { user: { include: { pegawai: { select: { id: true, nama_lengkap: true, nama_panggilan: true } } } } },
-      });
+          ] },
+        include: { user: { include: { pegawai: { select: { id: true, nama_lengkap: true, nama_panggilan: true } } } } } });
 
       if (pegawai?.user) {
         user = pegawai.user;
@@ -86,9 +82,7 @@ export async function POST(req: NextRequest) {
             { user_id: user.id },
             { email: { equals: user.email, mode: "insensitive" } },
             { nama_lengkap: { contains: user.nama.split(',')[0].trim(), mode: "insensitive" } },
-          ],
-        },
-      });
+          ] } });
       if (linkedPegawai) {
         asatidzId = linkedPegawai.id;
         user.pegawai = linkedPegawai as any;
@@ -113,8 +107,7 @@ export async function POST(req: NextRequest) {
       asatidz_id: asatidzId,
       spp_access_blocked: (user as any).spp_access_blocked ?? false,
       spp_blocked_reason: (user as any).spp_blocked_reason ?? undefined,
-      is_default_password: isDefaultPassword,
-    });
+      is_default_password: isDefaultPassword });
 
     return NextResponse.json({ success: true, role: user.role, nama: formattedNama, is_default_password: isDefaultPassword });
 

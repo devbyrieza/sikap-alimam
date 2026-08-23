@@ -34,8 +34,7 @@ export async function createSession(payload: SessionPayload) {
       domain: process.env.NEXT_PUBLIC_COOKIE_DOMAIN || undefined,
     maxAge,
     expires: new Date(Date.now() + maxAge * 1000),
-    path: "/",
-  });
+    path: "/" });
 
   return token;
 }

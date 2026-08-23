@@ -67,8 +67,7 @@ export async function syncHalaqohFromExcel() {
           "Haidar Ayyubi",
           "KHALISH",
           "Labibullah El Fatih",
-        ],
-      },
+        ] },
       {
         musyrifQuery: "Imran Abdillah",
         namaKelompok: "Halaqoh Ust. Imran Abdillah (IL)",
@@ -84,8 +83,7 @@ export async function syncHalaqohFromExcel() {
           "Fiqri Ramdan Handoko",
           "Hibban Hibaturrahman",
           "Nurcahya Eka Putra",
-        ],
-      },
+        ] },
       {
         musyrifQuery: "Iqbal",
         namaKelompok: "Halaqoh Ust. Iqbal (MTs)",
@@ -99,8 +97,7 @@ export async function syncHalaqohFromExcel() {
           "Naufal Dzakiy Purnama",
           "Muhammad Yahya Ayyash",
           "Rifqi Arsyadi Fadilah",
-        ],
-      },
+        ] },
       {
         musyrifQuery: "Ikhwan",
         namaKelompok: "Halaqoh Ust. Ikhwan (Kls 11 & 12)",
@@ -112,8 +109,7 @@ export async function syncHalaqohFromExcel() {
           "Diki",
           "Syafiq",
           "Yaser",
-        ],
-      },
+        ] },
       {
         musyrifQuery: "Wahyudi",
         namaKelompok: "Halaqoh Ust. Wahyudi (IL)",
@@ -129,8 +125,7 @@ export async function syncHalaqohFromExcel() {
           "Iman Prayogo", // Menggantikan Raylan Akbar
           "Muhammad Rizky",
           "Muhammad Rasyid Ridho",
-        ],
-      },
+        ] },
     ];
 
     const seseis = ["subuh", "maghrib", "dhuha"];
@@ -157,9 +152,7 @@ export async function syncHalaqohFromExcel() {
                 role: "musyrif",
                 password: "$2a$10$abcdefghijklmnopqrstuvwxyz0123456789",
                 plain_password: "GuruAlimam2026!",
-                is_active: true,
-              },
-            });
+                is_active: true } });
           }
 
           teacher = await prisma.pegawai.create({
@@ -169,9 +162,7 @@ export async function syncHalaqohFromExcel() {
               nama_lengkap: "Ust. Ikhwan",
               jenis_kelamin: "L",
               kategori_pegawai: "ASATIDZ",
-              jabatan: "Musyrif Halaqoh (Pengabdian)",
-            },
-          });
+              jabatan: "Musyrif Halaqoh (Pengabdian)" } });
           pegawaiList.push(teacher);
         } catch (e) {
           /* ignore */
@@ -183,9 +174,7 @@ export async function syncHalaqohFromExcel() {
               nama_lengkap: `Ust. ${groupDef.musyrifQuery}`,
               jenis_kelamin: "L",
               kategori_pegawai: "ASATIDZ",
-              jabatan: "Musyrif Halaqoh",
-            },
-          });
+              jabatan: "Musyrif Halaqoh" } });
           pegawaiList.push(teacher);
         } catch (e) {
           continue;
@@ -200,9 +189,7 @@ export async function syncHalaqohFromExcel() {
             pegawai_id: teacher.id,
             nama_kelompok: `${groupDef.namaKelompok} - Sesi ${sesi.toUpperCase()}`,
             sesi: sesi,
-            is_active: true,
-          },
-        });
+            is_active: true } });
         totalGroupsCreated++;
 
         const isMTsGroup = groupDef.namaKelompok.includes("(MTs)");
@@ -223,9 +210,7 @@ export async function syncHalaqohFromExcel() {
                   nis: `SAN-${Math.floor(100000 + Math.random() * 900000)}`,
                   jenis_kelamin: "L",
                   kelas_id: targetKelas?.id || kelasList[0]?.id || "",
-                  is_active: true,
-                },
-              });
+                  is_active: true } });
               santriList.push(s);
             } catch (e) {
               continue;
@@ -234,8 +219,7 @@ export async function syncHalaqohFromExcel() {
             try {
               await prisma.santriAktif.update({
                 where: { id: s.id },
-                data: { kelas_id: targetKelas.id },
-              });
+                data: { kelas_id: targetKelas.id } });
               s.kelas_id = targetKelas.id;
             } catch (e) {
               /* ignore */
@@ -247,9 +231,7 @@ export async function syncHalaqohFromExcel() {
               data: {
                 kelompok_id: kel.id,
                 santri_id: s.id,
-                is_active: true,
-              },
-            });
+                is_active: true } });
             totalMembersCreated++;
           }
         }

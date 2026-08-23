@@ -45,10 +45,7 @@ export async function cekStatusSpp(
         santri_id_bulan_tahun: {
           santri_id: santriId,
           bulan: targetBulan,
-          tahun: targetTahun,
-        },
-      },
-    });
+          tahun: targetTahun } } });
 
     if (pembayaran && pembayaran.status === "lunas") {
       return {
@@ -62,8 +59,7 @@ export async function cekStatusSpp(
         jatuhTempo,
         isGracePeriod: false,
         tanggalBayar: pembayaran.tanggal_bayar ? pembayaran.tanggal_bayar.toISOString().split("T")[0] : null,
-        metodeBayar: pembayaran.metode_bayar,
-      };
+        metodeBayar: pembayaran.metode_bayar };
     }
 
     // 2. Jika belum lunas, terapkan aturan tanggal 1 - 10
@@ -81,8 +77,7 @@ export async function cekStatusSpp(
           tahun: targetTahun,
           namaBulan: namaBulanStr,
           jatuhTempo,
-          isGracePeriod: true,
-        };
+          isGracePeriod: true };
       } else {
         // Lewat tanggal 10 dan belum lunas -> Terkunci
         return {
@@ -94,8 +89,7 @@ export async function cekStatusSpp(
           tahun: targetTahun,
           namaBulan: namaBulanStr,
           jatuhTempo,
-          isGracePeriod: false,
-        };
+          isGracePeriod: false };
       }
     } else if (targetTahun < now.getFullYear() || (targetTahun === now.getFullYear() && targetBulan < (now.getMonth() + 1))) {
       // Bulan lampau dan belum lunas -> Terkunci
@@ -108,8 +102,7 @@ export async function cekStatusSpp(
         tahun: targetTahun,
         namaBulan: namaBulanStr,
         jatuhTempo,
-        isGracePeriod: false,
-      };
+        isGracePeriod: false };
     } else {
       // Bulan mendatang
       return {
@@ -121,8 +114,7 @@ export async function cekStatusSpp(
         tahun: targetTahun,
         namaBulan: namaBulanStr,
         jatuhTempo,
-        isGracePeriod: true,
-      };
+        isGracePeriod: true };
     }
   } catch (error) {
     console.error("Error cekStatusSpp:", error);
@@ -134,7 +126,6 @@ export async function cekStatusSpp(
       tahun: targetTahun,
       namaBulan: namaBulanStr,
       jatuhTempo,
-      isGracePeriod: false,
-    };
+      isGracePeriod: false };
   }
 }

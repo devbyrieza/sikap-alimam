@@ -34,11 +34,8 @@ export async function GET(req: NextRequest) {
     where: { tanggal },
     include: {
       pegawai: {
-        select: { id: true, nama_lengkap: true, jabatan: true },
-      },
-    },
-    orderBy: { jam_masuk: 'asc' },
-  });
+        select: { id: true, nama_lengkap: true, jabatan: true } } },
+    orderBy: { jam_masuk: 'asc' } });
 
   // Asatidz yang belum absen
   const sudahAbsen = presensi.map((p) => p.pegawai_id);
@@ -52,17 +49,14 @@ export async function GET(req: NextRequest) {
         { jabatan: { contains: "Pengajar", mode: "insensitive" } },
         { mata_pelajaran: { not: null } },
       ],
-      id: sudahAbsen.length > 0 ? { notIn: sudahAbsen } : undefined,
-    },
+      id: sudahAbsen.length > 0 ? { notIn: sudahAbsen } : undefined },
     select: { id: true, nama_lengkap: true, jabatan: true },
-    orderBy: { nama_lengkap: 'asc' },
-  });
+    orderBy: { nama_lengkap: 'asc' } });
 
   if (belumAbsen.length === 0 && presensi.length === 0) {
     belumAbsen = await prisma.pegawai.findMany({
       select: { id: true, nama_lengkap: true, jabatan: true },
-      orderBy: { nama_lengkap: 'asc' },
-    });
+      orderBy: { nama_lengkap: 'asc' } });
   }
 
   return NextResponse.json({ presensi, belumAbsen, tanggal });
@@ -90,8 +84,7 @@ export async function POST(req: NextRequest) {
     tanggal: tanggalStr,
     status,
     keterangan,
-    jam_masuk: jamStr,
-  } = body;
+    jam_masuk: jamStr } = body;
 
   if (!pegawai_id || !tanggalStr || !status) {
     return NextResponse.json({ error: 'Data tidak lengkap' }, { status: 400 });
@@ -107,20 +100,16 @@ export async function POST(req: NextRequest) {
       status,
       keterangan: keterangan ?? null,
       jam_masuk,
-      metode: 'manual',
-    },
+      metode: 'manual' },
     create: {
       pegawai_id,
       tanggal,
       jam_masuk,
       status,
       metode: 'manual',
-      keterangan: keterangan ?? null,
-    },
+      keterangan: keterangan ?? null },
     include: {
-      pegawai: { select: { nama_lengkap: true } },
-    },
-  });
+      pegawai: { select: { nama_lengkap: true } } } });
 
   return NextResponse.json({ success: true, presensi });
 }

@@ -29,9 +29,7 @@ export async function GET(req: NextRequest) {
           id: true,
           nama_lengkap: true,
           nis: true,
-          kelas: { select: { id: true, nama: true, jenjang: true } },
-        },
-      });
+          kelas: { select: { id: true, nama: true, jenjang: true } } } });
 
       return NextResponse.json({ santriList });
     }
@@ -45,9 +43,7 @@ export async function GET(req: NextRequest) {
         nis: true,
         jenis_kelamin: true,
         foto_url: true,
-        kelas: { select: { id: true, nama: true, jenjang: true } },
-      },
-    });
+        kelas: { select: { id: true, nama: true, jenjang: true } } } });
 
     if (!santri) {
       return NextResponse.json({ error: "Santri tidak ditemukan" }, { status: 404 });
@@ -60,15 +56,13 @@ export async function GET(req: NextRequest) {
       const endDate = new Date(tahun, bulan, 0, 23, 59, 59);
       wherePresensi.tanggal = {
         gte: startDate,
-        lte: endDate,
-      };
+        lte: endDate };
     } else if (tahun) {
       const startDate = new Date(tahun, 0, 1);
       const endDate = new Date(tahun, 11, 31, 23, 59, 59);
       wherePresensi.tanggal = {
         gte: startDate,
-        lte: endDate,
-      };
+        lte: endDate };
     }
 
     const presensiList = await prisma.presensiSiswa.findMany({
@@ -80,9 +74,7 @@ export async function GET(req: NextRequest) {
         status: true,
         keterangan: true,
         created_at: true,
-        kelas: { select: { nama: true, wali_kelas: { select: { nama_lengkap: true } } } },
-      },
-    });
+        kelas: { select: { nama: true, wali_kelas: { select: { nama_lengkap: true } } } } } });
 
     // Format presensi and calculate summary
     const summary = { hadir: 0, sakit: 0, izin: 0, alpha: 0, total: 0, persentaseHadir: 0 };
@@ -102,8 +94,7 @@ export async function GET(req: NextRequest) {
         status: p.status,
         keterangan: p.keterangan,
         kelasNama: p.kelas.nama,
-        waliKelas: p.kelas.wali_kelas?.nama_lengkap ?? "Wali Kelas belum diatur",
-      };
+        waliKelas: p.kelas.wali_kelas?.nama_lengkap ?? "Wali Kelas belum diatur" };
     });
 
     if (summary.total > 0) {
@@ -114,8 +105,7 @@ export async function GET(req: NextRequest) {
       santri,
       presensi: formattedPresensi,
       summary,
-      meta: { bulan, tahun },
-    });
+      meta: { bulan, tahun } });
   } catch (err) {
     console.error("[GET /api/presensi/santri/riwayat]", err);
     return NextResponse.json({ error: "Gagal memuat riwayat presensi santri" }, { status: 500 });

@@ -67,16 +67,14 @@ export default function FilterNilaiPage() {
             kelas: { nama: "7 MTs" },
             mapel: { nama: "Matematika", kategori: "umum" },
             nilai: 85,
-            keterangan: "Lulus",
-          },
+            keterangan: "Lulus" },
           {
             id: "2",
             santri: { nama_lengkap: "Ahmad Zaki", nis: "2026001" },
             kelas: { nama: "7 MTs" },
             mapel: { nama: "Akidah", kategori: "syariah" },
             nilai: 92,
-            keterangan: "Mumtaz",
-          },
+            keterangan: "Mumtaz" },
         ]);
         setLoading(false);
       }, 600);

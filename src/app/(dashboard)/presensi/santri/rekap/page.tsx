@@ -35,8 +35,7 @@ const STATUS_COLORS: Record<string, { bg: string; color: string; short: string }
   hadir: { bg: "#dcfce7", color: "#15803d", short: "H" },
   sakit: { bg: "#dbeafe", color: "#1d4ed8", short: "S" },
   izin:  { bg: "#fef3c7", color: "#d97706", short: "I" },
-  alpha: { bg: "#fee2e2", color: "#b91c1c", short: "A" },
-};
+  alpha: { bg: "#fee2e2", color: "#b91c1c", short: "A" } };
 
 const BULAN_NAMA = [
   "", "Januari", "Februari", "Maret", "April", "Mei", "Juni",
@@ -216,8 +215,7 @@ export default function RekapPresensiSantriPage() {
                 background: c.bg, color: c.color,
                 display: "flex", alignItems: "center", justifyContent: "center",
                 fontWeight: 800, fontSize: 11,
-                border: `1px solid ${c.color}33`,
-              }}
+                border: `1px solid ${c.color}33` }}
             >
               {c.short}
             </div>
@@ -231,8 +229,7 @@ export default function RekapPresensiSantriPage() {
               background: "#f8fafc", color: "#94a3b8",
               display: "flex", alignItems: "center", justifyContent: "center",
               fontWeight: 800, fontSize: 11,
-              border: "1px solid #e2e8f0",
-            }}
+              border: "1px solid #e2e8f0" }}
           >
             ·
           </div>
@@ -261,8 +258,7 @@ export default function RekapPresensiSantriPage() {
                   "Hadir": { val: rekapData.overall.hadir, color: "#15803d", bg: "#f0fdf4", border: "#bbf7d0" },
                   "Sakit": { val: rekapData.overall.sakit, color: "#a16207", bg: "#fefce8", border: "#fef08a" },
                   "Izin": { val: rekapData.overall.izin, color: "#1d4ed8", bg: "#eff6ff", border: "#bfdbfe" },
-                  "Alpha": { val: rekapData.overall.alpha, color: "#b91c1c", bg: "#fef2f2", border: "#fecaca" },
-                }).map(([label, info]) => {
+                  "Alpha": { val: rekapData.overall.alpha, color: "#b91c1c", bg: "#fef2f2", border: "#fecaca" } }).map(([label, info]) => {
                   const total = rekapData.overall.hadir + rekapData.overall.sakit + rekapData.overall.izin + rekapData.overall.alpha;
                   const pct = total > 0 ? Math.round((info.val / total) * 100) : 0;
                   return (
@@ -450,8 +446,7 @@ export default function RekapPresensiSantriPage() {
                                     margin: "0 auto",
                                     fontWeight: 800, fontSize: 10,
                                     border: sc ? `1px solid ${sc.color}44` : "1px solid #f1f5f9",
-                                    cursor: "default",
-                                  }}
+                                    cursor: "default" }}
                                 >
                                   {sc ? sc.short : "·"}
                                 </div>
@@ -499,8 +494,7 @@ export default function RekapPresensiSantriPage() {
                     borderRadius: 14,
                     background: bg,
                     border: `1px solid ${border}`,
-                    textAlign: "center",
-                  }}
+                    textAlign: "center" }}
                 >
                   <div style={{ fontSize: 24, fontWeight: 800, color }}>{total}</div>
                   <div style={{ fontSize: 12, color, fontWeight: 700 }}>{label}</div>

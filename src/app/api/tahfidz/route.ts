@@ -25,17 +25,13 @@ export async function GET(req: NextRequest) {
       select: {
         id: true,
         nama_lengkap: true,
-        nis: true,
-      },
-    });
+        nis: true } });
 
     // Ambil capaian tahfidz pada tanggal tersebut untuk santri-santri ini
     const capaian = await prisma.capaianTahfidz.findMany({
       where: {
         tanggal: targetDate,
-        santri_id: { in: santri.map((s) => s.id) },
-      },
-    });
+        santri_id: { in: santri.map((s) => s.id) } } });
 
     // Petakan capaian ke ID santri
     const capaianMap = new Map();
@@ -49,8 +45,7 @@ export async function GET(req: NextRequest) {
 
     const result = santri.map((s) => ({
       ...s,
-      capaian: capaianMap.get(s.id) || [],
-    }));
+      capaian: capaianMap.get(s.id) || [] }));
 
     return NextResponse.json({ success: true, data: result }, { status: 200 });
   } catch (error) {
@@ -89,9 +84,7 @@ export async function POST(req: NextRequest) {
               halaman: item.halaman || null,
               ayat: item.ayat || null,
               nilai: item.nilai ? parseFloat(item.nilai) : null,
-              keterangan: item.keterangan || null,
-            },
-          });
+              keterangan: item.keterangan || null } });
         } else {
           // Create new
           return prisma.capaianTahfidz.create({
@@ -104,9 +97,7 @@ export async function POST(req: NextRequest) {
               halaman: item.halaman || null,
               ayat: item.ayat || null,
               nilai: item.nilai ? parseFloat(item.nilai) : null,
-              keterangan: item.keterangan || null,
-            },
-          });
+              keterangan: item.keterangan || null } });
         }
       })
     );

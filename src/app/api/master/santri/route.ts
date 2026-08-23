@@ -13,8 +13,7 @@ export async function GET(req: NextRequest) {
     const santri = await prisma.santriAktif.findMany({
       where,
       orderBy: { nama_lengkap: 'asc' },
-      select: { id: true, nama_lengkap: true, nis: true, jenis_kelamin: true },
-    });
+      select: { id: true, nama_lengkap: true, nis: true, jenis_kelamin: true } });
 
     return NextResponse.json({ santri });
   } catch (err) {

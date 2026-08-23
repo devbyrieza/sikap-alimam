@@ -30,6 +30,5 @@ export async function GET(request: Request) {
     ayat_dari: dari,
     ayat_ke: ke,
     halaman,
-    halaman_mulai_surah: surah.halaman_mulai,
-  });
+    halaman_mulai_surah: surah.halaman_mulai });
 }

@@ -14,8 +14,7 @@ export async function GET(req: NextRequest) {
       include: {
         santri: true,
         mapel: true,
-        kelas: true,
-      },
+        kelas: true },
       where: {}
     };
 

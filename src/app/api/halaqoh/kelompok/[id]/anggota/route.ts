@@ -27,15 +27,11 @@ export async function POST(
       where: {
         kelompok_id_santri_id: {
           kelompok_id,
-          santri_id,
-        },
-      },
+          santri_id } },
       update: {},
       create: {
         kelompok_id,
-        santri_id,
-      },
-    });
+        santri_id } });
 
     return NextResponse.json(newAnggota);
   } catch (error) {
@@ -71,10 +67,7 @@ export async function DELETE(
       where: {
         kelompok_id_santri_id: {
           kelompok_id,
-          santri_id,
-        },
-      },
-    });
+          santri_id } } });
     return NextResponse.json({ success: true });
   } catch (error) {
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });

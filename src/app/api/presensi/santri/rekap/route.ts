@@ -33,13 +33,9 @@ export async function GET(req: NextRequest) {
         where: {
           tanggal: {
             gte: startDate,
-            lte: endDate,
-          },
-        },
+            lte: endDate } },
         include: {
-          kelas: { select: { id: true, nama: true, jenjang: true } },
-        },
-      });
+          kelas: { select: { id: true, nama: true, jenjang: true } } } });
 
       // Calculate overall stats
       const overall = { hadir: 0, sakit: 0, izin: 0, alpha: 0 };
@@ -69,16 +65,14 @@ export async function GET(req: NextRequest) {
         overall,
         perKelas: Object.values(perKelas),
         perJenjang,
-        meta: { bulan, tahun },
-      });
+        meta: { bulan, tahun } });
     }
 
     // Santri aktif di kelas
     const santri = await prisma.santriAktif.findMany({
       where: { kelas_id, is_active: true },
       orderBy: { nama_lengkap: "asc" },
-      select: { id: true, nama_lengkap: true, nis: true },
-    });
+      select: { id: true, nama_lengkap: true, nis: true } });
 
     // Presensi di bulan tersebut
     const presensi = await prisma.presensiSiswa.findMany({
@@ -86,29 +80,23 @@ export async function GET(req: NextRequest) {
         kelas_id,
         tanggal: {
           gte: startDate,
-          lte: endDate,
-        },
-      },
+          lte: endDate } },
       select: {
         santri_id: true,
         tanggal: true,
-        status: true,
-      },
-      orderBy: { tanggal: "asc" },
-    });
+        status: true },
+      orderBy: { tanggal: "asc" } });
 
     // Format tanggal sebagai string YYYY-MM-DD
     const presensiFormatted = presensi.map((p) => ({
       santri_id: p.santri_id,
       tanggal: p.tanggal.toISOString().split("T")[0],
-      status: p.status,
-    }));
+      status: p.status }));
 
     return NextResponse.json({
       santri,
       presensi: presensiFormatted,
-      meta: { kelas_id, bulan, tahun },
-    });
+      meta: { kelas_id, bulan, tahun } });
   } catch (err) {
     console.error("[GET /api/presensi/santri/rekap]", err);
     return NextResponse.json(

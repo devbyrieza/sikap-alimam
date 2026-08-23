@@ -28,12 +28,9 @@ export async function GET(req: NextRequest) {
     const rawMapel = await prisma.mataPelajaran.findMany({
       where: whereClause,
       include: {
-        kelas: true,
-      },
+        kelas: true },
       orderBy: {
-        nama: "asc",
-      },
-    });
+        nama: "asc" } });
 
     // Urutkan mapel berdasarkan urutan logis kelasnya
     const sortedMapel = [...rawMapel].sort((a, b) => {
@@ -71,8 +68,7 @@ export async function POST(req: NextRequest) {
 
     // Pastikan kelas exists
     const kelas = await prisma.kelas.findUnique({
-      where: { id: kelas_id },
-    });
+      where: { id: kelas_id } });
 
     if (!kelas) {
       return NextResponse.json({ error: "Kelas yang dipilih tidak valid" }, { status: 400 });
@@ -84,12 +80,9 @@ export async function POST(req: NextRequest) {
         nama_arab: nama_arab?.trim() || null,
         kategori: kategori || "umum",
         kelas_id,
-        is_active: true,
-      },
+        is_active: true },
       include: {
-        kelas: true,
-      },
-    });
+        kelas: true } });
 
     return NextResponse.json({ success: true, mapel: newMapel }, { status: 201 });
   } catch (error: any) {

@@ -36,8 +36,7 @@ export default function MasterSesiPage() {
       jam_ke: parseInt(form.jam_ke),
       waktu_mulai: form.waktu_mulai,
       waktu_selesai: form.waktu_selesai,
-      durasi_menit: parseInt(form.durasi_menit),
-    };
+      durasi_menit: parseInt(form.durasi_menit) };
 
     setSesi([...sesi, newEntry].sort((a, b) => a.jam_ke - b.jam_ke));
     setIsAdding(false);
@@ -52,8 +51,7 @@ export default function MasterSesiPage() {
       icon: "warning",
       showCancelButton: true,
       confirmButtonText: "Ya, Hapus",
-      cancelButtonText: "Batal",
-    }).then((result) => {
+      cancelButtonText: "Batal" }).then((result) => {
       if (result.isConfirmed) {
         setSesi(sesi.filter((s) => s.id !== id));
         Swal.fire("Terhapus!", "Sesi berhasil dihapus.", "success");

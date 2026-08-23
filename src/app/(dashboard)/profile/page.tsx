@@ -52,8 +52,7 @@ export default function ProfilePage() {
       const res = await fetch("/api/profile/password", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ oldPassword, newPassword }),
-      });
+        body: JSON.stringify({ oldPassword, newPassword }) });
       const data = await res.json();
       
       if (!res.ok) {

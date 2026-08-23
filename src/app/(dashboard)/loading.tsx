@@ -11,8 +11,7 @@ export default function DashboardLoading() {
         height: "100%",
         minHeight: "70vh",
         width: "100%",
-        animation: "fadeIn 0.3s ease-out",
-      }}
+        animation: "fadeIn 0.3s ease-out" }}
     >
       <div
         style={{
@@ -25,8 +24,7 @@ export default function DashboardLoading() {
           justifyContent: "center",
           marginBottom: 20,
           boxShadow: "0 8px 24px rgba(155, 27, 34, 0.12)",
-          position: "relative",
-        }}
+          position: "relative" }}
       >
         <div 
           style={{
@@ -36,8 +34,7 @@ export default function DashboardLoading() {
             border: "2px solid var(--primary)",
             opacity: 0.2,
             borderTopColor: "transparent",
-            animation: "spin 2s linear infinite",
-          }}
+            animation: "spin 2s linear infinite" }}
         />
         <Loader2 size={28} color="var(--primary)" style={{ animation: "spin 1s linear infinite" }} />
       </div>

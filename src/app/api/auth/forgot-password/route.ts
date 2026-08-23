@@ -23,10 +23,8 @@ export async function POST(req: NextRequest) {
           { nik: ident },
           { nip: ident },
           { no_hp: ident },
-        ],
-      },
-      include: { user: true },
-    });
+        ] },
+      include: { user: true } });
 
     if (!pegawai || !pegawai.user) {
       return NextResponse.json(
@@ -54,9 +52,7 @@ export async function POST(req: NextRequest) {
       data: {
         user_id: user.id,
         token: token,
-        expires_at: expiresAt,
-      },
-    });
+        expires_at: expiresAt } });
 
     // Kirim pesan WhatsApp
     const resetUrl = `${process.env.NEXT_PUBLIC_APP_URL || "https://sikap.pesantren-alimam.com"}/reset-password?token=${token}`;
@@ -85,8 +81,7 @@ Terima kasih.`;
 
     return NextResponse.json({
       success: true,
-      message: "Tautan reset kata sandi telah dikirim ke WhatsApp Anda.",
-    });
+      message: "Tautan reset kata sandi telah dikirim ke WhatsApp Anda." });
   } catch (error: any) {
     console.error("[FORGOT_PASSWORD]", error);
     return NextResponse.json(

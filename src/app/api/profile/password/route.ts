@@ -50,9 +50,7 @@ export async function POST(req: Request) {
       data: { 
         password: hashedNewPassword,
         plain_password: newPassword,
-        must_change_password: false,
-      },
-    });
+        must_change_password: false } });
 
     return NextResponse.json({ message: "Password berhasil diganti" });
   } catch (error) {

@@ -20,18 +20,15 @@ export async function GET() {
           { jabatan: { contains: "Musyrif", mode: "insensitive" } },
           { jabatan: { contains: "Halaqoh", mode: "insensitive" } },
           { mata_pelajaran: { not: null } },
-        ],
-      },
+        ] },
       include: { user: true },
-      orderBy: { nama_lengkap: "asc" },
-    });
+      orderBy: { nama_lengkap: "asc" } });
 
     // Fallback: jika belum terfilter, ambil semua pegawai
     if (guru.length === 0) {
       guru = await prisma.pegawai.findMany({
         include: { user: true },
-        orderBy: { nama_lengkap: "asc" },
-      });
+        orderBy: { nama_lengkap: "asc" } });
     }
 
     return NextResponse.json(guru);
@@ -64,16 +61,13 @@ export async function POST(req: NextRequest) {
         email: email || null,
         mata_pelajaran: mata_pelajaran || null,
         foto_url: foto_url?.trim() || null,
-        kategori_pegawai: "ASATIDZ",
-      },
-    });
+        kategori_pegawai: "ASATIDZ" } });
 
     // Handle wali_kelas assignment for newly created teacher
     if (roles?.includes("WALI_KELAS") && wali_kelas_id) {
       await prisma.kelas.update({
         where: { id: wali_kelas_id },
-        data: { wali_kelas_id: newGuru.id },
-      });
+        data: { wali_kelas_id: newGuru.id } });
     }
 
     // 2. Create User if roles provided

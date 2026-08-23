@@ -31,8 +31,7 @@ export default function LoginPage() {
       const res = await fetch("/api/auth/forgot-password", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ identifier: forgotInput }),
-      });
+        body: JSON.stringify({ identifier: forgotInput }) });
       const json = await res.json();
       if (!res.ok) {
         setForgotMessage({ type: "error", text: json.error || "Gagal mengirim permintaan" });
@@ -54,8 +53,7 @@ export default function LoginPage() {
       const res = await fetch("/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-      });
+        body: JSON.stringify({ email, password }) });
       const json = await res.json();
       if (!res.ok) {
         setError(json.error || "Login gagal");
@@ -82,8 +80,7 @@ export default function LoginPage() {
       const res = await fetch("/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password, selectedRole: role }),
-      });
+        body: JSON.stringify({ email, password, selectedRole: role }) });
       const json = await res.json();
       if (!res.ok) {
         setError(json.error || "Login gagal");
@@ -117,8 +114,7 @@ export default function LoginPage() {
               fontWeight: 700,
               marginTop: 14,
               color: "#4b5563",
-              fontFamily: "var(--font-arabic)",
-            }}
+              fontFamily: "var(--font-arabic)" }}
           >
             أهلاً وسهلاً
           </p>
@@ -167,8 +163,7 @@ export default function LoginPage() {
                   cursor: "pointer",
                   color: "#9ca3af",
                   display: "flex",
-                  alignItems: "center",
-                }}
+                  alignItems: "center" }}
               >
                 {showPass ? <EyeOff size={18} /> : <Eye size={18} />}
               </button>
@@ -196,8 +191,7 @@ export default function LoginPage() {
                 marginBottom: 16,
                 display: "flex",
                 alignItems: "center",
-                gap: 8,
-              }}
+                gap: 8 }}
             >
               <AlertTriangle size={16} className="inline mr-1" /> {error}
             </div>
@@ -220,8 +214,7 @@ export default function LoginPage() {
             background: "#f8f7f4",
             borderRadius: 12,
             fontSize: 12,
-            color: "#6b7280",
-          }}
+            color: "#6b7280" }}
         >
           <p style={{ fontWeight: 700, marginBottom: 4, color: "#374151" }}>
              Info Login

@@ -39,10 +39,8 @@ export default async function PresensiAsatidz_Page() {
   const presensi = await prisma.presensiAsatidz.findMany({
     where: { tanggal: today },
     include: {
-      pegawai: { select: { id: true, nama_lengkap: true, jabatan: true } },
-    },
-    orderBy: { jam_masuk: 'asc' },
-  });
+      pegawai: { select: { id: true, nama_lengkap: true, jabatan: true } } },
+    orderBy: { jam_masuk: 'asc' } });
 
   const guruWhere = {
     OR: [
@@ -52,37 +50,31 @@ export default async function PresensiAsatidz_Page() {
       { jabatan: { contains: "Guru", mode: "insensitive" as const } },
       { jabatan: { contains: "Pengajar", mode: "insensitive" as const } },
       { mata_pelajaran: { not: null } },
-    ],
-  };
+    ] };
 
   // Asatidz yang belum absen
   const sudahAbsen = presensi.map((p) => p.pegawai_id);
   let belumAbsen = await prisma.pegawai.findMany({
     where: {
       ...guruWhere,
-      id: sudahAbsen.length > 0 ? { notIn: sudahAbsen } : undefined,
-    },
+      id: sudahAbsen.length > 0 ? { notIn: sudahAbsen } : undefined },
     select: { id: true, nama_lengkap: true, jabatan: true },
-    orderBy: { nama_lengkap: 'asc' },
-  });
+    orderBy: { nama_lengkap: 'asc' } });
 
   // Token hari ini
   const token = await prisma.tokenHarian.findUnique({
-    where: { tanggal: today },
-  });
+    where: { tanggal: today } });
 
   // Semua asatidz untuk modal input manual
   let allAsatidz = await prisma.pegawai.findMany({
     where: guruWhere,
     select: { id: true, nama_lengkap: true },
-    orderBy: { nama_lengkap: 'asc' },
-  });
+    orderBy: { nama_lengkap: 'asc' } });
 
   if (allAsatidz.length === 0) {
     allAsatidz = await prisma.pegawai.findMany({
       select: { id: true, nama_lengkap: true },
-      orderBy: { nama_lengkap: 'asc' },
-    });
+      orderBy: { nama_lengkap: 'asc' } });
     belumAbsen = allAsatidz.filter(a => !sudahAbsen.includes(a.id)).map(a => ({ ...a, jabatan: null }));
   }
 
@@ -95,8 +87,7 @@ export default async function PresensiAsatidz_Page() {
           token
             ? {
                 token: token.token,
-                expires_at: token.expires_at.toISOString(),
-              }
+                expires_at: token.expires_at.toISOString() }
             : null
         }
         allAsatidz={allAsatidz}

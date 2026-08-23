@@ -7,15 +7,13 @@ import Link from "next/link";
 const SESI_BADGE: Record<string, { label: string; color: string; bg: string; border: string }> = {
   subuh:   { label: "Subuh",   color: "#d97706", bg: "#fffbeb", border: "#fde68a" },
   maghrib: { label: "Maghrib", color: "#7c3aed", bg: "#f5f3ff", border: "#ede9fe" },
-  dhuha:   { label: "Dhuha",   color: "#0284c7", bg: "#eff6ff", border: "#bfdbfe" },
-};
+  dhuha:   { label: "Dhuha",   color: "#0284c7", bg: "#eff6ff", border: "#bfdbfe" } };
 
 const KEHADIRAN_BADGE: Record<string, { label: string; color: string; bg: string; border: string }> = {
   hadir: { label: "Hadir", color: "#059669", bg: "#ecfdf5", border: "#a7f3d0" },
   sakit: { label: "Sakit", color: "#d97706", bg: "#fffbeb", border: "#fde68a" },
   izin:  { label: "Izin",  color: "#0284c7", bg: "#eff6ff", border: "#bfdbfe" },
-  alfa:  { label: "Alfa",  color: "#dc2626", bg: "#fef2f2", border: "#fecaca" },
-};
+  alfa:  { label: "Alfa",  color: "#dc2626", bg: "#fef2f2", border: "#fecaca" } };
 
 interface CatatanRow {
   id: string;
@@ -95,13 +93,11 @@ export default function HalaqohRekapPage() {
   const inputStyle: React.CSSProperties = {
     borderRadius: 13, border: "1.5px solid #e2e8f0",
     padding: "10px 14px", fontSize: 13, fontWeight: 600, outline: "none",
-    background: "#fdf8f0", color: "#1e293b", width: "100%",
-  };
+    background: "#fdf8f0", color: "#1e293b", width: "100%" };
 
   const labelStyle: React.CSSProperties = {
     display: "block", fontSize: 11, fontWeight: 800, color: "#64748b",
-    textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 6,
-  };
+    textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 6 };
 
   return (
     <div className="page-container">
@@ -112,8 +108,7 @@ export default function HalaqohRekapPage() {
           style={{
             width: 40, height: 40, background: "white", border: "1.5px solid #e2e8f0",
             borderRadius: 13, display: "flex", alignItems: "center", justifyContent: "center",
-            color: "#475569", textDecoration: "none", boxShadow: "0 2px 6px rgba(0,0,0,0.04)",
-          }}
+            color: "#475569", textDecoration: "none", boxShadow: "0 2px 6px rgba(0,0,0,0.04)" }}
         >
           <ArrowLeft size={18} />
         </Link>
@@ -239,8 +234,7 @@ export default function HalaqohRekapPage() {
                       padding: "12px 14px",
                       textAlign: i >= 5 ? "center" : "left",
                       fontSize: 11, fontWeight: 800, color: "#475569",
-                      textTransform: "uppercase", letterSpacing: "0.06em", whiteSpace: "nowrap",
-                    }}>{h}</th>
+                      textTransform: "uppercase", letterSpacing: "0.06em", whiteSpace: "nowrap" }}>{h}</th>
                   ))}
                 </tr>
               </thead>

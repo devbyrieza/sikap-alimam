@@ -7,8 +7,7 @@ export async function GET() {
 
     // 1. Cari user berdasarkan email
     const user = await prisma.user.findUnique({
-      where: { email },
-    });
+      where: { email } });
 
     if (!user) {
       return NextResponse.json({ message: "Akun demo tidak ditemukan." });

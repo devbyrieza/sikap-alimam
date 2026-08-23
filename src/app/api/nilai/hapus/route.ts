@@ -35,8 +35,7 @@ export async function DELETE(req: NextRequest) {
         mapel_id,
         semester,
         tahun_ajaran
-      },
-    });
+      } });
     return NextResponse.json({ message: "Data nilai santri berhasil dihapus" }, { status: 200 });
   } catch (err) {
     console.error(`[DELETE /api/nilai/hapus]`, err);

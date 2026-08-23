@@ -13,8 +13,7 @@ export async function PUT(req: NextRequest, { params }: Params) {
     const { nama, jenjang, is_active, wali_kelas_id } = body;
 
     const existing = await prisma.kelas.findUnique({
-      where: { id },
-    });
+      where: { id } });
 
     if (!existing) {
       return NextResponse.json({ error: "Kelas tidak ditemukan" }, { status: 404 });
@@ -24,9 +23,7 @@ export async function PUT(req: NextRequest, { params }: Params) {
       const duplicate = await prisma.kelas.findFirst({
         where: {
           nama: { equals: nama.trim(), mode: "insensitive" },
-          id: { not: id },
-        },
-      });
+          id: { not: id } } });
 
       if (duplicate) {
         return NextResponse.json(
@@ -42,18 +39,13 @@ export async function PUT(req: NextRequest, { params }: Params) {
         nama: nama !== undefined ? nama.trim() : existing.nama,
         jenjang: jenjang !== undefined ? (jenjang?.trim() || null) : existing.jenjang,
         is_active: is_active !== undefined ? Boolean(is_active) : existing.is_active,
-        wali_kelas_id: wali_kelas_id !== undefined ? (wali_kelas_id || null) : existing.wali_kelas_id,
-      },
+        wali_kelas_id: wali_kelas_id !== undefined ? (wali_kelas_id || null) : existing.wali_kelas_id },
       include: {
         wali_kelas: { select: { id: true, nama_lengkap: true } },
         _count: {
           select: {
             santri: true,
-            MataPelajaran: true,
-          },
-        },
-      },
-    });
+            MataPelajaran: true } } } });
 
     return NextResponse.json({ success: true, kelas: updated });
   } catch (err: any) {
@@ -78,11 +70,7 @@ export async function DELETE(req: NextRequest, { params }: Params) {
             santri: true,
             MataPelajaran: true,
             jurnal: true,
-            nilai: true,
-          },
-        },
-      },
-    });
+            nilai: true } } } });
 
     if (!existing) {
       return NextResponse.json({ error: "Kelas tidak ditemukan" }, { status: 404 });
@@ -98,25 +86,21 @@ export async function DELETE(req: NextRequest, { params }: Params) {
       // Jika memiliki data relasi (santri/jurnal/mapel), nonaktifkan saja untuk keamanan data integritas
       await prisma.kelas.update({
         where: { id },
-        data: { is_active: false },
-      });
+        data: { is_active: false } });
 
       return NextResponse.json({
         success: true,
         deactivated: true,
-        message: `Kelas memiliki ${totalRelations} data terkait (santri/mapel/jurnal), sehingga statusnya dinonaktifkan agar data historis tetap aman.`,
-      });
+        message: `Kelas memiliki ${totalRelations} data terkait (santri/mapel/jurnal), sehingga statusnya dinonaktifkan agar data historis tetap aman.` });
     }
 
     // Hapus permanen jika belum ada relasi
     await prisma.kelas.delete({
-      where: { id },
-    });
+      where: { id } });
 
     return NextResponse.json({
       success: true,
-      message: "Kelas berhasil dihapus secara permanen.",
-    });
+      message: "Kelas berhasil dihapus secara permanen." });
   } catch (err: any) {
     console.error("[DELETE /api/master/kelas/[id]]", err);
     return NextResponse.json(

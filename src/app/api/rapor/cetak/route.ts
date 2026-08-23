@@ -21,9 +21,7 @@ export async function GET(req: NextRequest) {
     const santri = await prisma.santriAktif.findUnique({
       where: { id: santri_id },
       include: {
-        kelas: true,
-      },
-    });
+        kelas: true } });
 
     if (!santri) {
       return NextResponse.json({ error: "Santri not found" }, { status: 404 });
@@ -38,8 +36,7 @@ export async function GET(req: NextRequest) {
         jenis: "pas" // Anggap nilai akhir diambil dari PAS
       },
       include: {
-        mapel: true,
-      }
+        mapel: true }
     });
 
     // Kelompokkan Nilai Berdasarkan Kategori Mapel
@@ -67,8 +64,7 @@ export async function GET(req: NextRequest) {
     const absen = {
       sakit: datesSakit.size,
       izin: datesIzin.size,
-      alpha: datesAlpha.size,
-    };
+      alpha: datesAlpha.size };
 
     // 4. Ambil Nilai Kepribadian & Kedisiplinan (BPI)
     // Di real app, kita agregasi seluruh data ibadah menjadi nilai huruf.
@@ -124,8 +120,7 @@ export async function GET(req: NextRequest) {
           kkm: 65,
           nilai: u.nilai,
           rata_rata_kelas: 85
-        })),
-      },
+        })) },
       kedisiplinan: {
         totalNilai,
         rataRata,

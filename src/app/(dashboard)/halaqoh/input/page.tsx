@@ -3,8 +3,7 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import {
   BookHeart, ArrowLeft, Search, ChevronDown, BookOpen, Users, Save,
-  CheckCircle2, AlertCircle, RotateCcw, Award, AlertTriangle,
-} from "lucide-react";
+  CheckCircle2, AlertCircle, RotateCcw, Award, AlertTriangle } from "lucide-react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 
@@ -69,8 +68,7 @@ function SurahPicker({
   surahList,
   selected,
   onSelect,
-  label = "Pilih Surah",
-}: {
+  label = "Pilih Surah" }: {
   surahList: Surah[];
   selected: Surah | null;
   onSelect: (s: Surah) => void;
@@ -103,8 +101,7 @@ function SurahPicker({
         style={{
           display: "flex", alignItems: "center", justifyContent: "space-between",
           padding: "11px 14px", borderRadius: 13, border: "1.5px solid #e2e8f0",
-          background: "#fdf8f0", cursor: "pointer", fontSize: 14, fontWeight: 600, color: "#1e293b",
-        }}
+          background: "#fdf8f0", cursor: "pointer", fontSize: 14, fontWeight: 600, color: "#1e293b" }}
       >
         {selected ? (
           <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
@@ -121,8 +118,7 @@ function SurahPicker({
         <div style={{
           position: "absolute", top: "calc(100% + 6px)", left: 0, right: 0, zIndex: 50,
           background: "white", borderRadius: 16, border: "1.5px solid #e2e8f0",
-          boxShadow: "0 12px 36px rgba(0,0,0,0.12)", overflow: "hidden",
-        }}>
+          boxShadow: "0 12px 36px rgba(0,0,0,0.12)", overflow: "hidden" }}>
           <div style={{ padding: 10, borderBottom: "1px solid #f1f5f9" }}>
             <div style={{ position: "relative" }}>
               <Search size={14} color="#94a3b8" style={{ position: "absolute", left: 10, top: "50%", transform: "translateY(-50%)" }} />
@@ -188,8 +184,7 @@ function NumericScoreSelector({ label, value, onChange }: { label: string; value
                 background: isSelected ? "#550000" : "#f8fafc", color: isSelected ? "white" : "#475569",
                 fontSize: 14, fontWeight: 800, cursor: "pointer",
                 boxShadow: isSelected ? "0 4px 12px rgba(85,0,0,0.3)" : "none",
-                transition: "all 0.15s",
-              }}
+                transition: "all 0.15s" }}
             >
               {num}
             </button>
@@ -231,8 +226,7 @@ function TextScoreSelector({ label, value, onChange }: { label: string; value: n
                 background: isSelected ? "#550000" : "#f8fafc", color: isSelected ? "white" : "#475569",
                 fontSize: 13, fontWeight: 700, cursor: "pointer",
                 boxShadow: isSelected ? "0 4px 12px rgba(85,0,0,0.3)" : "none",
-                transition: "all 0.15s",
-              }}
+                transition: "all 0.15s" }}
             >
               {item.label}
             </button>
@@ -307,8 +301,7 @@ export default function HalaqohInputPage() {
       const sList = (kelompok?.anggota || []).map((a: any) => ({
         id: a.santri.id,
         nama_lengkap: a.santri.nama_lengkap,
-        nis: a.santri.nis,
-      }));
+        nis: a.santri.nis }));
       setSantriList(sList);
 
       const catList = Array.isArray(catatanRes) ? catatanRes : catatanRes?.catatan || [];
@@ -394,16 +387,13 @@ export default function HalaqohInputPage() {
             nilai_sikap: nilaiSikap,
             nilai_bacaan: nilaiBacaan,
             nilai_kelancaran: nilaiKelancaran,
-            catatan: catatan || null,
-          },
-        ],
-      };
+            catatan: catatan || null },
+        ] };
 
       const res = await fetch("/api/halaqoh/catatan", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(body),
-      });
+        body: JSON.stringify(body) });
 
       if (!res.ok) {
         const err = await res.json();
@@ -447,8 +437,7 @@ export default function HalaqohInputPage() {
   const SESI_LABEL: Record<string, string> = {
     subuh: "Halaqoh Subuh",
     maghrib: "Ba'da Maghrib",
-    dhuha: "Halaqoh Dhuha",
-  };
+    dhuha: "Halaqoh Dhuha" };
 
   const formatTanggal = (s: string) => {
     if (!s) return "";
@@ -463,14 +452,12 @@ export default function HalaqohInputPage() {
 
   const labelStyle: React.CSSProperties = {
     display: "block", fontSize: 12, fontWeight: 800, color: "#475569",
-    textTransform: "uppercase", letterSpacing: "0.04em", marginBottom: 6,
-  };
+    textTransform: "uppercase", letterSpacing: "0.04em", marginBottom: 6 };
 
   const inputStyle: React.CSSProperties = {
     width: "100%", borderRadius: 13, border: "1.5px solid #e2e8f0",
     padding: "11px 14px", fontSize: 14, fontWeight: 600, outline: "none",
-    background: "#fdf8f0", color: "#1e293b", transition: "border-color 0.2s",
-  };
+    background: "#fdf8f0", color: "#1e293b", transition: "border-color 0.2s" };
 
   if (loading) {
     return (
@@ -489,8 +476,7 @@ export default function HalaqohInputPage() {
           style={{
             width: 40, height: 40, background: "white", border: "1.5px solid #e2e8f0",
             borderRadius: 13, display: "flex", alignItems: "center", justifyContent: "center",
-            color: "#475569", textDecoration: "none", boxShadow: "0 2px 6px rgba(0,0,0,0.04)",
-          }}
+            color: "#475569", textDecoration: "none", boxShadow: "0 2px 6px rgba(0,0,0,0.04)" }}
         >
           <ArrowLeft size={18} />
         </Link>
@@ -535,8 +521,7 @@ export default function HalaqohInputPage() {
               const meta: Record<string, { title: string; sub: string; icon: React.ReactNode }> = {
                 tahsin:   { title: "Tahsin (Talaqqi Face-to-Face)", sub: "Penguatan Bacaan & Talaqqi", icon: <Award size={18} /> },
                 ziyadah:  { title: "Setoran Ziyadah",             sub: "Setoran Hafalan Baru", icon: <BookOpen size={18} /> },
-                murojaah: { title: "Setoran Murojaah",            sub: "Pengulangan Hafalan", icon: <RotateCcw size={18} /> },
-              };
+                murojaah: { title: "Setoran Murojaah",            sub: "Pengulangan Hafalan", icon: <RotateCcw size={18} /> } };
               const item = meta[j];
               return (
                 <div
@@ -547,8 +532,7 @@ export default function HalaqohInputPage() {
                     border: isSelected ? "2px solid #550000" : "1.5px solid #e2e8f0",
                     background: isSelected ? "#fff5f5" : "#f8fafc",
                     boxShadow: isSelected ? "0 4px 12px rgba(85,0,0,0.12)" : "none",
-                    transition: "all 0.15s", display: "flex", alignItems: "center", gap: 10,
-                  }}
+                    transition: "all 0.15s", display: "flex", alignItems: "center", gap: 10 }}
                 >
                   <div style={{ width: 34, height: 34, borderRadius: 10, background: isSelected ? "#550000" : "white", display: "flex", alignItems: "center", justifyContent: "center", color: isSelected ? "white" : "#550000", border: "1px solid #ebdcc3", flexShrink: 0 }}>
                     {item.icon}
@@ -603,13 +587,11 @@ export default function HalaqohInputPage() {
                     const counts = {
                       all: santriList.length,
                       pending: santriList.length - completedCount,
-                      done: completedCount,
-                    };
+                      done: completedCount };
                     const labels = {
                       all: `Semua (${counts.all})`,
                       pending: `Belum Diisi (${counts.pending})`,
-                      done: `Sudah Diisi (${counts.done})`,
-                    };
+                      done: `Sudah Diisi (${counts.done})` };
                     const isSel = statusFilter === f;
                     return (
                       <button
@@ -621,8 +603,7 @@ export default function HalaqohInputPage() {
                           border: isSel ? "1.5px solid #550000" : "1px solid #cbd5e1",
                           background: isSel ? "#550000" : "white",
                           color: isSel ? "white" : "#64748b",
-                          fontSize: 11, fontWeight: 800, cursor: "pointer", transition: "all 0.15s",
-                        }}
+                          fontSize: 11, fontWeight: 800, cursor: "pointer", transition: "all 0.15s" }}
                       >
                         {labels[f]}
                       </button>
@@ -657,8 +638,7 @@ export default function HalaqohInputPage() {
                       style={{
                         padding: "12px 18px", borderBottom: "1px solid #f1f5f9", cursor: "pointer",
                         display: "flex", alignItems: "center", justifyContent: "space-between", transition: "background 0.15s",
-                        background: isDone ? "#f0fdf4" : "white",
-                      }}
+                        background: isDone ? "#f0fdf4" : "white" }}
                       onMouseEnter={e => (e.currentTarget.style.background = isDone ? "#dcfce7" : "#fdf8f0")}
                       onMouseLeave={e => (e.currentTarget.style.background = isDone ? "#f0fdf4" : "white")}
                     >
@@ -716,8 +696,7 @@ export default function HalaqohInputPage() {
                         style={{
                           padding: "10px 16px", borderRadius: 12, border: isSel ? `1.5px solid ${k.warna}` : "1.5px solid #e2e8f0",
                           background: isSel ? k.bg : "white", color: isSel ? k.warna : "#64748b",
-                          fontSize: 13, fontWeight: 800, cursor: "pointer", transition: "all 0.15s", flex: 1,
-                        }}
+                          fontSize: 13, fontWeight: 800, cursor: "pointer", transition: "all 0.15s", flex: 1 }}
                       >
                         {k.label}
                       </button>
@@ -903,8 +882,7 @@ export default function HalaqohInputPage() {
                 border: "none", fontWeight: 800, fontSize: 15, cursor: saving || !selectedSantriId ? "not-allowed" : "pointer",
                 display: "flex", alignItems: "center", justifyContent: "center", gap: 10,
                 boxShadow: saving || !selectedSantriId ? "none" : "0 4px 14px rgba(85,0,0,0.3)",
-                transition: "all 0.2s",
-              }}
+                transition: "all 0.2s" }}
             >
               <Save size={18} /> {saving ? "Menyimpan Catatan..." : "Simpan Catatan Santri Ini"}
             </button>
@@ -969,8 +947,7 @@ export default function HalaqohInputPage() {
                         style={{
                           background: "#fff5f5", border: "1px solid #fecaca", color: "#550000",
                           padding: "4px 12px", borderRadius: 8, fontWeight: 800, fontSize: 11,
-                          cursor: "pointer", transition: "all 0.15s",
-                        }}
+                          cursor: "pointer", transition: "all 0.15s" }}
                       >
                         ✏️ Edit Nilai
                       </button>

@@ -58,23 +58,19 @@ export async function PUT(
         email: email?.trim() || null, 
         mata_pelajaran: mata_pelajaran || null,
         foto_url: foto_url !== undefined ? (foto_url?.trim() || null) : undefined,
-        ttd_url: ttd_url !== undefined ? (ttd_url?.trim() || null) : undefined,
-      },
-    });
+        ttd_url: ttd_url !== undefined ? (ttd_url?.trim() || null) : undefined } });
 
     // Handle wali_kelas assignment
     // First, remove this teacher from any classes they are currently wali kelas of
     await prisma.kelas.updateMany({
       where: { wali_kelas_id: id },
-      data: { wali_kelas_id: null },
-    });
+      data: { wali_kelas_id: null } });
 
     // Then, if they have a new class selected and the WALI_KELAS role is present, assign it
     if (roles?.includes("WALI_KELAS") && wali_kelas_id) {
       await prisma.kelas.update({
         where: { id: wali_kelas_id },
-        data: { wali_kelas_id: id },
-      });
+        data: { wali_kelas_id: id } });
     }
 
     if (roles) {

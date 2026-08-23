@@ -87,23 +87,18 @@ export async function GET() {
     // Cari santri aktif pertama untuk dihubungkan ke wali
     const firstSantri = await prisma.santriAktif.findFirst({
       where: { is_active: true },
-      orderBy: { nama_lengkap: 'asc' },
-    });
+      orderBy: { nama_lengkap: 'asc' } });
 
     if (firstSantri) {
       await prisma.orangTuaSantri.upsert({
         where: {
           user_id_santri_id: {
             user_id: userWali.id,
-            santri_id: firstSantri.id,
-          },
-        },
+            santri_id: firstSantri.id } },
         update: {},
         create: {
           user_id: userWali.id,
-          santri_id: firstSantri.id,
-        },
-      });
+          santri_id: firstSantri.id } });
     }
     // === 4. Akun Admin Super ===
     const emailAdminSuper = 'admin.super@pesantren-alimam.com';

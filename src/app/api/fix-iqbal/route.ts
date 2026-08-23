@@ -14,9 +14,7 @@ export async function GET() {
         OR: [
           { email: { equals: "muhammadiqbal.mi118@gmail.com", mode: "insensitive" } },
           { nama_lengkap: { contains: "Iqbal", mode: "insensitive" } },
-        ],
-      },
-    });
+        ] } });
 
     const targetMapelString = "7 MTs: Tahsin/Tahfidz Al-Quran, Shorf; IL: Shorf";
 
@@ -28,18 +26,14 @@ export async function GET() {
           no_hp: "085777919274",
           kategori_pegawai: "GURU,ASATIDZ",
           jabatan: "Pengajar / Guru",
-          mata_pelajaran: targetMapelString,
-        },
-      });
+          mata_pelajaran: targetMapelString } });
     } else {
       pegawai = await prisma.pegawai.update({
         where: { id: pegawai.id },
         data: {
           email: "muhammadiqbal.mi118@gmail.com",
           nama_lengkap: "Muhammad Iqbal, S.Pd.",
-          mata_pelajaran: targetMapelString,
-        },
-      });
+          mata_pelajaran: targetMapelString } });
     }
 
     // 2. Cari / reset user account & hapus duplikat
@@ -52,20 +46,14 @@ export async function GET() {
               OR: [
                 { email: { contains: "iqbal", mode: "insensitive" } },
                 { nama: { contains: "Iqbal", mode: "insensitive" } },
-              ],
-            },
+              ] },
             {
-              email: { not: "muhammadiqbal.mi118@gmail.com" },
-            },
-          ],
-        },
-      }).catch(() => {});
+              email: { not: "muhammadiqbal.mi118@gmail.com" } },
+          ] } }).catch(() => {});
 
       let user = await prisma.user.findFirst({
         where: {
-          email: { equals: "muhammadiqbal.mi118@gmail.com", mode: "insensitive" },
-        },
-      });
+          email: { equals: "muhammadiqbal.mi118@gmail.com", mode: "insensitive" } } });
 
       if (!user) {
         user = await prisma.user.create({
@@ -74,15 +62,13 @@ export async function GET() {
             nama: "Muhammad Iqbal, S.Pd.",
             role: "GURU",
             password: "password123", // fallback
-          },
-        });
+          } });
       }
 
       if (user && pegawai) {
         await prisma.pegawai.update({
           where: { id: pegawai.id },
-          data: { user_id: user.id },
-        }).catch(() => {});
+          data: { user_id: user.id } }).catch(() => {});
       }
     } catch (userErr) {
       console.warn("User cleanup warning:", userErr);
@@ -90,8 +76,7 @@ export async function GET() {
 
     // 3. Hapus relasi lama yang rusak di asatidz_mapel
     await prisma.asatidzmMapel.deleteMany({
-      where: { pegawai_id: pegawai.id },
-    });
+      where: { pegawai_id: pegawai.id } });
 
     // 4. Jalankan syncAsatidzMapel terbaru dengan pencocokan fleksibel
     await syncAsatidzMapel(pegawai.id, targetMapelString);
@@ -103,26 +88,21 @@ export async function GET() {
         OR: [
           { nama: { equals: "7 MTs", mode: "insensitive" } },
           { nama: { equals: "7", mode: "insensitive" } },
-        ],
-      },
-    });
+        ] } });
 
     if (kelas7) {
       const shorfMapels = await prisma.mataPelajaran.findMany({
         where: {
           kelas_id: kelas7.id,
-          nama: { equals: "Shorf", mode: "insensitive" },
-        },
-        orderBy: { id: "asc" },
-      });
+          nama: { equals: "Shorf", mode: "insensitive" } },
+        orderBy: { id: "asc" } });
 
       // Jika ada lebih dari 1 mapel Shorf di kelas 7 MTs, hapus duplikatnya
       if (shorfMapels.length > 1) {
         const keepId = shorfMapels[0].id;
         const deleteIds = shorfMapels.slice(1).map((m) => m.id);
         await prisma.mataPelajaran.deleteMany({
-          where: { id: { in: deleteIds } },
-        });
+          where: { id: { in: deleteIds } } });
       }
     }
 
@@ -133,9 +113,7 @@ export async function GET() {
         id: pegawai.id,
         nama: pegawai.nama_lengkap,
         email: pegawai.email,
-        mata_pelajaran: pegawai.mata_pelajaran,
-      },
-    });
+        mata_pelajaran: pegawai.mata_pelajaran } });
   } catch (error: any) {
     console.error("Error fixing production Iqbal:", error);
     return NextResponse.json(

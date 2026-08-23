@@ -32,8 +32,7 @@ const STATUS_COLORS: Record<string, { bg: string; color: string; short: string; 
   telat: { bg: '#fff7ed', color: '#c2410c', short: 'T', label: 'Telat' },
   sakit: { bg: '#fefce8', color: '#a16207', short: 'S', label: 'Sakit' },
   izin: { bg: '#eff6ff', color: '#1d4ed8', short: 'I', label: 'Izin' },
-  alpha: { bg: '#fef2f2', color: '#b91c1c', short: 'A', label: 'Alpha' },
-};
+  alpha: { bg: '#fef2f2', color: '#b91c1c', short: 'A', label: 'Alpha' } };
 
 const BULAN_NAMA = [
   '',
@@ -155,8 +154,7 @@ export default function RekapBulananPage() {
               display: "inline-flex",
               alignItems: "center",
               gap: "8px",
-              textDecoration: "none",
-            }}
+              textDecoration: "none" }}
           >
             <ArrowLeft size={16} color="#ddc192" />
             Kembali
@@ -223,8 +221,7 @@ export default function RekapBulananPage() {
                   justifyContent: 'center',
                   fontWeight: 800,
                   fontSize: 11,
-                  border: `1px solid ${c.color}40`,
-                }}
+                  border: `1px solid ${c.color}40` }}
               >
                 {c.short}
               </div>
@@ -244,8 +241,7 @@ export default function RekapBulananPage() {
                 justifyContent: 'center',
                 fontWeight: 800,
                 fontSize: 11,
-                border: '1px solid #e2e8f0',
-              }}
+                border: '1px solid #e2e8f0' }}
             >
               -
             </div>
@@ -316,8 +312,7 @@ export default function RekapBulananPage() {
                           key={id}
                           style={{
                             borderBottom: "1px solid #f5ede1",
-                            background: idx % 2 === 0 ? "white" : "#fdfcf9",
-                          }}
+                            background: idx % 2 === 0 ? "white" : "#fdfcf9" }}
                         >
                           <td
                             style={{
@@ -329,8 +324,7 @@ export default function RekapBulananPage() {
                               whiteSpace: 'nowrap',
                               padding: '12px 16px',
                               color: '#1a1a1a',
-                              borderBottom: '1px solid #f5ede1',
-                            }}
+                              borderBottom: '1px solid #f5ede1' }}
                           >
                             {nama}
                           </td>
@@ -355,8 +349,7 @@ export default function RekapBulananPage() {
                                     fontSize: 10,
                                     border: sc
                                       ? `1px solid ${sc.color}40`
-                                      : '1px solid #f1f5f9',
-                                  }}
+                                      : '1px solid #f1f5f9' }}
                                 >
                                   {sc ? sc.short : '·'}
                                 </div>

@@ -90,16 +90,13 @@ export async function GET() {
           nama: pegawai.nama_lengkap,
           role: role,
           password: passwordHash,
-          is_active: true,
-        },
+          is_active: true },
         create: {
           email: targetEmail,
           nama: pegawai.nama_lengkap,
           role: role,
           password: passwordHash,
-          is_active: true,
-        },
-      });
+          is_active: true } });
 
       // 3. Link ke Pegawai
       if (!pegawai.user_id || pegawai.user_id !== user.id) {
@@ -117,8 +114,7 @@ export async function GET() {
         isMultiRole: isMultiRole,
         jabatan: jabatanKhusus || pegawai.jabatan,
         pegawaiId: pegawai.id,
-        nipPegawai: nipPegawai,
-      });
+        nipPegawai: nipPegawai });
     }
 
     // Pastikan Santri IL Pindahan (Iman Prayogo - NIS 2602070019) terdaftar
@@ -154,8 +150,7 @@ export async function GET() {
       success: true,
       message: 'Berhasil membuat dan mengonfigurasi seluruh akun Civitas Guru & Santri (Termasuk Iman Prayogo - 22 Santri IL)!',
       total: results.length,
-      data: results,
-    });
+      data: results });
 
   } catch (error: any) {
     console.error('Error provisioning civitas accounts:', error);

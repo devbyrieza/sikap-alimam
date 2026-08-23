@@ -32,10 +32,8 @@ export async function GET(req: NextRequest) {
     where,
     include: {
       santri: { select: { id: true, nama_lengkap: true, nis: true } },
-      mapel: { select: { id: true, nama: true } },
-    },
-    orderBy: { santri: { nama_lengkap: 'asc' } },
-  });
+      mapel: { select: { id: true, nama: true } } },
+    orderBy: { santri: { nama_lengkap: 'asc' } } });
 
   return NextResponse.json({ nilai });
 }
@@ -110,18 +108,14 @@ export async function POST(req: NextRequest) {
             kelas_id,
             semester,
             jenis,
-            tahun_ajaran,
-          },
-          select: { id: true },
-        });
+            tahun_ajaran },
+          select: { id: true } });
 
         if (existing) {
           await prisma.nilaiSantri.update({
             where: { id: existing.id },
             data: {
-              nilai: numValue,
-            },
-          });
+              nilai: numValue } });
         } else {
           await prisma.nilaiSantri.create({
             data: {
@@ -131,9 +125,7 @@ export async function POST(req: NextRequest) {
               semester,
               jenis,
               tahun_ajaran,
-              nilai: numValue,
-            },
-          });
+              nilai: numValue } });
         }
         count++;
       } else if (value === '' || value === null) {

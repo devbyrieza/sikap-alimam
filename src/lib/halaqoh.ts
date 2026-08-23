@@ -49,29 +49,25 @@ export const JADWAL_HALAQOH: JadwalSesiInfo[] = [
     waktu: "04.50 – 06.10",
     // Subuh: Senin, Rabu, Kamis, Jumat, Sabtu (Selasa = Kajian)
     hari: ["Senin", "Rabu", "Kamis", "Jumat", "Sabtu"],
-    jenjang: "semua",
-  },
+    jenjang: "semua" },
   {
     sesi: "maghrib",
     label: "Halaqoh Ba'da Maghrib",
     waktu: "Ba'da Maghrib",
     hari: ["Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"],
-    jenjang: "semua",
-  },
+    jenjang: "semua" },
   {
     sesi: "dhuha",
     label: "Halaqoh Dhuha (MTs)",
     waktu: "07.00 – 08.20",
     hari: ["Rabu", "Sabtu"],
-    jenjang: "MTs",
-  },
+    jenjang: "MTs" },
   {
     sesi: "dhuha",
     label: "Halaqoh Dhuha (IL)",
     waktu: "07.00 – 08.20",
     hari: ["Sabtu"],
-    jenjang: "IL",
-  },
+    jenjang: "IL" },
 ];
 
 /** Ambil sesi halaqoh yang berlaku hari ini */

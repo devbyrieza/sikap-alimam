@@ -19,8 +19,7 @@ import {
   Calendar,
   BookOpen,
   AlertCircle,
-  AlertTriangle,
-} from "lucide-react";
+  AlertTriangle } from "lucide-react";
 
 
 type Kelas = { id: string; nama: string; jenjang: string | null };
@@ -42,20 +41,17 @@ const STATUS_LABEL: Record<StatusType, string> = {
   hadir: "Hadir",
   sakit: "Sakit",
   izin: "Izin",
-  alpha: "Alpha",
-};
+  alpha: "Alpha" };
 const STATUS_COLOR: Record<StatusType, string> = {
   hadir: "#15803d",
   sakit: "#1d4ed8",
   izin: "#d97706",
-  alpha: "#b91c1c",
-};
+  alpha: "#b91c1c" };
 const STATUS_BG: Record<StatusType, string> = {
   hadir: "rgba(21,128,61,0.10)",
   sakit: "rgba(29,78,216,0.10)",
   izin: "rgba(217,119,6,0.10)",
-  alpha: "rgba(185,28,28,0.10)",
-};
+  alpha: "rgba(185,28,28,0.10)" };
 
 const JAM_OPTIONS = ["3", "4", "5", "6", "7", "8", "9", "Khusus"];
 
@@ -82,8 +78,7 @@ export default function PresensiSantriPage() {
     timeZone: "Asia/Jakarta",
     year: "numeric",
     month: "2-digit",
-    day: "2-digit",
-  }).format(new Date());
+    day: "2-digit" }).format(new Date());
 
   const [master, setMaster] = useState<{
     kelas: Kelas[];
@@ -176,8 +171,7 @@ export default function PresensiSantriPage() {
           icon: "error",
           title: "Gagal memuat data",
           text: "Tidak dapat mengambil data master.",
-          confirmButtonColor: "var(--primary)",
-        });
+          confirmButtonColor: "var(--primary)" });
       });
   }, []);
 
@@ -305,8 +299,7 @@ export default function PresensiSantriPage() {
           icon: "warning",
           title: "Data Kurang Lengkap",
           text: "Pilih Kelas, Tanggal, Mata Pelajaran, dan Jam Ke- terlebih dahulu.",
-          confirmButtonColor: "var(--primary)",
-        });
+          confirmButtonColor: "var(--primary)" });
       }
       return;
     }
@@ -351,8 +344,7 @@ export default function PresensiSantriPage() {
         icon: "error",
         title: "Error",
         text: message,
-        confirmButtonColor: "var(--primary)",
-      });
+        confirmButtonColor: "var(--primary)" });
     } finally {
       setLoadingSantri(false);
     }
@@ -415,8 +407,7 @@ export default function PresensiSantriPage() {
         icon: "warning",
         title: "Mata Pelajaran Belum Dipilih",
         text: "Silakan pilih Mata Pelajaran terlebih dahulu sebelum menyimpan presensi.",
-        confirmButtonColor: "var(--primary)",
-      });
+        confirmButtonColor: "var(--primary)" });
       return;
     }
 
@@ -457,8 +448,7 @@ export default function PresensiSantriPage() {
       confirmButtonColor: "var(--primary)",
       cancelButtonColor: "#9ca3af",
       confirmButtonText: "Ya, Simpan",
-      cancelButtonText: "Batal",
-    });
+      cancelButtonText: "Batal" });
 
     if (!confirm.isConfirmed) return;
 
@@ -467,15 +457,13 @@ export default function PresensiSantriPage() {
       const presensiPayload = santri.map((s) => ({
         santri_id: s.id,
         status: statusMap[s.id] || "hadir",
-        keterangan: keteranganMap[s.id] || null,
-      }));
+        keterangan: keteranganMap[s.id] || null }));
       
       const payload: any = {
         kelas_id: selectedKelas,
         tanggal,
         jam_ke: jamKe,
-        presensi: presensiPayload,
-      };
+        presensi: presensiPayload };
       if (isSpecialClass) {
         payload.nama_mapel_custom = namaMapelCustom;
       } else {
@@ -485,8 +473,7 @@ export default function PresensiSantriPage() {
       const res = await fetch("/api/presensi/santri", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
+        body: JSON.stringify(payload) });
 
       const json = await res.json();
       if (!res.ok) throw new Error(json.error || "Gagal menyimpan");
@@ -498,16 +485,14 @@ export default function PresensiSantriPage() {
         title: "Presensi Berhasil Disimpan!",
         text: `Data presensi ${json.count} santri telah berhasil tersimpan ke sistem.`,
         confirmButtonColor: "var(--primary)",
-        confirmButtonText: "Selesai",
-      });
+        confirmButtonText: "Selesai" });
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : "Terjadi kesalahan";
       Swal.fire({
         icon: "error",
         title: "Gagal Menyimpan",
         text: message,
-        confirmButtonColor: "var(--primary)",
-      });
+        confirmButtonColor: "var(--primary)" });
     } finally {
       setSaving(false);
     }
@@ -554,8 +539,7 @@ export default function PresensiSantriPage() {
           borderRadius: "20px",
           padding: "clamp(16px, 3.5vw, 24px)",
           boxShadow: "0 2px 12px rgba(85,0,0,0.03)",
-          border: "1px solid #ebdcc3",
-        }}
+          border: "1px solid #ebdcc3" }}
       >
         <div style={{ fontSize: "15px", fontWeight: "800", color: "#550000", display: "flex", alignItems: "center", gap: "8px" }}>
           <Users size={18} color="#ddc192" />
@@ -724,8 +708,7 @@ export default function PresensiSantriPage() {
                 "6": "09.00-09.40",
                 "7": "10.00-10.40",
                 "8": "10.40-11.20",
-                "9": "11.20-12.00",
-              };
+                "9": "11.20-12.00" };
               return (
                 <button
                   key={j}
@@ -755,15 +738,12 @@ export default function PresensiSantriPage() {
                           background: "#ecfdf5",
                           color: "#047857",
                           borderColor: "#10b981",
-                          boxShadow: "0 1px 3px rgba(16,185,129,0.2)",
-                        }
+                          boxShadow: "0 1px 3px rgba(16,185,129,0.2)" }
                       : {
                           background: "white",
                           color: "#64748b",
-                          borderColor: "#cbd5e1",
-                        }),
-                    cursor: "pointer",
-                  }}
+                          borderColor: "#cbd5e1" }),
+                    cursor: "pointer" }}
                 >
                   {isSelected && j !== "Khusus" && (
                     <div style={{ position: "absolute", top: "-6px", right: "-6px", background: "#10b981", color: "white", borderRadius: "50%", padding: "2px", boxShadow: "0 1px 2px rgba(0,0,0,0.1)", zIndex: 10 }}>
@@ -864,8 +844,7 @@ export default function PresensiSantriPage() {
                   width: `${progressPct}%`,
                   background: "linear-gradient(90deg, #550000, #ddc192)",
                   borderRadius: 99,
-                  transition: "width 0.4s ease",
-                }}
+                  transition: "width 0.4s ease" }}
               />
             </div>
           </div>
@@ -924,16 +903,14 @@ export default function PresensiSantriPage() {
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "space-between",
-                      gap: 8,
-                    }}
+                      gap: 8 }}
                   >
                     <div
                       style={{
                         display: "flex",
                         alignItems: "center",
                         gap: 12,
-                        minWidth: 0,
-                      }}
+                        minWidth: 0 }}
                     >
                       <div style={{ width: 28, height: 28, borderRadius: "50%", background: "#fdf8f0", border: "1px solid #ebdcc3", color: "#550000", fontWeight: 800, fontSize: "12px", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
                         {idx + 1}
@@ -948,8 +925,7 @@ export default function PresensiSantriPage() {
                             lineHeight: 1.3,
                             overflow: "hidden",
                             textOverflow: "ellipsis",
-                            whiteSpace: "nowrap",
-                          }}
+                            whiteSpace: "nowrap" }}
                         >
                           {s.nama_lengkap}
                         </p>
@@ -957,8 +933,7 @@ export default function PresensiSantriPage() {
                           style={{
                             fontSize: 12,
                             color: "#64748b",
-                            margin: "2px 0 0 0",
-                          }}
+                            margin: "2px 0 0 0" }}
                         >
                           NIS: {s.nis || "—"}
                         </p>
@@ -987,8 +962,7 @@ export default function PresensiSantriPage() {
                     style={{
                       display: "grid",
                       gridTemplateColumns: "repeat(4, 1fr)",
-                      gap: 8,
-                    }}
+                      gap: 8 }}
                   >
                     {STATUS_LIST.map((st) => {
                       const isSelected = currentStatus === st;
@@ -1013,8 +987,7 @@ export default function PresensiSantriPage() {
                             fontSize: 13,
                             cursor: "pointer",
                             transition: "all 0.15s",
-                            minHeight: 42,
-                          }}
+                            minHeight: 42 }}
                         >
                           {STATUS_LABEL[st]}
                         </button>
@@ -1031,8 +1004,7 @@ export default function PresensiSantriPage() {
                           fontWeight: 700,
                           color: STATUS_COLOR[currentStatus],
                           marginBottom: 4,
-                          display: "block",
-                        }}
+                          display: "block" }}
                       >
                         Keterangan {STATUS_LABEL[currentStatus]} (opsional):
                       </label>

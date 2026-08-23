@@ -8,12 +8,10 @@ export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
   title: "SIKAP — Al-Imam Al-Islami",
   description:
-    "Sistem Informasi Akademik dan Pengasuhan Pesantren Al-Imam Al-Islami. Jurnal mengajar, presensi santri, absensi asatidz, dan input nilai.",
-};
+    "Sistem Informasi Akademik dan Pengasuhan Pesantren Al-Imam Al-Islami. Jurnal mengajar, presensi santri, absensi asatidz, dan input nilai." };
 
 export default function RootLayout({
-  children,
-}: {
+  children }: {
   children: React.ReactNode;
 }) {
   return (

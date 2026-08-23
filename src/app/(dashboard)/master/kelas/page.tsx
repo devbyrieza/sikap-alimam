@@ -19,8 +19,7 @@ const jenjangColor: Record<string, { bg: string; text: string }> = {
   MTs:       { bg: "#eff6ff", text: "#1d4ed8" },
   Islamiyah: { bg: "#f0fdf4", text: "#15803d" },
   MA:        { bg: "#fdf4ff", text: "#7e22ce" },
-  Umum:      { bg: "#f1f5f9", text: "#475569" },
-};
+  Umum:      { bg: "#f1f5f9", text: "#475569" } };
 
 export default function MasterKelasPage() {
   const [kelas, setKelas]       = useState<KelasItem[]>([]);
@@ -111,8 +110,7 @@ export default function MasterKelasPage() {
       text: "Jika kelas memiliki santri atau mapel terkait, statusnya akan dinonaktifkan.",
       icon: "warning", showCancelButton: true,
       confirmButtonColor: "#dc2626", cancelButtonColor: "#6b7280",
-      confirmButtonText: "Ya, Hapus", cancelButtonText: "Batal",
-    });
+      confirmButtonText: "Ya, Hapus", cancelButtonText: "Batal" });
     if (result.isConfirmed) {
       try {
         const res = await fetch(`/api/master/kelas/${k.id}`, { method: "DELETE" });
@@ -128,8 +126,7 @@ export default function MasterKelasPage() {
     total:       kelas.length,
     aktif:       kelas.filter(k => k.is_active).length,
     totalSantri: kelas.reduce((s, k) => s + (k._count?.santri || 0), 0),
-    totalMapel:  kelas.reduce((s, k) => s + (k._count?.MataPelajaran || 0), 0),
-  };
+    totalMapel:  kelas.reduce((s, k) => s + (k._count?.MataPelajaran || 0), 0) };
 
   return (
     <div style={{ padding: "24px 28px", maxWidth: 1100, margin: "0 auto", display: "flex", flexDirection: "column", gap: 24 }}>
@@ -141,8 +138,7 @@ export default function MasterKelasPage() {
         display: "flex", justifyContent: "space-between", alignItems: "center",
         flexWrap: "wrap", gap: 20,
         boxShadow: "0 16px 40px rgba(85,0,0,0.28)",
-        position: "relative", overflow: "hidden",
-      }}>
+        position: "relative", overflow: "hidden" }}>
         {/* Decorative circles */}
         <div style={{ position:"absolute", top:-40, right:-40, width:200, height:200, borderRadius:"50%", background:"rgba(255,255,255,0.06)", pointerEvents:"none" }} />
         <div style={{ position:"absolute", bottom:-60, right:120, width:160, height:160, borderRadius:"50%", background:"rgba(255,255,255,0.04)", pointerEvents:"none" }} />
@@ -165,8 +161,7 @@ export default function MasterKelasPage() {
             fontWeight:800, fontSize:14, padding:"12px 22px", borderRadius:14,
             display:"flex", alignItems:"center", gap:8,
             boxShadow:"0 4px 16px rgba(221,193,146,0.3)", transition:"all 0.2s",
-            whiteSpace:"nowrap",
-          }}
+            whiteSpace:"nowrap" }}
         >
           {isAdding ? <X size={18} /> : <Plus size={18} />}
           {isAdding ? "Tutup Form" : "Tambah Kelas Baru"}
@@ -195,8 +190,7 @@ export default function MasterKelasPage() {
       {isAdding && (
         <div style={{
           background:"white", borderRadius:20, padding:"28px 32px",
-          border:"2px solid #fecaca", boxShadow:"0 4px 20px rgba(124,16,16,0.08)",
-        }}>
+          border:"2px solid #fecaca", boxShadow:"0 4px 20px rgba(124,16,16,0.08)" }}>
           <div style={{ display:"flex", alignItems:"center", gap:10, marginBottom:20 }}>
             <Sparkles size={20} color="#7c1010" />
             <h3 style={{ margin:0, fontSize:16, fontWeight:700, color:"#7c1010" }}>Pendaftaran Kelas Baru</h3>
@@ -266,8 +260,7 @@ export default function MasterKelasPage() {
                     <th key={h} style={{
                       padding:"14px 16px", textAlign: i === 0 ? "center" : i >= 4 && i <= 5 ? "center" : i === 7 ? "right" : "left",
                       fontSize:11, fontWeight:700, textTransform:"uppercase", letterSpacing:"0.5px", color:"#64748b",
-                      borderBottom:"2px solid #e2e8f0", whiteSpace:"nowrap",
-                    }}>{h}</th>
+                      borderBottom:"2px solid #e2e8f0", whiteSpace:"nowrap" }}>{h}</th>
                   ))}
                 </tr>
               </thead>
@@ -278,8 +271,7 @@ export default function MasterKelasPage() {
                   return (
                     <tr key={k.id} style={{
                       background: isEditing ? "#fffbeb" : idx % 2 === 0 ? "white" : "#fafafa",
-                      transition:"background 0.15s",
-                    }}
+                      transition:"background 0.15s" }}
                     onMouseEnter={e => { if (!isEditing) (e.currentTarget as HTMLElement).style.background = "#f0f9ff"; }}
                     onMouseLeave={e => { if (!isEditing) (e.currentTarget as HTMLElement).style.background = idx % 2 === 0 ? "white" : "#fafafa"; }}
                     >
@@ -355,8 +347,7 @@ export default function MasterKelasPage() {
                           <button onClick={() => handleToggleActive(k)} style={{
                             border:"none", cursor:"pointer", padding:"5px 14px", borderRadius:20, fontSize:12, fontWeight:700,
                             background: k.is_active ? "#dcfce7" : "#fee2e2", color: k.is_active ? "#15803d" : "#b91c1c",
-                            transition:"all 0.2s",
-                          }} title="Klik untuk toggle status">
+                            transition:"all 0.2s" }} title="Klik untuk toggle status">
                             {k.is_active ? "● Aktif" : "○ Nonaktif"}
                           </button>
                         )}

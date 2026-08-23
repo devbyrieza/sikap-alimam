@@ -5,8 +5,7 @@ import Sidebar from "@/components/Sidebar";
 import TeacherMapelSetupModal from "@/components/TeacherMapelSetupModal";
 
 export default async function DashboardLayout({
-  children,
-}: {
+  children }: {
   children: React.ReactNode;
 }) {
   const session = await getSession();
@@ -20,8 +19,7 @@ export default async function DashboardLayout({
     try {
       if (session.asatidz_id) {
         pegawai = await prisma.pegawai.findUnique({
-          where: { id: session.asatidz_id },
-        });
+          where: { id: session.asatidz_id } });
       }
 
       if (!pegawai && session.userId) {
@@ -31,9 +29,7 @@ export default async function DashboardLayout({
               { user_id: session.userId },
               { email: session.email },
               { nama_lengkap: { equals: session.nama || "", mode: "insensitive" } },
-            ],
-          },
-        });
+            ] } });
       }
     } catch (e) {
       console.error("DashboardLayout: Error fetching pegawai:", e);
@@ -98,8 +94,7 @@ export default async function DashboardLayout({
             mata_pelajaran: pegawai.mata_pelajaran,
             pendidikan_terakhir: pegawai.pendidikan_terakhir,
             status_pernikahan: pegawai.status_pernikahan,
-            foto_url: pegawai.foto_url,
-          } : null}
+            foto_url: pegawai.foto_url } : null}
           initialMapel={pegawai?.mata_pelajaran || ""}
           needsSetup={needsSetup}
           missingFields={missingFields}

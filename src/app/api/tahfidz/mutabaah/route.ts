@@ -184,8 +184,7 @@ export async function POST(req: NextRequest) {
         surat_dari,
         ayat_dari: String(ayat_dari),
         surat_ke,
-        ayat_ke: String(ayat_ke),
-      }
+        ayat_ke: String(ayat_ke) }
     });
 
     return NextResponse.json({ success: true, data: newRecord }, { status: 201 });

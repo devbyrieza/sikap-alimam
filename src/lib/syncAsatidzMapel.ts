@@ -10,8 +10,7 @@ export async function syncAsatidzMapel(pegawaiId: string, mapelString: string | 
   if (!mapelString || !mapelString.trim()) {
     // Delete existing assignments if mapel was cleared
     await prisma.asatidzmMapel.deleteMany({
-      where: { pegawai_id: pegawaiId },
-    }).catch((e) => console.warn("Failed to clear asatidz_mapel:", e));
+      where: { pegawai_id: pegawaiId } }).catch((e) => console.warn("Failed to clear asatidz_mapel:", e));
     return;
   }
 
@@ -88,19 +87,14 @@ export async function syncAsatidzMapel(pegawaiId: string, mapelString: string | 
       let kelas = await prisma.kelas.findFirst({
         where: {
           is_active: true,
-          OR: OR_conditions,
-        },
+          OR: OR_conditions },
         include: {
-          _count: { select: { santri: true } },
-        },
+          _count: { select: { santri: true } } },
         orderBy: {
-          santri: { _count: "desc" },
-        },
-      }).catch(async () => {
+          santri: { _count: "desc" } } }).catch(async () => {
         // Fallback without sort if santri relation ordering fails
         return await prisma.kelas.findFirst({
-          where: { is_active: true, OR: OR_conditions },
-        });
+          where: { is_active: true, OR: OR_conditions } });
       });
 
       if (!kelas) {
@@ -108,9 +102,7 @@ export async function syncAsatidzMapel(pegawaiId: string, mapelString: string | 
           data: {
             nama: assignment.kelasNama,
             jenjang: assignment.jenjang,
-            is_active: true,
-          },
-        });
+            is_active: true } });
       }
 
       // 2. Ensure MataPelajaran exists
@@ -126,9 +118,7 @@ export async function syncAsatidzMapel(pegawaiId: string, mapelString: string | 
       let mapel = await prisma.mataPelajaran.findFirst({
         where: {
           kelas_id: kelas.id,
-          OR: mapelOR,
-        },
-      });
+          OR: mapelOR } });
 
       if (!mapel) {
         mapel = await prisma.mataPelajaran.create({
@@ -136,9 +126,7 @@ export async function syncAsatidzMapel(pegawaiId: string, mapelString: string | 
             nama: assignment.mapelNama,
             kelas_id: kelas.id,
             kategori: "syariah",
-            is_active: true,
-          },
-        });
+            is_active: true } });
       }
 
       // 3. Upsert AsatidzmMapel
@@ -146,18 +134,14 @@ export async function syncAsatidzMapel(pegawaiId: string, mapelString: string | 
         where: {
           pegawai_id: pegawaiId,
           mapel_id: mapel.id,
-          kelas_id: kelas.id,
-        },
-      });
+          kelas_id: kelas.id } });
 
       if (!existingRel) {
         await prisma.asatidzmMapel.create({
           data: {
             pegawai_id: pegawaiId,
             mapel_id: mapel.id,
-            kelas_id: kelas.id,
-          },
-        }).catch((e) => console.warn("Rel create skipped:", e));
+            kelas_id: kelas.id } }).catch((e) => console.warn("Rel create skipped:", e));
       }
 
       activeMapelIds.push({ pegawai_id: pegawaiId, mapel_id: mapel.id, kelas_id: kelas.id });
@@ -165,8 +149,7 @@ export async function syncAsatidzMapel(pegawaiId: string, mapelString: string | 
 
     // Clean up old assignments that are no longer selected or duplicate entries
     const allTeacherAssignments = await prisma.asatidzmMapel.findMany({
-      where: { pegawai_id: pegawaiId },
-    });
+      where: { pegawai_id: pegawaiId } });
 
     const seenKey = new Set<string>();
     for (const cur of allTeacherAssignments) {
@@ -178,8 +161,7 @@ export async function syncAsatidzMapel(pegawaiId: string, mapelString: string | 
       // If no longer active OR if we've already seen this exact pair (duplicate row)
       if (!stillActive || seenKey.has(pairKey)) {
         await prisma.asatidzmMapel.delete({
-          where: { id: cur.id },
-        }).catch(() => {});
+          where: { id: cur.id } }).catch(() => {});
       } else {
         seenKey.add(pairKey);
       }

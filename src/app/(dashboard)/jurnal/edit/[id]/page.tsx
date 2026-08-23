@@ -118,8 +118,7 @@ export default function EditJurnalPage({ params }: { params: Promise<{ id: strin
       confirmButtonColor: "#dc2626",
       cancelButtonColor: "#64748b",
       confirmButtonText: "Ya, Bersihkan",
-      cancelButtonText: "Batal",
-    }).then((result) => {
+      cancelButtonText: "Batal" }).then((result) => {
       if (result.isConfirmed) {
         localStorage.removeItem("siakad_jurnal_draft");
         setKelasId("");
@@ -141,8 +140,7 @@ export default function EditJurnalPage({ params }: { params: Promise<{ id: strin
           title: "Draf Dibersihkan",
           text: "Formulir telah dikosongkan.",
           timer: 1500,
-          showConfirmButton: false,
-        });
+          showConfirmButton: false });
       }
     });
   };
@@ -212,8 +210,7 @@ export default function EditJurnalPage({ params }: { params: Promise<{ id: strin
         Swal.fire({
           icon: "error",
           title: "Gagal memuat data",
-          text: "Tidak dapat mengambil data master. Coba refresh halaman.",
-        });
+          text: "Tidak dapat mengambil data master. Coba refresh halaman." });
       });
   }, []);
 
@@ -300,8 +297,7 @@ export default function EditJurnalPage({ params }: { params: Promise<{ id: strin
         icon: "warning",
         title: "Form Tidak Lengkap",
         text: "Mohon lengkapi semua field yang wajib diisi.",
-        confirmButtonColor: "#0f172a",
-      });
+        confirmButtonColor: "#0f172a" });
       return;
     }
 
@@ -329,9 +325,7 @@ export default function EditJurnalPage({ params }: { params: Promise<{ id: strin
           sub_materi: subMateri || null,
           learning_outcome: learningOutcome || null,
           kegiatan,
-          catatan: catatan || null,
-        }),
-      });
+          catatan: catatan || null }) });
 
       const json = await res.json();
       if (!res.ok) {
@@ -344,8 +338,7 @@ export default function EditJurnalPage({ params }: { params: Promise<{ id: strin
         text: "Jurnal mengajar berhasil ditambahkan.",
         confirmButtonColor: "#0f172a",
         timer: 2000,
-        timerProgressBar: true,
-      });
+        timerProgressBar: true });
 
       localStorage.removeItem("siakad_jurnal_draft");
       localStorage.removeItem("sikap_pending_jurnal_date");
@@ -356,8 +349,7 @@ export default function EditJurnalPage({ params }: { params: Promise<{ id: strin
         icon: "error",
         title: "Gagal Menyimpan",
         text: message,
-        confirmButtonColor: "#0f172a",
-      });
+        confirmButtonColor: "#0f172a" });
     } finally {
       setSubmitting(false);
     }
@@ -548,8 +540,7 @@ export default function EditJurnalPage({ params }: { params: Promise<{ id: strin
                         "6": "09.00-09.40",
                         "7": "10.00-10.40",
                         "8": "10.40-11.20",
-                        "9": "11.20-12.00",
-                      };
+                        "9": "11.20-12.00" };
                       return (
                         <button
                           key={j}

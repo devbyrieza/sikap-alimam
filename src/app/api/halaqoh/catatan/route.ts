@@ -23,8 +23,7 @@ export async function GET(request: Request) {
   } else if (dari || sampai) {
     tanggalFilter = {
       ...(dari && { gte: new Date(dari) }),
-      ...(sampai && { lte: new Date(sampai + 'T23:59:59.999Z') }),
-    };
+      ...(sampai && { lte: new Date(sampai + 'T23:59:59.999Z') }) };
   }
 
   try {
@@ -33,23 +32,16 @@ export async function GET(request: Request) {
         ...(tanggalFilter && { tanggal: tanggalFilter }),
         ...(sesi && { sesi }),
         ...(kelompok_id && { kelompok_id }),
-        ...(pegawai_id && { pegawai_id }),
-      },
+        ...(pegawai_id && { pegawai_id }) },
       include: {
         santri: {
           select: {
             nama_lengkap: true,
-            nis: true,
-          },
-        },
+            nis: true } },
         pegawai: {
           select: {
-            nama_lengkap: true,
-          },
-        },
-      },
-      orderBy: [{ tanggal: 'desc' }, { sesi: 'asc' }],
-    });
+            nama_lengkap: true } } },
+      orderBy: [{ tanggal: 'desc' }, { sesi: 'asc' }] });
     return NextResponse.json(catatan);
   } catch (error) {
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
@@ -74,8 +66,7 @@ export async function POST(request: Request) {
       ayat_dari,
       ayat_ke,
       jumlah_halaman,
-      entries,
-    } = body;
+      entries } = body;
 
     const parsedTanggal = new Date(tanggal);
 
@@ -89,9 +80,7 @@ export async function POST(request: Request) {
           santri_id_tanggal_sesi: {
             santri_id: entry.santri_id,
             tanggal: parsedTanggal,
-            sesi: sesi,
-          },
-        },
+            sesi: sesi } },
         update: {
           kelompok_id,
           pegawai_id,
@@ -108,8 +97,7 @@ export async function POST(request: Request) {
           nilai_bacaan: nilai_bacaan,
           nilai_kelancaran: nilai_kelancaran,
           nilai_akhir,
-          catatan: entry.catatan ?? null,
-        },
+          catatan: entry.catatan ?? null },
         create: {
           santri_id: entry.santri_id,
           kelompok_id,
@@ -129,9 +117,7 @@ export async function POST(request: Request) {
           nilai_bacaan: nilai_bacaan,
           nilai_kelancaran: nilai_kelancaran,
           nilai_akhir,
-          catatan: entry.catatan ?? null,
-        },
-      });
+          catatan: entry.catatan ?? null } });
     });
 
     const results = await prisma.$transaction(upserts);

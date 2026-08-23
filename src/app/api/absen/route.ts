@@ -12,8 +12,7 @@ export async function GET(req: NextRequest) {
 
   // Cari token di DB
   const tokenData = await prisma.tokenHarian.findUnique({
-    where: { token },
-  });
+    where: { token } });
 
   if (!tokenData) {
     return NextResponse.json({ error: 'Token tidak valid' }, { status: 404 });
@@ -34,32 +33,26 @@ export async function GET(req: NextRequest) {
         { jabatan: { contains: "Guru", mode: "insensitive" } },
         { jabatan: { contains: "Pengajar", mode: "insensitive" } },
         { mata_pelajaran: { not: null } },
-      ],
-    },
+      ] },
     select: {
       id: true,
       nama_lengkap: true,
-      jabatan: true,
-    },
-    orderBy: { nama_lengkap: 'asc' },
-  });
+      jabatan: true },
+    orderBy: { nama_lengkap: 'asc' } });
 
   if (asatidz.length === 0) {
     asatidz = await prisma.pegawai.findMany({
       select: {
         id: true,
         nama_lengkap: true,
-        jabatan: true,
-      },
-      orderBy: { nama_lengkap: 'asc' },
-    });
+        jabatan: true },
+      orderBy: { nama_lengkap: 'asc' } });
   }
 
   return NextResponse.json({
     valid: true,
     tanggal: tokenData.tanggal,
-    asatidz,
-  });
+    asatidz });
 }
 
 // POST: simpan absensi
@@ -98,8 +91,7 @@ export async function POST(req: NextRequest) {
 
   // Cek duplikasi
   const existing = await prisma.presensiAsatidz.findUnique({
-    where: { pegawai_id_tanggal: { pegawai_id, tanggal } },
-  });
+    where: { pegawai_id_tanggal: { pegawai_id, tanggal } } });
 
   if (existing) {
     return NextResponse.json({ error: 'Anda sudah melakukan absensi hari ini' }, { status: 409 });
@@ -115,17 +107,13 @@ export async function POST(req: NextRequest) {
       metode: 'link',
       lat: lat ?? null,
       lng: lng ?? null,
-      foto_url: foto_url ?? null,
-    },
+      foto_url: foto_url ?? null },
     include: {
-      pegawai: { select: { nama_lengkap: true } },
-    },
-  });
+      pegawai: { select: { nama_lengkap: true } } } });
 
   return NextResponse.json({
     success: true,
     nama: presensi.pegawai.nama_lengkap,
     jam_masuk: presensi.jam_masuk,
-    status: presensi.status,
-  });
+    status: presensi.status });
 }

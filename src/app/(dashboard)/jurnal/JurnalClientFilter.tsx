@@ -12,8 +12,7 @@ import {
   LayoutGrid,
   Table as TableIcon,
   ChevronRight,
-  Sparkles,
-} from "lucide-react";
+  Sparkles } from "lucide-react";
 import { getJenjangFromKelas } from "@/lib/kelas";
 import JurnalDetailModal from "@/components/JurnalDetailModal";
 
@@ -43,16 +42,14 @@ function formatTanggal(iso: string) {
     weekday: "short",
     day: "numeric",
     month: "short",
-    year: "numeric",
-  });
+    year: "numeric" });
 }
 
 export default function JurnalClientFilter({
   data,
   kelasList = [],
   asatidzList = [],
-  isAdminSuper = false,
-}: {
+  isAdminSuper = false }: {
   data: JurnalRow[];
   kelasList?: (string | KelasObject)[];
   asatidzList?: string[];
@@ -87,8 +84,7 @@ export default function JurnalClientFilter({
           list.push({
             id: typeof k === "string" ? name : k.id,
             nama: name,
-            jenjang: typeof k === "string" ? getJenjangFromKelas(name) : (k.jenjang || getJenjangFromKelas(name, k.jenjang)),
-          });
+            jenjang: typeof k === "string" ? getJenjangFromKelas(name) : (k.jenjang || getJenjangFromKelas(name, k.jenjang)) });
         }
       }
     } else {
@@ -102,8 +98,7 @@ export default function JurnalClientFilter({
         if (!["8 MTs", "9 MTs", "10 MA", "11 MA", "12 MA"].includes(nama)) {
           list.push({
             nama,
-            jenjang: getJenjangFromKelas(nama),
-          });
+            jenjang: getJenjangFromKelas(nama) });
         }
       });
     }
@@ -186,8 +181,7 @@ export default function JurnalClientFilter({
           borderRadius: 20,
           background: "#ffffff",
           border: "1px solid #ebdcc3",
-          boxShadow: "0 2px 12px rgba(85,0,0,0.03)",
-        }}
+          boxShadow: "0 2px 12px rgba(85,0,0,0.03)" }}
       >
         {/* 1. Filter Tanggal */}
         <div style={{ minWidth: 150, flex: "1 1 140px", display: "flex", flexDirection: "column", gap: 6 }}>
@@ -219,8 +213,7 @@ export default function JurnalClientFilter({
               background: "#fdf8f0",
               fontSize: 13,
               fontWeight: filterJenjang ? 700 : 500,
-              outline: "none",
-            }}
+              outline: "none" }}
           >
             <option value="">Semua Jenjang</option>
             <option value="MTs">MTs (Madrasah Tsanawiyah)</option>
@@ -247,8 +240,7 @@ export default function JurnalClientFilter({
               cursor: !filterJenjang ? "not-allowed" : "pointer",
               color: !filterJenjang ? "#a8a29e" : "#1a1a1a",
               fontSize: 13,
-              outline: "none",
-            }}
+              outline: "none" }}
           >
             {!filterJenjang ? (
               <option value="">— Pilih Jenjang Dahulu —</option>
@@ -302,8 +294,7 @@ export default function JurnalClientFilter({
               borderRadius: 12,
               fontWeight: 700,
               fontSize: 13,
-              cursor: "pointer",
-            }}
+              cursor: "pointer" }}
             onClick={handleReset}
           >
             <RotateCcw size={14} />
@@ -321,8 +312,7 @@ export default function JurnalClientFilter({
             padding: "6px 14px",
             borderRadius: 20,
             border: "1px solid #ebdcc3",
-            alignSelf: "center",
-          }}
+            alignSelf: "center" }}
         >
           {filtered.length} Jurnal
         </div>
@@ -339,8 +329,7 @@ export default function JurnalClientFilter({
           borderRadius: 16,
           border: "1px solid #ebdcc3",
           flexWrap: "wrap",
-          gap: 10,
-        }}
+          gap: 10 }}
       >
         <div style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 13, fontWeight: 700, color: "#550000" }}>
           <Sparkles size={16} color="#ddc192" />
@@ -363,8 +352,7 @@ export default function JurnalClientFilter({
               cursor: "pointer",
               background: viewMode === "card" ? "#550000" : "transparent",
               color: viewMode === "card" ? "#ffffff" : "#64748b",
-              transition: "all 0.2s",
-            }}
+              transition: "all 0.2s" }}
           >
             <LayoutGrid size={14} />
             <span>Kartu Modern</span>
@@ -385,8 +373,7 @@ export default function JurnalClientFilter({
               cursor: "pointer",
               background: viewMode === "table" ? "#550000" : "transparent",
               color: viewMode === "table" ? "#ffffff" : "#64748b",
-              transition: "all 0.2s",
-            }}
+              transition: "all 0.2s" }}
           >
             <TableIcon size={14} />
             <span>Tabel Lengkap</span>
@@ -402,8 +389,7 @@ export default function JurnalClientFilter({
             borderRadius: 20,
             border: "1px solid #ebdcc3",
             textAlign: "center",
-            padding: "54px 20px",
-          }}
+            padding: "54px 20px" }}
         >
           <BookOpen
             size={44}
@@ -422,8 +408,7 @@ export default function JurnalClientFilter({
           style={{
             display: "grid",
             gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))",
-            gap: 16,
-          }}
+            gap: 16 }}
         >
           {filtered.map((j) => {
             const jenjang = getJenjangFromKelas(j.kelas, j.kelas_jenjang);
@@ -441,8 +426,7 @@ export default function JurnalClientFilter({
                   flexDirection: "column",
                   justifyContent: "space-between",
                   gap: 14,
-                  transition: "transform 0.2s, box-shadow 0.2s",
-                }}
+                  transition: "transform 0.2s, box-shadow 0.2s" }}
               >
                 {/* Header Card: Tanggal, Jenjang & Kelas */}
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 10 }}>
@@ -462,8 +446,7 @@ export default function JurnalClientFilter({
                         borderRadius: 8,
                         background: jenjang === "MTs" ? "#fdf5f5" : "#fdf8f0",
                         color: jenjang === "MTs" ? "#550000" : "#b89758",
-                        border: "1px solid #ebdcc3",
-                      }}
+                        border: "1px solid #ebdcc3" }}
                     >
                       {jenjang}
                     </span>
@@ -474,8 +457,7 @@ export default function JurnalClientFilter({
                         padding: "3px 8px",
                         borderRadius: 8,
                         background: "#550000",
-                        color: "#ffffff",
-                      }}
+                        color: "#ffffff" }}
                     >
                       {j.kelas}
                     </span>
@@ -502,8 +484,7 @@ export default function JurnalClientFilter({
                     borderRadius: 12,
                     fontSize: 12,
                     color: "#475569",
-                    lineHeight: 1.4,
-                  }}
+                    lineHeight: 1.4 }}
                 >
                   <div style={{ fontWeight: 700, color: "#550000", marginBottom: 2 }}>Materi:</div>
                   <div style={{ overflow: "hidden", textOverflow: "ellipsis", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical" }}>
@@ -533,8 +514,7 @@ export default function JurnalClientFilter({
                       fontSize: 12,
                       fontWeight: 800,
                       cursor: "pointer",
-                      boxShadow: "0 2px 8px rgba(85,0,0,0.15)",
-                    }}
+                      boxShadow: "0 2px 8px rgba(85,0,0,0.15)" }}
                   >
                     <Eye size={13} color="#ddc192" />
                     <span>Lihat Detail</span>
@@ -553,8 +533,7 @@ export default function JurnalClientFilter({
             borderRadius: 20,
             border: "1px solid #ebdcc3",
             boxShadow: "0 4px 16px rgba(85,0,0,0.03)",
-            overflow: "hidden",
-          }}
+            overflow: "hidden" }}
         >
           {/* Touch-Friendly Table Wrapper */}
           <div
@@ -562,8 +541,7 @@ export default function JurnalClientFilter({
               width: "100%",
               overflowX: "auto",
               WebkitOverflowScrolling: "touch",
-              touchAction: "pan-x pan-y",
-            }}
+              touchAction: "pan-x pan-y" }}
           >
             <table style={{ width: "100%", minWidth: 780, borderCollapse: "collapse", fontSize: 13 }}>
               <thead>
@@ -602,8 +580,7 @@ export default function JurnalClientFilter({
                       style={{
                         background: bgRow,
                         borderBottom: "1px solid #f5ede1",
-                        transition: "background 0.2s",
-                      }}
+                        transition: "background 0.2s" }}
                     >
                       {/* Tanggal */}
                       <td style={{ padding: "14px 18px", fontWeight: 800, color: "#550000", fontSize: 13 }}>
@@ -631,8 +608,7 @@ export default function JurnalClientFilter({
                               borderRadius: 6,
                               background: jenjang === "MTs" ? "#fdf5f5" : "#fdf8f0",
                               color: jenjang === "MTs" ? "#550000" : "#b89758",
-                              border: "1px solid #ebdcc3",
-                            }}
+                              border: "1px solid #ebdcc3" }}
                           >
                             {jenjang}
                           </span>
@@ -643,8 +619,7 @@ export default function JurnalClientFilter({
                               padding: "2px 7px",
                               borderRadius: 6,
                               background: "#550000",
-                              color: "#ffffff",
-                            }}
+                              color: "#ffffff" }}
                           >
                             {j.kelas}
                           </span>
@@ -667,8 +642,7 @@ export default function JurnalClientFilter({
                           textOverflow: "ellipsis",
                           whiteSpace: "nowrap",
                           color: "#475569",
-                          fontSize: 13,
-                        }}
+                          fontSize: 13 }}
                         title={j.materi}
                       >
                         {j.materi}
@@ -691,8 +665,7 @@ export default function JurnalClientFilter({
                             color: "#ffffff",
                             border: "none",
                             cursor: "pointer",
-                            boxShadow: "0 2px 6px rgba(85,0,0,0.12)",
-                          }}
+                            boxShadow: "0 2px 6px rgba(85,0,0,0.12)" }}
                         >
                           <Eye size={12} color="#ddc192" />
                           <span>Detail</span>

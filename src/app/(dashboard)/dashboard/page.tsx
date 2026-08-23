@@ -37,8 +37,7 @@ export default async function DashboardPage() {
 
   const today = new Date();
   const todayStr = new Intl.DateTimeFormat("en-CA", {
-    timeZone: "Asia/Jakarta", year: "numeric", month: "2-digit", day: "2-digit",
-  }).format(today);
+    timeZone: "Asia/Jakarta", year: "numeric", month: "2-digit", day: "2-digit" }).format(today);
 
   // Stats paralel
   let totalAsatidz = 0;
@@ -82,26 +81,20 @@ export default async function DashboardPage() {
             { kategori_pegawai: { contains: "GURU", mode: "insensitive" } },
             { jabatan: { contains: "Guru", mode: "insensitive" } },
             { jabatan: { contains: "Pengajar", mode: "insensitive" } },
-          ],
-        },
-      }),
+          ] } }),
       prisma.santriAktif.count({ where: { is_active: true } }),
       prisma.jurnalMengajar.count({ where: { tanggal: todayDate } }),
       prisma.presensiAsatidz.count({
-        where: { tanggal: todayDate, status: { in: ["hadir", "telat"] } },
-      }),
+        where: { tanggal: todayDate, status: { in: ["hadir", "telat"] } } }),
       prisma.jurnalMengajar.findMany({
         take: 5, orderBy: { created_at: "desc" },
-        include: { pegawai: { select: { nama_lengkap: true } }, mapel: { select: { nama: true } }, kelas: { select: { nama: true } } },
-      }),
+        include: { pegawai: { select: { nama_lengkap: true } }, mapel: { select: { nama: true } }, kelas: { select: { nama: true } } } }),
       prisma.presensiAsatidz.findMany({
         where: { tanggal: todayDate },
         include: { pegawai: { select: { nama_lengkap: true } } },
-        orderBy: { jam_masuk: "desc" }, take: 8,
-      }),
+        orderBy: { jam_masuk: "desc" }, take: 8 }),
       prisma.presensiSiswa.findMany({
-        where: { tanggal: todayDate }, select: { status: true },
-      }),
+        where: { tanggal: todayDate }, select: { status: true } }),
       // Query 7: Jadwal Mengajar Guru
       asatidzId ? prisma.jadwalPelajaran.findMany({
         where: { pegawai_id: asatidzId, hari: currentDayName },

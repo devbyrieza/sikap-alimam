@@ -47,9 +47,7 @@ export default function SppAccessPage() {
         body: JSON.stringify({
           user_id: wali.id,
           spp_access_blocked: action === "blokir",
-          spp_blocked_reason: action === "blokir" ? alasan : null,
-        }),
-      });
+          spp_blocked_reason: action === "blokir" ? alasan : null }) });
       setModalData(null);
       setAlasan("");
       await fetchData();

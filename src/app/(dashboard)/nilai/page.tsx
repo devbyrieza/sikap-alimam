@@ -226,8 +226,7 @@ export default function InputNilaiPage() {
           semester: semester,
           tahun: tahun_ajaran,
           periode: periode,
-          data: inputData,
-        })
+          data: inputData })
       );
     }
   }, [inputData, step, kelas_id, mapel_id, namaMapelCustom, isSpecialClass, semester, tahun_ajaran, periode]);
@@ -295,8 +294,7 @@ export default function InputNilaiPage() {
             harian,
             kompetensi,
             sikap,
-            ujian,
-          };
+            ujian };
         }
       });
       setInputData(map);
@@ -306,8 +304,7 @@ export default function InputNilaiPage() {
         icon: "error",
         title: "Gagal Memuat Data",
         text: message,
-        confirmButtonColor: "var(--primary)",
-      });
+        confirmButtonColor: "var(--primary)" });
     } finally {
       setLoadingSantri(false);
     }
@@ -328,9 +325,7 @@ export default function InputNilaiPage() {
       ...prev,
       [santriId]: {
         ...prev[santriId],
-        [field]: String(num),
-      },
-    }));
+        [field]: String(num) } }));
   };
 
   const hitungNilaiAkhir = (data: CapaianNilai) => {
@@ -354,8 +349,7 @@ export default function InputNilaiPage() {
       confirmButtonText: "Ya, Hapus!",
       cancelButtonText: "Batal",
       confirmButtonColor: "#ef4444",
-      cancelButtonColor: "#64748b",
-    });
+      cancelButtonColor: "#64748b" });
 
     if (confirm.isConfirmed) {
       try {
@@ -366,8 +360,7 @@ export default function InputNilaiPage() {
           urlHapus += `&mapel_id=${mapel_id}`;
         }
         const res = await fetch(urlHapus, {
-          method: "DELETE",
-        });
+          method: "DELETE" });
         if (res.ok) {
           Swal.fire("Terhapus!", "Nilai santri berhasil dihapus.", "success");
           fetchStep2(); // Reload data
@@ -384,8 +377,7 @@ export default function InputNilaiPage() {
     // Siapkan data untuk bulk upsert
     const dataToSave = santriList.map((s) => ({
       santri_id: s.id,
-      nilai: inputData[s.id],
-    })).filter(item => 
+      nilai: inputData[s.id] })).filter(item => 
       // Filter hanya jika minimal 1 kolom terisi
       item.nilai.harian || item.nilai.kompetensi || item.nilai.sikap || item.nilai.ujian
     );
@@ -395,8 +387,7 @@ export default function InputNilaiPage() {
         icon: "warning",
         title: "Tidak Ada Nilai",
         text: "Isi minimal satu nilai terlebih dahulu sebelum menyimpan.",
-        confirmButtonColor: "var(--primary)",
-      });
+        confirmButtonColor: "var(--primary)" });
       return;
     }
 
@@ -407,8 +398,7 @@ export default function InputNilaiPage() {
       showCancelButton: true,
       confirmButtonText: "Ya, Simpan",
       cancelButtonText: "Batal",
-      confirmButtonColor: "var(--primary)",
-    });
+      confirmButtonColor: "var(--primary)" });
 
     if (!confirm.isConfirmed) return;
 
@@ -419,8 +409,7 @@ export default function InputNilaiPage() {
         kelas_id,
         semester,
         tahun_ajaran,
-        periode: periode.toLowerCase(),
-      };
+        periode: periode.toLowerCase() };
       if (isSpecialClass) {
         payload.nama_mapel_custom = namaMapelCustom;
       } else {
@@ -430,8 +419,7 @@ export default function InputNilaiPage() {
       const res = await fetch("/api/nilai", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
+        body: JSON.stringify(payload) });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error);
 
@@ -442,8 +430,7 @@ export default function InputNilaiPage() {
         icon: "success",
         title: "Nilai Tersimpan!",
         html: `<b>${data.count}</b> sel nilai berhasil disimpan/diperbarui.`,
-        confirmButtonColor: "var(--primary)",
-      });
+        confirmButtonColor: "var(--primary)" });
       fetchStep2();
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : "Terjadi kesalahan";
@@ -451,8 +438,7 @@ export default function InputNilaiPage() {
         icon: "error",
         title: "Gagal",
         text: message,
-        confirmButtonColor: "var(--primary)",
-      });
+        confirmButtonColor: "var(--primary)" });
     } finally {
       setSaving(false);
     }
@@ -512,8 +498,7 @@ export default function InputNilaiPage() {
                 fontWeight: 800,
                 fontSize: "14px",
                 boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
-                transition: "all 0.2s",
-              }}
+                transition: "all 0.2s" }}
               onClick={() => setStep(1)}
             >
               <ArrowLeft size={16} color="#550000" /> Kembali
@@ -538,8 +523,7 @@ export default function InputNilaiPage() {
             borderRadius: "24px",
             padding: "clamp(18px, 4vw, 32px)",
             boxShadow: "0 4px 20px rgba(85,0,0,0.03)",
-            border: "1px solid #ebdcc3",
-          }}
+            border: "1px solid #ebdcc3" }}
         >
           <p style={{ fontSize: "18px", fontWeight: "800", color: "#550000", margin: 0, display: "flex", alignItems: "center", gap: "10px" }}>
             <Users size={20} color="#550000" />
@@ -706,8 +690,7 @@ export default function InputNilaiPage() {
                 border: "none",
                 cursor: !kelas_id || !mapel_id ? "not-allowed" : "pointer",
                 boxShadow: !kelas_id || !mapel_id ? "none" : "0 4px 14px rgba(85, 0, 0, 0.25)",
-                transition: "all 0.2s",
-              }}
+                transition: "all 0.2s" }}
               disabled={!kelas_id || !mapel_id}
               onClick={() => {
                 if (!kelas_id || !mapel_id) {
@@ -715,8 +698,7 @@ export default function InputNilaiPage() {
                     icon: "warning",
                     title: "Parameter Belum Lengkap",
                     text: "Silakan pilih Kelas dan Mata Pelajaran terlebih dahulu.",
-                    confirmButtonColor: "var(--primary)",
-                  });
+                    confirmButtonColor: "var(--primary)" });
                   return;
                 }
                 setStep(2);

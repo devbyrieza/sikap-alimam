@@ -41,9 +41,7 @@ export async function GET(
     return new NextResponse(fileBuffer, {
       headers: {
         "Content-Type": contentType,
-        "Cache-Control": "public, max-age=31536000, immutable",
-      },
-    });
+        "Cache-Control": "public, max-age=31536000, immutable" } });
   } catch (error: any) {
     console.error("Error serving uploaded file in SIKAP:", error);
     return NextResponse.json({ error: "File tidak ditemukan" }, { status: 404 });

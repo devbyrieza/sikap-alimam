@@ -30,8 +30,7 @@ export default function ModuleTabs({ tabs }: ModuleTabsProps) {
           padding: "6px",
           borderRadius: 14,
           border: "1px solid var(--border)",
-          WebkitOverflowScrolling: "touch",
-        }}
+          WebkitOverflowScrolling: "touch" }}
       >
         {tabs.map((tab, idx) => {
           const isActive = tab.exact
@@ -56,8 +55,7 @@ export default function ModuleTabs({ tabs }: ModuleTabsProps) {
                 whiteSpace: "nowrap",
                 flexShrink: 0,
                 transition: "all 0.2s ease",
-                boxShadow: isActive ? "0 4px 12px rgba(155, 27, 34, 0.25)" : "none",
-              }}
+                boxShadow: isActive ? "0 4px 12px rgba(155, 27, 34, 0.25)" : "none" }}
               onMouseEnter={(e) => {
                 if (!isActive) {
                   e.currentTarget.style.background = "var(--primary-pale)";
@@ -78,8 +76,7 @@ export default function ModuleTabs({ tabs }: ModuleTabsProps) {
                     alignItems: "center",
                     color: isActive ? "#ffffff" : "var(--text-muted)",
                     opacity: isActive ? 1 : 0.7,
-                    transition: "color 0.2s ease",
-                  }}
+                    transition: "color 0.2s ease" }}
                 >
                   {tab.icon}
                 </span>

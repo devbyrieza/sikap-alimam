@@ -2,8 +2,7 @@
 
 import React, { useState, useEffect, useCallback } from "react";
 import {
-  ArrowLeft, Plus, X, Save, AlertCircle, FileText, Trash2, User, BookOpen, BookHeart,
-} from "lucide-react";
+  ArrowLeft, Plus, X, Save, AlertCircle, FileText, Trash2, User, BookOpen, BookHeart } from "lucide-react";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { QURAN_SURAH } from "@/lib/quran";
 import Swal from "sweetalert2";
@@ -39,8 +38,7 @@ export default function TahfidzDetailPage() {
     ayat_ke: "",
     halaman: "",
     nilai: "",
-    keterangan: "",
-  });
+    keterangan: "" });
 
   const [suratDariVerses, setSuratDariVerses] = useState<number>(7);
   const [suratKeVerses, setSuratKeVerses] = useState<number>(0);
@@ -111,8 +109,7 @@ export default function TahfidzDetailPage() {
       confirmButtonText: "Ya, Hapus!",
       cancelButtonText: "Batal",
       confirmButtonColor: "#ef4444",
-      cancelButtonColor: "#64748b",
-    });
+      cancelButtonColor: "#64748b" });
     if (confirm.isConfirmed) {
       try {
         const res = await fetch(`/api/tahfidz/mutabaah/hapus/${id}`, { method: "DELETE" });
@@ -139,9 +136,7 @@ export default function TahfidzDetailPage() {
           ...form,
           ayat_dari: String(form.ayat_dari),
           ayat_ke: form.ayat_ke ? String(form.ayat_ke) : null,
-          surat_ke: form.surat_ke || null,
-        }),
-      });
+          surat_ke: form.surat_ke || null }) });
       const data = await res.json();
       if (data.success) {
         setShowModal(false);
@@ -158,20 +153,17 @@ export default function TahfidzDetailPage() {
   const jenisColor: Record<string, { bg: string; color: string; border: string }> = {
     ziyadah: { bg: "#eff6ff", color: "#1d4ed8", border: "#bfdbfe" },
     murojaah: { bg: "#fffbeb", color: "#d97706", border: "#fde68a" },
-    tilawah: { bg: "#ecfdf5", color: "#059669", border: "#a7f3d0" },
-  };
+    tilawah: { bg: "#ecfdf5", color: "#059669", border: "#a7f3d0" } };
 
   const inputStyle: React.CSSProperties = {
     width: "100%", borderRadius: 12, border: "1.5px solid #e2e8f0",
     padding: "10px 14px", fontSize: 14, outline: "none",
     fontFamily: "inherit", color: "#1e293b", background: "#f8fafc",
-    transition: "border-color 0.2s",
-  };
+    transition: "border-color 0.2s" };
 
   const labelStyle: React.CSSProperties = {
     display: "block", fontSize: 11, fontWeight: 800, color: "#64748b",
-    textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 6,
-  };
+    textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 6 };
 
   return (
     <div className="page-container">
@@ -184,8 +176,7 @@ export default function TahfidzDetailPage() {
             border: "1.5px solid #e2e8f0", borderRadius: 14,
             display: "flex", alignItems: "center", justifyContent: "center",
             color: "#475569", cursor: "pointer", flexShrink: 0,
-            boxShadow: "0 2px 6px rgba(0,0,0,0.05)", transition: "all 0.2s",
-          }}
+            boxShadow: "0 2px 6px rgba(0,0,0,0.05)", transition: "all 0.2s" }}
           onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = "#f1f5f9"; (e.currentTarget as HTMLElement).style.transform = "translateX(-2px)"; }}
           onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = "white"; (e.currentTarget as HTMLElement).style.transform = "translateX(0)"; }}
         >
@@ -228,8 +219,7 @@ export default function TahfidzDetailPage() {
               display: "flex", alignItems: "center", gap: 8,
               fontSize: 14, boxShadow: "0 6px 18px rgba(245,158,11,0.4)",
               transition: "transform 0.2s, box-shadow 0.2s",
-              whiteSpace: "nowrap", flexShrink: 0,
-            }}
+              whiteSpace: "nowrap", flexShrink: 0 }}
             onMouseEnter={e => { (e.currentTarget as HTMLElement).style.transform = "translateY(-2px)"; (e.currentTarget as HTMLElement).style.boxShadow = "0 10px 24px rgba(245,158,11,0.5)"; }}
             onMouseLeave={e => { (e.currentTarget as HTMLElement).style.transform = "translateY(0)"; (e.currentTarget as HTMLElement).style.boxShadow = "0 6px 18px rgba(245,158,11,0.4)"; }}
           >
@@ -243,8 +233,7 @@ export default function TahfidzDetailPage() {
         background: "white", borderRadius: 20,
         border: "1.5px solid #e2e8f0",
         boxShadow: "0 4px 20px rgba(0,0,0,0.05)",
-        overflow: "hidden",
-      }}>
+        overflow: "hidden" }}>
         {/* Table header bar */}
         <div style={{ padding: "16px 24px", borderBottom: "1.5px solid #f1f5f9", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 8 }}>
           <div style={{ fontWeight: 800, color: "#1e293b", fontSize: 15, display: "flex", alignItems: "center", gap: 8 }}>
@@ -276,8 +265,7 @@ export default function TahfidzDetailPage() {
                       padding: "13px 18px", textAlign: i >= 3 && i <= 4 ? "center" : (i === 7 ? "center" : "left"),
                       fontSize: 11, fontWeight: 800, color: "#475569",
                       textTransform: "uppercase", letterSpacing: "0.06em",
-                      whiteSpace: "nowrap",
-                    }}>{h}</th>
+                      whiteSpace: "nowrap" }}>{h}</th>
                   ))}
                 </tr>
               </thead>
@@ -317,8 +305,7 @@ export default function TahfidzDetailPage() {
                               color: "#dc2626", border: "1px solid #fecaca",
                               borderRadius: 9, display: "flex", alignItems: "center",
                               justifyContent: "center", cursor: "pointer",
-                              transition: "all 0.15s", margin: "0 auto",
-                            }}
+                              transition: "all 0.15s", margin: "0 auto" }}
                             onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = "#fee2e2"; (e.currentTarget as HTMLElement).style.transform = "translateY(-1px)"; }}
                             onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = "#fef2f2"; (e.currentTarget as HTMLElement).style.transform = "translateY(0)"; }}
                           >
@@ -471,8 +458,7 @@ export default function TahfidzDetailPage() {
                   border: "none", background: "#550000", color: "white",
                   cursor: "pointer", display: "flex", alignItems: "center",
                   gap: 8, fontSize: 14, boxShadow: "0 4px 12px rgba(85,0,0,0.25)",
-                  transition: "transform 0.15s, box-shadow 0.15s",
-                }}
+                  transition: "transform 0.15s, box-shadow 0.15s" }}
                 onMouseEnter={e => { (e.currentTarget as HTMLElement).style.transform = "translateY(-1px)"; (e.currentTarget as HTMLElement).style.boxShadow = "0 8px 20px rgba(85,0,0,0.35)"; }}
                 onMouseLeave={e => { (e.currentTarget as HTMLElement).style.transform = "translateY(0)"; (e.currentTarget as HTMLElement).style.boxShadow = "0 4px 12px rgba(85,0,0,0.25)"; }}
               >

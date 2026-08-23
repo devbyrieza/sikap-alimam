@@ -29,9 +29,7 @@ async function executeSync() {
             jenis_kelamin: "L",
             kategori_pegawai: "GURU",
             jabatan: "Admin Keuangan & Guru Bahasa Inggris",
-            mata_pelajaran: "Bahasa Inggris",
-          },
-        });
+            mata_pelajaran: "Bahasa Inggris" } });
 
         pegawaiList.push(maulidin);
       } catch (e) {
@@ -111,8 +109,7 @@ async function executeSync() {
         6: { mulai: "09:00", selesai: "09:40" },
         7: { mulai: "10:00", selesai: "10:40" },
         8: { mulai: "10:40", selesai: "11:20" },
-        9: { mulai: "11:20", selesai: "12:00" },
-      };
+        9: { mulai: "11:20", selesai: "12:00" } };
       return map[jam] || { mulai: "07:00", selesai: "07:40" };
     };
 
@@ -233,9 +230,7 @@ async function executeSync() {
           kelas_id: k.id,
           pegawai_id: p.id,
           mapel_id: m.id,
-          tipe_pekan: item.pekan || "semua",
-        },
-      });
+          tipe_pekan: item.pekan || "semua" } });
 
       countCreated++;
     }
@@ -243,8 +238,7 @@ async function executeSync() {
     return NextResponse.json({
       success: true,
       message: `Berhasil menyingkronkan ${countCreated} jadwal pelajaran resmi!`,
-      countCreated,
-    });
+      countCreated });
   } catch (err: any) {
     console.error("Error syncing schedule:", err);
     return NextResponse.json({ error: err?.message || "Gagal sync jadwal" }, { status: 500 });

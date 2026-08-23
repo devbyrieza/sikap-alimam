@@ -178,8 +178,7 @@ export default function RekapNilaiPage() {
           borderRadius: "20px",
           padding: "clamp(16px, 3.5vw, 24px)",
           boxShadow: "0 2px 12px rgba(85,0,0,0.03)",
-          border: "1px solid #ebdcc3",
-        }}
+          border: "1px solid #ebdcc3" }}
       >
         <div style={{ fontSize: "15px", fontWeight: "800", color: "#550000" }}>Filter Rekap Nilai</div>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 w-full items-end">

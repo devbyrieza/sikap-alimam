@@ -11,8 +11,7 @@ export async function DELETE(req: NextRequest, { params }: { params: Promise<{ i
 
     const resolvedParams = await params;
     await prisma.presensiAsatidz.delete({
-      where: { id: resolvedParams.id },
-    });
+      where: { id: resolvedParams.id } });
     return NextResponse.json({ message: "Data presensi guru berhasil dihapus" }, { status: 200 });
   } catch (err) {
     console.error(`[DELETE /api/presensi/asatidz/[id]]`, err);

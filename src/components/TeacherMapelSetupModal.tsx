@@ -78,8 +78,7 @@ export default function TeacherMapelSetupModal({
   needsSetup = false,
   missingFields = [],
   userName = "Ustadz",
-  userRole = "guru",
-}: TeacherMapelSetupModalProps) {
+  userRole = "guru" }: TeacherMapelSetupModalProps) {
   const [isOpen, setIsOpen] = useState(needsSetup);
   const [isForced, setIsForced] = useState(needsSetup);
   const [isSaving, setIsSaving] = useState(false);
@@ -110,8 +109,7 @@ export default function TeacherMapelSetupModal({
     mata_pelajaran: initialPegawai?.mata_pelajaran || initialMapel || "",
     pendidikan_terakhir: initialPegawai?.pendidikan_terakhir || "",
     status_pernikahan: initialPegawai?.status_pernikahan || "BELUM_MENIKAH",
-    foto_url: initialPegawai?.foto_url || null as string | null,
-  });
+    foto_url: initialPegawai?.foto_url || null as string | null });
 
   const userDraftKey = useMemo(() => {
     const identifier = initialPegawai?.id || initialPegawai?.email || userName || "user";
@@ -256,8 +254,7 @@ export default function TeacherMapelSetupModal({
     setIsSaving(true);
     try {
       const res = await fetch("/api/profile", {
-        method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(formData),
-      });
+        method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(formData) });
       const json = await res.json();
       if (res.ok) {
         try {
@@ -272,8 +269,7 @@ export default function TeacherMapelSetupModal({
           html: `<p style="color:#64748b;font-size:.875rem">Jazakallahu Khairan, <b>${formData.nama_lengkap}</b>! Profil Anda telah tersimpan.</p>`,
           confirmButtonText: "Mulai Gunakan SIKAP →",
           confirmButtonColor: "#3b0a0a",
-          timer: 3500, timerProgressBar: true,
-        });
+          timer: 3500, timerProgressBar: true });
         window.location.reload();
       } else {
         Swal.fire({ icon: "error", title: "Gagal Menyimpan", text: json.error || "Terjadi kesalahan.", confirmButtonColor: "#3b0a0a" });
@@ -304,26 +300,22 @@ export default function TeacherMapelSetupModal({
             style={{
               background: "linear-gradient(145deg, #ffffff 0%, #f8fafc 100%)",
               borderRadius: "2rem",
-              boxShadow: "0 32px 80px rgba(0,0,0,0.35), 0 0 0 1px rgba(255,255,255,0.1)",
-            }}
+              boxShadow: "0 32px 80px rgba(0,0,0,0.35), 0 0 0 1px rgba(255,255,255,0.1)" }}
           >
             {/* ═══ HEADER ═══ */}
             <div
               className="relative overflow-hidden shrink-0"
               style={{
                 background: "linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%)",
-                padding: "1.5rem 2rem",
-              }}
+                padding: "1.5rem 2rem" }}
             >
               {/* Decorative mesh */}
               <div style={{
                 position: "absolute", inset: 0, opacity: 0.06,
-                backgroundImage: "radial-gradient(circle at 20% 50%, #fbbf24 0%, transparent 50%), radial-gradient(circle at 80% 20%, #fde68a 0%, transparent 40%), radial-gradient(circle at 60% 80%, #f59e0b 0%, transparent 35%)",
-              }} />
+                backgroundImage: "radial-gradient(circle at 20% 50%, #fbbf24 0%, transparent 50%), radial-gradient(circle at 80% 20%, #fde68a 0%, transparent 40%), radial-gradient(circle at 60% 80%, #f59e0b 0%, transparent 35%)" }} />
               <div style={{
                 position: "absolute", right: 0, top: 0, bottom: 0, width: "40%", opacity: 0.03,
-                backgroundImage: "repeating-linear-gradient(45deg, white 0px, white 1px, transparent 1px, transparent 20px)",
-              }} />
+                backgroundImage: "repeating-linear-gradient(45deg, white 0px, white 1px, transparent 1px, transparent 20px)" }} />
 
               {!isForced && (
                 <motion.button
@@ -346,8 +338,7 @@ export default function TeacherMapelSetupModal({
                   border: "1px solid rgba(251,191,36,0.35)",
                   display: "flex", alignItems: "center", justifyContent: "center",
                   flexShrink: 0,
-                  boxShadow: "0 0 20px rgba(251,191,36,0.15)",
-                }}>
+                  boxShadow: "0 0 20px rgba(251,191,36,0.15)" }}>
                   {isForced
                     ? <AlertTriangle size={26} style={{ color: "#fbbf24" }} />
                     : <Edit3 size={26} style={{ color: "#fbbf24" }} />
@@ -361,8 +352,7 @@ export default function TeacherMapelSetupModal({
                       padding: "2px 10px", borderRadius: "999px",
                       background: "rgba(251,191,36,0.15)", border: "1px solid rgba(251,191,36,0.3)",
                       fontSize: 10, fontWeight: 800, letterSpacing: "0.1em",
-                      color: "#fde68a", textTransform: "uppercase",
-                    }}>
+                      color: "#fde68a", textTransform: "uppercase" }}>
                       <Sparkles size={10} />
                       {isForced ? "Lengkapi Data Civitas" : "Pengaturan Profil & Mapel"}
                     </span>
@@ -393,13 +383,11 @@ export default function TeacherMapelSetupModal({
                     borderRadius: "1rem",
                     padding: "12px 16px",
                     display: "flex", alignItems: "flex-start", gap: 12,
-                    boxShadow: "0 2px 12px rgba(251,191,36,0.12)",
-                  }}
+                    boxShadow: "0 2px 12px rgba(251,191,36,0.12)" }}
                 >
                   <div style={{
                     width: 36, height: 36, borderRadius: "0.75rem", flexShrink: 0,
-                    background: "rgba(217,119,6,0.12)", display: "flex", alignItems: "center", justifyContent: "center",
-                  }}>
+                    background: "rgba(217,119,6,0.12)", display: "flex", alignItems: "center", justifyContent: "center" }}>
                     <ShieldCheck size={18} style={{ color: "#d97706" }} />
                   </div>
                   <div>
@@ -417,8 +405,7 @@ export default function TeacherMapelSetupModal({
                 border: "1px solid #e2e8f0",
                 borderRadius: "1.5rem",
                 padding: "1.25rem",
-                display: "flex", flexDirection: "column", gap: "1rem",
-              }}>
+                display: "flex", flexDirection: "column", gap: "1rem" }}>
                 <div style={{ display: "flex", gap: "1.25rem", alignItems: "flex-start", flexWrap: "wrap" }}>
                   {/* Avatar Upload */}
                   <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 10, flexShrink: 0 }}>
@@ -429,8 +416,7 @@ export default function TeacherMapelSetupModal({
                       boxShadow: "0 8px 32px rgba(59,10,10,0.2), 0 0 0 4px white, 0 0 0 5px rgba(59,10,10,0.1)",
                       overflow: "hidden",
                       background: formData.foto_url ? "transparent" : "linear-gradient(135deg, #e2e8f0, #cbd5e1)",
-                      flexShrink: 0,
-                    }}>
+                      flexShrink: 0 }}>
                       {formData.foto_url ? (
                         <img src={formData.foto_url} alt="Foto" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
                       ) : (
@@ -440,8 +426,7 @@ export default function TeacherMapelSetupModal({
                             background: "linear-gradient(135deg, #3b0a0a, #6b1111)",
                             display: "flex", alignItems: "center", justifyContent: "center",
                             fontSize: 22, fontWeight: 900, color: "white",
-                            boxShadow: "0 4px 12px rgba(59,10,10,0.4)",
-                          }}>
+                            boxShadow: "0 4px 12px rgba(59,10,10,0.4)" }}>
                             {initials}
                           </div>
                         </div>
@@ -449,8 +434,7 @@ export default function TeacherMapelSetupModal({
                       {uploadingFoto && (
                         <div style={{
                           position: "absolute", inset: 0, background: "rgba(0,0,0,0.65)",
-                          display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 6,
-                        }}>
+                          display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 6 }}>
                           <Loader2 size={20} style={{ color: "#fbbf24" }} className="animate-spin" />
                           <span style={{ fontSize: 10, color: "white", fontWeight: 700 }}>Mengunggah...</span>
                         </div>
@@ -470,8 +454,7 @@ export default function TeacherMapelSetupModal({
                           fontSize: 11, fontWeight: 700, color: "#374151",
                           display: "flex", alignItems: "center", justifyContent: "center", gap: 5,
                           cursor: "pointer", boxShadow: "0 1px 4px rgba(0,0,0,0.06)",
-                          width: "100%",
-                        }}
+                          width: "100%" }}
                       >
                         <Camera size={12} style={{ color: "#3b0a0a" }} />
                         {formData.foto_url ? "Ganti Foto" : "Upload Foto"}
@@ -484,8 +467,7 @@ export default function TeacherMapelSetupModal({
                           style={{
                             padding: "5px 0", fontSize: 10, fontWeight: 700, color: "#dc2626",
                             display: "flex", alignItems: "center", justifyContent: "center", gap: 4,
-                            background: "none", border: "none", cursor: "pointer",
-                          }}
+                            background: "none", border: "none", cursor: "pointer" }}
                         >
                           <Trash2 size={10} /> Hapus Foto
                         </button>
@@ -545,8 +527,7 @@ export default function TeacherMapelSetupModal({
                 <div style={{
                   background: "white", borderRadius: "1.25rem",
                   border: "1px solid #e2e8f0", padding: "1rem",
-                  boxShadow: "0 1px 4px rgba(0,0,0,0.04)",
-                }}>
+                  boxShadow: "0 1px 4px rgba(0,0,0,0.04)" }}>
                   <label style={{ fontSize: 11, fontWeight: 800, color: "#374151", textTransform: "uppercase", letterSpacing: "0.08em", display: "flex", alignItems: "center", gap: 6, marginBottom: 12 }}>
                     <Sparkles size={12} style={{ color: "#3b0a0a" }} />
                     Kategori Civitas
@@ -569,15 +550,13 @@ export default function TeacherMapelSetupModal({
                             border: `1.5px solid ${isSelected ? cat.color : "#e2e8f0"}`,
                             background: isSelected ? cat.bg : "white",
                             cursor: "pointer", transition: "all 0.15s",
-                            boxShadow: isSelected ? `0 0 0 3px ${cat.color}20` : "0 1px 3px rgba(0,0,0,0.05)",
-                          }}
+                            boxShadow: isSelected ? `0 0 0 3px ${cat.color}20` : "0 1px 3px rgba(0,0,0,0.05)" }}
                         >
                           <div style={{
                             width: 22, height: 22, borderRadius: "50%",
                             background: isSelected ? cat.color : "#f1f5f9",
                             display: "flex", alignItems: "center", justifyContent: "center",
-                            flexShrink: 0,
-                          }}>
+                            flexShrink: 0 }}>
                             {isSelected
                               ? <Check size={12} style={{ color: "white", strokeWidth: 3 }} />
                               : <Icon size={12} style={{ color: "#94a3b8" }} />
@@ -603,8 +582,7 @@ export default function TeacherMapelSetupModal({
                             display: "inline-flex", alignItems: "center", gap: 6,
                             padding: "3px 10px", borderRadius: "999px",
                             background: "#fef3c7", border: "1px solid #fcd34d",
-                            fontSize: 11, fontWeight: 700, color: "#92400e",
-                          }}>
+                            fontSize: 11, fontWeight: 700, color: "#92400e" }}>
                             {custom}
                             <button type="button" onClick={() => toggleKategori(custom)} style={{ color: "#d97706", cursor: "pointer", lineHeight: 1 }}>
                               <X size={10} />
@@ -624,8 +602,7 @@ export default function TeacherMapelSetupModal({
                       style={{
                         flex: 1, padding: "7px 14px", borderRadius: "999px",
                         border: "1.5px solid #e2e8f0", fontSize: 12, outline: "none",
-                        background: "#f8fafc",
-                      }}
+                        background: "#f8fafc" }}
                     />
                     <button
                       type="button"
@@ -635,8 +612,7 @@ export default function TeacherMapelSetupModal({
                         padding: "7px 16px", borderRadius: "999px",
                         background: "#1e293b", color: "white",
                         fontSize: 11, fontWeight: 700, cursor: "pointer",
-                        border: "none", opacity: customKategoriInput.trim() ? 1 : 0.4,
-                      }}
+                        border: "none", opacity: customKategoriInput.trim() ? 1 : 0.4 }}
                     >
                       + Tambah
                     </button>
@@ -654,8 +630,7 @@ export default function TeacherMapelSetupModal({
                     border: "1.5px solid #fed7aa",
                     borderRadius: "1.5rem",
                     padding: "1.25rem",
-                    boxShadow: "0 4px 20px rgba(251,146,60,0.08)",
-                  }}
+                    boxShadow: "0 4px 20px rgba(251,146,60,0.08)" }}
                 >
                   <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 14 }}>
                     <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
@@ -663,8 +638,7 @@ export default function TeacherMapelSetupModal({
                         width: 38, height: 38, borderRadius: "0.875rem",
                         background: "linear-gradient(135deg, #ea580c, #f97316)",
                         display: "flex", alignItems: "center", justifyContent: "center",
-                        boxShadow: "0 4px 12px rgba(234,88,12,0.3)",
-                      }}>
+                        boxShadow: "0 4px 12px rgba(234,88,12,0.3)" }}>
                         <BookOpen size={18} style={{ color: "white" }} />
                       </div>
                       <div>
@@ -675,8 +649,7 @@ export default function TeacherMapelSetupModal({
                     <span style={{
                       padding: "4px 12px", borderRadius: "999px",
                       background: "#dc2626", color: "white",
-                      fontSize: 10, fontWeight: 800,
-                    }}>
+                      fontSize: 10, fontWeight: 800 }}>
                       Wajib Diisi
                     </span>
                   </div>
@@ -688,14 +661,12 @@ export default function TeacherMapelSetupModal({
               <div style={{
                 background: "white", border: "1px solid #e2e8f0",
                 borderRadius: "1.5rem", padding: "1.25rem",
-                boxShadow: "0 2px 8px rgba(0,0,0,0.04)",
-              }}>
+                boxShadow: "0 2px 8px rgba(0,0,0,0.04)" }}>
                 <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 16, paddingBottom: 12, borderBottom: "1px solid #f1f5f9" }}>
                   <div style={{
                     width: 36, height: 36, borderRadius: "0.75rem",
                     background: "linear-gradient(135deg, #1e293b, #334155)",
-                    display: "flex", alignItems: "center", justifyContent: "center",
-                  }}>
+                    display: "flex", alignItems: "center", justifyContent: "center" }}>
                     <User2 size={16} style={{ color: "white" }} />
                   </div>
                   <div>
@@ -792,8 +763,7 @@ export default function TeacherMapelSetupModal({
               background: "linear-gradient(135deg, #f8fafc, #f1f5f9)",
               borderTop: "1px solid #e2e8f0",
               display: "flex", alignItems: "center", justifyContent: "space-between",
-              flexShrink: 0,
-            }}>
+              flexShrink: 0 }}>
               {!isForced ? (
                 <button
                   type="button"
@@ -803,8 +773,7 @@ export default function TeacherMapelSetupModal({
                     padding: "10px 22px", borderRadius: "0.875rem",
                     border: "1.5px solid #e2e8f0", background: "white",
                     fontSize: 13, fontWeight: 700, color: "#64748b",
-                    cursor: "pointer", transition: "all 0.15s",
-                  }}
+                    cursor: "pointer", transition: "all 0.15s" }}
                 >
                   Batal
                 </button>
@@ -826,8 +795,7 @@ export default function TeacherMapelSetupModal({
                       fontSize: 12, fontWeight: 700,
                       cursor: "pointer",
                       boxShadow: "0 1px 4px rgba(239,68,68,0.08)",
-                      opacity: (isLoggingOut || isSaving) ? 0.6 : 1,
-                    }}
+                      opacity: (isLoggingOut || isSaving) ? 0.6 : 1 }}
                   >
                     {isLoggingOut
                       ? <Loader2 size={13} className="animate-spin" />
@@ -839,8 +807,7 @@ export default function TeacherMapelSetupModal({
                   <div style={{ display: "flex", alignItems: "center", gap: 5 }}>
                     <div style={{
                       width: 22, height: 22, borderRadius: "0.5rem", flexShrink: 0,
-                      background: "#fef3c7", display: "flex", alignItems: "center", justifyContent: "center",
-                    }}>
+                      background: "#fef3c7", display: "flex", alignItems: "center", justifyContent: "center" }}>
                       <ShieldCheck size={12} style={{ color: "#d97706" }} />
                     </div>
                     <span style={{ fontSize: 11, color: "#a8a29e", fontWeight: 500, lineHeight: 1.4 }}>
@@ -864,8 +831,7 @@ export default function TeacherMapelSetupModal({
                   border: "none", cursor: "pointer",
                   boxShadow: "0 4px 16px rgba(59,10,10,0.25)",
                   opacity: (isSaving || uploadingFoto) ? 0.7 : 1,
-                  transition: "opacity 0.15s",
-                }}
+                  transition: "opacity 0.15s" }}
               >
                 {isSaving ? (
                   <>

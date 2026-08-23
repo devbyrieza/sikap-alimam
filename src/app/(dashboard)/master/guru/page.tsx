@@ -219,8 +219,7 @@ export default function MasterGuruPage() {
       const res = await fetch("/api/admin/reset-password", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ user_id: resetPwdModal.userId, new_password: resetPwdVal }),
-      });
+        body: JSON.stringify({ user_id: resetPwdModal.userId, new_password: resetPwdVal }) });
       const data = await res.json();
       if (res.ok && data.success) {
         setResetPwdModal({ open: false, userId: "", nama: "" });
@@ -246,8 +245,7 @@ export default function MasterGuruPage() {
         display: "flex", justifyContent: "space-between", alignItems: "center",
         flexWrap: "wrap", gap: 20,
         boxShadow: "0 10px 25px rgba(0,0,0,0.2)",
-        position: "relative", overflow: "hidden",
-      }}>
+        position: "relative", overflow: "hidden" }}>
         {/* Decorative circles */}
         <div style={{ position:"absolute", top:-40, right:-40, width:200, height:200, borderRadius:"50%", background:"rgba(221,193,146,0.1)", pointerEvents:"none" }} />
         <div style={{ position:"absolute", bottom:-60, right:120, width:160, height:160, borderRadius:"50%", background:"rgba(221,193,146,0.05)", pointerEvents:"none" }} />
@@ -265,14 +263,12 @@ export default function MasterGuruPage() {
         <div style={{ position:"relative", zIndex:1, display:"flex", gap:12, flexWrap:"wrap" }}>
           <button onClick={handleSync} disabled={isSyncing} style={{
             background:"rgba(255,255,255,0.1)", color:"white", border:"1px solid rgba(255,255,255,0.2)", cursor:"pointer",
-            fontWeight:700, fontSize:14, padding:"12px 22px", borderRadius:14, display:"flex", alignItems:"center", gap:8, backdropFilter:"blur(8px)", transition:"all 0.2s", whiteSpace:"nowrap",
-          }}>
+            fontWeight:700, fontSize:14, padding:"12px 22px", borderRadius:14, display:"flex", alignItems:"center", gap:8, backdropFilter:"blur(8px)", transition:"all 0.2s", whiteSpace:"nowrap" }}>
             <RefreshCw size={18} className={isSyncing ? "animate-spin" : ""} /> Sync SIMPEG
           </button>
           <button onClick={() => { setIsAdding(!isAdding); if (isAdding) { setEditingId(null); setForm(emptyForm); } }} style={{
             background:"#ddc192", color:"#3b0000", border:"none", cursor:"pointer",
-            fontWeight:800, fontSize:14, padding:"12px 22px", borderRadius:14, display:"flex", alignItems:"center", gap:8, boxShadow:"0 4px 16px rgba(221,193,146,0.3)", transition:"all 0.2s", whiteSpace:"nowrap",
-          }}>
+            fontWeight:800, fontSize:14, padding:"12px 22px", borderRadius:14, display:"flex", alignItems:"center", gap:8, boxShadow:"0 4px 16px rgba(221,193,146,0.3)", transition:"all 0.2s", whiteSpace:"nowrap" }}>
             {isAdding ? <X size={18} /> : <Plus size={18} />} {isAdding ? "Tutup Form" : "Tambah Guru"}
           </button>
         </div>
@@ -282,8 +278,7 @@ export default function MasterGuruPage() {
       {isAdding && (
         <div style={{
           background:"#ecfdf5", borderRadius:20, padding:"28px 32px",
-          border:"2px solid #a7f3d0", boxShadow:"0 4px 20px rgba(5,150,105,0.08)",
-        }}>
+          border:"2px solid #a7f3d0", boxShadow:"0 4px 20px rgba(5,150,105,0.08)" }}>
           <div style={{ display:"flex", alignItems:"center", gap:10, marginBottom:20 }}>
             <Sparkles size={20} color="#059669" />
             <h3 style={{ margin:0, fontSize:16, fontWeight:700, color:"#059669" }}>
@@ -531,8 +526,7 @@ export default function MasterGuruPage() {
                               KABID_KEDISIPLINAN: "Kabid Kedisiplinan",
                               KABID_KURIKULUM: "Kabid Kurikulum",
                               ADMIN_KEUANGAN: "Admin Keuangan",
-                              ADMIN_SUPER: "Admin Super",
-                            };
+                              ADMIN_SUPER: "Admin Super" };
                             const roleKey = r.trim().toUpperCase();
                             const labelText = roleMap[roleKey] || roleKey;
                             return (

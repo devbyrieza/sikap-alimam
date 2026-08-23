@@ -40,8 +40,7 @@ function formatPhoneNumber(phone: string): string {
  */
 export async function sendWhatsAppMessage({
   target,
-  message,
-}: WaPayload): Promise<WablasResponse> {
+  message }: WaPayload): Promise<WablasResponse> {
   if (!WABLAS_DOMAIN || !WABLAS_TOKEN) {
     console.warn("⚠️ Wablas credentials not configured in .env");
     // Fallback mock for development if credentials are not set
@@ -75,10 +74,8 @@ export async function sendWhatsAppMessage({
       method: "POST",
       headers: {
         Authorization: authToken,
-        "Content-Type": "application/x-www-form-urlencoded",
-      },
-      body: formData.toString(),
-    });
+        "Content-Type": "application/x-www-form-urlencoded" },
+      body: formData.toString() });
 
     const rawText = await response.text();
     let data;
@@ -88,16 +85,14 @@ export async function sendWhatsAppMessage({
       console.error("❌ Wablas Non-JSON Response:", rawText);
       return {
         status: false,
-        message: `Wablas Error: ${response.status} ${response.statusText}`,
-      };
+        message: `Wablas Error: ${response.status} ${response.statusText}` };
     }
 
     if (!response.ok || !data.status) {
       console.error("❌ Wablas API Error:", data);
       return {
         status: false,
-        message: data.message || `Wablas Failed: ${response.status}`,
-      };
+        message: data.message || `Wablas Failed: ${response.status}` };
     }
 
     return { status: true, message: "Message sent successfully", data };

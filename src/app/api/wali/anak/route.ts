@@ -9,8 +9,7 @@ export async function GET() {
       where: { is_active: true },
       include: { kelas: true },
       orderBy: { nama_lengkap: "asc" },
-      take: 10,
-    });
+      take: 10 });
 
     const data = await Promise.all(
       santriList.map(async (s) => {
@@ -23,8 +22,7 @@ export async function GET() {
           jenjang: s.kelas?.jenjang || "MTs",
           foto_url: s.foto_url,
           spp: sppInfo,
-          lunas: sppInfo.lunas,
-        };
+          lunas: sppInfo.lunas };
       })
     );
 

@@ -27,13 +27,11 @@ export async function GET(req: NextRequest) {
       include: {
         kelas: true,
         pegawai: true,
-        mapel: true,
-      },
+        mapel: true },
       orderBy: [
         { hari: 'asc' }, // In real app, you might want to map string days to integer for correct sorting
         { jam_ke: 'asc' },
-      ],
-    });
+      ] });
 
     return NextResponse.json(jadwal);
   } catch (error) {

@@ -117,14 +117,12 @@ export default function IbadahHarianPage() {
       const payload = {
         tanggal,
         pegawai_id: "user-pegawai-123", // Should be from session
-        data,
-      };
+        data };
 
       const res = await fetch("/api/ibadah", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
+        body: JSON.stringify(payload) });
 
       if (res.ok) {
         // Hapus draft karena sudah tersimpan di server
@@ -135,8 +133,7 @@ export default function IbadahHarianPage() {
           title: "Berhasil!",
           text: "Ceklist Ibadah Harian berhasil disimpan.",
           icon: "success",
-          confirmButtonColor: "#3085d6",
-        });
+          confirmButtonColor: "#3085d6" });
       } else {
         throw new Error("Gagal menyimpan");
       }
@@ -145,8 +142,7 @@ export default function IbadahHarianPage() {
       Swal.fire({
         title: "Error!",
         text: "Gagal menyimpan data ke server.",
-        icon: "error",
-      });
+        icon: "error" });
     } finally {
       setSaving(false);
     }

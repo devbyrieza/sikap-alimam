@@ -15,11 +15,7 @@ export async function GET(req: NextRequest) {
         _count: {
           select: {
             santri: true,
-            MataPelajaran: true,
-          },
-        },
-      },
-    });
+            MataPelajaran: true } } } });
 
     const kelas = normalizeKelasList(rawKelas);
 
@@ -53,10 +49,7 @@ export async function POST(req: NextRequest) {
       where: {
         nama: {
           equals: trimmedNama,
-          mode: "insensitive",
-        },
-      },
-    });
+          mode: "insensitive" } } });
 
     if (existing) {
       return NextResponse.json(
@@ -70,18 +63,13 @@ export async function POST(req: NextRequest) {
         nama: trimmedNama,
         jenjang: jenjang || "MTs",
         is_active: is_active ?? true,
-        wali_kelas_id: wali_kelas_id || null,
-      },
+        wali_kelas_id: wali_kelas_id || null },
       include: {
         wali_kelas: { select: { id: true, nama_lengkap: true } },
         _count: {
           select: {
             santri: true,
-            MataPelajaran: true,
-          },
-        },
-      },
-    });
+            MataPelajaran: true } } } });
 
     return NextResponse.json({ success: true, kelas: newKelas }, { status: 201 });
   } catch (err: any) {

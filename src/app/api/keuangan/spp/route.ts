@@ -35,14 +35,11 @@ export async function GET(req: NextRequest) {
       include: {
         kelas: { select: { id: true, nama: true, jenjang: true } },
         pembayaran_spp: {
-          where: { bulan, tahun },
-        },
-      },
+          where: { bulan, tahun } } },
       orderBy: [
         { kelas: { nama: "asc" } },
         { nama_lengkap: "asc" },
-      ],
-    });
+      ] });
 
     const todayDate = now.getDate();
     const isCurrentMonth = bulan === (now.getMonth() + 1) && tahun === now.getFullYear();
@@ -80,9 +77,7 @@ export async function GET(req: NextRequest) {
           lock_status: lockStatus,
           tanggal_bayar: spp?.tanggal_bayar ? spp.tanggal_bayar.toISOString().split("T")[0] : null,
           metode_bayar: spp?.metode_bayar || "transfer",
-          catatan: spp?.catatan || "",
-        },
-      };
+          catatan: spp?.catatan || "" } };
     });
 
     // Filter status jika diminta
@@ -115,10 +110,8 @@ export async function GET(req: NextRequest) {
         total_terkunci: totalTerkunci,
         total_terkumpul: totalTerkumpul,
         total_tunggakan: totalTunggakan,
-        persentase: totalSantri > 0 ? Math.round((totalLunas / totalSantri) * 100) : 0,
-      },
-      data: filteredData,
-    });
+        persentase: totalSantri > 0 ? Math.round((totalLunas / totalSantri) * 100) : 0 },
+      data: filteredData });
   } catch (error: any) {
     console.error("Error in GET /api/keuangan/spp:", error);
     return NextResponse.json({ error: error.message || "Internal server error" }, { status: 500 });
@@ -154,9 +147,7 @@ export async function POST(req: NextRequest) {
         santri_id_bulan_tahun: {
           santri_id,
           bulan: Number(bulan),
-          tahun: Number(tahun),
-        },
-      },
+          tahun: Number(tahun) } },
       create: {
         santri_id,
         bulan: Number(bulan),
@@ -165,22 +156,18 @@ export async function POST(req: NextRequest) {
         nominal: Number(nominal) || 1500000,
         tanggal_bayar: tgl,
         metode_bayar: metode_bayar || "transfer",
-        catatan: catatan || null,
-      },
+        catatan: catatan || null },
       update: {
         status: status || "belum_lunas",
         nominal: nominal !== undefined ? Number(nominal) : undefined,
         tanggal_bayar: tgl,
         metode_bayar: metode_bayar || "transfer",
-        catatan: catatan !== undefined ? catatan : undefined,
-      },
-    });
+        catatan: catatan !== undefined ? catatan : undefined } });
 
     return NextResponse.json({
       success: true,
       message: `Status SPP santri berhasil diubah menjadi ${status === "lunas" ? "LUNAS" : "BELUM LUNAS"}`,
-      data: record,
-    });
+      data: record });
   } catch (error: any) {
     console.error("Error in POST /api/keuangan/spp:", error);
     return NextResponse.json({ error: error.message || "Internal server error" }, { status: 500 });

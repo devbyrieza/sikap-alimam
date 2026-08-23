@@ -8,8 +8,7 @@ export async function POST() {
     // 1. Connect to the OLD office schema
     const OLD_DB_URL = "postgresql://user_office:password_rahasia_office123@ucso0wo8gg8owc880w8sco44:5432/postgres?schema=office";
     const oldPrisma = new PrismaClient({
-      datasourceUrl: OLD_DB_URL,
-    });
+      datasourceUrl: OLD_DB_URL });
 
     // 2. Fetch all Pegawai and their associated Users from old DB
     // (Assuming they have the exact same Prisma Schema in the old DB)
@@ -31,8 +30,7 @@ export async function POST() {
           password: oldU.password,
           nama: oldU.nama,
           role: oldU.role,
-          is_active: oldU.is_active,
-        },
+          is_active: oldU.is_active },
         create: {
           id: oldU.id,
           email: oldU.email,
@@ -40,8 +38,7 @@ export async function POST() {
           nama: oldU.nama,
           role: oldU.role,
           is_active: oldU.is_active,
-          created_at: oldU.created_at,
-        }
+          created_at: oldU.created_at }
       });
     }
 
@@ -57,8 +54,7 @@ export async function POST() {
           unit_kerja: oldP.unit_kerja,
           divisi: oldP.divisi,
           mata_pelajaran: oldP.mata_pelajaran,
-          foto_url: oldP.foto_url,
-        },
+          foto_url: oldP.foto_url },
         create: {
           id: oldP.id,
           user_id: oldP.user_id,
@@ -70,8 +66,7 @@ export async function POST() {
           mata_pelajaran: oldP.mata_pelajaran,
           foto_url: oldP.foto_url,
           created_at: oldP.created_at,
-          updated_at: oldP.updated_at,
-        }
+          updated_at: oldP.updated_at }
       });
       successCount++;
     }

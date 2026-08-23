@@ -11,8 +11,7 @@ export async function DELETE(req: NextRequest, { params }: { params: Promise<{ i
 
     const resolvedParams = await params;
     await prisma.nilaiSantri.delete({
-      where: { id: resolvedParams.id },
-    });
+      where: { id: resolvedParams.id } });
     return NextResponse.json({ message: "Data nilai santri berhasil dihapus" }, { status: 200 });
   } catch (err) {
     console.error(`[DELETE /api/nilai/[id]]`, err);

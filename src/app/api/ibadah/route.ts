@@ -22,26 +22,19 @@ export async function GET(req: NextRequest) {
     const santriList = await prisma.santriAktif.findMany({
       where: {
         kelas_id,
-        is_active: true,
-      },
+        is_active: true },
       select: {
         id: true,
-        nama_lengkap: true,
-      },
+        nama_lengkap: true },
       orderBy: {
-        nama_lengkap: "asc",
-      },
-    });
+        nama_lengkap: "asc" } });
 
     // Ambil data ibadah santri pada tanggal tersebut
     const ibadahData = await prisma.ibadahAdabSantri.findMany({
       where: {
         tanggal,
         santri_id: {
-          in: santriList.map((s) => s.id),
-        },
-      },
-    });
+          in: santriList.map((s) => s.id) } } });
 
     // Gabungkan data
     const result = santriList.map((santri) => {
@@ -61,8 +54,7 @@ export async function GET(req: NextRequest) {
         almatsurat: ibadah?.almatsurat || false,
         adab_kamar: ibadah?.adab_kamar || "",
         adab_masjid: ibadah?.adab_masjid || "",
-        catatan: ibadah?.catatan || "",
-      };
+        catatan: ibadah?.catatan || "" };
     });
 
     return NextResponse.json(result);
@@ -96,9 +88,7 @@ export async function POST(req: NextRequest) {
           where: {
             santri_id_tanggal: {
               santri_id: item.santri_id,
-              tanggal,
-            },
-          },
+              tanggal } },
           update: {
             pegawai_id,
             shubuh: item.shubuh,
@@ -112,8 +102,7 @@ export async function POST(req: NextRequest) {
             almatsurat: item.almatsurat,
             adab_kamar: item.adab_kamar,
             adab_masjid: item.adab_masjid,
-            catatan: item.catatan,
-          },
+            catatan: item.catatan },
           create: {
             santri_id: item.santri_id,
             pegawai_id,
@@ -129,9 +118,7 @@ export async function POST(req: NextRequest) {
             almatsurat: item.almatsurat,
             adab_kamar: item.adab_kamar,
             adab_masjid: item.adab_masjid,
-            catatan: item.catatan,
-          },
-        })
+            catatan: item.catatan } })
       )
     );
 

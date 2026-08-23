@@ -25,9 +25,7 @@ export async function syncScheduleFromPDF() {
             jenis_kelamin: "L",
             kategori_pegawai: "GURU",
             jabatan: "Admin Keuangan & Guru Bahasa Inggris",
-            mata_pelajaran: "Bahasa Inggris",
-          },
-        });
+            mata_pelajaran: "Bahasa Inggris" } });
 
         pegawaiList.push(maulidin);
       } catch (e) {
@@ -107,8 +105,7 @@ export async function syncScheduleFromPDF() {
         6: { mulai: "09:00", selesai: "09:40" },
         7: { mulai: "10:00", selesai: "10:40" },
         8: { mulai: "10:40", selesai: "11:20" },
-        9: { mulai: "11:20", selesai: "12:00" },
-      };
+        9: { mulai: "11:20", selesai: "12:00" } };
       return map[jam] || { mulai: "07:00", selesai: "07:40" };
     };
 
@@ -227,9 +224,7 @@ export async function syncScheduleFromPDF() {
           kelas_id: k.id,
           pegawai_id: p.id,
           mapel_id: m.id,
-          tipe_pekan: item.pekan || "semua",
-        },
-      });
+          tipe_pekan: item.pekan || "semua" } });
 
       countCreated++;
     }

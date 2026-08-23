@@ -21,9 +21,7 @@ export async function GET(req: NextRequest) {
       include: {
         pegawai: { select: { id: true, nama_lengkap: true } },
         mapel: { select: { id: true, nama: true } },
-        kelas: { select: { id: true, nama: true } },
-      },
-    });
+        kelas: { select: { id: true, nama: true } } } });
 
     return NextResponse.json({ data: jurnal });
   } catch (err) {
@@ -68,9 +66,7 @@ export async function POST(req: NextRequest) {
         sub_materi: sub_materi || null,
         learning_outcome: learning_outcome || null,
         kegiatan,
-        catatan: catatan || null,
-      },
-    });
+        catatan: catatan || null } });
 
     return NextResponse.json({ data: jurnal }, { status: 201 });
   } catch (err) {

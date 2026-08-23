@@ -17,8 +17,7 @@ export async function POST(req: Request) {
           password: u.password,
           nama: u.nama,
           role: u.role,
-          is_active: u.is_active,
-        },
+          is_active: u.is_active },
         create: {
           id: u.id,
           email: u.email,
@@ -26,8 +25,7 @@ export async function POST(req: Request) {
           nama: u.nama,
           role: u.role,
           is_active: u.is_active,
-          created_at: u.created_at,
-        }
+          created_at: u.created_at }
       });
     }
 
@@ -42,8 +40,7 @@ export async function POST(req: Request) {
           unit_kerja: p.unit_kerja,
           divisi: p.divisi,
           mata_pelajaran: p.mata_pelajaran,
-          foto_url: p.foto_url,
-        },
+          foto_url: p.foto_url },
         create: {
           id: p.id,
           user_id: p.user_id,
@@ -55,8 +52,7 @@ export async function POST(req: Request) {
           mata_pelajaran: p.mata_pelajaran,
           foto_url: p.foto_url,
           created_at: p.created_at,
-          updated_at: p.updated_at,
-        }
+          updated_at: p.updated_at }
       });
       count++;
     }

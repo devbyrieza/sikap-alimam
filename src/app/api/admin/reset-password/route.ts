@@ -45,8 +45,7 @@ export async function POST(req: NextRequest) {
     // Pastikan user target ada
     const targetUser = await prisma.user.findUnique({
       where: { id: user_id },
-      include: { pegawai: { select: { nama_lengkap: true } } },
-    });
+      include: { pegawai: { select: { nama_lengkap: true } } } });
 
     if (!targetUser) {
       return NextResponse.json({ error: "Akun tidak ditemukan" }, { status: 404 });
@@ -58,15 +57,13 @@ export async function POST(req: NextRequest) {
     // Update password
     await prisma.user.update({
       where: { id: user_id },
-      data: { password: hashedPassword },
-    });
+      data: { password: hashedPassword } });
 
     const targetNama = targetUser.pegawai?.nama_lengkap ?? targetUser.nama;
 
     return NextResponse.json({
       success: true,
-      message: `Password akun ${targetNama} berhasil diubah oleh Admin Super.`,
-    });
+      message: `Password akun ${targetNama} berhasil diubah oleh Admin Super.` });
   } catch (error: any) {
     console.error("[ADMIN_RESET_PASSWORD]", error);
     return NextResponse.json(

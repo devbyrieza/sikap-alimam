@@ -41,19 +41,14 @@ export async function GET(request: Request) {
     const kelompok = await prisma.halaqohKelompok.findMany({
       where: {
         ...(pegawai_id && { pegawai_id }),
-        ...(sesi && { sesi }),
-      },
+        ...(sesi && { sesi }) },
       include: {
         pegawai: { select: { nama_lengkap: true } },
         anggota: {
           include: {
             santri: {
               include: { kelas: true }
-            },
-          },
-        },
-      },
-    });
+            } } } } });
     return NextResponse.json(kelompok);
 
 
@@ -75,9 +70,7 @@ export async function POST(request: Request) {
         pegawai_id,
         kelas_id,
         nama_kelompok,
-        sesi,
-      },
-    });
+        sesi } });
     return NextResponse.json(newKelompok);
   } catch (error) {
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });

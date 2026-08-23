@@ -12,8 +12,7 @@ import {
   MessageSquare,
   CheckCircle2,
   User,
-  Sparkles,
-} from "lucide-react";
+  Sparkles } from "lucide-react";
 
 export interface JurnalDetailData {
   id: string;
@@ -45,8 +44,7 @@ function formatTanggalLengkap(iso: string) {
     weekday: "long",
     day: "numeric",
     month: "long",
-    year: "numeric",
-  });
+    year: "numeric" });
 }
 
 const JAM_WAKTU: Record<string, { mulai: string, selesai: string }> = {
@@ -60,8 +58,7 @@ const JAM_WAKTU: Record<string, { mulai: string, selesai: string }> = {
   "8": { mulai: "10:20", selesai: "11:00" },
   "9": { mulai: "11:00", selesai: "11:40" },
   "10": { mulai: "13:00", selesai: "13:40" },
-  "11": { mulai: "13:40", selesai: "14:20" },
-};
+  "11": { mulai: "13:40", selesai: "14:20" } };
 
 function getDurasiJam(jamStr: string) {
   if (!jamStr || jamStr === "-" || jamStr.toLowerCase() === "khusus") return "";
@@ -123,8 +120,7 @@ export default function JurnalDetailModal({ data, onClose, isOpen, isAdminSuper 
           maxHeight: "92vh",
           borderRadius: "24px",
           background: "#ffffff",
-          boxShadow: "0 20px 70px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,0.1)",
-        }}
+          boxShadow: "0 20px 70px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,0.1)" }}
         onClick={(e) => e.stopPropagation()}
       >
         {/* Sticky Top Bar (Close button & sticky title indicator) */}
@@ -138,8 +134,7 @@ export default function JurnalDetailModal({ data, onClose, isOpen, isAdminSuper 
             justifyContent: "space-between",
             gap: 12,
             zIndex: 20,
-            flexShrink: 0,
-          }}
+            flexShrink: 0 }}
         >
           <div style={{ display: "flex", alignItems: "center", gap: 8, overflow: "hidden" }}>
             <span style={{ fontSize: 11, fontWeight: 800, color: "#ddc192", textTransform: "uppercase", letterSpacing: "0.08em", whiteSpace: "nowrap" }}>
@@ -165,8 +160,7 @@ export default function JurnalDetailModal({ data, onClose, isOpen, isAdminSuper 
               alignItems: "center",
               justifyContent: "center",
               cursor: "pointer",
-              flexShrink: 0,
-            }}
+              flexShrink: 0 }}
           >
             <X size={15} />
           </button>
@@ -186,8 +180,7 @@ export default function JurnalDetailModal({ data, onClose, isOpen, isAdminSuper 
                 position: "absolute",
                 right: -20,
                 bottom: -20,
-                opacity: 0.06,
-              }}
+                opacity: 0.06 }}
             >
               <BookOpen size={140} color="white" />
             </div>
@@ -207,8 +200,7 @@ export default function JurnalDetailModal({ data, onClose, isOpen, isAdminSuper 
                   fontWeight: 800,
                   color: "#fff",
                   letterSpacing: "0.06em",
-                  textTransform: "uppercase",
-                }}
+                  textTransform: "uppercase" }}
               >
                 <Sparkles size={11} style={{ color: "#fbbf24" }} />
                 Jurnal KBM Harian
@@ -225,8 +217,7 @@ export default function JurnalDetailModal({ data, onClose, isOpen, isAdminSuper 
                   border: "1px solid rgba(134,239,172,0.3)",
                   fontSize: 11,
                   fontWeight: 700,
-                  color: "#86efac",
-                }}
+                  color: "#86efac" }}
               >
                 <CheckCircle2 size={11} />
                 Terverifikasi
@@ -241,8 +232,7 @@ export default function JurnalDetailModal({ data, onClose, isOpen, isAdminSuper 
                 color: "#ffffff",
                 lineHeight: 1.25,
                 marginBottom: 4,
-                letterSpacing: "-0.02em",
-              }}
+                letterSpacing: "-0.02em" }}
             >
               {namaMapelBersih}
             </h2>
@@ -255,8 +245,7 @@ export default function JurnalDetailModal({ data, onClose, isOpen, isAdminSuper 
                 color: "rgba(255,255,255,0.85)",
                 fontSize: 13,
                 fontWeight: 500,
-                marginBottom: 14,
-              }}
+                marginBottom: 14 }}
             >
               <Calendar size={14} style={{ color: "#ddc192", flexShrink: 0 }} />
               <span>{formatTanggalLengkap(displayData.tanggal)}</span>
@@ -273,8 +262,7 @@ export default function JurnalDetailModal({ data, onClose, isOpen, isAdminSuper 
                   padding: "10px 14px",
                   borderRadius: 14,
                   background: "rgba(0,0,0,0.25)",
-                  border: "1px solid rgba(255,255,255,0.12)",
-                }}
+                  border: "1px solid rgba(255,255,255,0.12)" }}
               >
                 <div style={{ display: "flex", alignItems: "center", gap: 6, color: "rgba(255,255,255,0.95)", fontSize: 13, fontWeight: 700 }}>
                   <GraduationCap size={15} style={{ color: "#fbbf24", flexShrink: 0 }} />
@@ -298,8 +286,7 @@ export default function JurnalDetailModal({ data, onClose, isOpen, isAdminSuper 
                   padding: "10px 14px",
                   borderRadius: 14,
                   background: "rgba(0,0,0,0.25)",
-                  border: "1px solid rgba(255,255,255,0.12)",
-                }}
+                  border: "1px solid rgba(255,255,255,0.12)" }}
               >
                 <div
                   style={{
@@ -314,8 +301,7 @@ export default function JurnalDetailModal({ data, onClose, isOpen, isAdminSuper 
                     color: "#fff",
                     fontWeight: 900,
                     fontSize: 14,
-                    flexShrink: 0,
-                  }}
+                    flexShrink: 0 }}
                 >
                   {displayData.asatidz.charAt(0)}
                 </div>
@@ -327,8 +313,7 @@ export default function JurnalDetailModal({ data, onClose, isOpen, isAdminSuper 
                       color: "rgba(255,255,255,0.55)",
                       textTransform: "uppercase",
                       letterSpacing: "0.08em",
-                      marginBottom: 2,
-                    }}
+                      marginBottom: 2 }}
                   >
                     Guru Pengampu
                   </div>
@@ -351,16 +336,14 @@ export default function JurnalDetailModal({ data, onClose, isOpen, isAdminSuper 
               borderRadius: 20,
               border: "1px solid #e2e8f0",
               padding: "18px 20px",
-              boxShadow: "0 1px 4px rgba(0,0,0,0.05)",
-            }}
+              boxShadow: "0 1px 4px rgba(0,0,0,0.05)" }}
           >
             <div
               style={{
                 display: "flex",
                 alignItems: "center",
                 gap: 8,
-                marginBottom: 12,
-              }}
+                marginBottom: 12 }}
             >
               <div
                 style={{
@@ -371,8 +354,7 @@ export default function JurnalDetailModal({ data, onClose, isOpen, isAdminSuper 
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
-                  flexShrink: 0,
-                }}
+                  flexShrink: 0 }}
               >
                 <BookOpen size={16} style={{ color: "#9b1b22" }} />
               </div>
@@ -383,8 +365,7 @@ export default function JurnalDetailModal({ data, onClose, isOpen, isAdminSuper 
                     fontWeight: 800,
                     color: "#9b1b22",
                     textTransform: "uppercase",
-                    letterSpacing: "0.08em",
-                  }}
+                    letterSpacing: "0.08em" }}
                 >
                   Topik & Materi Pembelajaran
                 </div>
@@ -396,8 +377,7 @@ export default function JurnalDetailModal({ data, onClose, isOpen, isAdminSuper 
                 fontWeight: 800,
                 color: "#0f172a",
                 lineHeight: 1.5,
-                margin: 0,
-              }}
+                margin: 0 }}
             >
               {displayData.materi || "-"}
             </p>
@@ -410,16 +390,14 @@ export default function JurnalDetailModal({ data, onClose, isOpen, isAdminSuper 
               borderRadius: 20,
               border: "1px solid #bbf7d0",
               padding: "18px 20px",
-              boxShadow: "0 1px 4px rgba(0,0,0,0.04)",
-            }}
+              boxShadow: "0 1px 4px rgba(0,0,0,0.04)" }}
           >
             <div
               style={{
                 display: "flex",
                 alignItems: "center",
                 gap: 8,
-                marginBottom: 12,
-              }}
+                marginBottom: 12 }}
             >
               <div
                 style={{
@@ -430,8 +408,7 @@ export default function JurnalDetailModal({ data, onClose, isOpen, isAdminSuper 
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
-                  flexShrink: 0,
-                }}
+                  flexShrink: 0 }}
               >
                 <Target size={16} style={{ color: "#15803d" }} />
               </div>
@@ -441,8 +418,7 @@ export default function JurnalDetailModal({ data, onClose, isOpen, isAdminSuper 
                   fontWeight: 800,
                   color: "#15803d",
                   textTransform: "uppercase",
-                  letterSpacing: "0.08em",
-                }}
+                  letterSpacing: "0.08em" }}
               >
                 Tujuan Pembelajaran (Learning Objective)
               </div>
@@ -453,8 +429,7 @@ export default function JurnalDetailModal({ data, onClose, isOpen, isAdminSuper 
                 fontWeight: 500,
                 color: "#14532d",
                 lineHeight: 1.65,
-                margin: 0,
-              }}
+                margin: 0 }}
             >
               {formattedLO}
             </p>
@@ -467,16 +442,14 @@ export default function JurnalDetailModal({ data, onClose, isOpen, isAdminSuper 
               borderRadius: 20,
               border: "1px solid #e2e8f0",
               padding: "18px 20px",
-              boxShadow: "0 1px 4px rgba(0,0,0,0.05)",
-            }}
+              boxShadow: "0 1px 4px rgba(0,0,0,0.05)" }}
           >
             <div
               style={{
                 display: "flex",
                 alignItems: "center",
                 gap: 8,
-                marginBottom: 12,
-              }}
+                marginBottom: 12 }}
             >
               <div
                 style={{
@@ -487,8 +460,7 @@ export default function JurnalDetailModal({ data, onClose, isOpen, isAdminSuper 
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
-                  flexShrink: 0,
-                }}
+                  flexShrink: 0 }}
               >
                 <FileText size={16} style={{ color: "#0369a1" }} />
               </div>
@@ -498,8 +470,7 @@ export default function JurnalDetailModal({ data, onClose, isOpen, isAdminSuper 
                   fontWeight: 800,
                   color: "#0369a1",
                   textTransform: "uppercase",
-                  letterSpacing: "0.08em",
-                }}
+                  letterSpacing: "0.08em" }}
               >
                 Aktivitas & Langkah Pembelajaran
               </div>
@@ -511,8 +482,7 @@ export default function JurnalDetailModal({ data, onClose, isOpen, isAdminSuper 
                 color: "#334155",
                 lineHeight: 1.7,
                 margin: 0,
-                whiteSpace: "pre-wrap",
-              }}
+                whiteSpace: "pre-wrap" }}
             >
               {displayData.kegiatan ||
                 "Guru menyampaikan penjelasan materi secara interaktif, tanya jawab santri, dan evaluasi pemahaman di kelas."}
@@ -527,16 +497,14 @@ export default function JurnalDetailModal({ data, onClose, isOpen, isAdminSuper 
                 borderRadius: 20,
                 border: "1px solid #fde68a",
                 padding: "18px 20px",
-                boxShadow: "0 1px 4px rgba(0,0,0,0.04)",
-              }}
+                boxShadow: "0 1px 4px rgba(0,0,0,0.04)" }}
             >
               <div
                 style={{
                   display: "flex",
                   alignItems: "center",
                   gap: 8,
-                  marginBottom: 12,
-                }}
+                  marginBottom: 12 }}
               >
                 <div
                   style={{
@@ -547,8 +515,7 @@ export default function JurnalDetailModal({ data, onClose, isOpen, isAdminSuper 
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
-                    flexShrink: 0,
-                  }}
+                    flexShrink: 0 }}
                 >
                   <MessageSquare size={16} style={{ color: "#b45309" }} />
                 </div>
@@ -558,8 +525,7 @@ export default function JurnalDetailModal({ data, onClose, isOpen, isAdminSuper 
                     fontWeight: 800,
                     color: "#b45309",
                     textTransform: "uppercase",
-                    letterSpacing: "0.08em",
-                  }}
+                    letterSpacing: "0.08em" }}
                 >
                   Catatan Khusus / Evaluasi Guru
                 </div>
@@ -571,8 +537,7 @@ export default function JurnalDetailModal({ data, onClose, isOpen, isAdminSuper 
                   color: "#78350f",
                   lineHeight: 1.65,
                   fontStyle: "italic",
-                  margin: 0,
-                }}
+                  margin: 0 }}
               >
                 &ldquo;{displayData.catatan}&rdquo;
               </p>
@@ -587,8 +552,7 @@ export default function JurnalDetailModal({ data, onClose, isOpen, isAdminSuper 
               justifyContent: "space-between",
               padding: "10px 4px",
               fontSize: 11,
-              color: "#94a3b8",
-            }}
+              color: "#94a3b8" }}
           >
             <span>
               ID Dokumen:{" "}
@@ -611,8 +575,7 @@ export default function JurnalDetailModal({ data, onClose, isOpen, isAdminSuper 
             alignItems: "center",
             justifyContent: "space-between",
             gap: 12,
-            flexShrink: 0,
-          }}
+            flexShrink: 0 }}
         >
           <div
             style={{
@@ -621,8 +584,7 @@ export default function JurnalDetailModal({ data, onClose, isOpen, isAdminSuper 
               gap: 6,
               fontSize: 12,
               fontWeight: 700,
-              color: "#16a34a",
-            }}
+              color: "#16a34a" }}
           >
             <CheckCircle2 size={15} style={{ color: "#16a34a" }} />
             <span>SIAKAD Al-Imam</span>
@@ -636,8 +598,7 @@ export default function JurnalDetailModal({ data, onClose, isOpen, isAdminSuper 
                 padding: "10px 24px",
                 borderRadius: 14,
                 fontWeight: 800,
-                fontSize: 14,
-              }}
+                fontSize: 14 }}
             >
               Edit Jurnal
             </a>
@@ -695,8 +656,7 @@ export default function JurnalDetailModal({ data, onClose, isOpen, isAdminSuper 
                 borderRadius: 14,
                 fontWeight: 800,
                 fontSize: 14,
-                boxShadow: "0 4px 16px rgba(155, 27, 34, 0.3)",
-              }}
+                boxShadow: "0 4px 16px rgba(155, 27, 34, 0.3)" }}
             >
               Tutup Detail
             </button>

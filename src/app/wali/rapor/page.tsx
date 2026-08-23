@@ -30,8 +30,7 @@ import {
   PhoneCall,
   ShieldCheck,
   AlertTriangle,
-  ArrowRight,
-} from "lucide-react";
+  ArrowRight } from "lucide-react";
 import Swal from "sweetalert2";
 import JurnalDetailModal from "@/components/JurnalDetailModal";
 
@@ -80,15 +79,13 @@ export default function RaporWaliPage() {
       showCancelButton: true,
       confirmButtonText: "Kirim Sekarang",
       cancelButtonText: "Batal",
-      confirmButtonColor: "#9b1b22",
-    }).then(async (result) => {
+      confirmButtonColor: "#9b1b22" }).then(async (result) => {
       if (result.isConfirmed) {
         Swal.fire({
           title: "Mengirim Notifikasi...",
           text: "Menghubungkan ke gateway WhatsApp Pesantren Al-Imam",
           allowOutsideClick: false,
-          didOpen: () => Swal.showLoading(),
-        });
+          didOpen: () => Swal.showLoading() });
 
         setTimeout(() => {
           Swal.fire("Laporan Terkirim!", `Ringkasan capaian santri telah berhasil diteruskan ke nomor WhatsApp Anda.`, "success");
@@ -104,8 +101,7 @@ export default function RaporWaliPage() {
       weekday: "short",
       day: "numeric",
       month: "short",
-      year: "numeric",
-    });
+      year: "numeric" });
   };
 
   // Group Academic Scores by Mapel
@@ -126,8 +122,7 @@ export default function RaporWaliPage() {
           hasHarian: false,
           hasKomp: false,
           hasSikap: false,
-          hasUjian: false,
-        });
+          hasUjian: false });
       }
       const item = map.get(n.mapel_id);
       const val = Number(n.nilai) || 0;
@@ -163,8 +158,7 @@ export default function RaporWaliPage() {
       return {
         ...item,
         nilaiAkhir: naNum !== null ? naNum.toFixed(1) : null,
-        predikat,
-      };
+        predikat };
     });
   }, [data]);
 
@@ -371,8 +365,7 @@ export default function RaporWaliPage() {
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
-                  gap: 8,
-                }}
+                  gap: 8 }}
               >
                 <PhoneCall size={16} />
                 <span>Konfirmasi ke Admin Keuangan (WhatsApp)</span>
@@ -384,8 +377,7 @@ export default function RaporWaliPage() {
                   padding: "12px 20px",
                   borderRadius: "16px",
                   fontWeight: 700,
-                  fontSize: "14px",
-                }}
+                  fontSize: "14px" }}
               >
                 Kembali ke Menu Utama
               </a>

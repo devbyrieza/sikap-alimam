@@ -28,8 +28,7 @@ export async function GET() {
     const [rawKelas, rawAsatidz, allMapel, rawAsatidzmMapel] = await Promise.all([
       prisma.kelas.findMany({ 
         where: { is_active: true },
-        select: { id: true, nama: true, jenjang: true },
-      }),
+        select: { id: true, nama: true, jenjang: true } }),
       prisma.pegawai.findMany({
         where: {
           OR: [
@@ -41,19 +40,15 @@ export async function GET() {
             { jabatan: { contains: "Asatidz", mode: "insensitive" } },
             { jabatan: { contains: "Ustadz", mode: "insensitive" } },
             { mata_pelajaran: { not: null } },
-          ],
-        },
+          ] },
         orderBy: { nama_lengkap: "asc" },
-        select: { id: true, nama_lengkap: true, jabatan: true, mata_pelajaran: true },
-      }),
+        select: { id: true, nama_lengkap: true, jabatan: true, mata_pelajaran: true } }),
       prisma.mataPelajaran.findMany({ 
         where: { is_active: true },
         orderBy: { nama: "asc" },
-        select: { id: true, nama: true, kelas_id: true, kategori: true },
-      }),
+        select: { id: true, nama: true, kelas_id: true, kategori: true } }),
       prisma.asatidzmMapel.findMany({
-        select: { pegawai_id: true, mapel_id: true, kelas_id: true },
-      }),
+        select: { pegawai_id: true, mapel_id: true, kelas_id: true } }),
     ]);
 
     const { kelas, asatidzmMapel, mapelByKelas } = normalizeMasterData(
@@ -68,8 +63,7 @@ export async function GET() {
     if (asatidz.length === 0) {
       asatidz = await prisma.pegawai.findMany({
         orderBy: { nama_lengkap: "asc" },
-        select: { id: true, nama_lengkap: true, jabatan: true, mata_pelajaran: true },
-      });
+        select: { id: true, nama_lengkap: true, jabatan: true, mata_pelajaran: true } });
     }
 
     const formattedAsatidz = asatidz.map(a => ({

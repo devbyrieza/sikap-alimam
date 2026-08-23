@@ -52,20 +52,17 @@ export async function GET() {
     
     await prisma.mataPelajaran.createMany({
       data: [...mapel7Data, ...mapelILData],
-      skipDuplicates: true,
-    });
+      skipDuplicates: true });
 
     const santriData = SANTRI_MTS.map(s => ({
       nis: s.nis || null,
       nama_lengkap: s.nama,
       kelas_id: kelas7!.id,
-      jenis_kelamin: s.jk,
-    }));
+      jenis_kelamin: s.jk }));
 
     await prisma.santriAktif.createMany({
       data: santriData,
-      skipDuplicates: true,
-    });
+      skipDuplicates: true });
 
     const ASATIDZ = [
       "Agus Cahyono", "Wahyudi Pranata, Lc.", "Imron Abdillah", "Ramdan",
@@ -86,8 +83,7 @@ export async function GET() {
             email,
             password: hashedPass,
             nama: asatidz,
-            role: "GURU",
-          }
+            role: "GURU" }
         });
       }
     }

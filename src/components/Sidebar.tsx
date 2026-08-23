@@ -33,38 +33,32 @@ const NAV: NavItem[] = [
   {
     href: "/dashboard",
     label: "Dashboard",
-    icon: <LayoutDashboard size={18} />,
-  },
+    icon: <LayoutDashboard size={18} /> },
   {
     href: "/keuangan",
     label: "Keuangan",
     icon: <CreditCard size={18} />,
-    roles: ["admin_keuangan", "ADMIN_KEUANGAN", "admin_super", "ADMIN_SUPER", "mudir", "MUDIR"],
-  },
+    roles: ["admin_keuangan", "ADMIN_KEUANGAN", "admin_super", "ADMIN_SUPER", "mudir", "MUDIR"] },
   {
     href: "/presensi/santri",
     label: "Presensi Santri",
     icon: <ClipboardCheck size={18} />,
-    roles: ["guru", "GURU", "wali_kelas", "WALI_KELAS", "kabid_kedisiplinan", "KABID_KEDISIPLINAN", "kabid_kurikulum", "KABID_KURIKULUM", "kepala_sekolah", "KEPALA_SEKOLAH", "admin_super", "ADMIN_SUPER", "mudir", "MUDIR"],
-  },
+    roles: ["guru", "GURU", "wali_kelas", "WALI_KELAS", "kabid_kedisiplinan", "KABID_KEDISIPLINAN", "kabid_kurikulum", "KABID_KURIKULUM", "kepala_sekolah", "KEPALA_SEKOLAH", "admin_super", "ADMIN_SUPER", "mudir", "MUDIR"] },
   {
     href: "/jurnal",
     label: "Jurnal Mengajar",
     icon: <BookMarked size={18} />,
-    roles: ["guru", "GURU", "kabid_kurikulum", "KABID_KURIKULUM", "kepala_sekolah", "KEPALA_SEKOLAH", "admin_super", "ADMIN_SUPER", "mudir", "MUDIR"],
-  },
+    roles: ["guru", "GURU", "kabid_kurikulum", "KABID_KURIKULUM", "kepala_sekolah", "KEPALA_SEKOLAH", "admin_super", "ADMIN_SUPER", "mudir", "MUDIR"] },
   {
     href: "/nilai",
     label: "Input Nilai",
     icon: <BarChart3 size={18} />,
-    roles: ["guru", "GURU", "wali_kelas", "WALI_KELAS", "kabid_kurikulum", "KABID_KURIKULUM", "kepala_sekolah", "KEPALA_SEKOLAH", "admin_super", "ADMIN_SUPER", "mudir", "MUDIR"],
-  },
+    roles: ["guru", "GURU", "wali_kelas", "WALI_KELAS", "kabid_kurikulum", "KABID_KURIKULUM", "kepala_sekolah", "KEPALA_SEKOLAH", "admin_super", "ADMIN_SUPER", "mudir", "MUDIR"] },
   {
     href: "/wali-kelas",
     label: "Hub Wali Kelas",
     icon: <Users size={18} />,
-    roles: ["wali_kelas", "WALI_KELAS", "kabid_kurikulum", "KABID_KURIKULUM", "kepala_sekolah", "KEPALA_SEKOLAH", "admin_super", "ADMIN_SUPER", "mudir", "MUDIR"],
-  },
+    roles: ["wali_kelas", "WALI_KELAS", "kabid_kurikulum", "KABID_KURIKULUM", "kepala_sekolah", "KEPALA_SEKOLAH", "admin_super", "ADMIN_SUPER", "mudir", "MUDIR"] },
   {
     href: "/halaqoh",
     label: "Halaqoh & Mutabaah",
@@ -79,20 +73,17 @@ const NAV: NavItem[] = [
       "kabid_kurikulum", "KABID_KURIKULUM",
       "admin_super", "ADMIN_SUPER",
       "mudir", "MUDIR",
-    ],
-  },
+    ] },
   {
     href: "/presensi/asatidz",
     label: "Absensi Guru",
     icon: <UserCheck size={18} />,
-    roles: ["guru", "GURU", "wali_kelas", "WALI_KELAS", "kepala_sekolah", "KEPALA_SEKOLAH", "kabid_kurikulum", "KABID_KURIKULUM", "kabid_pengasuhan", "KABID_PENGASUHAN", "admin_super", "ADMIN_SUPER", "mudir", "MUDIR"],
-  },
+    roles: ["guru", "GURU", "wali_kelas", "WALI_KELAS", "kepala_sekolah", "KEPALA_SEKOLAH", "kabid_kurikulum", "KABID_KURIKULUM", "kabid_pengasuhan", "KABID_PENGASUHAN", "admin_super", "ADMIN_SUPER", "mudir", "MUDIR"] },
   {
     href: "/master",
     label: "Master Data",
     icon: <Database size={18} />,
-    roles: ["admin_super", "ADMIN_SUPER", "mudir", "MUDIR"],
-  },
+    roles: ["admin_super", "ADMIN_SUPER", "mudir", "MUDIR"] },
 ];
 
 interface SidebarProps {
@@ -136,8 +127,7 @@ export default function Sidebar({ user }: SidebarProps) {
       KABID_KEDISIPLINAN: "Kabid Kedisiplinan",
       KABID_KURIKULUM: "Kabid Kurikulum",
       ADMIN_KEUANGAN: "Admin Keuangan",
-      WALI_SANTRI: "Wali Santri",
-    };
+      WALI_SANTRI: "Wali Santri" };
     
     return roleStr
       .toUpperCase()
@@ -161,8 +151,7 @@ export default function Sidebar({ user }: SidebarProps) {
           paddingLeft: "18px",
           paddingRight: "14px",
           background: "#ffffff",
-          borderBottom: "1px solid var(--border)",
-        }}
+          borderBottom: "1px solid var(--border)" }}
       >
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
           <div
@@ -176,8 +165,7 @@ export default function Sidebar({ user }: SidebarProps) {
               justifyContent: "center",
               flexShrink: 0,
               boxShadow: "0 2px 8px rgba(85, 0, 0, 0.35)",
-              border: "1px solid rgba(221, 193, 146, 0.3)",
-            }}
+              border: "1px solid rgba(221, 193, 146, 0.3)" }}
           >
             <GraduationCap size={22} color="#ddc192" />
           </div>
@@ -204,8 +192,7 @@ export default function Sidebar({ user }: SidebarProps) {
             alignItems: "center",
             justifyContent: "center",
             flexShrink: 0,
-            transition: "all 0.15s ease",
-          }}
+            transition: "all 0.15s ease" }}
           aria-label="Tutup Menu"
         >
           <X size={18} />
@@ -223,8 +210,7 @@ export default function Sidebar({ user }: SidebarProps) {
             onClick={() => setMobileOpen(false)}
             style={{
               transform: isActive(item.href) ? "none" : undefined,
-              transition: "all 0.18s cubic-bezier(0.34, 1.56, 0.64, 1)",
-            }}
+              transition: "all 0.18s cubic-bezier(0.34, 1.56, 0.64, 1)" }}
           >
             {item.icon}
             {item.label}
@@ -239,8 +225,7 @@ export default function Sidebar({ user }: SidebarProps) {
             display: "flex",
             alignItems: "center",
             gap: 10,
-            marginBottom: 12,
-          }}
+            marginBottom: 12 }}
         >
           {user?.foto_url ? (
             <img
@@ -270,8 +255,7 @@ export default function Sidebar({ user }: SidebarProps) {
                 flexShrink: 0,
                 fontSize: 14,
                 fontWeight: 800,
-                color: "#550000",
-              }}
+                color: "#550000" }}
             >
               {((user?.nama) || "U").charAt(0).toUpperCase()}
             </div>
@@ -284,8 +268,7 @@ export default function Sidebar({ user }: SidebarProps) {
                 color: "#550000",
                 overflow: "hidden",
                 textOverflow: "ellipsis",
-                whiteSpace: "nowrap",
-              }}
+                whiteSpace: "nowrap" }}
             >
               {user?.nama || "User"}
             </p>
@@ -296,8 +279,7 @@ export default function Sidebar({ user }: SidebarProps) {
                 fontWeight: (user?.role || "").toUpperCase().includes("ADMIN") ? 700 : 500,
                 overflow: "hidden",
                 textOverflow: "ellipsis",
-                whiteSpace: "nowrap",
-              }}
+                whiteSpace: "nowrap" }}
             >
               {formatRoleDisplay(user?.role || "")}
             </p>
@@ -385,8 +367,7 @@ export default function Sidebar({ user }: SidebarProps) {
           padding: "0 16px",
           alignItems: "center",
           justifyContent: "space-between",
-          boxShadow: "0 2px 12px rgba(85,0,0,0.25)",
-        }}
+          boxShadow: "0 2px 12px rgba(85,0,0,0.25)" }}
         className="mobile-header"
       >
         <span
@@ -402,8 +383,7 @@ export default function Sidebar({ user }: SidebarProps) {
             color: "white",
             cursor: "pointer",
             display: "flex",
-            padding: 4,
-          }}
+            padding: 4 }}
         >
           {mobileOpen ? <X size={22} /> : <Menu size={22} />}
         </button>
@@ -425,8 +405,7 @@ export default function Sidebar({ user }: SidebarProps) {
               background: "rgba(15, 23, 42, 0.65)",
               backdropFilter: "blur(6px)",
               WebkitBackdropFilter: "blur(6px)",
-              zIndex: 1000,
-            }}
+              zIndex: 1000 }}
           />
           <aside
             className="app-sidebar"
@@ -443,8 +422,7 @@ export default function Sidebar({ user }: SidebarProps) {
               background: "#ffffff",
               boxShadow: "10px 0 40px rgba(0,0,0,0.35)",
               display: "flex",
-              flexDirection: "column",
-            }}
+              flexDirection: "column" }}
           >
             <SidebarContent />
           </aside>

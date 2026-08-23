@@ -75,8 +75,7 @@ export default function AbsenPage() {
         icon: 'error',
         title: 'GPS Tidak Didukung',
         text: 'Browser Anda tidak mendukung GPS.',
-        confirmButtonColor: '#7c1010',
-      });
+        confirmButtonColor: '#7c1010' });
       return;
     }
     setGpsLoading(true);
@@ -90,8 +89,7 @@ export default function AbsenPage() {
           text: `Lat: ${pos.coords.latitude.toFixed(6)}, Lng: ${pos.coords.longitude.toFixed(6)}`,
           confirmButtonColor: '#7c1010',
           timer: 2000,
-          showConfirmButton: false,
-        });
+          showConfirmButton: false });
       },
       (err) => {
         setGpsLoading(false);
@@ -99,8 +97,7 @@ export default function AbsenPage() {
           icon: 'warning',
           title: 'GPS Gagal',
           text: err.message,
-          confirmButtonColor: '#7c1010',
-        });
+          confirmButtonColor: '#7c1010' });
       },
       { enableHighAccuracy: true, timeout: 15000 }
     );
@@ -122,8 +119,7 @@ export default function AbsenPage() {
         icon: 'warning',
         title: 'Pilih Nama',
         text: 'Silakan pilih nama Anda terlebih dahulu.',
-        confirmButtonColor: '#7c1010',
-      });
+        confirmButtonColor: '#7c1010' });
       return;
     }
 
@@ -142,9 +138,7 @@ export default function AbsenPage() {
           asatidz_id: selectedAsatidz,
           lat: gpsCoords?.lat ?? null,
           lng: gpsCoords?.lng ?? null,
-          foto_url,
-        }),
-      });
+          foto_url }) });
 
       const data = await res.json();
 
@@ -153,8 +147,7 @@ export default function AbsenPage() {
           icon: 'error',
           title: 'Gagal Absen',
           text: data.error,
-          confirmButtonColor: '#7c1010',
-        });
+          confirmButtonColor: '#7c1010' });
       } else {
         setSuccessData(data);
       }
@@ -163,8 +156,7 @@ export default function AbsenPage() {
         icon: 'error',
         title: 'Error',
         text: 'Terjadi kesalahan. Coba lagi.',
-        confirmButtonColor: '#7c1010',
-      });
+        confirmButtonColor: '#7c1010' });
     } finally {
       setSubmitting(false);
     }
@@ -176,8 +168,7 @@ export default function AbsenPage() {
       weekday: 'long',
       year: 'numeric',
       month: 'long',
-      day: 'numeric',
-    });
+      day: 'numeric' });
   };
 
   const formatJam = (dateStr: string) => {
@@ -192,8 +183,7 @@ export default function AbsenPage() {
     alignItems: 'center',
     justifyContent: 'center',
     padding: '20px',
-    fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif",
-  };
+    fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif" };
 
   // Loading state
   if (loading) {
@@ -209,8 +199,7 @@ export default function AbsenPage() {
                 borderColor: 'rgba(124,16,16,0.2)',
                 width: 40,
                 height: 40,
-                borderWidth: 3,
-              }}
+                borderWidth: 3 }}
             />
           </div>
           <p style={{ color: '#6b7280', fontWeight: 600 }}>Memverifikasi link absensi...</p>
@@ -247,8 +236,7 @@ export default function AbsenPage() {
               border: '1px solid #fecaca',
               borderRadius: 12,
               padding: '16px 20px',
-              textAlign: 'center',
-            }}
+              textAlign: 'center' }}
           >
             <p style={{ fontSize: 14, color: '#b91c1c', fontWeight: 500 }}>
               Silakan hubungi Admin untuk mendapatkan link absensi yang valid.
@@ -280,8 +268,7 @@ export default function AbsenPage() {
                 margin: '0 auto 16px',
                 boxShadow: isHadir
                   ? '0 8px 24px rgba(22,163,74,0.4)'
-                  : '0 8px 24px rgba(217,119,6,0.4)',
-              }}
+                  : '0 8px 24px rgba(217,119,6,0.4)' }}
               className="animate-pulse-ring"
             >
               <svg width="40" height="40" fill="none" viewBox="0 0 24 24">
@@ -309,8 +296,7 @@ export default function AbsenPage() {
               padding: '20px 24px',
               display: 'flex',
               flexDirection: 'column',
-              gap: 14,
-            }}
+              gap: 14 }}
           >
             <div
               style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
@@ -354,8 +340,7 @@ export default function AbsenPage() {
         weekday: 'long',
         year: 'numeric',
         month: 'long',
-        day: 'numeric',
-      });
+        day: 'numeric' });
 
   return (
     <div style={pageStyle}>
@@ -385,8 +370,7 @@ export default function AbsenPage() {
               marginTop: 8,
               fontSize: 13,
               fontWeight: 600,
-              color: '#7c1010',
-            }}
+              color: '#7c1010' }}
           >
             {today}
           </div>
@@ -428,8 +412,7 @@ export default function AbsenPage() {
                 className="spinner"
                 style={{
                   borderTopColor: '#7c1010',
-                  borderColor: 'rgba(124,16,16,0.2)',
-                }}
+                  borderColor: 'rgba(124,16,16,0.2)' }}
               />
             ) : (
               <svg width="18" height="18" fill="none" viewBox="0 0 24 24">
@@ -453,8 +436,7 @@ export default function AbsenPage() {
                 borderRadius: 8,
                 fontSize: 13,
                 color: '#15803d',
-                fontWeight: 600,
-              }}
+                fontWeight: 600 }}
             >
               <svg
                 width="14"
@@ -515,8 +497,7 @@ export default function AbsenPage() {
                   objectFit: 'cover',
                   borderRadius: 12,
                   border: '2px solid #e5e2db',
-                  boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
-                }}
+                  boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
               />
             </div>
           )}
@@ -529,8 +510,7 @@ export default function AbsenPage() {
             width: '100%',
             justifyContent: 'center',
             marginTop: 8,
-            background: 'linear-gradient(135deg, #7c1010, #a31515)',
-          }}
+            background: 'linear-gradient(135deg, #7c1010, #a31515)' }}
           onClick={handleSubmit}
           disabled={submitting || !selectedAsatidz}
         >

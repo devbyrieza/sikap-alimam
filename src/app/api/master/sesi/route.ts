@@ -7,8 +7,7 @@ const prisma = new PrismaClient();
 export async function GET() {
   try {
     const sesi = await prisma.masterSesiWaktu.findMany({
-      orderBy: { jam_ke: 'asc' },
-    });
+      orderBy: { jam_ke: 'asc' } });
     return NextResponse.json(sesi);
   } catch (error) {
     console.error("Error fetching sesi waktu:", error);
@@ -27,9 +26,7 @@ export async function POST(req: NextRequest) {
         jam_ke: parseInt(jam_ke),
         waktu_mulai,
         waktu_selesai,
-        durasi_menit: parseInt(durasi_menit) || 40,
-      },
-    });
+        durasi_menit: parseInt(durasi_menit) || 40 } });
 
     return NextResponse.json(newSesi, { status: 201 });
   } catch (error: any) {

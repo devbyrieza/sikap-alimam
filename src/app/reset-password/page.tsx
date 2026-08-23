@@ -44,8 +44,7 @@ function ResetPasswordForm() {
       const res = await fetch("/api/auth/reset-password", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ token, newPassword }),
-      });
+        body: JSON.stringify({ token, newPassword }) });
 
       const data = await res.json();
 
@@ -57,8 +56,7 @@ function ResetPasswordForm() {
           icon: "success",
           title: "Berhasil",
           text: "Kata sandi Anda telah berhasil diubah!",
-          confirmButtonColor: "var(--primary)",
-        }).then(() => {
+          confirmButtonColor: "var(--primary)" }).then(() => {
           router.push("/login");
         });
       }

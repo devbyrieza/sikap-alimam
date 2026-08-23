@@ -9,8 +9,7 @@ export async function GET() {
 
     // 1. Dapatkan referensi kelas 11 MA dan 12 MA dengan pencarian yang lebih fleksibel
     let kelas11 = await prisma.kelas.findFirst({
-      where: { nama: { contains: "11", mode: "insensitive" } },
-    });
+      where: { nama: { contains: "11", mode: "insensitive" } } });
     
     if (!kelas11) {
       kelas11 = await prisma.kelas.create({
@@ -19,8 +18,7 @@ export async function GET() {
     }
 
     let kelas12 = await prisma.kelas.findFirst({
-      where: { nama: { contains: "12", mode: "insensitive" } },
-    });
+      where: { nama: { contains: "12", mode: "insensitive" } } });
 
     if (!kelas12) {
       kelas12 = await prisma.kelas.create({
@@ -67,8 +65,7 @@ export async function GET() {
               where: { id: anggota.santri.id },
               data: {
                 nama_lengkap: target.updateName,
-                kelas_id: target.classId,
-              }
+                kelas_id: target.classId }
             });
             updateLogs.push(`Updated ${santriName} -> ${target.updateName} (Kelas: ${target.classId === kelas11.id ? '11 MA' : '12 MA'})`);
             break; // lanjut ke anggota berikutnya
@@ -109,8 +106,7 @@ export async function GET() {
         await prisma.halaqohAnggota.create({
           data: {
             kelompok_id: group.id,
-            santri_id: pandi.id,
-          }
+            santri_id: pandi.id }
         });
         updateLogs.push(`Added Pandi Rianto to group: ${group.nama_kelompok}`);
       }

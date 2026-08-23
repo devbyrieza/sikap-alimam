@@ -15,16 +15,14 @@ export default function RealtimeClock() {
         day: "numeric",
         month: "long",
         year: "numeric",
-        timeZone: "Asia/Jakarta",
-      });
+        timeZone: "Asia/Jakarta" });
 
       const jam = now.toLocaleTimeString("id-ID", {
         hour: "2-digit",
         minute: "2-digit",
         second: "2-digit",
         hour12: false,
-        timeZone: "Asia/Jakarta",
-      }).replace(/:/g, ".");
+        timeZone: "Asia/Jakarta" }).replace(/:/g, ".");
 
       setTimeState({ tanggal, jam });
     };

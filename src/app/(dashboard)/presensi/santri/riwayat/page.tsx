@@ -70,8 +70,7 @@ const STATUS_CONFIG: Record<string, { label: string; color: string; bg: string; 
   hadir: { label: "Hadir", color: "#15803d", bg: "#f0fdf4", border: "#bbf7d0", icon: CheckCircle2 },
   sakit: { label: "Sakit", color: "#1d4ed8", bg: "#eff6ff", border: "#bfdbfe", icon: AlertCircle },
   izin: { label: "Izin", color: "#d97706", bg: "#fffbeb", border: "#fde68a", icon: Clock },
-  alpha: { label: "Alpha", color: "#b91c1c", bg: "#fef2f2", border: "#fecaca", icon: XCircle },
-};
+  alpha: { label: "Alpha", color: "#b91c1c", bg: "#fef2f2", border: "#fecaca", icon: XCircle } };
 
 export default function RiwayatPresensiSantriPage() {
   const [kelasList, setKelasList] = useState<KelasItem[]>([]);
@@ -466,24 +465,21 @@ export default function RiwayatPresensiSantriPage() {
                         color: "#64748b",
                         bg: "#f8fafc",
                         border: "#e2e8f0",
-                        icon: CheckCircle2,
-                      };
+                        icon: CheckCircle2 };
                       const Icon = st.icon;
                       const dateObj = new Date(p.tanggal);
                       const formattedDate = dateObj.toLocaleDateString("id-ID", {
                         weekday: "long",
                         day: "numeric",
                         month: "long",
-                        year: "numeric",
-                      });
+                        year: "numeric" });
 
                       return (
                         <tr
                           key={p.id}
                           style={{
                             borderBottom: "1px solid #f5ede1",
-                            background: idx % 2 === 0 ? "white" : "#fdfcf9",
-                          }}
+                            background: idx % 2 === 0 ? "white" : "#fdfcf9" }}
                         >
                           <td style={{ padding: "14px 16px", color: "#550000", fontWeight: 700 }}>
                             {idx + 1}
@@ -503,8 +499,7 @@ export default function RiwayatPresensiSantriPage() {
                                 borderRadius: 20,
                                 background: st.bg,
                                 color: st.color,
-                                border: `1px solid ${st.border}`,
-                              }}
+                                border: `1px solid ${st.border}` }}
                             >
                               <Icon size={14} />
                               {st.label}

@@ -23,8 +23,7 @@ export async function POST(req: NextRequest) {
     // Cari token
     const resetToken = await prisma.passwordResetToken.findUnique({
       where: { token },
-      include: { user: true },
-    });
+      include: { user: true } });
 
     if (!resetToken) {
       return NextResponse.json(
@@ -54,18 +53,15 @@ export async function POST(req: NextRequest) {
     await prisma.$transaction([
       prisma.user.update({
         where: { id: resetToken.user_id },
-        data: { password: hashedPassword },
-      }),
+        data: { password: hashedPassword } }),
       prisma.passwordResetToken.update({
         where: { id: resetToken.id },
-        data: { used: true },
-      }),
+        data: { used: true } }),
     ]);
 
     return NextResponse.json({
       success: true,
-      message: "Kata sandi berhasil direset",
-    });
+      message: "Kata sandi berhasil direset" });
   } catch (error: any) {
     console.error("[RESET_PASSWORD]", error);
     return NextResponse.json(

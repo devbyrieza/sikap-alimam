@@ -9,8 +9,7 @@ import {
   Users,
   CheckCircle,
   BookOpen,
-  Lightbulb,
-} from "lucide-react";
+  Lightbulb } from "lucide-react";
 
 type Kelas = { id: string; nama: string; jenjang: string | null };
 
@@ -71,8 +70,7 @@ export default function TahfidzPage() {
           icon: "error",
           title: "Gagal memuat data",
           text: "Tidak dapat mengambil data master kelas.",
-          confirmButtonColor: "var(--primary)",
-        });
+          confirmButtonColor: "var(--primary)" });
       });
   }, []);
 
@@ -99,8 +97,7 @@ export default function TahfidzPage() {
         JSON.stringify({
           kelas: selectedKelas,
           tanggal: tanggal,
-          data: inputData,
-        })
+          data: inputData })
       );
     }
   }, [inputData, selectedKelas, tanggal]);
@@ -145,8 +142,7 @@ export default function TahfidzPage() {
             halaman: c.halaman || "",
             ayat: c.ayat || "",
             nilai: c.nilai ? String(c.nilai) : "",
-            keterangan: c.keterangan || "",
-          };
+            keterangan: c.keterangan || "" };
         } else if (!map[s.id]) {
           map[s.id] = {
             jenis: "",
@@ -154,8 +150,7 @@ export default function TahfidzPage() {
             halaman: "",
             ayat: "",
             nilai: "",
-            keterangan: "",
-          };
+            keterangan: "" };
         }
       });
       setInputData(map);
@@ -165,8 +160,7 @@ export default function TahfidzPage() {
         icon: "error",
         title: "Error",
         text: message,
-        confirmButtonColor: "var(--primary)",
-      });
+        confirmButtonColor: "var(--primary)" });
     } finally {
       setLoadingSantri(false);
     }
@@ -183,9 +177,7 @@ export default function TahfidzPage() {
       ...prev,
       [santriId]: {
         ...prev[santriId],
-        [field]: value,
-      },
-    }));
+        [field]: value } }));
   };
 
   const handleSimpan = async () => {
@@ -195,16 +187,14 @@ export default function TahfidzPage() {
       .filter(([_, data]) => data.jenis && data.surat.trim() !== "")
       .map(([santriId, data]) => ({
         santri_id: santriId,
-        ...data,
-      }));
+        ...data }));
 
     if (validDataToSave.length === 0) {
       Swal.fire({
         icon: "warning",
         title: "Belum ada data",
         text: "Silakan isi minimal 'Jenis Setoran' dan 'Nama Surat' untuk beberapa santri sebelum menyimpan.",
-        confirmButtonColor: "#0f172a",
-      });
+        confirmButtonColor: "#0f172a" });
       return;
     }
 
@@ -216,8 +206,7 @@ export default function TahfidzPage() {
       confirmButtonColor: "#0f172a",
       cancelButtonColor: "#9ca3af",
       confirmButtonText: "Ya, Simpan",
-      cancelButtonText: "Batal",
-    });
+      cancelButtonText: "Batal" });
 
     if (!confirm.isConfirmed) return;
 
@@ -229,9 +218,7 @@ export default function TahfidzPage() {
         body: JSON.stringify({
           asatidz_id: "00000000-0000-0000-0000-000000000000",
           tanggal,
-          data: validDataToSave,
-        }),
-      });
+          data: validDataToSave }) });
 
       const json = await res.json();
       if (!res.ok) throw new Error(json.message || "Gagal menyimpan");
@@ -243,12 +230,10 @@ export default function TahfidzPage() {
         position: "top-end",
         showConfirmButton: false,
         timer: 3000,
-        timerProgressBar: true,
-      });
+        timerProgressBar: true });
       Toast.fire({
         icon: "success",
-        title: "Capaian tahfidz berhasil disimpan!",
-      });
+        title: "Capaian tahfidz berhasil disimpan!" });
       
       loadTahfidz();
     } catch (err: unknown) {
@@ -257,8 +242,7 @@ export default function TahfidzPage() {
         icon: "error",
         title: "Gagal Menyimpan",
         text: message,
-        confirmButtonColor: "#0f172a",
-      });
+        confirmButtonColor: "#0f172a" });
     } finally {
       setSaving(false);
     }
@@ -421,8 +405,7 @@ export default function TahfidzPage() {
                         style={{
                           borderBottom: "1px solid #f1f5f9",
                           background: isFilled ? "rgba(16, 185, 129, 0.05)" : (idx % 2 === 0 ? "white" : "#fafafa"),
-                          transition: "background 0.2s ease-in-out",
-                        }}
+                          transition: "background 0.2s ease-in-out" }}
                       >
                         <td style={{ padding: "16px 20px", fontSize: 14, color: "#64748b" }}>
                           {idx + 1}

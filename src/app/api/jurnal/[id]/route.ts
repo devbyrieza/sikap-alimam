@@ -19,9 +19,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
         sub_materi: sub_materi || null,
         learning_outcome: learning_outcome || null,
         kegiatan,
-        catatan: catatan || null,
-      },
-    });
+        catatan: catatan || null } });
 
     return NextResponse.json({ data: jurnal }, { status: 200 });
   } catch (err) {
@@ -34,8 +32,7 @@ export async function DELETE(req: NextRequest, { params }: { params: Promise<{ i
   try {
     const resolvedParams = await params;
     await prisma.jurnalMengajar.delete({
-      where: { id: resolvedParams.id },
-    });
+      where: { id: resolvedParams.id } });
     return NextResponse.json({ message: "Jurnal berhasil dihapus" }, { status: 200 });
   } catch (err) {
     console.error(`[DELETE /api/jurnal]`, err);
@@ -47,8 +44,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
   try {
     const resolvedParams = await params;
     const jurnal = await prisma.jurnalMengajar.findUnique({
-      where: { id: resolvedParams.id },
-    });
+      where: { id: resolvedParams.id } });
     
     if (!jurnal) {
       return NextResponse.json({ error: "Jurnal tidak ditemukan" }, { status: 404 });

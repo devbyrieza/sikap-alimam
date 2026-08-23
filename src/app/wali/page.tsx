@@ -115,8 +115,7 @@ export default function WaliDashboard() {
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "center",
-                      gap: 8,
-                    }}
+                      gap: 8 }}
                   >
                     <span className="flex items-center gap-2">{anak.lunas ? "Buka Rapor & Rekap Lengkap" : <><Lock className="w-4 h-4" /> Lihat Status Tagihan SPP</>}</span>
                     <ChevronRight size={16} />
@@ -134,8 +133,7 @@ export default function WaliDashboard() {
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "center",
-                        gap: 6,
-                      }}
+                        gap: 6 }}
                     >
                       <Printer size={15} />
                       <span>Cetak PDF</span>

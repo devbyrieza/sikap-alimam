@@ -30,8 +30,7 @@ export async function POST(req: NextRequest) {
       nama: session.nama,
       role: targetRole,
       originalRole: originalRole,
-      asatidz_id: session.asatidz_id,
-    });
+      asatidz_id: session.asatidz_id });
 
     return NextResponse.json({ success: true, role: targetRole });
   } catch (err) {

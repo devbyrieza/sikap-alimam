@@ -49,8 +49,7 @@ export async function PATCH(req: NextRequest) {
     where: { id: user_id },
     data: {
       spp_access_blocked: !!spp_access_blocked,
-      spp_blocked_reason: spp_access_blocked ? (spp_blocked_reason || null) : null,
-    },
+      spp_blocked_reason: spp_access_blocked ? (spp_blocked_reason || null) : null },
     select: { id: true, nama: true, spp_access_blocked: true, spp_blocked_reason: true }
   });
 

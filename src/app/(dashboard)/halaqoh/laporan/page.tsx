@@ -52,8 +52,7 @@ export default function LaporanHalaqohPage() {
         bulan: String(bulan),
         tahun: String(tahun),
         pekan_ke: String(pekanKe),
-        periode,
-      });
+        periode });
       const res = await fetch(`/api/halaqoh/laporan?${params.toString()}`);
       const data = await res.json();
       setReport(data);
@@ -76,13 +75,11 @@ export default function LaporanHalaqohPage() {
   const selectStyle: React.CSSProperties = {
     width: "100%", borderRadius: 13, border: "1.5px solid #e2e8f0",
     padding: "11px 14px", fontSize: 13, fontWeight: 700, outline: "none",
-    background: "#fdf8f0", color: "#1e293b", appearance: "none", cursor: "pointer",
-  };
+    background: "#fdf8f0", color: "#1e293b", appearance: "none", cursor: "pointer" };
 
   const labelStyle: React.CSSProperties = {
     display: "block", fontSize: 11, fontWeight: 800, color: "#64748b",
-    textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 6,
-  };
+    textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 6 };
 
   return (
     <div className="page-container">
@@ -103,8 +100,7 @@ export default function LaporanHalaqohPage() {
             style={{
               width: 40, height: 40, background: "white", border: "1.5px solid #e2e8f0",
               borderRadius: 13, display: "flex", alignItems: "center", justifyContent: "center",
-              color: "#475569", textDecoration: "none", boxShadow: "0 2px 6px rgba(0,0,0,0.04)",
-            }}
+              color: "#475569", textDecoration: "none", boxShadow: "0 2px 6px rgba(0,0,0,0.04)" }}
           >
             <ArrowLeft size={18} />
           </Link>
@@ -136,8 +132,7 @@ export default function LaporanHalaqohPage() {
                 background: "#ddc192", color: "#550000", padding: "11px 22px",
                 borderRadius: 14, border: "none", fontWeight: 800, fontSize: 14,
                 display: "inline-flex", alignItems: "center", gap: 8, cursor: "pointer",
-                boxShadow: "0 4px 14px rgba(0,0,0,0.15)",
-              }}
+                boxShadow: "0 4px 14px rgba(0,0,0,0.15)" }}
             >
               <Printer size={18} /> Cetak Laporan
             </button>
@@ -415,8 +410,7 @@ export default function LaporanHalaqohPage() {
                           border: "2px solid #991b1b", color: "#991b1b",
                           display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
                           transform: "rotate(-12deg)", opacity: 0.75, pointerEvents: "none", zIndex: 1,
-                          fontSize: 6, fontWeight: 900, textTransform: "uppercase", textAlign: "center", padding: 2,
-                        }}
+                          fontSize: 6, fontWeight: 900, textTransform: "uppercase", textAlign: "center", padding: 2 }}
                       >
                         <div style={{ fontSize: 5, borderBottom: "1px solid #991b1b", paddingBottom: 1, marginBottom: 1 }}>PESANTREN AL-IMAM</div>
                         <div style={{ fontSize: 6, fontWeight: 900, color: "#991b1b" }}>TERVERIFIKASI</div>

@@ -137,9 +137,7 @@ export default function KeuanganSPPPage() {
           nominal: item.spp.nominal,
           tanggal_bayar: newStatus === "lunas" ? new Date().toISOString().split("T")[0] : null,
           metode_bayar: item.spp.metode_bayar || "transfer",
-          catatan: item.spp.catatan || "",
-        }),
-      });
+          catatan: item.spp.catatan || "" }) });
       const json = await res.json();
       if (json.success) {
         await fetchData();
@@ -169,9 +167,7 @@ export default function KeuanganSPPPage() {
           nominal: Number(editNominal),
           tanggal_bayar: editTglBayar || null,
           metode_bayar: editMetode,
-          catatan: editCatatan,
-        }),
-      });
+          catatan: editCatatan }) });
       const json = await res.json();
       if (json.success) {
         setEditModalSantri(null);

@@ -37,8 +37,7 @@ export default function PresensiAsatidz({
   tokenHariIni,
   allAsatidz,
   tanggal,
-  isAdminSuper,
-}: Props) {
+  isAdminSuper }: Props) {
   const router = useRouter();
   const [token, setToken] = useState(tokenHariIni);
   const [generating, setGenerating] = useState(false);
@@ -47,8 +46,7 @@ export default function PresensiAsatidz({
     asatidz_id: '',
     status: 'hadir',
     keterangan: '',
-    jam_masuk: '',
-  });
+    jam_masuk: '' });
   const [saving, setSaving] = useState(false);
 
   const today = new Date(tanggal);
@@ -56,8 +54,7 @@ export default function PresensiAsatidz({
     weekday: 'long',
     year: 'numeric',
     month: 'long',
-    day: 'numeric',
-  });
+    day: 'numeric' });
 
   const handleDelete = async (id: string, name: string) => {
     const result = await Swal.fire({
@@ -98,8 +95,7 @@ export default function PresensiAsatidz({
     sakit: presensiHariIni.filter((p) => p.status === 'sakit').length,
     izin: presensiHariIni.filter((p) => p.status === 'izin').length,
     alpha: presensiHariIni.filter((p) => p.status === 'alpha').length,
-    belum: belumAbsen.length,
-  };
+    belum: belumAbsen.length };
 
   const handleGenerateToken = async () => {
     setGenerating(true);
@@ -112,16 +108,14 @@ export default function PresensiAsatidz({
         icon: 'success',
         title: 'Token Berhasil Dibuat!',
         html: `Token: <code style="font-weight:700;color:#550000;background:#fdf8f0;padding:4px 8px;border-radius:6px;border:1px solid #ebdcc3">${data.token}</code>`,
-        confirmButtonColor: '#550000',
-      });
+        confirmButtonColor: '#550000' });
       router.refresh();
     } catch (err) {
       Swal.fire({
         icon: 'error',
         title: 'Gagal',
         text: (err as Error).message,
-        confirmButtonColor: '#550000',
-      });
+        confirmButtonColor: '#550000' });
     } finally {
       setGenerating(false);
     }
@@ -135,8 +129,7 @@ export default function PresensiAsatidz({
         icon: 'success',
         title: 'Link Disalin!',
         timer: 1500,
-        showConfirmButton: false,
-      });
+        showConfirmButton: false });
     });
   };
 
@@ -146,8 +139,7 @@ export default function PresensiAsatidz({
         icon: 'warning',
         title: 'Data Tidak Lengkap',
         text: 'Pilih guru dan status.',
-        confirmButtonColor: '#550000',
-      });
+        confirmButtonColor: '#550000' });
       return;
     }
     setSaving(true);
@@ -165,16 +157,13 @@ export default function PresensiAsatidz({
           tanggal: tanggalISO,
           status: manualForm.status,
           keterangan: manualForm.keterangan || null,
-          jam_masuk: jam_masuk?.toISOString(),
-        }),
-      });
+          jam_masuk: jam_masuk?.toISOString() }) });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error);
       Swal.fire({
         icon: 'success',
         title: 'Berhasil Disimpan!',
-        confirmButtonColor: '#550000',
-      });
+        confirmButtonColor: '#550000' });
       setShowModal(false);
       setManualForm({ asatidz_id: '', status: 'hadir', keterangan: '', jam_masuk: '' });
       router.refresh();
@@ -183,8 +172,7 @@ export default function PresensiAsatidz({
         icon: 'error',
         title: 'Gagal',
         text: (err as Error).message,
-        confirmButtonColor: '#550000',
-      });
+        confirmButtonColor: '#550000' });
     } finally {
       setSaving(false);
     }
@@ -256,8 +244,7 @@ export default function PresensiAsatidz({
               border: "1px solid #ebdcc3",
               borderRadius: "20px",
               padding: "22px 24px",
-              boxShadow: "0 2px 12px rgba(85,0,0,0.03)",
-            }}
+              boxShadow: "0 2px 12px rgba(85,0,0,0.03)" }}
           >
             <div
               style={{
@@ -265,8 +252,7 @@ export default function PresensiAsatidz({
                 alignItems: "center",
                 justifyContent: "space-between",
                 flexWrap: "wrap",
-                gap: 16,
-              }}
+                gap: 16 }}
             >
               <div>
                 <div
@@ -294,8 +280,7 @@ export default function PresensiAsatidz({
                       background: "#fdf8f0",
                       padding: "6px 14px",
                       borderRadius: 10,
-                      border: "1px solid #ebdcc3",
-                    }}
+                      border: "1px solid #ebdcc3" }}
                   >
                     TOKEN: {token.token}
                   </code>
@@ -310,8 +295,7 @@ export default function PresensiAsatidz({
                       color: "#64748b",
                       marginTop: 6,
                       wordBreak: "break-all",
-                      fontWeight: 500,
-                    }}
+                      fontWeight: 500 }}
                   >
                     {absenLink}
                   </div>
@@ -328,8 +312,7 @@ export default function PresensiAsatidz({
                   cursor: "pointer",
                   display: "inline-flex",
                   alignItems: "center",
-                  gap: "8px",
-                }}
+                  gap: "8px" }}
                 onClick={handleCopyLink}
               >
                 <Copy size={15} color="#ddc192" />
@@ -344,8 +327,7 @@ export default function PresensiAsatidz({
               border: "1px solid #fecdd3",
               textAlign: "center",
               borderRadius: "20px",
-              padding: "20px 24px",
-            }}
+              padding: "20px 24px" }}
           >
             <p style={{ color: "#9f1239", fontSize: 14, fontWeight: 700, margin: 0 }}>
               Belum ada token untuk hari ini. Klik tombol <strong>Generate Token</strong> di atas untuk mengaktifkan link absensi mandiri asatidz.
@@ -358,8 +340,7 @@ export default function PresensiAsatidz({
           style={{
             display: "grid",
             gridTemplateColumns: "repeat(auto-fit, minmax(130px, 1fr))",
-            gap: 12,
-          }}
+            gap: 12 }}
         >
           {([
             { label: "Hadir", value: stats.hadir, color: "#15803d", bg: "#f0fdf4", border: "#bbf7d0" },
@@ -376,8 +357,7 @@ export default function PresensiAsatidz({
                 background: s.bg,
                 border: `1px solid ${s.border}`,
                 textAlign: "center",
-                borderRadius: "16px",
-              }}
+                borderRadius: "16px" }}
             >
               <div style={{ fontSize: 26, fontWeight: 800, color: s.color, lineHeight: 1 }}>
                 {s.value}
@@ -398,8 +378,7 @@ export default function PresensiAsatidz({
               background: "#fdfcf9",
               display: "flex",
               alignItems: "center",
-              justifyContent: "space-between",
-            }}
+              justifyContent: "space-between" }}
           >
             <div style={{ fontSize: "15px", fontWeight: "800", color: "#550000", display: "flex", alignItems: "center", gap: 8 }}>
               <Users size={18} color="#ddc192" />
@@ -412,8 +391,7 @@ export default function PresensiAsatidz({
                   padding: "2px 10px",
                   fontSize: 12,
                   fontWeight: 800,
-                  border: "1px solid #bbf7d0",
-                }}
+                  border: "1px solid #bbf7d0" }}
               >
                 {presensiHariIni.length}
               </span>
@@ -450,8 +428,7 @@ export default function PresensiAsatidz({
                       key={p.id}
                       style={{
                         borderBottom: "1px solid #f5ede1",
-                        background: i % 2 === 0 ? "white" : "#fdfcf9",
-                      }}
+                        background: i % 2 === 0 ? "white" : "#fdfcf9" }}
                     >
                       <td style={{ padding: "14px 16px", color: "#550000", fontWeight: 700 }}>{i + 1}</td>
                       <td style={{ padding: "14px 16px" }}>
@@ -474,8 +451,7 @@ export default function PresensiAsatidz({
                             background: p.status === 'hadir' ? '#f0fdf4' : p.status === 'telat' ? '#fff7ed' : p.status === 'sakit' ? '#eff6ff' : p.status === 'izin' ? '#fffbeb' : '#fef2f2',
                             color: p.status === 'hadir' ? '#15803d' : p.status === 'telat' ? '#c2410c' : p.status === 'sakit' ? '#1d4ed8' : p.status === 'izin' ? '#d97706' : '#b91c1c',
                             border: `1px solid ${p.status === 'hadir' ? '#bbf7d0' : p.status === 'telat' ? '#fed7aa' : p.status === 'sakit' ? '#bfdbfe' : p.status === 'izin' ? '#fde68a' : '#fecaca'}`,
-                            textTransform: "capitalize",
-                          }}
+                            textTransform: "capitalize" }}
                         >
                           {p.status}
                         </span>
@@ -490,8 +466,7 @@ export default function PresensiAsatidz({
                             background: p.metode === "link" ? "#fdf8f0" : "#eff6ff",
                             color: p.metode === "link" ? "#550000" : "#1d4ed8",
                             border: `1px solid ${p.metode === "link" ? "#ebdcc3" : "#bfdbfe"}`,
-                            textTransform: "uppercase",
-                          }}
+                            textTransform: "uppercase" }}
                         >
                           {p.metode}
                         </span>
@@ -560,8 +535,7 @@ export default function PresensiAsatidz({
                 background: "#fdfcf9",
                 display: "flex",
                 alignItems: "center",
-                justifyContent: "space-between",
-              }}
+                justifyContent: "space-between" }}
             >
               <div style={{ fontSize: "15px", fontWeight: "800", color: "#b91c1c", display: "flex", alignItems: "center", gap: 8 }}>
                 <Clock size={18} color="#b91c1c" />
@@ -574,8 +548,7 @@ export default function PresensiAsatidz({
                     padding: "2px 10px",
                     fontSize: 12,
                     fontWeight: 800,
-                    border: "1px solid #fecaca",
-                  }}
+                    border: "1px solid #fecaca" }}
                 >
                   {belumAbsen.length}
                 </span>
@@ -596,8 +569,7 @@ export default function PresensiAsatidz({
                       key={a.id}
                       style={{
                         borderBottom: "1px solid #f5ede1",
-                        background: i % 2 === 0 ? "white" : "#fdfcf9",
-                      }}
+                        background: i % 2 === 0 ? "white" : "#fdfcf9" }}
                     >
                       <td style={{ padding: "14px 16px", color: "#550000", fontWeight: 700 }}>{i + 1}</td>
                       <td style={{ padding: "14px 16px", fontWeight: 700, color: "#1a1a1a" }}>{a.nama_lengkap}</td>
@@ -623,8 +595,7 @@ export default function PresensiAsatidz({
             alignItems: 'center',
             justifyContent: 'center',
             zIndex: 9999,
-            padding: 20,
-          }}
+            padding: 20 }}
         >
           <div
             style={{ background: "white", borderRadius: "24px", padding: "28px", boxShadow: "0 10px 40px rgba(0,0,0,0.15)", border: "1px solid #ebdcc3", width: "100%", maxWidth: 480, maxHeight: "90vh", overflowY: "auto", display: "flex", flexDirection: "column", gap: "16px" }}
@@ -635,8 +606,7 @@ export default function PresensiAsatidz({
                 justifyContent: 'space-between',
                 alignItems: 'center',
                 borderBottom: '1px solid #f5ede1',
-                paddingBottom: 14,
-              }}
+                paddingBottom: 14 }}
             >
               <div style={{ fontSize: 16, fontWeight: 800, color: "#550000" }}>
                 Input Manual Absensi Guru
@@ -650,8 +620,7 @@ export default function PresensiAsatidz({
                   cursor: 'pointer',
                   color: '#550000',
                   padding: 6,
-                  display: 'flex',
-                }}
+                  display: 'flex' }}
               >
                 <X size={18} />
               </button>

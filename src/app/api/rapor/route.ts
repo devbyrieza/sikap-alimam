@@ -12,8 +12,7 @@ export async function GET(req: NextRequest) {
       const defaultSantri = await prisma.santriAktif.findFirst({
         where: { is_active: true },
         include: { kelas: true },
-        orderBy: { nama_lengkap: "asc" },
-      });
+        orderBy: { nama_lengkap: "asc" } });
       if (!defaultSantri) {
         return NextResponse.json({ error: "No active santri found" }, { status: 404 });
       }
@@ -24,9 +23,7 @@ export async function GET(req: NextRequest) {
     const santri = await prisma.santriAktif.findUnique({
       where: { id: santri_id },
       include: {
-        kelas: true,
-      },
-    });
+        kelas: true } });
 
     if (!santri) {
       return NextResponse.json({ error: "Santri not found" }, { status: 404 });
@@ -35,8 +32,7 @@ export async function GET(req: NextRequest) {
     // 2. Get Presensi & Breakdown
     const presensi = await prisma.presensiSiswa.findMany({
       where: { santri_id },
-      orderBy: { tanggal: "desc" },
-    });
+      orderBy: { tanggal: "desc" } });
     
     // Karena absen sekarang per mapel, kita harus menghitung total hari unik per status.
     const getDateString = (d: Date) => d.toISOString().split("T")[0];
@@ -69,9 +65,7 @@ export async function GET(req: NextRequest) {
       orderBy: { tanggal: "desc" },
       include: {
         pegawai: { select: { id: true, nama_lengkap: true } },
-        mapel: { select: { id: true, nama: true, kategori: true } },
-      },
-    });
+        mapel: { select: { id: true, nama: true, kategori: true } } } });
 
     const formatName = (str: string) => {
       if (!str) return "-";
@@ -94,24 +88,20 @@ export async function GET(req: NextRequest) {
       materi: j.materi,
       learning_outcome: j.learning_outcome || j.materi,
       kegiatan: j.kegiatan,
-      catatan: j.catatan || "",
-    }));
+      catatan: j.catatan || "" }));
 
     // 4. Get Tahfidz
     const tahfidz = await prisma.capaianTahfidz.findMany({
       where: { santri_id },
       orderBy: { tanggal: "desc" },
-      take: 15,
-    });
+      take: 15 });
 
     // 5. Get Akademik (Nilai Santri)
     const akademik = await prisma.nilaiSantri.findMany({
       where: { santri_id },
       include: {
-        mapel: true,
-      },
-      orderBy: { created_at: "asc" },
-    });
+        mapel: true },
+      orderBy: { created_at: "asc" } });
 
     // Extract unique mapel list
     const mapelMap = new Map();
@@ -120,8 +110,7 @@ export async function GET(req: NextRequest) {
         mapelMap.set(n.mapel_id, {
           id: n.mapel_id,
           nama: n.mapel.nama.replace(/^\[.*?\]\s*/, ""),
-          kategori: n.mapel.kategori || "umum",
-        });
+          kategori: n.mapel.kategori || "umum" });
       }
     });
 
@@ -129,16 +118,14 @@ export async function GET(req: NextRequest) {
     const classMapels = await prisma.mataPelajaran.findMany({
       where: { kelas_id: santri.kelas_id, is_active: true },
       select: { id: true, nama: true, kategori: true },
-      orderBy: { nama: "asc" },
-    });
+      orderBy: { nama: "asc" } });
     classMapels.forEach((m) => {
       const cleanNama = m.nama.replace(/^\[.*?\]\s*/, "");
       if (!mapelMap.has(m.id)) {
         mapelMap.set(m.id, {
           id: m.id,
           nama: cleanNama,
-          kategori: m.kategori || "umum",
-        });
+          kategori: m.kategori || "umum" });
       }
     });
 
@@ -165,8 +152,7 @@ export async function GET(req: NextRequest) {
         nis: santri.nis,
         kelas: santri.kelas.nama,
         jenjang: santri.kelas.jenjang,
-        foto_url: santri.foto_url,
-      },
+        foto_url: santri.foto_url },
       spp: sppInfo,
       ringkasan: {
         persentaseKehadiran,
@@ -175,15 +161,13 @@ export async function GET(req: NextRequest) {
         totalSakit,
         totalIzin,
         totalAlpha,
-        persentaseShubuh,
-      },
+        persentaseShubuh },
       detail: {
         presensi: presensi.map((p) => ({
           id: p.id,
           tanggal: p.tanggal.toISOString().split("T")[0],
           status: p.status,
-          keterangan: p.keterangan || "",
-        })),
+          keterangan: p.keterangan || "" })),
         jurnal: formattedJurnal,
         akademik: akademik.map((a) => ({
           id: a.id,
@@ -192,13 +176,10 @@ export async function GET(req: NextRequest) {
           mapel_kategori: a.mapel?.kategori || "umum",
           jenis: a.jenis,
           nilai: a.nilai,
-          keterangan: a.keterangan,
-        })),
+          keterangan: a.keterangan })),
         mapelList,
         tahfidz,
-        ibadah,
-      },
-    });
+        ibadah } });
   } catch (error) {
     console.error("Error generating rapor:", error);
     return NextResponse.json(

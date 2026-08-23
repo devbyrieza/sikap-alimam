@@ -17,8 +17,7 @@ export async function GET() {
   today.setHours(0, 0, 0, 0);
 
   const tokenData = await prisma.tokenHarian.findUnique({
-    where: { tanggal: today },
-  });
+    where: { tanggal: today } });
 
   if (!tokenData) {
     return NextResponse.json({ token: null });
@@ -28,8 +27,7 @@ export async function GET() {
     token: tokenData.token,
     tanggal: tokenData.tanggal,
     expires_at: tokenData.expires_at,
-    expired: new Date() > tokenData.expires_at,
-  });
+    expired: new Date() > tokenData.expires_at });
 }
 
 // POST: generate token baru untuk hari ini
@@ -67,12 +65,10 @@ export async function POST(req: NextRequest) {
   const tokenData = await prisma.tokenHarian.upsert({
     where: { tanggal: today },
     update: { token, expires_at: expiresAt },
-    create: { tanggal: today, token, expires_at: expiresAt },
-  });
+    create: { tanggal: today, token, expires_at: expiresAt } });
 
   return NextResponse.json({
     token: tokenData.token,
     tanggal: tokenData.tanggal,
-    expires_at: tokenData.expires_at,
-  });
+    expires_at: tokenData.expires_at });
 }

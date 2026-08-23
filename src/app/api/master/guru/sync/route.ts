@@ -217,10 +217,7 @@ async function executeSync(simpegGuruList: any[]) {
               where: {
                 nama: {
                   equals: rawKelas,
-                  mode: "insensitive",
-                },
-              },
-            });
+                  mode: "insensitive" } } });
             if (exactKelas) dbKelasList.push(exactKelas);
 
             // Fallback: If exact class name is not found (e.g. "IL" changed to "I'dad Lughowy Putra" during sync)
@@ -286,17 +283,14 @@ async function executeSync(simpegGuruList: any[]) {
             const mapelFilter: any = {
               nama: {
                 contains: searchName,
-                mode: "insensitive",
-              },
-            };
+                mode: "insensitive" } };
 
             if (kls) {
               mapelFilter.kelas_id = kls.id;
             }
 
             const matchedMapel = await prisma.mataPelajaran.findFirst({
-              where: mapelFilter,
-            });
+              where: mapelFilter });
 
             if (matchedMapel) {
               await prisma.asatidzmMapel.upsert({
@@ -304,16 +298,12 @@ async function executeSync(simpegGuruList: any[]) {
                   pegawai_id_mapel_id_kelas_id: {
                     pegawai_id: guru.id,
                     mapel_id: matchedMapel.id,
-                    kelas_id: matchedMapel.kelas_id,
-                  },
-                },
+                    kelas_id: matchedMapel.kelas_id } },
                 update: {},
                 create: {
                   pegawai_id: guru.id,
                   mapel_id: matchedMapel.id,
-                  kelas_id: matchedMapel.kelas_id,
-                },
-              });
+                  kelas_id: matchedMapel.kelas_id } });
             }
           }
         }

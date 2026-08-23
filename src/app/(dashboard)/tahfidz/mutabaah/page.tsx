@@ -15,8 +15,7 @@ import {
   Filter,
   ChevronDown,
   TrendingUp,
-  AlertCircle,
-} from "lucide-react";
+  AlertCircle } from "lucide-react";
 import Link from "next/link";
 
 interface SantriMutabaah {
@@ -74,8 +73,7 @@ function NilaiBadge({ nilai }: { nilai?: number | null }) {
         borderRadius: 8,
         fontSize: 11,
         fontWeight: 700,
-        whiteSpace: "nowrap",
-      }}
+        whiteSpace: "nowrap" }}
     >
       {nilai} · {cfg.label}
     </span>
@@ -130,8 +128,7 @@ export default function TahfidzMutabaahPage() {
       icon: <Users size={22} />,
       bg: "#ecfdf5",
       color: "#059669",
-      border: "#d1fae5",
-    },
+      border: "#d1fae5" },
     {
       label: "Berhalaqoh",
       value: santriList.filter((s) => s.kelompok_halaqoh).length,
@@ -139,8 +136,7 @@ export default function TahfidzMutabaahPage() {
       icon: <BookHeart size={22} />,
       bg: "#eff6ff",
       color: "#0284c7",
-      border: "#dbeafe",
-    },
+      border: "#dbeafe" },
     {
       label: "Setoran Murojaah",
       value: santriList.filter((s) => s.last_murojaah).length,
@@ -148,8 +144,7 @@ export default function TahfidzMutabaahPage() {
       icon: <CalendarDays size={22} />,
       bg: "#fffbeb",
       color: "#d97706",
-      border: "#fde68a",
-    },
+      border: "#fde68a" },
     {
       label: "Lulus Ujian",
       value: santriList.filter((s) => s.last_ujian?.is_lulus).length,
@@ -157,8 +152,7 @@ export default function TahfidzMutabaahPage() {
       icon: <TrendingUp size={22} />,
       bg: "#f5f3ff",
       color: "#7c3aed",
-      border: "#ede9fe",
-    },
+      border: "#ede9fe" },
   ];
 
   return (
@@ -192,8 +186,7 @@ export default function TahfidzMutabaahPage() {
               background: "rgba(255,255,255,0.15)", backdropFilter: "blur(8px)",
               color: "white", textDecoration: "none", padding: "10px 18px",
               borderRadius: 14, fontSize: 13, fontWeight: 700,
-              border: "1px solid rgba(255,255,255,0.25)", whiteSpace: "nowrap",
-            }}
+              border: "1px solid rgba(255,255,255,0.25)", whiteSpace: "nowrap" }}
           >
             <BookHeart size={16} /> Input Halaqoh Sesi
           </Link>
@@ -204,8 +197,7 @@ export default function TahfidzMutabaahPage() {
               background: "#f59e0b", color: "#451a03",
               textDecoration: "none", padding: "10px 18px",
               borderRadius: 14, fontSize: 13, fontWeight: 800,
-              boxShadow: "0 4px 14px rgba(245,158,11,0.4)", whiteSpace: "nowrap",
-            }}
+              boxShadow: "0 4px 14px rgba(245,158,11,0.4)", whiteSpace: "nowrap" }}
           >
             <Award size={16} /> Ujian Pekanan
           </Link>
@@ -219,8 +211,7 @@ export default function TahfidzMutabaahPage() {
             background: "white", borderRadius: 20, padding: "20px 22px",
             border: `1.5px solid ${s.border}`, boxShadow: "0 2px 10px rgba(0,0,0,0.04)",
             display: "flex", alignItems: "center", gap: 16,
-            transition: "transform 0.2s, box-shadow 0.2s",
-          }}
+            transition: "transform 0.2s, box-shadow 0.2s" }}
             onMouseEnter={e => { (e.currentTarget as HTMLElement).style.transform = "translateY(-3px)"; (e.currentTarget as HTMLElement).style.boxShadow = "0 8px 24px rgba(0,0,0,0.08)"; }}
             onMouseLeave={e => { (e.currentTarget as HTMLElement).style.transform = "translateY(0)"; (e.currentTarget as HTMLElement).style.boxShadow = "0 2px 10px rgba(0,0,0,0.04)"; }}
           >
@@ -239,8 +230,7 @@ export default function TahfidzMutabaahPage() {
       <div style={{
         background: "white", borderRadius: 20, padding: "18px 24px",
         border: "1.5px solid #e2e8f0", boxShadow: "0 2px 10px rgba(0,0,0,0.04)",
-        display: "flex", flexWrap: "wrap", gap: 12, alignItems: "center", justifyContent: "space-between",
-      }}>
+        display: "flex", flexWrap: "wrap", gap: 12, alignItems: "center", justifyContent: "space-between" }}>
         {/* Search */}
         <div style={{ position: "relative", flex: "1 1 280px", minWidth: 240 }}>
           <Search size={17} color="#94a3b8" style={{ position: "absolute", left: 14, top: "50%", transform: "translateY(-50%)", pointerEvents: "none" }} />
@@ -254,8 +244,7 @@ export default function TahfidzMutabaahPage() {
               borderRadius: 13, border: "1.5px solid #e2e8f0",
               fontSize: 13, fontWeight: 500, outline: "none",
               background: "#f8fafc", color: "#1e293b",
-              transition: "border-color 0.2s",
-            }}
+              transition: "border-color 0.2s" }}
             onFocus={e => (e.currentTarget.style.borderColor = "#550000")}
             onBlur={e => (e.currentTarget.style.borderColor = "#e2e8f0")}
           />
@@ -272,8 +261,7 @@ export default function TahfidzMutabaahPage() {
                 padding: "11px 36px 11px 34px",
                 borderRadius: 13, border: "1.5px solid #e2e8f0",
                 fontSize: 13, fontWeight: 700, color: "#334155",
-                background: "white", appearance: "none", cursor: "pointer", outline: "none",
-              }}
+                background: "white", appearance: "none", cursor: "pointer", outline: "none" }}
             >
               <option value="all">Semua Kelas</option>
               {uniqueKelas.map((k) => (
@@ -290,8 +278,7 @@ export default function TahfidzMutabaahPage() {
               display: "inline-flex", alignItems: "center", gap: 6,
               background: "#fff5f5", color: "#550000", textDecoration: "none",
               padding: "11px 16px", borderRadius: 13, fontSize: 13,
-              fontWeight: 700, border: "1.5px solid #fecaca", whiteSpace: "nowrap",
-            }}
+              fontWeight: 700, border: "1.5px solid #fecaca", whiteSpace: "nowrap" }}
           >
             <BarChart3 size={16} /> Rekap & Laporan <ChevronRight size={14} />
           </Link>
@@ -303,8 +290,7 @@ export default function TahfidzMutabaahPage() {
         background: "white", borderRadius: 20,
         border: "1.5px solid #e2e8f0",
         boxShadow: "0 4px 20px rgba(0,0,0,0.05)",
-        overflow: "hidden",
-      }}>
+        overflow: "hidden" }}>
         {/* Table Header */}
         <div style={{ padding: "16px 24px", borderBottom: "1.5px solid #f1f5f9", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 8 }}>
           <div style={{ fontWeight: 800, color: "#1e293b", fontSize: 15, display: "flex", alignItems: "center", gap: 8 }}>
@@ -336,8 +322,7 @@ export default function TahfidzMutabaahPage() {
                       padding: "13px 18px", textAlign: i === 7 ? "right" : "left",
                       fontSize: 11, fontWeight: 800, color: "#475569",
                       textTransform: "uppercase", letterSpacing: "0.06em",
-                      whiteSpace: "nowrap",
-                    }}>{h}</th>
+                      whiteSpace: "nowrap" }}>{h}</th>
                   ))}
                 </tr>
               </thead>
@@ -436,8 +421,7 @@ export default function TahfidzMutabaahPage() {
                           textDecoration: "none", padding: "7px 13px",
                           borderRadius: 10, fontSize: 12, fontWeight: 700,
                           border: "1px solid #e2e8f0", transition: "all 0.15s",
-                          whiteSpace: "nowrap",
-                        }}
+                          whiteSpace: "nowrap" }}
                         onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = "#550000"; (e.currentTarget as HTMLElement).style.color = "white"; (e.currentTarget as HTMLElement).style.border = "1px solid #550000"; }}
                         onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = "#f1f5f9"; (e.currentTarget as HTMLElement).style.color = "#334155"; (e.currentTarget as HTMLElement).style.border = "1px solid #e2e8f0"; }}
                       >

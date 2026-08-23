@@ -71,8 +71,7 @@ export default function MasterMapelPage() {
       text: "Sistem akan memastikan seluruh mapel standar Kelas 7 MTs dan Kelas IL terdaftar dan aktif secara terpisah di database.",
       icon: "question", showCancelButton: true,
       confirmButtonColor: "#0284c7", cancelButtonColor: "#6b7280",
-      confirmButtonText: "Ya, Sinkronkan", cancelButtonText: "Batal",
-    });
+      confirmButtonText: "Ya, Sinkronkan", cancelButtonText: "Batal" });
     if (!confirm.isConfirmed) return;
 
     setSyncing(true);
@@ -123,8 +122,7 @@ export default function MasterMapelPage() {
   const handleDelete = async (m: MapelItem) => {
     const result = await Swal.fire({
       title: `Hapus Mapel ${m.nama}?`, text: `Mata pelajaran kelas ${m.kelas?.nama} akan dihapus/dinonaktifkan.`,
-      icon: "warning", showCancelButton: true, confirmButtonColor: "#dc2626", cancelButtonColor: "#6b7280", confirmButtonText: "Ya, Hapus", cancelButtonText: "Batal",
-    });
+      icon: "warning", showCancelButton: true, confirmButtonColor: "#dc2626", cancelButtonColor: "#6b7280", confirmButtonText: "Ya, Hapus", cancelButtonText: "Batal" });
     if (result.isConfirmed) {
       try {
         const res = await fetch(`/api/master/mapel/${m.id}`, { method: "DELETE" });
@@ -160,8 +158,7 @@ export default function MasterMapelPage() {
         display: "flex", justifyContent: "space-between", alignItems: "center",
         flexWrap: "wrap", gap: 20,
         boxShadow: "0 10px 25px rgba(0,0,0,0.2)",
-        position: "relative", overflow: "hidden",
-      }}>
+        position: "relative", overflow: "hidden" }}>
         {/* Decorative circles */}
         <div style={{ position:"absolute", top:-40, right:-40, width:200, height:200, borderRadius:"50%", background:"rgba(221,193,146,0.1)", pointerEvents:"none" }} />
         <div style={{ position:"absolute", bottom:-60, right:120, width:160, height:160, borderRadius:"50%", background:"rgba(221,193,146,0.05)", pointerEvents:"none" }} />
@@ -179,14 +176,12 @@ export default function MasterMapelPage() {
         <div style={{ position:"relative", zIndex:1, display:"flex", gap:12, flexWrap:"wrap" }}>
           <button onClick={handleSyncKurikulum} disabled={syncing} style={{
             background:"rgba(255,255,255,0.1)", color:"white", border:"1px solid rgba(255,255,255,0.2)", cursor:"pointer",
-            fontWeight:700, fontSize:14, padding:"12px 22px", borderRadius:14, display:"flex", alignItems:"center", gap:8, backdropFilter:"blur(8px)", transition:"all 0.2s", whiteSpace:"nowrap",
-          }}>
+            fontWeight:700, fontSize:14, padding:"12px 22px", borderRadius:14, display:"flex", alignItems:"center", gap:8, backdropFilter:"blur(8px)", transition:"all 0.2s", whiteSpace:"nowrap" }}>
             <RefreshCw size={18} /> Sync Kurikulum
           </button>
           <button onClick={() => { setIsAdding(!isAdding); setEditingId(null); }} style={{
             background:"#ddc192", color:"#3b0000", border:"none", cursor:"pointer",
-            fontWeight:800, fontSize:14, padding:"12px 22px", borderRadius:14, display:"flex", alignItems:"center", gap:8, boxShadow:"0 4px 16px rgba(221,193,146,0.3)", transition:"all 0.2s", whiteSpace:"nowrap",
-          }}>
+            fontWeight:800, fontSize:14, padding:"12px 22px", borderRadius:14, display:"flex", alignItems:"center", gap:8, boxShadow:"0 4px 16px rgba(221,193,146,0.3)", transition:"all 0.2s", whiteSpace:"nowrap" }}>
             {isAdding ? <X size={18} /> : <Plus size={18} />} {isAdding ? "Tutup Form" : "Tambah Mapel"}
           </button>
         </div>
@@ -231,8 +226,7 @@ export default function MasterMapelPage() {
       {isAdding && (
         <div style={{
           background:"#f0f9ff", borderRadius:20, padding:"28px 32px",
-          border:"2px solid #bae6fd", boxShadow:"0 4px 20px rgba(3,105,161,0.08)",
-        }}>
+          border:"2px solid #bae6fd", boxShadow:"0 4px 20px rgba(3,105,161,0.08)" }}>
           <div style={{ display:"flex", alignItems:"center", gap:10, marginBottom:20 }}>
             <Sparkles size={20} color="#0284c7" />
             <h3 style={{ margin:0, fontSize:16, fontWeight:700, color:"#0284c7" }}>Pendaftaran Mapel Baru</h3>
@@ -286,8 +280,7 @@ export default function MasterMapelPage() {
                     <th key={h} style={{
                       padding:"16px 20px", textAlign: i === 0 ? "center" : i === 2 ? "right" : i === 3 || i === 4 ? "center" : i === 5 ? "right" : "left",
                       fontSize:11, fontWeight:700, textTransform:"uppercase", letterSpacing:"0.5px", color:"#64748b",
-                      borderBottom:"2px solid #e2e8f0", whiteSpace:"nowrap",
-                    }}>{h}</th>
+                      borderBottom:"2px solid #e2e8f0", whiteSpace:"nowrap" }}>{h}</th>
                   ))}
                 </tr>
               </thead>
@@ -297,8 +290,7 @@ export default function MasterMapelPage() {
                   return (
                     <tr key={m.id} style={{
                       background: isEditing ? "#f0f9ff" : idx % 2 === 0 ? "white" : "#fafafa",
-                      transition:"background 0.15s",
-                    }}
+                      transition:"background 0.15s" }}
                     onMouseEnter={e => { if (!isEditing) (e.currentTarget as HTMLElement).style.background = "#f0fdf4"; }}
                     onMouseLeave={e => { if (!isEditing) (e.currentTarget as HTMLElement).style.background = idx % 2 === 0 ? "white" : "#fafafa"; }}
                     >

@@ -3,8 +3,7 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import {
   ArrowLeft, Search, CalendarDays, Award, CheckCircle2, AlertCircle,
-  Save, Star, ShieldCheck, Clock, ChevronDown, Target, BookOpen, FileText, Check, AlertTriangle,
-} from "lucide-react";
+  Save, Star, ShieldCheck, Clock, ChevronDown, Target, BookOpen, FileText, Check, AlertTriangle } from "lucide-react";
 import Link from "next/link";
 import { calculateHalaman } from "@/lib/quran-madinah";
 
@@ -48,8 +47,7 @@ function NumericScoreSelector({ label, value, onChange }: { label: string; value
                 background: isSelected ? "#550000" : "#f8fafc", color: isSelected ? "white" : "#475569",
                 fontSize: 14, fontWeight: 800, cursor: "pointer",
                 boxShadow: isSelected ? "0 4px 12px rgba(85,0,0,0.3)" : "none",
-                transition: "all 0.15s",
-              }}
+                transition: "all 0.15s" }}
             >
               {num}
             </button>
@@ -91,8 +89,7 @@ function TextScoreSelector({ label, value, onChange }: { label: string; value: n
                 background: isSelected ? "#550000" : "#f8fafc", color: isSelected ? "white" : "#475569",
                 fontSize: 13, fontWeight: 700, cursor: "pointer",
                 boxShadow: isSelected ? "0 4px 12px rgba(85,0,0,0.3)" : "none",
-                transition: "all 0.15s",
-              }}
+                transition: "all 0.15s" }}
             >
               {item.label}
             </button>
@@ -146,8 +143,7 @@ function SurahPicker({ surahList, selected, onSelect, label = "Pilih Surah" }: {
         style={{
           display: "flex", alignItems: "center", justifyContent: "space-between",
           padding: "11px 14px", borderRadius: 13, border: "1.5px solid #e2e8f0",
-          background: "#fdf8f0", cursor: "pointer", fontSize: 14, fontWeight: 600, color: "#1e293b",
-        }}
+          background: "#fdf8f0", cursor: "pointer", fontSize: 14, fontWeight: 600, color: "#1e293b" }}
       >
         {selected ? (
           <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
@@ -164,8 +160,7 @@ function SurahPicker({ surahList, selected, onSelect, label = "Pilih Surah" }: {
         <div style={{
           position: "absolute", top: "calc(100% + 6px)", left: 0, right: 0, zIndex: 50,
           background: "white", borderRadius: 16, border: "1.5px solid #e2e8f0",
-          boxShadow: "0 12px 36px rgba(0,0,0,0.12)", overflow: "hidden",
-        }}>
+          boxShadow: "0 12px 36px rgba(0,0,0,0.12)", overflow: "hidden" }}>
           <div style={{ padding: 10, borderBottom: "1px solid #f1f5f9" }}>
             <div style={{ position: "relative" }}>
               <Search size={14} color="#94a3b8" style={{ position: "absolute", left: 10, top: "50%", transform: "translateY(-50%)" }} />
@@ -319,14 +314,12 @@ export default function UjianTahfidzPage() {
         nilai_sikap: nilaiSikap,
         nilai_akhir: finalNilai,
         is_lulus: isLulus,
-        catatan: catatan || undefined,
-      };
+        catatan: catatan || undefined };
 
       const res = await fetch("/api/halaqoh/ujian", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(body),
-      });
+        body: JSON.stringify(body) });
 
       if (!res.ok) {
         const err = await res.json();
@@ -372,13 +365,11 @@ export default function UjianTahfidzPage() {
   const inputStyle: React.CSSProperties = {
     width: "100%", borderRadius: 13, border: "1.5px solid #e2e8f0",
     padding: "11px 14px", fontSize: 14, fontWeight: 600, outline: "none",
-    background: "#fdf8f0", color: "#1e293b", transition: "border-color 0.2s",
-  };
+    background: "#fdf8f0", color: "#1e293b", transition: "border-color 0.2s" };
 
   const labelStyle: React.CSSProperties = {
     display: "block", fontSize: 12, fontWeight: 800, color: "#475569",
-    textTransform: "uppercase", letterSpacing: "0.04em", marginBottom: 6,
-  };
+    textTransform: "uppercase", letterSpacing: "0.04em", marginBottom: 6 };
 
   return (
     <div className="page-container">
@@ -389,8 +380,7 @@ export default function UjianTahfidzPage() {
           style={{
             width: 40, height: 40, background: "white", border: "1.5px solid #e2e8f0",
             borderRadius: 13, display: "flex", alignItems: "center", justifyContent: "center",
-            color: "#475569", textDecoration: "none", boxShadow: "0 2px 6px rgba(0,0,0,0.04)",
-          }}
+            color: "#475569", textDecoration: "none", boxShadow: "0 2px 6px rgba(0,0,0,0.04)" }}
         >
           <ArrowLeft size={18} />
         </Link>
@@ -441,8 +431,7 @@ export default function UjianTahfidzPage() {
                     border: isSelected ? `2px solid ${j.color}` : "1.5px solid #e2e8f0",
                     background: isSelected ? j.bg : "#f8fafc",
                     boxShadow: isSelected ? "0 4px 12px rgba(0,0,0,0.06)" : "none",
-                    transition: "all 0.15s",
-                  }}
+                    transition: "all 0.15s" }}
                 >
                   <div style={{ display: "flex", alignItems: "center", gap: 10, fontWeight: 800, fontSize: 14, color: isSelected ? j.color : "#334155", marginBottom: 4 }}>
                     <div style={{ width: 34, height: 34, borderRadius: 10, background: "white", display: "flex", alignItems: "center", justifyContent: "center", color: j.color, border: `1px solid ${j.border}`, flexShrink: 0 }}>
@@ -674,8 +663,7 @@ export default function UjianTahfidzPage() {
                 border: "none", fontWeight: 800, fontSize: 15, cursor: saving || !selectedSantriId ? "not-allowed" : "pointer",
                 display: "flex", alignItems: "center", justifyContent: "center", gap: 10,
                 boxShadow: saving || !selectedSantriId ? "none" : "0 4px 14px rgba(85,0,0,0.3)",
-                transition: "all 0.2s",
-              }}
+                transition: "all 0.2s" }}
             >
               <Save size={18} /> {saving ? "Menyimpan..." : "Simpan Nilai Ujian"}
             </button>
@@ -727,8 +715,7 @@ export default function UjianTahfidzPage() {
                           style={{
                             background: "#fff5f5", border: "1px solid #fecaca", color: "#550000",
                             padding: "4px 12px", borderRadius: 8, fontWeight: 800, fontSize: 11,
-                            cursor: "pointer", transition: "all 0.15s",
-                          }}
+                            cursor: "pointer", transition: "all 0.15s" }}
                         >
                           ✏️ Edit Ujian
                         </button>

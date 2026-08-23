@@ -5,8 +5,7 @@ import {
   BookHeart, Sun, Moon, Cloud, CalendarDays, Users,
   Plus, ArrowRight, Clock, CheckCircle2, AlertCircle,
   Award, FileText, BookOpen, Search, ChevronRight,
-  Megaphone, AlertTriangle, UserCircle2, TrendingUp,
-} from "lucide-react";
+  Megaphone, AlertTriangle, UserCircle2, TrendingUp } from "lucide-react";
 import Link from "next/link";
 import { useSearchParams, useRouter } from "next/navigation";
 
@@ -55,8 +54,7 @@ interface SantriMutabaah {
 const SESI_CONFIG: Record<string, { label: string; waktu: string; icon: React.ReactNode; bg: string; color: string; border: string }> = {
   subuh:   { label: "Halaqoh Subuh",   waktu: "04.50 – 06.10", icon: <Sun size={20} />,   bg: "#fffbeb", color: "#d97706", border: "#fde68a" },
   maghrib: { label: "Ba'da Maghrib",   waktu: "Ba'da Maghrib", icon: <Moon size={20} />,  bg: "#f5f3ff", color: "#7c3aed", border: "#ede9fe" },
-  dhuha:   { label: "Halaqoh Dhuha",   waktu: "07.00 – 08.20", icon: <Cloud size={20} />, bg: "#eff6ff", color: "#0284c7", border: "#dbeafe" },
-};
+  dhuha:   { label: "Halaqoh Dhuha",   waktu: "07.00 – 08.20", icon: <Cloud size={20} />, bg: "#eff6ff", color: "#0284c7", border: "#dbeafe" } };
 
 function NilaiBadge({ nilai }: { nilai?: number | null }) {
   if (!nilai) return <span style={{ fontSize: 11, color: "#94a3b8" }}>—</span>;
@@ -185,8 +183,7 @@ export default function HalaqohDashboardPage() {
     boxShadow: "0 2px 12px rgba(85,0,0,0.05)",
     padding: "24px", display: "flex",
     flexDirection: "column", justifyContent: "space-between",
-    transition: "transform 0.2s, box-shadow 0.2s",
-  };
+    transition: "transform 0.2s, box-shadow 0.2s" };
 
   return (
     <div className="page-container">
@@ -230,8 +227,7 @@ export default function HalaqohDashboardPage() {
               cursor: "pointer", fontSize: 13, fontWeight: 800, transition: "all 0.2s",
               background: activeTab === t.key ? "#550000" : "transparent",
               color: activeTab === t.key ? "white" : "#64748b",
-              boxShadow: activeTab === t.key ? "0 4px 12px rgba(85,0,0,0.25)" : "none",
-            }}
+              boxShadow: activeTab === t.key ? "0 4px 12px rgba(85,0,0,0.25)" : "none" }}
           >
             {t.icon} {t.label}
           </button>
@@ -347,8 +343,7 @@ export default function HalaqohDashboardPage() {
                     display: "flex", alignItems: "center", gap: 14,
                     background: "white", border: "1.5px solid #e8d5b7",
                     borderRadius: 16, padding: "16px 18px", textDecoration: "none",
-                    transition: "all 0.2s",
-                  }}
+                    transition: "all 0.2s" }}
                   onMouseEnter={e => { (e.currentTarget as HTMLElement).style.transform = "translateY(-2px)"; (e.currentTarget as HTMLElement).style.borderColor = "#550000"; (e.currentTarget as HTMLElement).style.boxShadow = "0 8px 20px rgba(85,0,0,0.1)"; }}
                   onMouseLeave={e => { (e.currentTarget as HTMLElement).style.transform = "translateY(0)"; (e.currentTarget as HTMLElement).style.borderColor = "#e8d5b7"; (e.currentTarget as HTMLElement).style.boxShadow = "none"; }}
                 >

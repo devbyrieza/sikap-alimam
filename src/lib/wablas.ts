@@ -23,9 +23,7 @@ export async function sendWhatsAppMessage(phone: string, message: string) {
       },
       body: JSON.stringify({
         phone: cleanPhone,
-        message: message,
-      }),
-    });
+        message: message }) });
 
     const data = await response.json();
     if (!response.ok || !data.status) {

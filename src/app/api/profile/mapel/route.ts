@@ -14,8 +14,7 @@ export async function GET() {
   if (session.asatidz_id) {
     pegawai = await prisma.pegawai.findUnique({
       where: { id: session.asatidz_id },
-      select: { id: true, nama_lengkap: true, mata_pelajaran: true, kategori_pegawai: true, jabatan: true },
-    });
+      select: { id: true, nama_lengkap: true, mata_pelajaran: true, kategori_pegawai: true, jabatan: true } });
   }
 
   if (!pegawai && session.userId) {
@@ -25,17 +24,14 @@ export async function GET() {
           { user_id: session.userId },
           { email: session.email },
           { nama_lengkap: { equals: session.nama, mode: "insensitive" } },
-        ],
-      },
-      select: { id: true, nama_lengkap: true, mata_pelajaran: true, kategori_pegawai: true, jabatan: true },
-    });
+        ] },
+      select: { id: true, nama_lengkap: true, mata_pelajaran: true, kategori_pegawai: true, jabatan: true } });
   }
 
   return NextResponse.json({
     success: true,
     pegawai,
-    hasMapel: Boolean(pegawai?.mata_pelajaran && pegawai.mata_pelajaran.trim().length > 0),
-  });
+    hasMapel: Boolean(pegawai?.mata_pelajaran && pegawai.mata_pelajaran.trim().length > 0) });
 }
 
 // POST / PATCH: Update penugasan mapel oleh guru sendiri atau admin
@@ -64,10 +60,8 @@ export async function POST(req: NextRequest) {
           { user_id: session.userId },
           { email: session.email },
           { nama_lengkap: { equals: session.nama, mode: "insensitive" } },
-        ],
-      },
-      select: { id: true },
-    });
+        ] },
+      select: { id: true } });
     if (p) pegawaiId = p.id;
   }
 
@@ -80,27 +74,21 @@ export async function POST(req: NextRequest) {
         email: session.email,
         kategori_pegawai: "GURU,ASATIDZ",
         jabatan: "Pengajar / Guru",
-        mata_pelajaran: mata_pelajaran.trim(),
-      },
-    });
+        mata_pelajaran: mata_pelajaran.trim() } });
     return NextResponse.json({
       success: true,
       message: "Data mapel berhasil disimpan!",
-      pegawai: newPegawai,
-    });
+      pegawai: newPegawai });
   }
 
   const updatedPegawai = await prisma.pegawai.update({
     where: { id: pegawaiId },
     data: {
       mata_pelajaran: mata_pelajaran.trim(),
-      updated_at: new Date(),
-    },
-  });
+      updated_at: new Date() } });
 
   return NextResponse.json({
     success: true,
     message: "Data mapel berhasil disimpan!",
-    pegawai: updatedPegawai,
-  });
+    pegawai: updatedPegawai });
 }
