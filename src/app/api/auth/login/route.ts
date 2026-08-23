@@ -95,7 +95,7 @@ export async function POST(req: NextRequest) {
       formattedNama = "Ust. " + formattedNama;
     }
 
-    const isDefaultPassword = user.must_change_password === true || password === "2026#@" || user.plain_password === "2026#@";
+    const isDefaultPassword = (user as any).must_change_password === true || password === "2026#@" || user.plain_password === "2026#@";
 
     await createSession({
       userId: user.id,

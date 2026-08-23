@@ -128,12 +128,21 @@ function SurahPicker({ surahList, selected, onSelect, label = "Pilih Surah" }: {
     return () => document.removeEventListener("mousedown", handler);
   }, []);
 
-  const filtered = surahList.filter(s =>
-    query === "" ||
-    s.nama_latin.toLowerCase().includes(query.toLowerCase()) ||
-    s.nama_arab.includes(query) ||
-    String(s.nomor) === query
-  ).slice(0, 20);
+  const filtered = surahList.filter(s => {
+    if (query === "") return true;
+    const qRaw = query.toLowerCase().trim();
+    const qNorm = qRaw.replace(/[-'\s`’]+/g, "");
+
+    const latinRaw = s.nama_latin.toLowerCase();
+    const latinNorm = latinRaw.replace(/[-'\s`’]+/g, "");
+
+    return (
+      latinRaw.includes(qRaw) ||
+      latinNorm.includes(qNorm) ||
+      s.nama_arab.includes(qRaw) ||
+      String(s.nomor) === qRaw
+    );
+  }).slice(0, 20);
 
   return (
     <div ref={ref} style={{ position: "relative" }}>

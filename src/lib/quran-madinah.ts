@@ -124,8 +124,19 @@ export const surahData: Surah[] = [
 ];
 
 export function searchSurah(query: string): Surah[] {
-  const q = query.toLowerCase();
-  return surahData.filter((s) => s.nama_latin.toLowerCase().includes(q));
+  if (!query) return surahData;
+  const qRaw = query.toLowerCase().trim();
+  const qNorm = qRaw.replace(/[-'\s`’]+/g, "");
+  return surahData.filter((s) => {
+    const latinRaw = s.nama_latin.toLowerCase();
+    const latinNorm = latinRaw.replace(/[-'\s`’]+/g, "");
+    return (
+      latinRaw.includes(qRaw) ||
+      latinNorm.includes(qNorm) ||
+      s.nama_arab.includes(qRaw) ||
+      String(s.nomor) === qRaw
+    );
+  });
 }
 
 export function getSurahByNomor(n: number): Surah | undefined {
