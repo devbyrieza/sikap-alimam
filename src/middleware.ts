@@ -33,18 +33,7 @@ export async function middleware(req: NextRequest) {
     }
   }
 
-  // Wajibkan ganti password jika masih menggunakan password default
-  if (
-    session.is_default_password &&
-    session.role &&
-    !["pendaftar", "santri", "wali_santri"].includes(session.role.toLowerCase()) &&
-    !pathname.startsWith("/profile") &&
-    !pathname.startsWith("/api/") &&
-    !pathname.startsWith("/login")
-  ) {
-    return NextResponse.redirect(new URL("/profile", req.url));
-  }
-
+  // Peringatan ganti password ditangani secara graceful lewat banner & modal di layout/dashboard
   return NextResponse.next();
 }
 

@@ -71,6 +71,44 @@ export default async function DashboardLayout({
     <div className="app-layout">
       <Sidebar user={{ nama: session.nama || "", role: session.role || "", email: session.email || "", originalRole: session.originalRole }} />
       <main className="app-content">
+        {session.is_default_password && (
+          <div style={{
+            background: "linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%)",
+            borderBottom: "1px solid #fed7aa",
+            padding: "12px 24px",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            gap: "16px",
+            fontSize: "13px",
+            color: "#9a3412",
+            borderRadius: "12px",
+            marginBottom: "16px",
+            boxShadow: "0 2px 8px rgba(234, 88, 12, 0.1)"
+          }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+              <span style={{ fontSize: "16px" }}>🔐</span>
+              <span>
+                <strong>Peringatan Keamanan:</strong> Anda saat ini masih menggunakan Password Default sistem. Disarankan segera memperbarui Kata Sandi Anda demi keamanan data pesantren.
+              </span>
+            </div>
+            <a
+              href="/profile"
+              style={{
+                background: "#ea580c",
+                color: "white",
+                padding: "6px 14px",
+                borderRadius: "8px",
+                fontWeight: 600,
+                fontSize: "12px",
+                textDecoration: "none",
+                whiteSpace: "nowrap"
+              }}
+            >
+              Ganti Password
+            </a>
+          </div>
+        )}
         {children}
       </main>
 
