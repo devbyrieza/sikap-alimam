@@ -174,22 +174,34 @@ export default async function JurnalPage() {
 
         <div style={{ position: "relative", zIndex: 1 }}>
           <Link href="/jurnal/tambah" style={{
-            background: "#550000",
-            color: "#ffffff",
-            padding: "11px 22px",
-            borderRadius: "14px",
-            fontWeight: 800,
-            fontSize: "14px",
+            background: "linear-gradient(135deg, #ffffff 0%, #fffbeb 100%)",
+            color: "#550000",
+            padding: "13px 26px",
+            borderRadius: "16px",
+            fontWeight: 900,
+            fontSize: "15px",
             display: "inline-flex",
             alignItems: "center",
-            gap: "8px",
+            gap: "10px",
             textDecoration: "none",
-            boxShadow: "0 4px 14px rgba(85,0,0,0.2)",
-            border: "1px solid #550000",
-            transition: "all 0.2s"
+            boxShadow: "0 10px 25px -5px rgba(255, 255, 255, 0.4), 0 8px 16px -4px rgba(0, 0, 0, 0.3)",
+            border: "2px solid #fbbf24",
+            letterSpacing: "0.02em",
+            transition: "all 0.25s cubic-bezier(0.4, 0, 0.2, 1)"
           }}>
-            <Plus size={18} color="#ffffff" />
-            Tambah Jurnal
+            <div style={{
+              width: 28,
+              height: 28,
+              borderRadius: 10,
+              background: "#550000",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              color: "#ffffff"
+            }}>
+              <Plus size={18} strokeWidth={3} />
+            </div>
+            <span>+ Tambah Jurnal</span>
           </Link>
         </div>
       </div>
