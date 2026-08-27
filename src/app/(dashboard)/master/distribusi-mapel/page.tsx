@@ -215,23 +215,32 @@ export default function DistribusiMapelPage() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         
         {/* Left Col: Teacher List */}
-        <div className="lg:col-span-1 bg-white rounded-3xl shadow-lg border border-slate-100 overflow-hidden flex flex-col h-[700px]">
-          <div className="p-5 border-b border-slate-100 bg-slate-50">
-            <h2 className="font-bold text-slate-700 flex items-center gap-2">
-              <Users size={18} /> Daftar Asatidz
+        <div className="lg:col-span-1 bg-white/80 backdrop-blur-xl rounded-3xl shadow-xl shadow-red-900/5 border border-white overflow-hidden flex flex-col h-[700px]">
+          <div className="p-6 border-b border-slate-100 bg-white/50">
+            <h2 className="font-bold text-slate-800 flex items-center gap-2 text-lg">
+              <Users size={20} color="#7A0000" /> Daftar Guru
             </h2>
           </div>
-          <div className="overflow-y-auto flex-1 p-5 space-y-3 custom-scrollbar">
+          <div className="overflow-y-auto flex-1 p-6 space-y-4 custom-scrollbar">
             {asatidz.map(guru => {
               const active = selectedGuru?.id === guru.id;
               return (
                 <div 
                   key={guru.id}
                   onClick={() => handleSelectGuru(guru)}
-                  className={`px-5 py-4 rounded-2xl cursor-pointer transition-all border ${active ? 'bg-red-50 border-red-200 shadow-sm' : 'bg-white border-slate-100 hover:border-red-100 hover:bg-red-50/30'}`}
+                  className={`p-5 rounded-2xl cursor-pointer transition-all border-2 relative overflow-hidden flex items-center gap-4 ${active ? "bg-red-50 border-red-300 shadow-md" : "bg-white border-slate-100 hover:border-red-200 hover:shadow-md"}`}
                 >
-                  <p className="font-bold text-slate-800 text-sm">{guru.nama_lengkap}</p>
-                  <p className="text-xs text-slate-500 mt-1">{guru.mengajar?.length || 0} Kelas Diajar</p>
+                  <div className="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center text-red-800 font-bold flex-shrink-0">
+                      {guru.nama_lengkap.charAt(0)}
+                    </div>
+                    <div>
+                      <p className="font-bold text-slate-800">{guru.nama_lengkap}</p>
+                  <div className="flex items-center gap-2 mt-1">
+                        <span className="bg-red-100 text-red-800 text-[10px] font-bold px-2 py-0.5 rounded-md">
+                          {guru.mengajar?.length || 0} Kelas Diajar
+                        </span>
+                      </div>
+                    </div>
                 </div>
               )
             })}
@@ -241,11 +250,21 @@ export default function DistribusiMapelPage() {
         {/* Right Col: Editor */}
         <div className="lg:col-span-2">
           {selectedGuru ? (
-            <div className="bg-white rounded-3xl shadow-xl shadow-slate-200/50 border border-slate-100 p-8">
-              <div className="mb-6 pb-6 border-b border-slate-100 flex justify-between items-start">
+            <div className="bg-white rounded-3xl shadow-2xl shadow-red-900/5 border border-slate-100 p-8 relative overflow-hidden">
+              <div className="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-[#7A0000] to-[#ddc192]" />
+              <div className="mb-6 pb-6 border-b border-slate-100 flex justify-between items-center mt-2">
                 <div>
-                  <h2 className="text-xl font-bold text-slate-800">{selectedGuru.nama_lengkap}</h2>
-                  <p className="text-sm text-slate-500 mt-1">NIP: {selectedGuru.nip || '-'}</p>
+                  <div className="flex items-center gap-4">
+                    <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-red-100 to-red-50 flex items-center justify-center text-red-800 font-black text-xl border border-red-200 shadow-sm">
+                      {selectedGuru.nama_lengkap.charAt(0)}
+                    </div>
+                    <div>
+                      <h2 className="text-2xl font-black text-slate-800">{selectedGuru.nama_lengkap}</h2>
+                  <p className="text-sm text-slate-500 mt-1 font-medium flex items-center gap-2">
+                        <span className="bg-slate-100 text-slate-600 px-2 py-0.5 rounded-md text-xs">NIP: {selectedGuru.nip || "-"}</span>
+                      </p>
+                    </div>
+                  </div>
                 </div>
                 <button
                   onClick={handleSave}
@@ -314,10 +333,11 @@ export default function DistribusiMapelPage() {
 
             </div>
           ) : (
-            <div className="bg-slate-50 rounded-3xl border-2 border-dashed border-slate-200 h-full flex flex-col items-center justify-center text-slate-400 min-h-[400px]">
-              <Users size={48} className="mb-4 opacity-50" />
-              <p className="font-medium">Pilih asatidz di sebelah kiri untuk mengatur mapel individu</p>
-              <p className="text-sm mt-2">Atau gunakan tombol <b className="text-slate-600">Import Massal</b> di atas.</p>
+            <div className="bg-white/60 backdrop-blur-md rounded-3xl border-2 border-dashed border-slate-300 h-full flex flex-col items-center justify-center text-slate-400 min-h-[400px] shadow-sm relative overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-br from-red-50/50 to-transparent pointer-events-none" />
+              <div className="w-20 h-20 bg-white rounded-full shadow-md flex items-center justify-center mb-4 z-10"><Users size={32} className="text-red-300" /></div>
+              <p className="font-bold text-slate-600 text-lg z-10">Pilih Guru di Sebelah Kiri</p>
+              <p className="text-sm mt-2 text-slate-500 z-10 max-w-sm text-center">Anda dapat mengatur plot kelas dan mata pelajaran untuk setiap guru, atau gunakan tombol <b className="text-red-700">Import Massal</b> untuk upload data Excel.</p>
             </div>
           )}
         </div>
