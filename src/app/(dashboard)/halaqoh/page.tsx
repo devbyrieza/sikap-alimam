@@ -148,7 +148,8 @@ export default function HalaqohDashboardPage() {
 
   const isPengampu = () => {
     const r = (profile?.role || "").toLowerCase();
-    return r.includes("guru") || r.includes("musyrif") || r.includes("pengampu") || r.includes("admin") || r.includes("mudir") || r.includes("kabid");
+    const j = (profile?.pegawai?.jabatan || "").toLowerCase();
+    return r.includes("musyrif") || j.includes("musyrif") || r.includes("pengampu") || r.includes("admin") || r.includes("mudir") || r.includes("kabid") || kelompokList.length > 0;
   };
 
   const isPimpinan = () => {
@@ -265,6 +266,20 @@ export default function HalaqohDashboardPage() {
                 <Clock size={18} color="#550000" /> Sesi Aktif Hari Ini
                 <span style={{ fontSize: 12, fontWeight: 700, color: "#94a3b8", background: "#f1f5f9", padding: "3px 10px", borderRadius: 8 }}>{hariIni}</span>
               </h2>
+              {kelompokList.length === 0 && !isPengampu() ? (
+                <div style={{ background: "#f8fafc", border: "1.5px dashed #cbd5e1", borderRadius: 20, padding: "32px 24px", textAlign: "center", display: "flex", flexDirection: "column", alignItems: "center", gap: 12 }}>
+                  <div style={{ width: 64, height: 64, background: "#f1f5f9", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", color: "#94a3b8" }}>
+                    <BookHeart size={32} />
+                  </div>
+                  <div>
+                    <h3 style={{ fontSize: 16, fontWeight: 800, color: "#334155", margin: "0 0 8px" }}>Bukan Musyrif Halaqoh</h3>
+                    <p style={{ fontSize: 14, color: "#64748b", margin: 0, maxWidth: 400, lineHeight: 1.5 }}>
+                      Anda saat ini masuk sebagai Guru Mata Pelajaran dan tidak memiliki Kelompok Halaqoh. <br/><br/>
+                      Silakan beralih ke tab <strong>Database Santri & Mutabaah</strong> untuk melihat data capaian tahfidz seluruh santri.
+                    </p>
+                  </div>
+                </div>
+              ) : (
               <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: 16 }}>
                 {sesiAktif.map(sesi => {
                   const cfg = SESI_CONFIG[sesi];
@@ -321,6 +336,7 @@ export default function HalaqohDashboardPage() {
                   );
                 })}
               </div>
+              )}
             </div>
           )}
 
