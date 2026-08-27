@@ -5,7 +5,7 @@ import { Client } from 'pg';
 const prisma = new PrismaClient();
 
 export async function GET() {
-  const targetNames = ['Abdil Aziz', 'Muhammad Maulana Rizki', 'Ust. Presentasi (Resmi), Lc.', 'Ust. Presensi (Resmi), Lc.'];
+  const targetNames = ['Abdil Aziz', 'Muhammad Maulana Rizki', 'Ust. Presentasi (Resmi), Lc.', 'Ust. Presensi (Resmi), Lc.', 'Ramdan'];
   const results = [];
 
   try {
