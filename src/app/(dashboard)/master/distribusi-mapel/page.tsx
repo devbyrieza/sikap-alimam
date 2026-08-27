@@ -221,14 +221,14 @@ export default function DistribusiMapelPage() {
               <Users size={18} /> Daftar Asatidz
             </h2>
           </div>
-          <div className="overflow-y-auto flex-1 p-3 space-y-2 custom-scrollbar">
+          <div className="overflow-y-auto flex-1 p-5 space-y-3 custom-scrollbar">
             {asatidz.map(guru => {
               const active = selectedGuru?.id === guru.id;
               return (
                 <div 
                   key={guru.id}
                   onClick={() => handleSelectGuru(guru)}
-                  className={`p-4 rounded-2xl cursor-pointer transition-all border ${active ? 'bg-red-50 border-red-200 shadow-sm' : 'bg-white border-slate-100 hover:border-red-100 hover:bg-red-50/30'}`}
+                  className={`px-5 py-4 rounded-2xl cursor-pointer transition-all border ${active ? 'bg-red-50 border-red-200 shadow-sm' : 'bg-white border-slate-100 hover:border-red-100 hover:bg-red-50/30'}`}
                 >
                   <p className="font-bold text-slate-800 text-sm">{guru.nama_lengkap}</p>
                   <p className="text-xs text-slate-500 mt-1">{guru.mengajar?.length || 0} Kelas Diajar</p>
