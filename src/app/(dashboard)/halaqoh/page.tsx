@@ -52,12 +52,12 @@ interface SantriMutabaah {
 }
 
 const SESI_CONFIG: Record<string, { label: string; waktu: string; icon: React.ReactNode; bg: string; color: string; border: string }> = {
-  subuh:   { label: "Halaqoh Subuh",   waktu: "04.50 â€“ 06.10", icon: <Sun size={20} />,   bg: "#fffbeb", color: "#d97706", border: "#fde68a" },
+  subuh:   { label: "Halaqoh Subuh",   waktu: "04.50 Ã¢â‚¬â€œ 06.10", icon: <Sun size={20} />,   bg: "#fffbeb", color: "#d97706", border: "#fde68a" },
   maghrib: { label: "Ba'da Maghrib",   waktu: "Ba'da Maghrib", icon: <Moon size={20} />,  bg: "#f5f3ff", color: "#7c3aed", border: "#ede9fe" },
-  dhuha:   { label: "Halaqoh Dhuha",   waktu: "07.00 â€“ 08.20", icon: <Cloud size={20} />, bg: "#eff6ff", color: "#0284c7", border: "#dbeafe" } };
+  dhuha:   { label: "Halaqoh Dhuha",   waktu: "07.00 Ã¢â‚¬â€œ 08.20", icon: <Cloud size={20} />, bg: "#eff6ff", color: "#0284c7", border: "#dbeafe" } };
 
 function NilaiBadge({ nilai }: { nilai?: number | null }) {
-  if (!nilai) return <span style={{ fontSize: 11, color: "#94a3b8" }}>â€”</span>;
+  if (!nilai) return <span style={{ fontSize: 11, color: "#94a3b8" }}>Ã¢â‚¬â€</span>;
   const cfg = nilai >= 90
     ? { bg: "#ecfdf5", color: "#059669", border: "#a7f3d0", label: "Sangat Baik" }
     : nilai >= 80
@@ -67,7 +67,7 @@ function NilaiBadge({ nilai }: { nilai?: number | null }) {
     : { bg: "#fef2f2", color: "#dc2626", border: "#fecaca", label: "Kurang" };
   return (
     <span style={{ background: cfg.bg, color: cfg.color, border: `1px solid ${cfg.border}`, padding: "2px 8px", borderRadius: 8, fontSize: 11, fontWeight: 700, whiteSpace: "nowrap" }}>
-      {nilai} Â· {cfg.label}
+      {nilai} Ã‚Â· {cfg.label}
     </span>
   );
 }
@@ -177,7 +177,7 @@ export default function HalaqohDashboardPage() {
     return matchSearch && matchKelas && matchScope;
   });
 
-  // â”€â”€â”€ CARD BUTTON STYLE â”€â”€â”€
+  // Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ CARD BUTTON STYLE Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
   const cardStyle: React.CSSProperties = {
     background: "white", borderRadius: 20,
     border: "1.5px solid #e8d5b7",
@@ -189,7 +189,7 @@ export default function HalaqohDashboardPage() {
   return (
     <div className="page-container">
 
-      {/* â”€â”€ HERO BANNER â”€â”€ */}
+      {/* Ã¢â€â‚¬Ã¢â€â‚¬ HERO BANNER Ã¢â€â‚¬Ã¢â€â‚¬ */}
       <div className="hero-banner">
         <div style={{ position: "absolute", top: 0, right: 0, width: 256, height: 256, background: "rgba(221,193,146,0.15)", borderRadius: "50%", filter: "blur(40px)", transform: "translate(30%,-50%)", pointerEvents: "none" }} />
         <div style={{ position: "absolute", bottom: 0, left: 0, width: 192, height: 192, background: "rgba(221,193,146,0.1)", borderRadius: "50%", filter: "blur(40px)", transform: "translate(-25%,50%)", pointerEvents: "none" }} />
@@ -213,7 +213,7 @@ export default function HalaqohDashboardPage() {
         </div>
       </div>
 
-      {/* â”€â”€ TAB SWITCHER â”€â”€ */}
+      {/* Ã¢â€â‚¬Ã¢â€â‚¬ TAB SWITCHER Ã¢â€â‚¬Ã¢â€â‚¬ */}
       <div style={{ background: "white", borderRadius: 18, padding: 6, border: "1.5px solid #e8d5b7", boxShadow: "0 2px 8px rgba(0,0,0,0.04)", display: "flex", gap: 6 }}>
         {[
           { key: "sesi", icon: <Clock size={16} />, label: "Sesi & Kelompok Hari Ini" },
@@ -235,9 +235,9 @@ export default function HalaqohDashboardPage() {
         ))}
       </div>
 
-      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-          TAB 1 â€” SESI & KELOMPOK HARI INI
-      â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
+      {/* Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â
+          TAB 1 Ã¢â‚¬â€ SESI & KELOMPOK HARI INI
+      Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â */}
       {activeTab === "sesi" && (
         <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
 
@@ -255,7 +255,7 @@ export default function HalaqohDashboardPage() {
           {hariIni === "Ahad" && (
             <div style={{ background: "#ecfdf5", border: "1.5px solid #a7f3d0", borderRadius: 16, padding: "14px 20px", display: "flex", alignItems: "center", gap: 12 }}>
               <CheckCircle2 size={18} color="#059669" style={{ flexShrink: 0 }} />
-              <p style={{ fontSize: 13, color: "#065f46", margin: 0, fontWeight: 600 }}>Hari Ahad â€” Tidak ada jadwal halaqoh. Selamat beristirahat!</p>
+              <p style={{ fontSize: 13, color: "#065f46", margin: 0, fontWeight: 600 }}>Hari Ahad Ã¢â‚¬â€ Tidak ada jadwal halaqoh. Selamat beristirahat!</p>
             </div>
           )}
 
@@ -348,8 +348,9 @@ export default function HalaqohDashboardPage() {
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 12 }}>
               {[
                 ...(isPengampu() ? [{ href: "/halaqoh/kelompok", icon: <Users size={18} />, label: isPimpinan() ? "Semua Kelompok" : "Kelompok Saya", sub: isPimpinan() ? "Manajemen semua kelompok" : "Atur santri bimbingan", bg: "#fdf8f0", color: "#550000" }] : []),
+                ...(isPimpinan() ? [{ href: "/halaqoh/distribusi", icon: <BookOpen size={18} />, label: "Distribusi Halaqoh", sub: "Plot via Excel", bg: "#fef2f2", color: "#b91c1c" }] : []),
                 { href: "/halaqoh/badal", icon: <Users size={18} />, label: "Setor Badal", sub: "Gantikan ustaz lain", bg: "#fdf8f0", color: "#d97706" },
-                  { href: "/halaqoh/ujian", icon: <Award size={18} />, label: "Ujian Tahfidz", sub: "Pekanan & Bulanan", bg: "#fffbeb", color: "#d97706" },
+                { href: "/halaqoh/ujian", icon: <Award size={18} />, label: "Ujian Tahfidz", sub: "Pekanan & Bulanan", bg: "#fffbeb", color: "#d97706" },
                 { href: "/halaqoh/laporan", icon: <FileText size={18} />, label: "Cetak Rapor", sub: "Rapor Pekanan & Bulanan", bg: "#ecfdf5", color: "#059669" },
                 { href: "/halaqoh/rekap", icon: <CalendarDays size={18} />, label: "Jurnal Harian", sub: "Tabel riwayat setoran", bg: "#eff6ff", color: "#0284c7" },
               ].map(item => (
@@ -378,9 +379,9 @@ export default function HalaqohDashboardPage() {
         </div>
       )}
 
-      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-          TAB 2 â€” DATABASE SANTRI & MUTABAAH
-      â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
+      {/* Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â
+          TAB 2 Ã¢â‚¬â€ DATABASE SANTRI & MUTABAAH
+      Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â */}
       {activeTab === "mutabaah" && (
         <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
 
@@ -398,7 +399,7 @@ export default function HalaqohDashboardPage() {
                 </div>
                 <div>
                   <div style={{ fontSize: 11, color: "#64748b", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.04em" }}>{card.label}</div>
-                  <div style={{ fontSize: 22, fontWeight: 900, color: "#0f172a" }}>{loadingMutabaah ? "â€¦" : card.value}</div>
+                  <div style={{ fontSize: 22, fontWeight: 900, color: "#0f172a" }}>{loadingMutabaah ? "Ã¢â‚¬Â¦" : card.value}</div>
                 </div>
               </div>
             ))}
@@ -428,7 +429,7 @@ export default function HalaqohDashboardPage() {
               ) : (
                 <div style={{ display: "flex", alignItems: "center", gap: 7, background: "#ecfdf5", border: "1.5px solid #a7f3d0", borderRadius: 13, padding: "10px 14px" }}>
                   <UserCircle2 size={15} color="#059669" />
-                  <span style={{ fontSize: 13, fontWeight: 700, color: "#059669", whiteSpace: "nowrap" }}>Kelompok Saya â€” {filteredSantri.length} Santri</span>
+                  <span style={{ fontSize: 13, fontWeight: 700, color: "#059669", whiteSpace: "nowrap" }}>Kelompok Saya Ã¢â‚¬â€ {filteredSantri.length} Santri</span>
                 </div>
               )}
               <select value={kelasFilter} onChange={e => setKelasFilter(e.target.value)}
@@ -489,11 +490,11 @@ export default function HalaqohDashboardPage() {
                         <td style={{ padding: "13px 16px", textAlign: "center", color: "#94a3b8", fontWeight: 600 }}>{idx + 1}</td>
                         <td style={{ padding: "13px 16px" }}>
                           <div style={{ fontWeight: 800, color: "#1e293b", marginBottom: 2 }}>{s.nama_lengkap}</div>
-                          <div style={{ fontSize: 11, color: "#64748b" }}>NIS: {s.nis || "â€”"}</div>
+                          <div style={{ fontSize: 11, color: "#64748b" }}>NIS: {s.nis || "Ã¢â‚¬â€"}</div>
                         </td>
                         <td style={{ padding: "13px 16px", textAlign: "center" }}>
                           <span style={{ background: "#fdf8f0", color: "#550000", border: "1px solid #ebdcc3", padding: "4px 10px", borderRadius: 9, fontSize: 12, fontWeight: 700, whiteSpace: "nowrap", display: "inline-block" }}>
-                            {s.kelas || "â€”"}
+                            {s.kelas || "Ã¢â‚¬â€"}
                           </span>
                         </td>
                         <td style={{ padding: "13px 16px" }}>
@@ -508,7 +509,7 @@ export default function HalaqohDashboardPage() {
                           {s.last_ziyadah ? (
                             <>
                               <div style={{ fontWeight: 700, color: "#1e293b", fontSize: 12, marginBottom: 3 }}>
-                                {s.last_ziyadah.surah} <span style={{ fontWeight: 400, color: "#64748b" }}>(Ayat {s.last_ziyadah.ayat_dari}â€“{s.last_ziyadah.ayat_ke})</span>
+                                {s.last_ziyadah.surah} <span style={{ fontWeight: 400, color: "#64748b" }}>(Ayat {s.last_ziyadah.ayat_dari}Ã¢â‚¬â€œ{s.last_ziyadah.ayat_ke})</span>
                               </div>
                               <div style={{ display: "flex", gap: 6, flexWrap: "wrap", alignItems: "center" }}>
                                 <span style={{ fontSize: 10, color: "#64748b", background: "#f1f5f9", padding: "1px 7px", borderRadius: 6 }}>{(s.last_ziyadah.tanggal || "").split("T")[0]}</span>
@@ -521,7 +522,7 @@ export default function HalaqohDashboardPage() {
                           {s.last_murojaah ? (
                             <>
                               <div style={{ fontWeight: 700, color: "#1e293b", fontSize: 12, marginBottom: 3 }}>
-                                {s.last_murojaah.surah} <span style={{ fontWeight: 400, color: "#64748b" }}>(Ayat {s.last_murojaah.ayat_dari}â€“{s.last_murojaah.ayat_ke})</span>
+                                {s.last_murojaah.surah} <span style={{ fontWeight: 400, color: "#64748b" }}>(Ayat {s.last_murojaah.ayat_dari}Ã¢â‚¬â€œ{s.last_murojaah.ayat_ke})</span>
                               </div>
                               <div style={{ display: "flex", gap: 6, flexWrap: "wrap", alignItems: "center" }}>
                                 <span style={{ fontSize: 10, color: "#64748b", background: "#f1f5f9", padding: "1px 7px", borderRadius: 6 }}>{(s.last_murojaah.tanggal || "").split("T")[0]}</span>
@@ -533,7 +534,7 @@ export default function HalaqohDashboardPage() {
                         <td style={{ padding: "13px 16px", textAlign: "center" }}>
                           {s.last_ujian ? (
                             <span style={{ padding: "4px 10px", borderRadius: 9, fontSize: 12, fontWeight: 700, ...(s.last_ujian.is_lulus ? { background: "#ecfdf5", color: "#059669", border: "1px solid #a7f3d0" } : { background: "#fffbeb", color: "#d97706", border: "1px solid #fde68a" }) }}>
-                              {s.last_ujian.nilai_akhir} Â· {s.last_ujian.is_lulus ? "Lulus" : "Mengulang"}
+                              {s.last_ujian.nilai_akhir} Ã‚Â· {s.last_ujian.is_lulus ? "Lulus" : "Mengulang"}
                             </span>
                           ) : <span style={{ fontSize: 11, color: "#94a3b8", fontStyle: "italic" }}>Belum ujian</span>}
                         </td>
