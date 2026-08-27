@@ -388,9 +388,9 @@ export default function HalaqohInputPage() {
             surah_nomor: selectedSurah?.nomor ?? 0,
             surah_nama: selectedSurah?.nama_latin ?? (jenis === "tahsin" ? "Tahsin" : "—"),
             surah_nama_arab: selectedSurah?.nama_arab ?? null,
-            ayat_dari: jenis === "tahsin" ? 0 : (ayatDari ?? 0),
-            ayat_ke: jenis === "tahsin" ? 0 : (ayatKe ?? 0),
-            jumlah_halaman: jenis === "tahsin" ? 0 : (halamanAuto ?? 0),
+            ayat_dari: ayatDari ?? 0,
+            ayat_ke: ayatKe ?? 0,
+            jumlah_halaman: halamanAuto ?? 0,
             kehadiran,
             alasan: alasan || null,
             nilai_sikap: nilaiSikap,
@@ -745,22 +745,17 @@ export default function HalaqohInputPage() {
             {/* Form Hafalan / Tahsin (Hanya jika Hadir) */}
             {kehadiran === "hadir" && (
               <>
-                {jenis === "tahsin" ? (
-                  <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
-                    <div style={{ background: "#fffbeb", border: "1.5px solid #fde68a", borderRadius: 16, padding: "14px 18px", color: "#b45309", fontSize: 13, fontWeight: 700, display: "flex", alignItems: "center", gap: 10 }}>
-                      <Award size={18} color="#d97706" />
-                      <span>Mode <strong>Tahsin (Talaqqi Face-to-Face)</strong>: Presensi &amp; Evaluasi Bacaan santri secara lisan.</span>
-                    </div>
-                    <div>
-                      <SurahPicker surahList={surahList} selected={selectedSurah} onSelect={setSelectedSurah} label="SURAH YANG DITAHSIN (OPSIONAL)" />
-                    </div>
-                  </div>
-                ) : (
-                  <>
-                    {/* Surah & Halaman */}
-                    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 16 }}>
-                      <div>
-                        <SurahPicker surahList={surahList} selected={selectedSurah} onSelect={setSelectedSurah} label="NAMA SURAH" />
+                                    <>
+                      {jenis === "tahsin" && (
+                        <div style={{ background: "#fffbeb", border: "1.5px solid #fde68a", borderRadius: 16, padding: "14px 18px", color: "#b45309", fontSize: 13, fontWeight: 700, display: "flex", alignItems: "center", gap: 10, marginBottom: 16 }}>
+                          <Award size={18} color="#d97706" />
+                          <span>Mode <strong>Tahsin (Talaqqi Face-to-Face)</strong>: Presensi &amp; Evaluasi Bacaan santri secara lisan.</span>
+                        </div>
+                      )}
+                      {/* Surah & Halaman */}
+                      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 16 }}>
+                        <div>
+                          <SurahPicker surahList={surahList} selected={selectedSurah} onSelect={setSelectedSurah} label={jenis === "tahsin" ? "NAMA SURAH (OPSIONAL)" : "NAMA SURAH"} />
                       </div>
                       <div>
                         <label style={labelStyle}>JUMLAH HALAMAN (STANDAR MADINAH)</label>
@@ -849,7 +844,6 @@ export default function HalaqohInputPage() {
                       </div>
                     )}
                   </>
-                )}
 
                 {/* Score Selectors */}
                 <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: 16 }}>

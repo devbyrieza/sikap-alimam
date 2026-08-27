@@ -24,7 +24,7 @@ export async function GET() {
         userUpdates++;
       }
     }
-    logs.push(Updated roles for  Users.);
+    logs.push(`Updated roles for ${userUpdates} Users.`);
 
     // 2. Update Pegawai jabatan and kategori_pegawai
     const pegawai = await prisma.pegawai.findMany({
@@ -67,7 +67,7 @@ export async function GET() {
         pegUpdates++;
       }
     }
-    logs.push(Updated jabatan/divisi for  Pegawai.);
+    logs.push(`Updated jabatan/divisi for ${pegUpdates} Pegawai.`);
 
     return NextResponse.json({ success: true, logs });
 
