@@ -194,9 +194,9 @@ export default function MasterGuruPage() {
       try {
         const res = await fetch(`/api/master/guru/${id}`, { method: "DELETE" });
         if (res.ok) {
-          Swal.fire({ icon: "success", title: "Terhapus", text: "Data guru dihapus.", confirmButtonColor: "#059669" });
+          Swal.fire({ icon: "success", title: "Terhapus", text: "Data guru dicabut tugasnya.", confirmButtonColor: "#059669" });
           fetchGuru();
-        } else { Swal.fire("Gagal", "Gagal menghapus data", "error"); }
+        } else { Swal.fire("Gagal", "Gagal mencabut tugas", "error"); }
       } catch { Swal.fire("Gagal", "Terjadi kesalahan server", "error"); }
     }
   };
