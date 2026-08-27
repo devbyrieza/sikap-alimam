@@ -1,7 +1,8 @@
 'use client';
-import { useState, useEffect } from 'react';
-import { BookOpen, Users, Plus, Trash2, Save, AlertCircle } from 'lucide-react';
+import { useState, useEffect, useRef } from 'react';
+import { BookOpen, Users, Plus, Trash2, Save, AlertCircle, Upload, Download, FileSpreadsheet } from 'lucide-react';
 import Swal from 'sweetalert2';
+import * as XLSX from 'xlsx';
 
 export default function DistribusiMapelPage() {
   const [asatidz, setAsatidz] = useState<any[]>([]);
@@ -12,6 +13,9 @@ export default function DistribusiMapelPage() {
   const [selectedGuru, setSelectedGuru] = useState<any>(null);
   const [assignments, setAssignments] = useState<any[]>([]);
   const [isSaving, setIsSaving] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
+  
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     fetchData();
@@ -107,6 +111,75 @@ export default function DistribusiMapelPage() {
     }
   };
 
+  // --- EXCEL IMPORT EXPORT FEATURE ---
+  const downloadTemplate = () => {
+    const data = [
+      { "Nama Guru": "Ade Supiana", "Kelas": "7 MTs", "Mata Pelajaran": "Bahasa Indonesia" },
+      { "Nama Guru": "Wahab Rajasam", "Kelas": "IL", "Mata Pelajaran": "Fiqih" },
+    ];
+    const ws = XLSX.utils.json_to_sheet(data);
+    
+    // Auto-size columns
+    ws['!cols'] = [{ wch: 30 }, { wch: 15 }, { wch: 30 }];
+    
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "DistribusiMapel");
+    XLSX.writeFile(wb, "Template_Distribusi_Mapel.xlsx");
+  };
+
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    Swal.fire({
+      title: 'Membaca File...',
+      text: 'Sedang memproses dokumen Excel.',
+      allowOutsideClick: false,
+      didOpen: () => Swal.showLoading()
+    });
+
+    const reader = new FileReader();
+    reader.onload = async (evt) => {
+      try {
+        const bstr = evt.target?.result;
+        const wb = XLSX.read(bstr, { type: 'binary' });
+        const wsname = wb.SheetNames[0];
+        const ws = wb.Sheets[wsname];
+        const data = XLSX.utils.sheet_to_json(ws);
+
+        if (data.length === 0) {
+          Swal.fire('Gagal', 'File Excel kosong atau format tidak sesuai.', 'error');
+          return;
+        }
+
+        // Send to backend
+        const res = await fetch('/api/master/distribusi-mapel/import', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ data })
+        });
+        const result = await res.json();
+
+        if (result.success) {
+          Swal.fire({
+            icon: 'success',
+            title: 'Berhasil Diimpor!',
+            html: `Berhasil menambahkan: <b>${result.results.berhasil}</b> data.<br/>Gagal/Tidak ditemukan: <b>${result.results.gagal}</b> data.<br/><br/><span class="text-xs text-red-500">${result.results.log_gagal.slice(0,5).join('<br/>')}</span>`,
+            confirmButtonColor: '#059669'
+          }).then(() => {
+            window.location.reload();
+          });
+        } else {
+          Swal.fire('Gagal', result.message || 'Terjadi kesalahan saat memproses data.', 'error');
+        }
+      } catch (err) {
+        Swal.fire('Error', 'Gagal membaca file Excel. Pastikan format benar.', 'error');
+      }
+      if (fileInputRef.current) fileInputRef.current.value = '';
+    };
+    reader.readAsBinaryString(file);
+  };
+
   if (loading) {
     return <div className="p-8 flex justify-center text-slate-500">Memuat data...</div>;
   }
@@ -121,6 +194,16 @@ export default function DistribusiMapelPage() {
             <BookOpen className="text-emerald-600" size={36} /> Distribusi Mengajar
           </h1>
           <p className="text-slate-500 mt-2 font-medium">Atur beban dan ploting mata pelajaran asatidz (Source of Truth).</p>
+        </div>
+        
+        <div className="flex gap-3">
+          <button onClick={downloadTemplate} className="bg-white border-2 border-emerald-100 hover:border-emerald-200 text-emerald-700 px-5 py-2.5 rounded-xl font-bold text-sm transition-all flex items-center gap-2 shadow-sm">
+            <Download size={16} /> Template Excel
+          </button>
+          <button onClick={() => fileInputRef.current?.click()} className="bg-slate-800 hover:bg-slate-900 text-white px-5 py-2.5 rounded-xl font-bold text-sm shadow-lg shadow-slate-800/30 transition-all flex items-center gap-2">
+            <Upload size={16} /> Import Massal
+          </button>
+          <input type="file" accept=".xlsx, .xls" ref={fileInputRef} onChange={handleFileUpload} className="hidden" />
         </div>
       </div>
 
@@ -228,7 +311,8 @@ export default function DistribusiMapelPage() {
           ) : (
             <div className="bg-slate-50 rounded-3xl border-2 border-dashed border-slate-200 h-full flex flex-col items-center justify-center text-slate-400 min-h-[400px]">
               <Users size={48} className="mb-4 opacity-50" />
-              <p className="font-medium">Pilih asatidz di sebelah kiri untuk mengatur mapel</p>
+              <p className="font-medium">Pilih asatidz di sebelah kiri untuk mengatur mapel individu</p>
+              <p className="text-sm mt-2">Atau gunakan tombol <b className="text-slate-600">Import Massal</b> di atas.</p>
             </div>
           )}
         </div>
