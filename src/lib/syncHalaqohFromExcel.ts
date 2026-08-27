@@ -96,7 +96,7 @@ export async function syncHalaqohFromExcel() {
           "M. Fazril Alkais",
           "Naufal Dzakiy Purnama",
           "Muhammad Yahya Ayyash",
-          "Rifqi Arsyadi Fadilah",
+          "Rifqi Arsyad Fadillah",
         ] },
       {
         musyrifQuery: "Ikhwan",
@@ -116,8 +116,8 @@ export async function syncHalaqohFromExcel() {
         santriNames: [
           "Ken Alfarezha Haryadi",
           "Khubaib Abdul Aziz",
-          "Lalu Muhammad Rizky Ananda",
-          "Mizan Alghofary Dizlilar",
+          "Lalu Muhamad Rizky Ananda",
+          "Miizan Alghifary Dizlilar",
           "Muhammad Khoirul Azzam",
           "Zakaria reynaldo",
           "Wahyu Hidayat",
@@ -203,18 +203,8 @@ export async function syncHalaqohFromExcel() {
         for (const santriName of groupDef.santriNames) {
           let s = findSantri(santriName);
           if (!s) {
-            try {
-              s = await prisma.santriAktif.create({
-                data: {
-                  nama_lengkap: santriName,
-                  nis: `SAN-${Math.floor(100000 + Math.random() * 900000)}`,
-                  jenis_kelamin: "L",
-                  kelas_id: targetKelas?.id || kelasList[0]?.id || "",
-                  is_active: true } });
-              santriList.push(s);
-            } catch (e) {
-              continue;
-            }
+            console.log(`[AutoSyncHalaqoh] Warning: Santri '${santriName}' not found in DB. Skipping to prevent duplicate fake SAN- data.`);
+            continue;
           } else if (targetKelas && s.kelas_id !== targetKelas.id) {
             try {
               await prisma.santriAktif.update({
