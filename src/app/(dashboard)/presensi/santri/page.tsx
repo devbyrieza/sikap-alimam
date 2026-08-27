@@ -84,6 +84,7 @@ export default function PresensiSantriPage() {
     kelas: Kelas[];
     mapel: Record<string, Mapel[]>;
     asatidzmMapel: AsatidzmMapel[];
+    asatidz: { id: string; nama_lengkap: string }[];
   } | null>(null);
   const [kelasList, setKelasList] = useState<Kelas[]>([]);
   const [loadingMaster, setLoadingMaster] = useState(true);
@@ -175,55 +176,28 @@ export default function PresensiSantriPage() {
       });
   }, []);
 
-  // Available Jenjang Options berdasarkan guru yang dipilih / login
+  // Tampilkan semua jenjang yang ada di master.kelas
   const availableJenjangs = useMemo(() => {
     const defaultJenjangs = ["MTs", "IL", "MA"];
-    if (isAdminSuper || !asatidId || !master?.asatidzmMapel || !master?.kelas) return defaultJenjangs;
-
-    const teacherKelasIds = master.asatidzmMapel
-      .filter((am) => am.pegawai_id === asatidId)
-      .map((am) => am.kelas_id);
-
-    if (teacherKelasIds.length === 0) return defaultJenjangs;
-
-    const teacherJenjangs = master.kelas
-      .filter((k) => teacherKelasIds.includes(k.id) && k.jenjang)
-      .map((k) => k.jenjang as string);
-
-    const uniqueJenjangs = Array.from(new Set(teacherJenjangs));
+    if (!master?.kelas) return defaultJenjangs;
+    const uniqueJenjangs = Array.from(new Set(master.kelas.map(k => k.jenjang).filter(Boolean))) as string[];
     return uniqueJenjangs.length > 0 ? uniqueJenjangs : defaultJenjangs;
-  }, [asatidId, master, isAdminSuper]);
+  }, [master]);
 
   // Auto-select Jenjang HANYA jika hanya ada 1 pilihan. Jika > 1, HARUS minta user memilih ("")
   useEffect(() => {
     if (availableJenjangs.length === 1) {
       setSelectedJenjang(availableJenjangs[0]);
-    } else if (availableJenjangs.length > 1) {
-      setSelectedJenjang("");
-      setSelectedKelas("");
-      setMapelId("");
-      setJamKe([]);
-      setSantri([]);
+    } else if (availableJenjangs.length > 1 && !selectedJenjang) {
+      // Tidak mereset state yang sudah dipilih sebelumnya
+      // agar pilihan user tidak hilang saat re-render
     }
-  }, [availableJenjangs]);
+  }, [availableJenjangs, selectedJenjang]);
 
   const filteredKelasList = useMemo(() => {
     if (!selectedJenjang) return [];
-    let list = master?.kelas || [];
-    list = list.filter((k) => k.jenjang === selectedJenjang);
-
-    if (!isAdminSuper && asatidId && master?.asatidzmMapel) {
-      const teacherKelasIds = master.asatidzmMapel
-        .filter((am) => am.pegawai_id === asatidId)
-        .map((am) => am.kelas_id);
-
-      if (teacherKelasIds.length > 0) {
-        list = list.filter((k) => teacherKelasIds.includes(k.id));
-      }
-    }
-
-    return list;
-  }, [selectedJenjang, asatidId, master, isAdminSuper]);
+    return (master?.kelas || []).filter((k) => k.jenjang === selectedJenjang);
+  }, [selectedJenjang, master]);
 
   // Auto-select Kelas jika hanya ada 1 kelas
   useEffect(() => {
@@ -237,34 +211,8 @@ export default function PresensiSantriPage() {
 
 
   const mapelList = useMemo(() => {
-    let list = (selectedKelas && master?.mapel?.[selectedKelas]) || [];
-    if (asatidId && master?.asatidzmMapel && list.length > 0) {
-      const allowedMapelIds = new Set(
-        master.asatidzmMapel
-          .filter((am) => am.pegawai_id === asatidId)
-          .map((am) => am.mapel_id)
-      );
-
-      const teacherMapelNames = new Set<string>();
-      if (master?.mapel) {
-        Object.values(master.mapel).flat().forEach((m: any) => {
-          if (allowedMapelIds.has(m.id)) {
-            teacherMapelNames.add(m.nama.trim().toLowerCase());
-          }
-        });
-      }
-
-      if (allowedMapelIds.size > 0 || teacherMapelNames.size > 0) {
-        const filtered = list.filter(
-          (m: any) => allowedMapelIds.has(m.id) || teacherMapelNames.has(m.nama.trim().toLowerCase())
-        );
-        if (filtered.length > 0) {
-          list = filtered;
-        }
-      }
-    }
-    return list;
-  }, [selectedKelas, asatidId, master]);
+    return (selectedKelas && master?.mapel?.[selectedKelas]) || [];
+  }, [selectedKelas, master]);
 
 
   // Auto-select Mapel jika hanya ada 1 mapel, atau reset jika kelas berganti
@@ -546,6 +494,23 @@ export default function PresensiSantriPage() {
           Pilih Kelas &amp; Tanggal Presensi
         </div>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "16px", width: "100%", alignItems: "flex-end" }}>
+          
+          {/* Guru Pengampu (Asatidz) */}
+          <div className="flex flex-col gap-1.5 min-w-0 w-full">
+            <label style={{ fontSize: "13px", fontWeight: "700", color: "#550000" }}>Guru Pengampu <span style={{ color: "#ef4444" }}>*</span></label>
+            <select
+              className="w-full min-w-0 box-border"
+              style={{ padding: "11px 14px", borderRadius: "12px", border: "1px solid #ebdcc3", background: "#fdf8f0", fontSize: "14px", outline: "none", fontWeight: 600 }}
+              value={asatidId}
+              onChange={(e) => setAsatidId(e.target.value)}
+            >
+              <option value="">-- Pilih Guru --</option>
+              {master?.asatidz?.map((a: any) => (
+                <option key={a.id} value={a.id}>{a.nama_lengkap}</option>
+              ))}
+            </select>
+          </div>
+
           {/* Tanggal */}
           <div className="flex flex-col gap-1.5 min-w-0 w-full">
             <label style={{ fontSize: "13px", fontWeight: "700", color: "#550000" }}>Tanggal <span style={{ color: "#ef4444" }}>*</span></label>

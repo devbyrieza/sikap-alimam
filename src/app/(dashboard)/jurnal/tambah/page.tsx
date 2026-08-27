@@ -200,54 +200,28 @@ export default function TambahJurnalPage() {
       });
   }, []);
 
-  // Available Jenjang Options berdasarkan guru yang dipilih / login
+  // Tampilkan semua jenjang yang ada di master.kelas
   const availableJenjangs = useMemo(() => {
     const defaultJenjangs = ["MTs", "IL", "MA"];
-    if (!asatidId || !master?.asatidzmMapel || !master?.kelas) return defaultJenjangs;
-
-    const teacherKelasIds = master.asatidzmMapel
-      .filter((am) => am.pegawai_id === asatidId)
-      .map((am) => am.kelas_id);
-
-    if (teacherKelasIds.length === 0) return defaultJenjangs;
-
-    const teacherJenjangs = master.kelas
-      .filter((k) => teacherKelasIds.includes(k.id) && k.jenjang)
-      .map((k) => k.jenjang as string);
-
-    const uniqueJenjangs = Array.from(new Set(teacherJenjangs));
+    if (!master?.kelas) return defaultJenjangs;
+    const uniqueJenjangs = Array.from(new Set(master.kelas.map(k => k.jenjang).filter(Boolean))) as string[];
     return uniqueJenjangs.length > 0 ? uniqueJenjangs : defaultJenjangs;
-  }, [asatidId, master]);
+  }, [master]);
 
   // Auto-select Jenjang HANYA jika hanya ada 1 pilihan. Jika > 1, HARUS minta user memilih ("")
   useEffect(() => {
     if (availableJenjangs.length === 1) {
       setJenjangFilter(availableJenjangs[0]);
-    } else if (availableJenjangs.length > 1) {
-      setJenjangFilter("");
-      setKelasId("");
-      setMapelId("");
+    } else if (availableJenjangs.length > 1 && !jenjangFilter) {
+      // Tidak mereset state yang sudah dipilih sebelumnya
     }
-  }, [availableJenjangs]);
+  }, [availableJenjangs, jenjangFilter]);
 
 
   const filteredKelasList = useMemo(() => {
     if (!jenjangFilter) return [];
-    let list = master?.kelas || [];
-    list = list.filter((k) => k.jenjang === jenjangFilter);
-
-    if (asatidId && master?.asatidzmMapel) {
-      const teacherKelasIds = master.asatidzmMapel
-        .filter((am) => am.pegawai_id === asatidId)
-        .map((am) => am.kelas_id);
-
-      if (teacherKelasIds.length > 0) {
-        list = list.filter((k) => teacherKelasIds.includes(k.id));
-      }
-    }
-
-    return list;
-  }, [jenjangFilter, asatidId, master]);
+    return (master?.kelas || []).filter((k) => k.jenjang === jenjangFilter);
+  }, [jenjangFilter, master]);
 
 
   // Auto-select Kelas jika hanya ada 1 kelas
@@ -258,17 +232,15 @@ export default function TambahJurnalPage() {
       const exists = filteredKelasList.find((k) => k.id === kelasId);
       if (!exists) setKelasId("");
     }
-  }, [filteredKelasList]);
+  }, [filteredKelasList, kelasId]);
+
 
   const mapelList = useMemo(() => {
-    if (!kelasId) return [];
+    // 1. Get mapels directly assigned to this class
+    let list: any[] = (kelasId && master?.mapel?.[kelasId]) ? [...master.mapel[kelasId]] : [];
 
-    // Get the selected class object to know its jenjang
     const selectedKelas = master?.kelas?.find((k: any) => k.id === kelasId);
     const selectedJenjang = selectedKelas?.jenjang;
-
-    // 1. Get mapels directly assigned to this class
-    let list: any[] = master?.mapel?.[kelasId] ? [...master.mapel[kelasId]] : [];
 
     // 2. Aggregate mapels from all classes belonging to the SAME jenjang
     if (selectedJenjang && master?.kelas && master?.mapel) {
@@ -554,14 +526,10 @@ export default function TambahJurnalPage() {
                 <div>
                   {/* Pilih Guru */}
                   <div>
-                    <label style={{ display: "block", fontSize: "14px", fontWeight: 600, color: "#475569", marginBottom: "8px" }}>
-                      Nama Guru <span style={{ color: "#ef4444" }}>*</span>
-                    </label>
-                    {(!currentUser?.role?.toLowerCase().includes("admin_super") && currentUser?.asatidz_id) ? (
-                      <div style={{ padding: "12px 16px", borderRadius: "12px", border: "1px solid #cbd5e1", fontSize: "15px", backgroundColor: "#f1f5f9", color: "#334155", fontWeight: 600 }}>
-                        {currentUser.nama}
-                      </div>
-                    ) : (
+                    <div>
+                      <label style={{ display: "block", fontSize: "14px", fontWeight: 600, color: "#475569", marginBottom: "8px" }}>
+                        Nama Guru <span style={{ color: "#ef4444" }}>*</span>
+                      </label>
                       <select
                         value={asatidId}
                         onChange={(e) => setAsatidId(e.target.value)}
@@ -575,7 +543,7 @@ export default function TambahJurnalPage() {
                           </option>
                         ))}
                       </select>
-                    )}
+                    </div>
                   </div>
                 </div>
 

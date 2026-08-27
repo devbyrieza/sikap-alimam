@@ -61,6 +61,7 @@ export default function InputNilaiPage() {
     kelas: Kelas[];
     mapel: Record<string, MapelItem[]>;
     asatidzmMapel: { id: string; pegawai_id: string; mapel_id: string; kelas_id: string }[];
+    asatidz: { id: string; nama_lengkap: string }[];
   } | null>(null);
 
   const isSpecialClass = useMemo(() => {
@@ -104,55 +105,29 @@ export default function InputNilaiPage() {
 
   }, []);
 
-  // Available Jenjang
+  // Tampilkan semua jenjang yang ada di master.kelas
   const availableJenjangs = useMemo(() => {
     const defaultJenjangs = ["MTs", "IL", "MA"];
-    if (isAdminSuper || !asatidId || !master?.asatidzmMapel || !master?.kelas) return defaultJenjangs;
-
-    const teacherKelasIds = master.asatidzmMapel
-      .filter((am) => am.pegawai_id === asatidId)
-      .map((am) => am.kelas_id);
-
-    if (teacherKelasIds.length === 0) return defaultJenjangs;
-
-    const teacherJenjangs = master.kelas
-      .filter((k) => teacherKelasIds.includes(k.id) && k.jenjang)
-      .map((k) => k.jenjang as string);
-
-    const uniqueJenjangs = Array.from(new Set(teacherJenjangs));
+    if (!master?.kelas) return defaultJenjangs;
+    const uniqueJenjangs = Array.from(new Set(master.kelas.map(k => k.jenjang).filter(Boolean))) as string[];
     return uniqueJenjangs.length > 0 ? uniqueJenjangs : defaultJenjangs;
-  }, [asatidId, master, isAdminSuper]);
+  }, [master]);
 
   // Auto-select Jenjang HANYA jika hanya ada 1 pilihan. Jika > 1, HARUS minta user memilih ("")
   useEffect(() => {
     if (availableJenjangs.length === 1) {
       setJenjangFilter(availableJenjangs[0]);
-    } else if (availableJenjangs.length > 1) {
-      setJenjangFilter("");
-      setKelasId("");
-      setMapelId("");
+    } else if (availableJenjangs.length > 1 && !jenjangFilter) {
+      // Tidak mereset state yang sudah dipilih sebelumnya
     }
-  }, [availableJenjangs]);
+  }, [availableJenjangs, jenjangFilter]);
 
 
   // Filtered Kelas List
   const filteredKelasList = useMemo(() => {
     if (!jenjangFilter) return [];
-    let list = master?.kelas || [];
-    list = list.filter((k) => k.jenjang === jenjangFilter);
-
-    if (!isAdminSuper && asatidId && master?.asatidzmMapel) {
-      const teacherKelasIds = master.asatidzmMapel
-        .filter((am) => am.pegawai_id === asatidId)
-        .map((am) => am.kelas_id);
-
-      if (teacherKelasIds.length > 0) {
-        list = list.filter((k) => teacherKelasIds.includes(k.id));
-      }
-    }
-
-    return list;
-  }, [jenjangFilter, asatidId, master, isAdminSuper]);
+    return (master?.kelas || []).filter((k) => k.jenjang === jenjangFilter);
+  }, [jenjangFilter, master]);
 
 
   // Auto-select Kelas jika hanya ada 1 kelas
@@ -163,24 +138,12 @@ export default function InputNilaiPage() {
       const exists = filteredKelasList.find((k) => k.id === kelas_id);
       if (!exists) setKelasId("");
     }
-  }, [filteredKelasList]);
+  }, [filteredKelasList, kelas_id]);
 
   // Mapel List
   const mapelList = useMemo(() => {
-    let list = (kelas_id && master?.mapel?.[kelas_id]) || [];
-    if (asatidId && master?.asatidzmMapel && list.length > 0) {
-      const allowedMapelIds = master.asatidzmMapel
-        .filter((am) => am.pegawai_id === asatidId)
-        .map((am) => am.mapel_id);
-      if (allowedMapelIds.length > 0) {
-        const filtered = list.filter((m) => allowedMapelIds.includes(m.id));
-        if (filtered.length > 0) {
-          list = filtered;
-        }
-      }
-    }
-    return list;
-  }, [kelas_id, asatidId, master]);
+    return (kelas_id && master?.mapel?.[kelas_id]) || [];
+  }, [kelas_id, master]);
 
   // Auto-select Mapel jika hanya ada 1 mapel
   useEffect(() => {
@@ -530,18 +493,36 @@ export default function InputNilaiPage() {
             Parameter Penilaian
           </p>
 
-          {/* Periode */}
-          <div className="flex flex-col gap-1.5 min-w-0 w-full">
-            <label style={{ fontSize: "13px", fontWeight: "700", color: "#550000" }}>Periode Penilaian</label>
-            <select
-              className="w-full min-w-0 box-border"
-              style={{ padding: "12px 14px", borderRadius: "12px", border: "1px solid #ebdcc3", background: "#fdf8f0", fontSize: "14px", outline: "none", fontWeight: 600 }}
-              value={periode}
-              onChange={(e) => setPeriode(e.target.value)}
-            >
-              <option value="PTS">Tengah Semester (PTS)</option>
-              <option value="PAS">Akhir Semester (PAS)</option>
-            </select>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full">
+            {/* Guru Pengampu (Asatidz) */}
+            <div className="flex flex-col gap-1.5 min-w-0 w-full">
+              <label style={{ fontSize: "13px", fontWeight: "700", color: "#550000" }}>Guru Pengampu</label>
+              <select
+                className="w-full min-w-0 box-border"
+                style={{ padding: "12px 14px", borderRadius: "12px", border: "1px solid #ebdcc3", background: "#fdf8f0", fontSize: "14px", outline: "none", fontWeight: 600 }}
+                value={asatidId}
+                onChange={(e) => setAsatidId(e.target.value)}
+              >
+                <option value="">-- Pilih Guru --</option>
+                {master?.asatidz?.map((a: any) => (
+                  <option key={a.id} value={a.id}>{a.nama_lengkap}</option>
+                ))}
+              </select>
+            </div>
+
+            {/* Periode */}
+            <div className="flex flex-col gap-1.5 min-w-0 w-full">
+              <label style={{ fontSize: "13px", fontWeight: "700", color: "#550000" }}>Periode Penilaian</label>
+              <select
+                className="w-full min-w-0 box-border"
+                style={{ padding: "12px 14px", borderRadius: "12px", border: "1px solid #ebdcc3", background: "#fdf8f0", fontSize: "14px", outline: "none", fontWeight: 600 }}
+                value={periode}
+                onChange={(e) => setPeriode(e.target.value)}
+              >
+                <option value="PTS">Tengah Semester (PTS)</option>
+                <option value="PAS">Akhir Semester (PAS)</option>
+              </select>
+            </div>
           </div>
 
           {/* Jenjang & Kelas */}

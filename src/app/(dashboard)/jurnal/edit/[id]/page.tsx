@@ -214,24 +214,13 @@ export default function EditJurnalPage({ params }: { params: Promise<{ id: strin
       });
   }, []);
 
-  // Available Jenjang Options berdasarkan guru yang dipilih / login
+  // Tampilkan semua jenjang yang ada di master.kelas
   const availableJenjangs = useMemo(() => {
     const defaultJenjangs = ["MTs", "IL", "MA"];
-    if (!asatidId || !master?.asatidzmMapel || !master?.kelas) return defaultJenjangs;
-
-    const teacherKelasIds = master.asatidzmMapel
-      .filter((am) => am.pegawai_id === asatidId)
-      .map((am) => am.kelas_id);
-
-    if (teacherKelasIds.length === 0) return defaultJenjangs;
-
-    const teacherJenjangs = master.kelas
-      .filter((k) => teacherKelasIds.includes(k.id) && k.jenjang)
-      .map((k) => k.jenjang as string);
-
-    const uniqueJenjangs = Array.from(new Set(teacherJenjangs));
+    if (!master?.kelas) return defaultJenjangs;
+    const uniqueJenjangs = Array.from(new Set(master.kelas.map(k => k.jenjang).filter(Boolean))) as string[];
     return uniqueJenjangs.length > 0 ? uniqueJenjangs : defaultJenjangs;
-  }, [asatidId, master]);
+  }, [master]);
 
   // Auto-select Jenjang jika hanya ada 1 pilihan (hanya jika belum terisi dari data initial)
   useEffect(() => {
@@ -245,19 +234,8 @@ export default function EditJurnalPage({ params }: { params: Promise<{ id: strin
     if (jenjangFilter) {
       list = list.filter((k) => k.jenjang === jenjangFilter);
     }
-
-    if (asatidId && master?.asatidzmMapel) {
-      const teacherKelasIds = master.asatidzmMapel
-        .filter((am) => am.pegawai_id === asatidId)
-        .map((am) => am.kelas_id);
-
-      if (teacherKelasIds.length > 0) {
-        list = list.filter((k) => teacherKelasIds.includes(k.id));
-      }
-    }
-
     return list;
-  }, [jenjangFilter, asatidId, master]);
+  }, [jenjangFilter, master]);
 
   useEffect(() => {
     if (kelasId) {
@@ -267,22 +245,37 @@ export default function EditJurnalPage({ params }: { params: Promise<{ id: strin
   }, [filteredKelasList, kelasId, loadingInitial]);
 
   const mapelList = useMemo(() => {
-    let list = (kelasId && master?.mapel?.[kelasId]) || [];
-    
-    if (asatidId && master?.asatidzmMapel && list.length > 0) {
-      const allowedMapelIds = master.asatidzmMapel
-        .filter(am => am.pegawai_id === asatidId && am.kelas_id === kelasId)
-        .map(am => am.mapel_id);
-      
-      if (allowedMapelIds.length > 0) {
-        list = list.filter(m => allowedMapelIds.includes(m.id));
-      } else {
-        list = [];
+    // 1. Get mapels directly assigned to this class
+    let list: any[] = (kelasId && master?.mapel?.[kelasId]) ? [...master.mapel[kelasId]] : [];
+
+    const selectedKelas = master?.kelas?.find((k: any) => k.id === kelasId);
+    const selectedJenjang = selectedKelas?.jenjang;
+
+    // 2. Aggregate mapels from all classes belonging to the SAME jenjang
+    if (selectedJenjang && master?.kelas && master?.mapel) {
+      const sameJenjangKelasIds = master.kelas
+        .filter((k: any) => k.jenjang === selectedJenjang)
+        .map((k: any) => k.id);
+
+      const extraMapels: any[] = [];
+      for (const kId of sameJenjangKelasIds) {
+        if (master.mapel[kId]) {
+          extraMapels.push(...master.mapel[kId]);
+        }
+      }
+
+      // Deduplicate by name
+      const mapelNames = new Set(list.map((m: any) => m.nama.toLowerCase()));
+      for (const em of extraMapels) {
+        if (!mapelNames.has(em.nama.toLowerCase())) {
+          list.push(em);
+          mapelNames.add(em.nama.toLowerCase());
+        }
       }
     }
     
     return list;
-  }, [kelasId, asatidId, master]);
+  }, [kelasId, master]);
 
   const handleTextareaResize = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     e.target.style.height = "auto";
@@ -493,25 +486,19 @@ export default function EditJurnalPage({ params }: { params: Promise<{ id: strin
                   <label style={{ display: "block", fontSize: "14px", fontWeight: 600, color: "#475569", marginBottom: "8px" }}>
                     Nama Guru <span style={{ color: "#ef4444" }}>*</span>
                   </label>
-                  {(!currentUser?.role?.toLowerCase().includes("admin_super") && currentUser?.asatidz_id) ? (
-                    <div style={{ padding: "12px 16px", borderRadius: "12px", border: "1px solid #cbd5e1", fontSize: "15px", backgroundColor: "#f1f5f9", color: "#334155", fontWeight: 600 }}>
-                      {currentUser.nama}
-                    </div>
-                  ) : (
-                    <select
-                      value={asatidId}
-                      onChange={(e) => setAsatidId(e.target.value)}
-                      required
-                      style={{ padding: "12px 16px", borderRadius: "12px", border: "1px solid #cbd5e1", fontSize: "15px", outline: "none", width: "100%", backgroundColor: "white" }}
-                    >
-                      <option value="">-- Pilih Guru --</option>
-                      {master?.asatidz.map((a) => (
-                        <option key={a.id} value={a.id}>
-                          {a.nama_lengkap}
-                        </option>
-                      ))}
-                    </select>
-                  )}
+                  <select
+                    value={asatidId}
+                    onChange={(e) => setAsatidId(e.target.value)}
+                    required
+                    style={{ padding: "12px 16px", borderRadius: "12px", border: "1px solid #cbd5e1", fontSize: "15px", outline: "none", width: "100%", backgroundColor: "white" }}
+                  >
+                    <option value="">-- Pilih Guru --</option>
+                    {master?.asatidz.map((a) => (
+                      <option key={a.id} value={a.id}>
+                        {a.nama_lengkap}
+                      </option>
+                    ))}
+                  </select>
                 </div>
 
                 {/* Jam ke- */}
