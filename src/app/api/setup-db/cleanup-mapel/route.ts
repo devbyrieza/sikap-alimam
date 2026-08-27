@@ -7,13 +7,6 @@ export async function GET() {
   try {
     const results: string[] = [];
 
-    // 1. Rename Siroh Nabi -> Siroh
-    const updatedSiroh = await prisma.mataPelajaran.updateMany({
-      where: { nama: "Siroh Nabi" },
-      data: { nama: "Siroh" }
-    });
-    results.push(`Mengubah nama ${updatedSiroh.count} mapel 'Siroh Nabi' menjadi 'Siroh'`);
-
     // Helper function for merging
     const mergeMapel = async (wrongName: string, correctName: string) => {
       const wrongList = await prisma.mataPelajaran.findMany({ where: { nama: wrongName } });
@@ -55,6 +48,10 @@ export async function GET() {
       }
       return { merged, deleted };
     };
+
+    // 1. Merge Siroh Nabi -> Siroh
+    const sirohRes = await mergeMapel("Siroh Nabi", "Siroh");
+    results.push(`Siroh Nabi: Direname ${sirohRes.merged}, Dihapus(Merge) ${sirohRes.deleted}`);
 
     // 2. Merge Ushul Fiqh -> Fiqh
     const ushulRes = await mergeMapel("Ushul Fiqh", "Fiqh");
