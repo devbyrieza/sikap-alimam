@@ -19,10 +19,10 @@ export async function GET() {
           nama_lengkap: 'Ust. Azzam Aghnia Ilman',
           jenis_kelamin: 'L',
           kategori_pegawai: 'ASATIDZ',
-          jabatan: 'Musyrif Halaqoh'
+          jabatan: 'Pengampu Halaqoh'
         }
       });
-      logs.push('Created new Musyrif: Azzam Aghnia Ilman');
+      logs.push('Created new Pengampu Halaqoh: Azzam Aghnia Ilman');
     } else {
       logs.push('Found existing Azzam: ' + azzam.nama_lengkap);
     }

@@ -174,7 +174,7 @@ export async function syncHalaqohFromExcel() {
               nama_lengkap: `Ust. ${groupDef.musyrifQuery}`,
               jenis_kelamin: "L",
               kategori_pegawai: "ASATIDZ",
-              jabatan: "Musyrif Halaqoh" } });
+              jabatan: "Pengampu Halaqoh" } });
           pegawaiList.push(teacher);
         } catch (e) {
           continue;

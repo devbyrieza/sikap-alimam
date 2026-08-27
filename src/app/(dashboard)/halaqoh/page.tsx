@@ -272,7 +272,7 @@ export default function HalaqohDashboardPage() {
                     <BookHeart size={32} />
                   </div>
                   <div>
-                    <h3 style={{ fontSize: 16, fontWeight: 800, color: "#334155", margin: "0 0 8px" }}>Bukan Musyrif Halaqoh</h3>
+                    <h3 style={{ fontSize: 16, fontWeight: 800, color: "#334155", margin: "0 0 8px" }}>Bukan Pengampu Halaqoh</h3>
                     <p style={{ fontSize: 14, color: "#64748b", margin: 0, maxWidth: 400, lineHeight: 1.5 }}>
                       Anda saat ini masuk sebagai Guru Mata Pelajaran dan tidak memiliki Kelompok Halaqoh. <br/><br/>
                       Silakan beralih ke tab <strong>Database Santri & Mutabaah</strong> untuk melihat data capaian tahfidz seluruh santri.
