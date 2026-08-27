@@ -35,8 +35,8 @@ export async function GET() {
       
       // Tentukan Jabatan Khusus
       let jabatanKhusus = pegawai.jabatan;
-      if (isRieza) jabatanKhusus = 'Kabid IT & Pengajar';
-      if (isAbdilAziz) jabatanKhusus = 'Kabid Kurikulum & Pengajar';
+      if (isRieza) jabatanKhusus = 'Kadiv IT & Pengajar';
+      if (isAbdilAziz) jabatanKhusus = 'Kadiv Kurikulum & Pengajar';
       if (isWahab) jabatanKhusus = 'Mudir Pesantren & Pengajar';
 
       // Update jabatan pegawai jika perlu

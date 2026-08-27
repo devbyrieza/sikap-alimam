@@ -27,7 +27,7 @@ export default function LaporanHalaqohPage() {
 
   // Dynamic signature names & TTD Digital
   const [pengampuNama, setPengampuNama] = useState("Muhammad Iqbal, S.Pd");
-  const [kabidNama, setKabidNama] = useState("Wahyudi Pranata, Lc");
+  const [kadivNama, setKadivNama] = useState("Wahyudi Pranata, Lc");
   const [showDigitalSignature, setShowDigitalSignature] = useState(true);
 
   useEffect(() => {
@@ -220,11 +220,11 @@ export default function LaporanHalaqohPage() {
               />
             </div>
             <div>
-              <label style={labelStyle}>Nama Kabid Pengasuhan (TTD)</label>
+              <label style={labelStyle}>Nama Kadiv Pengasuhan (TTD)</label>
               <input
                 type="text"
-                value={kabidNama}
-                onChange={e => setKabidNama(e.target.value)}
+                value={kadivNama}
+                onChange={e => setKadivNama(e.target.value)}
                 style={{ ...selectStyle, background: "white" }}
               />
             </div>
@@ -389,10 +389,10 @@ export default function LaporanHalaqohPage() {
                 <div style={{ fontSize: 10, color: "#64748b", marginTop: 2 }}>Musyrif Halaqoh</div>
               </div>
 
-              {/* Kabid Pengasuhan & Stempel */}
+              {/* Kadiv Pengasuhan & Stempel */}
               <div style={{ minWidth: 180, position: "relative" }}>
                 <div style={{ fontSize: 11, color: "#64748b", fontWeight: 600 }}>Mengetahui,</div>
-                <div style={{ fontSize: 13, fontWeight: 800, color: "#1e293b", marginTop: 2 }}>Kabid Pengasuhan</div>
+                <div style={{ fontSize: 13, fontWeight: 800, color: "#1e293b", marginTop: 2 }}>Kadiv Pengasuhan</div>
                 
                 <div style={{ height: 60, display: "flex", alignItems: "center", justifyContent: "center", position: "relative" }}>
                   {showDigitalSignature && (
@@ -421,9 +421,9 @@ export default function LaporanHalaqohPage() {
                 </div>
 
                 <div style={{ fontWeight: 800, color: "#1e293b", fontSize: 13, textDecoration: "underline" }}>
-                  {kabidNama || "___________________"}
+                  {kadivNama || "___________________"}
                 </div>
-                <div style={{ fontSize: 10, color: "#64748b", marginTop: 2 }}>Kabid Pengasuhan Pesantren</div>
+                <div style={{ fontSize: 10, color: "#64748b", marginTop: 2 }}>Kadiv Pengasuhan Pesantren</div>
               </div>
             </div>
 

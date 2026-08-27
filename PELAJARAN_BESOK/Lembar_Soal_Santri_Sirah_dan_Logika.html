@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lembar Latihan Santri - Sirah Nabi & Logika (Full 1 Halaman A4)</title>
+<style>
+  :root {
+    --primary: #064e3b;
+    --primary-light: #047857;
+    --accent: #d97706;
+    --text-dark: #0f172a;
+    --border: #94a3b8;
+  }
+
+  * { box-sizing: border-box; }
+  
+  @page {
+    size: A4 portrait;
+    margin: 6mm;
+  }
+
+  html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background-color: #f1f5f9;
+    color: var(--text-dark);
+    font-size: 13px;
+    line-height: 1.4;
+  }
+
+  body {
+    padding: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .page-container {
+    width: 100%;
+    max-width: 210mm;
+    min-height: 282mm;
+    height: 282mm; /* Mengisi Penuh Halaman A4 */
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 18px 22px;
+    margin: 0 auto;
+    border: 2px solid var(--primary);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  /* Compact Header */
+  .header-compact {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid var(--primary);
+    padding-bottom: 8px;
+    margin-bottom: 12px;
+  }
+
+  .header-title h1 {
+    margin: 0;
+    font-size: 19px;
+    color: var(--primary);
+    font-weight: 900;
+  }
+
+  .header-title p {
+    margin: 3px 0 0 0;
+    font-size: 12px;
+    color: var(--primary-light);
+    font-weight: 700;
+  }
+
+  /* Baris Identitas Clean & Minimalis */
+  .identity-bar {
+    display: grid;
+    grid-template-columns: 2.2fr 1.5fr 1.5fr 1fr;
+    gap: 12px;
+    background: #f8fafc;
+    border: 1.5px solid var(--border);
+    padding: 10px 16px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 700;
+    margin-bottom: 14px;
+  }
+
+  /* Main Grid 2 Columns */
+  .main-grid {
+    display: grid;
+    grid-template-columns: 1fr 1.2fr;
+    gap: 14px;
+    flex: 1; /* Mengisi sisa ruang vertikal secara penuh */
+  }
+
+  .column-card {
+    background: #ffffff;
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+  }
+
+  .col-header {
+    font-size: 13px;
+    font-weight: 800;
+    color: white;
+    padding: 6px 12px;
+    border-radius: 6px;
+    margin-bottom: 12px;
+    text-align: center;
+  }
+
+  .soal-box {
+    margin-bottom: 12px;
+  }
+
+  .soal-text {
+    font-size: 12px;
+    line-height: 1.4;
+    margin-bottom: 6px;
+  }
+
+  .soal-text strong {
+    color: var(--primary);
+  }
+
+  .answer-line {
+    border: 1px solid #cbd5e1;
+    background: #fafafa;
+    border-radius: 8px;
+    padding: 6px 8px;
+  }
+
+  /* Ukuran Kotak Jawaban Yang Pas Mengisi 1 Halaman Penuh */
+  .answer-line.lines-2 { height: 62px; }
+  .answer-line.lines-3 { height: 110px; }
+  .answer-line.lines-4 { height: 145px; }
+
+  .back-note {
+    font-size: 11px;
+    color: #b45309;
+    font-weight: 700;
+    background: #fffbeb;
+    border-left: 3px solid #f59e0b;
+    padding: 6px 10px;
+    border-radius: 0 6px 6px 0;
+    margin-top: 6px;
+  }
+
+  .footer-compact {
+    text-align: center;
+    font-size: 11px;
+    font-style: italic;
+    color: #64748b;
+    border-top: 1px dashed #cbd5e1;
+    padding-top: 6px;
+    margin-top: 10px;
+  }
+
+  @media print {
+    html, body {
+      height: 100%;
+      background: white;
+      padding: 0;
+      margin: 0;
+    }
+    .page-container {
+      border: none;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      min-height: 100vh;
+      border-radius: 0;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div class="page-container">
+
+  <!-- HEADER COMPACT -->
+  <div class="header-compact">
+    <div class="header-title">
+      <h1>🕌 LEMBAR LATIHAN SANTRI MTs 7 AL-IMAM</h1>
+      <p>LOGIKA ASAH OTAK & SIRAH VISUAL NABI MUHAMMAD ﷺ (EPISODE 1)</p>
+    </div>
+    <div style="text-align: right; font-size: 12px; font-weight: bold; color: var(--primary);">
+      Ustaz Rieza Eka Tomara, S.Kom
+    </div>
+  </div>
+
+  <!-- BARIS IDENTITAS CLEAN & MINIMALIS -->
+  <div class="identity-bar">
+    <div>Nama :</div>
+    <div>Kelas : 7 MTs Al-Imam</div>
+    <div>Tgl :</div>
+    <div>Nilai :</div>
+  </div>
+
+  <!-- MAIN GRID 2 KOLOM (PAS FULL 1 HALAMAN A4) -->
+  <div class="main-grid">
+
+    <!-- KOLOM KIRI: KATEGORI 1 (LOGIKA JEBAKAN) -->
+    <div class="column-card" style="border-color: #fde68a; background: #fffdf5;">
+      <div>
+        <div class="col-header" style="background: #d97706;">
+          🧠 KATEGORI 1: LOGIKA JEBAKAN (ASAH OTAK)
+        </div>
+
+        <!-- SOAL 1 LOGIKA -->
+        <div class="soal-box">
+          <div class="soal-text">
+            <strong>1.</strong> Ibu ke pasar membeli salak <strong>200 buah</strong>. Di antaranya ada <strong>88 salak busuk</strong>. Berapa jumlah salak Ibu sekarang?
+          </div>
+          <div class="answer-line lines-2"></div>
+        </div>
+
+        <!-- SOAL 2 LOGIKA -->
+        <div class="soal-box">
+          <div class="soal-text">
+            <strong>2.</strong> Ayyash punya <strong>100 apel</strong>, <strong>setengah</strong> Ayyash bagikan ke Dzaki. Berapa apel Ayyash sekarang?
+          </div>
+          <div class="answer-line lines-2"></div>
+        </div>
+
+        <!-- SOAL 3 LOGIKA -->
+        <div class="soal-box">
+          <div class="soal-text">
+            <strong>3.</strong> Hitunglah secara logika: <strong style="font-size: 14px; color: #b45309;">4 - 1 =</strong>
+          </div>
+          <div class="answer-line lines-2"></div>
+        </div>
+      </div>
+
+      <div style="font-size: 11px; color: #b45309; font-style: italic; background: #fef3c7; padding: 8px 12px; border-radius: 8px; text-align: center;">
+        💡 Gunakan logika terbaikmu! Hati-hati dengan jebakannya!
+      </div>
+    </div>
+
+    <!-- KOLOM KANAN: KATEGORI 2 (SIRAH NABI & ENTREPRENEURSHIP) -->
+    <div class="column-card" style="border-color: #a7f3d0; background: #f0fdf4;">
+      <div>
+        <div class="col-header" style="background: #047857;">
+          📜 KATEGORI 2: SIRAH NABI EP. 1 & ENTREPRENEURSHIP
+        </div>
+
+        <!-- SOAL 1 SIRAH -->
+        <div class="soal-box">
+          <div class="soal-text">
+            <strong>1.</strong> Siapakah nama Ibu Susu Rasulullah <em>shallallahu 'alaihi wa sallam</em>? <em>(Boleh nama panggilan, tapi nama lengkap mendapat nilai lebih tinggi!)</em>
+          </div>
+          <div class="answer-line lines-2"></div>
+        </div>
+
+        <!-- SOAL 2 SIRAH -->
+        <div class="soal-box">
+          <div class="soal-text">
+            <strong>2.</strong> Siapakah sahabat utusan <strong>Ummul Mukminin Khadijah <em>radhiyallahu 'anha</em></strong> yang menyampaikan niat menikah kepada Rasulullah <em>shallallahu 'alaihi wa sallam</em>? <em>(Boleh nama panggilan, tapi nama lengkap mendapat nilai lebih tinggi!)</em>
+          </div>
+          <div class="answer-line lines-2"></div>
+        </div>
+
+        <!-- SOAL 3 ENTREPRENEURSHIP -->
+        <div class="soal-box">
+          <div class="soal-text">
+            <strong>3.</strong> Rasulullah ﷺ sejak kecil menggembala kambing dan berdagang <strong>dengan jujur (As-Siddiq) serta amanah dan dapat dipercaya (Al-Amin)</strong>. <strong>Mengapa Program Entrepreneurship di Pesantren Al-Imam sangat penting bagi kita sebagai santri?</strong>
+          </div>
+          <div class="answer-line lines-3"></div>
+        </div>
+
+        <!-- SOAL 4 IBROH -->
+        <div class="soal-box">
+          <div class="soal-text">
+            <strong>4.</strong> Sebutkan <strong>ibroh (pelajaran)</strong> dari <strong>Serial Kehidupan Rasulullah ﷺ Ep. 1</strong> yang bisa <strong>kita terapkan</strong> di pondok/rumah! <em>(Semakin lengkap & detail = nilai makin tinggi)</em>
+          </div>
+          <div class="answer-line lines-4"></div>
+        </div>
+
+        <!-- CATATAN HALAMAN BELAKANG -->
+        <div class="back-note">
+          📝 <em>Petunjuk: Jika jawabanmu panjang, silakan lanjutkan menulis di halaman belakang kertas!</em>
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- FOOTER COMPACT -->
+  <div class="footer-compact">
+    “Sungguh telah ada pada diri Rasulullah itu suri teladan yang baik bagimu.” (QS. Al-Ahzab: 21) · Pesantren Al-Imam
+  </div>
+
+</div>
+
+</body>
+</html>

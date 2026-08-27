@@ -45,7 +45,7 @@ export default function HalaqohKelompokPage() {
 
   const canManage = () => {
     const role = (profile?.role || "").toLowerCase();
-    return role.includes("admin_super") || role.includes("kabid_pengasuhan");
+    return role.includes("admin_super") || role.includes("kadiv_pengasuhan");
   };
 
   const fetchAll = useCallback(async () => {

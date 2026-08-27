@@ -58,7 +58,7 @@ export async function GET(req: NextRequest) {
         },
         penandatangan: {
           pengampu_halaqoh: musyrifNama,
-          kabid_pengasuhan: "Wahyudi Pranata, Lc."
+          kadiv_pengasuhan: "Wahyudi Pranata, Lc."
         },
         keamanan: "Terenskripsi Digital (SHA-256 Seal)",
         timestamp_verifikasi: new Date().toISOString()

@@ -130,8 +130,8 @@ export default async function DashboardPage() {
   const isGuru = userRolesStr.includes("GURU") || userRolesStr.includes("TEACHER");
   const isPengampu = userRolesStr.includes("MUSYRIF") || userRolesStr.includes("PENGAMPU");
   const isWaliKelas = userRolesStr.includes("WALI_KELAS");
-  const isKabidKurikulum = userRolesStr.includes("KABID_KURIKULUM");
-  const isKabidPengasuhan = userRolesStr.includes("KABID_PENGASUHAN");
+  const isKadivKurikulum = userRolesStr.includes("KADIV_KURIKULUM");
+  const isKadivPengasuhan = userRolesStr.includes("KADIV_PENGASUHAN");
 
   let greetingName = "Ust. User";
   if (session?.nama_panggilan) {

@@ -8,11 +8,11 @@ async function syncRoles() {
   const roleMappings = [
     { nameMatch: 'Wahab', role: 'ADMIN_SUPER,GURU' },
     { nameMatch: 'Rieza', role: 'ADMIN_SUPER' },
-    { nameMatch: 'Wahyudi', role: 'KABID_PENGASUHAN,MUSYRIF' },
-    { nameMatch: 'Imron', role: 'KABID_KURIKULUM,WALI_KELAS,MUSYRIF,GURU' },
+    { nameMatch: 'Wahyudi', role: 'KADIV_PENGASUHAN,MUSYRIF' },
+    { nameMatch: 'Imron', role: 'KADIV_KURIKULUM,WALI_KELAS,MUSYRIF,GURU' },
     { nameMatch: 'Agus', role: 'WALI_KELAS,MUSYRIF,GURU' },
     { nameMatch: 'Iqbal', role: 'MUSYRIF,GURU' },
-    { nameMatch: 'Aziz', role: 'KABID_KURIKULUM,GURU' },
+    { nameMatch: 'Aziz', role: 'KADIV_KURIKULUM,GURU' },
   ];
 
   for (const m of roleMappings) {

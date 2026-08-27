@@ -133,21 +133,21 @@ WHERE NOT EXISTS (SELECT 1 FROM santri_aktif WHERE nama_lengkap = 'Zakaria Reyna
 
 -- Data Asatidz Resmi (Sinkron 100% dengan Master Data Guru)
 INSERT INTO pegawai (id, nip, nama_lengkap, no_hp, email, kategori_pegawai, jabatan, mata_pelajaran) VALUES
-(gen_random_uuid(), '3322183101990002', 'Abdil Aziz, S.Pd, B.A', '085856160862', 'abdilaziz3101@gmail.com', 'GURU', 'Kabid Kurikulum & Pengajar', 'Bahasa Arab'),
+(gen_random_uuid(), '3322183101990002', 'Abdil Aziz, S.Pd, B.A', '085856160862', 'abdilaziz3101@gmail.com', 'GURU', 'Kadiv Kurikulum & Pengajar', 'Bahasa Arab'),
 (gen_random_uuid(), '3202082102690001', 'Ade Supyana S. Pd. I', '085775053526', 'supyanaade33@gmail.com', 'GURU', 'Pengajar / Guru', 'Bahasa Indonesia'),
 (gen_random_uuid(), '6408012910950001', 'Agus Cahyono', '081251971250', 'aguscahyono2921@gmail.com', 'GURU', 'Wali Kelas MTs & Musyrif', 'Khitobah, Tadribat Alal Anmath'),
 (gen_random_uuid(), '3511110204810005', 'Arifin Saefullah, A.Ma, Dpl, Lc, M.M, M.Pd', '087836270966', 'abahjawiy@gmail.com', 'GURU', 'Pengajar / Guru', 'Akidah'),
 (gen_random_uuid(), '1402011503990001', 'Hardiansyah, S. Pd', '082272804497', 'hardiansyahhd51@gmail.com', 'GURU', 'Pengajar / Guru', 'IPA Terpadu'),
-(gen_random_uuid(), '3301022411900005', 'Imron Abdillah', '081234566408', 'imr.abd.99@gmail.com', 'GURU', 'Kabid Kurikulum & Wali Kelas IL', 'Nahwu, Tahsin Al-Quran'),
+(gen_random_uuid(), '3301022411900005', 'Imron Abdillah', '081234566408', 'imr.abd.99@gmail.com', 'GURU', 'Kadiv Kurikulum & Wali Kelas IL', 'Nahwu, Tahsin Al-Quran'),
 (gen_random_uuid(), '3172020212840005', 'Maulidin Bachtiar', '0895332071063', 'thiarz17@gmail.com', 'GURU', 'Pengajar / Guru', 'Bahasa Inggris'),
 (gen_random_uuid(), '3211051605920001', 'Muhammad Iqbal, S.Pd', '085777919274', 'muhammadiqbal.mi118@gmail.com', 'GURU', 'Musyrif & Guru', 'Shorf, Tahsin Al-Quran'),
 (gen_random_uuid(), '2026089826', 'Muhammad Maulana Rizki', NULL, 'muhammad@pesantren-alimam.com', 'GURU', 'Pengajar / Guru', 'Bahasa Inggris'),
 (gen_random_uuid(), '3202290106940002', 'Muhammad Thoriq Ibn Ziyad, Lc, M.Ag', '085797220373', 'biezie.sundanese@gmail.com', 'GURU', 'Pengajar / Guru', 'Hadis, Siroh Nabi'),
 (gen_random_uuid(), '3202091101990007', 'Ramdan', '085703459162', 'Marjinal145@gmail.com', 'GURU', 'Pengajar / Guru', 'TIK'),
-(gen_random_uuid(), '1609010706970003', 'Rieza Eka Tomara, S.Kom', '081271414441', 'riezaekatomara@gmail.com', 'GURU', 'Kabid IT & Pengajar', 'Matematika'),
+(gen_random_uuid(), '1609010706970003', 'Rieza Eka Tomara, S.Kom', '081271414441', 'riezaekatomara@gmail.com', 'GURU', 'Kadiv IT & Pengajar', 'Matematika'),
 (gen_random_uuid(), '2026087393', 'Teguh Hudaya, Lc, M.M', '081398225358', 'teguh.hudaya@gmail.com', 'GURU', 'Pengajar / Guru', 'Entrepreneurship'),
 (gen_random_uuid(), '2026089999', 'Ust. Presentasi (Resmi), Lc.', NULL, 'presentasi.guru@pesantren-alimam.com', 'GURU', 'Pengajar / Guru', 'Bahasa Arab, Tahfidz'),
 (gen_random_uuid(), '2026086778', 'Wahab Rajasam, M.Pd', '081326611671', 'prof.wahabrajasam35@gmail.com', 'GURU', 'Mudir Pesantren & Pengajar', 'Fiqh'),
-(gen_random_uuid(), '1901072302950001', 'Wahyudi Pranata, Lc', '082316228728', 'wahyudipra95@gmail.com', 'GURU', 'Kabid Pengasuhan & Musyrif', 'Bahasa Arab')
+(gen_random_uuid(), '1901072302950001', 'Wahyudi Pranata, Lc', '082316228728', 'wahyudipra95@gmail.com', 'GURU', 'Kadiv Pengasuhan & Musyrif', 'Bahasa Arab')
 ON CONFLICT (nama_lengkap) DO NOTHING;
 

@@ -13,9 +13,9 @@ export async function POST(
   if (!session) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
   const role = (session.role || "").toLowerCase();
-  const isAllowed = role.includes("admin_super") || role.includes("kabid_pengasuhan");
+  const isAllowed = role.includes("admin_super") || role.includes("kadiv_pengasuhan");
   if (!isAllowed) {
-    return NextResponse.json({ error: "Akses ditolak. Hanya Admin Super dan Kabid Pengasuhan yang berhak mengelola anggota kelompok." }, { status: 403 });
+    return NextResponse.json({ error: "Akses ditolak. Hanya Admin Super dan Kadiv Pengasuhan yang berhak mengelola anggota kelompok." }, { status: 403 });
   }
 
   try {
@@ -48,9 +48,9 @@ export async function DELETE(
   if (!session) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
   const role = (session.role || "").toLowerCase();
-  const isAllowed = role.includes("admin_super") || role.includes("kabid_pengasuhan");
+  const isAllowed = role.includes("admin_super") || role.includes("kadiv_pengasuhan");
   if (!isAllowed) {
-    return NextResponse.json({ error: "Akses ditolak. Hanya Admin Super dan Kabid Pengasuhan yang berhak mengelola anggota kelompok." }, { status: 403 });
+    return NextResponse.json({ error: "Akses ditolak. Hanya Admin Super dan Kadiv Pengasuhan yang berhak mengelola anggota kelompok." }, { status: 403 });
   }
 
   const { searchParams } = new URL(request.url);

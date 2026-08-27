@@ -6,7 +6,7 @@ export default async function PresensiAsatidzLayout({ children }: { children: Re
   const session = await getSession();
   const userRoles = (session?.role || "").toLowerCase().split(",").map(r => r.trim());
 
-  const allowedRoles = ["guru", "musyrif", "wali_kelas", "kepala_sekolah", "kabid_kurikulum", "kabid_pengasuhan", "admin_super", "mudir"];
+  const allowedRoles = ["guru", "musyrif", "wali_kelas", "kepala_sekolah", "kadiv_kurikulum", "kadiv_pengasuhan", "admin_super", "mudir"];
   const hasAccess = userRoles.some(role => allowedRoles.includes(role));
 
   if (!hasAccess) {

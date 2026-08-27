@@ -126,7 +126,7 @@ export default function HalaqohDashboardPage() {
       setPegawaiName(p?.nama_lengkap || u?.nama || "");
       setPegawaiId(p?.id || "");
       const r = (u?.role || "").toLowerCase();
-      setScopeFilter(r.includes("admin") || r.includes("mudir") || r.includes("kabid") || r.includes("wali") ? "all" : "mine");
+      setScopeFilter(r.includes("admin") || r.includes("mudir") || r.includes("kadiv") || r.includes("wali") ? "all" : "mine");
     }).finally(() => setLoading(false));
   }, []);
 
@@ -149,12 +149,12 @@ export default function HalaqohDashboardPage() {
   const isPengampu = () => {
     const r = (profile?.role || "").toLowerCase();
     const j = (profile?.pegawai?.jabatan || "").toLowerCase();
-    return r.includes("musyrif") || j.includes("musyrif") || r.includes("pengampu") || r.includes("admin") || r.includes("mudir") || r.includes("kabid") || kelompokList.length > 0;
+    return r.includes("musyrif") || j.includes("musyrif") || r.includes("pengampu") || r.includes("admin") || r.includes("mudir") || r.includes("kadiv") || kelompokList.length > 0;
   };
 
   const isPimpinan = () => {
     const r = (profile?.role || "").toLowerCase();
-    return r.includes("admin") || r.includes("mudir") || r.includes("kabid");
+    return r.includes("admin") || r.includes("mudir") || r.includes("kadiv");
   };
 
   const isMySantri = (s: SantriMutabaah) => {

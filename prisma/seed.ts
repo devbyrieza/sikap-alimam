@@ -6,11 +6,11 @@ const prisma = new PrismaClient();
 const ASATIDZ_CONFIG = [
   { nama: "Ust. Wahab Rajasam, M.Pd", role: "ADMIN_SUPER,GURU", jabatan: "Admin Super & Guru", kategori: "GURU" },
   { nama: "Rieza Eka Tomara, S.Kom", role: "ADMIN_SUPER", jabatan: "Admin Super IT", kategori: "GURU" },
-  { nama: "Wahyudi Pranata, Lc.", role: "KABID_PENGASUHAN,MUSYRIF", jabatan: "Kabid Pengasuhan & Musyrif", kategori: "GURU" },
-  { nama: "Imron Abdillah", role: "KABID_KURIKULUM,WALI_KELAS,MUSYRIF,GURU", jabatan: "Kabid Kurikulum & Wali Kelas IL", kategori: "GURU" },
+  { nama: "Wahyudi Pranata, Lc.", role: "KADIV_PENGASUHAN,MUSYRIF", jabatan: "Kadiv Pengasuhan & Musyrif", kategori: "GURU" },
+  { nama: "Imron Abdillah", role: "KADIV_KURIKULUM,WALI_KELAS,MUSYRIF,GURU", jabatan: "Kadiv Kurikulum & Wali Kelas IL", kategori: "GURU" },
   { nama: "Agus Cahyono", role: "WALI_KELAS,MUSYRIF,GURU", jabatan: "Wali Kelas MTs & Musyrif", kategori: "GURU" },
   { nama: "Muhammad Iqbal, S. Pd", role: "MUSYRIF,GURU", jabatan: "Musyrif & Guru", kategori: "GURU" },
-  { nama: "Abdil Aziz, S.Pd., B.A.", role: "GURU,KABID_KURIKULUM", jabatan: "Guru & Kurikulum", kategori: "GURU" },
+  { nama: "Abdil Aziz, S.Pd., B.A.", role: "GURU,KADIV_KURIKULUM", jabatan: "Guru & Kurikulum", kategori: "GURU" },
   { nama: "Ikhwan Ramandhanu", role: "MUSYRIF", jabatan: "Musyrif / Pengasuh", kategori: "MUSYRIF" },
 ];
 
