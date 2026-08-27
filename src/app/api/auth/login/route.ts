@@ -62,6 +62,9 @@ export async function POST(req: NextRequest) {
     // DEMO BACKDOOR: Allow master passwords for easy testing during demo
     const isMasterPassword = 
       password === "2026#@" ||
+      password === "Paas2026!" ||
+      password === "Puas2026!" ||
+      password === "Andalus2026!" ||
       password === "Sikap2026!" || 
       password === "GuruAlimam2026!" || 
       password === "AdminAlimam2026!";
@@ -95,7 +98,16 @@ export async function POST(req: NextRequest) {
       formattedNama = "Ust. " + formattedNama;
     }
 
-    const isDefaultPassword = (user as any).must_change_password === true || password === "2026#@" || user.plain_password === "2026#@";
+    const isDefaultPassword = 
+      (user as any).must_change_password === true || 
+      password === "2026#@" || 
+      user.plain_password === "2026#@" ||
+      password === "Paas2026!" || 
+      password === "Puas2026!" || 
+      password === "Andalus2026!" || 
+      user.plain_password === "Paas2026!" || 
+      user.plain_password === "Puas2026!" || 
+      user.plain_password === "Andalus2026!";
 
     await createSession({
       userId: user.id,
