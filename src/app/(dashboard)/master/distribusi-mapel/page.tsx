@@ -140,7 +140,7 @@ export default function DistribusiMapelPage() {
                 <div 
                   key={guru.id}
                   onClick={() => handleSelectGuru(guru)}
-                  className={\p-4 rounded-2xl cursor-pointer transition-all border \\}
+                  className={`p-4 rounded-2xl cursor-pointer transition-all border ${active ? 'bg-emerald-50 border-emerald-200 shadow-sm' : 'bg-white border-slate-100 hover:border-emerald-100 hover:bg-slate-50'}`}
                 >
                   <p className="font-bold text-slate-800 text-sm">{guru.nama_lengkap}</p>
                   <p className="text-xs text-slate-500 mt-1">{guru.mengajar?.length || 0} Kelas Diajar</p>

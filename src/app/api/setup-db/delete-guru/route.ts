@@ -26,7 +26,7 @@ export async function GET() {
       await prisma.ibadahAdabSantri.deleteMany({ where: { pegawai_id: p.id } });
       
       await prisma.pegawai.delete({ where: { id: p.id } });
-      results.push(Dihapus dari SIKAP:  + p.nama_lengkap);
+      results.push('Dihapus dari SIKAP: ' + p.nama_lengkap);
 
       if (p.user_id) {
         await prisma.user.delete({ where: { id: p.user_id } }).catch(() => {});
@@ -39,9 +39,9 @@ export async function GET() {
       await pgClient.connect();
       
       for (const name of targetNames) {
-        const res = await pgClient.query(DELETE FROM public.pegawai WHERE nama_lengkap ILIKE  RETURNING nama_lengkap, ['%' + name + '%']);
+        const res = await pgClient.query(`DELETE FROM public.pegawai WHERE nama_lengkap ILIKE $1 RETURNING nama_lengkap`, ['%' + name + '%']);
         if (res.rowCount && res.rowCount > 0) {
-          results.push(Dihapus dari SIMPEG:  + res.rows.map(r => r.nama_lengkap).join(', '));
+          results.push('Dihapus dari SIMPEG: ' + res.rows.map(r => r.nama_lengkap).join(', '));
         }
       }
       
