@@ -18,13 +18,27 @@ const data = [
   { nama: 'Bachtiar', mapel: ['[7 MTs] Bahasa Inggris'] }
 ];
 
-export async function GET() {
+export async function GET(request: Request) {
+  const url = new URL(request.url);
+  const debug = url.searchParams.get("debug");
+  
+  if (debug === "true") {
+    const all = await prisma.pegawai.findMany({ select: { nama_lengkap: true } });
+    return NextResponse.json({ all: all.map(a => a.nama_lengkap) });
+  }
+
   const results = [];
+  const allPegawai = await prisma.pegawai.findMany();
   
   for (const t of data) {
-    const p = await prisma.pegawai.findFirst({ 
-      where: { nama_lengkap: { contains: t.nama, mode: 'insensitive' } } 
-    });
+    let p = allPegawai.find(x => x.nama_lengkap.toLowerCase().includes(t.nama.toLowerCase()));
+    
+    // Fallback manual matching
+    if (!p) {
+      if (t.nama === "Ade Supiana") p = allPegawai.find(x => x.nama_lengkap.toLowerCase().includes("ade"));
+      if (t.nama === "Arifin Syaifullah") p = allPegawai.find(x => x.nama_lengkap.toLowerCase().includes("arifin"));
+      if (t.nama === "Muhammad Ikbal") p = allPegawai.find(x => x.nama_lengkap.toLowerCase().includes("ikbal") || x.nama_lengkap.toLowerCase().includes("iqbal"));
+    }
     
     if (!p) {
       results.push('Guru tidak ditemukan: ' + t.nama);
