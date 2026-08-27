@@ -83,7 +83,7 @@ const NAV: NavItem[] = [
     href: "/master",
     label: "Master Data",
     icon: <Database size={18} />,
-    roles: ["admin_super", "ADMIN_SUPER", "mudir", "MUDIR"] },
+    roles: ["admin_super", "ADMIN_SUPER", "mudir", "MUDIR", "kadiv_kurikulum", "KADIV_KURIKULUM"] },
 ];
 
 interface SidebarProps {
