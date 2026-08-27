@@ -63,7 +63,7 @@ export async function GET() {
       });
       countImronToAzzam++;
     }
-    logs.push(Moved  groups from Imron to Azzam);
+    logs.push(`Moved ${countImronToAzzam} groups from Imron to Azzam`);
 
     // ACTION 2: Pindahkan kelompok Wahyudi SESI MAGHRIB ke Imron
     const kelompokWahyudiMaghrib = await prisma.halaqohKelompok.findMany({
@@ -84,7 +84,7 @@ export async function GET() {
       });
       countWahyudiToImron++;
     }
-    logs.push(Moved  Maghrib groups from Wahyudi to Imron);
+    logs.push(`Moved ${countWahyudiToImron} Maghrib groups from Wahyudi to Imron`);
 
     return NextResponse.json({ success: true, logs });
 
