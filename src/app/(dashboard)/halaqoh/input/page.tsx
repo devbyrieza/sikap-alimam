@@ -468,6 +468,19 @@ export default function HalaqohInputPage() {
     padding: "11px 14px", fontSize: 14, fontWeight: 600, outline: "none",
     background: "#fdf8f0", color: "#1e293b", transition: "border-color 0.2s" };
 
+  if (!kelompokId) {
+    return (
+      <div className="flex flex-col items-center justify-center h-[500px] text-slate-500">
+        <AlertCircle size={48} className="text-red-300 mb-4" />
+        <h2 className="text-xl font-bold text-slate-700 mb-2">Pilih Kelompok Terlebih Dahulu</h2>
+        <p className="text-sm mb-6 max-w-md text-center">Anda harus memilih kelompok dan sesi halaqoh dari Dashboard Halaqoh sebelum dapat mengisi catatan.</p>
+        <Link href="/halaqoh" className="bg-[#550000] text-white px-6 py-2.5 rounded-xl font-bold hover:bg-[#751414] transition-all flex items-center gap-2 shadow-lg shadow-red-900/20">
+          <ArrowLeft size={16} /> Kembali ke Dashboard
+        </Link>
+      </div>
+    );
+  }
+
   if (loading) {
     return (
       <div className="flex items-center justify-center h-[300px] text-slate-400">

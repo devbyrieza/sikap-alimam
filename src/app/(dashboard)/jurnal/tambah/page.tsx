@@ -287,9 +287,7 @@ export default function TambahJurnalPage() {
         const filtered = list.filter(
           (m: any) => allowedMapelIds.has(m.id) || teacherMapelNames.has(m.nama.toLowerCase())
         );
-        if (filtered.length > 0) {
-          list = filtered;
-        }
+        list = filtered;
       }
     }
 
