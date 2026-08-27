@@ -151,7 +151,7 @@ export async function syncHalaqohFromExcel() {
                 nama: "Ust. Ikhwan",
                 role: "musyrif",
                 password: "$2a$10$abcdefghijklmnopqrstuvwxyz0123456789",
-                plain_password: "GuruAlimam2026!",
+                plain_password: "Paas2026!",
                 is_active: true } });
           }
 

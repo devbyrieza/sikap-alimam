@@ -33,14 +33,14 @@ async function syncRoles() {
     where: { nama: { contains: 'Ikhwan', mode: 'insensitive' } }
   });
   if (!ikhwan) {
-    const pass = await bcrypt.hash('MusyrifAlimam2026!', 12);
+    const pass = await bcrypt.hash("Paas2026!", 12);
     const newUser = await prisma.user.create({
       data: {
         email: 'ikhwan.ramandhanu@pesantren-alimam.com',
         password: pass,
         nama: 'Ikhwan Ramandhanu',
         role: 'MUSYRIF',
-        plain_password: 'MusyrifAlimam2026!'
+        plain_password: "Paas2026!"
       }
     });
     await prisma.pegawai.create({

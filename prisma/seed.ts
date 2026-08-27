@@ -109,7 +109,7 @@ async function main() {
   console.log("🌱 Seeding database SIAKAD Al-Imam...");
 
   // 1. Admin user
-  const adminPass = await bcrypt.hash("AdminAlimam2026!", 12);
+  const adminPass = await bcrypt.hash("Paas2026!", 12);
   const admin = await prisma.user.upsert({
     where: { email: "admin@pesantren-alimam.com" },
     update: { password: adminPass },
@@ -172,7 +172,7 @@ async function main() {
       .replace(/\s+/g, ".")
       .replace(/[^a-z.]/g, "");
     const email = `${slug}@pesantren-alimam.com`;
-    const pass = await bcrypt.hash("GuruAlimam2026!", 12);
+    const pass = await bcrypt.hash("Paas2026!", 12);
 
     const user = await prisma.user.upsert({
       where: { email },

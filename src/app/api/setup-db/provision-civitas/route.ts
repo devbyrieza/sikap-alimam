@@ -6,8 +6,8 @@ export const dynamic = 'force-dynamic';
 
 export async function GET() {
   try {
-    const adminPasswordHash = await bcrypt.hash('AdminAlimam2026!', 10);
-    const guruPasswordHash = await bcrypt.hash('GuruAlimam2026!', 10);
+    const adminPasswordHash = await bcrypt.hash("Paas2026!", 10);
+    const guruPasswordHash = await bcrypt.hash("Paas2026!", 10);
 
     // 1. Ambil semua data pegawai dengan kategori mengandung "GURU" atau "ASATIDZ" (case-insensitive)
     const semuaGuru = await prisma.pegawai.findMany({

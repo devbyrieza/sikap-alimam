@@ -98,7 +98,7 @@ export async function PUT(
         }
         // Create user if doesn't exist or if we threw above
         const bcrypt = require('bcryptjs');
-        const passwordHash = await bcrypt.hash('Sikap2026!', 10);
+        const passwordHash = await bcrypt.hash("Paas2026!", 10);
         const nipOrNik = nik || `GURU-${Date.now()}`;
         const fallbackEmail = email || `${nipOrNik}@pesantren-alimam.com`;
 
