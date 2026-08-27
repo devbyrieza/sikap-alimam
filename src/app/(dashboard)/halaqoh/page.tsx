@@ -266,7 +266,7 @@ export default function HalaqohDashboardPage() {
                 <Clock size={18} color="#550000" /> Sesi Aktif Hari Ini
                 <span style={{ fontSize: 12, fontWeight: 700, color: "#94a3b8", background: "#f1f5f9", padding: "3px 10px", borderRadius: 8 }}>{hariIni}</span>
               </h2>
-              {kelompokList.length === 0 && !isPengampu() ? (
+              {!loading && kelompokList.length === 0 && !isPengampu() ? (
                 <div style={{ background: "#f8fafc", border: "1.5px dashed #cbd5e1", borderRadius: 20, padding: "32px 24px", textAlign: "center", display: "flex", flexDirection: "column", alignItems: "center", gap: 12 }}>
                   <div style={{ width: 64, height: 64, background: "#f1f5f9", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", color: "#94a3b8" }}>
                     <BookHeart size={32} />
