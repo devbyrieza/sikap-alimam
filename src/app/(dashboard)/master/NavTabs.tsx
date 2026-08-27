@@ -38,6 +38,11 @@ export default function NavTabs() {
         <Users size={16} />
         Data Guru
       </Link>
+
+      <Link href="/master/distribusi-mapel" style={getStyle("/master/distribusi-mapel")}>
+        <BookOpen size={16} />
+        Distribusi Mengajar
+      </Link>
     </div>
   );
 }
