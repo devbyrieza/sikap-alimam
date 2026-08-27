@@ -209,7 +209,7 @@ export default function TeacherMapelSetupModal({
               </p>
               <div style={{ background: "white", padding: "0.75rem", borderRadius: "0.5rem", border: "1px solid #cbd5e1" }}>
                 <div style={{ fontWeight: 800, color: "#1e293b", fontSize: "0.95rem" }}>{initialPegawai?.nama_lengkap || userName}</div>
-                <div style={{ fontSize: "0.8rem", color: "#64748b", marginTop: "0.25rem" }}>{initialPegawai?.jabatan || "Pegawai"} • {initialPegawai?.divisi || "Umum"}</div>
+                <div style={{ fontSize: "0.8rem", color: "#64748b", marginTop: "0.25rem" }}>{initialPegawai?.jabatan || "Pegawai"} â€¢ {initialPegawai?.divisi || "Umum"}</div>
               </div>
             </div>
 
