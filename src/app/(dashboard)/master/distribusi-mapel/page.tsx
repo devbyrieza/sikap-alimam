@@ -185,23 +185,28 @@ export default function DistribusiMapelPage() {
   }
 
   return (
-    <div className="p-6 md:p-12 max-w-7xl mx-auto space-y-8">
+    <div className="p-6 md:p-8 max-w-[1400px] mx-auto">
       
       {/* Header */}
-      <div className="bg-white/80 backdrop-blur-xl p-8 rounded-3xl shadow-xl shadow-emerald-500/10 border border-white/40 flex flex-col md:flex-row justify-between items-center gap-6">
-        <div>
-          <h1 className="text-3xl font-black text-slate-800 flex items-center gap-3">
-            <BookOpen className="text-emerald-600" size={36} /> Distribusi Mengajar
-          </h1>
-          <p className="text-slate-500 mt-2 font-medium">Atur beban dan ploting mata pelajaran asatidz (Source of Truth).</p>
+      <div style={{ background: "linear-gradient(135deg, #7A0000, #4A0000)", color: "white", padding: "32px 36px", borderRadius: 24, display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 20, boxShadow: "0 10px 25px rgba(0,0,0,0.2)", position: "relative", overflow: "hidden", marginBottom: "32px" }}>
+        <div style={{ position:"absolute", top:-40, right:-40, width:200, height:200, borderRadius:"50%", background: "rgba(221,193,146,0.1)", pointerEvents:"none" }} />
+        <div style={{ position:"absolute", bottom:-60, right:120, width:160, height:160, borderRadius:"50%", background: "rgba(221,193,146,0.05)", pointerEvents:"none" }} />
+        <div style={{ position:"relative", zIndex:1 }}>
+          <div style={{ display:"flex", alignItems:"center", gap:12, marginBottom:8 }}>
+            <BookOpen size={32} color="#ddc192" />
+            <h1 style={{ margin:0, fontSize:26, fontWeight:800, letterSpacing:"-0.3px" }}>Distribusi Mengajar</h1>
+          </div>
+          <p style={{ margin:0, color:"rgba(255,255,255,0.82)", fontSize:14, lineHeight:1.6, maxWidth:460 }}>
+            Atur beban dan ploting mata pelajaran asatidz (Source of Truth).
+          </p>
         </div>
         
-        <div className="flex gap-3">
-          <button onClick={downloadTemplate} className="bg-white border-2 border-emerald-100 hover:border-emerald-200 text-emerald-700 px-5 py-2.5 rounded-xl font-bold text-sm transition-all flex items-center gap-2 shadow-sm">
-            <Download size={16} /> Template Excel
+        <div style={{ position:"relative", zIndex:1, display:"flex", gap:12, flexWrap:"wrap" }}>
+          <button onClick={downloadTemplate} style={{ background:"rgba(255,255,255,0.1)", color:"white", border:"1px solid rgba(255,255,255,0.2)", cursor:"pointer", fontWeight:700, fontSize:14, padding:"12px 22px", borderRadius:14, display:"flex", alignItems:"center", gap:8, backdropFilter:"blur(8px)", transition:"all 0.2s" }}>
+            <Download size={18} /> Template Excel
           </button>
-          <button onClick={() => fileInputRef.current?.click()} className="bg-slate-800 hover:bg-slate-900 text-white px-5 py-2.5 rounded-xl font-bold text-sm shadow-lg shadow-slate-800/30 transition-all flex items-center gap-2">
-            <Upload size={16} /> Import Massal
+          <button onClick={() => fileInputRef.current?.click()} style={{ background:"linear-gradient(135deg, #ddc192, #c6a673)", color:"#4A0000", border:"none", cursor:"pointer", fontWeight:800, fontSize:14, padding:"12px 22px", borderRadius:14, display:"flex", alignItems:"center", gap:8, boxShadow:"0 4px 12px rgba(221,193,146,0.3)", transition:"all 0.2s" }}>
+            <Upload size={18} /> Import Massal
           </button>
           <input type="file" accept=".xlsx, .xls" ref={fileInputRef} onChange={handleFileUpload} className="hidden" />
         </div>
@@ -223,7 +228,7 @@ export default function DistribusiMapelPage() {
                 <div 
                   key={guru.id}
                   onClick={() => handleSelectGuru(guru)}
-                  className={`p-4 rounded-2xl cursor-pointer transition-all border ${active ? 'bg-emerald-50 border-emerald-200 shadow-sm' : 'bg-white border-slate-100 hover:border-emerald-100 hover:bg-slate-50'}`}
+                  className={`p-4 rounded-2xl cursor-pointer transition-all border ${active ? 'bg-red-50 border-red-200 shadow-sm' : 'bg-white border-slate-100 hover:border-red-100 hover:bg-red-50/30'}`}
                 >
                   <p className="font-bold text-slate-800 text-sm">{guru.nama_lengkap}</p>
                   <p className="text-xs text-slate-500 mt-1">{guru.mengajar?.length || 0} Kelas Diajar</p>
@@ -245,7 +250,7 @@ export default function DistribusiMapelPage() {
                 <button
                   onClick={handleSave}
                   disabled={isSaving}
-                  className="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-2.5 rounded-xl font-bold text-sm shadow-lg shadow-emerald-600/30 transition-all flex items-center gap-2"
+                  className="bg-red-700 hover:bg-red-800 text-white px-6 py-2.5 rounded-xl font-bold text-sm shadow-lg shadow-red-700/30 transition-all flex items-center gap-2"
                 >
                   <Save size={16} /> {isSaving ? 'Menyimpan...' : 'Simpan Tugas'}
                 </button>
@@ -264,7 +269,7 @@ export default function DistribusiMapelPage() {
                       <select 
                         value={asgn.kelas_id}
                         onChange={(e) => updateAssignment(i, 'kelas_id', e.target.value)}
-                        className="w-full bg-white border border-slate-200 rounded-xl p-3 text-sm font-medium outline-none focus:border-emerald-500"
+                        className="w-full bg-white border border-slate-200 rounded-xl p-3 text-sm font-medium outline-none focus:border-red-500 focus:ring-red-500/20"
                       >
                         <option value="">-- Pilih Kelas --</option>
                         {kelas.map(k => <option key={k.id} value={k.id}>{k.nama}</option>)}
@@ -275,7 +280,7 @@ export default function DistribusiMapelPage() {
                       <select 
                         value={asgn.mapel_id}
                         onChange={(e) => updateAssignment(i, 'mapel_id', e.target.value)}
-                        className="w-full bg-white border border-slate-200 rounded-xl p-3 text-sm font-medium outline-none focus:border-emerald-500"
+                        className="w-full bg-white border border-slate-200 rounded-xl p-3 text-sm font-medium outline-none focus:border-red-500 focus:ring-red-500/20"
                       >
                         <option value="">-- Pilih Mapel --</option>
                         {mapel.filter(m => asgn.kelas_id ? m.kelas_id === asgn.kelas_id : true).map(m => (
@@ -302,7 +307,7 @@ export default function DistribusiMapelPage() {
 
               <button
                 onClick={addAssignment}
-                className="w-full py-4 border-2 border-dashed border-emerald-200 text-emerald-600 rounded-2xl font-bold flex items-center justify-center gap-2 hover:bg-emerald-50 transition-colors"
+                className="w-full py-4 border-2 border-dashed border-red-200 text-red-700 rounded-2xl font-bold flex items-center justify-center gap-2 hover:bg-red-50 transition-colors"
               >
                 <Plus size={18} /> Tambah Kelas & Mapel
               </button>
