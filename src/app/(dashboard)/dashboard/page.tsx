@@ -128,7 +128,7 @@ export default async function DashboardPage() {
   const userRolesStr = (session?.role || "").toUpperCase();
   const isSuperAdmin = userRolesStr.includes("ADMIN_SUPER");
   const isGuru = userRolesStr.includes("GURU") || userRolesStr.includes("TEACHER");
-  const isMusyrif = userRolesStr.includes("MUSYRIF") || userRolesStr.includes("PENGAMPU");
+  const isPengampu = userRolesStr.includes("MUSYRIF") || userRolesStr.includes("PENGAMPU");
   const isWaliKelas = userRolesStr.includes("WALI_KELAS");
   const isKabidKurikulum = userRolesStr.includes("KABID_KURIKULUM");
   const isKabidPengasuhan = userRolesStr.includes("KABID_PENGASUHAN");
@@ -312,7 +312,7 @@ export default async function DashboardPage() {
           )}
 
           {/* Tombol Pengampu Halaqoh */}
-          {(isMusyrif || isSuperAdmin) && (
+          {(isPengampu || isSuperAdmin) && (
             <>
               <Link href="/halaqoh" style={{ display:"inline-flex", alignItems:"center", gap:8, background: isGuru ? "#fdf8f0" : "#550000", color: isGuru ? "#550000" : "white", border: isGuru ? "1px solid #ebdcc3" : "1px solid #751414", padding:"10px 20px", borderRadius:12, fontSize:13, fontWeight:700, textDecoration:"none", transition:"all 0.2s", boxShadow: isGuru ? "0 2px 8px rgba(85,0,0,0.04)" : "0 4px 14px rgba(85,0,0,0.25)" }}>
                 <BookOpen size={16} color={isGuru ? "#b89758" : "#ddc192"} /> Setoran Halaqoh

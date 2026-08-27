@@ -19,7 +19,7 @@ export async function GET() {
           nama_lengkap: 'Ust. Azzam Aghnia Ilman',
           jenis_kelamin: 'L',
           kategori_pegawai: 'ASATIDZ',
-          jabatan: 'Pengampu Halaqoh'
+          jabatan: 'Pengasuh & Pengampu Halaqoh'
         }
       });
       logs.push('Created new Pengampu Halaqoh: Azzam Aghnia Ilman');
