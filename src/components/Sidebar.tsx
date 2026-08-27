@@ -154,21 +154,7 @@ export default function Sidebar({ user }: SidebarProps) {
           borderBottom: "1px solid var(--border)" }}
       >
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-          <div
-            style={{
-              width: 38,
-              height: 38,
-              borderRadius: 10,
-              background: "linear-gradient(135deg, #550000, #751414)",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              flexShrink: 0,
-              boxShadow: "0 2px 8px rgba(85, 0, 0, 0.35)",
-              border: "1px solid rgba(221, 193, 146, 0.3)" }}
-          >
-            <GraduationCap size={22} color="#ddc192" />
-          </div>
+          <img src="/logo.png" alt="Logo Al-Imam" style={{ width: 44, height: 44, objectFit: "contain" }} />
           <div>
             <h1 style={{ margin: 0, fontSize: "16px", fontWeight: 800, color: "#550000", letterSpacing: "-0.02em", lineHeight: 1.2 }}>SIKAP</h1>
             <p style={{ margin: 0, fontSize: "10px", color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.08em", fontWeight: 600, marginTop: "2px" }}>Al-Imam Al-Islami</p>
