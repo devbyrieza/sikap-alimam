@@ -100,9 +100,7 @@ export default function LoginPage() {
 
       <div className="login-card">
         <div className="login-logo">
-          <div className="icon">
-            <BookOpen size={32} color="white" />
-          </div>
+          <img src="/logo.png" alt="Logo Al-Imam" style={{ width: 85, height: 85, objectFit: "contain", margin: "0 auto 16px", filter: "drop-shadow(0px 8px 16px rgba(85,0,0,0.15))" }} />
           <h1>SIKAP</h1>
           <p style={{ fontWeight: 600, fontSize: 12, color: "var(--primary)", marginTop: 4 }}>
             Sistem Informasi Kependidikan Akademik dan Pengasuhan
@@ -116,7 +114,7 @@ export default function LoginPage() {
               color: "#4b5563",
               fontFamily: "var(--font-arabic)" }}
           >
-            أهلاً وسهلاً
+            Ø£Ù‡Ù„Ø§Ù‹ ÙˆØ³Ù‡Ù„Ø§Ù‹
           </p>
           <p style={{ fontSize: 12, color: "#9ca3af", marginTop: 2 }}>
             (Selamat Datang)
@@ -144,7 +142,7 @@ export default function LoginPage() {
               <input
                 type={showPass ? "text" : "password"}
                 className="form-control"
-                placeholder="••••••••"
+                placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
