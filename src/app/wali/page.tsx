@@ -42,7 +42,7 @@ export default function WaliDashboard() {
 
   return (
     <div className="min-h-screen bg-slate-50 pb-16">
-      {/* Header Banner - PPDB Platinum Standard */}
+      {/* Header Banner - SPMB Platinum Standard */}
       <div className="bg-gradient-to-br from-primary via-[#7e141a] to-[#4a080d] pt-14 pb-20 px-6 relative overflow-hidden rounded-b-[2.5rem] shadow-xl shadow-primary/20 text-white">
         <div className="absolute top-0 right-0 p-8 opacity-10 pointer-events-none">
           <GraduationCap size={160} />

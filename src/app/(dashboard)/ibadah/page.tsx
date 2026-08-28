@@ -158,7 +158,7 @@ export default function IbadahHarianPage() {
 
   return (
     <div style={{ padding: "24px 28px", maxWidth: 1200, margin: "0 auto", display: "flex", flexDirection: "column", gap: 24 }}>
-      {/* Header Banner - PPDB Platinum Standard */}
+      {/* Header Banner - SPMB Platinum Standard */}
       <div style={{
         display: "flex",
         justifyContent: "space-between",
