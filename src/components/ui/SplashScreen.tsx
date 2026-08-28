@@ -34,7 +34,7 @@ export default function SplashScreen() {
           initial={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.5, ease: 'easeInOut' }}
-          className="fixed inset-0 z-[99999] bg-white flex flex-col items-center justify-center"
+          className="fixed inset-0 z-[99999] bg-white flex flex-col items-center justify-center overscroll-contain"
         >
           <div className="relative flex items-center justify-center">
             {/* Spinning Ring */}

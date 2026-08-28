@@ -376,7 +376,7 @@ export default function Sidebar({ user }: SidebarProps) {
       </div>
 
       {/* Desktop sidebar */}
-      <aside className="app-sidebar">
+      <aside className="app-sidebar overscroll-contain">
         <SidebarContent />
       </aside>
 
