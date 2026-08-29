@@ -772,8 +772,10 @@ export default function HalaqohInputPage() {
                                   style={{ width: 38, height: 38, borderRadius: 10, border: "1.5px solid #e2e8f0", background: "white", color: "#550000", fontWeight: 900, fontSize: 16, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}
                                 >-</button>
                                 <input
-                                  type="number"
-                                  value={ayatDari === 0 ? "" : ayatDari}
+                                    type="text"
+                                    inputMode="numeric"
+                                    pattern="[0-9]*"
+                                    value={ayatDari === 0 ? "" : ayatDari}
                                   onChange={e => {
                                     const val = e.target.value;
                                     if (val === "") setAyatDari(0);
@@ -812,8 +814,10 @@ export default function HalaqohInputPage() {
                                   style={{ width: 38, height: 38, borderRadius: 10, border: "1.5px solid #e2e8f0", background: "white", color: "#550000", fontWeight: 900, fontSize: 16, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}
                                 >-</button>
                                 <input
-                                  type="number"
-                                  value={ayatKe === 0 ? "" : ayatKe}
+                                    type="text"
+                                    inputMode="numeric"
+                                    pattern="[0-9]*"
+                                    value={ayatKe === 0 ? "" : ayatKe}
                                   onChange={e => {
                                     const val = e.target.value;
                                     if (val === "") setAyatKe(0);

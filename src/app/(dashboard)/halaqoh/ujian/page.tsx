@@ -545,7 +545,7 @@ export default function UjianTahfidzPage() {
                   </div>
                   <div>
                     <label style={labelStyle}>Jumlah Halaman (Standar Madinah)</label>
-                    <input type="number" min={1} value={jumlahHalaman || ""} onChange={e => setJumlahHalaman(Number(e.target.value) || 0)} style={inputStyle}
+                    <input type="text" inputMode="numeric" pattern="[0-9]*" value={jumlahHalaman || ""} onChange={e => setJumlahHalaman(Number(e.target.value) || 0)} style={inputStyle}
                       onFocus={e => (e.currentTarget.style.borderColor = "#550000")} onBlur={e => (e.currentTarget.style.borderColor = "#e2e8f0")} />
                   </div>
                 </>
@@ -565,10 +565,10 @@ export default function UjianTahfidzPage() {
                       style={{ width: 38, height: 38, borderRadius: 10, border: "1.5px solid #e2e8f0", background: "white", color: "#550000", fontWeight: 900, fontSize: 16, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}
                     >-</button>
                     <input
-                      type="number"
-                      min={1}
-                      max={selectedSurah.total_ayat}
-                      value={ayatDari === 0 ? "" : ayatDari}
+                        type="text"
+                        inputMode="numeric"
+                        pattern="[0-9]*"
+                        value={ayatDari === 0 ? "" : ayatDari}
                       onChange={e => {
                         const val = e.target.value;
                         if (val === "") setAyatDari(0);
@@ -602,10 +602,10 @@ export default function UjianTahfidzPage() {
                       style={{ width: 38, height: 38, borderRadius: 10, border: "1.5px solid #e2e8f0", background: "white", color: "#550000", fontWeight: 900, fontSize: 16, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}
                     >-</button>
                     <input
-                      type="number"
-                      min={ayatDari || 1}
-                      max={selectedSurah.total_ayat}
-                      value={ayatKe === 0 ? "" : ayatKe}
+                        type="text"
+                        inputMode="numeric"
+                        pattern="[0-9]*"
+                        value={ayatKe === 0 ? "" : ayatKe}
                       onChange={e => {
                         const val = e.target.value;
                         if (val === "") setAyatKe(0);
