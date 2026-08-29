@@ -12,10 +12,14 @@ import {
   Clock,
   ArrowRightLeft,
   X,
-  Loader2
+  Loader2,
+  Sparkles,
+  BookOpen,
+  Check,
+  Building,
+  AlertCircle
 } from "lucide-react";
 import Swal from "sweetalert2";
-import NavTabs from "../NavTabs";
 
 interface Santri {
   id: string;
@@ -46,36 +50,41 @@ interface KelasOption {
   jenjang: string | null;
 }
 
-const STATUS_CONFIG = {
+const STATUS_CONFIG: Record<string, { label: string; bg: string; text: string; border: string; icon: any }> = {
   aktif: {
     label: "Aktif",
-    badgeClass: "bg-emerald-50 text-emerald-700 border-emerald-200",
-    icon: CheckCircle2,
-    color: "#059669"
+    bg: "#ecfdf5",
+    text: "#047857",
+    border: "#a7f3d0",
+    icon: CheckCircle2
   },
   dikeluarkan: {
     label: "Dikeluarkan (DO)",
-    badgeClass: "bg-rose-50 text-rose-700 border-rose-200 font-bold",
-    icon: XCircle,
-    color: "#e11d48"
+    bg: "#fff1f2",
+    text: "#be123c",
+    border: "#fecdd3",
+    icon: XCircle
   },
   mengundurkan_diri: {
     label: "Mengundurkan Diri",
-    badgeClass: "bg-amber-50 text-amber-700 border-amber-200",
-    icon: Clock,
-    color: "#d97706"
+    bg: "#fffbeb",
+    text: "#b45309",
+    border: "#fde68a",
+    icon: Clock
   },
   mutasi: {
     label: "Mutasi Keluar",
-    badgeClass: "bg-purple-50 text-purple-700 border-purple-200",
-    icon: ArrowRightLeft,
-    color: "#7c3aed"
+    bg: "#f5f3ff",
+    text: "#6d28d9",
+    border: "#ddd6fe",
+    icon: ArrowRightLeft
   },
   lulus: {
     label: "Lulus (Alumni)",
-    badgeClass: "bg-blue-50 text-blue-700 border-blue-200",
-    icon: GraduationCap,
-    color: "#2563eb"
+    bg: "#eff6ff",
+    text: "#1d4ed8",
+    border: "#bfdbfe",
+    icon: GraduationCap
   }
 };
 
@@ -131,19 +140,31 @@ export default function MasterSantriPage() {
     try {
       const [resSantri, resKelas] = await Promise.all([
         fetch("/api/master/santri?status=all"),
-        fetch("/api/master/kelas")
+        fetch("/api/master/kelas?all=true")
       ]);
 
       if (resSantri.ok) {
         const json = await resSantri.json();
-        const rawS = Array.isArray(json.data) ? json.data : (Array.isArray(json.santri) ? json.santri : (Array.isArray(json) ? json : []));
+        const rawS = Array.isArray(json.data)
+          ? json.data
+          : Array.isArray(json.santri)
+          ? json.santri
+          : Array.isArray(json)
+          ? json
+          : [];
         setSantriList(rawS);
         if (json.stats) setStats(json.stats);
       }
 
       if (resKelas.ok) {
         const jsonK = await resKelas.json();
-        const rawK = Array.isArray(jsonK) ? jsonK : (Array.isArray(jsonK.kelas) ? jsonK.kelas : (Array.isArray(jsonK.data) ? jsonK.data : []));
+        const rawK = Array.isArray(jsonK)
+          ? jsonK
+          : Array.isArray(jsonK.kelas)
+          ? jsonK.kelas
+          : Array.isArray(jsonK.data)
+          ? jsonK.data
+          : [];
         setKelasList(rawK);
       }
     } catch (err) {
@@ -159,7 +180,7 @@ export default function MasterSantriPage() {
 
   // Filtered List
   const filteredSantri = useMemo(() => {
-    return santriList.filter((s) => {
+    return (santriList || []).filter((s) => {
       const matchSearch =
         searchQuery === "" ||
         s.nama_lengkap.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -179,10 +200,12 @@ export default function MasterSantriPage() {
     setSelectedSantriForStatus(santri);
     setStatusForm({
       status_kesiswaan: (santri.status_kesiswaan === "aktif" ? "dikeluarkan" : santri.status_kesiswaan) as any,
-      tanggal_keluar: santri.tanggal_keluar 
+      tanggal_keluar: santri.tanggal_keluar
         ? new Date(santri.tanggal_keluar).toISOString().split("T")[0]
         : new Date().toISOString().split("T")[0],
-      no_sk_keluar: santri.no_sk_keluar || (santri.status_kesiswaan === "dikeluarkan" ? "SK/DIR/ALIMAM/2026/088" : ""),
+      no_sk_keluar:
+        santri.no_sk_keluar ||
+        (santri.status_kesiswaan === "dikeluarkan" ? "SK/DIR/ALIMAM/2026/088" : ""),
       alasan_keluar: santri.alasan_keluar || "",
       catatan_keluar: santri.catatan_keluar || ""
     });
@@ -194,26 +217,24 @@ export default function MasterSantriPage() {
     e.preventDefault();
     if (!selectedSantriForStatus) return;
 
-    // Confirm dialog
     const isDeactivating = statusForm.status_kesiswaan !== "aktif";
     const result = await Swal.fire({
       title: isDeactivating ? "Konfirmasi Perubahan Status" : "Aktifkan Kembali Santri?",
       html: `
-        <div class="text-left text-sm text-slate-600 space-y-2">
-          <p>Anda akan mengubah status santri <b>${selectedSantriForStatus.nama_lengkap}</b> menjadi: <span class="font-bold uppercase text-primary-700">${statusForm.status_kesiswaan.replace("_", " ")}</span>.</p>
-          ${isDeactivating ? "<p class='p-2.5 bg-amber-50 text-amber-800 rounded-xl text-xs border border-amber-200'><b>Peringatan:</b> Santri ini otomatis dikeluarkan dari jadwal halaqoh harian, absensi kelas, dan tagihan SPP berikutnya akan dihentikan.</p>" : ""}
+        <div style="text-align: left; font-size: 13px; color: #475569; line-height: 1.6;">
+          <p>Anda akan mengubah status santri <b>${selectedSantriForStatus.nama_lengkap}</b> menjadi: <span style="font-weight: 800; color: #550000; text-transform: uppercase;">${statusForm.status_kesiswaan.replace("_", " ")}</span>.</p>
+          ${
+            isDeactivating
+              ? "<div style='padding: 10px 14px; background: #fffbeb; color: #92400e; border-radius: 12px; margin-top: 8px; border: 1px solid #fde68a; font-size: 12px;'><b>Peringatan:</b> Santri ini otomatis dikeluarkan dari jadwal halaqoh harian, absensi kelas, dan tagihan SPP berikutnya akan dihentikan.</div>"
+              : ""
+          }
         </div>
       `,
       icon: isDeactivating ? "warning" : "question",
       showCancelButton: true,
       confirmButtonText: "Ya, Simpan Perubahan",
       cancelButtonText: "Batal",
-      confirmButtonColor: isDeactivating ? "#550000" : "#059669",
-      customClass: {
-        popup: "rounded-2xl shadow-2xl border border-slate-100",
-        confirmButton: "rounded-xl font-bold px-5 py-2.5",
-        cancelButton: "rounded-xl font-bold px-5 py-2.5"
-      }
+      confirmButtonColor: isDeactivating ? "#550000" : "#059669"
     });
 
     if (!result.isConfirmed) return;
@@ -236,8 +257,7 @@ export default function MasterSantriPage() {
         icon: "success",
         title: "Status Berhasil Diperbarui!",
         text: data.message,
-        confirmButtonColor: "#550000",
-        customClass: { popup: "rounded-2xl shadow-xl" }
+        confirmButtonColor: "#550000"
       });
 
       setStatusModalOpen(false);
@@ -261,103 +281,136 @@ export default function MasterSantriPage() {
   };
 
   return (
-    <div className="space-y-6 max-w-7xl mx-auto pb-16">
-      {/* 1. Header Banner - Platinum Standard */}
-      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-[#550000] via-[#6e0000] to-[#800000] p-6 sm:p-8 text-white shadow-xl shadow-[#550000]/25">
-        <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div>
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs font-semibold text-amber-300 mb-3">
-              <Users className="w-3.5 h-3.5" />
-              <span>Pusat Data Induk Kesiswaan</span>
+    <div style={{ padding: "0 28px 48px", maxWidth: 1200, margin: "0 auto", display: "flex", flexDirection: "column", gap: 24 }}>
+      {/* ── 1. Hero Banner (Platinum Standard) ─────────────────────────────────── */}
+      <div
+        style={{
+          background: "linear-gradient(135deg, #3b0000 0%, #550000 60%, #7a0000 100%)",
+          borderRadius: 24,
+          padding: "32px 36px",
+          color: "white",
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          flexWrap: "wrap",
+          gap: 20,
+          boxShadow: "0 16px 40px rgba(85,0,0,0.28)",
+          position: "relative",
+          overflow: "hidden"
+        }}
+      >
+        {/* Decorative Circles */}
+        <div style={{ position: "absolute", top: -40, right: -40, width: 220, height: 220, borderRadius: "50%", background: "rgba(255,255,255,0.06)", pointerEvents: "none" }} />
+        <div style={{ position: "absolute", bottom: -60, right: 140, width: 180, height: 180, borderRadius: "50%", background: "rgba(255,255,255,0.04)", pointerEvents: "none" }} />
+
+        <div style={{ position: "relative", zIndex: 1, maxWidth: 640 }}>
+          <div style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: "4px 12px", borderRadius: 100, background: "rgba(221, 193, 146, 0.2)", border: "1px solid rgba(221, 193, 146, 0.3)", color: "#fef08a", fontSize: 12, fontWeight: 700, marginBottom: 12 }}>
+            <Users size={14} />
+            <span>Pusat Data Induk Kesiswaan</span>
+          </div>
+          <h1 style={{ margin: 0, fontSize: 26, fontWeight: 800, letterSpacing: "-0.3px" }}>
+            Data Santri &amp; Status Kesiswaan
+          </h1>
+          <p style={{ margin: "8px 0 0", color: "rgba(255,255,255,0.85)", fontSize: 14, lineHeight: 1.6 }}>
+            Kelola data induk santri, pemetaan kelas &amp; halaqoh, serta tata kelola status mutasi dan pemberhentian santri terintegrasi ke seluruh ekosistem Al-Imam.
+          </p>
+        </div>
+      </div>
+
+      {/* ── 2. Stat Cards Grid ─────────────────────────────────────────────────── */}
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(190px, 1fr))", gap: 16 }}>
+        {[
+          { label: "Total Santri", value: stats.total, unit: "Santri", color: "#1e293b", icon: Users, bg: "#ffffff", border: "#f1f5f9" },
+          { label: "Santri Aktif", value: stats.aktif, unit: "Aktif", color: "#047857", icon: CheckCircle2, bg: "#f0fdf4", border: "#dcfce7" },
+          { label: "Dikeluarkan (DO)", value: stats.dikeluarkan, unit: "Santri", color: "#be123c", icon: XCircle, bg: "#fff1f2", border: "#ffe4e6" },
+          { label: "Undur Diri", value: stats.mengundurkan_diri, unit: "Santri", color: "#b45309", icon: Clock, bg: "#fffbeb", border: "#fef3c7" },
+          { label: "Mutasi Keluar", value: stats.mutasi, unit: "Santri", color: "#6d28d9", icon: ArrowRightLeft, bg: "#f5f3ff", border: "#ede9fe" }
+        ].map((s) => {
+          const IconComponent = s.icon;
+          return (
+            <div
+              key={s.label}
+              style={{
+                background: s.bg,
+                borderRadius: 18,
+                padding: "20px 22px",
+                border: `1px solid ${s.border}`,
+                boxShadow: "0 2px 10px rgba(0,0,0,0.04)",
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "space-between"
+              }}
+            >
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 10 }}>
+                <span style={{ fontSize: 11, color: "#64748b", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.6px" }}>
+                  {s.label}
+                </span>
+                <IconComponent size={18} color={s.color} />
+              </div>
+              <div style={{ fontSize: 28, fontWeight: 800, color: s.color, lineHeight: 1 }}>
+                {s.value}
+                <span style={{ fontSize: 13, fontWeight: 500, color: "#94a3b8", marginLeft: 6 }}>
+                  {s.unit}
+                </span>
+              </div>
             </div>
-            <h1 className="text-2xl sm:text-3xl font-black tracking-tight">
-              Data Santri &amp; Status Kesiswaan
-            </h1>
-            <p className="text-white/80 text-sm mt-1 max-w-xl leading-relaxed">
-              Kelola data pokok santri, pembagian kelas, riwayat halaqoh, serta penanganan status mutasi &amp; pemberhentian santri terintegrasi.
-            </p>
-          </div>
-        </div>
-
-        {/* Decorative Background Icon */}
-        <div className="absolute right-4 -bottom-6 opacity-10 pointer-events-none">
-          <GraduationCap className="w-64 h-64 text-white" />
-        </div>
+          );
+        })}
       </div>
 
-      {/* 2. Navigation Tabs Master Data */}
-      <NavTabs />
-
-      {/* 3. Stat Cards */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4">
-        <div className="bg-white p-4 rounded-2xl border border-slate-100 shadow-xs flex flex-col justify-between">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Total Santri</span>
-            <Users className="w-4 h-4 text-slate-400" />
-          </div>
-          <div className="text-2xl font-black text-slate-800 mt-2">{stats.total}</div>
-          <span className="text-[10px] text-slate-400 mt-0.5">Semua data terdaftar</span>
-        </div>
-
-        <div className="bg-white p-4 rounded-2xl border border-emerald-100 shadow-xs flex flex-col justify-between">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-bold text-emerald-700 uppercase tracking-wider">Santri Aktif</span>
-            <CheckCircle2 className="w-4 h-4 text-emerald-500" />
-          </div>
-          <div className="text-2xl font-black text-emerald-600 mt-2">{stats.aktif}</div>
-          <span className="text-[10px] text-emerald-600/70 mt-0.5">KBM &amp; Halaqoh Aktif</span>
-        </div>
-
-        <div className="bg-white p-4 rounded-2xl border border-rose-100 shadow-xs flex flex-col justify-between">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-bold text-rose-700 uppercase tracking-wider">Dikeluarkan (DO)</span>
-            <XCircle className="w-4 h-4 text-rose-500" />
-          </div>
-          <div className="text-2xl font-black text-rose-600 mt-2">{stats.dikeluarkan}</div>
-          <span className="text-[10px] text-rose-600/70 mt-0.5">Pelanggaran / SK DO</span>
-        </div>
-
-        <div className="bg-white p-4 rounded-2xl border border-amber-100 shadow-xs flex flex-col justify-between">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-bold text-amber-700 uppercase tracking-wider">Undur Diri</span>
-            <Clock className="w-4 h-4 text-amber-500" />
-          </div>
-          <div className="text-2xl font-black text-amber-600 mt-2">{stats.mengundurkan_diri}</div>
-          <span className="text-[10px] text-amber-600/70 mt-0.5">Permintaan Orang Tua</span>
-        </div>
-
-        <div className="bg-white p-4 rounded-2xl border border-purple-100 shadow-xs flex flex-col justify-between col-span-2 sm:col-span-1">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-bold text-purple-700 uppercase tracking-wider">Mutasi Keluar</span>
-            <ArrowRightLeft className="w-4 h-4 text-purple-500" />
-          </div>
-          <div className="text-2xl font-black text-purple-600 mt-2">{stats.mutasi}</div>
-          <span className="text-[10px] text-purple-600/70 mt-0.5">Pindah Sekolah Lain</span>
-        </div>
-      </div>
-
-      {/* 4. Filter & Action Toolbar */}
-      <div className="bg-white p-4 sm:p-5 rounded-2xl border border-slate-100 shadow-xs space-y-4">
-        <div className="flex flex-col md:flex-row gap-3 items-stretch md:items-center justify-between">
+      {/* ── 3. Filter Toolbar & Status Pills ──────────────────────────────────── */}
+      <div
+        style={{
+          background: "white",
+          borderRadius: 20,
+          padding: "20px 24px",
+          border: "1px solid #f1f5f9",
+          boxShadow: "0 2px 12px rgba(0,0,0,0.04)",
+          display: "flex",
+          flexDirection: "column",
+          gap: 16
+        }}
+      >
+        <div style={{ display: "flex", gap: 12, flexWrap: "wrap", alignItems: "center", justifyContent: "space-between" }}>
           {/* Search Box */}
-          <div className="relative flex-1">
-            <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+          <div style={{ position: "relative", flex: 1, minWidth: 260 }}>
+            <Search size={16} color="#94a3b8" style={{ position: "absolute", left: 14, top: "50%", transform: "translateY(-50%)" }} />
             <input
               type="text"
               placeholder="Cari nama santri atau NIS..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#550000]/20 focus:border-[#550000] transition-all"
+              style={{
+                width: "100%",
+                padding: "11px 16px 11px 40px",
+                background: "#f8fafc",
+                border: "1px solid #e2e8f0",
+                borderRadius: 12,
+                fontSize: 14,
+                color: "#1e293b",
+                outline: "none",
+                transition: "all 0.2s"
+              }}
             />
           </div>
 
-          {/* Kelas Dropdown Filter */}
-          <div className="flex items-center gap-2">
-            <Filter className="w-4 h-4 text-slate-400 shrink-0" />
+          {/* Filter Dropdown Kelas */}
+          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            <Filter size={16} color="#64748b" />
             <select
               value={selectedKelas}
               onChange={(e) => setSelectedKelas(e.target.value)}
-              className="px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-semibold text-slate-700 focus:outline-none focus:ring-2 focus:ring-[#550000]/20"
+              style={{
+                padding: "11px 16px",
+                background: "#f8fafc",
+                border: "1px solid #e2e8f0",
+                borderRadius: 12,
+                fontSize: 13,
+                fontWeight: 600,
+                color: "#334155",
+                outline: "none",
+                cursor: "pointer"
+              }}
             >
               <option value="all">Semua Kelas</option>
               {(kelasList || []).map((k) => (
@@ -369,8 +422,8 @@ export default function MasterSantriPage() {
           </div>
         </div>
 
-        {/* Status Filter Tabs */}
-        <div className="flex items-center gap-2 overflow-x-auto pb-1 custom-scrollbar text-xs font-bold">
+        {/* Status Filter Pills */}
+        <div style={{ display: "flex", gap: 8, overflowX: "auto", paddingBottom: 4 }}>
           {[
             { id: "all", label: "Semua Status", count: stats.total },
             { id: "aktif", label: "Aktif", count: stats.aktif },
@@ -385,17 +438,33 @@ export default function MasterSantriPage() {
                 key={tab.id}
                 type="button"
                 onClick={() => setSelectedStatus(tab.id)}
-                className={`px-3.5 py-2 rounded-xl transition-all whitespace-nowrap flex items-center gap-1.5 cursor-pointer ${
-                  isSelected
-                    ? "bg-[#550000] text-white shadow-sm"
-                    : "bg-slate-100 text-slate-600 hover:bg-slate-200"
-                }`}
+                style={{
+                  padding: "8px 16px",
+                  borderRadius: 10,
+                  fontSize: 12,
+                  fontWeight: 700,
+                  border: isSelected ? "none" : "1px solid #e2e8f0",
+                  background: isSelected ? "#550000" : "#ffffff",
+                  color: isSelected ? "#ffffff" : "#475569",
+                  cursor: "pointer",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 8,
+                  whiteSpace: "nowrap",
+                  transition: "all 0.15s ease",
+                  boxShadow: isSelected ? "0 4px 12px rgba(85,0,0,0.2)" : "none"
+                }}
               >
                 <span>{tab.label}</span>
                 <span
-                  className={`px-1.5 py-0.2 rounded-full text-[10px] ${
-                    isSelected ? "bg-white/20 text-white" : "bg-white text-slate-600 border border-slate-200"
-                  }`}
+                  style={{
+                    padding: "2px 7px",
+                    borderRadius: 100,
+                    fontSize: 11,
+                    fontWeight: 800,
+                    background: isSelected ? "rgba(255,255,255,0.25)" : "#f1f5f9",
+                    color: isSelected ? "#ffffff" : "#64748b"
+                  }}
                 >
                   {tab.count}
                 </span>
@@ -405,34 +474,42 @@ export default function MasterSantriPage() {
         </div>
       </div>
 
-      {/* 5. Dense Table of Santri */}
-      <div className="bg-white rounded-2xl border border-slate-100 shadow-xs overflow-hidden">
-        <div className="overflow-x-auto custom-scrollbar">
-          <table className="w-full text-left text-sm">
-            <thead className="bg-slate-50 text-slate-700 font-bold border-b border-slate-200 text-xs uppercase tracking-wider">
+      {/* ── 4. Main Data Table ─────────────────────────────────────────────────── */}
+      <div
+        style={{
+          background: "white",
+          borderRadius: 20,
+          border: "1px solid #f1f5f9",
+          boxShadow: "0 4px 20px rgba(0,0,0,0.05)",
+          overflow: "hidden"
+        }}
+      >
+        <div style={{ overflowX: "auto" }} className="custom-scrollbar">
+          <table style={{ width: "100%", borderCollapse: "collapse", textAlign: "left", fontSize: 13 }}>
+            <thead style={{ background: "#f8fafc", borderBottom: "1px solid #e2e8f0" }}>
               <tr>
-                <th className="px-4 py-3.5 text-center w-12">No</th>
-                <th className="px-4 py-3.5">Nama Santri &amp; NIS</th>
-                <th className="px-4 py-3.5">Kelas</th>
-                <th className="px-4 py-3.5">Kelompok Halaqoh</th>
-                <th className="px-4 py-3.5 text-center">Status Kesiswaan</th>
-                <th className="px-6 py-3.5 text-right">Aksi &amp; Dokumen</th>
+                <th style={{ padding: "14px 18px", width: 50, textAlign: "center", color: "#475569", fontWeight: 700 }}>NO</th>
+                <th style={{ padding: "14px 18px", color: "#475569", fontWeight: 700 }}>NAMA SANTRI &amp; NIS</th>
+                <th style={{ padding: "14px 18px", color: "#475569", fontWeight: 700 }}>KELAS</th>
+                <th style={{ padding: "14px 18px", color: "#475569", fontWeight: 700 }}>KELOMPOK HALAQOH</th>
+                <th style={{ padding: "14px 18px", textAlign: "center", color: "#475569", fontWeight: 700 }}>STATUS KESISWAAN</th>
+                <th style={{ padding: "14px 24px", textAlign: "right", color: "#475569", fontWeight: 700 }}>AKSI &amp; DOKUMEN</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100">
+            <tbody>
               {loading ? (
                 <tr>
-                  <td colSpan={6} className="px-6 py-12 text-center text-slate-400">
-                    <Loader2 className="w-6 h-6 animate-spin mx-auto text-[#550000] mb-2" />
-                    <p className="font-semibold text-xs">Memuat data santri...</p>
+                  <td colSpan={6} style={{ padding: "48px 20px", textAlign: "center", color: "#94a3b8" }}>
+                    <Loader2 size={28} color="#550000" className="animate-spin" style={{ margin: "0 auto 8px" }} />
+                    <p style={{ fontWeight: 600, fontSize: 13 }}>Memuat data santri...</p>
                   </td>
                 </tr>
               ) : filteredSantri.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="px-6 py-12 text-center text-slate-400">
-                    <Users className="w-10 h-10 mx-auto text-slate-300 mb-2" />
-                    <p className="font-bold text-slate-600">Tidak ada data santri ditemukan</p>
-                    <p className="text-xs text-slate-400 mt-0.5">Coba sesuaikan kata kunci pencarian atau filter status.</p>
+                  <td colSpan={6} style={{ padding: "48px 20px", textAlign: "center", color: "#94a3b8" }}>
+                    <Users size={36} color="#cbd5e1" style={{ margin: "0 auto 8px" }} />
+                    <p style={{ fontWeight: 700, color: "#475569", fontSize: 14, margin: 0 }}>Tidak ada data santri ditemukan</p>
+                    <p style={{ fontSize: 12, margin: "4px 0 0" }}>Coba sesuaikan kata kunci pencarian atau filter status.</p>
                   </td>
                 </tr>
               ) : (
@@ -443,81 +520,123 @@ export default function MasterSantriPage() {
                   return (
                     <tr
                       key={santri.id}
-                      className={`hover:bg-slate-50/80 transition-colors ${
-                        santri.status_kesiswaan === "dikeluarkan" ? "bg-rose-50/20" : ""
-                      }`}
+                      style={{
+                        borderBottom: "1px solid #f1f5f9",
+                        background: santri.status_kesiswaan === "dikeluarkan" ? "#fff5f5" : "transparent"
+                      }}
+                      className="hover:bg-slate-50 transition-colors"
                     >
-                      <td className="px-4 py-3.5 text-center text-slate-400 font-semibold text-xs">
+                      <td style={{ padding: "16px 18px", textAlign: "center", color: "#94a3b8", fontWeight: 600 }}>
                         {index + 1}
                       </td>
-                      <td className="px-4 py-3.5">
-                        <div className="font-bold text-slate-800 flex items-center gap-2">
-                          <span>{santri.nama_lengkap}</span>
+                      <td style={{ padding: "16px 18px" }}>
+                        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                          <span style={{ fontWeight: 800, color: "#1e293b", fontSize: 14 }}>
+                            {santri.nama_lengkap}
+                          </span>
                           {santri.status_kesiswaan === "dikeluarkan" && (
-                            <span className="px-1.5 py-0.5 rounded text-[10px] bg-rose-100 text-rose-800 font-bold">
+                            <span style={{ padding: "2px 8px", borderRadius: 6, background: "#fee2e2", color: "#991b1b", fontSize: 11, fontWeight: 800 }}>
                               DO
                             </span>
                           )}
                         </div>
-                        <div className="text-xs text-slate-400 font-mono mt-0.5">
+                        <div style={{ fontSize: 12, color: "#64748b", fontFamily: "monospace", marginTop: 2 }}>
                           NIS: {santri.nis || "-"} • JK: {santri.jenis_kelamin || "L"}
                         </div>
                         {santri.alasan_keluar && (
-                          <div className="text-[11px] text-rose-600 bg-rose-50 px-2 py-0.5 rounded-md mt-1 inline-block border border-rose-100">
+                          <div style={{ marginTop: 4, padding: "3px 8px", borderRadius: 6, background: "#fff1f2", border: "1px solid #ffe4e6", color: "#be123c", fontSize: 11, display: "inline-block" }}>
                             <b>Ket:</b> {santri.alasan_keluar}
                           </div>
                         )}
                       </td>
-                      <td className="px-4 py-3.5 whitespace-nowrap">
-                        <span className="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-bold bg-slate-100 text-slate-700 border border-slate-200">
+                      <td style={{ padding: "16px 18px", whiteSpace: "nowrap" }}>
+                        <span style={{ padding: "4px 10px", borderRadius: 8, background: "#f1f5f9", border: "1px solid #e2e8f0", color: "#334155", fontWeight: 700, fontSize: 12 }}>
                           {santri.kelas?.nama || "-"}
                         </span>
                       </td>
-                      <td className="px-4 py-3.5">
+                      <td style={{ padding: "16px 18px" }}>
                         {santri.halaqoh_anggota && santri.halaqoh_anggota.length > 0 ? (
-                          <div className="space-y-0.5">
-                            <span className="text-xs font-semibold text-slate-700 block">
+                          <div>
+                            <span style={{ fontWeight: 700, color: "#334155", display: "block" }}>
                               {santri.halaqoh_anggota[0]?.kelompok?.nama_kelompok || "-"}
                             </span>
-                            <span className="text-[10px] text-slate-400">
+                            <span style={{ fontSize: 11, color: "#64748b" }}>
                               Pengampu: {santri.halaqoh_anggota[0]?.kelompok?.pegawai?.nama_lengkap || "-"}
                             </span>
                           </div>
                         ) : (
-                          <span className="text-xs text-slate-400 italic">
+                          <span style={{ fontSize: 12, color: "#94a3b8", fontStyle: "italic" }}>
                             {santri.is_active ? "Belum dialokasikan" : "Nonaktif (Keluar)"}
                           </span>
                         )}
                       </td>
-                      <td className="px-4 py-3.5 text-center whitespace-nowrap">
+                      <td style={{ padding: "16px 18px", textAlign: "center", whiteSpace: "nowrap" }}>
                         <span
-                          className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold border ${statusConf.badgeClass}`}
+                          style={{
+                            display: "inline-flex",
+                            alignItems: "center",
+                            gap: 6,
+                            padding: "6px 14px",
+                            borderRadius: 100,
+                            fontSize: 12,
+                            fontWeight: 700,
+                            background: statusConf.bg,
+                            color: statusConf.text,
+                            border: `1px solid ${statusConf.border}`
+                          }}
                         >
-                          <StatusIcon className="w-3.5 h-3.5" />
+                          <StatusIcon size={14} />
                           <span>{statusConf.label}</span>
                         </span>
                       </td>
-                      <td className="px-6 py-3.5 text-right whitespace-nowrap">
-                        <div className="flex items-center justify-end gap-1.5">
+                      <td style={{ padding: "16px 24px", textAlign: "right", whiteSpace: "nowrap" }}>
+                        <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-end", gap: 8 }}>
                           {/* Ubah Status Button */}
                           <button
                             type="button"
                             onClick={() => openStatusModal(santri)}
-                            className="px-3 py-1.5 bg-[#550000] hover:bg-[#700000] text-white rounded-xl text-xs font-bold transition-all shadow-xs flex items-center gap-1 cursor-pointer"
+                            style={{
+                              padding: "7px 14px",
+                              borderRadius: 10,
+                              background: "#550000",
+                              color: "#ffffff",
+                              border: "none",
+                              fontWeight: 700,
+                              fontSize: 12,
+                              cursor: "pointer",
+                              display: "inline-flex",
+                              alignItems: "center",
+                              gap: 6,
+                              boxShadow: "0 2px 8px rgba(85,0,0,0.25)",
+                              transition: "all 0.15s"
+                            }}
                           >
-                            <ArrowRightLeft className="w-3 h-3" />
+                            <ArrowRightLeft size={13} />
                             <span>Ubah Status</span>
                           </button>
 
-                          {/* Print Actions */}
+                          {/* Print SK Button */}
                           {santri.status_kesiswaan !== "aktif" && (
                             <button
                               type="button"
                               onClick={() => openDocModal(santri)}
-                              className="px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 rounded-xl text-xs font-bold transition-all flex items-center gap-1 cursor-pointer"
+                              style={{
+                                padding: "7px 12px",
+                                borderRadius: 10,
+                                background: "#f8fafc",
+                                color: "#334155",
+                                border: "1px solid #cbd5e1",
+                                fontWeight: 700,
+                                fontSize: 12,
+                                cursor: "pointer",
+                                display: "inline-flex",
+                                alignItems: "center",
+                                gap: 6,
+                                transition: "all 0.15s"
+                              }}
                               title="Cetak Surat Keputusan / Surat Keterangan"
                             >
-                              <Printer className="w-3.5 h-3.5 text-slate-600" />
+                              <Printer size={13} color="#475569" />
                               <span>Cetak SK</span>
                             </button>
                           )}
@@ -532,25 +651,55 @@ export default function MasterSantriPage() {
         </div>
       </div>
 
-      {/* 6. MODAL: UBAH STATUS KESISWAAN */}
+      {/* ── 5. Modal: Ubah Status Kesiswaan ─────────────────────────────────────── */}
       {statusModalOpen && selectedSantriForStatus && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-950/60 backdrop-blur-xs overscroll-contain overflow-y-auto custom-scrollbar"
+          style={{
+            position: "fixed",
+            inset: 0,
+            zIndex: 1000,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            padding: 16,
+            background: "rgba(15, 23, 42, 0.65)",
+            backdropFilter: "blur(6px)",
+            overflowY: "auto"
+          }}
           onClick={() => setStatusModalOpen(false)}
         >
           <div
-            className="relative w-full max-w-lg bg-white rounded-3xl shadow-2xl border border-slate-100 overflow-hidden my-8"
+            style={{
+              position: "relative",
+              width: "100%",
+              maxWidth: 520,
+              background: "white",
+              borderRadius: 24,
+              boxShadow: "0 25px 60px rgba(0,0,0,0.35)",
+              overflow: "hidden",
+              border: "1px solid #f1f5f9",
+              margin: "auto"
+            }}
             onClick={(e) => e.stopPropagation()}
           >
             {/* Header Modal */}
-            <div className="bg-gradient-to-r from-[#550000] to-[#7a0000] p-5 text-white flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-white/10 rounded-xl">
-                  <ArrowRightLeft className="w-5 h-5 text-amber-300" />
+            <div
+              style={{
+                background: "linear-gradient(135deg, #550000 0%, #7a0000 100%)",
+                padding: "20px 24px",
+                color: "white",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between"
+              }}
+            >
+              <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                <div style={{ padding: 8, background: "rgba(255,255,255,0.15)", borderRadius: 12 }}>
+                  <ArrowRightLeft size={20} color="#fef08a" />
                 </div>
                 <div>
-                  <h3 className="text-base font-bold">Ubah Status Kesiswaan</h3>
-                  <p className="text-xs text-white/70">
+                  <h3 style={{ margin: 0, fontSize: 16, fontWeight: 800 }}>Ubah Status Kesiswaan</h3>
+                  <p style={{ margin: "2px 0 0", fontSize: 12, color: "rgba(255,255,255,0.8)" }}>
                     Santri: <b>{selectedSantriForStatus.nama_lengkap}</b>
                   </p>
                 </div>
@@ -558,20 +707,19 @@ export default function MasterSantriPage() {
               <button
                 type="button"
                 onClick={() => setStatusModalOpen(false)}
-                className="p-1.5 hover:bg-white/10 rounded-full text-white/80 transition-colors"
+                style={{ background: "none", border: "none", color: "white", cursor: "pointer", padding: 4 }}
               >
-                <X className="w-5 h-5" />
+                <X size={20} />
               </button>
             </div>
 
-            {/* Form */}
-            <form onSubmit={handleSaveStatus} className="p-6 space-y-4">
-              {/* Pilihan Status */}
+            {/* Form Content */}
+            <form onSubmit={handleSaveStatus} style={{ padding: 24, display: "flex", flexDirection: "column", gap: 16 }}>
               <div>
-                <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">
+                <label style={{ display: "block", fontSize: 12, fontWeight: 700, color: "#334155", textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: 8 }}>
                   Pilih Status Baru
                 </label>
-                <div className="grid grid-cols-2 gap-2">
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
                   {[
                     { id: "aktif", label: "Aktif", desc: "Santri kembali aktif KBM" },
                     { id: "dikeluarkan", label: "Dikeluarkan (DO)", desc: "Pelanggaran berat / SK Mudir" },
@@ -580,26 +728,32 @@ export default function MasterSantriPage() {
                   ].map((st) => (
                     <label
                       key={st.id}
-                      className={`p-3 rounded-xl border-2 cursor-pointer transition-all flex flex-col ${
-                        statusForm.status_kesiswaan === st.id
-                          ? "border-[#550000] bg-[#550000]/5 text-[#550000]"
-                          : "border-slate-200 bg-white hover:border-slate-300 text-slate-600"
-                      }`}
+                      style={{
+                        padding: "12px 14px",
+                        borderRadius: 14,
+                        border: statusForm.status_kesiswaan === st.id ? "2px solid #550000" : "1.5px solid #e2e8f0",
+                        background: statusForm.status_kesiswaan === st.id ? "#fff5f5" : "#ffffff",
+                        cursor: "pointer",
+                        display: "flex",
+                        flexDirection: "column",
+                        gap: 2,
+                        transition: "all 0.15s"
+                      }}
                     >
-                      <div className="flex items-center justify-between">
-                        <span className="text-xs font-bold">{st.label}</span>
+                      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                        <span style={{ fontSize: 13, fontWeight: 800, color: statusForm.status_kesiswaan === st.id ? "#550000" : "#1e293b" }}>
+                          {st.label}
+                        </span>
                         <input
                           type="radio"
                           name="status_kesiswaan"
                           value={st.id}
                           checked={statusForm.status_kesiswaan === st.id}
-                          onChange={(e) =>
-                            setStatusForm({ ...statusForm, status_kesiswaan: e.target.value as any })
-                          }
-                          className="text-[#550000] focus:ring-[#550000]"
+                          onChange={(e) => setStatusForm({ ...statusForm, status_kesiswaan: e.target.value as any })}
+                          style={{ accentColor: "#550000" }}
                         />
                       </div>
-                      <span className="text-[10px] text-slate-400 mt-1">{st.desc}</span>
+                      <span style={{ fontSize: 11, color: "#64748b" }}>{st.desc}</span>
                     </label>
                   ))}
                 </div>
@@ -607,74 +761,74 @@ export default function MasterSantriPage() {
 
               {statusForm.status_kesiswaan !== "aktif" && (
                 <>
-                  {/* Tanggal Efektif */}
                   <div>
-                    <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+                    <label style={{ display: "block", fontSize: 12, fontWeight: 700, color: "#334155", textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: 6 }}>
                       Tanggal Efektif Keluar
                     </label>
                     <input
                       type="date"
                       value={statusForm.tanggal_keluar}
-                      onChange={(e) =>
-                        setStatusForm({ ...statusForm, tanggal_keluar: e.target.value })
-                      }
-                      className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#550000]/20"
+                      onChange={(e) => setStatusForm({ ...statusForm, tanggal_keluar: e.target.value })}
+                      style={{ width: "100%", padding: "10px 14px", background: "#f8fafc", border: "1px solid #cbd5e1", borderRadius: 12, fontSize: 13, outline: "none" }}
                     />
                   </div>
 
-                  {/* Nomor SK */}
                   <div>
-                    <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+                    <label style={{ display: "block", fontSize: 12, fontWeight: 700, color: "#334155", textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: 6 }}>
                       Nomor Surat Keputusan (SK)
                     </label>
                     <input
                       type="text"
                       placeholder="Contoh: SK/DIR/ALIMAM/2026/088"
                       value={statusForm.no_sk_keluar}
-                      onChange={(e) =>
-                        setStatusForm({ ...statusForm, no_sk_keluar: e.target.value })
-                      }
-                      className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#550000]/20"
+                      onChange={(e) => setStatusForm({ ...statusForm, no_sk_keluar: e.target.value })}
+                      style={{ width: "100%", padding: "10px 14px", background: "#f8fafc", border: "1px solid #cbd5e1", borderRadius: 12, fontSize: 13, outline: "none" }}
                     />
                   </div>
 
-                  {/* Alasan Pelanggaran / Keterangan */}
                   <div>
-                    <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+                    <label style={{ display: "block", fontSize: 12, fontWeight: 700, color: "#334155", textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: 6 }}>
                       Alasan / Keterangan Resmi
                     </label>
                     <textarea
                       rows={2}
                       placeholder="Contoh: Pelanggaran berat sesuai surat perjanjian tata tertib pesantren..."
                       value={statusForm.alasan_keluar}
-                      onChange={(e) =>
-                        setStatusForm({ ...statusForm, alasan_keluar: e.target.value })
-                      }
-                      className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#550000]/20"
+                      onChange={(e) => setStatusForm({ ...statusForm, alasan_keluar: e.target.value })}
+                      style={{ width: "100%", padding: "10px 14px", background: "#f8fafc", border: "1px solid #cbd5e1", borderRadius: 12, fontSize: 13, outline: "none" }}
                     />
                   </div>
                 </>
               )}
 
               {/* Action Buttons */}
-              <div className="pt-2 flex items-center justify-end gap-2 border-t border-slate-100">
+              <div style={{ display: "flex", justifyContent: "flex-end", gap: 10, paddingTop: 12, borderTop: "1px solid #f1f5f9" }}>
                 <button
                   type="button"
                   onClick={() => setStatusModalOpen(false)}
-                  className="px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold transition-all cursor-pointer"
+                  style={{ padding: "10px 18px", borderRadius: 12, background: "#f1f5f9", color: "#475569", border: "none", fontWeight: 700, fontSize: 13, cursor: "pointer" }}
                 >
                   Batal
                 </button>
                 <button
                   type="submit"
                   disabled={savingStatus}
-                  className="px-5 py-2.5 bg-[#550000] hover:bg-[#700000] text-white rounded-xl text-xs font-bold transition-all shadow-md flex items-center gap-1.5 cursor-pointer"
+                  style={{
+                    padding: "10px 22px",
+                    borderRadius: 12,
+                    background: "#550000",
+                    color: "white",
+                    border: "none",
+                    fontWeight: 800,
+                    fontSize: 13,
+                    cursor: savingStatus ? "not-allowed" : "pointer",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 8,
+                    boxShadow: "0 4px 14px rgba(85,0,0,0.3)"
+                  }}
                 >
-                  {savingStatus ? (
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                  ) : (
-                    <CheckCircle2 className="w-4 h-4" />
-                  )}
+                  {savingStatus ? <Loader2 size={16} className="animate-spin" /> : <Check size={16} />}
                   <span>Simpan Perubahan</span>
                 </button>
               </div>
@@ -683,123 +837,164 @@ export default function MasterSantriPage() {
         </div>
       )}
 
-      {/* 7. MODAL: CETAK DOKUMEN SK / MUTASI (PREVIEW SIAP CETAK) */}
+      {/* ── 6. Modal: Cetak Dokumen SK (Print Preview) ─────────────────────────── */}
       {docModalOpen && selectedSantriForDoc && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-950/70 backdrop-blur-xs overscroll-contain overflow-y-auto custom-scrollbar"
+          style={{
+            position: "fixed",
+            inset: 0,
+            zIndex: 1000,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            padding: 16,
+            background: "rgba(15, 23, 42, 0.75)",
+            backdropFilter: "blur(6px)",
+            overflowY: "auto"
+          }}
           onClick={() => setDocModalOpen(false)}
         >
           <div
-            className="relative w-full max-w-2xl bg-white rounded-3xl shadow-2xl border border-slate-100 overflow-hidden my-6"
+            style={{
+              position: "relative",
+              width: "100%",
+              maxWidth: 680,
+              background: "white",
+              borderRadius: 24,
+              boxShadow: "0 25px 60px rgba(0,0,0,0.4)",
+              overflow: "hidden",
+              border: "1px solid #f1f5f9",
+              margin: "auto"
+            }}
             onClick={(e) => e.stopPropagation()}
           >
             {/* Toolbar Modal */}
-            <div className="bg-slate-900 text-white p-4 flex items-center justify-between no-print">
-              <div className="flex items-center gap-2">
-                <Printer className="w-4 h-4 text-amber-400" />
-                <span className="text-sm font-bold">Cetak Dokumen Resmi Pesantren</span>
+            <div
+              style={{
+                background: "#0f172a",
+                color: "white",
+                padding: "14px 20px",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between"
+              }}
+              className="no-print"
+            >
+              <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                <Printer size={16} color="#fbbf24" />
+                <span style={{ fontSize: 14, fontWeight: 700 }}>Cetak Dokumen Resmi Pesantren</span>
               </div>
-              <div className="flex items-center gap-2">
+              <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
                 <button
                   type="button"
                   onClick={() => window.print()}
-                  className="px-3.5 py-1.5 bg-[#550000] hover:bg-[#700000] text-white rounded-xl text-xs font-bold transition-all flex items-center gap-1 cursor-pointer"
+                  style={{
+                    padding: "7px 16px",
+                    borderRadius: 10,
+                    background: "#550000",
+                    color: "white",
+                    border: "none",
+                    fontWeight: 700,
+                    fontSize: 12,
+                    cursor: "pointer",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 6
+                  }}
                 >
-                  <Printer className="w-3.5 h-3.5" />
-                  <span>Cetak / Simpan PDF</span>
+                  <Printer size={14} />
+                  <span>Cetak / PDF</span>
                 </button>
                 <button
                   type="button"
                   onClick={() => setDocModalOpen(false)}
-                  className="p-1 hover:bg-white/10 rounded-full text-white/70 cursor-pointer"
+                  style={{ background: "none", border: "none", color: "#94a3b8", cursor: "pointer", padding: 4 }}
                 >
-                  <X className="w-5 h-5" />
+                  <X size={20} />
                 </button>
               </div>
             </div>
 
-            {/* Printable Document Paper */}
-            <div className="p-8 bg-white font-serif text-slate-900 space-y-6 text-sm leading-relaxed" id="printable-area">
-              {/* KOP SURAT */}
-              <div className="text-center border-b-2 border-slate-900 pb-4">
-                <h2 className="text-lg font-bold tracking-wider uppercase">PESANTREN AL-IMAM AL-ISLAMI</h2>
-                <p className="text-xs font-sans text-slate-600 mt-0.5">
+            {/* Printable Area */}
+            <div style={{ padding: "36px 40px", background: "white", color: "#0f172a", fontSize: 13, lineHeight: 1.7 }} id="printable-area">
+              {/* Kop Surat */}
+              <div style={{ textAlign: "center", borderBottom: "2px solid #0f172a", paddingBottom: 14, marginBottom: 20 }}>
+                <h2 style={{ margin: 0, fontSize: 18, fontWeight: 800, letterSpacing: "1px", textTransform: "uppercase" }}>
+                  PESANTREN AL-IMAM AL-ISLAMI
+                </h2>
+                <p style={{ margin: "2px 0 0", fontSize: 12, color: "#475569" }}>
                   Sistem Informasi &amp; Kepengasuhan Santri (SIKAP) • Akreditasi Pesantren
                 </p>
-                <p className="text-[11px] font-sans text-slate-500">
+                <p style={{ margin: "2px 0 0", fontSize: 11, color: "#64748b" }}>
                   Jl. Ciremai Raya No. 10, Garut - Jawa Barat | Web: pesantren-alimam.com
                 </p>
               </div>
 
-              {/* JUDUL SURAT */}
-              <div className="text-center space-y-1">
-                <h3 className="text-base font-bold uppercase underline">
+              {/* Judul Surat */}
+              <div style={{ textAlign: "center", marginBottom: 20 }}>
+                <h3 style={{ margin: 0, fontSize: 15, fontWeight: 800, textTransform: "uppercase", textDecoration: "underline" }}>
                   {selectedSantriForDoc.status_kesiswaan === "dikeluarkan"
                     ? "SURAT KEPUTUSAN PEMBERHENTIAN SANTRI"
                     : "SURAT KETERANGAN MUTASI / PINDAH SEKOLAH"}
                 </h3>
-                <p className="text-xs font-sans text-slate-600">
+                <p style={{ margin: "4px 0 0", fontSize: 12, color: "#64748b" }}>
                   Nomor: {selectedSantriForDoc.no_sk_keluar || "SK/DIR/ALIMAM/2026/088"}
                 </p>
               </div>
 
-              {/* ISI SURAT */}
-              <div className="space-y-3 font-sans text-xs">
-                <p>
+              {/* Isi Surat */}
+              <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+                <p style={{ margin: 0 }}>
                   Yang bertanda tangan di bawah ini, Pimpinan / Mudir Pesantren Al-Imam Al-Islami menerangkan bahwa:
                 </p>
 
-                <div className="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-1.5 font-mono text-xs">
-                  <div className="grid grid-cols-3">
-                    <span className="text-slate-500">Nama Lengkap</span>
-                    <span className="col-span-2 font-bold text-slate-900">: {selectedSantriForDoc.nama_lengkap}</span>
-                  </div>
-                  <div className="grid grid-cols-3">
-                    <span className="text-slate-500">Nomor Induk Santri (NIS)</span>
-                    <span className="col-span-2 font-bold text-slate-900">: {selectedSantriForDoc.nis || "-"}</span>
-                  </div>
-                  <div className="grid grid-cols-3">
-                    <span className="text-slate-500">Jenjang / Kelas Terakhir</span>
-                    <span className="col-span-2 text-slate-900">: {selectedSantriForDoc.kelas?.nama || "I'dad Lughowy (IL)"}</span>
-                  </div>
-                  <div className="grid grid-cols-3">
-                    <span className="text-slate-500">Tanggal Efektif</span>
-                    <span className="col-span-2 text-slate-900">
-                      : {selectedSantriForDoc.tanggal_keluar ? new Date(selectedSantriForDoc.tanggal_keluar).toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" }) : new Date().toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" })}
-                    </span>
-                  </div>
-                  <div className="grid grid-cols-3">
-                    <span className="text-slate-500">Alasan Keterangan</span>
-                    <span className="col-span-2 font-semibold text-rose-700">
-                      : {selectedSantriForDoc.alasan_keluar || "Pelanggaran berat sesuai surat perjanjian pesantren."}
-                    </span>
-                  </div>
+                <div style={{ background: "#f8fafc", padding: "14px 18px", borderRadius: 12, border: "1px solid #e2e8f0", display: "grid", gridTemplateColumns: "140px 1fr", gap: "6px 12px", fontSize: 12 }}>
+                  <span style={{ color: "#64748b" }}>Nama Lengkap</span>
+                  <span style={{ fontWeight: 800, color: "#0f172a" }}>: {selectedSantriForDoc.nama_lengkap}</span>
+
+                  <span style={{ color: "#64748b" }}>Nomor Induk (NIS)</span>
+                  <span style={{ fontWeight: 800, color: "#0f172a" }}>: {selectedSantriForDoc.nis || "-"}</span>
+
+                  <span style={{ color: "#64748b" }}>Jenjang / Kelas</span>
+                  <span style={{ color: "#0f172a" }}>: {selectedSantriForDoc.kelas?.nama || "I'dad Lughowy (IL)"}</span>
+
+                  <span style={{ color: "#64748b" }}>Tanggal Efektif</span>
+                  <span style={{ color: "#0f172a" }}>
+                    :{" "}
+                    {selectedSantriForDoc.tanggal_keluar
+                      ? new Date(selectedSantriForDoc.tanggal_keluar).toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" })
+                      : new Date().toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" })}
+                  </span>
+
+                  <span style={{ color: "#64748b" }}>Alasan Keterangan</span>
+                  <span style={{ fontWeight: 700, color: "#be123c" }}>
+                    : {selectedSantriForDoc.alasan_keluar || "Pelanggaran berat sesuai surat perjanjian tata tertib pesantren."}
+                  </span>
                 </div>
 
-                <p className="leading-relaxed">
+                <p style={{ margin: 0 }}>
                   Terhitung sejak tanggal ditetapkannya surat keputusan ini, santri yang bersangkutan dinyatakan resmi{" "}
-                  <b>
-                    {selectedSantriForDoc.status_kesiswaan === "dikeluarkan" ? "DIKELUARKAN" : "MUTASI KELUAR"}
-                  </b>{" "}
-                  dari Pesantren Al-Imam Al-Islami dan tidak lagi memiliki hak serta kewajiban sebagai santri aktif.
+                  <b>{selectedSantriForDoc.status_kesiswaan === "dikeluarkan" ? "DIKELUARKAN" : "MUTASI KELUAR"}</b> dari
+                  Pesantren Al-Imam Al-Islami dan tidak lagi memiliki hak serta kewajiban sebagai santri aktif.
                 </p>
 
-                <p className="leading-relaxed">
+                <p style={{ margin: 0 }}>
                   Demikian surat keterangan ini dibuat dengan sebenarnya agar dapat dipergunakan sebagaimana mestinya.
                 </p>
               </div>
 
-              {/* TANDA TANGAN */}
-              <div className="pt-8 flex justify-end font-sans text-xs">
-                <div className="text-center w-56 space-y-12">
-                  <p>
+              {/* Tanda Tangan */}
+              <div style={{ display: "flex", justifyContent: "flex-end", marginTop: 32 }}>
+                <div style={{ textAlign: "center", width: 220 }}>
+                  <p style={{ margin: 0, fontSize: 12 }}>
                     Garut, {new Date().toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" })}
                     <br />
                     Mudir Pesantren Al-Imam,
                   </p>
+                  <div style={{ height: 56 }} />
                   <div>
-                    <p className="font-bold underline">Ust. Wahab Rajasam, M.Pd.</p>
-                    <p className="text-slate-500 text-[10px]">NIP. 198001012026011001</p>
+                    <p style={{ margin: 0, fontWeight: 800, textDecoration: "underline", fontSize: 13 }}>Ust. Wahab Rajasam, M.Pd.</p>
+                    <p style={{ margin: "2px 0 0", color: "#64748b", fontSize: 11 }}>NIP. 198001012026011001</p>
                   </div>
                 </div>
               </div>
