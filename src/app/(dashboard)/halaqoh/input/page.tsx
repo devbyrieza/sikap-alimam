@@ -545,7 +545,7 @@ export default function HalaqohInputPage() {
             {(["tahsin", "ziyadah", "murojaah"] as const).map(j => {
               const isSelected = jenis === j;
               const meta: Record<string, { title: string; sub: string; icon: React.ReactNode }> = {
-                tahsin:   { title: "Tahsin (Talaqqi Face-to-Face)", sub: "Penguatan Bacaan & Talaqqi", icon: <Award size={18} /> },
+                tahsin:   { title: "Tahsin", sub: "Penguatan Bacaan & Talaqqi", icon: <Award size={18} /> },
                 ziyadah:  { title: "Setoran Ziyadah",             sub: "Setoran Hafalan Baru", icon: <BookOpen size={18} /> },
                 murojaah: { title: "Setoran Murojaah",            sub: "Pengulangan Hafalan", icon: <RotateCcw size={18} /> } };
               const item = meta[j];
@@ -753,7 +753,7 @@ export default function HalaqohInputPage() {
                       {jenis === "tahsin" && (
                         <div style={{ background: "#fffbeb", border: "1.5px solid #fde68a", borderRadius: 16, padding: "14px 18px", color: "#b45309", fontSize: 13, fontWeight: 700, display: "flex", alignItems: "center", gap: 10, marginBottom: 16 }}>
                           <Award size={18} color="#d97706" />
-                          <span>Mode <strong>Tahsin (Talaqqi Face-to-Face)</strong>: Presensi &amp; Evaluasi Bacaan santri secara lisan.</span>
+                          <span>Mode <strong>Tahsin</strong>: Presensi &amp; Evaluasi Bacaan santri secara lisan.</span>
                         </div>
                       )}
                       {/* Surah & Ayat Grouping */}
