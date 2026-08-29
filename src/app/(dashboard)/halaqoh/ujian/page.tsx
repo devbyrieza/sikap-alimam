@@ -369,7 +369,7 @@ export default function UjianTahfidzPage() {
   };
 
   const formatTanggal = (s: string) =>
-    new Date(s).toLocaleDateString("id-ID", { day: "numeric", month: "short", year: "numeric" });
+    new Date(s).toLocaleDateString("id-ID", { weekday: "long", day: "numeric", month: "long", year: "numeric" });
 
   const inputStyle: React.CSSProperties = {
     width: "100%", borderRadius: 13, border: "1.5px solid #e2e8f0",
@@ -521,6 +521,11 @@ export default function UjianTahfidzPage() {
                 <label style={labelStyle}>Tanggal Ujian</label>
                 <input type="date" value={tanggal} onChange={e => setTanggal(e.target.value)} style={inputStyle}
                   onFocus={e => (e.currentTarget.style.borderColor = "#550000")} onBlur={e => (e.currentTarget.style.borderColor = "#e2e8f0")} />
+                  {tanggal && (
+                    <div style={{ marginTop: "6px", fontSize: "12px", fontWeight: 700, color: "#047857", display: "flex", alignItems: "center", gap: "5px", background: "#ecfdf5", padding: "4px 10px", borderRadius: "8px", border: "1px solid #a7f3d0", width: "fit-content" }}>
+                      <span>{formatTanggal(tanggal)}</span>
+                    </div>
+                  )}
               </div>
 
               {jenisUjian === "ujian_itqon" ? (
