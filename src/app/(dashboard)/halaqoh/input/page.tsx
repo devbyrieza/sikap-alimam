@@ -756,86 +756,91 @@ export default function HalaqohInputPage() {
                           <span>Mode <strong>Tahsin (Talaqqi Face-to-Face)</strong>: Presensi &amp; Evaluasi Bacaan santri secara lisan.</span>
                         </div>
                       )}
-                      {/* Surah & Halaman */}
-                      <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: 16 }}>
-                        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 16 }}>
-                          <SurahPicker surahList={surahList} selected={selectedSurah} onSelect={(s) => { setSelectedSurah(s); setSelectedSurahAkhir(s); }} label={jenis === "tahsin" ? "MULAI SURAH (OPSIONAL)" : "MULAI SURAH"} />
-                          <SurahPicker surahList={surahList} selected={selectedSurahAkhir} onSelect={setSelectedSurahAkhir} label={jenis === "tahsin" ? "SAMPAI SURAH (OPSIONAL)" : "SAMPAI SURAH"} />
-                        </div>
-                        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 16 }}>
-                          <div>
-                            <label style={labelStyle}>JUMLAH HALAMAN (MADINAH)</label>
-                            <div style={{ padding: "10px", borderRadius: 13, background: "#ecfdf5", border: "1.5px solid #a7f3d0", color: "#059669", fontWeight: 800, textAlign: "center", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                              {halamanAuto !== null ? halamanAuto.toFixed(1) + " hal." : "-"}
+                      {/* Surah & Ayat Grouping */}
+                      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))", gap: 16 }}>
+                        {/* Block DARI */}
+                        <div style={{ background: "#f8fafc", borderRadius: 16, padding: 18, border: "1.5px solid #e2e8f0", display: "flex", flexDirection: "column", gap: 14 }}>
+                          <SurahPicker surahList={surahList} selected={selectedSurah} onSelect={(s) => { setSelectedSurah(s); setSelectedSurahAkhir(s); }} label={jenis === "tahsin" ? "DARI SURAH (OPSIONAL)" : "DARI SURAH"} />
+                          
+                          {selectedSurah && (
+                            <div>
+                              <label style={labelStyle}>DARI AYAT</label>
+                              <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                                <button
+                                  type="button"
+                                  onClick={() => setAyatDari(prev => Math.max(1, (prev || 1) - 1))}
+                                  style={{ width: 38, height: 38, borderRadius: 10, border: "1.5px solid #e2e8f0", background: "white", color: "#550000", fontWeight: 900, fontSize: 16, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}
+                                >-</button>
+                                <input
+                                  type="number"
+                                  value={ayatDari || ""}
+                                  onChange={e => {
+                                    const val = parseInt(e.target.value) || 1;
+                                    setAyatDari(Math.min(selectedSurah?.total_ayat || 300, Math.max(1, val)));
+                                  }}
+                                  onBlur={() => {
+                                    if (!ayatDari) setAyatDari(1);
+                                  }}
+                                  style={{ ...inputStyle, flex: 1, minWidth: 70, textAlign: "center", padding: "10px", fontWeight: 800, fontSize: 16 }}
+                                />
+                                <button
+                                  type="button"
+                                  onClick={() => setAyatDari(prev => Math.min(selectedSurah?.total_ayat || 300, (prev || 1) + 1))}
+                                  style={{ width: 38, height: 38, borderRadius: 10, border: "1.5px solid #e2e8f0", background: "white", color: "#550000", fontWeight: 900, fontSize: 16, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}
+                                >+</button>
+                              </div>
+                              <span style={{ fontSize: 11, color: "#64748b", marginTop: 4, display: "block" }}>Maks: {selectedSurah.total_ayat} ayat</span>
                             </div>
+                          )}
+                        </div>
+
+                        {/* Block SAMPAI */}
+                        <div style={{ background: "#f8fafc", borderRadius: 16, padding: 18, border: "1.5px solid #e2e8f0", display: "flex", flexDirection: "column", gap: 14 }}>
+                          <SurahPicker surahList={surahList} selected={selectedSurahAkhir} onSelect={setSelectedSurahAkhir} label={jenis === "tahsin" ? "SAMPAI SURAH (OPSIONAL)" : "SAMPAI SURAH"} />
+                          
+                          {selectedSurahAkhir && selectedSurah && (
+                            <div>
+                              <label style={labelStyle}>SAMPAI AYAT</label>
+                              <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                                <button
+                                  type="button"
+                                  onClick={() => setAyatKe(prev => Math.max(1, (prev || 1) - 1))}
+                                  style={{ width: 38, height: 38, borderRadius: 10, border: "1.5px solid #e2e8f0", background: "white", color: "#550000", fontWeight: 900, fontSize: 16, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}
+                                >-</button>
+                                <input
+                                  type="number"
+                                  value={ayatKe || ""}
+                                  onChange={e => {
+                                    const val = parseInt(e.target.value) || 1;
+                                    setAyatKe(Math.min(selectedSurahAkhir?.total_ayat || 300, Math.max(1, val)));
+                                  }}
+                                  onBlur={() => {
+                                    if (!ayatKe) setAyatKe(1);
+                                  }}
+                                  style={{ ...inputStyle, flex: 1, minWidth: 70, textAlign: "center", padding: "10px", fontWeight: 800, fontSize: 16 }}
+                                />
+                                <button
+                                  type="button"
+                                  onClick={() => setAyatKe(prev => Math.min(selectedSurahAkhir?.total_ayat || 300, (prev || 1) + 1))}
+                                  style={{ width: 38, height: 38, borderRadius: 10, border: "1.5px solid #e2e8f0", background: "white", color: "#550000", fontWeight: 900, fontSize: 16, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}
+                                >+</button>
+                              </div>
+                              <span style={{ fontSize: 11, color: "#64748b", marginTop: 4, display: "block" }}>Maks: {selectedSurahAkhir?.total_ayat || 300} ayat</span>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* JUMLAH HALAMAN */}
+                      <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: 16 }}>
+                        <div>
+                          <label style={labelStyle}>JUMLAH HALAMAN (MADINAH)</label>
+                          <div style={{ padding: "10px", borderRadius: 13, background: "#ecfdf5", border: "1.5px solid #a7f3d0", color: "#059669", fontWeight: 800, textAlign: "center", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                            {halamanAuto !== null ? halamanAuto.toFixed(1) + " hal." : "-"}
                           </div>
                         </div>
                       </div>
 
-                      {/* Ayat Range */}
-                      {selectedSurah && (
-                        <div style={{ background: "#f8fafc", borderRadius: 16, padding: 18, border: "1.5px solid #e2e8f0", display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))", gap: 14 }}>
-                          {/* Dari Ayat */}
-                          <div>
-                            <label style={labelStyle}>Dari Ayat</label>
-                            <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                              <button
-                                type="button"
-                                onClick={() => setAyatDari(prev => Math.max(1, (prev || 1) - 1))}
-                                style={{ width: 38, height: 38, borderRadius: 10, border: "1.5px solid #e2e8f0", background: "white", color: "#550000", fontWeight: 900, fontSize: 16, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}
-                              >-</button>
-                              <input
-                                type="number"
-                                value={ayatDari || ""}
-                                onChange={e => {
-                                  const val = parseInt(e.target.value) || 1;
-                                  setAyatDari(Math.min(selectedSurah?.total_ayat || 300, Math.max(1, val)));
-                                }}
-                                onBlur={() => {
-                                  if (!ayatDari) setAyatDari(1);
-                                }}
-                                style={{ ...inputStyle, flex: 1, minWidth: 70, textAlign: "center", padding: "10px", fontWeight: 800, fontSize: 16 }}
-                              />
-                              <button
-                                type="button"
-                                onClick={() => setAyatDari(prev => Math.min(selectedSurah?.total_ayat || 300, (prev || 1) + 1))}
-                                style={{ width: 38, height: 38, borderRadius: 10, border: "1.5px solid #e2e8f0", background: "white", color: "#550000", fontWeight: 900, fontSize: 16, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}
-                              >+</button>
-                            </div>
-                            <span style={{ fontSize: 11, color: "#64748b", marginTop: 4, display: "block" }}>Maks: {selectedSurah.total_ayat} ayat</span>
-                          </div>
-
-                          {/* Sampai Ayat */}
-                          <div>
-                            <label style={labelStyle}>Sampai Ayat</label>
-                            <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                              <button
-                                type="button"
-                                onClick={() => setAyatKe(prev => Math.max(1, (prev || 1) - 1))}
-                                style={{ width: 38, height: 38, borderRadius: 10, border: "1.5px solid #e2e8f0", background: "white", color: "#550000", fontWeight: 900, fontSize: 16, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}
-                              >-</button>
-                              <input
-                                type="number"
-                                value={ayatKe || ""}
-                                onChange={e => {
-                                  const val = parseInt(e.target.value) || 1;
-                                  setAyatKe(Math.min(selectedSurahAkhir?.total_ayat || 300, Math.max(1, val)));
-                                }}
-                                onBlur={() => {
-                                  if (!ayatKe) setAyatKe(1);
-                                }}
-                                style={{ ...inputStyle, flex: 1, minWidth: 70, textAlign: "center", padding: "10px", fontWeight: 800, fontSize: 16 }}
-                              />
-                              <button
-                                type="button"
-                                onClick={() => setAyatKe(prev => Math.min(selectedSurahAkhir?.total_ayat || 300, (prev || 1) + 1))}
-                                style={{ width: 38, height: 38, borderRadius: 10, border: "1.5px solid #e2e8f0", background: "white", color: "#550000", fontWeight: 900, fontSize: 16, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}
-                              >+</button>
-                            </div>
-                            <span style={{ fontSize: 11, color: "#64748b", marginTop: 4, display: "block" }}>Maks: {selectedSurahAkhir?.total_ayat || 300} ayat</span>
-                          </div>
-                        </div>
-                      )}
 
                   </>
 
