@@ -138,14 +138,19 @@ model AsatidzmMapel {
 }
 
 model SantriAktif {
-  id            String   @id @default(uuid()) @db.Uuid
-  nis           String?  @unique
-  nama_lengkap  String
-  kelas_id      String   @db.Uuid
-  jenis_kelamin String?
-  foto_url      String?
-  is_active     Boolean  @default(true)
-  created_at    DateTime @default(now()) @db.Timestamptz(6)
+  id               String    @id @default(uuid()) @db.Uuid
+  nis              String?   @unique
+  nama_lengkap     String
+  kelas_id         String    @db.Uuid
+  jenis_kelamin    String?
+  foto_url         String?
+  is_active        Boolean   @default(true)
+  status_kesiswaan String    @default("aktif") // aktif | mengundurkan_diri | dikeluarkan | mutasi | lulus
+  tanggal_keluar   DateTime? @db.Date
+  alasan_keluar    String?
+  no_sk_keluar     String?
+  catatan_keluar   String?
+  created_at       DateTime  @default(now()) @db.Timestamptz(6)
 
   kelas             Kelas            @relation(fields: [kelas_id], references: [id])
   presensi          PresensiSiswa[]

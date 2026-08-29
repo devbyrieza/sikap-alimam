@@ -24,6 +24,11 @@ export default function NavTabs() {
 
   return (
     <div style={{ display: "flex", gap: 24, borderBottom: "1px solid var(--border)", overflowX: "auto" }}>
+      <Link href="/master/santri" style={getStyle("/master/santri")}>
+        <Users size={16} />
+        Data Santri
+      </Link>
+
       <Link href="/master/kelas" style={getStyle("/master/kelas")}>
         <GraduationCap size={16} />
         Data Kelas

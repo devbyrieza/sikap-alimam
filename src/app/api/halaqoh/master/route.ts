@@ -28,6 +28,7 @@ export async function GET(request: Request) {
   try {
     const [santriAktif, kelompokHalaqoh] = await Promise.all([
       prisma.santriAktif.findMany({
+        where: { is_active: true },
         select: {
           id: true,
           nama_lengkap: true,

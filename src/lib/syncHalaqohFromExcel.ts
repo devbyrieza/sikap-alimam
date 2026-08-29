@@ -6,7 +6,7 @@ export async function syncHalaqohFromExcel() {
 
     const [pegawaiList, santriList, kelasList] = await Promise.all([
       prisma.pegawai.findMany(),
-      prisma.santriAktif.findMany(),
+      prisma.santriAktif.findMany({ where: { is_active: true } }),
       prisma.kelas.findMany({ where: { is_active: true } }),
     ]);
 
@@ -120,7 +120,6 @@ export async function syncHalaqohFromExcel() {
           "Lalu Muhamad Rizky Ananda",
           "Miizan Alghifary Dizlilar",
           "Muhammad Khoirul Azzam",
-          "Zakaria reynaldo",
           "Wahyu Hidayat",
           "Panji Ahmad",
           "Iman Prayogo", // Menggantikan Raylan Akbar
