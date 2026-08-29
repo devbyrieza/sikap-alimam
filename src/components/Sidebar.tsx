@@ -64,8 +64,8 @@ const NAV: NavItem[] = [
     label: "Halaqoh & Mutabaah",
     icon: <BookHeart size={18} />,
     roles: [
-      "musyrif", "MUSYRIF",
       "pengampu", "PENGAMPU",
+      "musyrif", "MUSYRIF",
       "guru", "GURU",
       "wali_kelas", "WALI_KELAS",
       "kadiv_pengasuhan", "KADIV_PENGASUHAN",
@@ -75,10 +75,24 @@ const NAV: NavItem[] = [
       "mudir", "MUDIR",
     ] },
   {
+    href: "/ibadah",
+    label: "Ibadah & Adab (BPI)",
+    icon: <HeartHandshake size={18} />,
+    roles: [
+      "musyrif", "MUSYRIF",
+      "pengasuh", "PENGASUH",
+      "kadiv_pengasuhan", "KADIV_PENGASUHAN",
+      "kadiv_asrama", "KADIV_ASRAMA",
+      "kadiv_kedisiplinan", "KADIV_KEDISIPLINAN",
+      "wali_kelas", "WALI_KELAS",
+      "admin_super", "ADMIN_SUPER",
+      "mudir", "MUDIR",
+    ] },
+  {
     href: "/presensi/asatidz",
-    label: "Absensi Guru",
+    label: "Absensi Pegawai",
     icon: <UserCheck size={18} />,
-    roles: ["guru", "GURU", "wali_kelas", "WALI_KELAS", "kepala_sekolah", "KEPALA_SEKOLAH", "kadiv_kurikulum", "KADIV_KURIKULUM", "kadiv_pengasuhan", "KADIV_PENGASUHAN", "admin_super", "ADMIN_SUPER", "mudir", "MUDIR"] },
+    roles: ["guru", "GURU", "musyrif", "MUSYRIF", "pengampu", "PENGAMPU", "wali_kelas", "WALI_KELAS", "kepala_sekolah", "KEPALA_SEKOLAH", "kadiv_kurikulum", "KADIV_KURIKULUM", "kadiv_pengasuhan", "KADIV_PENGASUHAN", "admin_super", "ADMIN_SUPER", "mudir", "MUDIR"] },
   {
     href: "/master",
     label: "Master Data",
@@ -118,7 +132,9 @@ export default function Sidebar({ user }: SidebarProps) {
     const mapping: Record<string, string> = {
       ADMIN_SUPER: "Admin Super",
       GURU: "Guru Mapel",
-      MUSYRIF: "Pengampu Halaqoh",
+      MUSYRIF: "Pengasuh Asrama",
+      PENGAMPU: "Pengampu Halaqoh",
+      PENGAMPU_HALAQOH: "Pengampu Halaqoh",
       WALI_KELAS: "Wali Kelas",
       MUDIR: "Mudir Pesantren",
       KEPALA_SEKOLAH: "Kepala Sekolah",
