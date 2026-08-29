@@ -8,8 +8,22 @@ export async function GET(request: Request) {
   const session = await getSession();
   if (!session) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
-  // Assuming session user id corresponds to a pegawai
-  const pegawai_id = (session.user as any)?.id;
+  let pegawai_id = session.asatidz_id;
+  if (!pegawai_id && session.userId) {
+    const p = await prisma.pegawai.findFirst({
+      where: {
+        OR: [
+          { user_id: session.userId },
+          { email: session.email },
+          ...(session.nama ? [{ nama_lengkap: { contains: session.nama.split(" ")[0], mode: "insensitive" as const } }] : [])
+        ]
+      }
+    });
+    if (p) pegawai_id = p.id;
+  }
+
+  const userRole = (session.role || "").toLowerCase();
+  const isAdminOrKadiv = userRole.includes("admin") || userRole.includes("mudir") || userRole.includes("kadiv");
 
   try {
     const [santriAktif, kelompokHalaqoh] = await Promise.all([
@@ -22,7 +36,7 @@ export async function GET(request: Request) {
           kelas: { select: { nama: true } } } }),
       prisma.halaqohKelompok.findMany({
         where: {
-          ...(pegawai_id && { pegawai_id }) } }),
+          ...(!isAdminOrKadiv && pegawai_id ? { pegawai_id } : {}) } }),
     ]);
 
     return NextResponse.json({

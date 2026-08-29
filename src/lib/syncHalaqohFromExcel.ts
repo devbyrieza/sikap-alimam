@@ -15,6 +15,7 @@ export async function syncHalaqohFromExcel() {
       const q = nameQuery.toLowerCase();
       return pegawaiList.find((p) => {
         const name = p.nama_lengkap.toLowerCase();
+        if (q.includes("azzam")) return name.includes("azzam");
         if (q.includes("agus")) return name.includes("agus") || name.includes("cahyono");
         if (q.includes("imran") || q.includes("imron")) return name.includes("imran") || name.includes("abdillah");
         if (q.includes("ikbal") || q.includes("iqbal")) return name.includes("ikbal") || name.includes("iqbal");
@@ -69,8 +70,8 @@ export async function syncHalaqohFromExcel() {
           "Labibullah El Fatih",
         ] },
       {
-        musyrifQuery: "Imran Abdillah",
-        namaKelompok: "Halaqoh Ust. Imran Abdillah (IL)",
+        musyrifQuery: "Azzam",
+        namaKelompok: "Halaqoh Ust. Azzam Aghnia Ilman (IL)",
         santriNames: [
           "Muhammad Hafidz Abdurrahman",
           "Syeh Al bani Irsyad Amrullah",
