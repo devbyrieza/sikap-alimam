@@ -773,13 +773,17 @@ export default function HalaqohInputPage() {
                                 >-</button>
                                 <input
                                   type="number"
-                                  value={ayatDari || ""}
+                                  value={ayatDari === 0 ? "" : ayatDari}
                                   onChange={e => {
-                                    const val = parseInt(e.target.value) || 1;
-                                    setAyatDari(Math.min(selectedSurah?.total_ayat || 300, Math.max(1, val)));
+                                    const val = e.target.value;
+                                    if (val === "") setAyatDari(0);
+                                    else {
+                                      const n = parseInt(val);
+                                      if (!isNaN(n)) setAyatDari(Math.min(selectedSurah?.total_ayat || 300, n));
+                                    }
                                   }}
                                   onBlur={() => {
-                                    if (!ayatDari) setAyatDari(1);
+                                    if (!ayatDari || ayatDari < 1) setAyatDari(1);
                                   }}
                                   style={{ ...inputStyle, flex: 1, minWidth: 70, textAlign: "center", padding: "10px", fontWeight: 800, fontSize: 16 }}
                                 />
@@ -809,13 +813,17 @@ export default function HalaqohInputPage() {
                                 >-</button>
                                 <input
                                   type="number"
-                                  value={ayatKe || ""}
+                                  value={ayatKe === 0 ? "" : ayatKe}
                                   onChange={e => {
-                                    const val = parseInt(e.target.value) || 1;
-                                    setAyatKe(Math.min(selectedSurahAkhir?.total_ayat || 300, Math.max(1, val)));
+                                    const val = e.target.value;
+                                    if (val === "") setAyatKe(0);
+                                    else {
+                                      const n = parseInt(val);
+                                      if (!isNaN(n)) setAyatKe(Math.min(selectedSurahAkhir?.total_ayat || 300, n));
+                                    }
                                   }}
                                   onBlur={() => {
-                                    if (!ayatKe) setAyatKe(1);
+                                    if (!ayatKe || ayatKe < 1) setAyatKe(1);
                                   }}
                                   style={{ ...inputStyle, flex: 1, minWidth: 70, textAlign: "center", padding: "10px", fontWeight: 800, fontSize: 16 }}
                                 />
