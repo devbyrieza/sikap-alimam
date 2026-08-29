@@ -794,7 +794,7 @@ export default function HalaqohInputPage() {
                                 onBlur={() => {
                                   if (!ayatDari) setAyatDari(1);
                                 }}
-                                style={{ ...inputStyle, textAlign: "center", padding: "10px", fontWeight: 800 }}
+                                style={{ ...inputStyle, flex: 1, minWidth: 70, textAlign: "center", padding: "10px", fontWeight: 800, fontSize: 16 }}
                               />
                               <button
                                 type="button"
@@ -824,7 +824,7 @@ export default function HalaqohInputPage() {
                                 onBlur={() => {
                                   if (!ayatKe) setAyatKe(1);
                                 }}
-                                style={{ ...inputStyle, textAlign: "center", padding: "10px", fontWeight: 800 }}
+                                style={{ ...inputStyle, flex: 1, minWidth: 70, textAlign: "center", padding: "10px", fontWeight: 800, fontSize: 16 }}
                               />
                               <button
                                 type="button"
