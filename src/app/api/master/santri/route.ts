@@ -10,6 +10,20 @@ export async function GET(req: NextRequest) {
     const session = await getSession();
     if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
+    // Self-healing: Pastikan kolom status_kesiswaan ada di database
+    try {
+      await prisma.$executeRawUnsafe(`
+        ALTER TABLE santri_aktif ADD COLUMN IF NOT EXISTS status_kesiswaan VARCHAR(50) DEFAULT 'aktif';
+        ALTER TABLE santri_aktif ADD COLUMN IF NOT EXISTS tanggal_keluar DATE;
+        ALTER TABLE santri_aktif ADD COLUMN IF NOT EXISTS alasan_keluar TEXT;
+        ALTER TABLE santri_aktif ADD COLUMN IF NOT EXISTS no_sk_keluar VARCHAR(255);
+        ALTER TABLE santri_aktif ADD COLUMN IF NOT EXISTS catatan_keluar TEXT;
+        UPDATE santri_aktif SET status_kesiswaan = 'aktif' WHERE status_kesiswaan IS NULL;
+      `);
+    } catch (migErr) {
+      // Ignore
+    }
+
     const { searchParams } = new URL(req.url);
     const kelas_id = searchParams.get("kelas_id");
     const status = searchParams.get("status"); // 'all' | 'aktif' | 'dikeluarkan' | 'mengundurkan_diri' | 'mutasi' | 'lulus'

@@ -136,13 +136,15 @@ export default function MasterSantriPage() {
 
       if (resSantri.ok) {
         const json = await resSantri.json();
-        setSantriList(json.data || []);
+        const rawS = Array.isArray(json.data) ? json.data : (Array.isArray(json.santri) ? json.santri : (Array.isArray(json) ? json : []));
+        setSantriList(rawS);
         if (json.stats) setStats(json.stats);
       }
 
       if (resKelas.ok) {
         const jsonK = await resKelas.json();
-        setKelasList(jsonK || []);
+        const rawK = Array.isArray(jsonK) ? jsonK : (Array.isArray(jsonK.kelas) ? jsonK.kelas : (Array.isArray(jsonK.data) ? jsonK.data : []));
+        setKelasList(rawK);
       }
     } catch (err) {
       console.error("Gagal memuat data santri:", err);
@@ -358,7 +360,7 @@ export default function MasterSantriPage() {
               className="px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-semibold text-slate-700 focus:outline-none focus:ring-2 focus:ring-[#550000]/20"
             >
               <option value="all">Semua Kelas</option>
-              {kelasList.map((k) => (
+              {(kelasList || []).map((k) => (
                 <option key={k.id} value={k.id}>
                   Kelas {k.nama} ({k.jenjang || "MTs"})
                 </option>
