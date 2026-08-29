@@ -130,7 +130,7 @@ export default function MasterSantriPage() {
     setLoading(true);
     try {
       const [resSantri, resKelas] = await Promise.all([
-        fetch("/api/master/santri"),
+        fetch("/api/master/santri?status=all"),
         fetch("/api/master/kelas")
       ]);
 

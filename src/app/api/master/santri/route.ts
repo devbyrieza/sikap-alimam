@@ -23,6 +23,9 @@ export async function GET(req: NextRequest) {
 
     if (status && status !== "all") {
       whereClause.status_kesiswaan = status;
+    } else if (!status) {
+      // Default to active santri for KBM & Nilai consumers unless status=all is specified
+      whereClause.is_active = true;
     }
 
     if (q) {
@@ -58,6 +61,7 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({
       success: true,
       data: santriList,
+      santri: santriList,
       stats: {
         total: totalCount,
         aktif: activeCount,
