@@ -774,7 +774,7 @@ export default function HalaqohInputPage() {
 
                       {/* Ayat Range */}
                       {selectedSurah && (
-                        <div style={{ background: "#f8fafc", borderRadius: 16, padding: 18, border: "1.5px solid #e2e8f0", display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
+                        <div style={{ background: "#f8fafc", borderRadius: 16, padding: 18, border: "1.5px solid #e2e8f0", display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))", gap: 14 }}>
                           {/* Dari Ayat */}
                           <div>
                             <label style={labelStyle}>Dari Ayat</label>
