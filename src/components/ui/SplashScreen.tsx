@@ -42,13 +42,7 @@ export default function SplashScreen() {
             
             {/* Logo */}
             <div className="relative w-20 h-20 md:w-24 md:h-24 rounded-full overflow-hidden bg-white shadow-sm flex items-center justify-center p-2">
-              <Image 
-                src="/logo.png" 
-                alt="Logo Al-Imam" 
-                fill 
-                className="object-contain p-2"
-                priority
-              />
+              <img src="/logo.png" alt="Logo Al-Imam" style={{ width: "100%", height: "100%", objectFit: "contain", padding: 8 }} />
             </div>
           </div>
           <motion.div 
