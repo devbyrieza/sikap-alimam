@@ -5,6 +5,14 @@ import bcrypt from "bcryptjs";
 
 export async function POST(req: NextRequest) {
   try {
+    // Self-healing: pastikan kolom phone & must_change_password ada di tabel users
+    try {
+      await prisma.$executeRawUnsafe(`
+        ALTER TABLE users ADD COLUMN IF NOT EXISTS phone VARCHAR(20) UNIQUE;
+        ALTER TABLE users ADD COLUMN IF NOT EXISTS must_change_password BOOLEAN NOT NULL DEFAULT false;
+      `);
+    } catch (_) { /* ignore */ }
+
     const { email, password, selectedRole } = await req.json();
 
     if (!email || !password) {
@@ -15,28 +23,29 @@ export async function POST(req: NextRequest) {
     }
 
     const identifier = email.trim();
+    const cleanPhone = identifier.replace(/\D/g, "");
+    let phoneVariations: string[] = [identifier];
+    if (cleanPhone.startsWith("62")) {
+      phoneVariations.push("0" + cleanPhone.substring(2));
+    } else if (cleanPhone.startsWith("0")) {
+      phoneVariations.push("62" + cleanPhone.substring(1));
+      phoneVariations.push("+62" + cleanPhone.substring(1));
+    }
+
+    // 1. Cari via User table (email, username, atau nomor HP)
     let user = await prisma.user.findFirst({
       where: {
         OR: [
           { email: { equals: identifier, mode: "insensitive" } },
           { username: { equals: identifier, mode: "insensitive" } },
+          { phone: { in: phoneVariations } },
         ] },
       include: { pegawai: { select: { id: true, nama_lengkap: true, nama_panggilan: true } } } });
 
-    // Jika tidak ditemukan via User email, coba cari di tabel Pegawai (via NIK, NIP, HP, atau Email)
+    // 2. Jika tidak ditemukan via User, cari di tabel Pegawai (NIK, NIP, HP, Email)
     if (!user) {
-      const cleanPhone = identifier.replace(/\D/g, "");
-      let phoneVariations = [identifier];
-      if (cleanPhone.startsWith("62")) {
-        phoneVariations.push("0" + cleanPhone.substring(2));
-      } else if (cleanPhone.startsWith("0")) {
-        phoneVariations.push("62" + cleanPhone.substring(1));
-        phoneVariations.push("+62" + cleanPhone.substring(1));
-      }
-
       const pegawai = await prisma.pegawai.findFirst({
         where: {
-          user_id: { not: null },
           OR: [
             { nik: identifier },
             { nip: identifier },
@@ -46,7 +55,41 @@ export async function POST(req: NextRequest) {
         include: { user: { include: { pegawai: { select: { id: true, nama_lengkap: true, nama_panggilan: true } } } } } });
 
       if (pegawai?.user) {
+        // Pegawai sudah punya User terhubung
         user = pegawai.user;
+      } else if (pegawai && !pegawai.user_id) {
+        // Auto-provision: Pegawai ada tapi belum punya akun User — buat akun baru
+        const bcrypt2 = await import("bcryptjs");
+        const defaultPassword = "PAAS2026!";
+        const hashed = await bcrypt2.default.hash(defaultPassword, 10);
+        const newUsername = (pegawai.nama_lengkap || "pegawai")
+          .toLowerCase()
+          .replace(/\s+/g, ".")
+          .replace(/[^a-z0-9._]/g, "")
+          .substring(0, 30);
+
+        const newUser = await prisma.user.create({
+          data: {
+            username: newUsername + Math.floor(Math.random() * 900 + 100),
+            email: pegawai.email || `${newUsername}@pesantren-alimam.com`,
+            phone: pegawai.no_hp || undefined,
+            password: hashed,
+            plain_password: defaultPassword,
+            nama: pegawai.nama_lengkap || newUsername,
+            role: "GURU",
+            is_active: true,
+            must_change_password: true,
+          },
+          include: { pegawai: { select: { id: true, nama_lengkap: true, nama_panggilan: true } } }
+        });
+
+        // Tautkan pegawai ke user baru
+        await prisma.pegawai.update({
+          where: { id: pegawai.id },
+          data: { user_id: newUser.id }
+        });
+
+        user = newUser;
       }
     }
 

@@ -13,11 +13,13 @@ model User {
   id             String   @id @default(uuid()) @db.Uuid
   username       String?  @unique
   email          String   @unique
+  phone          String?  @unique
   password       String
   plain_password String?
   nama           String
   role           String   @default("guru") // ADMIN_SUPER | ADMIN_KEUANGAN | MUDIR | KEPALA_SEKOLAH | KADIV_PENGASUHAN | KADIV_ASRAMA | KADIV_KEDISIPLINAN | KADIV_KURIKULUM | GURU | MUSYRIF | WALI_SANTRI
   is_active      Boolean  @default(true)
+  must_change_password Boolean @default(false)
   spp_access_blocked  Boolean  @default(false) // jika true, Wali Santri tidak bisa akses SIKAP
   spp_blocked_reason  String?  // contoh: "SPP Agustus 2026 belum lunas"
   created_at     DateTime @default(now()) @db.Timestamptz(6)
