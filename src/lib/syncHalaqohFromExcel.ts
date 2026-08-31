@@ -25,23 +25,41 @@ export async function syncHalaqohFromExcel() {
       });
     };
 
-    // Helper finding santri
+    // Helper finding santri (toleran ejaan, double-l vs single-l, dll)
+    const normalize = (s: string) => s.toLowerCase().trim().replace(/(.)\1+/g, "$1"); // collapse double chars: ll→l, rr→r, etc.
     const findSantri = (nameQuery: string) => {
       const q = nameQuery.toLowerCase().trim();
+      const qNorm = normalize(q);
       const parts = q.split(" ").filter((p) => p.length > 2);
 
+      // Exact include match
       let match = santriList.find((s) => s.nama_lengkap.toLowerCase().includes(q));
       if (match) return match;
 
+      // Normalized match (collapse double chars)
+      match = santriList.find((s) => normalize(s.nama_lengkap).includes(qNorm));
+      if (match) return match;
+
+      // All word parts match
       if (parts.length > 0) {
         match = santriList.find((s) => {
           const sn = s.nama_lengkap.toLowerCase();
           return parts.every((pt) => sn.includes(pt));
         });
       }
-
       if (match) return match;
 
+      // Normalized all-word-parts match
+      const partsNorm = qNorm.split(" ").filter((p) => p.length > 2);
+      if (partsNorm.length > 0) {
+        match = santriList.find((s) => {
+          const sn = normalize(s.nama_lengkap);
+          return partsNorm.every((pt) => sn.includes(pt));
+        });
+      }
+      if (match) return match;
+
+      // First 2 parts match
       if (parts.length >= 2) {
         match = santriList.find((s) => {
           const sn = s.nama_lengkap.toLowerCase();
@@ -97,7 +115,7 @@ export async function syncHalaqohFromExcel() {
           "M. Fazril Alkais",
           "Naufal Dzakiy Purnama",
           "Muhammad Yahya Ayyash",
-          "Rifqi Arsyad Fadillah",
+          "Rifqi Arsyad Fadilah",
         ] },
       {
         musyrifQuery: "Ikhwan",
