@@ -60,7 +60,7 @@ export async function POST(req: NextRequest) {
       } else if (pegawai && !pegawai.user_id) {
         // Auto-provision: Pegawai ada tapi belum punya akun User — buat akun baru
         const bcrypt2 = await import("bcryptjs");
-        const defaultPassword = "PAAS2026!";
+        const defaultPassword = "Paas2026!";
         const hashed = await bcrypt2.default.hash(defaultPassword, 10);
         const newUsername = (pegawai.nama_lengkap || "pegawai")
           .toLowerCase()

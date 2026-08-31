@@ -1,4 +1,4 @@
-﻿import { NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
 export const dynamic = "force-dynamic";
@@ -25,9 +25,17 @@ export async function GET() {
       return NextResponse.json({ error: "User Azzam tidak ditemukan" }, { status: 404 });
     }
 
+    const bcrypt = await import("bcryptjs");
+    const hashedPwd = await bcrypt.hash("Paas2026!", 10);
+
     const updated = await (prisma as any).user.update({
       where: { id: azzam.id },
-      data: { phone: "082119136590" }
+      data: { 
+        phone: "082119136590",
+        password: hashedPwd,
+        plain_password: "Paas2026!",
+        must_change_password: true
+      }
     });
 
     const pegawai = await prisma.pegawai.findFirst({
@@ -48,7 +56,7 @@ export async function GET() {
       user_id: updated.id,
       email: updated.email,
       phone: updated.phone,
-      hint: "Login: username=azzam atau HP=082119136590, password=PAAS2026!"
+      hint: "Login: username=azzam atau HP=082119136590, password=Paas2026!"
     });
   } catch (err: any) {
     return NextResponse.json({ error: err?.message }, { status: 500 });
