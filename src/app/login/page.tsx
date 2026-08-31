@@ -112,9 +112,10 @@ export default function LoginPage() {
               fontWeight: 700,
               marginTop: 14,
               color: "#4b5563",
-              fontFamily: "var(--font-arabic)" }}
+              fontFamily: "serif",
+              direction: "rtl" }}
           >
-            Ø£Ù‡Ù„Ø§Ù‹ ÙˆØ³Ù‡Ù„Ø§Ù‹
+            &#x623;&#x647;&#x644;&#x627;&#x64B; &#x648;&#x633;&#x647;&#x644;&#x627;&#x64B;
           </p>
           <p style={{ fontSize: 12, color: "#9ca3af", marginTop: 2 }}>
             (Selamat Datang)
@@ -142,7 +143,7 @@ export default function LoginPage() {
               <input
                 type={showPass ? "text" : "password"}
                 className="form-control"
-                placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢"
+                placeholder="Password Anda"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
