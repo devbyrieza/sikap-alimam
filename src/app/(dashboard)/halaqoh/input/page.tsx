@@ -531,8 +531,19 @@ export default function HalaqohInputPage() {
       {/* ── MAIN FORM CARD ── */}
       <div style={{ background: "white", borderRadius: 24, padding: "28px 32px", border: "1.5px solid #ebdcc3", boxShadow: "0 4px 20px rgba(85,0,0,0.03)", display: "flex", flexDirection: "column", gap: 24 }}>
 
-        <div style={{ fontSize: 18, fontWeight: 800, color: "#550000", display: "flex", alignItems: "center", gap: 10 }}>
-          <BookHeart size={22} color="#550000" /> Form Catatan &amp; Mutabaah Halaqoh
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 16 }}>
+          <div style={{ fontSize: 18, fontWeight: 800, color: "#550000", display: "flex", alignItems: "center", gap: 10 }}>
+            <BookHeart size={22} color="#550000" /> Form Catatan &amp; Mutabaah Halaqoh
+          </div>
+          <div style={{ display: "flex", alignItems: "center", gap: 12, background: "#f8fafc", padding: "6px 14px", borderRadius: 12, border: "1.5px solid #e2e8f0" }}>
+            <label style={{ fontSize: 12, fontWeight: 800, color: "#475569", margin: 0 }}>TANGGAL PENGISIAN:</label>
+            <input 
+              type="date" 
+              value={tanggal} 
+              onChange={e => setTanggal(e.target.value)} 
+              style={{ border: "none", background: "transparent", fontSize: 14, fontWeight: 800, color: "#1e293b", outline: "none", cursor: "pointer" }} 
+            />
+          </div>
         </div>
 
         {/* STEP 1: Pilih Jenis Setoran / Kegiatan */}
@@ -702,17 +713,11 @@ export default function HalaqohInputPage() {
         {/* STEP 3: Detail Setoran & Nilai */}
         {selectedSantri && (
           <>
-            {/* Tanggal & Kehadiran */}
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 16 }}>
-              <div>
-                <label style={labelStyle}>{jenis === "tahsin" ? "TANGGAL HALAQOH" : "TANGGAL SETORAN"}</label>
-                <input type="date" value={tanggal} onChange={e => setTanggal(e.target.value)} style={inputStyle}
-                  onFocus={e => (e.currentTarget.style.borderColor = "#550000")} onBlur={e => (e.currentTarget.style.borderColor = "#e2e8f0")} />
-              </div>
-              <div>
-                <label style={labelStyle}>STATUS KEHADIRAN</label>
-                <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
-                  {KEHADIRAN_OPT.map(k => {
+            {/* Kehadiran */}
+            <div>
+              <label style={labelStyle}>STATUS KEHADIRAN</label>
+              <div style={{ display: "flex", gap: 6, flexWrap: "wrap", marginBottom: 16 }}>
+                {KEHADIRAN_OPT.map(k => {
                     const isSel = kehadiran === k.val;
                     return (
                       <button
@@ -730,7 +735,6 @@ export default function HalaqohInputPage() {
                   })}
                 </div>
               </div>
-            </div>
 
             {/* Alasan jika tidak hadir */}
             {(kehadiran === "sakit" || kehadiran === "izin") && (

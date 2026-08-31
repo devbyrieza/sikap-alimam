@@ -418,8 +418,19 @@ export default function UjianTahfidzPage() {
       {/* ── MAIN FORM CARD ── */}
       <div style={{ background: "white", borderRadius: 24, padding: "28px 32px", border: "1.5px solid #ebdcc3", boxShadow: "0 4px 20px rgba(85,0,0,0.03)", display: "flex", flexDirection: "column", gap: 24 }}>
 
-        <div style={{ fontSize: 18, fontWeight: 800, color: "#550000", display: "flex", alignItems: "center", gap: 10 }}>
-          <Award size={22} color="#550000" /> Form Penginputan Ujian
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 16 }}>
+          <div style={{ fontSize: 18, fontWeight: 800, color: "#550000", display: "flex", alignItems: "center", gap: 10 }}>
+            <Award size={22} color="#550000" /> Form Penginputan Ujian
+          </div>
+          <div style={{ display: "flex", alignItems: "center", gap: 12, background: "#f8fafc", padding: "6px 14px", borderRadius: 12, border: "1.5px solid #e2e8f0" }}>
+            <label style={{ fontSize: 12, fontWeight: 800, color: "#475569", margin: 0 }}>TANGGAL UJIAN:</label>
+            <input 
+              type="date" 
+              value={tanggal} 
+              onChange={e => setTanggal(e.target.value)} 
+              style={{ border: "none", background: "transparent", fontSize: 14, fontWeight: 800, color: "#1e293b", outline: "none", cursor: "pointer" }} 
+            />
+          </div>
         </div>
 
         {/* STEP 1: Jenis Ujian */}
@@ -515,18 +526,8 @@ export default function UjianTahfidzPage() {
         {/* STEP 3: Detail Ujian & Nilai (Hanya muncul jika santri sudah dipilih) */}
         {selectedSantri && (
           <>
-            {/* Date & Details */}
+            {/* Details */}
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 16 }}>
-              <div>
-                <label style={labelStyle}>Tanggal Ujian</label>
-                <input type="date" value={tanggal} onChange={e => setTanggal(e.target.value)} style={inputStyle}
-                  onFocus={e => (e.currentTarget.style.borderColor = "#550000")} onBlur={e => (e.currentTarget.style.borderColor = "#e2e8f0")} />
-                  {tanggal && (
-                    <div style={{ marginTop: "6px", fontSize: "12px", fontWeight: 700, color: "#047857", display: "flex", alignItems: "center", gap: "5px", background: "#ecfdf5", padding: "4px 10px", borderRadius: "8px", border: "1px solid #a7f3d0", width: "fit-content" }}>
-                      <span>{formatTanggal(tanggal)}</span>
-                    </div>
-                  )}
-              </div>
 
               {jenisUjian === "ujian_itqon" ? (
                 <div>
