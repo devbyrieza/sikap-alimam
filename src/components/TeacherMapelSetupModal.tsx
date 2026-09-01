@@ -106,10 +106,11 @@ export default function TeacherMapelSetupModal({
           window.location.reload();
         });
       } else {
-        Swal.fire("Gagal", "Gagal menyimpan data", "error");
+        const errData = await res.json().catch(() => ({}));
+        Swal.fire({ icon: "error", title: "Gagal", text: errData.error || "Gagal menyimpan data", confirmButtonColor: "#550000" });
       }
     } catch {
-      Swal.fire("Error", "Gagal terhubung ke server", "error");
+      Swal.fire({ icon: "error", title: "Error", text: "Gagal terhubung ke server", confirmButtonColor: "#550000" });
     } finally {
       setIsSaving(false);
     }
