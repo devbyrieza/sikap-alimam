@@ -18,6 +18,7 @@ export async function middleware(req: NextRequest) {
   if (pathname.startsWith("/api/debug-db")) return NextResponse.next();
   if (pathname.startsWith("/api/fix-san-santri")) return NextResponse.next();
   if (pathname.startsWith("/api/admin/sync-halaqoh")) return NextResponse.next();
+  if (pathname.startsWith("/api/fix-azzam")) return NextResponse.next();
 
   // Untuk semua path lain, cek session
   const session = await getSession();
