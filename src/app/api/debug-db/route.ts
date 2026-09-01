@@ -5,23 +5,32 @@ export const dynamic = 'force-dynamic';
 
 export async function GET() {
   try {
-    const naufals = await prisma.santriAktif.findMany({
-      where: {
-        OR: [
-          { nama_lengkap: { contains: 'Naufal', mode: 'insensitive' } },
-          { nama_lengkap: { contains: 'Alfaniri', mode: 'insensitive' } },
-          { nama_lengkap: { contains: 'Al-Faniri', mode: 'insensitive' } }
-        ]
-      },
-      select: { id: true, nama_lengkap: true, nis: true }
+    const santriNaufal = await prisma.santriAktif.findFirst({
+      where: { nama_lengkap: { contains: 'M Naufal Alfaniri', mode: 'insensitive' } }
     });
 
-    const kelompok = await prisma.halaqohKelompok.findFirst({
-      where: { nama_kelompok: { contains: 'Iqbal', mode: 'insensitive' } },
-      include: { anggota: { include: { santri: true } } }
+    if (!santriNaufal) {
+      return NextResponse.json({ success: false, error: 'Santri tidak ditemukan' });
+    }
+
+    const kelompokIqbal = await prisma.halaqohKelompok.findMany({
+      where: { nama_kelompok: { contains: 'Iqbal', mode: 'insensitive' } }
     });
 
-    return NextResponse.json({ naufals, kelompok });
+    let count = 0;
+    for (const kel of kelompokIqbal) {
+      const existing = await prisma.halaqohAnggota.findFirst({
+        where: { kelompok_id: kel.id, santri_id: santriNaufal.id }
+      });
+      if (!existing) {
+        await prisma.halaqohAnggota.create({
+          data: { kelompok_id: kel.id, santri_id: santriNaufal.id }
+        });
+        count++;
+      }
+    }
+
+    return NextResponse.json({ success: true, message: `Berhasil menambahkan M Naufal Alfaniri ke ${count} kelompok Ust. Iqbal.` });
   } catch (error: any) {
     return NextResponse.json({ success: false, error: error.message }, { status: 500 });
   }
