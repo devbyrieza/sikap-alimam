@@ -162,44 +162,46 @@ export default function HalaqohRekapPage() {
 
       {/* ── FILTER BAR CARD ── */}
       <div style={{ background: "white", borderRadius: 20, padding: "20px 24px", border: "1.5px solid #ebdcc3", boxShadow: "0 2px 12px rgba(85,0,0,0.03)" }}>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 12, marginBottom: 14 }}>
-          <div style={{ fontSize: 14, fontWeight: 800, color: "#550000", display: "flex", alignItems: "center", gap: 8 }}>
-            <Filter size={16} color="#550000" /> Filter Parameter Jurnal
-          </div>
-          {/* Quick Filters */}
-          <div style={{ display: "flex", gap: 6 }}>
-            {[
-              { label: "Bulan Ini", onClick: () => { const d = new Date(); setFilterDari(new Date(d.getFullYear(), d.getMonth(), 1).toISOString().split("T")[0]); setFilterSampai(d.toISOString().split("T")[0]); } },
-              { label: "Pekan Ini", onClick: () => { const d = new Date(); const start = new Date(d); start.setDate(d.getDate() - d.getDay()); setFilterDari(start.toISOString().split("T")[0]); setFilterSampai(d.toISOString().split("T")[0]); } },
-              { label: "7 Hari Terakhir", onClick: () => { const d = new Date(); const start = new Date(d); start.setDate(d.getDate() - 7); setFilterDari(start.toISOString().split("T")[0]); setFilterSampai(d.toISOString().split("T")[0]); } }
-            ].map((qf, idx) => (
-              <button
-                key={idx}
-                onClick={qf.onClick}
-                style={{
-                  padding: "4px 10px", fontSize: 11, fontWeight: 700,
-                  background: "#f8fafc", color: "#475569", border: "1px solid #e2e8f0",
-                  borderRadius: 8, cursor: "pointer", transition: "all 0.15s"
-                }}
-                onMouseOver={e => { e.currentTarget.style.background = "#f1f5f9"; }}
-                onMouseOut={e => { e.currentTarget.style.background = "#f8fafc"; }}
-              >
-                {qf.label}
-              </button>
-            ))}
-          </div>
+        <div style={{ fontSize: 14, fontWeight: 800, color: "#550000", marginBottom: 16, display: "flex", alignItems: "center", gap: 8 }}>
+          <Filter size={16} color="#550000" /> Filter Parameter Jurnal
         </div>
         
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))", gap: 12 }}>
-          <div>
-            <label style={labelStyle}>Dari Tanggal</label>
-            <input type="date" value={filterDari} onChange={e => setFilterDari(e.target.value)} style={inputStyle} />
+        <div style={{ display: "flex", flexWrap: "wrap", gap: 16, alignItems: "flex-end" }}>
+          
+          {/* Rentang Tanggal Group */}
+          <div style={{ flex: "1 1 340px", display: "flex", flexDirection: "column", gap: 10, background: "#f8fafc", padding: "12px 14px", borderRadius: 14, border: "1.5px solid #e2e8f0" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+              <span style={{ fontSize: 11, fontWeight: 800, color: "#64748b", textTransform: "uppercase", letterSpacing: "0.04em" }}>Rentang Tanggal</span>
+              <div style={{ display: "flex", gap: 6 }}>
+                {[
+                  { label: "Bulan Ini", onClick: () => { const d = new Date(); setFilterDari(new Date(d.getFullYear(), d.getMonth(), 1).toISOString().split("T")[0]); setFilterSampai(d.toISOString().split("T")[0]); } },
+                  { label: "Pekan Ini", onClick: () => { const d = new Date(); const start = new Date(d); start.setDate(d.getDate() - d.getDay()); setFilterDari(start.toISOString().split("T")[0]); setFilterSampai(d.toISOString().split("T")[0]); } },
+                  { label: "7 Hari", onClick: () => { const d = new Date(); const start = new Date(d); start.setDate(d.getDate() - 7); setFilterDari(start.toISOString().split("T")[0]); setFilterSampai(d.toISOString().split("T")[0]); } }
+                ].map((qf, idx) => (
+                  <button
+                    key={idx}
+                    onClick={qf.onClick}
+                    style={{
+                      padding: "4px 8px", fontSize: 10, fontWeight: 800,
+                      background: "white", color: "#475569", border: "1px solid #cbd5e1",
+                      borderRadius: 6, cursor: "pointer", transition: "all 0.15s"
+                    }}
+                    onMouseOver={e => { e.currentTarget.style.background = "#f1f5f9"; e.currentTarget.style.borderColor = "#94a3b8"; }}
+                    onMouseOut={e => { e.currentTarget.style.background = "white"; e.currentTarget.style.borderColor = "#cbd5e1"; }}
+                  >
+                    {qf.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
+              <input type="date" value={filterDari} onChange={e => setFilterDari(e.target.value)} style={{ ...inputStyle, flex: 1, padding: "8px 12px", fontSize: 12 }} />
+              <span style={{ color: "#94a3b8", fontWeight: 800, fontSize: 12 }}>s/d</span>
+              <input type="date" value={filterSampai} onChange={e => setFilterSampai(e.target.value)} style={{ ...inputStyle, flex: 1, padding: "8px 12px", fontSize: 12 }} />
+            </div>
           </div>
-          <div>
-            <label style={labelStyle}>Sampai Tanggal</label>
-            <input type="date" value={filterSampai} onChange={e => setFilterSampai(e.target.value)} style={inputStyle} />
-          </div>
-          <div>
+
+          <div style={{ flex: "1 1 160px" }}>
             <label style={labelStyle}>Kelompok</label>
             <select value={filterKelompok} onChange={e => setFilterKelompok(e.target.value)} style={{ ...inputStyle, appearance: "none", cursor: "pointer" }}>
               <option value="">Semua Kelompok</option>
@@ -208,26 +210,20 @@ export default function HalaqohRekapPage() {
               ))}
             </select>
           </div>
-          <div>
+          <div style={{ flex: "1 1 140px" }}>
             <label style={labelStyle}>Sesi</label>
             <select value={filterSesi} onChange={e => setFilterSesi(e.target.value)} style={{ ...inputStyle, appearance: "none", cursor: "pointer" }}>
               <option value="">Semua Sesi</option>
               <option value="subuh">Subuh</option>
               <option value="dhuha">Dhuha</option>
-              <option value="maghrib">Ba'da Maghrib</option>
+              <option value="maghrib">Maghrib</option>
             </select>
           </div>
-          <div>
+          <div style={{ flex: "1 1 200px" }}>
             <label style={labelStyle}>Cari Santri</label>
             <div style={{ position: "relative" }}>
-              <Search size={14} color="#94a3b8" style={{ position: "absolute", left: 12, top: "50%", transform: "translateY(-50%)" }} />
-              <input
-                type="text"
-                placeholder="Nama atau NIS..."
-                value={filterSearch}
-                onChange={e => setFilterSearch(e.target.value)}
-                style={{ ...inputStyle, paddingLeft: 34 }}
-              />
+              <Search size={16} color="#94a3b8" style={{ position: "absolute", left: 14, top: 12 }} />
+              <input type="text" placeholder="Nama atau NIS..." value={filterSearch} onChange={e => setFilterSearch(e.target.value)} style={{ ...inputStyle, paddingLeft: 38 }} />
             </div>
           </div>
         </div>
@@ -281,35 +277,35 @@ export default function HalaqohRekapPage() {
                       <td style={{ padding: "12px 14px", fontWeight: 800, color: "#1e293b", whiteSpace: "nowrap" }}>
                         {c.santri?.nama_lengkap}
                       </td>
-                      <td style={{ padding: "12px 14px" }}>
+                      <td style={{ padding: "12px 14px", whiteSpace: "nowrap" }}>
                         <span style={{ padding: "3px 8px", borderRadius: 7, fontSize: 11, fontWeight: 700, border: `1px solid ${sBadge.border}`, background: sBadge.bg, color: sBadge.color }}>
                           {sBadge.label}
                         </span>
                       </td>
-                      <td style={{ padding: "12px 14px", textTransform: "capitalize", fontWeight: 700, color: "#475569" }}>
+                      <td style={{ padding: "12px 14px", textTransform: "capitalize", fontWeight: 700, color: "#475569", whiteSpace: "nowrap" }}>
                         {c.jenis}
                       </td>
-                      <td style={{ padding: "12px 14px", fontWeight: 700, color: "#1e293b" }}>
-                        {c.surah_nama} <span style={{ fontSize: 11, color: "#64748b", fontWeight: 400 }}>({c.ayat_dari}–{c.ayat_ke})</span>
+                      <td style={{ padding: "12px 14px", fontWeight: 700, color: "#1e293b", whiteSpace: "nowrap" }}>
+                        {c.surah_nama} <span style={{ fontSize: 11, color: "#64748b", fontWeight: 400 }}>({c.ayat_dari}-{c.ayat_ke})</span>
                       </td>
-                      <td style={{ padding: "12px 14px", textAlign: "center", fontWeight: 700, color: "#334155" }}>
+                      <td style={{ padding: "12px 14px", textAlign: "center", fontWeight: 700, color: "#334155", whiteSpace: "nowrap" }}>
                         {c.jumlah_halaman || 0}
                       </td>
-                      <td style={{ padding: "12px 14px", textAlign: "center" }}>
+                      <td style={{ padding: "12px 14px", textAlign: "center", whiteSpace: "nowrap" }}>
                         <span style={{ padding: "3px 8px", borderRadius: 7, fontSize: 11, fontWeight: 700, border: `1px solid ${kBadge.border}`, background: kBadge.bg, color: kBadge.color }}>
                           {kBadge.label}
                         </span>
                       </td>
-                      <td style={{ padding: "12px 14px", textAlign: "center", fontWeight: 700, color: "#334155" }}>
+                      <td style={{ padding: "12px 14px", textAlign: "center", fontWeight: 700, color: "#334155", whiteSpace: "nowrap" }}>
                         {c.nilai_kelancaran || "—"}
                       </td>
-                      <td style={{ padding: "12px 14px", textAlign: "center", fontWeight: 700, color: "#334155" }}>
+                      <td style={{ padding: "12px 14px", textAlign: "center", fontWeight: 700, color: "#334155", whiteSpace: "nowrap" }}>
                         {c.nilai_bacaan || "—"}
                       </td>
-                      <td style={{ padding: "12px 14px", textAlign: "center", fontWeight: 700, color: "#334155" }}>
+                      <td style={{ padding: "12px 14px", textAlign: "center", fontWeight: 700, color: "#334155", whiteSpace: "nowrap" }}>
                         {c.nilai_sikap || "—"}
                       </td>
-                      <td style={{ padding: "12px 14px", textAlign: "center", fontWeight: 900, color: "#059669", fontSize: 14 }}>
+                      <td style={{ padding: "12px 14px", textAlign: "center", fontWeight: 900, color: "#059669", fontSize: 14, whiteSpace: "nowrap" }}>
                         {c.nilai_akhir || "—"}
                       </td>
                     </tr>
