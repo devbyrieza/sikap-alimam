@@ -148,9 +148,8 @@ export async function syncHalaqohFromExcel() {
 
     const seseis = ["subuh", "maghrib", "dhuha"];
 
-    // Clear existing groups & members cleanly
+    // Clear existing members cleanly (safely recreates without breaking notes FK)
     await prisma.halaqohAnggota.deleteMany({});
-    await prisma.halaqohKelompok.deleteMany({});
 
     let totalGroupsCreated = 0;
     let totalMembersCreated = 0;
@@ -202,13 +201,25 @@ export async function syncHalaqohFromExcel() {
       if (!teacher) continue;
 
       for (const sesi of seseis) {
-        const kel = await prisma.halaqohKelompok.create({
-          data: {
-            pegawai_id: teacher.id,
-            nama_kelompok: `${groupDef.namaKelompok} - Sesi ${sesi.toUpperCase()}`,
-            sesi: sesi,
-            is_active: true } });
-        totalGroupsCreated++;
+        const nama_kelompok = `${groupDef.namaKelompok} - Sesi ${sesi.toUpperCase()}`;
+        let kel = await prisma.halaqohKelompok.findFirst({
+          where: { pegawai_id: teacher.id, sesi: sesi }
+        });
+
+        if (!kel) {
+          kel = await prisma.halaqohKelompok.create({
+            data: {
+              pegawai_id: teacher.id,
+              nama_kelompok,
+              sesi: sesi,
+              is_active: true } });
+          totalGroupsCreated++;
+        } else if (kel.nama_kelompok !== nama_kelompok) {
+          kel = await prisma.halaqohKelompok.update({
+            where: { id: kel.id },
+            data: { nama_kelompok }
+          });
+        }
 
         const isMTsGroup = groupDef.namaKelompok.includes("(MTs)");
         const isILGroup = groupDef.namaKelompok.includes("(IL)");
