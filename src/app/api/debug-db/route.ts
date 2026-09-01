@@ -3,7 +3,7 @@ import { prisma } from '@/lib/prisma';
 
 export const dynamic = 'force-dynamic';
 
-export async function GET() {
+export async function POST() {
   try {
     const santriNaufal = await prisma.santriAktif.findFirst({
       where: { nama_lengkap: { contains: 'M Naufal Alfaniri', mode: 'insensitive' } }
