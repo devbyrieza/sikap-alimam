@@ -48,9 +48,15 @@ export default function HalaqohRekapPage() {
   const [loading, setLoading] = useState(false);
 
   // Filters
-  const today = new Date().toISOString().split("T")[0];
-  const firstOfMonth = today.substring(0, 8) + "01";
-  const [filterDari, setFilterDari] = useState(firstOfMonth);
+  const todayObj = new Date();
+  const today = todayObj.toISOString().split("T")[0];
+  
+  // Default ke 7 hari yang lalu agar saat awal bulan data bulan lalu tetap terlihat
+  const lastWeekObj = new Date(todayObj);
+  lastWeekObj.setDate(lastWeekObj.getDate() - 7);
+  const lastWeek = lastWeekObj.toISOString().split("T")[0];
+
+  const [filterDari, setFilterDari] = useState(lastWeek);
   const [filterSampai, setFilterSampai] = useState(today);
   const [filterKelompok, setFilterKelompok] = useState("");
   const [filterSesi, setFilterSesi] = useState("");
@@ -156,9 +162,34 @@ export default function HalaqohRekapPage() {
 
       {/* ── FILTER BAR CARD ── */}
       <div style={{ background: "white", borderRadius: 20, padding: "20px 24px", border: "1.5px solid #ebdcc3", boxShadow: "0 2px 12px rgba(85,0,0,0.03)" }}>
-        <div style={{ fontSize: 14, fontWeight: 800, color: "#550000", marginBottom: 14, display: "flex", alignItems: "center", gap: 8 }}>
-          <Filter size={16} color="#550000" /> Filter Parameter Jurnal
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 12, marginBottom: 14 }}>
+          <div style={{ fontSize: 14, fontWeight: 800, color: "#550000", display: "flex", alignItems: "center", gap: 8 }}>
+            <Filter size={16} color="#550000" /> Filter Parameter Jurnal
+          </div>
+          {/* Quick Filters */}
+          <div style={{ display: "flex", gap: 6 }}>
+            {[
+              { label: "Bulan Ini", onClick: () => { const d = new Date(); setFilterDari(new Date(d.getFullYear(), d.getMonth(), 1).toISOString().split("T")[0]); setFilterSampai(d.toISOString().split("T")[0]); } },
+              { label: "Pekan Ini", onClick: () => { const d = new Date(); const start = new Date(d); start.setDate(d.getDate() - d.getDay()); setFilterDari(start.toISOString().split("T")[0]); setFilterSampai(d.toISOString().split("T")[0]); } },
+              { label: "7 Hari Terakhir", onClick: () => { const d = new Date(); const start = new Date(d); start.setDate(d.getDate() - 7); setFilterDari(start.toISOString().split("T")[0]); setFilterSampai(d.toISOString().split("T")[0]); } }
+            ].map((qf, idx) => (
+              <button
+                key={idx}
+                onClick={qf.onClick}
+                style={{
+                  padding: "4px 10px", fontSize: 11, fontWeight: 700,
+                  background: "#f8fafc", color: "#475569", border: "1px solid #e2e8f0",
+                  borderRadius: 8, cursor: "pointer", transition: "all 0.15s"
+                }}
+                onMouseOver={e => { e.currentTarget.style.background = "#f1f5f9"; }}
+                onMouseOut={e => { e.currentTarget.style.background = "#f8fafc"; }}
+              >
+                {qf.label}
+              </button>
+            ))}
+          </div>
         </div>
+        
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))", gap: 12 }}>
           <div>
             <label style={labelStyle}>Dari Tanggal</label>
