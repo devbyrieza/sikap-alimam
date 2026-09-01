@@ -117,6 +117,7 @@ export default async function DashboardLayout({
           initialPegawai={pegawai ? {
             id: pegawai.id,
             nama_lengkap: pegawai.nama_lengkap,
+            nama_panggilan: pegawai.nama_panggilan,
             nik: pegawai.nik,
             jenis_kelamin: pegawai.jenis_kelamin,
             tempat_lahir: pegawai.tempat_lahir,
