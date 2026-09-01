@@ -55,14 +55,13 @@ export default async function DashboardLayout({
       missingFields.push("Profil Civitas Belum Terdaftar");
     } else {
       if (!pegawai.nama_lengkap || !pegawai.nama_lengkap.trim()) missingFields.push("Nama Lengkap");
-      if (!pegawai.no_hp || !pegawai.no_hp.trim()) missingFields.push("No. WhatsApp / HP");
+      if (!pegawai.no_hp || !pegawai.no_hp.trim()) {
+        needsSetup = true;
+        missingFields.push("No. WhatsApp / HP");
+      }
       if (!pegawai.jenis_kelamin) missingFields.push("Jenis Kelamin");
       if (isGuru && (!pegawai.mata_pelajaran || !pegawai.mata_pelajaran.trim())) {
         missingFields.push("Penugasan Mata Pelajaran");
-      }
-
-      if (missingFields.length > 0) {
-        needsSetup = true;
       }
     }
   }
