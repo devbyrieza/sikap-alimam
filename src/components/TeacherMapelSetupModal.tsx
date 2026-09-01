@@ -81,6 +81,10 @@ export default function TeacherMapelSetupModal({
   };
 
   const handleSave = async () => {
+    if (!formData.no_hp?.trim()) {
+      Swal.fire({ icon: "warning", title: "Data Belum Lengkap", text: "Mohon isi Nomor WhatsApp Anda terlebih dahulu agar profil dianggap lengkap.", confirmButtonColor: "#550000" });
+      return;
+    }
     setIsSaving(true);
     try {
       const res = await fetch("/api/master/guru/self-update", {
