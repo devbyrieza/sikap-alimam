@@ -265,7 +265,9 @@ export default function TambahJurnalPage() {
       }
     }
 
-    // 3. Filter berdasarkan AsatidzmMapel (jika asatidId terpilih)
+    // 3. Filter berdasarkan AsatidzmMapel (DIHAPUS agar sesuai dengan presensi)
+    // Berdasarkan permintaan user: "harusnya muncul semua daftar pilihan mapel (sesuai jenjang) , kalau di presensi muncul tapi kok saat isi jurnal begitu tampilannya"
+    /*
     if (asatidId && master?.asatidzmMapel && list.length > 0) {
       const allowedMapelIds = new Set(
         master.asatidzmMapel
@@ -287,9 +289,14 @@ export default function TambahJurnalPage() {
         const filtered = list.filter(
           (m: any) => allowedMapelIds.has(m.id) || teacherMapelNames.has(m.nama.toLowerCase())
         );
-        list = filtered;
+        // Fallback: Jika ternyata setelah difilter kosong (mungkin karena data mapping belum lengkap),
+        // tampilkan saja semua mapel yang ada di kelas tersebut agar guru tetap bisa mengisi jurnal.
+        if (filtered.length > 0) {
+          list = filtered;
+        }
       }
     }
+    */
 
     // 4. Final deduplication by mapel name
     const finalUnique: any[] = [];
