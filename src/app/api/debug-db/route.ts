@@ -5,32 +5,16 @@ export const dynamic = 'force-dynamic';
 
 export async function POST() {
   try {
-    const santriNaufal = await prisma.santriAktif.findFirst({
-      where: { nama_lengkap: { contains: 'M Naufal Alfaniri', mode: 'insensitive' } }
+    const p = await prisma.pegawai.findFirst({
+      where: { nama_lengkap: { contains: 'Agus', mode: 'insensitive' } }
     });
-
-    if (!santriNaufal) {
-      return NextResponse.json({ success: false, error: 'Santri tidak ditemukan' });
-    }
-
-    const kelompokIqbal = await prisma.halaqohKelompok.findMany({
-      where: { nama_kelompok: { contains: 'Iqbal', mode: 'insensitive' } }
+    if (!p) return NextResponse.json({ error: 'Pegawai not found' });
+    
+    const am = await prisma.asatidzmMapel.findMany({
+      where: { pegawai_id: p.id },
+      include: { mapel: { include: { kelas: true } } }
     });
-
-    let count = 0;
-    for (const kel of kelompokIqbal) {
-      const existing = await prisma.halaqohAnggota.findFirst({
-        where: { kelompok_id: kel.id, santri_id: santriNaufal.id }
-      });
-      if (!existing) {
-        await prisma.halaqohAnggota.create({
-          data: { kelompok_id: kel.id, santri_id: santriNaufal.id }
-        });
-        count++;
-      }
-    }
-
-    return NextResponse.json({ success: true, message: `Berhasil menambahkan M Naufal Alfaniri ke ${count} kelompok Ust. Iqbal.` });
+    return NextResponse.json({ pegawai: p.nama_lengkap, am });
   } catch (error: any) {
     return NextResponse.json({ success: false, error: error.message }, { status: 500 });
   }
