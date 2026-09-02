@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import React, { useState, useEffect } from "react";
 import {
@@ -78,8 +78,15 @@ export default function HalaqohDashboardPage() {
   const tabParam = searchParams.get("tab") || "sesi";
 
   const [activeTab, setActiveTab] = useState<"sesi" | "mutabaah">(tabParam === "mutabaah" ? "mutabaah" : "sesi");
-  const [today] = useState(() => new Date());
-  const [hariIni] = useState(() => HARI_NAMA[new Date().getDay()]);
+  const [selectedDateStr, setSelectedDateStr] = useState(() => {
+    const d = new Date();
+    d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
+    return d.toISOString().split("T")[0];
+  });
+  
+  const selectedDateObj = new Date(selectedDateStr + "T00:00:00");
+  const hariIni = HARI_NAMA[selectedDateObj.getDay()];
+  
   const [kelompokList, setKelompokList] = useState<KelompokHalaqoh[]>([]);
   const [loading, setLoading] = useState(true);
   const [profile, setProfile] = useState<any>(null);
@@ -93,7 +100,7 @@ export default function HalaqohDashboardPage() {
   const [search, setSearch] = useState("");
   const [kelasFilter, setKelasFilter] = useState("all");
 
-  const tanggalStr = today.toISOString().split("T")[0];
+  const tanggalStr = selectedDateStr;
 
   const getSesiAktif = (): string[] => {
     if (hariIni === "Ahad") return [];
@@ -209,7 +216,20 @@ export default function HalaqohDashboardPage() {
 
         <div style={{ position: "relative", zIndex: 1, display: "flex", alignItems: "center", gap: 10, background: "rgba(253,248,240,0.15)", padding: "10px 18px", borderRadius: 14, border: "1px solid rgba(221,193,146,0.35)", fontWeight: 700, color: "#fdf8f0", flexShrink: 0 }}>
           <CalendarDays size={16} color="#ddc192" />
-          <span style={{ fontSize: 13 }}>{formatTanggal(today)}</span>
+          <input 
+            type="date"
+            value={selectedDateStr}
+            onChange={(e) => setSelectedDateStr(e.target.value)}
+            style={{ 
+              background: "transparent", 
+              border: "none", 
+              color: "#fdf8f0", 
+              fontSize: 14, 
+              fontWeight: 800, 
+              outline: "none",
+              colorScheme: "dark"
+            }}
+          />
         </div>
       </div>
 
