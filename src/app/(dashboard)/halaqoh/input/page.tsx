@@ -536,7 +536,7 @@ export default function HalaqohInputPage() {
             <BookHeart size={22} color="#550000" /> Form Catatan &amp; Mutabaah Halaqoh
           </div>
           <div style={{ display: "flex", alignItems: "center", gap: 12, background: "#f8fafc", padding: "6px 14px", borderRadius: 12, border: "1.5px solid #e2e8f0" }}>
-            <label style={{ fontSize: 12, fontWeight: 800, color: "#475569", margin: 0 }}>TANGGAL PENGISIAN:</label>
+            <label style={{ fontSize: 12, fontWeight: 800, color: "#475569", margin: 0 }}>TANGGAL SESI:</label>
             <input 
               type="date" 
               value={tanggal} 
