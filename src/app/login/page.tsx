@@ -1,8 +1,23 @@
+﻿// src/app/login/page.tsx
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { BookOpen, Eye, EyeOff, Loader2, AlertTriangle, X } from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
+import {
+  BookOpen,
+  Eye,
+  EyeOff,
+  Loader2,
+  AlertTriangle,
+  X,
+  ShieldCheck,
+  UserCheck,
+  ArrowRight,
+  Lock,
+  User
+} from "lucide-react";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -20,7 +35,19 @@ export default function LoginPage() {
   const [showForgotModal, setShowForgotModal] = useState(false);
   const [forgotInput, setForgotInput] = useState("");
   const [forgotLoading, setForgotLoading] = useState(false);
-  const [forgotMessage, setForgotMessage] = useState<{type: "error" | "success", text: string} | null>(null);
+  const [forgotMessage, setForgotMessage] = useState<{ type: "error" | "success"; text: string } | null>(null);
+
+  // Mandatory UX Rule: Modal Scroll Lock
+  useEffect(() => {
+    if (showForgotModal || requireRoleSelection) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "unset";
+    }
+    return () => {
+      document.body.style.overflow = "unset";
+    };
+  }, [showForgotModal, requireRoleSelection]);
 
   async function handleForgotSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -31,7 +58,8 @@ export default function LoginPage() {
       const res = await fetch("/api/auth/forgot-password", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ identifier: forgotInput }) });
+        body: JSON.stringify({ identifier: forgotInput })
+      });
       const json = await res.json();
       if (!res.ok) {
         setForgotMessage({ type: "error", text: json.error || "Gagal mengirim permintaan" });
@@ -53,7 +81,8 @@ export default function LoginPage() {
       const res = await fetch("/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }) });
+        body: JSON.stringify({ email, password })
+      });
       const json = await res.json();
       if (!res.ok) {
         setError(json.error || "Login gagal");
@@ -80,7 +109,8 @@ export default function LoginPage() {
       const res = await fetch("/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password, selectedRole: role }) });
+        body: JSON.stringify({ email, password, selectedRole: role })
+      });
       const json = await res.json();
       if (!res.ok) {
         setError(json.error || "Login gagal");
@@ -96,185 +126,271 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="login-page">
+    <div className="min-h-screen bg-gradient-to-b from-[#F0F7FF] via-[#F8FAFC] to-white py-10 px-4 flex flex-col justify-center items-center font-sans relative overflow-hidden">
+      
+      {/* Background Micro-Grid */}
+      <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGcgc3Ryb2tlPSIjMDAwMDAwIiBzdHJva2Utb3BhY2l0eT0iMC4wMiIgZmlsbD0ibm9uZSI+PHBhdGggZD0iTTAgNjBoNjBNNjAgMGwwIDYwIi8+PC9nPjwvc3ZnPg==')] opacity-70 pointer-events-none" />
 
-      <div className="login-card">
-        <div className="login-logo">
-          <img src="/logo.png" alt="Logo Al-Imam" style={{ width: 85, height: 85, objectFit: "contain", margin: "0 auto 16px", filter: "drop-shadow(0px 8px 16px rgba(85,0,0,0.15))" }} />
-          <h1>SIKAP</h1>
-          <p style={{ fontWeight: 600, fontSize: 12, color: "var(--primary)", marginTop: 4 }}>
-            Sistem Informasi Kependidikan Akademik dan Pengasuhan
-          </p>
-          <p style={{ marginTop: 2 }}>Pesantren Al-Imam Al-Islami</p>
-          <p
-            style={{
-              fontSize: 24,
-              fontWeight: 700,
-              marginTop: 14,
-              color: "#4b5563",
-              fontFamily: "serif",
-              direction: "rtl" }}
-          >
-            &#x623;&#x647;&#x644;&#x627;&#x64B; &#x648;&#x633;&#x647;&#x644;&#x627;&#x64B;
-          </p>
-          <p style={{ fontSize: 12, color: "#9ca3af", marginTop: 2 }}>
-            (Selamat Datang)
-          </p>
-        </div>
-
-        <form onSubmit={handleSubmit}>
-          <div className="form-group" style={{ marginBottom: 16 }}>
-            <label className="form-label" style={{ fontSize: 13, fontWeight: 700, marginBottom: 8, color: "var(--text-main)" }}>Email / No. WA / Username</label>
-            <input
-              type="text"
-              name="email"
-              className="form-control"
-              placeholder="Username / Email / No. WA"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              autoFocus
-            />
-          </div>
-
-          <div className="form-group">
-            <label className="form-label" style={{ fontSize: 13, fontWeight: 700, marginBottom: 8, color: "var(--text-main)" }}>Password</label>
-            <div style={{ position: "relative" }}>
-              <input
-                type={showPass ? "text" : "password"}
-                className="form-control"
-                placeholder="Password Anda"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                style={{ paddingRight: 44 }}
-              />
-              <button
-                type="button"
-                onClick={() => setShowPass(!showPass)}
-                style={{
-                  position: "absolute",
-                  right: 12,
-                  top: "50%",
-                  transform: "translateY(-50%)",
-                  background: "none",
-                  border: "none",
-                  cursor: "pointer",
-                  color: "#9ca3af",
-                  display: "flex",
-                  alignItems: "center" }}
-              >
-                {showPass ? <EyeOff size={18} /> : <Eye size={18} />}
-              </button>
-            </div>
-            <div style={{ textAlign: "right", marginTop: 8 }}>
-              <button
-                type="button"
-                onClick={() => { setShowForgotModal(true); setForgotMessage(null); setForgotInput(""); }}
-                style={{ fontSize: 13, color: "var(--primary)", background: "none", border: "none", cursor: "pointer", fontWeight: 600 }}
-              >
-                Lupa Password?
-              </button>
-            </div>
-          </div>
-
-          {error && (
-            <div
-              style={{
-                background: "#fef2f2",
-                border: "1px solid #fecaca",
-                borderRadius: 10,
-                padding: "10px 14px",
-                fontSize: 13,
-                color: "#b91c1c",
-                marginBottom: 16,
-                display: "flex",
-                alignItems: "center",
-                gap: 8 }}
-            >
-              <AlertTriangle size={16} className="inline mr-1" /> {error}
-            </div>
-          )}
-
-          <button
-            type="submit"
-            className="btn btn-primary"
-            disabled={loading}
-            style={{ width: "100%", padding: "12px", marginTop: 8 }}
-          >
-            {loading ? <Loader2 className="spin" size={18} /> : "Masuk ke Sistem"}
-          </button>
-        </form>
-
-        <div
-          style={{
-            marginTop: 24,
-            padding: "14px 16px",
-            background: "#f8f7f4",
-            borderRadius: 12,
-            fontSize: 12,
-            color: "#6b7280" }}
+      {/* Top Navigation Pills (OMI Standard) */}
+      <div className="w-full max-w-md flex items-center justify-between gap-3 mb-5 relative z-10">
+        <a
+          href="https://pesantren-alimam.com"
+          className="inline-flex items-center gap-1.5 px-4 py-2 rounded-2xl bg-white/95 border border-slate-200/90 shadow-2xs text-xs font-extrabold uppercase tracking-wider text-slate-700 hover:text-[#550000] hover:border-[#550000]/40 transition-all hover:-translate-y-0.5"
         >
-          <p style={{ fontWeight: 700, marginBottom: 4, color: "#374151" }}>
-             Info Login
-          </p>
-          <p style={{ marginBottom: 6, lineHeight: 1.5 }}>
-            Silakan login menggunakan <b>User ID</b>, <b>Email</b>, atau <b>No. WhatsApp</b> Anda.
-          </p>
+          <span>← Beranda Utama</span>
+        </a>
+        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-2xl bg-white/95 border border-slate-200/90 shadow-2xs text-xs font-bold text-slate-700">
+          <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+          <span>Portal SIKAP 2026/2027</span>
         </div>
       </div>
 
-      {showForgotModal && (
-        <div style={{
-          position: "fixed", inset: 0, background: "rgba(0,0,0,0.5)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 9999, padding: 20
-        }}>
-          <div style={{ background: "white", padding: 24, borderRadius: 16, width: "100%", maxWidth: 400, position: "relative" }}>
-            <button
-              onClick={() => setShowForgotModal(false)}
-              style={{ position: "absolute", right: 16, top: 16, background: "none", border: "none", cursor: "pointer", color: "#6b7280" }}
-            >
-              <X size={20} />
-            </button>
-            <h2 style={{ fontSize: 18, fontWeight: 700, color: "#1f2937", marginBottom: 8 }}>Lupa Kata Sandi?</h2>
-            <p style={{ fontSize: 13, color: "#6b7280", marginBottom: 20, lineHeight: 1.5 }}>
-              Masukkan NIP, NIK, atau Nomor WA Anda. Kami akan mengirimkan tautan reset kata sandi melalui WhatsApp.
+      {/* Two-Section OMI Card */}
+      <div className="w-full max-w-md rounded-3xl overflow-hidden shadow-xl shadow-slate-900/5 border border-slate-200 bg-white relative z-10">
+        
+        {/* Section 1: Dark Maroon Gradient Header */}
+        <div className="bg-gradient-to-br from-[#2D0000] via-[#400000] to-[#550000] p-7 text-center text-white relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-36 h-36 bg-[#ddc192]/15 rounded-full blur-2xl pointer-events-none" />
+          
+          <div className="relative z-10 space-y-2.5">
+            <div className="w-16 h-16 bg-white rounded-2xl p-2 mx-auto shadow-md border border-white/20 flex items-center justify-center">
+              <img
+                src="/logo.png"
+                alt="Logo Al-Imam"
+                className="w-12 h-12 object-contain"
+              />
+            </div>
+            <div>
+              <h1 className="text-2xl font-black tracking-tight text-white">
+                SIKAP AL-IMAM
+              </h1>
+              <p className="text-xs text-[#ddc192] font-semibold mt-0.5">
+                Sistem Informasi Kependidikan Akademik &amp; Pengasuhan
+              </p>
+            </div>
+            <p className="text-xl font-bold text-white/90 font-serif direction-rtl pt-1">
+              أهلاً وسهلاً
             </p>
+          </div>
+        </div>
 
-            {forgotMessage && (
-              <div style={{
-                background: forgotMessage.type === "success" ? "#ecfdf5" : "#fef2f2",
-                color: forgotMessage.type === "success" ? "#047857" : "#b91c1c",
-                padding: "10px 14px", borderRadius: 8, fontSize: 13, marginBottom: 16, border: `1px solid ${forgotMessage.type === "success" ? "#a7f3d0" : "#fecaca"}`
-              }}>
-                {forgotMessage.text}
+        {/* Section 2: White Body Card */}
+        <div className="p-7 space-y-5 bg-white">
+          
+          {/* Info Banner Box */}
+          <div className="p-3.5 rounded-2xl bg-[#ddc192]/15 border border-[#ddc192]/40 text-xs text-[#550000] flex items-center gap-2.5">
+            <ShieldCheck className="w-4 h-4 text-[#550000] shrink-0" />
+            <span className="font-medium leading-relaxed">
+              Login staf, asatidzah, dan wali santri menggunakan <strong>Username / Email / No. WA</strong>.
+            </span>
+          </div>
+
+          <form onSubmit={handleSubmit} className="space-y-4">
+            
+            {/* Input Identifier */}
+            <div className="space-y-1.5">
+              <label className="text-xs font-extrabold text-slate-700 flex items-center gap-1">
+                <span>Username / Email / No. WA</span>
+                <span className="text-red-500">*</span>
+              </label>
+              <div className="relative">
+                <input
+                  type="text"
+                  name="email"
+                  required
+                  autoFocus
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="Username / Email / No. WA"
+                  className="w-full h-12 pl-4 pr-10 bg-slate-50/60 border border-slate-200 rounded-xl text-sm font-bold text-slate-900 placeholder:text-slate-400 placeholder:font-normal focus:bg-white focus:border-[#550000] focus:ring-4 focus:ring-[#550000]/10 transition-all"
+                />
+                <User className="w-4 h-4 text-slate-400 absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+              </div>
+            </div>
+
+            {/* Input Password */}
+            <div className="space-y-1.5">
+              <div className="flex items-center justify-between">
+                <label className="text-xs font-extrabold text-slate-700 flex items-center gap-1">
+                  <span>Kata Sandi</span>
+                  <span className="text-red-500">*</span>
+                </label>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowForgotModal(true);
+                    setForgotMessage(null);
+                    setForgotInput("");
+                  }}
+                  className="text-xs font-bold text-[#550000] hover:underline"
+                >
+                  Lupa Password?
+                </button>
+              </div>
+
+              <div className="relative">
+                <input
+                  type={showPass ? "text" : "password"}
+                  required
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="Masukkan kata sandi akun"
+                  className="w-full h-12 pl-4 pr-11 bg-slate-50/60 border border-slate-200 rounded-xl text-sm font-bold text-slate-900 placeholder:text-slate-400 placeholder:font-normal focus:bg-white focus:border-[#550000] focus:ring-4 focus:ring-[#550000]/10 transition-all"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPass(!showPass)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 p-1 transition-colors"
+                >
+                  {showPass ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                </button>
+              </div>
+            </div>
+
+            {/* Error Alert */}
+            {error && (
+              <div className="p-3 rounded-xl bg-red-50 border border-red-200 text-xs font-bold text-red-700 flex items-center gap-2">
+                <AlertTriangle className="w-4 h-4 text-red-600 shrink-0" />
+                <span>{error}</span>
               </div>
             )}
 
-            <form onSubmit={handleForgotSubmit}>
-              <div className="form-group" style={{ marginBottom: 16 }}>
+            {/* Submit Button */}
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full h-12 rounded-xl bg-[#550000] hover:bg-[#400000] text-white font-extrabold text-sm shadow-md shadow-[#550000]/25 transition-all flex items-center justify-center gap-2 hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+            >
+              {loading ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  <span>Memverifikasi Akun...</span>
+                </>
+              ) : (
+                <>
+                  <span>Masuk ke Sistem SIKAP</span>
+                  <ArrowRight className="w-4 h-4" />
+                </>
+              )}
+            </button>
+          </form>
+
+          {/* Footer Card Info */}
+          <div className="pt-3 border-t border-slate-100 text-center space-y-2">
+            <div className="inline-flex items-center gap-1.5 text-[11px] font-bold text-slate-400">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+              <span>Koneksi Aman Terenkripsi SSL</span>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+      {/* ─── MODAL ROLE SELECTION (JIKA MULTI-ROLE) ─── */}
+      {requireRoleSelection && (
+        <div className="fixed inset-0 bg-slate-950/60 backdrop-blur-xs flex items-center justify-center z-50 p-4 overscroll-contain">
+          <div className="bg-white rounded-3xl p-6 sm:p-8 max-w-sm w-full border border-slate-200 shadow-2xl space-y-5 animate-in fade-in zoom-in-95">
+            <div className="text-center space-y-1.5">
+              <div className="w-12 h-12 rounded-2xl bg-[#ddc192]/20 text-[#550000] flex items-center justify-center mx-auto font-bold mb-3">
+                <UserCheck className="w-6 h-6" />
+              </div>
+              <h3 className="text-lg font-extrabold text-slate-900">
+                Pilih Peran Masuk
+              </h3>
+              <p className="text-xs text-slate-500">
+                Akun Anda memiliki lebih dari satu hak akses. Pilih dashboard yang ingin Anda tuju:
+              </p>
+            </div>
+
+            <div className="space-y-2.5">
+              {availableRoles.map((role) => (
+                <button
+                  key={role}
+                  onClick={() => handleRoleSelect(role)}
+                  className="w-full h-11 px-4 rounded-xl border border-slate-200 hover:border-[#550000] hover:bg-[#ddc192]/10 text-slate-800 font-extrabold text-xs transition-all flex items-center justify-between group"
+                >
+                  <span className="capitalize">{role.replace(/_/g, " ")}</span>
+                  <ArrowRight className="w-4 h-4 text-slate-400 group-hover:text-[#550000] group-hover:translate-x-0.5 transition-transform" />
+                </button>
+              ))}
+            </div>
+
+            <button
+              type="button"
+              onClick={() => setRequireRoleSelection(false)}
+              className="w-full text-center text-xs font-bold text-slate-400 hover:text-slate-600 pt-2"
+            >
+              Batal
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* ─── MODAL FORGOT PASSWORD ─── */}
+      {showForgotModal && (
+        <div className="fixed inset-0 bg-slate-950/60 backdrop-blur-xs flex items-center justify-center z-50 p-4 overscroll-contain">
+          <div className="bg-white rounded-3xl p-6 sm:p-8 max-w-md w-full border border-slate-200 shadow-2xl space-y-4 relative animate-in fade-in zoom-in-95">
+            <button
+              onClick={() => setShowForgotModal(false)}
+              className="absolute right-5 top-5 w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 flex items-center justify-center transition-colors"
+            >
+              <X className="w-4 h-4" />
+            </button>
+
+            <div className="space-y-1.5 pr-8">
+              <h3 className="text-lg font-extrabold text-slate-900">
+                Lupa Kata Sandi?
+              </h3>
+              <p className="text-xs text-slate-500 leading-relaxed">
+                Masukkan NIP, NIK, atau Nomor WhatsApp terdaftar Anda. Kami akan mengirimkan tautan instruksi reset kata sandi.
+              </p>
+            </div>
+
+            {forgotMessage && (
+              <div
+                className={`p-3.5 rounded-xl text-xs font-bold flex items-center gap-2 ${
+                  forgotMessage.type === "success"
+                    ? "bg-emerald-50 border border-emerald-200 text-emerald-800"
+                    : "bg-red-50 border border-red-200 text-red-800"
+                }`}
+              >
+                <span>{forgotMessage.text}</span>
+              </div>
+            )}
+
+            <form onSubmit={handleForgotSubmit} className="space-y-4 pt-2">
+              <div className="space-y-1.5">
                 <input
                   type="text"
-                  className="form-control"
-                  placeholder="08123xxxx / NIK / NIP"
-                  value={forgotInput}
-                  onChange={(e) => setForgotInput(e.target.value)}
                   required
                   disabled={forgotLoading}
+                  value={forgotInput}
+                  onChange={(e) => setForgotInput(e.target.value)}
+                  placeholder="08123xxxx / NIK / NIP"
+                  className="w-full h-12 px-4 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold text-slate-900 placeholder:text-slate-400 focus:bg-white focus:border-[#550000] focus:ring-4 focus:ring-[#550000]/10 transition-all"
                 />
               </div>
+
               <button
                 type="submit"
-                className="btn btn-primary"
                 disabled={forgotLoading || !forgotInput}
-                style={{ width: "100%", justifyContent: "center" }}
+                className="w-full h-12 rounded-xl bg-[#550000] hover:bg-[#400000] text-white font-extrabold text-xs shadow-md transition-all flex items-center justify-center gap-2 disabled:opacity-50"
               >
-                {forgotLoading ? <Loader2 size={16} className="spinner mr-2" /> : null}
-                {forgotLoading ? "Mengirim..." : "Kirim Tautan Reset"}
+                {forgotLoading ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    <span>Mengirim Tautan...</span>
+                  </>
+                ) : (
+                  <span>Kirim Tautan Reset</span>
+                )}
               </button>
             </form>
           </div>
         </div>
       )}
+
     </div>
   );
 }
