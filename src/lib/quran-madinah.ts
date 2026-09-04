@@ -126,10 +126,10 @@ export const surahData: Surah[] = [
 export function searchSurah(query: string): Surah[] {
   if (!query) return surahData;
   const qRaw = query.toLowerCase().trim();
-  const qNorm = qRaw.replace(/[-'\s`â€™]+/g, "");
+  const qNorm = qRaw.replace(/[-'\s`’]+/g, "");
   return surahData.filter((s) => {
     const latinRaw = s.nama_latin.toLowerCase();
-    const latinNorm = latinRaw.replace(/[-'\s`â€™]+/g, "");
+    const latinNorm = latinRaw.replace(/[-'\s`’]+/g, "");
     return (
       latinRaw.includes(qRaw) ||
       latinNorm.includes(qNorm) ||

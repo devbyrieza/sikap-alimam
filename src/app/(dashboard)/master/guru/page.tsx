@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import { Users, Plus, Trash2, Edit2, Save, Mail, Phone, RefreshCw, BookOpen, X, Sparkles, Eye, EyeOff, Download, KeyRound, AlertTriangle } from "lucide-react";
 import Swal from "sweetalert2";
 
-// â”€â”€â”€ Helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Helpers ──────────────────────────────────────────────────────────────────
 const formatName = (str: string) => {
   if (!str) return "-";
   return str.split(' ').map(word => {
@@ -238,7 +238,7 @@ export default function MasterGuruPage() {
   return (
     <div style={{ padding: "24px 28px", maxWidth: 1100, margin: "0 auto", display: "flex", flexDirection: "column", gap: 24 }}>
 
-      {/* â”€â”€ Hero Banner â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+      {/* ── Hero Banner ─────────────────────────────────────────────────────── */}
       <div style={{
         background: "linear-gradient(135deg, #3b0000 0%, #550000 60%, #7a0000 100%)",
         borderRadius: 24, padding: "32px 36px", color: "white",
@@ -274,7 +274,7 @@ export default function MasterGuruPage() {
         </div>
       </div>
 
-      {/* â”€â”€ Add Form â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+      {/* ── Add Form ─────────────────────────────────────────────────────────── */}
       {isAdding && (
         <div style={{
           background:"#ecfdf5", borderRadius:20, padding:"28px 32px",
@@ -457,7 +457,7 @@ export default function MasterGuruPage() {
         </div>
       )}
 
-      {/* â”€â”€ Data Grid â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+      {/* ── Data Grid ────────────────────────────────────────────────────────── */}
       {loading ? (
         <div style={{ padding:48, textAlign:"center", color:"#94a3b8" }}>Memuat data guru...</div>
       ) : guru.length === 0 ? (
@@ -626,7 +626,7 @@ export default function MasterGuruPage() {
         </div>
       )}
 
-      {/* â”€â”€ Modal Reset Password (Admin Super) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+      {/* ── Modal Reset Password (Admin Super) ─────────────────────────────── */}
       {resetPwdModal.open && (
         <div style={{
           position: "fixed", inset: 0, zIndex: 1000, background: "rgba(15,23,42,0.55)",
