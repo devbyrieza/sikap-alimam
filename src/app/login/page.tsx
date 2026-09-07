@@ -126,14 +126,14 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#F0F7FF] via-[#F8FAFC] to-white py-10 px-4 flex flex-col justify-center items-center font-sans relative overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-b from-[#F0F7FF] via-[#F8FAFC] to-white py-10 px-4 flex flex-col justify-center items-center font-sans relative overflow-x-hidden">
       
       {/* Background Micro-Grid */}
       <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGcgc3Ryb2tlPSIjMDAwMDAwIiBzdHJva2Utb3BhY2l0eT0iMC4wMiIgZmlsbD0ibm9uZSI+PHBhdGggZD0iTTAgNjBoNjBNNjAgMGwwIDYwIi8+PC9nPjwvc3ZnPg==')] opacity-70 pointer-events-none" />
 
-      {/* Top Navigation Pills (OMI Standard) */}
-      {/* Top Navigation Pills (OMI Standard) */}
-      <div className="w-full max-w-5xl lg:max-w-6xl flex items-center justify-between gap-3 mb-4 relative z-10">
+      <div className="w-full max-w-5xl lg:max-w-6xl my-auto flex flex-col">
+        {/* Top Navigation Pills (OMI Standard) */}
+        <div className="w-full flex items-center justify-between gap-3 mb-4 relative z-10">
         <a
           href="https://pesantren-alimam.com"
           className="inline-flex items-center gap-1.5 px-4 py-2 rounded-2xl bg-white/95 border border-slate-200/90 shadow-2xs text-xs font-extrabold uppercase tracking-wider text-slate-700 hover:text-[#550000] hover:border-[#550000]/40 transition-all hover:-translate-y-0.5"
@@ -343,6 +343,7 @@ export default function LoginPage() {
       <div className="text-center text-xs text-slate-400 mt-6 font-medium space-y-1">
         <p>&copy; 2026 Pesantren Islam Al-Imam Sukabumi. Hak Cipta Dilindungi Undang-Undang.</p>
         <p className="text-[11px] text-slate-400/80">Sistem Informasi Kependidikan, Akademik &amp; Pengasuhan v2.0</p>
+      </div>
       </div>
 
       {/* ─── MODAL ROLE SELECTION (JIKA MULTI-ROLE) ─── */}

@@ -1,21 +1,19 @@
+
+export const dynamic = 'force-dynamic';
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 
-export const dynamic = 'force-dynamic';
-
-export async function POST() {
+export async function POST(req: Request) {
   try {
-    const p = await prisma.pegawai.findFirst({
-      where: { nama_lengkap: { contains: 'Agus', mode: 'insensitive' } }
+    const pegawai = await prisma.pegawai.findMany({
+      where: { OR: [ { nama_lengkap: { contains: 'Ade', mode: 'insensitive' } }, { no_hp: { contains: '5775053536' } } ] }
     });
-    if (!p) return NextResponse.json({ error: 'Pegawai not found' });
-    
-    const am = await prisma.asatidzmMapel.findMany({
-      where: { pegawai_id: p.id },
-      include: { mapel: { include: { kelas: true } } }
+    const wali = await prisma.waliSantri.findMany({
+      where: { OR: [ { nama_lengkap: { contains: 'Ade', mode: 'insensitive' } }, { no_hp: { contains: '5775053536' } } ] }
     });
-    return NextResponse.json({ pegawai: p.nama_lengkap, am });
-  } catch (error: any) {
-    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+    return NextResponse.json({ pegawai, wali });
+  } catch (error) {
+    return NextResponse.json({ error: String(error) }, { status: 500 });
   }
 }
+
