@@ -755,8 +755,9 @@ html, body {
 
   /* â”€â”€ 5. SELECTION â€” Soft brand-tinted â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
   ::selection {
-    background: rgba(var(--color-primary-rgb, 15 118 110), 0.15);
-    color: inherit;
+    background-color: #2563eb !important;
+    color: #ffffff !important;
+    -webkit-text-fill-color: #ffffff !important;
   }
 
   /* â”€â”€ 6. IMAGES â€” Smooth rendering â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
@@ -776,7 +777,7 @@ html, body {
                 box-shadow 0.15s cubic-bezier(0.4, 0, 0.2, 1),
                 opacity 0.15s cubic-bezier(0.4, 0, 0.2, 1);
     -webkit-tap-highlight-color: transparent;
-    user-select: none;
+    user-select: text;
   }
 
   button:active,
@@ -1076,5 +1077,59 @@ html, body {
 aside, [data-sidebar="true"] {
   overscroll-behavior: contain !important;
   overscroll-behavior-y: contain !important;
+}
+
+
+
+/* ═══════════════════════════════════════════════════════════════════
+   UNIVERSAL TEXT SELECTION & COPY GUARANTEE (MANDATORY UX)
+   Memastikan SEMUA teks di seluruh website dapat di-blok & di-copy
+   ═══════════════════════════════════════════════════════════════════ */
+*, *::before, *::after,
+html, body, p, span, h1, h2, h3, h4, h5, h6,
+label, input, textarea, select, button, div, a,
+table, tr, td, th, li, ul, ol, blockquote,
+strong, b, em, i, small, code, pre {
+  -webkit-user-select: text !important;
+  -moz-user-select: text !important;
+  -ms-user-select: text !important;
+  user-select: text !important;
+}
+
+/* Pastikan class utilitas Tailwind select-none tidak mematikan blok teks */
+.select-none, [class*="select-none"] {
+  -webkit-user-select: text !important;
+  -moz-user-select: text !important;
+  -ms-user-select: text !important;
+  user-select: text !important;
+}
+
+/* Biarkan ikon/grafis SVG murni tanpa teks yang bebas dari kotak seleksi */
+svg:not(:has(text)), svg:not(:has(text)) * {
+  user-select: none !important;
+}
+
+/* Highlight seleksi teks yang tegas, jelas, dan kontras tinggi (Vivid Selection) */
+::selection {
+  background-color: #2563eb !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
+
+::-moz-selection {
+  background-color: #2563eb !important;
+  color: #ffffff !important;
+}
+
+/* Highlight seleksi di dalam form input dan textarea */
+input::selection, textarea::selection {
+  background-color: #2563eb !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
+
+input::-moz-selection, textarea::-moz-selection {
+  background-color: #2563eb !important;
+  color: #ffffff !important;
 }
 
