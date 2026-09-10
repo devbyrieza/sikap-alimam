@@ -348,7 +348,7 @@ export default function LoginPage() {
 
       {/* ─── MODAL ROLE SELECTION (JIKA MULTI-ROLE) ─── */}
       {requireRoleSelection && (
-        <div className="fixed inset-0 bg-slate-950/60 backdrop-blur-xs flex items-center justify-center z-50 p-4 overscroll-contain">
+        <div onWheel={(e) => e.stopPropagation()} data-modal="true" aria-modal="true" role="dialog" className="fixed inset-0 bg-slate-950/60 backdrop-blur-xs flex items-center justify-center z-50 p-4 overscroll-contain">
           <div className="bg-white rounded-3xl p-6 sm:p-8 max-w-sm w-full border border-slate-200 shadow-2xl space-y-5 animate-in fade-in zoom-in-95">
             <div className="text-center space-y-1.5">
               <div className="w-12 h-12 rounded-2xl bg-[#ddc192]/20 text-[#550000] flex items-center justify-center mx-auto font-bold mb-3">
@@ -388,7 +388,7 @@ export default function LoginPage() {
 
       {/* ─── MODAL FORGOT PASSWORD ─── */}
       {showForgotModal && (
-        <div className="fixed inset-0 bg-slate-950/60 backdrop-blur-xs flex items-center justify-center z-50 p-4 overscroll-contain">
+        <div onWheel={(e) => e.stopPropagation()} data-modal="true" aria-modal="true" role="dialog" className="fixed inset-0 bg-slate-950/60 backdrop-blur-xs flex items-center justify-center z-50 p-4 overscroll-contain">
           <div className="bg-white rounded-3xl p-6 sm:p-8 max-w-md w-full border border-slate-200 shadow-2xl space-y-4 relative animate-in fade-in zoom-in-95">
             <button
               onClick={() => setShowForgotModal(false)}

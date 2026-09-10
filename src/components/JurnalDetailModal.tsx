@@ -106,7 +106,7 @@ export default function JurnalDetailModal({ data, onClose, isOpen, isAdminSuper 
     "Santri memahami dan menguasai kompetensi dasar materi dengan baik.";
 
   return (
-    <div
+    <div onWheel={(e) => e.stopPropagation()} data-modal="true" aria-modal="true" role="dialog"
       className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 overscroll-contain"
       style={{ background: "rgba(2, 6, 23, 0.75)", backdropFilter: "blur(6px)" }}
     >
