@@ -202,7 +202,7 @@ export default function Sidebar({ user }: SidebarProps) {
       </div>
 
       {/* Nav */}
-      <nav className="sidebar-nav">
+      <nav className="sidebar-nav sidebar-scroll-menu">
         <div className="sidebar-section-title">Menu Utama</div>
         {visibleNav.map((item) => (
           <Link
@@ -392,7 +392,14 @@ export default function Sidebar({ user }: SidebarProps) {
       </div>
 
       {/* Desktop sidebar */}
-      <aside className="app-sidebar overscroll-contain">
+      <aside className="app-sidebar overscroll-contain"
+        onWheel={(e) => {
+        const scrollMenu = e.currentTarget.querySelector('.sidebar-scroll-menu') || e.currentTarget;
+        if (scrollMenu) {
+          scrollMenu.scrollTop += e.deltaY;
+        }
+        e.stopPropagation();
+      }}>
         <SidebarContent />
       </aside>
 
@@ -409,8 +416,7 @@ export default function Sidebar({ user }: SidebarProps) {
               WebkitBackdropFilter: "blur(6px)",
               zIndex: 1000 }}
           />
-          <aside
-            className="app-sidebar"
+          <aside className="app-sidebar"
             style={{
               position: "fixed",
               top: 0,
@@ -425,7 +431,13 @@ export default function Sidebar({ user }: SidebarProps) {
               boxShadow: "10px 0 40px rgba(0,0,0,0.35)",
               display: "flex",
               flexDirection: "column" }}
-          >
+        onWheel={(e) => {
+        const scrollMenu = e.currentTarget.querySelector('.sidebar-scroll-menu') || e.currentTarget;
+        if (scrollMenu) {
+          scrollMenu.scrollTop += e.deltaY;
+        }
+        e.stopPropagation();
+      }}>
             <SidebarContent />
           </aside>
         </>
