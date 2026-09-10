@@ -1,4 +1,5 @@
-'use client';
+"use client";
+
 import { useState, useEffect, useRef } from 'react';
 import { BookOpen, Users, Plus, Trash2, Save, AlertCircle, Upload, Download, FileSpreadsheet } from 'lucide-react';
 import Swal from 'sweetalert2';
