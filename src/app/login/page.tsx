@@ -16,7 +16,7 @@ import {
   User,
   GraduationCap,
   Star,
-} from "lucide-react";
+, AlertCircle} from "lucide-react";
 
 export default function LoginPage() {
   const router = useRouter();
