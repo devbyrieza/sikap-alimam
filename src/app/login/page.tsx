@@ -43,87 +43,7 @@ export default function LoginPage() {
     } else {
       document.body.style.overflow = "unset";
     }
-    return () => {
-      document.body.style.overflow = "unset";
-    };
-  }, [showForgotModal, requireRoleSelection]);
-
-  async function handleForgotSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    if (!forgotInput) return;
-    setForgotLoading(true);
-    setForgotMessage(null);
-    try {
-      const res = await fetch("/api/auth/forgot-password", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ identifier: forgotInput }),
-      });
-      const json = await res.json();
-      if (!res.ok) {
-        setForgotMessage({ type: "error", text: json.error || "Gagal mengirim permintaan" });
-      } else {
-        setForgotMessage({ type: "success", text: json.message });
-      }
-    } catch {
-      setForgotMessage({ type: "error", text: "Terjadi kesalahan jaringan" });
-    } finally {
-      setForgotLoading(false);
-    }
-  }
-
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    setError("");
-    setLoading(true);
-    try {
-      const res = await fetch("/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-      });
-      const json = await res.json();
-      if (!res.ok) {
-        setError(json.error || "Login gagal");
-        return;
-      }
-      if (json.requireRoleSelection) {
-        setRequireRoleSelection(true);
-        setAvailableRoles(json.availableRoles);
-        return;
-      }
-      router.push("/dashboard");
-      router.refresh();
-    } catch {
-      setError("Terjadi kesalahan. Coba lagi.");
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  async function handleRoleSelect(role: string) {
-    setError("");
-    setLoading(true);
-    try {
-      const res = await fetch("/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password, selectedRole: role }),
-      });
-      const json = await res.json();
-      if (!res.ok) {
-        setError(json.error || "Login gagal");
-        return;
-      }
-      router.push("/dashboard");
-      router.refresh();
-    } catch {
-      setError("Terjadi kesalahan. Coba lagi.");
-    } finally {
-      setLoading(false);
-    }
-  }
-
+    
   return (
       <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4 sm:p-8 relative overflow-hidden font-sans">
         {/* Background Mesh */}
@@ -253,6 +173,7 @@ export default function LoginPage() {
           </div>
         </div>
       </div>
-    );
+  );
+
 
 }
