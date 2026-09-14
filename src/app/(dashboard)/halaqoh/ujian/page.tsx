@@ -219,6 +219,8 @@ interface UjianRecord {
   juz?: number;
   surah_nomor?: number;
   surah_nama?: string;
+  surah_selesai_nomor?: number;
+  surah_selesai_nama?: string;
   ayat_dari?: number;
   ayat_ke?: number;
   jumlah_halaman?: number;
@@ -247,6 +249,7 @@ export default function UjianTahfidzPage() {
   const [juz, setJuz] = useState(1);
   const [surahList, setSurahList] = useState<Surah[]>([]);
   const [selectedSurah, setSelectedSurah] = useState<Surah | null>(null);
+  const [selectedSurahAkhir, setSelectedSurahAkhir] = useState<Surah | null>(null);
   const [ayatDari, setAyatDari] = useState(1);
   const [ayatKe, setAyatKe] = useState(10);
   const [jumlahHalaman, setJumlahHalaman] = useState(2);
@@ -315,6 +318,8 @@ export default function UjianTahfidzPage() {
         juz: jenisUjian === "ujian_itqon" ? juz : undefined,
         surah_nomor: selectedSurah?.nomor,
         surah_nama: selectedSurah?.nama_latin,
+        surah_selesai_nomor: selectedSurahAkhir?.nomor,
+        surah_selesai_nama: selectedSurahAkhir?.nama_latin,
         ayat_dari: ayatDari,
         ayat_ke: ayatKe,
         jumlah_halaman: jumlahHalaman,
@@ -542,7 +547,10 @@ export default function UjianTahfidzPage() {
               ) : (
                 <>
                   <div>
-                    <SurahPicker surahList={surahList} selected={selectedSurah} onSelect={setSelectedSurah} label="Nama Surah" />
+                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+                  <SurahPicker surahList={surahList} selected={selectedSurah} onSelect={(s) => { setSelectedSurah(s); setSelectedSurahAkhir(s); }} label="Dari Surah" />
+                  <SurahPicker surahList={surahList} selected={selectedSurahAkhir} onSelect={setSelectedSurahAkhir} label="Sampai Surah" />
+                </div>
                   </div>
                   <div>
                     <label style={labelStyle}>Jumlah Halaman (Standar Madinah)</label>

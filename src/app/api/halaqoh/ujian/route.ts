@@ -55,65 +55,74 @@ export async function POST(request: Request) {
       juz,
       surah_nomor,
       surah_nama,
+      surah_selesai_nomor,
+      surah_selesai_nama,
       ayat_dari,
       ayat_ke,
       jumlah_halaman,
       nilai_bacaan,
-      nilai_kelancaran = 90,
-      nilai_sikap = 82,
-      is_lulus = true,
+      nilai_kelancaran,
+      nilai_sikap,
+      is_lulus,
       catatan
     } = body;
 
-    let nilai_akhir = Math.round((Number(nilai_bacaan) + Number(nilai_kelancaran)) / 2);
-    
-    if (jenis_ujian === 'ujian_itqon' && is_lulus !== false) {
-      nilai_akhir += 10;
-      if (nilai_akhir > 100) nilai_akhir = 100;
+    let nilai_akhir = Math.round((Number(nilai_bacaan) + Number(nilai_kelancaran || 0) + Number(nilai_sikap)) / 3);
+    if (jenis_ujian === 'ujian_itqon' && is_lulus) {
+      nilai_akhir = Math.min(100, nilai_akhir + 10);
     }
 
-    const data = id ? await prisma.ujianTahfidz.update({
-      where: { id },
-      data: {
-        santri_id,
-        pegawai_id,
-        tanggal: new Date(tanggal),
-        jenis_ujian,
-        juz: juz ? Number(juz) : null,
-        surah_nomor: surah_nomor ? Number(surah_nomor) : null,
-        surah_nama,
-        ayat_dari: ayat_dari ? Number(ayat_dari) : null,
-        ayat_ke: ayat_ke ? Number(ayat_ke) : null,
-        jumlah_halaman: jumlah_halaman ? Number(jumlah_halaman) : null,
-        nilai_bacaan: Number(nilai_bacaan),
-        nilai_kelancaran: Number(nilai_kelancaran),
-        nilai_sikap: Number(nilai_sikap),
-        nilai_akhir,
-        is_lulus: Boolean(is_lulus),
-        catatan
-      }
-    }) : await prisma.ujianTahfidz.create({
-      data: {
-        santri_id,
-        pegawai_id,
-        tanggal: new Date(tanggal),
-        jenis_ujian,
-        juz: juz ? Number(juz) : null,
-        surah_nomor: surah_nomor ? Number(surah_nomor) : null,
-        surah_nama,
-        ayat_dari: ayat_dari ? Number(ayat_dari) : null,
-        ayat_ke: ayat_ke ? Number(ayat_ke) : null,
-        jumlah_halaman: jumlah_halaman ? Number(jumlah_halaman) : null,
-        nilai_bacaan: Number(nilai_bacaan),
-        nilai_kelancaran: Number(nilai_kelancaran),
-        nilai_sikap: Number(nilai_sikap),
-        nilai_akhir,
-        is_lulus: Boolean(is_lulus),
-        catatan
-      }
-    });
+    if (id) {
+      const updated = await prisma.ujianTahfidz.update({
+        where: { id },
+        data: {
+          santri_id,
+          pegawai_id,
+          tanggal: new Date(tanggal),
+          jenis_ujian,
+          juz: juz ? Number(juz) : null,
+          surah_nomor: surah_nomor ? Number(surah_nomor) : null,
+          surah_nama,
+          surah_selesai_nomor: surah_selesai_nomor ? Number(surah_selesai_nomor) : null,
+          surah_selesai_nama,
+          ayat_dari: ayat_dari ? Number(ayat_dari) : null,
+          ayat_ke: ayat_ke ? Number(ayat_ke) : null,
+          jumlah_halaman: jumlah_halaman ? Number(jumlah_halaman) : null,
+          nilai_bacaan: Number(nilai_bacaan),
+          nilai_kelancaran: Number(nilai_kelancaran || 0),
+          nilai_sikap: Number(nilai_sikap),
+          nilai_akhir,
+          is_lulus,
+          catatan
+        }
+      });
+      return NextResponse.json(updated);
+    } else {
+      const data = await prisma.ujianTahfidz.create({
+        data: {
+          santri_id,
+          pegawai_id,
+          tanggal: new Date(tanggal),
+          jenis_ujian,
+          juz: juz ? Number(juz) : null,
+          surah_nomor: surah_nomor ? Number(surah_nomor) : null,
+          surah_nama,
+          surah_selesai_nomor: surah_selesai_nomor ? Number(surah_selesai_nomor) : null,
+          surah_selesai_nama,
+          ayat_dari: ayat_dari ? Number(ayat_dari) : null,
+          ayat_ke: ayat_ke ? Number(ayat_ke) : null,
+          jumlah_halaman: jumlah_halaman ? Number(jumlah_halaman) : null,
+          nilai_bacaan: Number(nilai_bacaan),
+          nilai_kelancaran: Number(nilai_kelancaran || 0),
+          nilai_sikap: Number(nilai_sikap),
+          nilai_akhir,
+          is_lulus,
+          catatan
+        }
+      });
 
-    return NextResponse.json(data);
+      return NextResponse.json(data);
+    }
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
