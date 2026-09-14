@@ -8,29 +8,30 @@ export async function GET() {
   try {
     let guru = await prisma.pegawai.findMany({
       where: {
-        OR: [
-          { kategori_pegawai: { in: ["ASATIDZ", "GURU", "Guru", "asatidz", "guru", "PENGAJAR", "MUSYRIF", "musyrif"] } },
-          { kategori_pegawai: { contains: "ASATIDZ", mode: "insensitive" } },
-          { kategori_pegawai: { contains: "GURU", mode: "insensitive" } },
-          { kategori_pegawai: { contains: "MUSYRIF", mode: "insensitive" } },
-          { jabatan: { contains: "Guru", mode: "insensitive" } },
-          { jabatan: { contains: "Pengajar", mode: "insensitive" } },
-          { jabatan: { contains: "Asatidz", mode: "insensitive" } },
-          { jabatan: { contains: "Ustadz", mode: "insensitive" } },
-          { jabatan: { contains: "Musyrif", mode: "insensitive" } },
-          { jabatan: { contains: "Halaqoh", mode: "insensitive" } },
-          { mata_pelajaran: { not: null } },
-        ] },
+        AND: [
+          {
+            OR: [
+              { kategori_pegawai: { in: ["ASATIDZ", "GURU", "Guru", "asatidz", "guru", "PENGAJAR", "MUSYRIF", "musyrif"] } },
+              { kategori_pegawai: { contains: "ASATIDZ", mode: "insensitive" } },
+              { kategori_pegawai: { contains: "GURU", mode: "insensitive" } },
+              { kategori_pegawai: { contains: "MUSYRIF", mode: "insensitive" } },
+              { jabatan: { contains: "Guru", mode: "insensitive" } },
+              { jabatan: { contains: "Pengajar", mode: "insensitive" } },
+              { jabatan: { contains: "Asatidz", mode: "insensitive" } },
+              { jabatan: { contains: "Ustadz", mode: "insensitive" } },
+              { jabatan: { contains: "Musyrif", mode: "insensitive" } },
+              { jabatan: { contains: "Halaqoh", mode: "insensitive" } },
+              { mata_pelajaran: { not: null } },
+            ]
+          },
+          { kategori_pegawai: { not: "PEGAWAI_UMUM" } }
+        ]
+      },
       include: { user: true },
-      orderBy: { nama_lengkap: "asc" } });
+      orderBy: { nama_lengkap: "asc" } 
+    });
 
-    // Fallback: jika belum terfilter, ambil semua pegawai
-    if (guru.length === 0) {
-      guru = await prisma.pegawai.findMany({
-        include: { user: true },
-        orderBy: { nama_lengkap: "asc" } });
-    }
-
+    // Hapus fallback berbahaya yang menampilkan semua pegawai
     return NextResponse.json(guru);
   } catch (error: any) {
     console.error("Error fetching guru:", error);
