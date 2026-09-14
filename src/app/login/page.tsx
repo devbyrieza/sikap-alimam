@@ -148,10 +148,10 @@ export default function LoginPage() {
       </div>
 
       {/* Two-Panel OMI Card (Desktop Split / Mobile Stacked) */}
-      <div className="w-full max-w-5xl lg:max-w-6xl rounded-3xl overflow-hidden shadow-2xl shadow-slate-950/10 border border-slate-200 bg-white grid grid-cols-1 lg:grid-cols-12 relative z-10">
+      <div className="w-full max-w-5xl lg:max-w-6xl rounded-3xl overflow-hidden shadow-2xl shadow-slate-950/10 border border-slate-200 bg-white flex flex-col lg:flex-row relative z-10">
         
-        {/* Sisi Kiri: Panel Identitas & 2 Bento Unggulan (Desktop: 5 Columns) */}
-        <div className="hidden lg:flex lg:col-span-5 bg-gradient-to-br from-[#2D0000] via-[#400000] to-[#550000] p-6 sm:p-8 lg:p-10 text-white relative overflow-hidden flex flex-col justify-between">
+        {/* Sisi Kiri: Panel Identitas & 2 Bento Unggulan (Desktop: 40%) */}
+        <div className="hidden lg:flex w-full lg:w-[45%] shrink-0 bg-gradient-to-br from-[#2D0000] via-[#400000] to-[#550000] p-6 sm:p-8 lg:p-10 text-white relative overflow-hidden flex-col justify-between">
           <div className="absolute top-0 right-0 w-64 h-64 bg-[#ddc192]/10 rounded-full blur-3xl pointer-events-none" />
           
           <div className="relative z-10 space-y-6">
@@ -170,7 +170,7 @@ export default function LoginPage() {
               <span className="text-[10px] font-extrabold uppercase tracking-widest text-[#ddc192] bg-white/10 px-3 py-1 rounded-full border border-white/15 inline-block mb-3">
                 Sistem Akademik &amp; Pengasuhan
               </span>
-              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-white tracking-tight leading-snug">
+              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-white tracking-tight leading-snug text-balance">
                 Portal Akademik &amp; Karakter Santri
               </h2>
               <p className="text-xs sm:text-sm text-slate-200/90 font-normal mt-2 leading-relaxed">
@@ -180,29 +180,29 @@ export default function LoginPage() {
 
             {/* 2 Kartu Bento Fitur Unggulan */}
             <div className="space-y-3 pt-2">
-              <div className="bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/15 flex items-center gap-3.5 shadow-sm">
+              <div className="bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/15 flex items-center gap-3.5 shadow-sm min-w-0">
                 <div className="w-11 h-11 rounded-xl bg-[#ddc192]/20 border border-[#ddc192]/30 flex items-center justify-center shrink-0 text-[#ddc192]">
                   <BookOpen className="w-5 h-5" />
                 </div>
-                <div>
-                  <h4 className="text-xs sm:text-sm font-extrabold text-white">
+                <div className="min-w-0 flex-1">
+                  <h4 className="text-xs sm:text-sm font-extrabold text-white truncate">
                     Monitoring Portofolio Santri
                   </h4>
-                  <p className="text-[11px] text-slate-300 font-normal">
+                  <p className="text-[11px] text-slate-300 font-normal truncate">
                     Pantau nilai, mutaba'ah &amp; adab real-time
                   </p>
                 </div>
               </div>
 
-              <div className="bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/15 flex items-center gap-3.5 shadow-sm">
+              <div className="bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/15 flex items-center gap-3.5 shadow-sm min-w-0">
                 <div className="w-11 h-11 rounded-xl bg-emerald-500/20 border border-emerald-400/30 flex items-center justify-center shrink-0 text-emerald-300">
                   <ShieldCheck className="w-5 h-5" />
                 </div>
-                <div>
-                  <h4 className="text-xs sm:text-sm font-extrabold text-white">
+                <div className="min-w-0 flex-1">
+                  <h4 className="text-xs sm:text-sm font-extrabold text-white truncate">
                     Evaluasi Karakter &amp; Disiplin
                   </h4>
-                  <p className="text-[11px] text-slate-300 font-normal">
+                  <p className="text-[11px] text-slate-300 font-normal truncate">
                     Penilaian holistik berkelanjutan
                   </p>
                 </div>
@@ -211,13 +211,13 @@ export default function LoginPage() {
           </div>
 
           <div className="relative z-10 pt-6 mt-6 border-t border-white/10 text-[11px] text-slate-300/80 font-medium flex items-center justify-between">
-            <span>Direktorat Tarbiyah &bull; SIKAP Al-Imam</span>
-            <span className="text-[#ddc192]">&bull; Sistem Terpadu</span>
+            <span className="truncate">Direktorat Tarbiyah &bull; SIKAP Al-Imam</span>
+            <span className="text-[#ddc192] shrink-0">&bull; Sistem Terpadu</span>
           </div>
         </div>
 
-        {/* Sisi Kanan: White Form Body (Desktop: 7 Columns) */}
-        <div className="lg:col-span-7 p-6 sm:p-8 lg:p-10 bg-white space-y-5 flex flex-col justify-center">
+        {/* Sisi Kanan: White Form Body (Desktop: 60%) */}
+        <div className="w-full lg:w-[55%] p-6 sm:p-8 lg:p-10 bg-white space-y-5 flex flex-col justify-center shrink-0">
           
           <div>
             <h3 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight leading-snug">
