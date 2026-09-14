@@ -241,7 +241,7 @@ export default function HalaqohKelompokPage() {
                     </div>
                     {k.tingkatan && (
                       <div style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: "4px 10px", borderRadius: 8, fontSize: 11, fontWeight: 800, background: "#f8fafc", color: "#475569", border: "1px solid #e2e8f0", marginBottom: 8, marginLeft: 6 }}>
-                        {k.tingkatan}
+                        {k.tingkatan === 'MUBTADI' ? 'Mubtadi (Pemula)' : k.tingkatan === 'MUTAWASSITH' ? 'Mutawassith (Menengah)' : k.tingkatan === 'MUTAFAWWIQ' ? 'Mutafawwiq (Lanjutan)' : k.tingkatan}
                       </div>
                     )}
                     <div style={{ fontSize: 16, fontWeight: 800, color: "#1e293b", marginBottom: 4 }}>{k.nama_kelompok}</div>
