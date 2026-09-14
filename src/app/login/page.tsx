@@ -1,10 +1,7 @@
 "use client";
 
-// src/app/login/page.tsx
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import Image from "next/image";
-import Link from "next/link";
 import {
   BookOpen,
   Eye,
@@ -16,7 +13,9 @@ import {
   UserCheck,
   ArrowRight,
   Lock,
-  User
+  User,
+  GraduationCap,
+  Star,
 } from "lucide-react";
 
 export default function LoginPage() {
@@ -27,17 +26,17 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  // Role Selection State
   const [requireRoleSelection, setRequireRoleSelection] = useState(false);
   const [availableRoles, setAvailableRoles] = useState<string[]>([]);
 
-  // Forgot Password State
   const [showForgotModal, setShowForgotModal] = useState(false);
   const [forgotInput, setForgotInput] = useState("");
   const [forgotLoading, setForgotLoading] = useState(false);
-  const [forgotMessage, setForgotMessage] = useState<{ type: "error" | "success"; text: string } | null>(null);
+  const [forgotMessage, setForgotMessage] = useState<{
+    type: "error" | "success";
+    text: string;
+  } | null>(null);
 
-  // Mandatory UX Rule: Modal Scroll Lock
   useEffect(() => {
     if (showForgotModal || requireRoleSelection) {
       document.body.style.overflow = "hidden";
@@ -58,7 +57,7 @@ export default function LoginPage() {
       const res = await fetch("/api/auth/forgot-password", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ identifier: forgotInput })
+        body: JSON.stringify({ identifier: forgotInput }),
       });
       const json = await res.json();
       if (!res.ok) {
@@ -81,7 +80,7 @@ export default function LoginPage() {
       const res = await fetch("/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password })
+        body: JSON.stringify({ email, password }),
       });
       const json = await res.json();
       if (!res.ok) {
@@ -109,7 +108,7 @@ export default function LoginPage() {
       const res = await fetch("/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password, selectedRole: role })
+        body: JSON.stringify({ email, password, selectedRole: role }),
       });
       const json = await res.json();
       if (!res.ok) {
@@ -126,259 +125,642 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#F0F7FF] via-[#F8FAFC] to-white py-10 px-4 flex flex-col justify-center items-center font-sans relative overflow-x-hidden">
-      
-      {/* Background Micro-Grid */}
-      <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGcgc3Ryb2tlPSIjMDAwMDAwIiBzdHJva2Utb3BhY2l0eT0iMC4wMiIgZmlsbD0ibm9uZSI+PHBhdGggZD0iTTAgNjBoNjBNNjAgMGwwIDYwIi8+PC9nPjwvc3ZnPg==')] opacity-70 pointer-events-none" />
+    <div
+      style={{
+        minHeight: "100vh",
+        background: "linear-gradient(135deg, #1a0000 0%, #3d0000 30%, #550000 60%, #7a0000 100%)",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        padding: "24px 16px",
+        fontFamily: "'Plus Jakarta Sans', sans-serif",
+        position: "relative",
+        overflow: "hidden",
+      }}
+    >
+      {/* Decorative background orbs */}
+      <div
+        style={{
+          position: "absolute",
+          top: "-20%",
+          right: "-10%",
+          width: "600px",
+          height: "600px",
+          borderRadius: "50%",
+          background: "radial-gradient(circle, rgba(221,193,146,0.12) 0%, transparent 70%)",
+          pointerEvents: "none",
+        }}
+      />
+      <div
+        style={{
+          position: "absolute",
+          bottom: "-20%",
+          left: "-10%",
+          width: "500px",
+          height: "500px",
+          borderRadius: "50%",
+          background: "radial-gradient(circle, rgba(255,255,255,0.05) 0%, transparent 70%)",
+          pointerEvents: "none",
+        }}
+      />
+      {/* Subtle grid pattern */}
+      <div
+        style={{
+          position: "absolute",
+          inset: 0,
+          backgroundImage:
+            "linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px)",
+          backgroundSize: "60px 60px",
+          pointerEvents: "none",
+        }}
+      />
 
-      <div className="w-full max-w-5xl lg:max-w-6xl my-auto flex flex-col">
-        {/* Top Navigation Pills (OMI Standard) */}
-        <div className="w-full flex items-center justify-between gap-3 mb-4 relative z-10">
-        <a
-          href="https://pesantren-alimam.com"
-          className="inline-flex items-center gap-1.5 px-4 py-2 rounded-2xl bg-white/95 border border-slate-200/90 shadow-2xs text-xs font-extrabold uppercase tracking-wider text-slate-700 hover:text-[#550000] hover:border-[#550000]/40 transition-all hover:-translate-y-0.5"
+      {/* Main Card */}
+      <div
+        style={{
+          position: "relative",
+          zIndex: 10,
+          width: "100%",
+          maxWidth: "460px",
+          display: "flex",
+          flexDirection: "column",
+          gap: "24px",
+        }}
+      >
+        {/* Top nav */}
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+          }}
         >
-          <ArrowRight className="w-3.5 h-3.5 rotate-180" />
-          <span>Beranda Utama</span>
-        </a>
-        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-2xl bg-white/95 border border-slate-200/90 shadow-2xs text-xs font-bold text-slate-700">
-          <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-          <span>Portal SIKAP 2026/2027</span>
-        </div>
-      </div>
-
-      {/* Two-Panel OMI Card (Desktop Split / Mobile Stacked) */}
-      <div className="w-full max-w-5xl lg:max-w-6xl rounded-3xl overflow-hidden shadow-2xl shadow-slate-950/10 border border-slate-200 bg-white flex flex-col lg:flex-row relative z-10">
-        
-        {/* Sisi Kiri: Panel Identitas & 2 Bento Unggulan (Desktop: 40%) */}
-        <div className="hidden lg:flex w-full lg:w-[45%] shrink-0 bg-gradient-to-br from-[#2D0000] via-[#400000] to-[#550000] p-6 sm:p-8 lg:p-10 text-white relative overflow-hidden flex-col justify-between">
-          <div className="absolute top-0 right-0 w-64 h-64 bg-[#ddc192]/10 rounded-full blur-3xl pointer-events-none" />
-          
-          <div className="relative z-10 space-y-6">
-            <div className="inline-flex items-center gap-3 bg-white px-3.5 py-2 rounded-2xl shadow-sm">
-              <img
-                src="/logo.png"
-                alt="Logo Al-Imam"
-                className="w-7 h-7 object-contain"
-              />
-              <span className="text-xs font-extrabold text-slate-900 tracking-tight">
-                SIKAP AL-IMAM
-              </span>
-            </div>
-
-            <div>
-              <span className="text-[10px] font-extrabold uppercase tracking-widest text-[#ddc192] bg-white/10 px-3 py-1 rounded-full border border-white/15 inline-block mb-3">
-                Sistem Akademik &amp; Pengasuhan
-              </span>
-              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-white tracking-tight leading-snug text-balance">
-                Portal Akademik &amp; Karakter Santri
-              </h2>
-              <p className="text-xs sm:text-sm text-slate-200/90 font-normal mt-2 leading-relaxed">
-                Sistem terpadu pencatatan hasil belajar, mutaba'ah tahfidz harian, dan pemantauan adab santri Pesantren Islam Al-Imam Sukabumi.
-              </p>
-            </div>
-
-            {/* 2 Kartu Bento Fitur Unggulan */}
-            <div className="space-y-3 pt-2">
-              <div className="bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/15 flex items-center gap-3.5 shadow-sm min-w-0">
-                <div className="w-11 h-11 rounded-xl bg-[#ddc192]/20 border border-[#ddc192]/30 flex items-center justify-center shrink-0 text-[#ddc192]">
-                  <BookOpen className="w-5 h-5" />
-                </div>
-                <div className="min-w-0 flex-1">
-                  <h4 className="text-xs sm:text-sm font-extrabold text-white truncate">
-                    Monitoring Portofolio Santri
-                  </h4>
-                  <p className="text-[11px] text-slate-300 font-normal truncate">
-                    Pantau nilai, mutaba'ah &amp; adab real-time
-                  </p>
-                </div>
-              </div>
-
-              <div className="bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/15 flex items-center gap-3.5 shadow-sm min-w-0">
-                <div className="w-11 h-11 rounded-xl bg-emerald-500/20 border border-emerald-400/30 flex items-center justify-center shrink-0 text-emerald-300">
-                  <ShieldCheck className="w-5 h-5" />
-                </div>
-                <div className="min-w-0 flex-1">
-                  <h4 className="text-xs sm:text-sm font-extrabold text-white truncate">
-                    Evaluasi Karakter &amp; Disiplin
-                  </h4>
-                  <p className="text-[11px] text-slate-300 font-normal truncate">
-                    Penilaian holistik berkelanjutan
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="relative z-10 pt-6 mt-6 border-t border-white/10 text-[11px] text-slate-300/80 font-medium flex items-center justify-between">
-            <span className="truncate">Direktorat Tarbiyah &bull; SIKAP Al-Imam</span>
-            <span className="text-[#ddc192] shrink-0">&bull; Sistem Terpadu</span>
+          <a
+            href="https://pesantren-alimam.com"
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: "6px",
+              padding: "8px 16px",
+              borderRadius: "100px",
+              background: "rgba(255,255,255,0.1)",
+              border: "1px solid rgba(255,255,255,0.15)",
+              color: "rgba(255,255,255,0.8)",
+              fontSize: "11px",
+              fontWeight: 700,
+              textDecoration: "none",
+              letterSpacing: "0.05em",
+              textTransform: "uppercase",
+              backdropFilter: "blur(8px)",
+              transition: "all 0.2s",
+            }}
+          >
+            <ArrowRight
+              style={{ width: 12, height: 12, transform: "rotate(180deg)" }}
+            />
+            Beranda
+          </a>
+          <div
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: "8px",
+              padding: "8px 16px",
+              borderRadius: "100px",
+              background: "rgba(255,255,255,0.08)",
+              border: "1px solid rgba(255,255,255,0.12)",
+              backdropFilter: "blur(8px)",
+            }}
+          >
+            <span
+              style={{
+                width: 7,
+                height: 7,
+                borderRadius: "50%",
+                background: "#4ade80",
+                display: "inline-block",
+                boxShadow: "0 0 8px #4ade80",
+              }}
+            />
+            <span
+              style={{
+                color: "rgba(255,255,255,0.8)",
+                fontSize: "11px",
+                fontWeight: 700,
+                letterSpacing: "0.04em",
+              }}
+            >
+              Portal SIKAP 2026/2027
+            </span>
           </div>
         </div>
 
-        {/* Sisi Kanan: White Form Body (Desktop: 60%) */}
-        <div className="w-full lg:w-[55%] p-6 sm:p-8 lg:p-10 bg-white space-y-5 flex flex-col justify-center shrink-0">
-          
-          <div>
-            <h3 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight leading-snug">
+        {/* Hero Brand Section */}
+        <div style={{ textAlign: "center" }}>
+          {/* Logo */}
+          <div
+            style={{
+              width: 72,
+              height: 72,
+              borderRadius: "20px",
+              background: "rgba(255,255,255,0.12)",
+              border: "1px solid rgba(255,255,255,0.2)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              margin: "0 auto 16px",
+              boxShadow: "0 8px 32px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.15)",
+              backdropFilter: "blur(12px)",
+            }}
+          >
+            <img
+              src="/logo.png"
+              alt="Logo Al-Imam"
+              style={{ width: 48, height: 48, objectFit: "contain" }}
+            />
+          </div>
+          <p
+            style={{
+              fontSize: "10px",
+              fontWeight: 800,
+              textTransform: "uppercase",
+              letterSpacing: "0.2em",
+              color: "#ddc192",
+              marginBottom: "6px",
+            }}
+          >
+            Pesantren Islam Al-Imam Sukabumi
+          </p>
+          <h1
+            style={{
+              fontSize: "28px",
+              fontWeight: 800,
+              color: "#ffffff",
+              letterSpacing: "-0.02em",
+              lineHeight: 1.2,
+              marginBottom: "8px",
+            }}
+          >
+            SIKAP Al-Imam
+          </h1>
+          <p
+            style={{
+              fontSize: "13px",
+              color: "rgba(255,255,255,0.6)",
+              fontWeight: 400,
+              lineHeight: 1.5,
+            }}
+          >
+            Sistem Informasi Kependidikan, Akademik &amp; Pengasuhan
+          </p>
+        </div>
+
+        {/* Login Form Card */}
+        <div
+          style={{
+            background: "rgba(255,255,255,0.97)",
+            borderRadius: "24px",
+            padding: "32px",
+            boxShadow: "0 32px 80px rgba(0,0,0,0.4), 0 8px 24px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.8)",
+            border: "1px solid rgba(255,255,255,0.3)",
+          }}
+        >
+          <div style={{ marginBottom: "24px" }}>
+            <h2
+              style={{
+                fontSize: "20px",
+                fontWeight: 800,
+                color: "#0f172a",
+                letterSpacing: "-0.02em",
+                marginBottom: "4px",
+              }}
+            >
               Masuk Portal SIKAP
-            </h3>
-            <p className="text-xs sm:text-sm text-slate-500 font-normal mt-1 leading-relaxed">
+            </h2>
+            <p style={{ fontSize: "12px", color: "#64748b", fontWeight: 400 }}>
               Silakan masukkan kredensial akun Asatidzah, Musyrif, atau Wali Santri.
             </p>
           </div>
-          {/* Info Banner Box */}
-          <div className="p-3.5 rounded-2xl bg-[#ddc192]/15 border border-[#ddc192]/40 text-xs text-[#550000] flex items-center gap-2.5">
-            <ShieldCheck className="w-4 h-4 text-[#550000] shrink-0" />
-            <span className="font-medium leading-relaxed">
-              Login staf, asatidzah, dan wali santri menggunakan <strong>Username / Email / No. WA</strong>.
+
+          {/* Info banner */}
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "10px",
+              padding: "10px 14px",
+              borderRadius: "12px",
+              background: "linear-gradient(135deg, #fff8ec 0%, #fdf4e7 100%)",
+              border: "1px solid #ddc19240",
+              marginBottom: "20px",
+            }}
+          >
+            <ShieldCheck style={{ width: 15, height: 15, color: "#550000", flexShrink: 0 }} />
+            <span style={{ fontSize: "11px", color: "#550000", fontWeight: 500, lineHeight: 1.4 }}>
+              Login staf, asatidzah, dan wali santri menggunakan{" "}
+              <strong>Username / Email / No. WA</strong>.
             </span>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-4">
-            
-            {/* Input Identifier */}
-            <div className="space-y-1.5">
-              <label className="text-xs font-extrabold text-slate-700 flex items-center gap-1">
-                <span>Username / Email / No. WA</span>
-                <span className="text-red-500">*</span>
+          <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+            {/* Username field */}
+            <div>
+              <label
+                style={{
+                  display: "block",
+                  fontSize: "11px",
+                  fontWeight: 700,
+                  color: "#475569",
+                  marginBottom: "6px",
+                  textTransform: "uppercase",
+                  letterSpacing: "0.06em",
+                }}
+              >
+                Username / Email / No. WA <span style={{ color: "#ef4444" }}>*</span>
               </label>
-              <div className="relative">
+              <div style={{ position: "relative" }}>
+                <User
+                  style={{
+                    position: "absolute",
+                    left: 14,
+                    top: "50%",
+                    transform: "translateY(-50%)",
+                    width: 15,
+                    height: 15,
+                    color: "#94a3b8",
+                    pointerEvents: "none",
+                  }}
+                />
                 <input
                   type="text"
-                  name="email"
                   required
-                  autoFocus
+                  autoComplete="username"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="Username / Email / No. WA"
-                  className="w-full h-12 pl-4 pr-10 bg-slate-50/60 border border-slate-200 rounded-xl text-sm font-bold text-slate-900 placeholder:text-slate-400 placeholder:font-normal focus:bg-white focus:border-[#550000] focus:ring-4 focus:ring-[#550000]/10 transition-all"
+                  style={{
+                    width: "100%",
+                    height: "48px",
+                    paddingLeft: "40px",
+                    paddingRight: "16px",
+                    background: "#f8fafc",
+                    border: "1.5px solid #e2e8f0",
+                    borderRadius: "12px",
+                    fontSize: "13px",
+                    fontWeight: 500,
+                    color: "#0f172a",
+                    outline: "none",
+                    transition: "all 0.2s",
+                    boxSizing: "border-box",
+                    fontFamily: "inherit",
+                  }}
+                  onFocus={(e) => {
+                    e.target.style.borderColor = "#550000";
+                    e.target.style.background = "#ffffff";
+                    e.target.style.boxShadow = "0 0 0 4px rgba(85,0,0,0.08)";
+                  }}
+                  onBlur={(e) => {
+                    e.target.style.borderColor = "#e2e8f0";
+                    e.target.style.background = "#f8fafc";
+                    e.target.style.boxShadow = "none";
+                  }}
                 />
-                <User className="w-4 h-4 text-slate-400 absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
               </div>
             </div>
 
-            {/* Input Password */}
-            <div className="space-y-1.5">
-              <div className="flex items-center justify-between">
-                <label className="text-xs font-extrabold text-slate-700 flex items-center gap-1">
-                  <span>Kata Sandi</span>
-                  <span className="text-red-500">*</span>
+            {/* Password field */}
+            <div>
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  marginBottom: "6px",
+                }}
+              >
+                <label
+                  style={{
+                    fontSize: "11px",
+                    fontWeight: 700,
+                    color: "#475569",
+                    textTransform: "uppercase",
+                    letterSpacing: "0.06em",
+                  }}
+                >
+                  Kata Sandi <span style={{ color: "#ef4444" }}>*</span>
                 </label>
                 <button
                   type="button"
-                  onClick={() => {
-                    setShowForgotModal(true);
-                    setForgotMessage(null);
-                    setForgotInput("");
+                  onClick={() => setShowForgotModal(true)}
+                  style={{
+                    fontSize: "11px",
+                    fontWeight: 600,
+                    color: "#550000",
+                    background: "none",
+                    border: "none",
+                    cursor: "pointer",
+                    padding: 0,
                   }}
-                  className="text-xs font-bold text-[#550000] hover:underline"
                 >
                   Lupa Password?
                 </button>
               </div>
-
-              <div className="relative">
+              <div style={{ position: "relative" }}>
+                <Lock
+                  style={{
+                    position: "absolute",
+                    left: 14,
+                    top: "50%",
+                    transform: "translateY(-50%)",
+                    width: 15,
+                    height: 15,
+                    color: "#94a3b8",
+                    pointerEvents: "none",
+                  }}
+                />
                 <input
                   type={showPass ? "text" : "password"}
                   required
+                  autoComplete="current-password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="Masukkan kata sandi akun"
-                  className="w-full h-12 pl-4 pr-11 bg-slate-50/60 border border-slate-200 rounded-xl text-sm font-bold text-slate-900 placeholder:text-slate-400 placeholder:font-normal focus:bg-white focus:border-[#550000] focus:ring-4 focus:ring-[#550000]/10 transition-all select-text"
+                  style={{
+                    width: "100%",
+                    height: "48px",
+                    paddingLeft: "40px",
+                    paddingRight: "44px",
+                    background: "#f8fafc",
+                    border: "1.5px solid #e2e8f0",
+                    borderRadius: "12px",
+                    fontSize: "13px",
+                    fontWeight: 500,
+                    color: "#0f172a",
+                    outline: "none",
+                    transition: "all 0.2s",
+                    boxSizing: "border-box",
+                    fontFamily: "inherit",
+                  }}
+                  onFocus={(e) => {
+                    e.target.style.borderColor = "#550000";
+                    e.target.style.background = "#ffffff";
+                    e.target.style.boxShadow = "0 0 0 4px rgba(85,0,0,0.08)";
+                  }}
+                  onBlur={(e) => {
+                    e.target.style.borderColor = "#e2e8f0";
+                    e.target.style.background = "#f8fafc";
+                    e.target.style.boxShadow = "none";
+                  }}
                 />
                 <button
                   type="button"
                   tabIndex={-1}
                   onMouseDown={(e) => e.preventDefault()}
                   onClick={() => setShowPass(!showPass)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 p-1 transition-colors"
-                  aria-label="Tampilkan atau sembunyikan kata sandi"
+                  style={{
+                    position: "absolute",
+                    right: 12,
+                    top: "50%",
+                    transform: "translateY(-50%)",
+                    background: "none",
+                    border: "none",
+                    cursor: "pointer",
+                    color: "#94a3b8",
+                    padding: "4px",
+                    display: "flex",
+                    alignItems: "center",
+                  }}
+                  aria-label="Tampilkan kata sandi"
                 >
-                  {showPass ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  {showPass ? (
+                    <EyeOff style={{ width: 16, height: 16 }} />
+                  ) : (
+                    <Eye style={{ width: 16, height: 16 }} />
+                  )}
                 </button>
               </div>
             </div>
 
-            {/* Error Alert */}
+            {/* Error */}
             {error && (
-              <div className="p-3 rounded-xl bg-red-50 border border-red-200 text-xs font-bold text-red-700 flex items-center gap-2">
-                <AlertTriangle className="w-4 h-4 text-red-600 shrink-0" />
-                <span>{error}</span>
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "8px",
+                  padding: "12px 14px",
+                  borderRadius: "12px",
+                  background: "#fef2f2",
+                  border: "1px solid #fecaca",
+                }}
+              >
+                <AlertTriangle style={{ width: 14, height: 14, color: "#dc2626", flexShrink: 0 }} />
+                <span style={{ fontSize: "12px", fontWeight: 600, color: "#dc2626" }}>{error}</span>
               </div>
             )}
 
-            {/* Submit Button */}
+            {/* Submit */}
             <button
               type="submit"
               disabled={loading}
-              className="w-full h-12 rounded-xl bg-[#550000] hover:bg-[#400000] text-white font-extrabold text-sm shadow-md shadow-[#550000]/25 transition-all flex items-center justify-center gap-2 hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+              style={{
+                width: "100%",
+                height: "50px",
+                borderRadius: "12px",
+                background: loading
+                  ? "#7a0000"
+                  : "linear-gradient(135deg, #550000 0%, #7a0000 100%)",
+                color: "#ffffff",
+                fontWeight: 800,
+                fontSize: "13px",
+                letterSpacing: "0.02em",
+                border: "none",
+                cursor: loading ? "not-allowed" : "pointer",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: "8px",
+                boxShadow: loading ? "none" : "0 8px 24px rgba(85,0,0,0.35)",
+                transition: "all 0.2s",
+                fontFamily: "inherit",
+                opacity: loading ? 0.8 : 1,
+              }}
             >
               {loading ? (
                 <>
-                  <Loader2 className="w-4 h-4 animate-spin" />
+                  <Loader2 style={{ width: 16, height: 16, animation: "spin 1s linear infinite" }} />
                   <span>Memverifikasi Akun...</span>
                 </>
               ) : (
                 <>
                   <span>Masuk ke Sistem SIKAP</span>
-                  <ArrowRight className="w-4 h-4" />
+                  <ArrowRight style={{ width: 16, height: 16 }} />
                 </>
               )}
             </button>
           </form>
 
-          {/* Footer Card Info */}
-          <div className="pt-3 border-t border-slate-100 text-center space-y-2">
-            <div className="inline-flex items-center gap-1.5 text-[11px] font-bold text-slate-400">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-              <span>Koneksi Aman Terenkripsi SSL</span>
-            </div>
+          {/* Footer inside card */}
+          <div
+            style={{
+              marginTop: "20px",
+              paddingTop: "16px",
+              borderTop: "1px solid #f1f5f9",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: "6px",
+            }}
+          >
+            <span
+              style={{
+                width: 6,
+                height: 6,
+                borderRadius: "50%",
+                background: "#4ade80",
+                display: "inline-block",
+              }}
+            />
+            <span style={{ fontSize: "11px", color: "#94a3b8", fontWeight: 600 }}>
+              Koneksi Aman Terenkripsi SSL
+            </span>
           </div>
-
         </div>
 
+        {/* Feature pills */}
+        <div style={{ display: "flex", gap: "8px", justifyContent: "center", flexWrap: "wrap" }}>
+          {[
+            { icon: BookOpen, label: "Jurnal Mengajar" },
+            { icon: GraduationCap, label: "Nilai & Rapor" },
+            { icon: Star, label: "Mutaba'ah Tahfidz" },
+          ].map(({ icon: Icon, label }) => (
+            <div
+              key={label}
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "6px",
+                padding: "6px 14px",
+                borderRadius: "100px",
+                background: "rgba(255,255,255,0.08)",
+                border: "1px solid rgba(255,255,255,0.12)",
+                backdropFilter: "blur(8px)",
+              }}
+            >
+              <Icon style={{ width: 11, height: 11, color: "#ddc192" }} />
+              <span style={{ fontSize: "10px", fontWeight: 600, color: "rgba(255,255,255,0.7)", letterSpacing: "0.03em" }}>
+                {label}
+              </span>
+            </div>
+          ))}
+        </div>
+
+        {/* Footer */}
+        <div style={{ textAlign: "center" }}>
+          <p style={{ fontSize: "11px", color: "rgba(255,255,255,0.35)", fontWeight: 500 }}>
+            &copy; 2026 Pesantren Islam Al-Imam Sukabumi. Hak Cipta Dilindungi.
+          </p>
+        </div>
       </div>
 
-      <div className="text-center text-xs text-slate-400 mt-6 font-medium space-y-1">
-        <p>&copy; 2026 Pesantren Islam Al-Imam Sukabumi. Hak Cipta Dilindungi Undang-Undang.</p>
-        <p className="text-[11px] text-slate-400/80">Sistem Informasi Kependidikan, Akademik &amp; Pengasuhan v2.0</p>
-      </div>
-      </div>
-
-      {/* ─── MODAL ROLE SELECTION (JIKA MULTI-ROLE) ─── */}
+      {/* MODAL: Role Selection */}
       {requireRoleSelection && (
-        <div onWheel={(e) => e.stopPropagation()} data-modal="true" aria-modal="true" role="dialog" className="fixed inset-0 bg-slate-950/60 backdrop-blur-xs flex items-center justify-center z-50 p-4 overscroll-contain">
-          <div className="bg-white rounded-3xl p-6 sm:p-8 max-w-sm w-full border border-slate-200 shadow-2xl space-y-5 animate-in fade-in zoom-in-95">
-            <div className="text-center space-y-1.5">
-              <div className="w-12 h-12 rounded-2xl bg-[#ddc192]/20 text-[#550000] flex items-center justify-center mx-auto font-bold mb-3">
-                <UserCheck className="w-6 h-6" />
+        <div
+          onWheel={(e) => e.stopPropagation()}
+          style={{
+            position: "fixed",
+            inset: 0,
+            background: "rgba(15,23,42,0.7)",
+            backdropFilter: "blur(4px)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            zIndex: 50,
+            padding: "16px",
+          }}
+        >
+          <div
+            style={{
+              background: "#ffffff",
+              borderRadius: "24px",
+              padding: "32px",
+              maxWidth: "380px",
+              width: "100%",
+              boxShadow: "0 32px 80px rgba(0,0,0,0.3)",
+            }}
+          >
+            <div style={{ textAlign: "center", marginBottom: "24px" }}>
+              <div
+                style={{
+                  width: 48,
+                  height: 48,
+                  borderRadius: "14px",
+                  background: "#fff0f0",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  margin: "0 auto 12px",
+                }}
+              >
+                <UserCheck style={{ width: 22, height: 22, color: "#550000" }} />
               </div>
-              <h3 className="text-lg font-extrabold text-slate-900">
+              <h3 style={{ fontSize: "17px", fontWeight: 800, color: "#0f172a", marginBottom: "6px" }}>
                 Pilih Peran Masuk
               </h3>
-              <p className="text-xs text-slate-500">
+              <p style={{ fontSize: "12px", color: "#64748b", fontWeight: 400, lineHeight: 1.5 }}>
                 Akun Anda memiliki lebih dari satu hak akses. Pilih dashboard yang ingin Anda tuju:
               </p>
             </div>
-
-            <div className="space-y-2.5">
+            <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
               {availableRoles.map((role) => (
                 <button
                   key={role}
                   onClick={() => handleRoleSelect(role)}
-                  className="w-full h-11 px-4 rounded-xl border border-slate-200 hover:border-[#550000] hover:bg-[#ddc192]/10 text-slate-800 font-extrabold text-xs transition-all flex items-center justify-between group"
+                  style={{
+                    width: "100%",
+                    height: "44px",
+                    padding: "0 16px",
+                    borderRadius: "12px",
+                    border: "1.5px solid #e2e8f0",
+                    background: "#ffffff",
+                    color: "#0f172a",
+                    fontWeight: 700,
+                    fontSize: "12px",
+                    cursor: "pointer",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    fontFamily: "inherit",
+                    transition: "all 0.15s",
+                  }}
+                  onMouseEnter={(e) => {
+                    (e.target as HTMLElement).style.borderColor = "#550000";
+                    (e.target as HTMLElement).style.background = "#fff8f8";
+                  }}
+                  onMouseLeave={(e) => {
+                    (e.target as HTMLElement).style.borderColor = "#e2e8f0";
+                    (e.target as HTMLElement).style.background = "#ffffff";
+                  }}
                 >
-                  <span className="capitalize">{role.replace(/_/g, " ")}</span>
-                  <ArrowRight className="w-4 h-4 text-slate-400 group-hover:text-[#550000] group-hover:translate-x-0.5 transition-transform" />
+                  <span style={{ textTransform: "capitalize" }}>{role.replace(/_/g, " ")}</span>
+                  <ArrowRight style={{ width: 14, height: 14, color: "#94a3b8" }} />
                 </button>
               ))}
             </div>
-
             <button
               type="button"
               onClick={() => setRequireRoleSelection(false)}
-              className="w-full text-center text-xs font-bold text-slate-400 hover:text-slate-600 pt-2"
+              style={{
+                width: "100%",
+                marginTop: "16px",
+                fontSize: "12px",
+                fontWeight: 700,
+                color: "#94a3b8",
+                background: "none",
+                border: "none",
+                cursor: "pointer",
+                fontFamily: "inherit",
+              }}
             >
               Batal
             </button>
@@ -386,59 +768,130 @@ export default function LoginPage() {
         </div>
       )}
 
-      {/* ─── MODAL FORGOT PASSWORD ─── */}
+      {/* MODAL: Forgot Password */}
       {showForgotModal && (
-        <div onWheel={(e) => e.stopPropagation()} data-modal="true" aria-modal="true" role="dialog" className="fixed inset-0 bg-slate-950/60 backdrop-blur-xs flex items-center justify-center z-50 p-4 overscroll-contain">
-          <div className="bg-white rounded-3xl p-6 sm:p-8 max-w-md w-full border border-slate-200 shadow-2xl space-y-4 relative animate-in fade-in zoom-in-95">
+        <div
+          onWheel={(e) => e.stopPropagation()}
+          style={{
+            position: "fixed",
+            inset: 0,
+            background: "rgba(15,23,42,0.7)",
+            backdropFilter: "blur(4px)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            zIndex: 50,
+            padding: "16px",
+          }}
+        >
+          <div
+            style={{
+              background: "#ffffff",
+              borderRadius: "24px",
+              padding: "32px",
+              maxWidth: "420px",
+              width: "100%",
+              boxShadow: "0 32px 80px rgba(0,0,0,0.3)",
+              position: "relative",
+            }}
+          >
             <button
               onClick={() => setShowForgotModal(false)}
-              className="absolute right-5 top-5 w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 flex items-center justify-center transition-colors"
+              style={{
+                position: "absolute",
+                right: 20,
+                top: 20,
+                width: 32,
+                height: 32,
+                borderRadius: "50%",
+                background: "#f1f5f9",
+                border: "none",
+                cursor: "pointer",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                color: "#64748b",
+              }}
             >
-              <X className="w-4 h-4" />
+              <X style={{ width: 14, height: 14 }} />
             </button>
-
-            <div className="space-y-1.5 pr-8">
-              <h3 className="text-lg font-extrabold text-slate-900">
+            <div style={{ marginBottom: "20px", paddingRight: "32px" }}>
+              <h3 style={{ fontSize: "18px", fontWeight: 800, color: "#0f172a", marginBottom: "6px" }}>
                 Lupa Kata Sandi?
               </h3>
-              <p className="text-xs text-slate-500 leading-relaxed">
+              <p style={{ fontSize: "12px", color: "#64748b", lineHeight: 1.6, fontWeight: 400 }}>
                 Masukkan NIP, NIK, atau Nomor WhatsApp terdaftar Anda. Kami akan mengirimkan tautan instruksi reset kata sandi.
               </p>
             </div>
-
             {forgotMessage && (
               <div
-                className={`p-3.5 rounded-xl text-xs font-bold flex items-center gap-2 ${
-                  forgotMessage.type === "success"
-                    ? "bg-emerald-50 border border-emerald-200 text-emerald-800"
-                    : "bg-red-50 border border-red-200 text-red-800"
-                }`}
+                style={{
+                  padding: "12px 14px",
+                  borderRadius: "12px",
+                  marginBottom: "16px",
+                  background: forgotMessage.type === "success" ? "#f0fdf4" : "#fef2f2",
+                  border: `1px solid ${forgotMessage.type === "success" ? "#bbf7d0" : "#fecaca"}`,
+                }}
               >
-                <span>{forgotMessage.text}</span>
+                <span
+                  style={{
+                    fontSize: "12px",
+                    fontWeight: 600,
+                    color: forgotMessage.type === "success" ? "#166534" : "#dc2626",
+                  }}
+                >
+                  {forgotMessage.text}
+                </span>
               </div>
             )}
-
-            <form onSubmit={handleForgotSubmit} className="space-y-4 pt-2">
-              <div className="space-y-1.5">
-                <input
-                  type="text"
-                  required
-                  disabled={forgotLoading}
-                  value={forgotInput}
-                  onChange={(e) => setForgotInput(e.target.value)}
-                  placeholder="08123xxxx / NIK / NIP"
-                  className="w-full h-12 px-4 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold text-slate-900 placeholder:text-slate-400 focus:bg-white focus:border-[#550000] focus:ring-4 focus:ring-[#550000]/10 transition-all"
-                />
-              </div>
-
+            <form onSubmit={handleForgotSubmit} style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+              <input
+                type="text"
+                required
+                disabled={forgotLoading}
+                value={forgotInput}
+                onChange={(e) => setForgotInput(e.target.value)}
+                placeholder="08123xxxx / NIK / NIP"
+                style={{
+                  width: "100%",
+                  height: "48px",
+                  padding: "0 16px",
+                  background: "#f8fafc",
+                  border: "1.5px solid #e2e8f0",
+                  borderRadius: "12px",
+                  fontSize: "13px",
+                  fontWeight: 500,
+                  color: "#0f172a",
+                  outline: "none",
+                  boxSizing: "border-box",
+                  fontFamily: "inherit",
+                }}
+              />
               <button
                 type="submit"
                 disabled={forgotLoading || !forgotInput}
-                className="w-full h-12 rounded-xl bg-[#550000] hover:bg-[#400000] text-white font-extrabold text-xs shadow-md transition-all flex items-center justify-center gap-2 disabled:opacity-50"
+                style={{
+                  width: "100%",
+                  height: "48px",
+                  borderRadius: "12px",
+                  background: "linear-gradient(135deg, #550000 0%, #7a0000 100%)",
+                  color: "#ffffff",
+                  fontWeight: 800,
+                  fontSize: "13px",
+                  border: "none",
+                  cursor: forgotLoading || !forgotInput ? "not-allowed" : "pointer",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: "8px",
+                  opacity: forgotLoading || !forgotInput ? 0.7 : 1,
+                  fontFamily: "inherit",
+                  boxShadow: "0 4px 16px rgba(85,0,0,0.3)",
+                }}
               >
                 {forgotLoading ? (
                   <>
-                    <Loader2 className="w-4 h-4 animate-spin" />
+                    <Loader2 style={{ width: 14, height: 14, animation: "spin 1s linear infinite" }} />
                     <span>Mengirim Tautan...</span>
                   </>
                 ) : (
@@ -450,6 +903,12 @@ export default function LoginPage() {
         </div>
       )}
 
+      <style>{`
+        @keyframes spin {
+          from { transform: rotate(0deg); }
+          to { transform: rotate(360deg); }
+        }
+      `}</style>
     </div>
   );
 }
