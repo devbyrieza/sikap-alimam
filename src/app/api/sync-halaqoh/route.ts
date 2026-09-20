@@ -55,8 +55,15 @@ const HALAQOH_DATA = [
 ];
 
 export async function GET(request: Request) {
-  try {
+    try {
+    const { searchParams } = new URL(request.url);
+    const resetCatatan = searchParams.get('resetCatatan') === 'true';
     const log: string[] = [];
+
+    if (resetCatatan) {
+      await prisma.catatanHalaqoh.deleteMany({});
+      log.push("⚠️ Berhasil mereset semua data NILAI CATATAN HALAQOH.");
+    }
     
     // 1. Dapatkan semua santri & pegawai untuk pencocokan ID
     const semuaSantri = await prisma.santriAktif.findMany();
