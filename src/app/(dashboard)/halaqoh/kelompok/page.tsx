@@ -46,7 +46,7 @@ export default function HalaqohKelompokPage() {
   const [formKelompok, setFormKelompok] = useState({
     id: "",
     nama_kelompok: "",
-    tingkatan: "MUBTADI",
+    tingkatan: "PEMULA",
     pegawai_id: "",
     kelas_id: "" });
 
@@ -106,7 +106,7 @@ export default function HalaqohKelompokPage() {
         body: JSON.stringify(payload) });
       if (res.ok) {
         setShowAddKelompok(false);
-        setFormKelompok({ id: "", nama_kelompok: "", tingkatan: "MUBTADI", pegawai_id: "", kelas_id: "" });
+        setFormKelompok({ id: "", nama_kelompok: "", tingkatan: "PEMULA", pegawai_id: "", kelas_id: "" });
         fetchAll();
         Swal.fire({ title: "Berhasil", text: editMode ? "Kelompok diperbarui." : "Kelompok baru dibuat.", icon: "success", confirmButtonColor: "#550000" });
       } else {
@@ -121,7 +121,7 @@ export default function HalaqohKelompokPage() {
     setFormKelompok({
       id: k.id,
       nama_kelompok: k.nama_kelompok,
-      tingkatan: k.tingkatan || "MUBTADI",
+      tingkatan: k.tingkatan || "PEMULA",
       pegawai_id: k.pegawai_id || "",
       kelas_id: ""
     });
@@ -130,7 +130,7 @@ export default function HalaqohKelompokPage() {
   };
 
   const openCreateModal = () => {
-    setFormKelompok({ id: "", nama_kelompok: "", tingkatan: "MUBTADI", pegawai_id: "", kelas_id: "" });
+    setFormKelompok({ id: "", nama_kelompok: "", tingkatan: "PEMULA", pegawai_id: "", kelas_id: "" });
     setEditMode(false);
     setShowAddKelompok(true);
   };
@@ -231,7 +231,7 @@ export default function HalaqohKelompokPage() {
                                         
                     {k.tingkatan && (
                       <div style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: "4px 10px", borderRadius: 8, fontSize: 11, fontWeight: 800, background: "#f8fafc", color: "#475569", border: "1px solid #e2e8f0", marginBottom: 8, marginLeft: 6 }}>
-                        {k.tingkatan === 'MUBTADI' ? 'Mubtadi (Pemula)' : k.tingkatan === 'MUTAWASSITH' ? 'Mutawassith (Menengah)' : k.tingkatan === 'MUTAFAWWIQ' ? 'Mutafawwiq (Lanjutan)' : k.tingkatan}
+                        {k.tingkatan === 'PEMULA' ? 'Pemula' : k.tingkatan === 'MENENGAH' ? 'Menengah' : k.tingkatan === 'LANJUTAN' ? 'Lanjutan' : k.tingkatan}
                       </div>
                     )}
                     <div style={{ fontSize: 16, fontWeight: 800, color: "#1e293b", marginBottom: 4 }}>{k.nama_kelompok}</div>
