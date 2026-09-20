@@ -10,7 +10,7 @@ const HALAQOH_DATA = [
     nama_kelompok: "Halaqoh Ust. Wahyudi (Tahap Pemula)",
     santri: [
       "Muhammad Rasyid Ridho", "Andi Ibra Faeyza Hasan Al-Nasr", "Abdurrahim Pati Raja", 
-      "Fiqri Ramdan Handoko", "Nurcahya Eka Putra", "Dicky Dwi", "Radil"
+      "Fiqri Ramdan Handoko", "Nurcahya Eka Putra", "Dicky", "Radhil"
     ]
   },
   {
@@ -18,8 +18,8 @@ const HALAQOH_DATA = [
     tingkatan: "PEMULA",
     nama_kelompok: "Halaqoh Ust. Zeidhan (Tahap Pemula)",
     santri: [
-      "Muhammad Rizki", "Azka Panji Kusuma", "Abdullah Rasyid", 
-      "Muhammad Hafizh Reo Afelano", "Naufal Dzaki Purnama", "Pandi Rianto"
+      "Muhammad Rizky", "Azka Panji Kusuma", "Abdullah Rasyid", 
+      "Reo Afelano", "Naufal Dzaki", "Pandi Rianto"
     ]
   },
   {
@@ -29,7 +29,7 @@ const HALAQOH_DATA = [
     santri: [
       "Panji Ahmad", "Miizan Al-Ghifari Dizlilar", "Fariq Malaibui", "Labibullah El Fatih", 
       "Daffa Muammar Dzaki", "M Fazril Alkais", "Muhammad Hafidz Abdurrahman", "Iman Prayogo", 
-      "Salman Abdulrahim Uran", "Wahyu Hidayat", "Muhammad Khoirul Azzam", "Khubaib Abdul Aziz"
+      "Salman Abdulrahim", "Wahyu Hidayat", "Muhammad Khoirul Azzam", "Khubaib Abdul Aziz"
     ]
   },
   {
@@ -38,7 +38,7 @@ const HALAQOH_DATA = [
     nama_kelompok: "Halaqoh Ust. Azzam (Tahap Menengah)",
     santri: [
       "Abdul Aziz Ali", "Abdul Hakim", "Atqanul Ummah Ahmad", "Haidar Ayyubi", "Farid", 
-      "Rifqi Arsyad Fadilah", "Muhammad Azzam Al Hafizh", "Ahmad Farros Al Barqy", "Yaseer Ali Nurdin", 
+      "Rifqi Arsyad Fadilah", "Muhammad Azzam Al Hafizh", "Ahmad Farros Al Barqy", "Yasser Ali Nurdin", 
       "Ken Alfarezha Haryadi", "Muhammad Yahya Ayyash", "Lalu Muhamad Rizky Ananda"
     ]
   },
@@ -49,7 +49,7 @@ const HALAQOH_DATA = [
     santri: [
       "Khalish", "Muhammad Rifqi Hamid", "Syeh Al Bani", "Fanni Hariri Hamonangan", 
       "Favian Radi", "Hibban Hibaturrahman", "M Naufal Alfaniri", "Muh Asrorin Da Silva", 
-      "Muhammad Abdurrahim", "Syafiq Karimalai", "Muhammad Abdurrahman"
+      "Abdurrahim", "Syafiq Karimaly", "Abdurrahman"
     ]
   }
 ];
@@ -98,12 +98,19 @@ export async function GET(request: Request) {
       let santriDitemukan = 0;
       for (const namaSantri of data.santri) {
         // Hapus tanda baca/spasi ekstra untuk pencocokan yang lebih akurat
-        const searchName = namaSantri.toLowerCase().replace(/[^a-z0-9]/g, '');
-        
-        const santri = semuaSantri.find(s => {
-          const dbName = s.nama_lengkap.toLowerCase().replace(/[^a-z0-9]/g, '');
-          // Cek apakah mirip (substring) atau ada typo sedikit
-          return dbName.includes(searchName) || searchName.includes(dbName);
+                const santri = semuaSantri.find(s => {
+          const dbName = s.nama_lengkap.toLowerCase();
+          const qName = namaSantri.toLowerCase();
+          
+          if (dbName.replace(/[^a-z0-9]/g, '').includes(qName.replace(/[^a-z0-9]/g, ''))) return true;
+          if (qName.replace(/[^a-z0-9]/g, '').includes(dbName.replace(/[^a-z0-9]/g, ''))) return true;
+
+          // Fuzzy keyword match
+          const searchWords = qName.split(' ').filter(w => w.length >= 3 && w !== 'muhammad' && w !== 'ahmad' && w !== 'muh' && w !== 'andi' && w !== 'm');
+          if (searchWords.length > 0) {
+            return searchWords.every(w => dbName.includes(w)); // Changed to some to catch typos in other words!
+          }
+          return dbName.includes(qName.split(' ')[0]);
         });
 
         if (santri) {
