@@ -318,14 +318,22 @@ export default function MasterSantriPage() {
           <p style={{ margin: "8px 0 0", color: "rgba(255,255,255,0.85)", fontSize: 14, lineHeight: 1.6 }}>
             Kelola data induk santri, pemetaan kelas &amp; halaqoh, serta tata kelola status mutasi dan pemberhentian santri terintegrasi ke seluruh ekosistem Al-Imam.
           </p>
+        </div>
 
         <button
           onClick={() => setIsAdding(true)}
-          style={{ position: "absolute", right: 32, bottom: -20, background: "#fef08a", color: "#550000", border: "none", borderRadius: 12, padding: "14px 24px", fontSize: 14, fontWeight: 800, display: "flex", alignItems: "center", gap: 8, cursor: "pointer", boxShadow: "0 8px 16px rgba(254,240,138,0.2)" }}
+          style={{
+            position: "relative", zIndex: 1,
+            background: "#ddc192", color: "#3b0000", border: "none", cursor: "pointer",
+            fontWeight: 800, fontSize: 14, padding: "12px 22px", borderRadius: 14,
+            display: "flex", alignItems: "center", gap: 8,
+            boxShadow: "0 4px 16px rgba(221,193,146,0.3)", transition: "all 0.2s",
+            whiteSpace: "nowrap"
+          }}
         >
           <Users size={18} /> Tambah Santri Baru
         </button>
-      </div>
+
       </div>
 
       {/* ── 2. Stat Cards Grid ─────────────────────────────────────────────────── */}
