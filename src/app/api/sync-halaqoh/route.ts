@@ -105,19 +105,14 @@ export async function GET(request: Request) {
           if (dbName.replace(/[^a-z0-9]/g, '') === qName.replace(/[^a-z0-9]/g, '')) return true;
 
           // Manual Override Mappings for problem children
-          if (qName === 'dicky' && dbName.includes('dicky')) return true;
-          if (qName === 'dicky' && dbName.includes('diki dwi')) return true;
-          if (qName === 'radhil' && (dbName.includes('radhil') || dbName.includes('radil') || dbName.includes('rhadi') || dbName.includes('fadhil'))) return true;
-          if (qName === 'panji ahmad' && dbName.includes('panji') && dbName.includes('ahmad')) return true;
-          
-          // Use 'salman' only if it matches exactly for the student Uran
-          if (qName === 'salman abdulrahim' && dbName.includes('salman')) return true;
-          
-          // Yasser Ali Nurdin -> Yasser / Yasir
-          if (qName === 'yasser ali nurdin' && (dbName.includes('yasir') || dbName.includes('yaseer') || dbName.includes('yasser'))) return true;
-          
-          // Syafiq Karimalai
-          if (qName === 'syafiq karimaly' && (dbName.includes('syafik') || dbName.includes('syafiq'))) return true;
+          if (qName.includes('dicky') && dbName.includes('dicky')) return true;
+          if (qName.includes('radhil') && (dbName.includes('radil') || dbName.includes('radhil'))) return true;
+          if (qName.includes('panji ahmad') && dbName.includes('panji') && dbName.includes('ahmad')) return true;
+          if (qName.includes('salman abdulrahim') && dbName.includes('salman')) return true;
+          if (qName.includes('yasser ali nurdin') && dbName.includes('yasser')) return true;
+          if (qName.includes('syafiq karimaly') && dbName.includes('syafiq')) return true;
+          if (qName.includes('miizan') && dbName.includes('miizan')) return true;
+          if (qName.includes('azzam al hafizh') && dbName.includes('azzam al hafiz')) return true;
           
           // Abdurrahman & Abdurrahim
           if (qName === 'abdurrahman' && dbName.includes('abdurrahman') && !dbName.includes('hafidz')) return true;
