@@ -5,10 +5,7 @@ import { Users, Plus, Trash2, BookHeart, ArrowLeft, ChevronDown, ChevronUp, Sear
 import Link from "next/link";
 import Swal from "sweetalert2";
 
-const SESI_INFO: Record<string, { label: string; icon: React.ReactNode; color: string; bg: string; border: string }> = {
-  subuh:   { label: "Subuh",          icon: <Sun size={15} />,   color: "#d97706", bg: "#fffbeb", border: "#fde68a" },
-  maghrib: { label: "Ba'da Maghrib",  icon: <Moon size={15} />,  color: "#7c3aed", bg: "#f5f3ff", border: "#ede9fe" },
-  dhuha:   { label: "Dhuha",          icon: <Cloud size={15} />, color: "#0284c7", bg: "#eff6ff", border: "#bfdbfe" } };
+
 
 interface Santri {
   id: string;
@@ -20,7 +17,6 @@ interface Santri {
 interface Kelompok {
   id: string;
   nama_kelompok: string;
-  sesi: string;
   tingkatan?: string | null;
   pegawai_id: string;
   kelas?: { nama: string } | null;
@@ -50,7 +46,6 @@ export default function HalaqohKelompokPage() {
   const [formKelompok, setFormKelompok] = useState({
     id: "",
     nama_kelompok: "",
-    sesi: "subuh",
     tingkatan: "MUBTADI",
     pegawai_id: "",
     kelas_id: "" });
@@ -90,8 +85,8 @@ export default function HalaqohKelompokPage() {
   useEffect(() => { fetchAll(); }, [fetchAll]);
 
   const handleSaveKelompok = async () => {
-    if (!formKelompok.nama_kelompok || !formKelompok.sesi || !formKelompok.pegawai_id) {
-      Swal.fire({ title: "Oops!", text: "Nama kelompok, sesi, dan pengampu wajib diisi.", icon: "error" });
+    if (!formKelompok.nama_kelompok || !formKelompok.pegawai_id) {
+      Swal.fire({ title: "Oops!", text: "Nama kelompok dan pengampu wajib diisi.", icon: "error" });
       return;
     }
     setSaving(true);
@@ -101,7 +96,6 @@ export default function HalaqohKelompokPage() {
       const payload = {
          ...(editMode && { id: formKelompok.id }),
          nama_kelompok: formKelompok.nama_kelompok,
-         sesi: formKelompok.sesi,
          tingkatan: formKelompok.tingkatan,
          pegawai_id: formKelompok.pegawai_id
       };
@@ -112,7 +106,7 @@ export default function HalaqohKelompokPage() {
         body: JSON.stringify(payload) });
       if (res.ok) {
         setShowAddKelompok(false);
-        setFormKelompok({ id: "", nama_kelompok: "", sesi: "subuh", tingkatan: "MUBTADI", pegawai_id: "", kelas_id: "" });
+        setFormKelompok({ id: "", nama_kelompok: "", tingkatan: "MUBTADI", pegawai_id: "", kelas_id: "" });
         fetchAll();
         Swal.fire({ title: "Berhasil", text: editMode ? "Kelompok diperbarui." : "Kelompok baru dibuat.", icon: "success", confirmButtonColor: "#550000" });
       } else {
@@ -127,7 +121,6 @@ export default function HalaqohKelompokPage() {
     setFormKelompok({
       id: k.id,
       nama_kelompok: k.nama_kelompok,
-      sesi: k.sesi,
       tingkatan: k.tingkatan || "MUBTADI",
       pegawai_id: k.pegawai_id || "",
       kelas_id: ""
@@ -137,7 +130,7 @@ export default function HalaqohKelompokPage() {
   };
 
   const openCreateModal = () => {
-    setFormKelompok({ id: "", nama_kelompok: "", sesi: "subuh", tingkatan: "MUBTADI", pegawai_id: "", kelas_id: "" });
+    setFormKelompok({ id: "", nama_kelompok: "", tingkatan: "MUBTADI", pegawai_id: "", kelas_id: "" });
     setEditMode(false);
     setShowAddKelompok(true);
   };
@@ -227,7 +220,6 @@ export default function HalaqohKelompokPage() {
           {kelompokList.map(k => {
             const isExpanded = expandedId === k.id;
             const isAdding = addSantriFor === k.id;
-            const sesiConfig = SESI_INFO[k.sesi] || SESI_INFO.subuh;
             const unassignedSantri = allSantri
               .filter(s => !k.anggota.find(a => a.santri?.id === s.id))
               .filter(s => s.nama_lengkap.toLowerCase().includes(searchSantri.toLowerCase()));
@@ -236,9 +228,7 @@ export default function HalaqohKelompokPage() {
               <div key={k.id} style={{ background: "white", borderRadius: 20, border: "1.5px solid #e2e8f0", overflow: "hidden", transition: "all 0.3s ease" }}>
                 <div style={{ padding: "20px 24px", display: "flex", justifyContent: "space-between", cursor: "pointer" }} onClick={() => setExpandedId(isExpanded ? null : k.id)}>
                   <div>
-                                        <div style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: "4px 10px", borderRadius: 8, fontSize: 11, fontWeight: 800, background: sesiConfig.bg, color: sesiConfig.color, border: `1px solid ${sesiConfig.border}`, marginBottom: 8 }}>
-                      {sesiConfig.icon} {sesiConfig.label}
-                    </div>
+                                        
                     {k.tingkatan && (
                       <div style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: "4px 10px", borderRadius: 8, fontSize: 11, fontWeight: 800, background: "#f8fafc", color: "#475569", border: "1px solid #e2e8f0", marginBottom: 8, marginLeft: 6 }}>
                         {k.tingkatan === 'MUBTADI' ? 'Mubtadi (Pemula)' : k.tingkatan === 'MUTAWASSITH' ? 'Mutawassith (Menengah)' : k.tingkatan === 'MUTAFAWWIQ' ? 'Mutafawwiq (Lanjutan)' : k.tingkatan}
@@ -374,20 +364,7 @@ export default function HalaqohKelompokPage() {
                   onBlur={e => (e.currentTarget.style.borderColor = "#e2e8f0")}
                 />
               </div>
-              <div>
-                <label style={labelStyle}>Sesi Halaqoh</label>
-                <select
-                  value={formKelompok.sesi}
-                  onChange={e => setFormKelompok({ ...formKelompok, sesi: e.target.value })}
-                  style={{ ...inputStyle, appearance: "none", cursor: "pointer" }}
-                  onFocus={e => (e.currentTarget.style.borderColor = "#550000")}
-                  onBlur={e => (e.currentTarget.style.borderColor = "#e2e8f0")}
-                >
-                  <option value="subuh">Sesi Subuh</option>
-                  <option value="dhuha">Sesi Dhuha</option>
-                  <option value="maghrib">Sesi Ba'da Maghrib</option>
-                </select>
-              </div>
+              
               <div>
                 <label style={labelStyle}>Pengampu Halaqoh</label>
                 <select

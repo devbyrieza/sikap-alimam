@@ -68,15 +68,13 @@ export async function POST(request: Request) {
 
   try {
     const body = await request.json();
-    const { pegawai_id, kelas_id, nama_kelompok, sesi, tingkatan } = body;
+    const { pegawai_id, kelas_id, nama_kelompok, tingkatan } = body;
 
     const newKelompok = await prisma.halaqohKelompok.create({
       data: {
         pegawai_id,
         kelas_id,
-        nama_kelompok,
-        sesi,
-        tingkatan } });
+        nama_kelompok, tingkatan } });
     return NextResponse.json(newKelompok);
   } catch (error) {
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
@@ -105,7 +103,7 @@ export async function PUT(request: Request) {
 
   try {
     const body = await request.json();
-    const { id, pegawai_id, kelas_id, nama_kelompok, sesi, tingkatan } = body;
+    const { id, pegawai_id, kelas_id, nama_kelompok, tingkatan } = body;
     if (!id) return NextResponse.json({ error: 'Missing ID' }, { status: 400 });
 
     const updated = await prisma.halaqohKelompok.update({
@@ -113,9 +111,7 @@ export async function PUT(request: Request) {
       data: {
         pegawai_id,
         kelas_id,
-        nama_kelompok,
-        sesi,
-        tingkatan } });
+        nama_kelompok, tingkatan } });
     return NextResponse.json(updated);
   } catch (error) {
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });

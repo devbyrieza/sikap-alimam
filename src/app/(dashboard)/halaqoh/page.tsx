@@ -302,7 +302,7 @@ export default function HalaqohDashboardPage() {
                 {sesiAktif.map(sesi => {
                   const cfg = SESI_CONFIG[sesi];
                   // Filter to ONLY show the logged-in user's own group for this session
-                  const kel = kelompokList.find(k => k.sesi === sesi && (k as any).pegawai_id === pegawaiId);
+                  const kel = kelompokList.find(k => (k as any).pegawai_id === pegawaiId);
                   return (
                     <div
                       key={sesi}

@@ -322,7 +322,7 @@ model HalaqohKelompok {
   pegawai_id    String   @db.Uuid
   kelas_id      String?  @db.Uuid
   nama_kelompok String
-  sesi          String   // "subuh" | "maghrib" | "dhuha"
+  sesi          String?   // "subuh" | "maghrib" | "dhuha" - NOW OPTIONAL/UNUSED
   tingkatan     String?  // "MUBTADI" | "MUTAWASSITH" | "MUTAFAWWIQ"
   is_active     Boolean  @default(true)
   created_at    DateTime @default(now()) @db.Timestamptz(6)
