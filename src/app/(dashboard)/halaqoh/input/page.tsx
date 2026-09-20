@@ -333,14 +333,18 @@ export default function HalaqohInputPage() {
   // Auto-calculate halaman when surah/ayat changes
   useEffect(() => {
     if (!selectedSurah) { setHalamanAuto(null); return; }
-    fetch(`/api/quran/halaman?surah=${selectedSurah.nomor}&dari=${ayatDari}&ke=${ayatKe}`)
+    let url = `/api/quran/halaman?surah=${selectedSurah.nomor}&dari=${ayatDari}&ke=${ayatKe}`;
+    if (selectedSurahAkhir) {
+      url += `&surah_selesai=${selectedSurahAkhir.nomor}`;
+    }
+    fetch(url)
       .then(r => r.json())
       .then(d => setHalamanAuto(d.halaman ?? null))
       .catch(() => {
         const ratio = (ayatKe - ayatDari + 1) / selectedSurah.total_ayat;
         setHalamanAuto(parseFloat((ratio * 0.5).toFixed(1)));
       });
-  }, [selectedSurah, ayatDari, ayatKe]);
+  }, [selectedSurah, selectedSurahAkhir, ayatDari, ayatKe]);
 
   // Sync ayatKe max when surah changes
   useEffect(() => {
