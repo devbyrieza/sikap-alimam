@@ -142,6 +142,7 @@ model AsatidzmMapel {
 model SantriAktif {
   id               String    @id @default(uuid()) @db.Uuid
   nis              String?   @unique
+  nisn             String?   @unique
   nama_lengkap     String
   kelas_id         String    @db.Uuid
   jenis_kelamin    String?

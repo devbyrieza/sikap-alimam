@@ -18,6 +18,7 @@ export async function GET(req: NextRequest) {
         ALTER TABLE santri_aktif ADD COLUMN IF NOT EXISTS alasan_keluar TEXT;
         ALTER TABLE santri_aktif ADD COLUMN IF NOT EXISTS no_sk_keluar VARCHAR(255);
         ALTER TABLE santri_aktif ADD COLUMN IF NOT EXISTS catatan_keluar TEXT;
+        ALTER TABLE santri_aktif ADD COLUMN IF NOT EXISTS nisn VARCHAR(50);
         UPDATE santri_aktif SET status_kesiswaan = 'aktif' WHERE status_kesiswaan IS NULL;
       `);
     } catch (migErr) {
@@ -97,7 +98,7 @@ export async function POST(req: NextRequest) {
     if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     const body = await req.json();
-    const { nis, nama_lengkap, kelas_id, jenis_kelamin, foto_url } = body;
+    const { nis, nisn, nama_lengkap, kelas_id, jenis_kelamin, foto_url } = body;
 
     if (!nama_lengkap || !kelas_id) {
       return NextResponse.json({ error: "Nama lengkap dan Kelas wajib diisi" }, { status: 400 });
@@ -106,6 +107,7 @@ export async function POST(req: NextRequest) {
     const newSantri = await prisma.santriAktif.create({
       data: {
         nis: nis || null,
+        nisn: nisn || null,
         nama_lengkap: nama_lengkap.trim(),
         kelas_id,
         jenis_kelamin: jenis_kelamin || "L",

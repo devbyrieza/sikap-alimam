@@ -95,12 +95,12 @@ export default function MasterSantriPage() {
 
   // Filters
   const [isAdding, setIsAdding] = useState(false);
-  const [formSantri, setFormSantri] = useState({ nama_lengkap: '', nis: '', kelas_id: '', jenis_kelamin: 'L' });
+  const [formSantri, setFormSantri] = useState({ nama_lengkap: '', nis: '', nisn: '', kelas_id: '', jenis_kelamin: 'L' });
   const [isSaving, setIsSaving] = useState(false);
 
   const handleSaveSantri = async () => {
-    if (!formSantri.nama_lengkap || !formSantri.kelas_id) {
-      Swal.fire({ icon: 'error', title: 'Error', text: 'Nama lengkap dan Kelas wajib diisi' });
+    if (!formSantri.nama_lengkap || !formSantri.kelas_id || !formSantri.nis) {
+      Swal.fire({ icon: 'error', title: 'Error', text: 'Nama lengkap, NIS, dan Kelas wajib diisi' });
       return;
     }
     setIsSaving(true);
@@ -114,7 +114,7 @@ export default function MasterSantriPage() {
       if (res.ok) {
         setSantriList(prev => [data.data, ...prev]);
         setIsAdding(false);
-        setFormSantri({ nama_lengkap: '', nis: '', kelas_id: '', jenis_kelamin: 'L' });
+        setFormSantri({ nama_lengkap: '', nis: '', nisn: '', kelas_id: '', jenis_kelamin: 'L' });
         Swal.fire({ icon: 'success', title: 'Berhasil', text: 'Data santri ditambahkan', timer: 1500, showConfirmButton: false });
         
         // Update stats
@@ -1094,7 +1094,7 @@ export default function MasterSantriPage() {
             </div>
             <div style={{ padding: "16px 24px", background: "#f8fafc", display: "flex", justifyContent: "flex-end", gap: 12 }}>
               <button onClick={() => setIsAdding(false)} style={{ padding: "10px 20px", borderRadius: 10, border: "1px solid #cbd5e1", background: "white", color: "#64748b", fontWeight: 700, cursor: "pointer" }}>Batal</button>
-              <button onClick={handleSaveSantri} disabled={isSaving || !formSantri.nama_lengkap || !formSantri.kelas_id} style={{ padding: "10px 20px", borderRadius: 10, border: "none", background: (!formSantri.nama_lengkap || !formSantri.kelas_id) ? "#cbd5e1" : "#550000", color: "white", fontWeight: 700, cursor: (!formSantri.nama_lengkap || !formSantri.kelas_id) ? "not-allowed" : "pointer", display: "flex", alignItems: "center", gap: 8 }}>
+              <button onClick={handleSaveSantri} disabled={isSaving || !formSantri.nama_lengkap || !formSantri.kelas_id || !formSantri.nis} style={{ padding: "10px 20px", borderRadius: 10, border: "none", background: (!formSantri.nama_lengkap || !formSantri.kelas_id || !formSantri.nis) ? "#cbd5e1" : "#550000", color: "white", fontWeight: 700, cursor: (!formSantri.nama_lengkap || !formSantri.kelas_id || !formSantri.nis) ? "not-allowed" : "pointer", display: "flex", alignItems: "center", gap: 8 }}>
                 {isSaving ? <Loader2 size={16} className="animate-spin" /> : <Check size={16} />} Simpan Data
               </button>
             </div>
