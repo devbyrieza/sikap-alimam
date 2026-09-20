@@ -71,8 +71,8 @@ export async function GET(request: Request) {
 
     // 2. Hapus semua keanggotaan dan kelompok halaqoh yang lama (reset)
     await prisma.halaqohAnggota.deleteMany({});
-    await prisma.halaqohKelompok.deleteMany({});
-    log.push("✅ Berhasil mereset (menghapus) semua kelompok halaqoh lama.");
+    // Tidak menghapus kelompok lama agar CatatanHalaqoh tidak hilang
+    log.push("✅ Berhasil mereset (menghapus) keanggotaan santri dari kelompok halaqoh lama.");
 
     // 3. Loop dan buat kelompok baru berdasarkan data array
     for (const data of HALAQOH_DATA) {
@@ -85,13 +85,23 @@ export async function GET(request: Request) {
       }
 
       // Buat Kelompok Baru
-      const kelompok = await prisma.halaqohKelompok.create({
-        data: {
-          pegawai_id: pegawai.id,
-          nama_kelompok: data.nama_kelompok,
-          tingkatan: data.tingkatan
-        }
+      let kelompok = await prisma.halaqohKelompok.findFirst({
+        where: { pegawai_id: pegawai.id }
       });
+      if (!kelompok) {
+        kelompok = await prisma.halaqohKelompok.create({
+          data: {
+            pegawai_id: pegawai.id,
+            nama_kelompok: data.nama_kelompok,
+            tingkatan: data.tingkatan
+          }
+        });
+      } else {
+        await prisma.halaqohKelompok.update({
+          where: { id: kelompok.id },
+          data: { nama_kelompok: data.nama_kelompok, tingkatan: data.tingkatan }
+        });
+      }
       log.push(`✅ Berhasil membuat kelompok: ${data.nama_kelompok}`);
 
       // Cari ID Santri dan masukkan ke Kelompok
