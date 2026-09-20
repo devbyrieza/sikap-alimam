@@ -100,8 +100,8 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     const { nis, nisn, nama_lengkap, kelas_id, jenis_kelamin, foto_url } = body;
 
-    if (!nama_lengkap || !kelas_id) {
-      return NextResponse.json({ error: "Nama lengkap dan Kelas wajib diisi" }, { status: 400 });
+    if (!nama_lengkap || !kelas_id || !nis || !nisn) {
+      return NextResponse.json({ error: "Nama lengkap, NIS, NISN, dan Kelas wajib diisi" }, { status: 400 });
     }
 
     const newSantri = await prisma.santriAktif.create({

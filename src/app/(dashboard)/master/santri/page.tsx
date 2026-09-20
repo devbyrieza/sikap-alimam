@@ -99,8 +99,8 @@ export default function MasterSantriPage() {
   const [isSaving, setIsSaving] = useState(false);
 
   const handleSaveSantri = async () => {
-    if (!formSantri.nama_lengkap || !formSantri.kelas_id || !formSantri.nis) {
-      Swal.fire({ icon: 'error', title: 'Error', text: 'Nama lengkap, NIS, dan Kelas wajib diisi' });
+    if (!formSantri.nama_lengkap || !formSantri.kelas_id || !formSantri.nis || !formSantri.nisn) {
+      Swal.fire({ icon: 'error', title: 'Error', text: 'Semua form wajib diisi' });
       return;
     }
     setIsSaving(true);
@@ -1078,7 +1078,7 @@ export default function MasterSantriPage() {
                   <input value={formSantri.nis} onChange={e => setFormSantri({...formSantri, nis: e.target.value})} placeholder="Nomor Induk Yayasan" style={{ width: "100%", padding: "12px 16px", borderRadius: 12, border: "1px solid #cbd5e1", fontSize: 14 }} />
                 </div>
                 <div>
-                  <label style={{ display: "block", fontSize: 13, fontWeight: 700, color: "#334155", marginBottom: 6 }}>NISN (Nasional)</label>
+                  <label style={{ display: "block", fontSize: 13, fontWeight: 700, color: "#334155", marginBottom: 6 }}>NISN (Nasional) <span style={{ color: "red" }}>*</span></label>
                   <input value={formSantri.nisn} onChange={e => setFormSantri({...formSantri, nisn: e.target.value})} placeholder="Nomor Induk Nasional" style={{ width: "100%", padding: "12px 16px", borderRadius: 12, border: "1px solid #cbd5e1", fontSize: 14 }} />
                 </div>
               </div>
@@ -1092,7 +1092,7 @@ export default function MasterSantriPage() {
                   </select>
                 </div>
                 <div>
-                  <label style={{ display: "block", fontSize: 13, fontWeight: 700, color: "#334155", marginBottom: 6 }}>Jenis Kelamin</label>
+                  <label style={{ display: "block", fontSize: 13, fontWeight: 700, color: "#334155", marginBottom: 6 }}>Jenis Kelamin <span style={{ color: "red" }}>*</span></label>
                   <select value={formSantri.jenis_kelamin} onChange={e => setFormSantri({...formSantri, jenis_kelamin: e.target.value})} style={{ width: "100%", padding: "12px 16px", borderRadius: 12, border: "1px solid #cbd5e1", fontSize: 14, background: "white" }}>
                     <option value="L">Laki-laki (Putra)</option>
                     <option value="P">Perempuan (Putri)</option>
@@ -1102,7 +1102,7 @@ export default function MasterSantriPage() {
             </div>
             <div style={{ padding: "16px 24px", background: "#f8fafc", display: "flex", justifyContent: "flex-end", gap: 12 }}>
               <button onClick={() => setIsAdding(false)} style={{ padding: "10px 20px", borderRadius: 10, border: "1px solid #cbd5e1", background: "white", color: "#64748b", fontWeight: 700, cursor: "pointer" }}>Batal</button>
-              <button onClick={handleSaveSantri} disabled={isSaving || !formSantri.nama_lengkap || !formSantri.kelas_id || !formSantri.nis} style={{ padding: "10px 20px", borderRadius: 10, border: "none", background: (!formSantri.nama_lengkap || !formSantri.kelas_id || !formSantri.nis) ? "#cbd5e1" : "#550000", color: "white", fontWeight: 700, cursor: (!formSantri.nama_lengkap || !formSantri.kelas_id || !formSantri.nis) ? "not-allowed" : "pointer", display: "flex", alignItems: "center", gap: 8 }}>
+              <button onClick={handleSaveSantri} disabled={isSaving || !formSantri.nama_lengkap || !formSantri.kelas_id || !formSantri.nis || !formSantri.nisn} style={{ padding: "10px 20px", borderRadius: 10, border: "none", background: (!formSantri.nama_lengkap || !formSantri.kelas_id || !formSantri.nis || !formSantri.nisn) ? "#cbd5e1" : "#550000", color: "white", fontWeight: 700, cursor: (!formSantri.nama_lengkap || !formSantri.kelas_id || !formSantri.nis || !formSantri.nisn) ? "not-allowed" : "pointer", display: "flex", alignItems: "center", gap: 8 }}>
                 {isSaving ? <Loader2 size={16} className="animate-spin" /> : <Check size={16} />} Simpan Data
               </button>
             </div>
