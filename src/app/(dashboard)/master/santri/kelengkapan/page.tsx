@@ -135,7 +135,7 @@ export default function KelengkapanSantriPage() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div 
           onClick={() => setFilterMode(filterMode === "missing_nis" ? "all" : "missing_nis")}
-          className={\`cursor-pointer p-5 rounded-2xl border transition-all \${filterMode === "missing_nis" ? "bg-red-50 border-red-200 shadow-md" : "bg-white border-gray-100 shadow-sm hover:shadow-md"}\`}
+          className={`cursor-pointer p-5 rounded-2xl border transition-all ${filterMode === "missing_nis" ? "bg-red-50 border-red-200 shadow-md" : "bg-white border-gray-100 shadow-sm hover:shadow-md"}`}
         >
           <div className="flex justify-between items-center">
             <div>
@@ -148,7 +148,7 @@ export default function KelengkapanSantriPage() {
         
         <div 
           onClick={() => setFilterMode(filterMode === "missing_tgl" ? "all" : "missing_tgl")}
-          className={\`cursor-pointer p-5 rounded-2xl border transition-all \${filterMode === "missing_tgl" ? "bg-amber-50 border-amber-200 shadow-md" : "bg-white border-gray-100 shadow-sm hover:shadow-md"}\`}
+          className={`cursor-pointer p-5 rounded-2xl border transition-all ${filterMode === "missing_tgl" ? "bg-amber-50 border-amber-200 shadow-md" : "bg-white border-gray-100 shadow-sm hover:shadow-md"}`}
         >
           <div className="flex justify-between items-center">
             <div>
