@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Kunci Guru HP - Detektif Sandi Al-Kindi | MTs Al-Imam</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800;900&family=JetBrains+Mono:wght@700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0f172a;
+    --card-bg: #1e293b;
+    --primary: #059669;
+    --primary-light: #10b981;
+    --accent: #f59e0b;
+    --danger: #ef4444;
+    --text-main: #f8fafc;
+    --text-muted: #94a3b8;
+    --border: #334155;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    background-color: var(--bg);
+    color: var(--text-main);
+    padding: 14px;
+    padding-bottom: 70px;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* Header Sticky */
+  .header-card {
+    background: linear-gradient(135deg, #064e3b 0%, #047857 100%);
+    border-radius: 16px;
+    padding: 16px;
+    margin-bottom: 14px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    border: 1px solid #059669;
+  }
+
+  .header-card h1 {
+    font-size: 18px;
+    font-weight: 900;
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .header-card p {
+    font-size: 12px;
+    color: #a7f3d0;
+    margin-top: 4px;
+  }
+
+  /* Quick Navigation Tabs */
+  .tabs-scroll {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    padding-bottom: 8px;
+    margin-bottom: 14px;
+    scrollbar-width: none;
+  }
+  .tabs-scroll::-webkit-scrollbar { display: none; }
+
+  .tab-btn {
+    white-space: nowrap;
+    background: #1e293b;
+    color: #cbd5e1;
+    border: 1px solid var(--border);
+    padding: 8px 14px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  .tab-btn.active {
+    background: var(--primary);
+    color: #ffffff;
+    border-color: var(--primary-light);
+  }
+
+  /* Section / Answer Card */
+  .answer-card {
+    background: var(--card-bg);
+    border-radius: 16px;
+    border: 1px solid var(--border);
+    padding: 16px;
+    margin-bottom: 14px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  }
+
+  .team-title-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 8px;
+  }
+
+  .team-tag {
+    font-size: 14px;
+    font-weight: 800;
+    color: #38bdf8;
+  }
+
+  .team-members-sub {
+    font-size: 11px;
+    color: var(--text-muted);
+  }
+
+  .target-word-box {
+    background: #022c22;
+    border: 2px solid #059669;
+    border-radius: 12px;
+    padding: 12px;
+    text-align: center;
+    margin-bottom: 12px;
+  }
+
+  .target-word {
+    font-size: 26px;
+    font-weight: 900;
+    letter-spacing: 4px;
+    color: #fde047;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .formula-badge {
+    display: inline-block;
+    background: rgba(245, 158, 11, 0.2);
+    color: #fbbf24;
+    border: 1px solid #f59e0b;
+    padding: 2px 8px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 700;
+    margin-top: 4px;
+  }
+
+  /* Step by Step Table */
+  .calc-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .calc-table th {
+    background: #0f172a;
+    color: #94a3b8;
+    padding: 6px;
+    text-align: center;
+    font-size: 10px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .calc-table td {
+    padding: 7px 4px;
+    text-align: center;
+    border-bottom: 1px solid #334155;
+  }
+
+  .letter-target {
+    font-weight: 900;
+    color: #4ade80;
+    font-size: 14px;
+  }
+
+  /* Live Scoreboard Box */
+  .scoreboard-box {
+    background: #1e1b4b;
+    border: 2px solid #6366f1;
+    border-radius: 16px;
+    padding: 14px;
+    margin-bottom: 16px;
+  }
+
+  .score-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 6px;
+    margin-top: 10px;
+  }
+
+  .score-col {
+    background: rgba(255,255,255,0.06);
+    border-radius: 8px;
+    padding: 6px 2px;
+    text-align: center;
+  }
+
+  .score-col-name {
+    font-size: 10px;
+    font-weight: 800;
+    color: #a5b4fc;
+  }
+
+  .score-col-val {
+    font-size: 18px;
+    font-weight: 900;
+    color: #fde047;
+    margin: 4px 0;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .btn-plus {
+    background: #4338ca;
+    color: #ffffff;
+    border: none;
+    padding: 3px 8px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 800;
+    cursor: pointer;
+    width: 100%;
+  }
+
+  /* Quick Reference Alphabet Bar */
+  .ref-bar {
+    background: #0f172a;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 10px;
+    font-size: 11px;
+    color: #94a3b8;
+    line-height: 1.5;
+    margin-top: 14px;
+  }
+</style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <div class="header-card">
+    <h1>📱 Kunci Jawaban Guru (HP)</h1>
+    <p>Game 2: Detektif Sandi Al-Kindi • Ustaz Rieza Eka Tomara, S.Kom.</p>
+  </div>
+
+  <!-- LIVE SCOREBOARD ON PHONE -->
+  <div class="scoreboard-box">
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+      <span style="font-size: 12px; font-weight: 800; color: #e0e7ff;">🏆 PAPAN SKOR KELOMPOK (KETUK +100):</span>
+      <button onclick="resetScores()" style="background:transparent; border:none; color:#f87171; font-size:10px; font-weight:700; cursor:pointer;">Reset</button>
+    </div>
+    <div class="score-grid">
+      <div class="score-col">
+        <div class="score-col-name">T1:Alpha</div>
+        <div class="score-col-val" id="sc1">0</div>
+        <button class="btn-plus" onclick="addScore(1, 100)">+100</button>
+      </div>
+      <div class="score-col">
+        <div class="score-col-name">T2:Bravo</div>
+        <div class="score-col-val" id="sc2">0</div>
+        <button class="btn-plus" onclick="addScore(2, 100)">+100</button>
+      </div>
+      <div class="score-col">
+        <div class="score-col-name">T3:Chrli</div>
+        <div class="score-col-val" id="sc3">0</div>
+        <button class="btn-plus" onclick="addScore(3, 100)">+100</button>
+      </div>
+      <div class="score-col">
+        <div class="score-col-name">T4:Delta</div>
+        <div class="score-col-val" id="sc4">0</div>
+        <button class="btn-plus" onclick="addScore(4, 100)">+100</button>
+      </div>
+      <div class="score-col">
+        <div class="score-col-name">T5:Echo</div>
+        <div class="score-col-val" id="sc5">0</div>
+        <button class="btn-plus" onclick="addScore(5, 100)">+100</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TABS TO SCROLL DIRECTLY -->
+  <div class="tabs-scroll">
+    <button class="tab-btn active" onclick="scrollToId('card1')">Tim 1 (Alpha)</button>
+    <button class="tab-btn" onclick="scrollToId('card2')">Tim 2 (Bravo)</button>
+    <button class="tab-btn" onclick="scrollToId('card3')">Tim 3 (Charlie)</button>
+    <button class="tab-btn" onclick="scrollToId('card4')">Tim 4 (Delta)</button>
+    <button class="tab-btn" onclick="scrollToId('card5')">Tim 5 (Echo)</button>
+    <button class="tab-btn" onclick="scrollToId('cardFinal1')" style="color:#fda4af; border-color:#f43f5e;">🔥 Rebutan 1</button>
+    <button class="tab-btn" onclick="scrollToId('cardFinal2')" style="color:#fde047; border-color:#eab308;">🏆 Rebutan 2 (Final)</button>
+  </div>
+
+  <!-- KUNCI TIM 1 -->
+  <div class="answer-card" id="card1">
+    <div class="team-title-row">
+      <span class="team-tag">🛡️ TIM 1 (ALPHA)</span>
+      <span class="team-members-sub">Hafidz, Azka, Atqan, Naufal</span>
+    </div>
+    <div class="target-word-box">
+      <div style="font-size: 10px; color: #a7f3d0; text-transform: uppercase;">Kata Rahasia:</div>
+      <div class="target-word">LOGIKA</div>
+      <div class="formula-badge">Rumus: X = Y - 2</div>
+    </div>
+    <table class="calc-table">
+      <tr><th>Angka di TV</th><th>Hitungan (-2)</th><th>Huruf Asli</th></tr>
+      <tr><td>14</td><td>14 - 2 = 12</td><td class="letter-target">L</td></tr>
+      <tr><td>17</td><td>17 - 2 = 15</td><td class="letter-target">O</td></tr>
+      <tr><td>9</td><td>9 - 2 = 7</td><td class="letter-target">G</td></tr>
+      <tr><td>11</td><td>11 - 2 = 9</td><td class="letter-target">I</td></tr>
+      <tr><td>13</td><td>13 - 2 = 11</td><td class="letter-target">K</td></tr>
+      <tr><td>3</td><td>3 - 2 = 1</td><td class="letter-target">A</td></tr>
+    </table>
+  </div>
+
+  <!-- KUNCI TIM 2 -->
+  <div class="answer-card" id="card2">
+    <div class="team-title-row">
+      <span class="team-tag">⚡ TIM 2 (BRAVO)</span>
+      <span class="team-members-sub">Labib, Dzaki, Iwan, Aziz</span>
+    </div>
+    <div class="target-word-box">
+      <div style="font-size: 10px; color: #a7f3d0; text-transform: uppercase;">Kata Rahasia:</div>
+      <div class="target-word">ALJABAR</div>
+      <div class="formula-badge">Rumus: X = Y - 3</div>
+    </div>
+    <table class="calc-table">
+      <tr><th>Angka di TV</th><th>Hitungan (-3)</th><th>Huruf Asli</th></tr>
+      <tr><td>4</td><td>4 - 3 = 1</td><td class="letter-target">A</td></tr>
+      <tr><td>15</td><td>15 - 3 = 12</td><td class="letter-target">L</td></tr>
+      <tr><td>13</td><td>13 - 3 = 10</td><td class="letter-target">J</td></tr>
+      <tr><td>4</td><td>4 - 3 = 1</td><td class="letter-target">A</td></tr>
+      <tr><td>5</td><td>5 - 3 = 2</td><td class="letter-target">B</td></tr>
+      <tr><td>4</td><td>4 - 3 = 1</td><td class="letter-target">A</td></tr>
+      <tr><td>21</td><td>21 - 3 = 18</td><td class="letter-target">R</td></tr>
+    </table>
+  </div>
+
+  <!-- KUNCI TIM 3 -->
+  <div class="answer-card" id="card3">
+    <div class="team-title-row">
+      <span class="team-tag">🔥 TIM 3 (CHARLIE)</span>
+      <span class="team-members-sub">Rifqi, Hakim, Farros (Jubir), Fadil</span>
+    </div>
+    <div class="target-word-box">
+      <div style="font-size: 10px; color: #a7f3d0; text-transform: uppercase;">Kata Rahasia:</div>
+      <div class="target-word">KOMPAS</div>
+      <div class="formula-badge">Rumus: X = Y - 4</div>
+    </div>
+    <table class="calc-table">
+      <tr><th>Angka di TV</th><th>Hitungan (-4)</th><th>Huruf Asli</th></tr>
+      <tr><td>15</td><td>15 - 4 = 11</td><td class="letter-target">K</td></tr>
+      <tr><td>19</td><td>19 - 4 = 15</td><td class="letter-target">O</td></tr>
+      <tr><td>17</td><td>17 - 4 = 13</td><td class="letter-target">M</td></tr>
+      <tr><td>20</td><td>20 - 4 = 16</td><td class="letter-target">P</td></tr>
+      <tr><td>5</td><td>5 - 4 = 1</td><td class="letter-target">A</td></tr>
+      <tr><td>23</td><td>23 - 4 = 19</td><td class="letter-target">S</td></tr>
+    </table>
+  </div>
+
+  <!-- KUNCI TIM 4 -->
+  <div class="answer-card" id="card4">
+    <div class="team-title-row">
+      <span class="team-tag">🦅 TIM 4 (DELTA)</span>
+      <span class="team-members-sub">Fazril (Kapten), Khalish, Fariq, Ibra</span>
+    </div>
+    <div class="target-word-box">
+      <div style="font-size: 10px; color: #a7f3d0; text-transform: uppercase;">Kata Rahasia:</div>
+      <div class="target-word">HIJRAH</div>
+      <div class="formula-badge">Rumus: X = Y - 2</div>
+    </div>
+    <table class="calc-table">
+      <tr><th>Angka di TV</th><th>Hitungan (-2)</th><th>Huruf Asli</th></tr>
+      <tr><td>10</td><td>10 - 2 = 8</td><td class="letter-target">H</td></tr>
+      <tr><td>11</td><td>11 - 2 = 9</td><td class="letter-target">I</td></tr>
+      <tr><td>12</td><td>12 - 2 = 10</td><td class="letter-target">J</td></tr>
+      <tr><td>20</td><td>20 - 2 = 18</td><td class="letter-target">R</td></tr>
+      <tr><td>3</td><td>3 - 2 = 1</td><td class="letter-target">A</td></tr>
+      <tr><td>10</td><td>10 - 2 = 8</td><td class="letter-target">H</td></tr>
+    </table>
+  </div>
+
+  <!-- KUNCI TIM 5 -->
+  <div class="answer-card" id="card5">
+    <div class="team-title-row">
+      <span class="team-tag">🌟 TIM 5 (ECHO)</span>
+      <span class="team-members-sub">Haidar, Ayyash, Azzam</span>
+    </div>
+    <div class="target-word-box">
+      <div style="font-size: 10px; color: #a7f3d0; text-transform: uppercase;">Kata Rahasia:</div>
+      <div class="target-word">TAQWA</div>
+      <div class="formula-badge">Rumus: X = Y - 3</div>
+    </div>
+    <table class="calc-table">
+      <tr><th>Angka di TV</th><th>Hitungan (-3)</th><th>Huruf Asli</th></tr>
+      <tr><td>23</td><td>23 - 3 = 20</td><td class="letter-target">T</td></tr>
+      <tr><td>4</td><td>4 - 3 = 1</td><td class="letter-target">A</td></tr>
+      <tr><td>20</td><td>20 - 3 = 17</td><td class="letter-target">Q</td></tr>
+      <tr><td>26</td><td>26 - 3 = 23</td><td class="letter-target">W</td></tr>
+      <tr><td>4</td><td>4 - 3 = 1</td><td class="letter-target">A</td></tr>
+    </table>
+  </div>
+
+  <!-- KUNCI GRAND DUEL: SOAL REBUTAN 1 -->
+  <div class="answer-card" id="cardFinal1" style="border: 2px solid #f43f5e; background: #18181b;">
+    <div class="team-title-row">
+      <span class="team-tag" style="color: #fb7185;">🔥 SOAL REBUTAN 1 (SEMUA TIM)</span>
+      <span class="team-members-sub" style="color:#cbd5e1;">Adu Cepat Babak Perdana</span>
+    </div>
+    <div class="target-word-box" style="background:#022c22; border-color:#059669;">
+      <div style="font-size: 10px; color: #a7f3d0; text-transform: uppercase;">Jawaban Kalimat Lengkap:</div>
+      <div class="target-word" style="font-size:22px; color:#fde047;">JUARA KELAS</div>
+      <div class="formula-badge" style="background:#064e3b; color:#a7f3d0; border-color:#059669;">
+        Rumus: X = Y - 3
+      </div>
+    </div>
+
+    <!-- Petunjuk Ustaz -->
+    <div style="background: rgba(245, 158, 11, 0.15); border-left: 3px solid #f59e0b; padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #fde047; margin-bottom: 10px;">
+      💡 <strong>Bocoran jika anak macet:</strong><br>
+      • Clue 1: Kata 1 huruf ke-2 adalah <strong>U</strong> (24 - 3 = 21)<br>
+      • Clue 2: Kata 2 huruf ke-3 adalah <strong>L</strong> (15 - 3 = 12)
+    </div>
+
+    <!-- Kata 1: JUARA -->
+    <div style="font-size: 11px; font-weight:800; color:#93c5fd; margin-bottom:4px;">KATA 1: JUARA (5 Huruf)</div>
+    <table class="calc-table" style="margin-bottom:12px;">
+      <tr><th>TV</th><th>Hitungan (-3)</th><th>Huruf</th></tr>
+      <tr><td>13</td><td>13 - 3 = 10</td><td class="letter-target">J</td></tr>
+      <tr><td>24</td><td>24 - 3 = 21</td><td class="letter-target">U</td></tr>
+      <tr><td>4</td><td>4 - 3 = 1</td><td class="letter-target">A</td></tr>
+      <tr><td>21</td><td>21 - 3 = 18</td><td class="letter-target">R</td></tr>
+      <tr><td>4</td><td>4 - 3 = 1</td><td class="letter-target">A</td></tr>
+    </table>
+
+    <!-- Kata 2: KELAS -->
+    <div style="font-size: 11px; font-weight:800; color:#93c5fd; margin-bottom:4px;">KATA 2: KELAS (5 Huruf)</div>
+    <table class="calc-table">
+      <tr><th>TV</th><th>Hitungan (-3)</th><th>Huruf</th></tr>
+      <tr><td>14</td><td>14 - 3 = 11</td><td class="letter-target">K</td></tr>
+      <tr><td>8</td><td>8 - 3 = 5</td><td class="letter-target">E</td></tr>
+      <tr><td>15</td><td>15 - 3 = 12</td><td class="letter-target">L</td></tr>
+      <tr><td>4</td><td>4 - 3 = 1</td><td class="letter-target">A</td></tr>
+      <tr><td>22</td><td>22 - 3 = 19</td><td class="letter-target">S</td></tr>
+    </table>
+  </div>
+
+  <!-- KUNCI GRAND DUEL: SOAL REBUTAN 2 (FINAL) -->
+  <div class="answer-card" id="cardFinal2" style="border: 2px solid #eab308; background: #18181b;">
+    <div class="team-title-row">
+      <span class="team-tag" style="color: #fde047;">🏆 SOAL REBUTAN 2: PENENTU FINAL</span>
+      <span class="team-members-sub" style="color:#cbd5e1;">Penentu Juara Utama</span>
+    </div>
+    <div class="target-word-box" style="background:#022c22; border-color:#eab308;">
+      <div style="font-size: 10px; color: #a7f3d0; text-transform: uppercase;">Jawaban Kalimat Lengkap:</div>
+      <div class="target-word" style="font-size:22px; color:#fde047;">BINTANG EMAS</div>
+      <div class="formula-badge" style="background:#854d0e; color:#fef08a; border-color:#ca8a04;">
+        Rumus: X = Y - 4
+      </div>
+    </div>
+
+    <!-- Petunjuk Ustaz -->
+    <div style="background: rgba(245, 158, 11, 0.15); border-left: 3px solid #f59e0b; padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #fde047; margin-bottom: 10px;">
+      💡 <strong>Bocoran jika anak macet:</strong><br>
+      • Clue 1: Kata 1 huruf ke-4 adalah <strong>T</strong> (24 - 4 = 20)<br>
+      • Clue 2: Kata 2 huruf ke-2 adalah <strong>M</strong> (17 - 4 = 13)
+    </div>
+
+    <!-- Kata 1: BINTANG -->
+    <div style="font-size: 11px; font-weight:800; color:#93c5fd; margin-bottom:4px;">KATA 1: BINTANG (7 Huruf)</div>
+    <table class="calc-table" style="margin-bottom:12px;">
+      <tr><th>TV</th><th>Hitungan (-4)</th><th>Huruf</th></tr>
+      <tr><td>6</td><td>6 - 4 = 2</td><td class="letter-target">B</td></tr>
+      <tr><td>13</td><td>13 - 4 = 9</td><td class="letter-target">I</td></tr>
+      <tr><td>18</td><td>18 - 4 = 14</td><td class="letter-target">N</td></tr>
+      <tr><td>24</td><td>24 - 4 = 20</td><td class="letter-target">T</td></tr>
+      <tr><td>5</td><td>5 - 4 = 1</td><td class="letter-target">A</td></tr>
+      <tr><td>18</td><td>18 - 4 = 14</td><td class="letter-target">N</td></tr>
+      <tr><td>11</td><td>11 - 4 = 7</td><td class="letter-target">G</td></tr>
+    </table>
+
+    <!-- Kata 2: EMAS -->
+    <div style="font-size: 11px; font-weight:800; color:#93c5fd; margin-bottom:4px;">KATA 2: EMAS (4 Huruf)</div>
+    <table class="calc-table">
+      <tr><th>TV</th><th>Hitungan (-4)</th><th>Huruf</th></tr>
+      <tr><td>9</td><td>9 - 4 = 5</td><td class="letter-target">E</td></tr>
+      <tr><td>17</td><td>17 - 4 = 13</td><td class="letter-target">M</td></tr>
+      <tr><td>5</td><td>5 - 4 = 1</td><td class="letter-target">A</td></tr>
+      <tr><td>23</td><td>23 - 4 = 19</td><td class="letter-target">S</td></tr>
+    </table>
+  </div>
+
+  <!-- QUICK REF ALPHABET -->
+  <div class="ref-bar">
+    <strong>Kamus Kilat:</strong><br>
+    A=1, B=2, C=3, D=4, E=5, F=6, G=7, H=8, I=9, J=10, K=11, L=12, M=13, N=14, O=15, P=16, Q=17, R=18, S=19, T=20, U=21, V=22, W=23, X=24, Y=25, Z=26.
+  </div>
+
+  <script>
+    const scores = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
+
+    function addScore(teamId, pts) {
+      scores[teamId] += pts;
+      document.getElementById(`sc${teamId}`).innerText = scores[teamId];
+    }
+
+    function resetScores() {
+      if (confirm("Reset semua skor tim?")) {
+        for (let i = 1; i <= 5; i++) {
+          scores[i] = 0;
+          document.getElementById(`sc${i}`).innerText = 0;
+        }
+      }
+    }
+
+    function scrollToId(id) {
+      const el = document.getElementById(id);
+      if (el) el.scrollIntoView({ behavior: 'smooth' });
+    }
+  </script>
+
+</body>
+</html>

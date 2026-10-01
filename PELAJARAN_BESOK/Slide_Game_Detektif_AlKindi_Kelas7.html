@@ -1,0 +1,1189 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Slide TV - Detektif Sandi Al-Kindi | Matematika MTs Al-Imam</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800;900&family=JetBrains+Mono:wght@700;800&family=Amiri:wght@700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-main: #022c22;
+    --card-bg: #ffffff;
+    --primary: #064e3b;
+    --primary-light: #047857;
+    --accent: #d97706;
+    --gold: #f59e0b;
+    --cyan: #0284c7;
+    --text-dark: #0f172a;
+    --text-muted: #475569;
+    --border: #cbd5e1;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    background-color: var(--bg-main);
+    color: var(--text-dark);
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    height: 100vh;
+    width: 100vw;
+  }
+
+  /* Slide Carousel Container */
+  .slide-container {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .slide {
+    min-width: 100vw;
+    height: 100vh;
+    padding: 24px 45px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    background-color: var(--bg-main);
+  }
+
+  .slide-card {
+    background: var(--card-bg);
+    border-radius: 20px;
+    padding: 28px 36px;
+    height: calc(100vh - 100px);
+    box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* Slide Header */
+  .slide-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid #f1f5f9;
+    padding-bottom: 12px;
+    margin-bottom: 16px;
+  }
+
+  .slide-title-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .slide-badge {
+    background: var(--primary);
+    color: #ffffff;
+    font-size: 12px;
+    font-weight: 800;
+    padding: 5px 12px;
+    border-radius: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .slide-title {
+    font-size: 24px;
+    font-weight: 900;
+    color: var(--primary);
+    margin: 0;
+  }
+
+  .slide-subtitle {
+    font-size: 13px;
+    color: var(--text-muted);
+    font-weight: 600;
+  }
+
+  /* Slide Content Area */
+  .slide-body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    overflow: hidden;
+  }
+
+  /* Navigation Footer */
+  .slide-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 52px;
+    padding: 0 10px;
+  }
+
+  .footer-branding {
+    color: #a7f3d0;
+    font-size: 13px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .nav-buttons {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+  }
+
+  .btn-nav {
+    background: #047857;
+    color: #ffffff;
+    border: none;
+    padding: 8px 18px;
+    border-radius: 10px;
+    font-weight: 700;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .btn-nav:hover { background: #059669; }
+  .btn-nav:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  .slide-indicator {
+    color: #a7f3d0;
+    font-size: 13px;
+    font-weight: 800;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  /* Specific Slide Styles */
+  /* Slide 1: Cover */
+  .hero-grid {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 32px;
+    align-items: center;
+    height: 100%;
+  }
+
+  .hero-text h1 {
+    font-size: 38px;
+    font-weight: 900;
+    color: var(--primary);
+    line-height: 1.15;
+    margin-bottom: 12px;
+  }
+
+  .hero-quote {
+    background: #ecfdf5;
+    border-left: 4px solid var(--primary-light);
+    padding: 14px 18px;
+    border-radius: 0 12px 12px 0;
+    font-size: 14px;
+    color: #064e3b;
+    margin: 16px 0;
+    font-style: italic;
+  }
+
+  .hero-card-right {
+    background: linear-gradient(135deg, #064e3b, #047857);
+    color: #ffffff;
+    border-radius: 18px;
+    padding: 24px;
+    box-shadow: 0 10px 25px rgba(6, 78, 59, 0.3);
+  }
+
+  /* Slide 2: Groups */
+  .groups-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 14px;
+    height: 100%;
+    align-items: stretch;
+  }
+
+  .team-card {
+    background: #f8fafc;
+    border-radius: 14px;
+    border: 2px solid #e2e8f0;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: all 0.2s;
+  }
+
+  .team-card:hover {
+    border-color: var(--primary-light);
+    transform: translateY(-4px);
+    box-shadow: 0 8px 18px rgba(0,0,0,0.06);
+  }
+
+  .team-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid #e2e8f0;
+    padding-bottom: 8px;
+    margin-bottom: 10px;
+  }
+
+  .team-name {
+    font-size: 16px;
+    font-weight: 800;
+    color: var(--primary);
+  }
+
+  .team-captain {
+    background: #ecfdf5;
+    color: #047857;
+    font-weight: 800;
+    font-size: 12px;
+    padding: 6px 10px;
+    border-radius: 8px;
+    margin-bottom: 8px;
+    border: 1px solid #a7f3d0;
+  }
+
+  .team-members {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    font-size: 12px;
+    color: var(--text-dark);
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .team-members li {
+    background: #ffffff;
+    padding: 5px 8px;
+    border-radius: 6px;
+    border: 1px solid #e2e8f0;
+  }
+
+  /* Slide 3: Alphabet Table */
+  .table-alphabet {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 10px 0;
+  }
+
+  .table-alphabet th {
+    background: var(--primary);
+    color: #ffffff;
+    font-size: 13px;
+    padding: 8px 4px;
+    border: 1px solid #047857;
+    text-align: center;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .table-alphabet td {
+    background: #f8fafc;
+    font-size: 13px;
+    font-weight: 800;
+    padding: 8px 4px;
+    border: 1px solid var(--border);
+    text-align: center;
+    color: var(--primary);
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .cipher-demo-box {
+    background: #fffbeb;
+    border: 2px solid #fde68a;
+    border-radius: 14px;
+    padding: 16px 20px;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    margin-top: 14px;
+  }
+
+  /* Slide 4: 5 Secret Missions */
+  .mission-selector {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+
+  .mission-btn {
+    flex: 1;
+    background: #f1f5f9;
+    border: 2px solid #cbd5e1;
+    border-radius: 10px;
+    padding: 10px;
+    font-weight: 800;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .mission-btn.active {
+    background: var(--primary);
+    color: #ffffff;
+    border-color: var(--primary);
+    box-shadow: 0 4px 12px rgba(6, 78, 59, 0.3);
+  }
+
+  .cipher-display-card {
+    background: #0f172a;
+    color: #38bdf8;
+    border-radius: 16px;
+    padding: 28px;
+    text-align: center;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    box-shadow: inset 0 0 20px rgba(0,0,0,0.5);
+  }
+
+  .cipher-numbers {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 42px;
+    font-weight: 900;
+    letter-spacing: 6px;
+    color: #fde047;
+    background: rgba(253, 224, 71, 0.1);
+    padding: 14px 28px;
+    border-radius: 12px;
+    border: 2px dashed #ca8a04;
+    margin: 16px 0;
+  }
+
+  /* Slide 5: Grand Duel */
+  .grand-duel-card {
+    background: linear-gradient(135deg, #1e1b4b 0%, #0f172a 100%);
+    border-radius: 16px;
+    padding: 24px;
+    color: #ffffff;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    text-align: center;
+  }
+
+  .timer-box {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 48px;
+    font-weight: 900;
+    color: #4ade80;
+    background: rgba(0,0,0,0.4);
+    padding: 10px 32px;
+    border-radius: 14px;
+    border: 2px solid #22c55e;
+  }
+
+  .final-cipher-block {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    margin: 16px 0;
+  }
+
+  .cipher-word {
+    background: rgba(255,255,255,0.08);
+    border: 2px solid #6366f1;
+    border-radius: 12px;
+    padding: 14px 22px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 32px;
+    font-weight: 800;
+    color: #a5b4fc;
+    letter-spacing: 4px;
+  }
+</style>
+</head>
+<body>
+
+<div class="slide-container" id="slideContainer">
+
+  <!-- SLIDE 1: COVER & SEJARAH AL-KINDI -->
+  <div class="slide">
+    <div class="slide-card">
+      <div class="slide-header">
+        <div class="slide-title-wrapper">
+          <span class="slide-badge">Pertemuan Matematika</span>
+          <h2 class="slide-title">Detektif Sandi Al-Kindi</h2>
+        </div>
+        <span class="slide-subtitle">Kelas 7 MTs Al-Imam • Ustaz Rieza Eka Tomara, S.Kom.</span>
+      </div>
+      <div class="slide-body">
+        <div class="hero-grid">
+          <div class="hero-text">
+            <h1>Membongkar Pesan Rahasia dengan Aljabar & Logika</h1>
+            <div class="hero-quote">
+              "Kriptografi (ilmu sandi) pertama kali dirumuskan secara ilmiah di dunia Islam oleh cendekiawan besar <strong>Abu Yusuf Ya'qub Al-Kindi</strong> (abad ke-9 M di Baghdad)."
+            </div>
+            <p style="font-size: 14px; color: #475569; line-height: 1.6;">
+              Hari ini, kita mempraktikkan langsung bagaimana <strong>Variabel, Fungsi Pergeseran, dan Persamaan Matematika</strong> digunakan untuk mengamankan pesan rahasia para khalifah dan ilmuwan!
+            </p>
+          </div>
+          <div class="hero-card-right">
+            <h3 style="font-size: 18px; margin-bottom: 12px; color: #fde68a;">📜 Prinsip Dasar Detektif:</h3>
+            <ul style="font-size: 13px; line-height: 1.8; padding-left: 20px;">
+              <li>Setiap huruf <strong>A</strong> sampai <strong>Z</strong> diubah menjadi angka <strong>1</strong> sampai <strong>26</strong>.</li>
+              <li>Pesan diacak menggunakan rumus pergeseran aljabar: <strong>Y = X + K</strong>.</li>
+              <li>Tugas kalian adalah membalikkan rumus aljabar (<strong>X = Y - K</strong>) untuk membaca pesan aslinya!</li>
+              <li>Kerja tim, ketelitian hitung, dan kecepatan adalah kunci juara!</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">
+      <div class="footer-branding">🏛️ MTs Al-Andalus Al-Imam</div>
+      <div class="nav-buttons">
+        <button class="btn-nav" onclick="prevSlide()">◀ Kembali</button>
+        <span class="slide-indicator" id="indicator1">1 / 7</span>
+        <button class="btn-nav" onclick="nextSlide()">Lanjut ▶</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 2: MISTERI PAPAN TULIS & FOTO 3 JENDERAL -->
+  <div class="slide">
+    <div class="slide-card">
+      <div class="slide-header">
+        <div class="slide-title-wrapper">
+          <span class="slide-badge" style="background:#0284c7;">Studi Kasus Nyata</span>
+          <h2 class="slide-title">Misteri Papan Tulis di Balik Foto Para Komandan</h2>
+        </div>
+        <span class="slide-subtitle">Bagaimana Matematika Digunakan untuk Mengelabui Mata-Mata Musuh?</span>
+      </div>
+      <div class="slide-body">
+        <div style="display: grid; grid-template-columns: 1.15fr 1fr; gap: 28px; height: 100%; align-items: center;">
+          
+          <!-- Left: The Visual Image -->
+          <div style="position: relative; border-radius: 16px; overflow: hidden; border: 3px solid var(--accent); box-shadow: 0 12px 30px rgba(0,0,0,0.25);">
+            <img src="misteri_tiga_jenderal.jpg" alt="Misteri Tiga Jenderal" style="width: 100%; height: auto; display: block; object-fit: cover;">
+            <div style="position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(transparent, rgba(0,0,0,0.85)); padding: 12px 16px; color: #ffffff; font-size: 11.5px; font-weight: 600;">
+              🔍 <em>Perhatikan papan tulis di belakang mereka: Ada rumus <strong>Y = X + 4</strong> dan deretan angka!</em>
+            </div>
+          </div>
+
+          <!-- Right: The Narrative & Analogy -->
+          <div style="display: flex; flex-direction: column; gap: 12px;">
+            
+            <!-- Box 1: Apa yang Dilihat Orang Awam -->
+            <div style="background: #f1f5f9; border-left: 4px solid #64748b; border-radius: 0 12px 12px 0; padding: 12px 16px;">
+              <div style="font-size: 12px; font-weight: 800; color: #334155; text-transform: uppercase;">
+                👀 Mata-Mata Musuh Melihat:
+              </div>
+              <p style="font-size: 13px; color: #475569; margin-top: 4px; line-height: 1.5;">
+                <em>"Ah, ini cuma foto 3 komandan militer sedang berpose. Papan tulis di belakangnya cuma coretan rumus matematika dan angka acak yang membosankan. Abaikan saja!"</em>
+              </p>
+            </div>
+
+            <!-- Box 2: Rahasia Sebenarnya -->
+            <div style="background: #ecfdf5; border-left: 4px solid #059669; border-radius: 0 12px 12px 0; padding: 12px 16px;">
+              <div style="font-size: 12px; font-weight: 800; color: #065f46; text-transform: uppercase;">
+                🎯 Rahasia Intelijen Sebenarnya:
+              </div>
+              <p style="font-size: 13px; color: #047857; margin-top: 4px; line-height: 1.5;">
+                Papan tulis itu sengaja difoto untuk <strong>mengirimkan perintah rahasia</strong> ke markas kawan tanpa dicurigai musuh!
+              </p>
+            </div>
+
+            <!-- Box 3: Membongkar Sandi (X dan Y) -->
+            <div style="background: #fffbeb; border: 2px solid #fde68a; border-radius: 12px; padding: 12px 16px;">
+              <div style="font-size: 11px; font-weight: 800; color: #92400e; text-transform: uppercase;">
+                🔓 Cara Membongkar Sandinya (Analogi X & Y):
+              </div>
+              <ul style="font-size: 12.5px; color: #78350f; line-height: 1.6; margin-top: 4px; padding-left: 18px;">
+                <li><strong>Y (Yang Terlihat di Papan):</strong> Angka <strong>20 - 9 - 17 - 13 - 15 - 13 - 22</strong></li>
+                <li><strong>Rumus Pemecah:</strong> <strong>X = Y - 4</strong> (Kurangi setiap angka dengan 4)</li>
+                <li><strong>X (Pesan Asli Terbongkar):</strong> <strong>P - E - M - I - K - I - R</strong>!</li>
+              </ul>
+            </div>
+
+            <div style="font-size: 12px; font-weight: 700; color: #047857; text-align: center;">
+              💡 <em>"Matematika adalah bahasa rahasia terhebat di dunia!"</em>
+            </div>
+
+          </div>
+
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">
+      <div class="footer-branding">🏛️ MTs Al-Andalus Al-Imam</div>
+      <div class="nav-buttons">
+        <button class="btn-nav" onclick="prevSlide()">◀ Kembali</button>
+        <span class="slide-indicator" id="indicator2">2 / 7</span>
+        <button class="btn-nav" onclick="nextSlide()">Lanjut ▶</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 3: PEMBAGIAN 5 TIM DETEKTIF -->
+  <div class="slide">
+    <div class="slide-card">
+      <div class="slide-header">
+        <div class="slide-title-wrapper">
+          <span class="slide-badge">Formasi Pasukan</span>
+          <h2 class="slide-title">5 Markas Detektif Sandi Kelas 7</h2>
+        </div>
+        <span class="slide-subtitle">19 Santri Terbagi Menjadi 5 Tim Solid</span>
+      </div>
+      <div class="slide-body">
+        <div class="groups-grid">
+          <!-- Tim 1 -->
+          <div class="team-card">
+            <div>
+              <div class="team-header">
+                <span class="team-name">TIM 1 (ALPHA)</span>
+                <span>🛡️</span>
+              </div>
+              <div class="team-captain">👑 Hafidz (Kapten)</div>
+              <ul class="team-members">
+                <li>• Azka</li>
+                <li>• Atqan</li>
+                <li>• Naufal</li>
+              </ul>
+            </div>
+            <div style="font-size: 11px; color: #059669; font-weight: 700; text-align: center; margin-top: 8px;">
+              Markas Depan Kiri
+            </div>
+          </div>
+
+          <!-- Tim 2 -->
+          <div class="team-card">
+            <div>
+              <div class="team-header">
+                <span class="team-name">TIM 2 (BRAVO)</span>
+                <span>⚡</span>
+              </div>
+              <div class="team-captain">👑 Labib (Kapten)</div>
+              <ul class="team-members">
+                <li>• Dzaki</li>
+                <li>• Iwan</li>
+                <li>• Aziz</li>
+              </ul>
+            </div>
+            <div style="font-size: 11px; color: #059669; font-weight: 700; text-align: center; margin-top: 8px;">
+              Markas Depan Kanan
+            </div>
+          </div>
+
+          <!-- Tim 3 -->
+          <div class="team-card">
+            <div>
+              <div class="team-header">
+                <span class="team-name">TIM 3 (CHARLIE)</span>
+                <span>🔥</span>
+              </div>
+              <div class="team-captain">👑 Rifqi (Kapten)</div>
+              <ul class="team-members">
+                <li>• Hakim</li>
+                <li>• Farros</li>
+                <li>• Fadil</li>
+              </ul>
+            </div>
+            <div style="font-size: 11px; color: #059669; font-weight: 700; text-align: center; margin-top: 8px;">
+              Markas Belakang Kiri
+            </div>
+          </div>
+
+          <!-- Tim 4 -->
+          <div class="team-card">
+            <div>
+              <div class="team-header">
+                <span class="team-name">TIM 4 (DELTA)</span>
+                <span>🦅</span>
+              </div>
+              <div class="team-captain">👑 Fazril (Kapten)</div>
+              <ul class="team-members">
+                <li>• Khalish</li>
+                <li>• Fariq</li>
+                <li>• Ibra</li>
+              </ul>
+            </div>
+            <div style="font-size: 11px; color: #059669; font-weight: 700; text-align: center; margin-top: 8px;">
+              Markas Belakang Kanan
+            </div>
+          </div>
+
+          <!-- Tim 5 -->
+          <div class="team-card">
+            <div>
+              <div class="team-header">
+                <span class="team-name">TIM 5 (ECHO)</span>
+                <span>🌟</span>
+              </div>
+              <div class="team-captain">👑 Haidar (Kapten)</div>
+              <ul class="team-members">
+                <li>• Ayyash</li>
+                <li>• Azzam</li>
+              </ul>
+            </div>
+            <div style="font-size: 11px; color: #059669; font-weight: 700; text-align: center; margin-top: 8px;">
+              Markas Belakang Tengah
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">
+      <div class="footer-branding">🏛️ MTs Al-Andalus Al-Imam</div>
+      <div class="nav-buttons">
+        <button class="btn-nav" onclick="prevSlide()">◀ Kembali</button>
+        <span class="slide-indicator" id="indicator3">3 / 7</span>
+        <button class="btn-nav" onclick="nextSlide()">Lanjut ▶</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 3: TABEL KONVERSI AL-KINDI (A=1 s/d Z=26) -->
+  <div class="slide">
+    <div class="slide-card">
+      <div class="slide-header">
+        <div class="slide-title-wrapper">
+          <span class="slide-badge">Kamus Rahasia</span>
+          <h2 class="slide-title">Tabel Indeks Sandi Al-Kindi (A = 1 s.d. Z = 26)</h2>
+        </div>
+        <span class="slide-subtitle">Pedoman Resmi untuk Memecahkan Angka Menjadi Huruf</span>
+      </div>
+      <div class="slide-body">
+        <!-- Table Row 1: A - M -->
+        <table class="table-alphabet">
+          <tr>
+            <th>A</th><th>B</th><th>C</th><th>D</th><th>E</th><th>F</th><th>G</th><th>H</th><th>I</th><th>J</th><th>K</th><th>L</th><th>M</th>
+          </tr>
+          <tr>
+            <td>1</td><td>2</td><td>3</td><td>4</td><td>5</td><td>6</td><td>7</td><td>8</td><td>9</td><td>10</td><td>11</td><td>12</td><td>13</td>
+          </tr>
+        </table>
+
+        <!-- Table Row 2: N - Z -->
+        <table class="table-alphabet">
+          <tr>
+            <th>N</th><th>O</th><th>P</th><th>Q</th><th>R</th><th>S</th><th>T</th><th>U</th><th>V</th><th>W</th><th>X</th><th>Y</th><th>Z</th>
+          </tr>
+          <tr>
+            <td>14</td><td>15</td><td>16</td><td>17</td><td>18</td><td>19</td><td>20</td><td>21</td><td>22</td><td>23</td><td>24</td><td>25</td><td>26</td>
+          </tr>
+        </table>
+
+        <!-- Contoh Aljabar Sandi -->
+        <div class="cipher-demo-box">
+          <div>
+            <div style="font-size: 11px; font-weight: 800; color: #92400e; text-transform: uppercase;">🔒 Rumus Kunci Rahasia:</div>
+            <div style="font-size: 24px; font-weight: 900; color: #b45309; font-family: 'JetBrains Mono', monospace;">
+              Y = X + 3
+            </div>
+            <div style="font-size: 12px; color: #78350f;">(Angka Sandi = Huruf Asli ditambah 3)</div>
+          </div>
+          <div style="font-size: 28px; color: #d97706;">➔</div>
+          <div>
+            <div style="font-size: 11px; font-weight: 800; color: #166534; text-transform: uppercase;">🔓 Rumus Detektif (Memecahkan):</div>
+            <div style="font-size: 24px; font-weight: 900; color: #15803d; font-family: 'JetBrains Mono', monospace;">
+              X = Y - 3
+            </div>
+            <div style="font-size: 12px; color: #14532d;">(Huruf Asli = Angka Sandi dikurangi 3!)</div>
+          </div>
+          <div style="font-size: 28px; color: #d97706;">➔</div>
+          <div style="background: #ffffff; padding: 8px 16px; border-radius: 10px; border: 1px solid #cbd5e1;">
+            <div style="font-size: 11px; font-weight: 800; color: #475569;">CONTOH ANGKANYA:</div>
+            <div style="font-size: 18px; font-weight: 800; color: #0284c7; font-family: 'JetBrains Mono', monospace;">Angka: 12 ➔ 12 - 3 = 9 (Huruf I)</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">
+      <div class="footer-branding">🏛️ MTs Al-Andalus Al-Imam</div>
+      <div class="nav-buttons">
+        <button class="btn-nav" onclick="prevSlide()">◀ Kembali</button>
+        <span class="slide-indicator" id="indicator4">4 / 7</span>
+        <button class="btn-nav" onclick="nextSlide()">Lanjut ▶</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 4: 5 MISI KHUSUS KELOMPOK (ANTI-CONTEK) -->
+  <div class="slide">
+    <div class="slide-card">
+      <div class="slide-header">
+        <div class="slide-title-wrapper">
+          <span class="slide-badge" style="background:#d97706;">Babak 1: Misi Rahasia</span>
+          <h2 class="slide-title">Pecahkan Dokumen Rahasia Markas Kalian!</h2>
+        </div>
+        <span class="slide-subtitle">Setiap Tim Mendapat Sandi Berbeda (Anti-Contek!)</span>
+      </div>
+      <div class="slide-body">
+        <!-- Selector Tim -->
+        <div class="mission-selector">
+          <button class="mission-btn active" onclick="showGroupMission(1)" id="mBtn1">🛡️ Tim 1 (Alpha)</button>
+          <button class="mission-btn" onclick="showGroupMission(2)" id="mBtn2">⚡ Tim 2 (Bravo)</button>
+          <button class="mission-btn" onclick="showGroupMission(3)" id="mBtn3">🔥 Tim 3 (Charlie)</button>
+          <button class="mission-btn" onclick="showGroupMission(4)" id="mBtn4">🦅 Tim 4 (Delta)</button>
+          <button class="mission-btn" onclick="showGroupMission(5)" id="mBtn5">🌟 Tim 5 (Echo)</button>
+        </div>
+
+        <!-- Display Card -->
+        <div class="cipher-display-card">
+          <div id="missionTargetLabel" style="font-size: 14px; font-weight: 800; color: #38bdf8; text-transform: uppercase; letter-spacing: 1px;">
+            DOKUMEN RAHASIA TIM 1 (ALPHA)
+          </div>
+          
+          <div id="missionFormulaLabel" style="font-size: 16px; color: #a5b4fc; margin-top: 6px; font-family: 'JetBrains Mono', monospace;">
+            🔓 Rumus Dekripsi: X = Y - 2
+          </div>
+
+          <div class="cipher-numbers" id="missionCipherCodes">
+            14 - 17 - 9 - 11 - 13 - 3
+          </div>
+
+          <div style="font-size: 13px; color: #94a3b8; max-width: 600px;">
+            💡 <em>Instruksi Tim: Bagi-bagi angka ke anggota tim! Setelah kata terangkai, Kapten/Juru Bicara mengacungkan tangan dan menyebutkan kata rahasianya ke Ustaz!</em>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">
+      <div class="footer-branding">🏛️ MTs Al-Andalus Al-Imam</div>
+      <div class="nav-buttons">
+        <button class="btn-nav" onclick="prevSlide()">◀ Kembali</button>
+        <span class="slide-indicator" id="indicator5">5 / 7</span>
+        <button class="btn-nav" onclick="nextSlide()">Lanjut ▶</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 6: GRAND DUEL REBUTAN (SEMUA KELOMPOK) -->
+  <div class="slide">
+    <div class="slide-card">
+      <div class="slide-header">
+        <div class="slide-title-wrapper">
+          <span class="slide-badge" style="background:#dc2626;" id="duelHeaderBadge">Babak 2: Duel Utama</span>
+          <h2 class="slide-title">Grand Duel Al-Kindi: Babak Rebutan Final</h2>
+        </div>
+        <span class="slide-subtitle" id="duelHeaderSubtitle">Semua Tim Berlomba Cepat Memecahkan Sandi Rahasia!</span>
+      </div>
+      <div class="slide-body">
+        <div class="grand-duel-card">
+          <!-- Switcher Rebutan 1 & Rebutan 2 -->
+          <div style="display: flex; gap: 12px; justify-content: center; align-items: center; margin-bottom: 6px;">
+            <button id="duelTab1" class="btn-nav" style="background: #e11d48; border: 2px solid #fda4af; padding: 7px 18px; font-size: 13px; font-weight: 800; cursor: pointer; border-radius: 999px; box-shadow: 0 4px 12px rgba(225,29,72,0.4);" onclick="switchDuelRound(1)">
+              🔥 SOAL REBUTAN 1 (5 + 5 HURUF)
+            </button>
+            <button id="duelTab2" class="btn-nav" style="background: rgba(255,255,255,0.08); border: 2px solid #475569; color: #94a3b8; padding: 7px 18px; font-size: 13px; font-weight: 800; cursor: pointer; border-radius: 999px;" onclick="switchDuelRound(2)">
+              🏆 SOAL REBUTAN 2: FINAL (7 + 4 HURUF)
+            </button>
+          </div>
+
+          <div>
+            <span id="duelRoundBadge" style="background: #ef4444; color:#fff; font-size: 12px; font-weight: 800; padding: 4px 14px; border-radius: 999px; text-transform: uppercase;">
+              🚨 TANTANGAN REBUTAN 1
+            </span>
+            <div id="duelFormulaLabel" style="font-size: 22px; font-weight: 800; color: #fde047; margin-top: 8px; font-family: 'JetBrains Mono', monospace;">
+              🔓 RUMUS DEKRIPSI BERSAMA: X = Y - 3
+            </div>
+          </div>
+
+          <div class="final-cipher-block">
+            <!-- Word 1 -->
+            <div>
+              <div id="cipherLabel1" style="font-size: 12px; color: #818cf8; font-weight: 700; margin-bottom: 6px;">KATA 1 (5 HURUF):</div>
+              <div class="cipher-word" id="cipherWord1">13 - 24 - 4 - 21 - 4</div>
+            </div>
+            <!-- Word 2 -->
+            <div>
+              <div id="cipherLabel2" style="font-size: 12px; color: #818cf8; font-weight: 700; margin-bottom: 6px;">KATA 2 (5 HURUF):</div>
+              <div class="cipher-word" id="cipherWord2">14 - 8 - 15 - 4 - 22</div>
+            </div>
+          </div>
+
+          <!-- Clue / Reveal Box -->
+          <div id="hintBox" style="display: none; background: rgba(251, 191, 36, 0.15); border: 1px dashed #f59e0b; border-radius: 10px; padding: 10px 20px; font-size: 14px; font-weight: 700; color: #fef08a; margin: 4px 0;">
+            💡 PETUNJUK DARI USTAZ: <span id="hintText"></span>
+          </div>
+
+          <!-- Closing Box -->
+          <div id="closingBox" style="display: none; background: rgba(16, 185, 129, 0.2); border: 2px solid #10b981; border-radius: 12px; padding: 12px 24px; color: #ffffff; margin: 6px 0; text-align: center;">
+            <div id="closingTitle" style="font-size: 20px; font-weight: 900; color: #fde047; letter-spacing: 2px;">🏆 SELAMAT KEPADA SANG JUARA KELAS! 🏆</div>
+            <div id="closingSubtitle" style="font-size: 13px; color: #e2e8f0; font-weight: 600; margin-top: 4px;">"Logika matematika, ketelitian algoritma, dan kerja sama tim membuktikan kehebatan kalian!"</div>
+          </div>
+
+          <!-- Timer & Action Buttons -->
+          <div style="display: flex; gap: 16px; align-items: center; justify-content: center; flex-wrap: wrap;">
+            <div class="timer-box" id="duelTimer">02:00</div>
+            
+            <div style="display: flex; gap: 8px; align-items: center;">
+              <button class="btn-nav" style="background:#16a34a; font-size: 13px; padding: 8px 14px;" onclick="toggleDuelTimer()" id="btnTimerControl">
+                ▶️ Mulai Waktu
+              </button>
+              <button class="btn-nav" style="background:#0284c7; font-size: 13px; padding: 8px 14px;" onclick="addDuelMinute()">
+                ⏱️ +1 Menit (Extra Time)
+              </button>
+              <button class="btn-nav" style="background:#d97706; font-size: 13px; padding: 8px 14px;" onclick="giveDuelHint()">
+                💡 Buka Petunjuk
+              </button>
+              <button class="btn-nav" style="background:#4338ca; font-size: 13px; padding: 8px 14px;" onclick="revealDuelAnswer()">
+                🎉 Buka Jawaban Resmi
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">
+      <div class="footer-branding">🏛️ MTs Al-Andalus Al-Imam</div>
+      <div class="nav-buttons">
+        <button class="btn-nav" onclick="prevSlide()">◀ Kembali</button>
+        <span class="slide-indicator" id="indicator6">6 / 7</span>
+        <button class="btn-nav" onclick="nextSlide()">Lanjut ▶</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 7: REFLEKSI MATEMATIKA & PENUTUP -->
+  <div class="slide">
+    <div class="slide-card">
+      <div class="slide-header">
+        <div class="slide-title-wrapper">
+          <span class="slide-badge">Refleksi Akhir</span>
+          <h2 class="slide-title">Kaitan Sandi Al-Kindi dengan Matematika</h2>
+        </div>
+        <span class="slide-subtitle">Mengapa Matematika Menjadi Pondasi Dunia Digital?</span>
+      </div>
+      <div class="slide-body">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; height: 100%; align-items: center;">
+          <div style="background: #f0fdf4; border: 2px solid #bbf7d0; border-radius: 16px; padding: 24px;">
+            <h3 style="color: #166534; font-size: 18px; margin-bottom: 12px;">📐 Hubungan ke Materi Matematika:</h3>
+            <ul style="font-size: 13.5px; line-height: 1.8; color: #14532d; padding-left: 20px;">
+              <li><strong>Variabel (X dan Y):</strong> Huruf asli dilambangkan dengan <strong>X</strong> (input), sedangkan angka sandi dilambangkan dengan <strong>Y</strong> (output).</li>
+              <li><strong>Fungsi Matematika:</strong> <strong>f(x) = x + 3</strong> adalah fungsi enkripsi.</li>
+              <li><strong>Invers Fungsi (Kebalikan):</strong> <strong>x = y - 3</strong> adalah rumus dekripsi yang kalian gunakan tadi!</li>
+              <li>Sandi inilah cikal bakal keamanan password WhatsApp, perbankan syariah, dan internet dunia!</li>
+            </ul>
+          </div>
+
+          <div style="background: #fffbeb; border: 2px solid #fde68a; border-radius: 16px; padding: 24px;">
+            <h3 style="color: #92400e; font-size: 18px; margin-bottom: 12px;">🌟 Nilai Karakter & Tarbawi:</h3>
+            <ul style="font-size: 13.5px; line-height: 1.8; color: #78350f; padding-left: 20px;">
+              <li><strong>Amanah Menjaga Rahasia:</strong> Sandi rahasia mengajarkan pentingnya menjaga amanah dan rahasia kaum muslimin.</li>
+              <li><strong>Itqan (Ketelitian Tinggi):</strong> Salah 1 angka saja, seluruh kalimat tidak akan terbaca.</li>
+              <li><strong>Kekuatan Ukhuwah:</strong> Tim yang menang adalah tim yang saling membagi tugas dan saling menyemangati temannya!</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">
+      <div class="footer-branding">🏛️ MTs Al-Andalus Al-Imam</div>
+      <div class="nav-buttons">
+        <button class="btn-nav" onclick="prevSlide()">◀ Kembali</button>
+        <span class="slide-indicator" id="indicator7">7 / 7</span>
+        <button class="btn-nav" onclick="nextSlide()" disabled>Selesai 🏁</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  let currentSlide = 0;
+  const totalSlides = 7;
+
+  function updateSlide() {
+    const container = document.getElementById('slideContainer');
+    container.style.transform = `translateX(-${currentSlide * 100}vw)`;
+  }
+
+  function nextSlide() {
+    if (currentSlide < totalSlides - 1) {
+      currentSlide++;
+      updateSlide();
+    }
+  }
+
+  function prevSlide() {
+    if (currentSlide > 0) {
+      currentSlide--;
+      updateSlide();
+    }
+  }
+
+  // Keyboard navigation
+  window.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') {
+      nextSlide();
+    } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+      prevSlide();
+    }
+  });
+
+  // Group Missions Data (Babak 1)
+  const groupMissions = {
+    1: {
+      team: 'TIM 1 (ALPHA) - Hafidz, Azka, Atqan, Naufal',
+      formula: '🔓 Rumus Dekripsi: X = Y - 2',
+      cipher: '14 - 17 - 9 - 11 - 13 - 3'
+    },
+    2: {
+      team: 'TIM 2 (BRAVO) - Labib, Dzaki, Iwan, Aziz',
+      formula: '🔓 Rumus Dekripsi: X = Y - 3',
+      cipher: '4 - 15 - 13 - 4 - 5 - 4 - 21'
+    },
+    3: {
+      team: 'TIM 3 (CHARLIE) - Rifqi, Hakim, Farros, Fadil',
+      formula: '🔓 Rumus Dekripsi: X = Y - 4',
+      cipher: '15 - 19 - 17 - 20 - 5 - 23'
+    },
+    4: {
+      team: 'TIM 4 (DELTA) - Fazril, Khalish, Fariq, Ibra',
+      formula: '🔓 Rumus Dekripsi: X = Y - 2',
+      cipher: '10 - 11 - 12 - 20 - 3 - 10'
+    },
+    5: {
+      team: 'TIM 5 (ECHO) - Haidar, Ayyash, Azzam',
+      formula: '🔓 Rumus Dekripsi: X = Y - 3',
+      cipher: '23 - 4 - 20 - 26 - 4'
+    }
+  };
+
+  function showGroupMission(groupId) {
+    for (let i = 1; i <= 5; i++) {
+      const btn = document.getElementById(`mBtn${i}`);
+      if (i === groupId) btn.classList.add('active');
+      else btn.classList.remove('active');
+    }
+
+    const data = groupMissions[groupId];
+    document.getElementById('missionTargetLabel').innerText = `DOKUMEN RAHASIA: ${data.team}`;
+    document.getElementById('missionFormulaLabel').innerText = data.formula;
+    document.getElementById('missionCipherCodes').innerText = data.cipher;
+  }
+
+  // Duel Timer & Multi-Round Grand Duel System (Rebutan 1 & Rebutan 2)
+  let currentDuelRound = 1;
+  let timerInterval = null;
+  let timeLeft = 120; // 2 minutes
+  let hintStep = 0;
+
+  const duelData = {
+    1: {
+      badge: "🚨 TANTANGAN REBUTAN 1",
+      formula: "🔓 RUMUS DEKRIPSI BERSAMA: X = Y - 3",
+      word1Label: "KATA 1 (5 HURUF):",
+      word1Cipher: "13 - 24 - 4 - 21 - 4",
+      word2Label: "KATA 2 (5 HURUF):",
+      word2Cipher: "14 - 8 - 15 - 4 - 22",
+      hints: [
+        { text: "Bocoran 1 Huruf: Di Kata 1, angka 24 - 3 = 21 (Huruf ke-2 adalah U)!", w1: "13 - <span style='color:#fde047; font-weight:900;'>U</span> - 4 - 21 - 4", w2: null },
+        { text: "Bocoran 1 Huruf: Di Kata 2, angka 15 - 3 = 12 (Huruf ke-3 adalah L)!", w1: null, w2: "14 - 8 - <span style='color:#fde047; font-weight:900;'>L</span> - 4 - 22" },
+        { text: "Gunakan rumus X = Y - 3! Kurangi setiap angka di layar dengan 3!", w1: null, w2: null }
+      ],
+      revealW1: "J - U - A - R - A",
+      revealW2: "K - E - L - A - S",
+      closingTitle: "🏆 SELAMAT KEPADA SANG JUARA KELAS! 🏆",
+      closingSubtitle: "Logika matematika, ketelitian algoritma, dan kerja sama tim membuktikan kehebatan kalian!"
+    },
+    2: {
+      badge: "🏆 TANTANGAN REBUTAN 2 (BABAK PENENTU FINAL)",
+      formula: "🔓 RUMUS DEKRIPSI BERSAMA: X = Y - 4",
+      word1Label: "KATA 1 (7 HURUF):",
+      word1Cipher: "6 - 13 - 18 - 24 - 5 - 18 - 11",
+      word2Label: "KATA 2 (4 HURUF):",
+      word2Cipher: "9 - 17 - 5 - 23",
+      hints: [
+        { text: "Bocoran 1 Huruf: Di Kata 1, angka 24 - 4 = 20 (Huruf ke-4 adalah T)!", w1: "6 - 13 - 18 - <span style='color:#fde047; font-weight:900;'>T</span> - 5 - 18 - 11", w2: null },
+        { text: "Bocoran 1 Huruf: Di Kata 2, angka 17 - 4 = 13 (Huruf ke-2 adalah M)!", w1: null, w2: "9 - <span style='color:#fde047; font-weight:900;'>M</span> - 5 - 23" },
+        { text: "Gunakan rumus X = Y - 4! Kurangi setiap angka di layar dengan 4!", w1: null, w2: null }
+      ],
+      revealW1: "B - I - N - T - A - N - G",
+      revealW2: "E - M - A - S",
+      closingTitle: "🌟 KALIAN SEMUA ADALAH BINTANG EMAS AL-IMAM! 🌟",
+      closingSubtitle: "Maha Hebat Allah yang menciptakan akal dan kecerdasan. Teruslah berjuang meraih kemuliaan ilmu!"
+    }
+  };
+
+  function switchDuelRound(roundNum) {
+    currentDuelRound = roundNum;
+    hintStep = 0;
+
+    // Reset Timer
+    if (timerInterval) {
+      clearInterval(timerInterval);
+      timerInterval = null;
+    }
+    timeLeft = 120;
+    updateTimerDisplay();
+    const btn = document.getElementById('btnTimerControl');
+    btn.innerText = "▶️ Mulai Waktu";
+    btn.style.background = "#16a34a";
+
+    // Reset Boxes
+    document.getElementById('hintBox').style.display = 'none';
+    document.getElementById('closingBox').style.display = 'none';
+
+    // Tabs Styling
+    const tab1 = document.getElementById('duelTab1');
+    const tab2 = document.getElementById('duelTab2');
+    if (roundNum === 1) {
+      tab1.style.background = "#e11d48";
+      tab1.style.borderColor = "#fda4af";
+      tab1.style.color = "#ffffff";
+      tab1.style.boxShadow = "0 4px 12px rgba(225,29,72,0.4)";
+
+      tab2.style.background = "rgba(255,255,255,0.08)";
+      tab2.style.borderColor = "#475569";
+      tab2.style.color = "#94a3b8";
+      tab2.style.boxShadow = "none";
+    } else {
+      tab2.style.background = "#e11d48";
+      tab2.style.borderColor = "#fda4af";
+      tab2.style.color = "#ffffff";
+      tab2.style.boxShadow = "0 4px 12px rgba(225,29,72,0.4)";
+
+      tab1.style.background = "rgba(255,255,255,0.08)";
+      tab1.style.borderColor = "#475569";
+      tab1.style.color = "#94a3b8";
+      tab1.style.boxShadow = "none";
+    }
+
+    // Load Data
+    const data = duelData[roundNum];
+    document.getElementById('duelRoundBadge').innerText = data.badge;
+    document.getElementById('duelFormulaLabel').innerText = data.formula;
+    document.getElementById('cipherLabel1').innerText = data.word1Label;
+    document.getElementById('cipherLabel2').innerText = data.word2Label;
+
+    const w1 = document.getElementById('cipherWord1');
+    const w2 = document.getElementById('cipherWord2');
+    w1.innerHTML = data.word1Cipher;
+    w1.style.color = "#a5b4fc";
+    w1.style.borderColor = "#6366f1";
+    w1.style.background = "rgba(255,255,255,0.08)";
+
+    w2.innerHTML = data.word2Cipher;
+    w2.style.color = "#a5b4fc";
+    w2.style.borderColor = "#6366f1";
+    w2.style.background = "rgba(255,255,255,0.08)";
+  }
+
+  function updateTimerDisplay() {
+    const m = Math.floor(timeLeft / 60).toString().padStart(2, '0');
+    const s = (timeLeft % 60).toString().padStart(2, '0');
+    const timerEl = document.getElementById('duelTimer');
+    timerEl.innerText = `${m}:${s}`;
+    if (timeLeft <= 30) {
+      timerEl.style.color = "#ef4444";
+      timerEl.style.borderColor = "#ef4444";
+    } else {
+      timerEl.style.color = "#4ade80";
+      timerEl.style.borderColor = "#22c55e";
+    }
+  }
+
+  function toggleDuelTimer() {
+    const btn = document.getElementById('btnTimerControl');
+    if (timerInterval) {
+      // Pause
+      clearInterval(timerInterval);
+      timerInterval = null;
+      btn.innerText = "▶️ Lanjut Waktu";
+      btn.style.background = "#16a34a";
+    } else {
+      // Start / Resume
+      if (timeLeft <= 0) timeLeft = 120;
+      updateTimerDisplay();
+      btn.innerText = "⏸️ Jeda Waktu";
+      btn.style.background = "#eab308";
+      timerInterval = setInterval(() => {
+        timeLeft--;
+        if (timeLeft <= 0) {
+          clearInterval(timerInterval);
+          timerInterval = null;
+          const timerEl = document.getElementById('duelTimer');
+          timerEl.innerText = "WAKTU HABIS!";
+          timerEl.style.color = "#ef4444";
+          btn.innerText = "▶️ Mulai Lagi";
+          btn.style.background = "#16a34a";
+          // Otomatis ingatkan buka petunjuk
+          document.getElementById('hintBox').style.display = 'block';
+          document.getElementById('hintText').innerText = "Waktu habis! Ustaz silakan klik tombol '💡 Buka Petunjuk' atau '+1 Menit'!";
+          return;
+        }
+        updateTimerDisplay();
+      }, 1000);
+    }
+  }
+
+  function addDuelMinute() {
+    timeLeft += 60;
+    updateTimerDisplay();
+    // Jika timer mati, jalankan
+    if (!timerInterval) toggleDuelTimer();
+  }
+
+  function giveDuelHint() {
+    hintStep++;
+    const hintBox = document.getElementById('hintBox');
+    const hintText = document.getElementById('hintText');
+    hintBox.style.display = 'block';
+
+    const data = duelData[currentDuelRound];
+    const hints = data.hints;
+    const currentHint = hints[Math.min(hintStep - 1, hints.length - 1)];
+
+    hintText.innerText = currentHint.text;
+    if (currentHint.w1) {
+      document.getElementById('cipherWord1').innerHTML = currentHint.w1;
+    }
+    if (currentHint.w2) {
+      document.getElementById('cipherWord2').innerHTML = currentHint.w2;
+    }
+  }
+
+  function revealDuelAnswer() {
+    // Hentikan timer jika jalan
+    if (timerInterval) {
+      clearInterval(timerInterval);
+      timerInterval = null;
+      document.getElementById('btnTimerControl').innerText = "▶️ Selesai";
+    }
+
+    const data = duelData[currentDuelRound];
+
+    // Tampilkan Jawaban Emas
+    const w1 = document.getElementById('cipherWord1');
+    const w2 = document.getElementById('cipherWord2');
+    w1.innerHTML = data.revealW1;
+    w1.style.color = "#fde047";
+    w1.style.borderColor = "#eab308";
+    w1.style.background = "rgba(234, 179, 8, 0.2)";
+
+    w2.innerHTML = data.revealW2;
+    w2.style.color = "#fde047";
+    w2.style.borderColor = "#eab308";
+    w2.style.background = "rgba(234, 179, 8, 0.2)";
+
+    // Tampilkan Closing Box
+    const closingBox = document.getElementById('closingBox');
+    document.getElementById('closingTitle').innerText = data.closingTitle;
+    document.getElementById('closingSubtitle').innerText = `"${data.closingSubtitle}"`;
+    closingBox.style.display = 'block';
+
+    const hintBox = document.getElementById('hintBox');
+    hintBox.style.display = 'block';
+    const cleanWord = `${data.revealW1.replace(/ - /g, '')} ${data.revealW2.replace(/ - /g, '')}`;
+    document.getElementById('hintText').innerText = `🎉 RESMI TERBONGKAR: '${cleanWord}'!`;
+  }
+</script>
+
+</body>
+</html>

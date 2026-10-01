@@ -1,0 +1,8 @@
+const { PrismaClient } = require('@prisma/client');
+const prisma = new PrismaClient();
+async function main() {
+  const semuaSantri = await prisma.santriAktif.findMany();
+  const salman = semuaSantri.find(s => s.nama_lengkap.toLowerCase().includes('salman'));
+  console.log('Salman from findMany:', salman ? salman.nama_lengkap : 'NOT FOUND');
+}
+main().finally(() => prisma.$disconnect());

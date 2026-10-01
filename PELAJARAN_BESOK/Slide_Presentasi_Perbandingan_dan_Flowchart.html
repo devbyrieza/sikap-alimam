@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Slide KBM MTs 7 - Perbandingan Senilai & Flowchart Logika</title>
+<style>
+  :root {
+    --bg-main: #022c22;
+    --card-bg: #ffffff;
+    --primary: #064e3b;
+    --primary-light: #047857;
+    --accent: #d97706;
+    --text-dark: #0f172a;
+    --text-muted: #475569;
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background-color: var(--bg-main);
+    color: var(--text-dark);
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    height: 100vh;
+    width: 100vw;
+  }
+
+  .slide-container {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .slide {
+    min-width: 100vw;
+    height: 100vh;
+    padding: 30px 50px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    background-color: var(--bg-main);
+  }
+
+  .slide-card {
+    background: var(--card-bg);
+    border-radius: 24px;
+    padding: 32px 40px;
+    height: calc(100vh - 120px);
+    box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    border: 3px solid #10b981;
+    overflow-y: auto;
+  }
+
+  .slide-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid #e2e8f0;
+    padding-bottom: 14px;
+    margin-bottom: 16px;
+  }
+
+  .slide-title {
+    font-size: 26px;
+    font-weight: 900;
+    color: var(--primary);
+    margin: 0;
+  }
+
+  .badge-tag {
+    background: #ecfdf5;
+    color: var(--primary-light);
+    font-size: 14px;
+    font-weight: 800;
+    padding: 6px 16px;
+    border-radius: 20px;
+    border: 1px solid #a7f3d0;
+  }
+
+  .content-body {
+    flex: 1;
+    font-size: 19px;
+    line-height: 1.6;
+  }
+
+  .grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+
+  .box-highlight {
+    background: #f0fdf4;
+    border-left: 5px solid var(--primary-light);
+    padding: 16px 20px;
+    border-radius: 0 16px 16px 0;
+    margin-bottom: 16px;
+  }
+
+  .box-warning {
+    background: #fffbeb;
+    border-left: 5px solid var(--accent);
+    padding: 16px 20px;
+    border-radius: 0 16px 16px 0;
+    margin-bottom: 16px;
+  }
+
+  .flow-symbol-card {
+    background: #f8fafc;
+    border: 2px solid #cbd5e1;
+    border-radius: 16px;
+    padding: 16px;
+    text-align: center;
+  }
+
+  .symbol-shape {
+    font-size: 32px;
+    margin-bottom: 6px;
+  }
+
+  .fraction-box {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    vertical-align: middle;
+  }
+
+  .fraction-box .num { padding: 0 8px; }
+  .fraction-box .denom { border-top: 3px solid #b45309; width: 100%; text-align: center; padding: 0 8px; }
+
+  .btn-nav {
+    background: #047857;
+    color: white;
+    border: none;
+    padding: 10px 24px;
+    font-size: 16px;
+    font-weight: 700;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  .btn-nav:hover { background: #064e3b; }
+</style>
+</head>
+<body>
+
+<div class="slide-container" id="slideContainer">
+
+  <!-- SLIDE 1: HERO COVER -->
+  <div class="slide">
+    <div class="slide-card" style="text-align: center; justify-content: center; background: linear-gradient(135deg, #ffffff 0%, #f0fdf4 100%);">
+      <div style="font-size: 50px; margin-bottom: 10px;">🕌🧮💻</div>
+      <h1 style="font-size: 36px; color: var(--primary); font-weight: 900; margin-bottom: 10px;">
+        MATEMATIKA & LOGIKA PERBANDINGAN SENILAI
+      </h1>
+      <p style="font-size: 22px; color: var(--primary-light); font-weight: 700; margin-bottom: 24px;">
+        Studi Kasus Belanja Toko Imla & Pemantapan Flowchart Algoritma
+      </p>
+      <div style="display: inline-block; background: #064e3b; color: white; padding: 12px 30px; border-radius: 50px; font-weight: 800; font-size: 18px;">
+        Kelas 7 MTs Al-Imam · Ustaz Rieza Eka Tomara, S.Kom
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 2: PERBANDINGAN SENILAI DI TOKO IMLA -->
+  <div class="slide">
+    <div class="slide-card">
+      <div class="slide-header">
+        <h2 class="slide-title">🍞 1. Perbandingan Senilai di Toko Imla</h2>
+        <span class="badge-tag">Konsep Dasar</span>
+      </div>
+      <div class="content-body">
+        <div class="box-highlight">
+          <strong>Prinsip Perbandingan Senilai:</strong> Jika jumlah barang <em>bertambah</em>, maka total harga yang dibayar juga ikut <em>bertambah</em> secara sebanding!
+        </div>
+        <div class="grid-2" style="margin-top: 16px;">
+          <div style="background: #f8fafc; border: 2px dashed #cbd5e1; padding: 20px; border-radius: 16px;">
+            <h3 style="color: var(--primary); margin-top: 0;">🛒 Contoh Roti Toko Imla:</h3>
+            <ul style="font-size: 20px; line-height: 1.8;">
+              <li><strong>1 Roti</strong> = Rp 3.000</li>
+              <li><strong>2 Roti</strong> = Rp 6.000</li>
+              <li><strong>5 Roti</strong> = Rp 15.000</li>
+              <li><strong><i>x</i> Roti</strong> = <i>x</i> × Rp 3.000</li>
+            </ul>
+          </div>
+          <div style="background: #fffbeb; border: 2px solid #fde68a; padding: 20px; border-radius: 16px; display: flex; flex-direction: column; justify-content: center;">
+            <h3 style="color: var(--accent); margin-top: 0; text-align: center;">📐 Rumus Matematika:</h3>
+            
+            <!-- PECAHAN RUMUS HTML CANTIK -->
+            <div style="font-size: 34px; font-weight: bold; text-align: center; margin: 15px 0; color: #b45309; display: flex; align-items: center; justify-content: center; gap: 15px;">
+              <div class="fraction-box">
+                <span class="num">a<sub>1</sub></span>
+                <span class="denom">a<sub>2</sub></span>
+              </div>
+              <span style="font-size: 38px; color: #b45309;">=</span>
+              <div class="fraction-box">
+                <span class="num">b<sub>1</sub></span>
+                <span class="denom">b<sub>2</sub></span>
+              </div>
+            </div>
+
+            <p style="font-size: 18px; color: #78350f; text-align: center; margin: 10px 0 0 0; font-weight: bold;">
+              Perkalian Silang: a<sub>1</sub> × b<sub>2</sub> = a<sub>2</sub> × b<sub>1</sub>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 3: PEMANTAPAN FLOWCHART (3 SIMBOL UTAMA) -->
+  <div class="slide">
+    <div class="slide-card">
+      <div class="slide-header">
+        <h2 class="slide-title">💻 2. Pemantapan Flowchart Algoritma</h2>
+        <span class="badge-tag">Informatika S.Kom</span>
+      </div>
+      <div class="content-body">
+        <p style="margin-top: 0;">Mari kita ingat kembali <strong>3 Simbol Utama Flowchart</strong> agar alur logikamu sempurna:</p>
+        <div class="grid-2" style="grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-top: 20px;">
+          <div class="flow-symbol-card">
+            <div class="symbol-shape">🛑</div>
+            <strong style="color: var(--primary); font-size: 18px;">OVAL</strong>
+            <p style="font-size: 15px; color: var(--text-muted); margin: 6px 0 0 0;">Terminator: Menandai <strong>MULAI</strong> atau <strong>SELESAI</strong>.</p>
+          </div>
+          <div class="flow-symbol-card">
+            <div class="symbol-shape">🟦</div>
+            <strong style="color: var(--primary); font-size: 18px;">PERSEGI PANJANG</strong>
+            <p style="font-size: 15px; color: var(--text-muted); margin: 6px 0 0 0;">Proses: Langkah perhitungan / tindakan.</p>
+          </div>
+          <div class="flow-symbol-card">
+            <div class="symbol-shape">🔷</div>
+            <strong style="color: var(--primary); font-size: 18px;">BELAH KETUPAT</strong>
+            <p style="font-size: 15px; color: var(--text-muted); margin: 6px 0 0 0;">Decision: Pilihan Keputusan Logika (Ya / Tidak).</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 4: GAME INTERAKTIF KASIR TOKO IMLA -->
+  <div class="slide">
+    <div class="slide-card">
+      <div class="slide-header">
+        <h2 class="slide-title">🏆 3. Game TGT: Kasir Toko Imla Kilat</h2>
+        <span class="badge-tag">Tantangan Kelas</span>
+      </div>
+      <div class="content-body">
+        <div class="box-warning">
+          <strong>Aturan Main:</strong> Jawab dengan cepat & tepat! Pemenang mendapat <strong>+10 Bonus Poin!</strong>
+        </div>
+        <div style="background: #f8fafc; border: 2px solid #cbd5e1; padding: 20px; border-radius: 16px; margin-top: 10px;">
+          <ol style="font-size: 20px; font-weight: 700; color: var(--primary); margin: 0; padding-left: 24px;">
+            <li style="margin-bottom: 14px;">Jika 3 botol Es Teh harganya Rp 9.000, berapa harga 7 botol Es Teh?</li>
+            <li style="margin-bottom: 14px;">Jika 1 dus Indomie berisi 40 bungkus, berapa bungkus dalam 3,5 dus Indomie?</li>
+            <li style="margin-bottom: 14px;">Simbol apakah yang dipakai untuk mengecek: <em>"Apakah Uang Santri Cukup?"</em> dalam Flowchart?</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 5: SOAL LATIHAN MANDIRI -->
+  <div class="slide">
+    <div class="slide-card">
+      <div class="slide-header">
+        <h2 class="slide-title">📝 4. Latihan Mandiri / PR</h2>
+        <span class="badge-tag">Evaluasi Santri</span>
+      </div>
+      <div class="content-body">
+        <div style="background: #ffffff; border: 2px solid #10b981; padding: 20px; border-radius: 16px;">
+          <p style="font-weight: bold; margin-top: 0;">Kerjakan di buku latihanmu:</p>
+          <ol style="font-size: 18px; margin: 0; padding-left: 20px;">
+            <li style="margin-bottom: 10px;">Harga 4 buah pensil di Toko Imla adalah Rp 8.000. Hitunglah harga 10 buah pensil!</li>
+            <li style="margin-bottom: 10px;">Buatlah Flowchart sederhana 3 simbol untuk alur: <strong>Beli Roti Toko Imla ➔ Hitung Total Harga ➔ Bayar di Kasir</strong>!</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- CONTROLS -->
+<div style="position: fixed; bottom: 15px; left: 0; right: 0; display: flex; justify-content: center; gap: 20px; z-index: 1000;">
+  <button class="btn-nav" onclick="prevSlide()">❮ Prev</button>
+  <button class="btn-nav" onclick="nextSlide()">Next ❯</button>
+</div>
+
+<script>
+  let currentSlide = 0;
+  const totalSlides = 5;
+  const container = document.getElementById('slideContainer');
+
+  function updateSlide() {
+    container.style.transform = `translateX(-${currentSlide * 100}vw)`;
+  }
+
+  function nextSlide() {
+    if (currentSlide < totalSlides - 1) {
+      currentSlide++;
+      updateSlide();
+    }
+  }
+
+  function prevSlide() {
+    if (currentSlide > 0) {
+      currentSlide--;
+      updateSlide();
+    }
+  }
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight' || e.key === ' ') nextSlide();
+    if (e.key === 'ArrowLeft') prevSlide();
+  });
+</script>
+
+</body>
+</html>

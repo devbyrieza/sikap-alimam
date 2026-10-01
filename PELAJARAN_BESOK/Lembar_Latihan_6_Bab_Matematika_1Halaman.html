@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lembar Latihan Santri - 6 Bab Matematika MTs 7 Al-Imam (Full 1 Halaman A4)</title>
+<style>
+  :root {
+    --primary: #064e3b;
+    --primary-light: #047857;
+    --accent: #d97706;
+    --text-dark: #0f172a;
+    --border: #94a3b8;
+  }
+
+  * { box-sizing: border-box; }
+  
+  @page {
+    size: A4 portrait;
+    margin: 6mm;
+  }
+
+  html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background-color: #f1f5f9;
+    color: var(--text-dark);
+    font-size: 13px;
+    line-height: 1.35;
+  }
+
+  body {
+    padding: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .page-container {
+    width: 100%;
+    max-width: 210mm;
+    min-height: 282mm;
+    height: 282mm;
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 16px 20px;
+    margin: 0 auto;
+    border: 2px solid var(--primary);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  /* Header Compact */
+  .header-compact {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid var(--primary);
+    padding-bottom: 8px;
+    margin-bottom: 10px;
+  }
+
+  .header-title h1 {
+    margin: 0;
+    font-size: 18px;
+    color: var(--primary);
+    font-weight: 900;
+  }
+
+  .header-title p {
+    margin: 2px 0 0 0;
+    font-size: 11px;
+    color: var(--primary-light);
+    font-weight: 700;
+  }
+
+  /* Baris Identitas Bersih Tanpa Titik-Titik */
+  .identity-bar {
+    display: grid;
+    grid-template-columns: 2.2fr 1.5fr 1.5fr 1fr;
+    gap: 12px;
+    background: #f8fafc;
+    border: 1.5px solid var(--border);
+    padding: 8px 14px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 700;
+    margin-bottom: 12px;
+  }
+
+  /* Main Grid 2 Kolom */
+  .main-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    flex: 1;
+  }
+
+  .column-card {
+    background: #ffffff;
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 14px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+  }
+
+  .col-header {
+    font-size: 12px;
+    font-weight: 800;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 6px;
+    margin-bottom: 10px;
+    text-align: center;
+  }
+
+  .soal-box {
+    margin-bottom: 10px;
+  }
+
+  .soal-text {
+    font-size: 12px;
+    line-height: 1.35;
+    margin-bottom: 5px;
+  }
+
+  .soal-text strong {
+    color: var(--primary);
+  }
+
+  .answer-line {
+    border: 1px solid #cbd5e1;
+    background: #fafafa;
+    border-radius: 6px;
+    padding: 6px;
+  }
+
+  /* Ukuran Kotak yang Pas Mengisi 1 Halaman Penuh */
+  .answer-line.lines-s { height: 58px; }
+  .answer-line.lines-m { height: 75px; }
+  .answer-line.lines-l { height: 95px; }
+
+  .footer-compact {
+    text-align: center;
+    font-size: 10.5px;
+    font-style: italic;
+    color: #64748b;
+    border-top: 1px dashed #cbd5e1;
+    padding-top: 6px;
+    margin-top: 8px;
+  }
+
+  @media print {
+    html, body {
+      height: 100%;
+      background: white;
+      padding: 0;
+      margin: 0;
+    }
+    .page-container {
+      border: none;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      min-height: 100vh;
+      border-radius: 0;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div class="page-container">
+
+  <!-- HEADER COMPACT -->
+  <div class="header-compact">
+    <div class="header-title">
+      <h1>🕌 LEMBAR LATIHAN MATEMATIKA MTs 7 AL-IMAM</h1>
+      <p>BILANGAN BULAT · ALJABAR · PLSV · PLDV · PERBANDINGAN SENILAI & BERBALIK NILAI</p>
+    </div>
+    <div style="text-align: right; font-size: 11px; font-weight: bold; color: var(--primary);">
+      Ustaz Rieza Eka Tomara, S.Kom
+    </div>
+  </div>
+
+  <!-- BARIS IDENTITAS CLEAN (TANPA TITIK-TITIK) -->
+  <div class="identity-bar">
+    <div>Nama :</div>
+    <div>Kelas : 7 MTs Al-Imam</div>
+    <div>Tgl :</div>
+    <div>Nilai :</div>
+  </div>
+
+  <!-- MAIN GRID 2 KOLOM (PAS FULL 1 HALAMAN A4) -->
+  <div class="main-grid">
+
+    <!-- KOLOM KIRI: BAGIAN 1 (SOAL 1 - 3) -->
+    <div class="column-card" style="border-color: #a7f3d0; background: #f0fdf4;">
+      <div>
+        <div class="col-header" style="background: #047857;">
+          BAGIAN 1: OPERASI, ALJABAR & PLSV
+        </div>
+
+        <!-- SOAL 1: BILANGAN BULAT -->
+        <div class="soal-box">
+          <div class="soal-text">
+            <strong>1. Bilangan Bulat:</strong><br>
+            Hitunglah hasil dari operasi hitung campuran berikut:
+            <div style="text-align: center; font-weight: bold; margin: 3px 0; color: #064e3b; font-size: 13px;">
+              -4 + 10 - 2 = .....
+            </div>
+          </div>
+          <div class="answer-line lines-s"></div>
+        </div>
+
+        <!-- SOAL 2: ALJABAR -->
+        <div class="soal-box">
+          <div class="soal-text">
+            <strong>2. Bentuk Aljabar (Suku Sejenis):</strong><br>
+            Sederhanakan bentuk aljabar berikut:
+            <div style="text-align: center; font-weight: bold; margin: 3px 0; color: #064e3b; font-size: 13px;">
+              4a + 7 + 2a - 3 = .....
+            </div>
+          </div>
+          <div class="answer-line lines-m"></div>
+        </div>
+
+        <!-- SOAL 3: PLSV -->
+        <div class="soal-box">
+          <div class="soal-text">
+            <strong>3. Persamaan Linear Satu Variabel (PLSV):</strong><br>
+            Tentukan nilai <strong>x</strong> dari persamaan linear berikut:
+            <div style="text-align: center; font-weight: bold; margin: 3px 0; color: #064e3b; font-size: 13px;">
+              2x + 5 = 15
+            </div>
+          </div>
+          <div class="answer-line lines-m"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- KOLOM KANAN: BAGIAN 2 (SOAL 4 - 6) -->
+    <div class="column-card" style="border-color: #fde68a; background: #fffdf5;">
+      <div>
+        <div class="col-header" style="background: #d97706;">
+          BAGIAN 2: PLDV & PERBANDINGAN
+        </div>
+
+        <!-- SOAL 4: PLDV -->
+        <div class="soal-box">
+          <div class="soal-text">
+            <strong>4. Persamaan Linear Dua Variabel (PLDV):</strong><br>
+            Umur Ayah adalah <strong>4 kali</strong> umur Anaknya. Jumlah umur Ayah dan Anak adalah <strong>50 tahun</strong>. Berapakah umur Anak dan umur Ayah masing-masing?
+          </div>
+          <div class="answer-line lines-l"></div>
+        </div>
+
+        <!-- SOAL 5: PERBANDINGAN SENILAI -->
+        <div class="soal-box">
+          <div class="soal-text">
+            <strong>5. Perbandingan Senilai (Toko Imla):</strong><br>
+            Harga <strong>2 buku tulis</strong> di Toko Imla adalah <strong>Rp 6.000</strong>. Berapakah harga yang harus dibayar jika membeli <strong>5 buku tulis</strong>?
+          </div>
+          <div class="answer-line lines-s"></div>
+        </div>
+
+        <!-- SOAL 6: PERBANDINGAN BERBALIK NILAI -->
+        <div class="soal-box">
+          <div class="soal-text">
+            <strong>6. Perbandingan Berbalik Nilai (Piket Pondok):</strong><br>
+            Piket membersihkan masjid pondok selesai dalam waktu <strong>60 menit</strong> jika dikerjakan oleh <strong>2 orang santri</strong>. Jika dikerjakan oleh <strong>4 orang santri</strong>, berapa menit pekerjaan tersebut akan selesai?
+          </div>
+          <div class="answer-line lines-s"></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- FOOTER COMPACT -->
+  <div class="footer-compact">
+    “Tuntutlah ilmu dan belajarlah untuk tenang dan menghormati gurumu.” · Pesantren Al-Imam
+  </div>
+
+</div>
+
+</body>
+</html>

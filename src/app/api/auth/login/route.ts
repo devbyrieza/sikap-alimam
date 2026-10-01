@@ -124,7 +124,15 @@ export async function POST(req: NextRequest) {
         } else {
           // Auto-provision akun Wali Santri baru
           const bcrypt2 = await import("bcryptjs");
-          const defaultPassword = "Sikap2026!";
+                    // Gunakan DDMMYY dari tanggal_lahir sebagai password default, jika kosong fallback ke Sikap2026!
+          let defaultPassword = "Sikap2026!";
+          if (santri.tanggal_lahir) {
+            const d = new Date(santri.tanggal_lahir);
+            const dd = String(d.getDate()).padStart(2, '0');
+            const mm = String(d.getMonth() + 1).padStart(2, '0');
+            const yy = String(d.getFullYear()).slice(-2);
+            defaultPassword = dd + mm + yy;
+          }
           const hashed = await bcrypt2.default.hash(defaultPassword, 10);
           
           user = await prisma.user.create({

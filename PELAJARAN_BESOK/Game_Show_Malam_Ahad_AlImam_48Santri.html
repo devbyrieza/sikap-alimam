@@ -1,0 +1,1653 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CLASH OF ALIANSI 48 - Game Show Akbar Malam Ahad | Pesantren Al-Imam Al-Islami</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800;900&family=JetBrains+Mono:wght@700;800;900&family=Amiri:wght@700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-dark: #090d16;
+    --card-bg: #111827;
+    --primary: #10b981;
+    --primary-glow: rgba(16, 185, 129, 0.4);
+    --gold: #f59e0b;
+    --gold-glow: rgba(245, 158, 11, 0.4);
+    --rose: #f43f5e;
+    --blue: #38bdf8;
+    --indigo: #6366f1;
+    --purple: #a855f7;
+    --text-light: #f8fafc;
+    --text-muted: #94a3b8;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    background-color: var(--bg-dark);
+    color: var(--text-light);
+    height: 100vh;
+    width: 100vw;
+    overflow: hidden;
+    user-select: none;
+  }
+
+  /* Fullscreen Carousel Container */
+  .deck-container {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+
+  .slide {
+    min-width: 100vw;
+    height: 100vh;
+    padding: 24px 40px 80px 40px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    background: radial-gradient(circle at 50% 20%, #1e1b4b 0%, #090d16 80%);
+    position: relative;
+  }
+
+  /* Header Bar */
+  .slide-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(17, 24, 39, 0.7);
+    backdrop-filter: blur(12px);
+    padding: 12px 24px;
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+  }
+
+  .brand-tag {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .badge-phase {
+    background: linear-gradient(135deg, #e11d48, #be123c);
+    color: #ffffff;
+    font-size: 13px;
+    font-weight: 900;
+    padding: 5px 14px;
+    border-radius: 999px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    box-shadow: 0 0 15px rgba(225, 29, 72, 0.4);
+  }
+
+  .badge-phase.pg { background: linear-gradient(135deg, #0284c7, #0369a1); box-shadow: 0 0 15px rgba(2, 132, 199, 0.4); }
+  .badge-phase.esai { background: linear-gradient(135deg, #d97706, #b45309); box-shadow: 0 0 15px rgba(217, 119, 6, 0.4); }
+
+  .header-title {
+    font-size: 20px;
+    font-weight: 800;
+    color: #f1f5f9;
+  }
+
+  .header-actions {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  /* Scoreboard Drawer Trigger */
+  .btn-scoreboard-toggle {
+    background: linear-gradient(135deg, #4f46e5, #4338ca);
+    color: #ffffff;
+    border: none;
+    padding: 8px 18px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 800;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 4px 14px rgba(79, 70, 229, 0.4);
+    transition: transform 0.1s;
+  }
+  .btn-scoreboard-toggle:active { transform: scale(0.96); }
+
+  /* Main Card Arena */
+  .arena-card {
+    background: rgba(17, 24, 39, 0.85);
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    border-radius: 24px;
+    padding: 30px 48px;
+    flex: 1;
+    margin: 16px 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* Timer Component */
+  .timer-center-wrap {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 8px;
+  }
+
+  .timer-circle {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 52px;
+    font-weight: 900;
+    color: #4ade80;
+    background: rgba(0,0,0,0.5);
+    padding: 4px 36px;
+    border-radius: 16px;
+    border: 3px solid #22c55e;
+    box-shadow: 0 0 25px rgba(34, 197, 94, 0.3);
+    min-width: 140px;
+    text-align: center;
+    letter-spacing: 2px;
+  }
+  .timer-circle.danger {
+    color: #ef4444;
+    border-color: #ef4444;
+    box-shadow: 0 0 30px rgba(239, 68, 68, 0.6);
+    animation: pulseDanger 0.8s infinite;
+  }
+  @keyframes pulseDanger {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+  }
+
+  .btn-timer {
+    background: #10b981;
+    color: #ffffff;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 12px;
+    font-size: 15px;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 0 4px 14px rgba(16, 185, 129, 0.4);
+  }
+
+  /* Question Typography */
+  .question-number-badge {
+    display: inline-block;
+    background: rgba(245, 158, 11, 0.2);
+    border: 1px solid #f59e0b;
+    color: #fde047;
+    font-size: 14px;
+    font-weight: 800;
+    padding: 4px 14px;
+    border-radius: 999px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+  }
+
+  .question-text {
+    font-size: 32px;
+    font-weight: 800;
+    line-height: 1.35;
+    color: #ffffff;
+    text-align: center;
+    margin: 10px 0 20px 0;
+    text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+  }
+
+  /* Options Layouts */
+  .tf-options-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+    max-width: 800px;
+    margin: 0 auto;
+    width: 100%;
+  }
+
+  .tf-btn {
+    border-radius: 20px;
+    padding: 24px;
+    font-size: 28px;
+    font-weight: 900;
+    text-align: center;
+    border: 3px solid;
+    transition: all 0.2s;
+    letter-spacing: 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+  }
+  .tf-btn.true { background: rgba(16, 185, 129, 0.15); border-color: #10b981; color: #4ade80; }
+  .tf-btn.false { background: rgba(239, 68, 68, 0.15); border-color: #ef4444; color: #f87171; }
+
+  .pg-options-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+    width: 100%;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .pg-option-card {
+    background: rgba(30, 41, 59, 0.7);
+    border: 2px solid rgba(255, 255, 255, 0.12);
+    border-radius: 16px;
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    font-size: 20px;
+    font-weight: 700;
+    color: #f1f5f9;
+    transition: all 0.2s;
+  }
+
+  .pg-letter {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 22px;
+    font-weight: 900;
+    color: #ffffff;
+    flex-shrink: 0;
+  }
+  .let-a { background: #3b82f6; }
+  .let-b { background: #10b981; }
+  .let-c { background: #f59e0b; }
+  .let-d { background: #ec4899; }
+
+  /* Answer Reveal Box */
+  .reveal-card {
+    background: linear-gradient(135deg, rgba(6, 78, 59, 0.95), rgba(4, 120, 87, 0.95));
+    border: 3px solid #34d399;
+    border-radius: 18px;
+    padding: 16px 28px;
+    margin-top: 14px;
+    display: none;
+    box-shadow: 0 10px 30px rgba(5, 150, 105, 0.4);
+    animation: fadeInReveal 0.3s ease;
+  }
+  @keyframes fadeInReveal {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .reveal-badge {
+    font-size: 13px;
+    font-weight: 900;
+    color: #a7f3d0;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .reveal-text {
+    font-size: 26px;
+    font-weight: 900;
+    color: #ffffff;
+    margin: 4px 0;
+  }
+  .reveal-explanation {
+    font-size: 15px;
+    color: #d1fae5;
+    font-weight: 600;
+    line-height: 1.5;
+  }
+
+  /* Footer Controls */
+  .slide-footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100vw;
+    background: rgba(10, 15, 26, 0.9);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 14px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 50;
+  }
+
+  .nav-btn-group {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .btn-action {
+    background: rgba(255, 255, 255, 0.08);
+    color: #ffffff;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 10px 20px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.15s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .btn-action:hover { background: rgba(255, 255, 255, 0.15); }
+  .btn-action.primary { background: var(--primary); border-color: var(--primary); }
+  .btn-action.gold { background: var(--gold); border-color: var(--gold); color: #000000; }
+
+  .slide-counter {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 16px;
+    font-weight: 800;
+    color: #94a3b8;
+  }
+
+  /* Scoreboard Drawer Modal */
+  .scoreboard-modal {
+    position: fixed;
+    top: 0;
+    right: -520px;
+    width: 500px;
+    height: 100vh;
+    background: #0f172a;
+    border-left: 2px solid #334155;
+    box-shadow: -10px 0 40px rgba(0,0,0,0.8);
+    z-index: 100;
+    transition: right 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  .scoreboard-modal.open { right: 0; }
+
+  .sc-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid #1e293b;
+    padding-bottom: 14px;
+  }
+  .sc-title { font-size: 18px; font-weight: 900; color: #fde047; }
+  .sc-close {
+    background: transparent;
+    border: none;
+    color: #94a3b8;
+    font-size: 24px;
+    font-weight: 900;
+    cursor: pointer;
+  }
+
+  .sc-list {
+    flex: 1;
+    overflow-y: auto;
+    margin: 14px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .team-row {
+    background: #1e293b;
+    border-radius: 12px;
+    padding: 10px 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: 1px solid #334155;
+  }
+  .team-info { display: flex; flex-direction: column; }
+  .t-name { font-size: 14px; font-weight: 800; color: #e2e8f0; }
+  .t-members { font-size: 11px; color: #94a3b8; }
+  .team-score-ctrl { display: flex; align-items: center; gap: 8px; }
+  .t-score {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 20px;
+    font-weight: 900;
+    color: #fde047;
+    min-width: 50px;
+    text-align: right;
+  }
+  .btn-pt {
+    background: #3b82f6;
+    color: #fff;
+    border: none;
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    font-weight: 900;
+    cursor: pointer;
+    font-size: 14px;
+  }
+  .btn-pt.minus { background: #ef4444; }
+
+  /* Hero / Intro Slide Styling */
+  .hero-slide-body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    height: 100%;
+  }
+
+  .hero-banner {
+    background: linear-gradient(135deg, #4f46e5 0%, #064e3b 100%);
+    padding: 10px 24px;
+    border-radius: 999px;
+    font-size: 14px;
+    font-weight: 800;
+    color: #fde047;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 16px;
+    border: 1px solid #ca8a04;
+  }
+
+  .hero-title {
+    font-size: 54px;
+    font-weight: 900;
+    letter-spacing: -1px;
+    line-height: 1.15;
+    background: linear-gradient(180deg, #ffffff 0%, #cbd5e1 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 14px;
+  }
+
+  .hero-sub {
+    font-size: 20px;
+    color: #94a3b8;
+    max-width: 850px;
+    line-height: 1.6;
+    margin-bottom: 28px;
+  }
+
+  .hero-pills {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 32px;
+  }
+  .pill {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.15);
+    padding: 10px 22px;
+    border-radius: 12px;
+    font-size: 15px;
+    font-weight: 700;
+    color: #cbd5e1;
+  }
+
+  /* Confetti Canvas */
+  #confettiCanvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    pointer-events: none;
+    z-index: 999;
+  }
+</style>
+</head>
+<body>
+
+<canvas id="confettiCanvas"></canvas>
+
+<!-- OVERLAY PERINGATAN WAKTU HABIS -->
+<div id="timeUpModal" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.85); backdrop-filter:blur(10px); z-index:900; justify-content:center; align-items:center; flex-direction:column; text-align:center;" onclick="dismissTimeUpModal()">
+  <div style="background:linear-gradient(135deg, #b91c1c, #991b1b); border:4px solid #f87171; border-radius:24px; padding:40px 60px; box-shadow:0 0 80px rgba(239,68,68,0.8); max-width:900px; margin:20px;" onclick="event.stopPropagation()">
+    <div style="font-size:68px; margin-bottom:12px;">🚨✋</div>
+    <h1 style="font-size:48px; font-weight:900; color:#ffffff; letter-spacing:2px; text-transform:uppercase; margin-bottom:12px;">
+      WAKTU HABIS!
+    </h1>
+    <div style="font-size:30px; font-weight:900; color:#fde047; margin-bottom:18px; text-shadow:0 2px 8px rgba(0,0,0,0.5);">
+      ANGKAT KERTAS TINGGI-TINGGI SEKARANG!
+    </div>
+    <div style="background:rgba(0,0,0,0.35); border-radius:14px; padding:12px 28px; font-size:18px; color:#fecaca; font-weight:800; border:1px dashed #fca5a5;">
+      ⚠️ SEMUA SPIDOL WAJIB DILETAKKAN DI LANTAI! TIDAK BOLEH MENULIS LAGI!
+    </div>
+    <button onclick="dismissTimeUpModal()" style="margin-top:24px; background:#ffffff; color:#991b1b; border:none; padding:12px 36px; border-radius:14px; font-size:17px; font-weight:900; cursor:pointer; box-shadow:0 4px 16px rgba(0,0,0,0.4);">
+      SUDAH ANGKAT KERTAS (TUTUP LAYAR) ✕
+    </button>
+  </div>
+</div>
+
+<!-- SCOREBOARD DRAWER -->
+<div class="scoreboard-modal" id="scoreboardModal">
+  <div class="sc-header">
+    <div class="sc-title">🏆 KLASEMEN 8 ALIANSI ASRAMA</div>
+    <button class="sc-close" onclick="toggleScoreboard()">✕</button>
+  </div>
+  <div class="sc-list" id="teamScoreList">
+    <!-- Populated by JS -->
+  </div>
+  <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid #334155; padding-top:12px;">
+    <button onclick="resetScores()" style="background:transparent; border:none; color:#f87171; font-size:12px; font-weight:700; cursor:pointer;">⚠️ Reset Poin</button>
+    <button onclick="playVictoryFanfare()" style="background:#f59e0b; border:none; color:#000; font-size:13px; font-weight:800; padding:6px 14px; border-radius:8px; cursor:pointer;">🎉 Umumkan Juara!</button>
+  </div>
+</div>
+
+<!-- SLIDE DECK CONTAINER -->
+<div class="deck-container" id="deckContainer">
+
+  <!-- SLIDE 0: COVER / GRAND INTRO -->
+  <div class="slide">
+    <div class="slide-header">
+      <div class="brand-tag">
+        <span class="badge-phase">Malam Spesial Santri</span>
+        <span class="header-title">Pesantren Al-Imam Al-Islami</span>
+      </div>
+      <div class="header-actions">
+        <button class="btn-scoreboard-toggle" onclick="toggleScoreboard()">🏆 Buka Papan Skor</button>
+      </div>
+    </div>
+    <div class="arena-card hero-slide-body">
+      <div class="hero-banner">⚡ GRAND CLASH OF ALIANSI 48 ⚡</div>
+      <h1 class="hero-title">BATTLE OF ALIANSI SANTRI<br><span style="color:#38bdf8;">SIMULASI TAKTIK MUKHAYYAM & UTS</span></h1>
+      <p class="hero-sub">
+        Ajang adu kecerdasan, strategi survival, ketangkasan, dan kebersamaan seluruh santri <strong>Pesantren Al-Imam Al-Islami</strong> malam ini!
+      </p>
+      <div class="hero-pills">
+        <div class="pill">🟡 5 Soal Benar / Salah</div>
+        <div class="pill">🔵 5 Soal Pilihan Ganda</div>
+        <div class="pill">🔴 4 Soal Esai & Logika</div>
+        <div class="pill">👑 Hadiah Kas Mukhayyam</div>
+      </div>
+      <button class="btn-action primary" style="font-size: 18px; padding: 14px 36px;" onclick="nextSlide()">
+        MULAI GAME SEKARANG ▶️
+      </button>
+    </div>
+  </div>
+
+  <!-- SLIDE 1: ATURAN MAIN & FORMAT TIM -->
+  <div class="slide">
+    <div class="slide-header">
+      <div class="brand-tag">
+        <span class="badge-phase">SOP Pertandingan</span>
+        <span class="header-title">Instruksi & Mekanisme Kuis Tertib</span>
+      </div>
+      <div class="header-actions">
+        <button class="btn-scoreboard-toggle" onclick="toggleScoreboard()">🏆 Buka Papan Skor</button>
+      </div>
+    </div>
+    <div class="arena-card" style="justify-content: center; gap: 20px;">
+      <div style="text-align: center;">
+        <h2 style="font-size: 32px; font-weight: 900; color: #fde047; margin-bottom: 8px;">📜 ATURAN EMAS "SILENT SHOWDOWN"</h2>
+        <p style="font-size: 16px; color: #cbd5e1;">Kuis ini memakai sistem kuis cerdas profesional: <strong>Seru, Cepat, dan Tanpa Gaduh!</strong></p>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; max-width: 1050px; margin: 0 auto;">
+        <div style="background: rgba(255,255,255,0.05); border: 2px solid #3b82f6; border-radius: 16px; padding: 20px; text-align: center;">
+          <div style="font-size: 36px; margin-bottom: 10px;">🤫</div>
+          <h3 style="font-size: 18px; color: #60a5fa; margin-bottom: 6px;">1. Berbisik & Menulis</h3>
+          <p style="font-size: 13px; color: #94a3b8; line-height: 1.5;">Saat soal tayang dan timer berjalan, seluruh anggota barisan <strong>hanya boleh berbisik</strong>. Juru tulis menuliskan jawaban huruf besar di kertas regu.</p>
+        </div>
+        <div style="background: rgba(255,255,255,0.05); border: 2px solid #10b981; border-radius: 16px; padding: 20px; text-align: center;">
+          <div style="font-size: 36px; margin-bottom: 10px;">🙋‍♂️</div>
+          <h3 style="font-size: 18px; color: #34d399; margin-bottom: 6px;">2. Angkat Kertas Serentak</h3>
+          <p style="font-size: 13px; color: #94a3b8; line-height: 1.5;">Saat alarm berbunyi <em>"WAKTU HABIS!"</em>, <strong>semua spidol di lantai!</strong> Juru tulis wajib mengangkat kertas tinggi-tinggi menghadap Ustaz di depan TV.</p>
+        </div>
+        <div style="background: rgba(255,255,255,0.05); border: 2px solid #f59e0b; border-radius: 16px; padding: 20px; text-align: center;">
+          <div style="font-size: 36px; margin-bottom: 10px;">⚖️</div>
+          <h3 style="font-size: 18px; color: #fde047; margin-bottom: 6px;">3. Verifikasi & Papan Skor</h3>
+          <p style="font-size: 13px; color: #94a3b8; line-height: 1.5;">Ustaz mengecek langsung jawaban 8 tim dari depan TV & mencatat poin. Khusus Babak Esai: Tukar silang ke baris tetangga (tanpa pegang spidol)!</p>
+        </div>
+      </div>
+      <div style="background: rgba(245, 158, 11, 0.15); border: 1px dashed #f59e0b; border-radius: 12px; padding: 10px 24px; text-align: center; max-width: 850px; margin: 0 auto;">
+        <span style="font-size: 14px; font-weight: 700; color: #fef08a;">
+          🛡️ Formasi 8 Barisan: Bersatu & Kompak Berdasarkan Regu Piket Ruangan Nobar!
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== BABAK 1: BENAR ATAU SALAH (5 SOAL) ==================== -->
+
+  <!-- SLIDE 2: Q1 (BENAR / SALAH) -->
+  <div class="slide" data-timer="15">
+    <div class="slide-header">
+      <div class="brand-tag">
+        <span class="badge-phase">Babak 1: Benar / Salah</span>
+        <span class="header-title">Soal 1 dari 14 • Simulasi Survival Mukhayyam</span>
+      </div>
+      <div class="header-actions">
+        <button class="btn-scoreboard-toggle" onclick="toggleScoreboard()">🏆 Papan Skor</button>
+      </div>
+    </div>
+    <div class="arena-card">
+      <div>
+        <div class="timer-center-wrap">
+          <div class="timer-circle" id="timer_2">15</div>
+          <button class="btn-timer" onclick="startSlideTimer(2, 15)">⏱️ Mulai Waktu</button>
+        </div>
+        <div style="text-align:center;">
+          <span class="question-number-badge">Kategori: Navigasi Alam Bebas</span>
+        </div>
+        <div class="question-text">
+          "Jika kalian tersesat di hutan saat Mukhayyam dan hari berkabut tebal tanpa kompas, lumut di batang pohon biasanya tumbuh lebih tebal dan lebat di sisi yang menghadap ke arah Barat."
+        </div>
+        <div class="tf-options-grid">
+          <div class="tf-btn true">✅ BENAR (B)</div>
+          <div class="tf-btn false">❌ SALAH (S)</div>
+        </div>
+      </div>
+      <div class="reveal-card" id="reveal_2">
+        <div class="reveal-badge">🎯 KUNCI JAWABAN RESMI:</div>
+        <div class="reveal-text" style="color: #f87171;">❌ SALAH (S)</div>
+        <div class="reveal-explanation">
+          <div style="margin-bottom: 6px;">
+            💡 <strong>Analogi Jemuran Asrama:</strong> Jemuran cepat kering kalau kena matahari sore di sisi Barat! Lumut itu tanaman anti-panas dan benci kering; ia hanya mau tumbuh subur di sisi yang adem dan lembap (Timur, Utara, atau Selatan).
+          </div>
+          <div style="color: #a7f3d0; font-style: italic;">
+            🌿 <strong>Filosofi Santri:</strong> Seperti lumut yang mencari tempat teduh, hati seorang mukmin selalu mencari ketenangan iman dan majelis ilmu, menjauhi panasnya fitnah dunia.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 3: Q2 (BENAR / SALAH) -->
+  <div class="slide" data-timer="15">
+    <div class="slide-header">
+      <div class="brand-tag">
+        <span class="badge-phase">Babak 1: Benar / Salah</span>
+        <span class="header-title">Soal 2 dari 14 • Fiqih Safar & Ibadah</span>
+      </div>
+      <div class="header-actions">
+        <button class="btn-scoreboard-toggle" onclick="toggleScoreboard()">🏆 Papan Skor</button>
+      </div>
+    </div>
+    <div class="arena-card">
+      <div>
+        <div class="timer-center-wrap">
+          <div class="timer-circle" id="timer_3">15</div>
+          <button class="btn-timer" onclick="startSlideTimer(3, 15)">⏱️ Mulai Waktu</button>
+        </div>
+        <div style="text-align:center;">
+          <span class="question-number-badge">Kategori: Fiqih Ibadah Mukhayyam</span>
+        </div>
+        <div class="question-text">
+          "Saat berkemah di hutan selama 3 hari 2 malam (Selasa s.d. Kamis), jika air wudhu sangat terbatas dan hanya cukup untuk minum dan masak, maka santri diperbolehkan melakukan Tayamum dengan debu/tanah yang suci."
+        </div>
+        <div class="tf-options-grid">
+          <div class="tf-btn true">✅ BENAR (B)</div>
+          <div class="tf-btn false">❌ SALAH (S)</div>
+        </div>
+      </div>
+      <div class="reveal-card" id="reveal_3">
+        <div class="reveal-badge">🎯 KUNCI JAWABAN RESMI:</div>
+        <div class="reveal-text" style="color: #4ade80;">✅ BENAR (B)</div>
+        <div class="reveal-explanation">
+          <div style="margin-bottom: 6px;">
+            💡 <strong>Analogi Baterai HP 5%:</strong> Kalau baterai tinggal 5% di hutan, pakai buat senter darurat, bukan main game! Begitu pula air: menjaga nyawa dari dehidrasi adalah darurat wajib, maka syariat memberi jalan keluar indah: wudhu diganti tayamum.
+          </div>
+          <div style="color: #a7f3d0; font-style: italic;">
+            🌿 <strong>Filosofi Syariat:</strong> Islam adalah agama yang memudahkan (*yusrun*), bukan menyulitkan. Menjaga keselamatan jiwa manusia (*Hifzhun Nafs*) adalah salah satu tujuan utama syariat Allah.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 4: Q3 (BENAR / SALAH) -->
+  <div class="slide" data-timer="15">
+    <div class="slide-header">
+      <div class="brand-tag">
+        <span class="badge-phase">Babak 1: Benar / Salah</span>
+        <span class="header-title">Soal 3 dari 14 • Sirah & Kepahlawanan</span>
+      </div>
+      <div class="header-actions">
+        <button class="btn-scoreboard-toggle" onclick="toggleScoreboard()">🏆 Papan Skor</button>
+      </div>
+    </div>
+    <div class="arena-card">
+      <div>
+        <div class="timer-center-wrap">
+          <div class="timer-circle" id="timer_4">15</div>
+          <button class="btn-timer" onclick="startSlideTimer(4, 15)">⏱️ Mulai Waktu</button>
+        </div>
+        <div style="text-align:center;">
+          <span class="question-number-badge">Kategori: Tokoh Militer Islam</span>
+        </div>
+        <div class="question-text">
+          "Panglima muda Islam yang berhasil menyeberangi Selat Gibraltar menuju benua Eropa dan membakar kapal pasukannya agar tidak ada kata mundur adalah Thariq bin Ziyad."
+        </div>
+        <div class="tf-options-grid">
+          <div class="tf-btn true">✅ BENAR (B)</div>
+          <div class="tf-btn false">❌ SALAH (S)</div>
+        </div>
+      </div>
+      <div class="reveal-card" id="reveal_4">
+        <div class="reveal-badge">🎯 KUNCI JAWABAN RESMI:</div>
+        <div class="reveal-text" style="color: #4ade80;">✅ BENAR (B)</div>
+        <div class="reveal-explanation">
+          <div style="margin-bottom: 6px;">
+            💡 <strong>Analogi Bakar Kapal (No Way Back):</strong> Thariq membakar kapal agar pasukannya sadar: laut di belakang kita, musuh di depan kita! Tidak ada jalan pulang ke zona nyaman kecuali berjuang sampai menang!
+          </div>
+          <div style="color: #a7f3d0; font-style: italic;">
+            🌿 <strong>Filosofi Santri Berjuang:</strong> Seperti santri yang merantau mondok: bakar rasa manja di belakang, tekadkan hati menuntut ilmu, dan pulang hanya saat membawa mahkota keberhasilan untuk orang tua!
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 5: Q4 (BENAR / SALAH) -->
+  <div class="slide" data-timer="15">
+    <div class="slide-header">
+      <div class="brand-tag">
+        <span class="badge-phase">Babak 1: Benar / Salah</span>
+        <span class="header-title">Soal 4 dari 14 • Logika Matematika Kilat (UTS)</span>
+      </div>
+      <div class="header-actions">
+        <button class="btn-scoreboard-toggle" onclick="toggleScoreboard()">🏆 Papan Skor</button>
+      </div>
+    </div>
+    <div class="arena-card">
+      <div>
+        <div class="timer-center-wrap">
+          <div class="timer-circle" id="timer_5">15</div>
+          <button class="btn-timer" onclick="startSlideTimer(5, 15)">⏱️ Mulai Waktu</button>
+        </div>
+        <div style="text-align:center;">
+          <span class="question-number-badge">Kategori: Aljabar & Bilangan Bulat</span>
+        </div>
+        <div class="question-text">
+          "Jika nilai X = -4 dan Y = 7, maka hasil dari operasi aljabar: 2X + 3Y adalah sama dengan 13."
+        </div>
+        <div class="tf-options-grid">
+          <div class="tf-btn true">✅ BENAR (B)</div>
+          <div class="tf-btn false">❌ SALAH (S)</div>
+        </div>
+      </div>
+      <div class="reveal-card" id="reveal_5">
+        <div class="reveal-badge">🎯 KUNCI JAWABAN RESMI:</div>
+        <div class="reveal-text" style="color: #4ade80;">✅ BENAR (B)</div>
+        <div class="reveal-explanation">
+          <div style="margin-bottom: 6px;">
+            💡 <strong>Analogi Utang vs Saldo Koperasi:</strong> Minus (-) itu utang, plus (+) itu saldo jajan! Punya utang 4 dibeli 2 kali = utang -8. Dapat kiriman saldo 7 sebanyak 3 kali = +21. Bayar utang 8 dari 21, sisanya pas 13 di kantong!
+          </div>
+          <div style="color: #a7f3d0; font-style: italic;">
+            🌿 <strong>Filosofi Hitungan Amal:</strong> Kebaikan dan keburukan itu seperti variabel aljabar kehidupan. Perbanyak amal positif agar saldo timbangan akhirat kita tetap surplus di Yaumul Hisab.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 6: Q5 (BENAR / SALAH) -->
+  <div class="slide" data-timer="15">
+    <div class="slide-header">
+      <div class="brand-tag">
+        <span class="badge-phase">Babak 1: Benar / Salah</span>
+        <span class="header-title">Soal 5 dari 14 • Fakta Geografi Jawa Barat</span>
+      </div>
+      <div class="header-actions">
+        <button class="btn-scoreboard-toggle" onclick="toggleScoreboard()">🏆 Papan Skor</button>
+      </div>
+    </div>
+    <div class="arena-card">
+      <div>
+        <div class="timer-center-wrap">
+          <div class="timer-circle" id="timer_6">15</div>
+          <button class="btn-timer" onclick="startSlideTimer(6, 15)">⏱️ Mulai Waktu</button>
+        </div>
+        <div style="text-align:center;">
+          <span class="question-number-badge">Kategori: Geografi & Alam</span>
+        </div>
+        <div class="question-text">
+          "Gunung tertinggi di wilayah Provinsi Jawa Barat (lokasi perkemahan kita) adalah Gunung Tangkuban Parahu dengan ketinggian 3.078 meter di atas permukaan laut."
+        </div>
+        <div class="tf-options-grid">
+          <div class="tf-btn true">✅ BENAR (B)</div>
+          <div class="tf-btn false">❌ SALAH (S)</div>
+        </div>
+      </div>
+      <div class="reveal-card" id="reveal_6">
+        <div class="reveal-badge">🎯 KUNCI JAWABAN RESMI:</div>
+        <div class="reveal-text" style="color: #f87171;">❌ SALAH (S)</div>
+        <div class="reveal-explanation">
+          <div style="margin-bottom: 6px;">
+            💡 <strong>Analogi Popularitas vs Fakta Riil:</strong> Tangkuban Parahu (2.084 mdpl) itu ibarat orang yang paling viral karena dongeng Sangkuriang. Padahal ada 'raksasa pendiam' yang sesungguhnya paling menjulang di Jawa Barat, yaitu <strong>Gunung Ciremai (3.078 mdpl)</strong>!
+          </div>
+          <div style="color: #a7f3d0; font-style: italic;">
+            🌿 <strong>Filosofi Rendah Hati (*Tawadhu'*):</strong> Yang paling terkenal belum tentu yang paling tinggi nilainya. Jadilah santri berilmu tinggi seperti Ciremai: kokoh, agung, dan tenang tanpa butuh pujian riya'.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 7: ACTION BREAK 1 (MISI SAMBUNG SARUNG TERPANJANG) -->
+  <div class="slide" data-timer="60">
+    <div class="slide-header">
+      <div class="brand-tag">
+        <span class="badge-phase" style="background:#e11d48;">🔥 ACTION BREAK 1</span>
+        <span class="header-title">Tantangan Fisik Cepat Antar-Aliansi (+200 Poin)</span>
+      </div>
+      <div class="header-actions">
+        <button class="btn-scoreboard-toggle" onclick="toggleScoreboard()">🏆 Papan Skor</button>
+      </div>
+    </div>
+    <div class="arena-card hero-slide-body" style="background: radial-gradient(circle at center, #311042 0%, #0f172a 100%);">
+      <div style="font-size: 54px; margin-bottom: 8px;">🧶⚡</div>
+      <div class="timer-center-wrap">
+        <div class="timer-circle" id="timer_7" style="color:#f43f5e; border-color:#f43f5e;">60</div>
+        <button class="btn-timer" style="background:#e11d48;" onclick="startSlideTimer(7, 60)">⏱️ Mulai 60 Detik!</button>
+      </div>
+      <h2 style="font-size: 38px; font-weight: 900; color: #fde047; text-transform: uppercase; margin: 10px 0;">
+        MISI SARUNG TERPANJANG TANPA PUTUS!
+      </h2>
+      <p style="font-size: 18px; color: #cbd5e1; max-width: 800px; line-height: 1.6; margin-bottom: 20px;">
+        Dalam waktu <strong>60 detik</strong>, seluruh anggota tim wajib menyambungkan sarung/jaket/sorban yang menempel di badan menjadi <strong>1 garis tali lurus terpanjang</strong> di lantai aula!
+      </p>
+      <div style="background: rgba(255,255,255,0.08); border: 2px dashed #f59e0b; border-radius: 16px; padding: 14px 28px; font-size: 15px; color: #fde047; font-weight: 700;">
+        ⚖️ Ustaz Rieza bersama para kapten memverifikasi bentangan terpanjang! Tim terpanjang dapat <strong>+200 POIN</strong>!
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== BABAK 2: PILIHAN GANDA (5 SOAL) ==================== -->
+
+  <!-- SLIDE 7: Q6 (PILIHAN GANDA) -->
+  <div class="slide" data-timer="25">
+    <div class="slide-header">
+      <div class="brand-tag">
+        <span class="badge-phase pg">Babak 2: Pilihan Ganda</span>
+        <span class="header-title">Soal 6 dari 14 • Taktik Pasang Tenda</span>
+      </div>
+      <div class="header-actions">
+        <button class="btn-scoreboard-toggle" onclick="toggleScoreboard()">🏆 Papan Skor</button>
+      </div>
+    </div>
+    <div class="arena-card">
+      <div>
+        <div class="timer-center-wrap">
+          <div class="timer-circle" id="timer_7">25</div>
+          <button class="btn-timer" onclick="startSlideTimer(7, 25)">⏱️ Mulai Waktu</button>
+        </div>
+        <div style="text-align:center;">
+          <span class="question-number-badge">Kategori: Pioneer & Tali Temali</span>
+        </div>
+        <div class="question-text">
+          "Simpul tali yang paling wajib dikuasai untuk mengikat tali tenda ke pasak tanah agar kuat menahan terpaan angin badai malam hari adalah..."
+        </div>
+        <div class="pg-options-grid">
+          <div class="pg-option-card"><span class="pg-letter let-a">A</span> Simpul Mati</div>
+          <div class="pg-option-card"><span class="pg-letter let-b">B</span> Simpul Pangkal (Clove Hitch)</div>
+          <div class="pg-option-card"><span class="pg-letter let-c">C</span> Simpul Anyam Tunggal</div>
+          <div class="pg-option-card"><span class="pg-letter let-d">D</span> Simpul Pita</div>
+        </div>
+      </div>
+      <div class="reveal-card" id="reveal_7">
+        <div class="reveal-badge">🎯 KUNCI JAWABAN RESMI:</div>
+        <div class="reveal-text" style="color: #4ade80;">B. Simpul Pangkal (Clove Hitch)</div>
+        <div class="reveal-explanation">
+          <div style="margin-bottom: 6px;">
+            💡 <strong>Analogi Pegangan Sahabat Sejati:</strong> Makin ditiup badai angin kencang, simpul pangkal makin menggigit kuat tiang pasak! Tapi saat tenda mau dibongkar santai, simpul ini sangat mudah dilepas tanpa merusak tali.
+          </div>
+          <div style="color: #a7f3d0; font-style: italic;">
+            🌿 <strong>Filosofi Keteguhan Prinsip:</strong> Jadilah santri yang memegang prinsip aqidah sekuat simpul pangkal saat diterpa badai godaan, namun tetap luwes, pemaaf, dan lembut saat bergaul dengan sesama.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 8: Q7 (PILIHAN GANDA) -->
+  <div class="slide" data-timer="25">
+    <div class="slide-header">
+      <div class="brand-tag">
+        <span class="badge-phase pg">Babak 2: Pilihan Ganda</span>
+        <span class="header-title">Soal 7 dari 14 • Kosakata Bahasa Arab (IL & MA)</span>
+      </div>
+      <div class="header-actions">
+        <button class="btn-scoreboard-toggle" onclick="toggleScoreboard()">🏆 Papan Skor</button>
+      </div>
+    </div>
+    <div class="arena-card">
+      <div>
+        <div class="timer-center-wrap">
+          <div class="timer-circle" id="timer_8">25</div>
+          <button class="btn-timer" onclick="startSlideTimer(8, 25)">⏱️ Mulai Waktu</button>
+        </div>
+        <div style="text-align:center;">
+          <span class="question-number-badge">Kategori: Lughah Arabiyyah Fil Mukhayyam</span>
+        </div>
+        <div class="question-text">
+          "Manakah pasangan mufradat (kosakata) bahasa Arab yang paling tepat untuk kata 'TENDA' dan 'RANSEL/TAS PUNGGUNG'?"
+        </div>
+        <div class="pg-options-grid">
+          <div class="pg-option-card"><span class="pg-letter let-a">A</span> خَيْمَةٌ (Khaimah) & حَقِيبَةُ الظَّهْرِ (Haqibatu Zhahr)</div>
+          <div class="pg-option-card"><span class="pg-letter let-b">B</span> غُرْفَةٌ (Ghurfah) & مِحْفَظَةٌ (Mihfazhah)</div>
+          <div class="pg-option-card"><span class="pg-letter let-c">C</span> مِظَلَّةٌ (Mizhallah) & كِتَابٌ (Kitab)</div>
+          <div class="pg-option-card"><span class="pg-letter let-d">D</span> فِرَاشٌ (Firasy) & مِصْبَاحٌ (Misbah)</div>
+        </div>
+      </div>
+      <div class="reveal-card" id="reveal_8">
+        <div class="reveal-badge">🎯 KUNCI JAWABAN RESMI:</div>
+        <div class="reveal-text" style="color: #4ade80;">A. خَيْمَةٌ & حَقِيبَةُ الظَّهْرِ</div>
+        <div class="reveal-explanation">
+          <div style="margin-bottom: 6px;">
+            💡 <strong>Analogi Bedah Kata Fisik:</strong> 'Zhahrun' (ظَهْرٌ) artinya punggung tubuh kita. Maka 'Haqibah azh-Zhahr' adalah tas yang menempel di punggung (ransel). 'Khaimah' (خَيْمَةٌ) adalah tenda kemah para ksatria peradaban Islam!
+          </div>
+          <div style="color: #a7f3d0; font-style: italic;">
+            🌿 <strong>Filosofi Bahasa Al-Qur'an:</strong> Bahasa Arab adalah bahasa yang sangat logis; setiap nama benda menceritakan fungsi hakikinya. Belajar mufradat adalah langkah pertama memahami kalamullah.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 9: Q8 (PILIHAN GANDA) -->
+  <div class="slide" data-timer="25">
+    <div class="slide-header">
+      <div class="brand-tag">
+        <span class="badge-phase pg">Babak 2: Pilihan Ganda</span>
+        <span class="header-title">Soal 8 dari 14 • First Aid & Kesehatan Lapangan</span>
+      </div>
+      <div class="header-actions">
+        <button class="btn-scoreboard-toggle" onclick="toggleScoreboard()">🏆 Papan Skor</button>
+      </div>
+    </div>
+    <div class="arena-card">
+      <div>
+        <div class="timer-center-wrap">
+          <div class="timer-circle" id="timer_9">25</div>
+          <button class="btn-timer" onclick="startSlideTimer(9, 25)">⏱️ Mulai Waktu</button>
+        </div>
+        <div style="text-align:center;">
+          <span class="question-number-badge">Kategori: Pertolongan Pertama (P3K)</span>
+        </div>
+        <div class="question-text">
+          "Jika ada teman satu regu yang mengalami kram otot betis yang sangat sakit saat mendaki bukit, tindakan pertama yang benar adalah..."
+        </div>
+        <div class="pg-options-grid">
+          <div class="pg-option-card"><span class="pg-letter let-a">A</span> Memukul-mukul betisnya sekeras mungkin</div>
+          <div class="pg-option-card"><span class="pg-letter let-b">B</span> Mengistirahatkan & meregangkan ujung telapak kaki perlahan ke arah atas</div>
+          <div class="pg-option-card"><span class="pg-letter let-c">C</span> Menyiram kakinya langsung dengan es batu</div>
+          <div class="pg-option-card"><span class="pg-letter let-d">D</span> Memaksanya langsung lari cepat agar lemas</div>
+        </div>
+      </div>
+      <div class="reveal-card" id="reveal_9">
+        <div class="reveal-badge">🎯 KUNCI JAWABAN RESMI:</div>
+        <div class="reveal-text" style="color: #4ade80;">B. Istirahatkan & Regangkan Telapak Kaki Perlahan ke Arah Atas</div>
+        <div class="reveal-explanation">
+          <div style="margin-bottom: 6px;">
+            💡 <strong>Analogi Karet Gelang Kusut:</strong> Kram otot itu seperti karet kusut yang saling mengunci. Kalau betis dipukul atau dipaksa jalan, seratnya bisa robek! Luruskan kaki, lalu tarik ujung jari kaki ke arah atas (ke arah lutut) agar otot memanjang kembali rileks.
+          </div>
+          <div style="color: #a7f3d0; font-style: italic;">
+            🌿 <strong>Filosofi Ketenangan Jiwa:</strong> Ketika emosi atau pikiran sedang tegang kusut, jangan dihadapi dengan amarah. Duduklah tenang, kendurkan ketegangan, dan urai benang kusut itu dengan sabar dan hikmah.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 10: Q9 (PILIHAN GANDA) -->
+  <div class="slide" data-timer="25">
+    <div class="slide-header">
+      <div class="brand-tag">
+        <span class="badge-phase pg">Babak 2: Pilihan Ganda</span>
+        <span class="header-title">Soal 9 dari 14 • Tokoh Penjelajah Dunia Islam</span>
+      </div>
+      <div class="header-actions">
+        <button class="btn-scoreboard-toggle" onclick="toggleScoreboard()">🏆 Papan Skor</button>
+      </div>
+    </div>
+    <div class="arena-card">
+      <div>
+        <div class="timer-center-wrap">
+          <div class="timer-circle" id="timer_10">25</div>
+          <button class="btn-timer" onclick="startSlideTimer(10, 25)">⏱️ Mulai Waktu</button>
+        </div>
+        <div style="text-align:center;">
+          <span class="question-number-badge">Kategori: Sejarah Petualang Muslim</span>
+        </div>
+        <div class="question-text">
+          "Cendekiawan dan penjelajah muslim asal Maroko yang menempuh perjalanan sejauh 117.000 km melintasi Afrika, Asia, hingga sampai ke tanah Nusantara (Samudera Pasai) adalah..."
+        </div>
+        <div class="pg-options-grid">
+          <div class="pg-option-card"><span class="pg-letter let-a">A</span> Ibnu Rusyd</div>
+          <div class="pg-option-card"><span class="pg-letter let-b">B</span> Ibnu Khaldun</div>
+          <div class="pg-option-card"><span class="pg-letter let-c">C</span> Ibnu Battuta</div>
+          <div class="pg-option-card"><span class="pg-letter let-d">D</span> Al-Idrisi</div>
+        </div>
+      </div>
+      <div class="reveal-card" id="reveal_10">
+        <div class="reveal-badge">🎯 KUNCI JAWABAN RESMI:</div>
+        <div class="reveal-text" style="color: #4ade80;">C. Ibnu Battuta (رحمه الله)</div>
+        <div class="reveal-explanation">
+          <div style="margin-bottom: 6px;">
+            💡 <strong>Analogi Mengelilingi Bumi 3 Kali:</strong> Ibnu Battuta berjalan 117.000 km melintasi 44 negara selama 30 tahun naik unta dan kapal kayu (3 kali lebih jauh dari Marco Polo!). Beliau singgah di Aceh dan kagum melihat sultan Nusantara yang memuliakan ulama.
+          </div>
+          <div style="color: #a7f3d0; font-style: italic;">
+            🌿 <strong>Filosofi Pengelana Ilmu:</strong> Santri sejati berjiwa pengelana. Kamar asrama bukan batas wawasan kita; seluruh bumi Allah yang luas ini adalah tempat kita menuntut ilmu dan menebar rahmat.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 11: Q10 (PILIHAN GANDA) -->
+  <div class="slide" data-timer="25">
+    <div class="slide-header">
+      <div class="brand-tag">
+        <span class="badge-phase pg">Babak 2: Pilihan Ganda</span>
+        <span class="header-title">Soal 10 dari 14 • Teka-Teki Logika Penalaran</span>
+      </div>
+      <div class="header-actions">
+        <button class="btn-scoreboard-toggle" onclick="toggleScoreboard()">🏆 Papan Skor</button>
+      </div>
+    </div>
+    <div class="arena-card">
+      <div>
+        <div class="timer-center-wrap">
+          <div class="timer-circle" id="timer_11">25</div>
+          <button class="btn-timer" onclick="startSlideTimer(11, 25)">⏱️ Mulai Waktu</button>
+        </div>
+        <div style="text-align:center;">
+          <span class="question-number-badge">Kategori: Riddle / Teka-Teki Berpikir</span>
+        </div>
+        <div class="question-text">
+          "Aku memiliki kota tetapi tanpa rumah, memiliki hutan tetapi tanpa pohon, memiliki sungai tetapi tanpa air, dan memiliki gunung tetapi tanpa batu. Benda apakah aku?"
+        </div>
+        <div class="pg-options-grid">
+          <div class="pg-option-card"><span class="pg-letter let-a">A</span> Lukisan Dinding</div>
+          <div class="pg-option-card"><span class="pg-letter let-b">B</span> PETA (Map Navigasi)</div>
+          <div class="pg-option-card"><span class="pg-letter let-c">C</span> Buku Cerita Dongeng</div>
+          <div class="pg-option-card"><span class="pg-letter let-d">D</span> Foto Satelit</div>
+        </div>
+      </div>
+      <div class="reveal-card" id="reveal_11">
+        <div class="reveal-badge">🎯 KUNCI JAWABAN RESMI:</div>
+        <div class="reveal-text" style="color: #4ade80;">B. PETA (MAP)</div>
+        <div class="reveal-explanation">
+          <div style="margin-bottom: 6px;">
+            💡 <strong>Analogi Miniatur Dunia Tanpa Bobot:</strong> Peta punya garis biru sungai tanpa setetes air basah; punya blok hijau hutan tanpa sebatang pohon pun yang bisa dipanjat; punya titik kota tanpa ada bangunan rumah!
+          </div>
+          <div style="color: #a7f3d0; font-style: italic;">
+            🌿 <strong>Filosofi Peta Kehidupan:</strong> Al-Qur'an dan Sunnah adalah peta navigasi hidup kita di dunia. Manusia yang tidak pernah membaca petanya pasti akan tersesat di tengah rimba belantara kehidupan akhir zaman.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 12: ACTION BREAK 2 (MISI SPIONASE & SANDAL RAKSASA) -->
+  <div class="slide" data-timer="60">
+    <div class="slide-header">
+      <div class="brand-tag">
+        <span class="badge-phase" style="background:#0284c7;">⚡ ACTION BREAK 2</span>
+        <span class="header-title">Misi Spionase: Sandal Raksasa & Benda Aneh (+200 Poin)</span>
+      </div>
+      <div class="header-actions">
+        <button class="btn-scoreboard-toggle" onclick="toggleScoreboard()">🏆 Papan Skor</button>
+      </div>
+    </div>
+    <div class="arena-card hero-slide-body" style="background: radial-gradient(circle at center, #0c4a6e 0%, #0f172a 100%);">
+      <div style="font-size: 54px; margin-bottom: 8px;">🩴🔍</div>
+      <div class="timer-center-wrap">
+        <div class="timer-circle" id="timer_12_act" style="color:#38bdf8; border-color:#38bdf8;">60</div>
+        <button class="btn-timer" style="background:#0284c7;" onclick="startSlideTimer('12_act', 60)">⏱️ Mulai 60 Detik!</button>
+      </div>
+      <h2 style="font-size: 38px; font-weight: 900; color: #fde047; text-transform: uppercase; margin: 10px 0;">
+        MISI: SANDAL PALING RAKSASA & BENDA ANEH!
+      </h2>
+      <p style="font-size: 18px; color: #cbd5e1; max-width: 800px; line-height: 1.6; margin-bottom: 20px;">
+        Dalam <strong>60 detik</strong>, perwakilan tim harus berlari ke depan membawa:<br>
+        <strong>1 pasang sandal anggota tim yang ukurannya paling raksasa</strong> + <strong>1 benda paling aneh di saku/tas yang bisa dipakai bertahan hidup</strong>!
+      </p>
+      <div style="background: rgba(255,255,255,0.08); border: 2px dashed #38bdf8; border-radius: 16px; padding: 14px 28px; font-size: 15px; color: #e0f2fe; font-weight: 700;">
+        ⚖️ Ustaz Rieza langsung mengecek nomor sandal dan menilai benda terunik! Pemenang dapat <strong>+200 POIN</strong>!
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== BABAK 3: ESAI & ANALISIS KASUS (4 SOAL x200 POIN) ==================== -->
+
+  <!-- SLIDE 12: Q11 (ESAI KASUS) -->
+  <div class="slide" data-timer="35">
+    <div class="slide-header">
+      <div class="brand-tag">
+        <span class="badge-phase esai">Babak 3: Esai Kasus (x2 Poin)</span>
+        <span class="header-title">Soal 11 dari 14 • Studi Kasus Darurat Mukhayyam</span>
+      </div>
+      <div class="header-actions">
+        <button class="btn-scoreboard-toggle" onclick="toggleScoreboard()">🏆 Papan Skor</button>
+      </div>
+    </div>
+    <div class="arena-card">
+      <div>
+        <div class="timer-center-wrap">
+          <div class="timer-circle" id="timer_12">35</div>
+          <button class="btn-timer" onclick="startSlideTimer(12, 35)">⏱️ Mulai Waktu</button>
+        </div>
+        <div style="text-align:center;">
+          <span class="question-number-badge">Kategori: Kepemimpinan & Manajemen Krisis</span>
+        </div>
+        <div class="question-text">
+          "Regu kalian berjalan di jalur lintas alam dan tersisa 1 botol air mineral (600 ml) untuk 6 orang, sedangkan perjalanan masih 2 jam lagi di bawah terik matahari. Tuliskan 1 ATURAN TERPENTING yang harus diputuskan Ketua Regu terkait botol air tersebut!"
+        </div>
+        <div style="text-align:center; color:#94a3b8; font-size:16px;">
+          ✍️ <em>Tuliskan jawaban singkat (1 kalimat padat) di kertas tim kalian!</em>
+        </div>
+      </div>
+      <div class="reveal-card" id="reveal_12">
+        <div class="reveal-badge">🎯 KATA KUNCI JAWABAN TEPAT (+200 Poin):</div>
+        <div class="reveal-text" style="color: #fde047;">"Rasionalisasi / Dijatah Sama Rata / Hanya Membasahi Tenggorokan"</div>
+        <div class="reveal-explanation">
+          <div style="margin-bottom: 6px;">
+            💡 <strong>Analogi Kapal Sekoci:</strong> Kalau 1 orang egois menenggak air rakus setengah botol, 5 kawannya pingsan dehidrasi dan regu gagal total! 600 ml dipegang ketua: tiap orang dijatah 1-2 teguk kecil (100 ml) terjadwal hanya untuk membasahi kerongkongan.
+          </div>
+          <div style="color: #a7f3d0; font-style: italic;">
+            🌿 <strong>Filosofi Pemimpin Muslim (*Itsar*):</strong> Pemimpin sejati mendahulukan dahaga pasukannya sebelum dirinya sendiri. Kekuatan regu ada pada pengorbanan dan keadilan membagi tetesan air terakhir.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 13: Q12 (ESAI KASUS) -->
+  <div class="slide" data-timer="35">
+    <div class="slide-header">
+      <div class="brand-tag">
+        <span class="badge-phase esai">Babak 3: Esai Kasus (x2 Poin)</span>
+        <span class="header-title">Soal 12 dari 14 • Sandi Al-Kindi</span>
+      </div>
+      <div class="header-actions">
+        <button class="btn-scoreboard-toggle" onclick="toggleScoreboard()">🏆 Papan Skor</button>
+      </div>
+    </div>
+    <div class="arena-card">
+      <div>
+        <div class="timer-center-wrap">
+          <div class="timer-circle" id="timer_13">35</div>
+          <button class="btn-timer" onclick="startSlideTimer(13, 35)">⏱️ Mulai Waktu</button>
+        </div>
+        <div style="text-align:center;">
+          <span class="question-number-badge">Kategori: Aljabar Dekripsi Cepat</span>
+        </div>
+        <div class="question-text">
+          "Gunakan rumus dekripsi aljabar: <strong>X = Y - 3</strong>. Pecahkan pesan kode sandi 5 huruf berikut:<br>
+          <span style="font-family:'JetBrains Mono'; font-size:42px; color:#fde047; letter-spacing:8px; display:inline-block; margin-top:10px;">
+            13 - 24 - 4 - 21 - 4
+          </span>"
+        </div>
+        <div style="text-align:center; color:#94a3b8; font-size:16px;">
+          ✍️ <em>Hitung: (13-3), (24-3), (4-3), (21-3), (4-3) lalu terjemahkan ke huruf (A=1 s.d. Z=26)!</em>
+        </div>
+      </div>
+      <div class="reveal-card" id="reveal_13">
+        <div class="reveal-badge">🎯 KUNCI JAWABAN RESMI (+200 Poin):</div>
+        <div class="reveal-text" style="color: #4ade80;">"J - U - A - R - A" (10 - 21 - 1 - 18 - 1)</div>
+        <div class="reveal-explanation">
+          <div style="margin-bottom: 6px;">
+            💡 <strong>Analogi Kunci Gembok Brankas:</strong> Tiap angka kurangi 3 lalu cocokkan urutan abjad: 13-3=10 (<strong>J</strong>), 24-3=21 (<strong>U</strong>), 4-3=1 (<strong>A</strong>), 21-3=18 (<strong>R</strong>), 4-3=1 (<strong>A</strong>)! Terbukalah kata sandi emas pejuang: <strong>JUARA!</strong>
+          </div>
+          <div style="color: #a7f3d0; font-style: italic;">
+            🌿 <strong>Filosofi Cendekiawan Islam:</strong> Al-Kindi (ilmuwan kriptografi muslim dunia) mengajarkan: serumit apa pun misteri dan ujian hidup, pasti terbuka kuncinya jika kita tekun, sabar, dan menggunakan akal sehat.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 14: Q13 (ESAI KASUS) -->
+  <div class="slide" data-timer="35">
+    <div class="slide-header">
+      <div class="brand-tag">
+        <span class="badge-phase esai">Babak 3: Esai Kasus (x2 Poin)</span>
+        <span class="header-title">Soal 13 dari 14 • Adab & Kehormatan Santri</span>
+      </div>
+      <div class="header-actions">
+        <button class="btn-scoreboard-toggle" onclick="toggleScoreboard()">🏆 Papan Skor</button>
+      </div>
+    </div>
+    <div class="arena-card">
+      <div>
+        <div class="timer-center-wrap">
+          <div class="timer-circle" id="timer_14">35</div>
+          <button class="btn-timer" onclick="startSlideTimer(14, 35)">⏱️ Mulai Waktu</button>
+        </div>
+        <div style="text-align:center;">
+          <span class="question-number-badge">Kategori: Tarbiyah & Akhlak Pesantren</span>
+        </div>
+        <div class="question-text">
+          "Ketika regu kalian sedang berjalan melintasi perkampungan warga di sekitar area perkemahan, sebutkan 2 ADAB PALING UTAMA yang wajib dijaga santri Pesantren Al-Imam Al-Islami!"
+        </div>
+        <div style="text-align:center; color:#94a3b8; font-size:16px;">
+          ✍️ <em>Tuliskan 2 adab singkat di kertas tim kalian!</em>
+        </div>
+      </div>
+      <div class="reveal-card" id="reveal_14">
+        <div class="reveal-badge">🎯 KATA KUNCI BENAR (+200 Poin):</div>
+        <div class="reveal-text" style="color: #38bdf8;">"Menundukkan Pandangan (Ghadhdhul Bashar) & Mengucapkan Salam / Sopan Santun"</div>
+        <div class="reveal-explanation">
+          <div style="margin-bottom: 6px;">
+            💡 <strong>Analogi Cermin Almamater:</strong> Saat antum memakai baju santri di kampung orang, warga melihat cermin Pesantren Al-Imam! Satu santri teriak tidak sopan, nama 50 santri tercoreng. Tapi satu senyuman dan sapaan salam santun, warga akan mendoakan kebaikan bagi kita semua.
+          </div>
+          <div style="color: #a7f3d0; font-style: italic;">
+            🌿 <strong>Filosofi Dakwah Akhlak:</strong> <em>"Al-Adabu fauqal 'ilmi"</em> (Adab itu di atas ilmu). Dakwah paling fasih bukanlah ceramah panjang, melainkan akhlak yang menundukkan pandangan dan menebar salam saat melangkah di bumi Allah.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 18: BABAK TARUHAN POIN (THE SUDDEN DEATH GAMBLE) -->
+  <div class="slide">
+    <div class="slide-header">
+      <div class="brand-tag">
+        <span class="badge-phase" style="background:#f59e0b; color:#000;">⚡ BABAK PENENTU</span>
+        <span class="header-title">The Sudden Death: Taruhan Poin Terakhir!</span>
+      </div>
+      <div class="header-actions">
+        <button class="btn-scoreboard-toggle" onclick="toggleScoreboard()">🏆 Papan Skor</button>
+      </div>
+    </div>
+    <div class="arena-card hero-slide-body" style="background: radial-gradient(circle at center, #451a03 0%, #0f172a 100%);">
+      <div style="font-size: 54px; margin-bottom: 8px;">🔥🎲</div>
+      <h2 style="font-size: 38px; font-weight: 900; color: #fde047; text-transform: uppercase; margin: 10px 0;">
+        SOAL TERAKHIR: SISTEM TARUHAN POIN!
+      </h2>
+      <p style="font-size: 18px; color: #cbd5e1; max-width: 850px; line-height: 1.6; margin-bottom: 20px;">
+        Sebelum Soal 14 dibuka, masing-masing Kapten MA wajib menuliskan <strong>BESARAN TARUHAN POIN</strong> di sudut atas kertas timnya:
+      </p>
+      <div style="display:grid; grid-template-columns: 1fr 1fr; gap:20px; max-width:750px; width:100%; margin-bottom:20px;">
+        <div style="background:rgba(16,185,129,0.15); border:2px solid #10b981; border-radius:14px; padding:16px; text-align:center;">
+          <div style="font-size:20px; font-weight:900; color:#4ade80;">JIKA BENAR:</div>
+          <div style="font-size:14px; color:#a7f3d0; margin-top:4px;">Poin bertambah sesuai jumlah taruhan yang dipasang (Maksimal +300 Poin)!</div>
+        </div>
+        <div style="background:rgba(239,68,68,0.15); border:2px solid #ef4444; border-radius:14px; padding:16px; text-align:center;">
+          <div style="font-size:20px; font-weight:900; color:#f87171;">JIKA SALAH:</div>
+          <div style="font-size:14px; color:#fca5a5; margin-top:4px;">Poin dipotong sebesar nilai taruhan yang dipasang!</div>
+        </div>
+      </div>
+      <div style="font-size: 14px; color: #fde047; font-weight: 800;">
+        ⏱️ Waktu diskusi taruhan: 30 detik! Ustaz Rieza mencatat angka taruhan tiap tim di papan skor!
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 19: Q14 (ESAI KASUS - FINAL CLASH) -->
+  <div class="slide" data-timer="35">
+    <div class="slide-header">
+      <div class="brand-tag">
+        <span class="badge-phase esai">Babak 3: Soal Penutup (x2 Poin)</span>
+        <span class="header-title">Soal 14 dari 14 • Semboyan Pejuang Islam</span>
+      </div>
+      <div class="header-actions">
+        <button class="btn-scoreboard-toggle" onclick="toggleScoreboard()">🏆 Papan Skor</button>
+      </div>
+    </div>
+    <div class="arena-card">
+      <div>
+        <div class="timer-center-wrap">
+          <div class="timer-circle" id="timer_15">35</div>
+          <button class="btn-timer" onclick="startSlideTimer(15, 35)">⏱️ Mulai Waktu</button>
+        </div>
+        <div style="text-align:center;">
+          <span class="question-number-badge">Kategori: Makna Tarbawi</span>
+        </div>
+        <div class="question-text">
+          "Rasulullah ﷺ bersabda: <em>'Al-Mu'minul qawiyyu khairun wa ahabbu ilallah minal mu'minidh dha'if...'</em><br>
+          Apakah arti dari penggalan hadits shahih riwayat Muslim tersebut?"
+        </div>
+        <div style="text-align:center; color:#94a3b8; font-size:16px;">
+          ✍️ <em>Tuliskan terjemahan maknanya di kertas tim kalian!</em>
+        </div>
+      </div>
+      <div class="reveal-card" id="reveal_15">
+        <div class="reveal-badge">🎯 KUNCI JAWABAN RESMI (+200 Poin):</div>
+        <div class="reveal-text" style="color: #4ade80;">"Mukmin yang kuat lebih baik dan lebih dicintai Allah daripada mukmin yang lemah."</div>
+        <div class="reveal-explanation">
+          <div style="margin-bottom: 6px;">
+            💡 <strong>Analogi 2 Sayap Rajawali:</strong> Mukmin tangguh harus punya dua sayap seimbang: <strong>Sayap Fisik</strong> (tahan banting camping di alam, tidak loyo) dan <strong>Sayap Iman</strong> (kuat bangun tahajud & hafal Qur'an). Mukmin yang lemah fisik dan tekad akan mudah menyerah di tengah jalan.
+          </div>
+          <div style="color: #a7f3d0; font-style: italic;">
+            🌿 <strong>Filosofi Mukhayyam Tarbawi:</strong> Camping hari Selasa bukan untuk menyiksa tubuh, tapi sarana membentuk fisik ksatria dan ruhani pemenang yang siap memimpin umat!
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 16: PENOBATAN SANG JUARA (FINALE) -->
+  <div class="slide">
+    <div class="slide-header">
+      <div class="brand-tag">
+        <span class="badge-phase" style="background:#f59e0b; color:#000;">Upacara Penutupan</span>
+        <span class="header-title">Penobatan Sang Juara & Pembagian Hadiah</span>
+      </div>
+      <div class="header-actions">
+        <button class="btn-scoreboard-toggle" onclick="toggleScoreboard()">🏆 Buka Papan Skor</button>
+      </div>
+    </div>
+    <div class="arena-card hero-slide-body" style="background: radial-gradient(circle at center, rgba(30, 27, 75, 0.95), rgba(15, 23, 42, 0.98));">
+      <div style="font-size: 60px; margin-bottom: 8px;">👑</div>
+      <h1 style="font-size: 44px; font-weight: 900; color: #fde047; text-transform: uppercase; letter-spacing: 2px;">
+        SELAMAT KEPADA SANG JUARA ALIANSI!
+      </h1>
+      <p style="font-size: 18px; color: #e2e8f0; max-width: 800px; line-height: 1.6; margin: 12px 0 24px 0;">
+        Kalian telah membuktikan bahwa perbedaan jenjang usia (MA, IL, dan MTs) bukanlah pemisah, melainkan kekuatan sinergi yang luar biasa!
+      </p>
+
+      <div style="background: rgba(16, 185, 129, 0.2); border: 2px solid #10b981; border-radius: 20px; padding: 20px 36px; margin-bottom: 24px;">
+        <div style="font-size: 16px; font-weight: 800; color: #a7f3d0; margin-bottom: 4px;">🏆 HADIAH KAS MUKHAYYAM DISERAHKAN:</div>
+        <div style="font-size: 26px; font-weight: 900; color: #ffffff;">Podium 3 Besar: Penyerahan 3 Amplop Kas Regu untuk Juara 1, 2, dan 3!</div>
+      </div>
+
+      <div style="display:flex; gap:16px;">
+        <button class="btn-action gold" style="font-size:16px; padding:12px 28px;" onclick="triggerConfetti(); playVictoryFanfare();">
+          🎉 TEMBAKKAN KONFETI JUARA!
+        </button>
+        <button class="btn-action primary" style="font-size:16px; padding:12px 28px;" onclick="toggleScoreboard()">
+          📊 LIHAT HASIL KLASEMEN AKHIR
+        </button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- FOOTER CONTROLS BAR -->
+<div class="slide-footer">
+  <div class="nav-btn-group">
+    <button class="btn-action" onclick="prevSlide()">◀ Mundur (Kiri)</button>
+    <button class="btn-action" onclick="nextSlide()">Lanjut ▶ (Kanan)</button>
+    <button class="btn-action" style="background:#1e293b;" onclick="toggleCurrentSlideTimer()">⏱️ Timer</button>
+  </div>
+
+  <div class="slide-counter" id="slideCounterText">Slide 1 / 17</div>
+
+  <div class="nav-btn-group">
+    <button class="btn-action primary" onclick="revealCurrentAnswer()">💡 BUKA JAWABAN (Enter)</button>
+    <button class="btn-action" style="background:#3b82f6;" onclick="toggleScoreboard()">🏆 Skor Tim</button>
+  </div>
+</div>
+
+<script>
+  // ==================== AUDIO SYNTHESIZER (WEB AUDIO API) ====================
+  const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+  function playTone(freq, type, duration) {
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.type = type;
+    osc.frequency.value = freq;
+    gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+    osc.start();
+    osc.stop(audioCtx.currentTime + duration);
+  }
+
+  function playTickSound() {
+    playTone(800, 'sine', 0.05);
+  }
+
+  function playBuzzerSound() {
+    playTone(220, 'sawtooth', 0.4);
+    setTimeout(() => playTone(180, 'sawtooth', 0.5), 150);
+  }
+
+  function playRevealChime() {
+    playTone(523.25, 'triangle', 0.15); // C5
+    setTimeout(() => playTone(659.25, 'triangle', 0.15), 100); // E5
+    setTimeout(() => playTone(783.99, 'triangle', 0.25), 200); // G5
+    setTimeout(() => playTone(1046.50, 'triangle', 0.4), 300); // C6
+  }
+
+  function playVictoryFanfare() {
+    const notes = [523, 659, 783, 1046, 783, 1046];
+    notes.forEach((n, idx) => {
+      setTimeout(() => playTone(n, 'triangle', 0.25), idx * 160);
+    });
+  }
+
+  // ==================== CAROUSEL LOGIC ====================
+  let currentSlide = 0;
+  const totalSlides = 20;
+
+  function updateSlideDisplay() {
+    const container = document.getElementById('deckContainer');
+    container.style.transform = `translateX(-${currentSlide * 100}vw)`;
+    document.getElementById('slideCounterText').innerText = `Slide ${currentSlide + 1} / ${totalSlides}`;
+  }
+
+  function nextSlide() {
+    if (currentSlide < totalSlides - 1) {
+      currentSlide++;
+      updateSlideDisplay();
+      stopAllTimers();
+    }
+  }
+
+  function prevSlide() {
+    if (currentSlide > 0) {
+      currentSlide--;
+      updateSlideDisplay();
+      stopAllTimers();
+    }
+  }
+
+  // Keyboard Navigation
+  window.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      dismissTimeUpModal();
+      const modal = document.getElementById('scoreboardModal');
+      if (modal) modal.classList.remove('open');
+    } else if (e.key === 'ArrowRight' || e.key === 'PageDown') {
+      dismissTimeUpModal();
+      nextSlide();
+    } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+      dismissTimeUpModal();
+      prevSlide();
+    } else if (e.key === 'Enter') {
+      dismissTimeUpModal();
+      revealCurrentAnswer();
+    } else if (e.key.toLowerCase() === 't') {
+      toggleCurrentSlideTimer();
+    } else if (e.key.toLowerCase() === 's') {
+      toggleScoreboard();
+    }
+  });
+
+  // ==================== TIMER ENGINE ====================
+  let activeTimerInterval = null;
+  let currentSlideTimeLeft = 15;
+
+  function showTimeUpModal() {
+    const modal = document.getElementById('timeUpModal');
+    if (modal) modal.style.display = 'flex';
+  }
+
+  function dismissTimeUpModal() {
+    const modal = document.getElementById('timeUpModal');
+    if (modal) modal.style.display = 'none';
+  }
+
+  function stopAllTimers() {
+    if (activeTimerInterval) {
+      clearInterval(activeTimerInterval);
+      activeTimerInterval = null;
+    }
+    dismissTimeUpModal();
+  }
+
+  function startSlideTimer(slideIndex, initialSec) {
+    stopAllTimers();
+    currentSlideTimeLeft = initialSec;
+    const timerEl = document.getElementById(`timer_${slideIndex}`);
+    if (!timerEl) return;
+
+    timerEl.classList.remove('danger');
+    timerEl.innerText = currentSlideTimeLeft;
+
+    activeTimerInterval = setInterval(() => {
+      currentSlideTimeLeft--;
+      if (currentSlideTimeLeft >= 0) {
+        timerEl.innerText = currentSlideTimeLeft;
+        if (currentSlideTimeLeft <= 5) {
+          timerEl.classList.add('danger');
+          playTickSound();
+        }
+      }
+      if (currentSlideTimeLeft <= 0) {
+        clearInterval(activeTimerInterval);
+        activeTimerInterval = null;
+        timerEl.innerText = "HABIS!";
+        playBuzzerSound();
+        showTimeUpModal();
+      }
+    }, 1000);
+  }
+
+  function toggleCurrentSlideTimer() {
+    const activeSlide = document.querySelectorAll('.slide')[currentSlide];
+    const defaultTimer = activeSlide.getAttribute('data-timer');
+    if (defaultTimer) {
+      startSlideTimer(currentSlide, parseInt(defaultTimer));
+    }
+  }
+
+  // ==================== ANSWER REVEAL ====================
+  function revealCurrentAnswer() {
+    const revealBox = document.getElementById(`reveal_${currentSlide}`);
+    if (revealBox) {
+      if (revealBox.style.display === 'block') {
+        revealBox.style.display = 'none';
+      } else {
+        revealBox.style.display = 'block';
+        playRevealChime();
+      }
+    }
+  }
+
+  // ==================== SCOREBOARD DATA ====================
+  const teams = [
+    { id: 1, name: "Tim Piket 1 (Pandi Rianto)", lead: "Koord: Pandi (MA) • 6 Santri", score: 0 },
+    { id: 2, name: "Tim Piket 2 (M. Abdul Rahman)", lead: "Koord: Rahman (MA) • 6 Santri", score: 0 },
+    { id: 3, name: "Tim Piket 3 (M. Abdul Rahim)", lead: "Koord: Rahim (MA) • 6 Santri", score: 0 },
+    { id: 4, name: "Tim Piket 4 (Salman Uran)", lead: "Koord: Salman (MA) • 6 Santri", score: 0 },
+    { id: 5, name: "Tim Piket 5 (Yasser Ali)", lead: "Koord: Yasser (MA) • 6 Santri", score: 0 },
+    { id: 6, name: "Tim Piket 6 (Syafiq Karimalai)", lead: "Koord: Syafiq (MA) • 6 Santri", score: 0 },
+    { id: 7, name: "Tim Piket 7 (Radil)", lead: "Koord: Radil (MA) • 6 Santri", score: 0 },
+    { id: 8, name: "Tim Piket 8 (Dicky Dwy)", lead: "Koord: Dicky (MA) • 6 Santri", score: 0 }
+  ];
+
+  function renderScoreboard() {
+    const listEl = document.getElementById('teamScoreList');
+    listEl.innerHTML = '';
+    teams.forEach(t => {
+      const row = document.createElement('div');
+      row.className = 'team-row';
+      row.innerHTML = `
+        <div class="team-info">
+          <span class="t-name">${t.name}</span>
+          <span class="t-members">${t.lead}</span>
+        </div>
+        <div class="team-score-ctrl">
+          <button class="btn-pt minus" onclick="modScore(${t.id}, -50)">-50</button>
+          <span class="t-score" id="score_val_${t.id}">${t.score}</span>
+          <button class="btn-pt" onclick="modScore(${t.id}, 100)">+100</button>
+          <button class="btn-pt" style="background:#d97706;" onclick="modScore(${t.id}, 200)">+200</button>
+        </div>
+      `;
+      listEl.appendChild(row);
+    });
+  }
+
+  function modScore(teamId, delta) {
+    const t = teams.find(x => x.id === teamId);
+    if (t) {
+      t.score = Math.max(0, t.score + delta);
+      document.getElementById(`score_val_${teamId}`).innerText = t.score;
+      if (delta > 0) playTone(700, 'sine', 0.1);
+    }
+  }
+
+  function resetScores() {
+    if (confirm("Reset semua skor tim kembali ke 0?")) {
+      teams.forEach(t => t.score = 0);
+      renderScoreboard();
+    }
+  }
+
+  function toggleScoreboard() {
+    const modal = document.getElementById('scoreboardModal');
+    modal.classList.toggle('open');
+  }
+
+  // ==================== CONFETTI ENGINE ====================
+  function triggerConfetti() {
+    const canvas = document.getElementById('confettiCanvas');
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    const particles = [];
+    const colors = ['#f59e0b', '#10b981', '#38bdf8', '#ec4899', '#8b5cf6', '#ef4444', '#ffffff'];
+
+    for (let i = 0; i < 160; i++) {
+      particles.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height - canvas.height,
+        size: Math.random() * 8 + 6,
+        color: colors[Math.floor(Math.random() * colors.length)],
+        velX: Math.random() * 4 - 2,
+        velY: Math.random() * 5 + 3,
+        rotation: Math.random() * 360,
+        rotSpeed: Math.random() * 6 - 3
+      });
+    }
+
+    let frames = 0;
+    function animateConfetti() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      particles.forEach(p => {
+        p.x += p.velX;
+        p.y += p.velY;
+        p.rotation += p.rotSpeed;
+        ctx.save();
+        ctx.translate(p.x, p.y);
+        ctx.rotate((p.rotation * Math.PI) / 180);
+        ctx.fillStyle = p.color;
+        ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size);
+        ctx.restore();
+      });
+      frames++;
+      if (frames < 200) {
+        requestAnimationFrame(animateConfetti);
+      } else {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+      }
+    }
+    animateConfetti();
+  }
+
+  // Initialize
+  renderScoreboard();
+</script>
+
+</body>
+</html>

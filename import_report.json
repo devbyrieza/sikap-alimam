@@ -1,0 +1,282 @@
+{
+  "ust": [
+    {
+      "id": "1b2ab03a-8133-4b77-8e0d-30cc4e313d70",
+      "nip": null,
+      "nik": null,
+      "nama_lengkap": "Wahyudi Pranata, Lc.",
+      "nama_panggilan": null,
+      "jenis_kelamin": null,
+      "tempat_lahir": null,
+      "tanggal_lahir": null,
+      "no_hp": null,
+      "email": null,
+      "alamat": null,
+      "kategori_pegawai": "GURU",
+      "unit_kerja": null,
+      "divisi": null,
+      "jabatan": "Kadiv Pengasuhan & Musyrif",
+      "mata_pelajaran": null,
+      "pendidikan_terakhir": null,
+      "status_pernikahan": null,
+      "foto_url": null,
+      "ttd_url": null,
+      "created_at": "2026-08-29T07:30:15.168Z",
+      "updated_at": "2026-08-29T07:30:15.168Z",
+      "user_id": "2f878453-b437-4081-88b1-901607e0f751"
+    },
+    {
+      "id": "1ed987d2-5ef9-4504-87eb-116933136fdc",
+      "nip": null,
+      "nik": null,
+      "nama_lengkap": "Muhammad Iqbal, S. Pd",
+      "nama_panggilan": null,
+      "jenis_kelamin": null,
+      "tempat_lahir": null,
+      "tanggal_lahir": null,
+      "no_hp": null,
+      "email": null,
+      "alamat": null,
+      "kategori_pegawai": "GURU",
+      "unit_kerja": null,
+      "divisi": null,
+      "jabatan": "Musyrif & Guru",
+      "mata_pelajaran": null,
+      "pendidikan_terakhir": null,
+      "status_pernikahan": null,
+      "foto_url": null,
+      "ttd_url": null,
+      "created_at": "2026-08-29T07:30:16.044Z",
+      "updated_at": "2026-08-29T07:30:16.044Z",
+      "user_id": "123f756f-c6b1-44c8-88e8-96ab8afacbaa"
+    }
+  ],
+  "matched": [
+    {
+      "excel": "Rasyid",
+      "db": "Abdullah Rasyid",
+      "id": "a1b19867-732b-4700-8683-ec5bb8e621ce"
+    },
+    {
+      "excel": "Andi Ibra Faeyza",
+      "db": "Andi Ibra Faeyza Hasan Alnasr",
+      "id": "bfd438ed-e8c4-4750-b1fc-ad2296425026"
+    },
+    {
+      "excel": "Abdurrahman Pati Raja",
+      "db": "Muhammad Hafidz Abdurrahman",
+      "id": "7aaf1a23-580d-4e53-9d15-5db78065c851"
+    },
+    {
+      "excel": "Fiqri",
+      "db": "Fiqri Ramdan Handoko",
+      "id": "8f0151c3-1886-43cf-b7a9-0089bc1ff595"
+    },
+    {
+      "excel": "Nurcahya Eka Putra",
+      "db": "Nurcahya Eka Putra",
+      "id": "1db7d870-244c-4aa7-946f-632f33ec6498"
+    },
+    {
+      "excel": "Dicky",
+      "db": "Dicky Dwy AP",
+      "id": "015736ce-6d07-48b6-864d-1e29611b4699"
+    },
+    {
+      "excel": "Radil",
+      "db": "Radil",
+      "id": "09f4088a-1eda-4d7c-8afd-119cdf1ed0f8"
+    },
+    {
+      "excel": "Muhammad Rizki",
+      "db": "Muhammad Rifqi Hamid",
+      "id": "9d80211c-15d7-4d8a-9575-240bd745a570"
+    },
+    {
+      "excel": "Azka Panji",
+      "db": "Azka Panji Kusuma",
+      "id": "89cfe216-8eb5-4148-9017-fe0298aaa077"
+    },
+    {
+      "excel": "Abdullah Rasyid",
+      "db": "Abdullah Rasyid",
+      "id": "a1b19867-732b-4700-8683-ec5bb8e621ce"
+    },
+    {
+      "excel": "Muhammad Hafizh Reo",
+      "db": "Muhammad Rifqi Hamid",
+      "id": "9d80211c-15d7-4d8a-9575-240bd745a570"
+    },
+    {
+      "excel": "Naufal Dzakiy",
+      "db": "Naufal Dzakiy Purnama",
+      "id": "4fdf131d-2618-4bb9-8816-acc74d375baf"
+    },
+    {
+      "excel": "Pandi",
+      "db": "Pandi Rianto",
+      "id": "9d195b6f-bd11-4a34-ac39-1337d7800b22"
+    },
+    {
+      "excel": "Panji Ahmad",
+      "db": "Panji Ahmad",
+      "id": "38dc8032-a76f-45df-aded-42c8c7a9b3f9"
+    },
+    {
+      "excel": "Fariq Malaibui",
+      "db": "Fariq Malaibui",
+      "id": "8841eafd-5dfc-4c4f-8f31-514230cd6710"
+    },
+    {
+      "excel": "Labibullah",
+      "db": "Labibullah El Fatih",
+      "id": "152a4bc2-272e-40b0-92a0-d152905c0904"
+    },
+    {
+      "excel": "Daffa Muhammad",
+      "db": "Daffa Muammar Dzaki",
+      "id": "78920e17-993a-41c7-98d8-2cc4eb3becb0"
+    },
+    {
+      "excel": "Muhammad Fazril",
+      "db": "Muhammad Rifqi Hamid",
+      "id": "9d80211c-15d7-4d8a-9575-240bd745a570"
+    },
+    {
+      "excel": "Muhammad Hafizh",
+      "db": "Muhammad Rifqi Hamid",
+      "id": "9d80211c-15d7-4d8a-9575-240bd745a570"
+    },
+    {
+      "excel": "Iman",
+      "db": "Iman Prayogo",
+      "id": "cb1f6d2f-78be-4603-ae8d-794d5c047746"
+    },
+    {
+      "excel": "Salman",
+      "db": "Salman Abdulrahim Uran",
+      "id": "9e7889bc-1e4d-4cf2-a0b9-4acdfc7856ee"
+    },
+    {
+      "excel": "Wahyu",
+      "db": "Wahyu Hidayat",
+      "id": "cd14d70d-5f39-4948-81cc-7bea08febd46"
+    },
+    {
+      "excel": "Khubaib",
+      "db": "Khubaib Abdul Aziz",
+      "id": "62878255-744c-48a9-8c0c-0a40887076ad"
+    },
+    {
+      "excel": "Abdul Aziz",
+      "db": "Abdul Aziz Ali",
+      "id": "83b56234-667c-441d-8faf-3a138d81cd40"
+    },
+    {
+      "excel": "Abdul Hakim",
+      "db": "Abdul Hakim",
+      "id": "79cb5e71-c308-4baa-92cf-2c0ee8138735"
+    },
+    {
+      "excel": "Haidar",
+      "db": "Haidar Ayyubi",
+      "id": "e9d0d1da-7222-4595-a5a3-18e61d0dfd90"
+    },
+    {
+      "excel": "Farid",
+      "db": "Farid",
+      "id": "e0e04087-119d-44b5-b1cd-cc50694942a5"
+    },
+    {
+      "excel": "Rifqi Arsyad",
+      "db": "Rifqi Arsyad Fadilah",
+      "id": "ad34527f-255e-432e-b25f-1e88c45e2da5"
+    },
+    {
+      "excel": "Muhammad Azzam",
+      "db": "Muhammad Azzam Al Hafiz",
+      "id": "4f4fee4f-78ed-4276-9c36-a4ed90e67f28"
+    },
+    {
+      "excel": "Ahmad Farros",
+      "db": "Ahmad Farros Al Barqy",
+      "id": "f9676d1e-3dbe-4a2f-92a0-1b974aafb53d"
+    },
+    {
+      "excel": "Ken Alfareza",
+      "db": "Ken Alfarezha Haryadi",
+      "id": "648441bc-7a22-4ad7-bb5f-4ce5b64e3e92"
+    },
+    {
+      "excel": "Yahya Ayyash",
+      "db": "Muhammad Yahya Ayyash",
+      "id": "2f265576-df15-4b12-80e2-8481066b9082"
+    },
+    {
+      "excel": "Lalu",
+      "db": "Lalu Muhamad Rizky Ananda",
+      "id": "10445a2f-adfc-498e-842a-aa156a2f7db2"
+    },
+    {
+      "excel": "Khalish",
+      "db": "Khalish",
+      "id": "5a21665b-d829-4ad2-9347-97e48e75eb9e"
+    },
+    {
+      "excel": "Muhammad Rifqi Hamid",
+      "db": "Muhammad Rifqi Hamid",
+      "id": "9d80211c-15d7-4d8a-9575-240bd745a570"
+    },
+    {
+      "excel": "Syeh Al Bani",
+      "db": "Syeh Al Bani Irsyad Amrulloh",
+      "id": "2c465dd8-0c1e-4a76-be69-00647858213a"
+    },
+    {
+      "excel": "Hariri",
+      "db": "Fanni Hariri Hamonangan",
+      "id": "310b40cb-6c14-469f-8934-74c2b5f57630"
+    },
+    {
+      "excel": "Favian",
+      "db": "Favian Radi",
+      "id": "bb983600-2451-4e8e-b842-b3d0feccb8ca"
+    },
+    {
+      "excel": "Hibban",
+      "db": "Hibban Hibaturrahman",
+      "id": "32664ede-7bff-4aca-b00d-b0f0689400fc"
+    },
+    {
+      "excel": "Naufal Al fariri",
+      "db": "M Naufal Alfaniri",
+      "id": "cbb89135-6864-45d8-8c1c-cd49f7c6e7fd"
+    },
+    {
+      "excel": "Muhammad Asrorin",
+      "db": "Muhammad Rifqi Hamid",
+      "id": "9d80211c-15d7-4d8a-9575-240bd745a570"
+    },
+    {
+      "excel": "Rahim",
+      "db": "Abdurrahim Pati Raja",
+      "id": "178471f4-4d8e-40ea-ac24-210a3e2dc126"
+    },
+    {
+      "excel": "Syafiq",
+      "db": "Syafiq Karimalai",
+      "id": "8baad705-8b3f-4bb4-8df3-d921fec60a1d"
+    },
+    {
+      "excel": "Rahman",
+      "db": "Hibban Hibaturrahman",
+      "id": "32664ede-7bff-4aca-b00d-b0f0689400fc"
+    }
+  ],
+  "missing": [
+    "Mizan",
+    "Khairul Azzam",
+    "Atqonul Ummah",
+    "Yaseer"
+  ]
+}

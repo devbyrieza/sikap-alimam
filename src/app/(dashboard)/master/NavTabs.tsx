@@ -29,6 +29,11 @@ export default function NavTabs() {
         Data Santri
       </Link>
 
+      <Link href="/master/santri/kelengkapan" style={getStyle("/master/santri/kelengkapan")}>
+        <Users size={16} />
+        Kelengkapan (NIS & Tgl Lahir)
+      </Link>
+
       <Link href="/master/kelas" style={getStyle("/master/kelas")}>
         <GraduationCap size={16} />
         Data Kelas

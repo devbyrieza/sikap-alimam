@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lembar Latihan Santri - Perbandingan Senilai & Flowchart</title>
+<style>
+  :root {
+    --primary: #064e3b;
+    --primary-light: #047857;
+    --text-dark: #0f172a;
+    --border: #94a3b8;
+  }
+  * { box-sizing: border-box; }
+  @page { size: A4 portrait; margin: 6mm; }
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background-color: #f1f5f9;
+    color: var(--text-dark);
+    margin: 0;
+    padding: 10px;
+    font-size: 13px;
+  }
+  .page-container {
+    width: 100%;
+    max-width: 210mm;
+    min-height: 282mm;
+    height: 282mm;
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 18px 22px;
+    margin: 0 auto;
+    border: 2px solid var(--primary);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  .header-compact {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid var(--primary);
+    padding-bottom: 8px;
+    margin-bottom: 10px;
+  }
+  .header-title h1 { margin: 0; font-size: 18px; color: var(--primary); font-weight: 900; }
+  .header-title p { margin: 2px 0 0 0; font-size: 11px; color: var(--primary-light); font-weight: 700; }
+  .identity-bar {
+    display: grid;
+    grid-template-columns: 2.2fr 1.5fr 1.5fr 1fr;
+    gap: 12px;
+    background: #f8fafc;
+    border: 1.5px solid var(--border);
+    padding: 8px 14px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 700;
+    margin-bottom: 12px;
+  }
+  .main-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    flex: 1;
+  }
+  .column-card {
+    background: #ffffff;
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 14px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  .col-header {
+    font-size: 12px;
+    font-weight: 800;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 6px;
+    margin-bottom: 10px;
+    text-align: center;
+  }
+  .soal-box { margin-bottom: 10px; }
+  .soal-text { font-size: 12px; line-height: 1.35; margin-bottom: 4px; }
+  .answer-line { border: 1px solid #cbd5e1; background: #fafafa; border-radius: 6px; }
+  .answer-line.lines-2 { height: 50px; }
+  .answer-line.lines-3 { height: 110px; }
+  .answer-line.lines-4 { height: 140px; }
+  @media print {
+    body { background: white; padding: 0; }
+    .page-container { border: none; padding: 0; width: 100%; height: 100%; border-radius: 0; }
+  }
+</style>
+</head>
+<body>
+
+<div class="page-container">
+  <div class="header-compact">
+    <div class="header-title">
+      <h1>🕌 LEMBAR LATIHAN SANTRI MTs 7 AL-IMAM</h1>
+      <p>PERBANDINGAN SENILAI TOKO IMLA & FLOWCHART LOGIKA PEMROGRAMAN</p>
+    </div>
+    <div style="text-align: right; font-size: 11px; font-weight: bold; color: var(--primary);">
+      Ustaz Rieza Eka Tomara, S.Kom
+    </div>
+  </div>
+
+  <div class="identity-bar">
+    <div>Nama :</div>
+    <div>Kelas : 7 MTs Al-Imam</div>
+    <div>Tgl :</div>
+    <div>Nilai :</div>
+  </div>
+
+  <div class="main-grid">
+    <!-- KOLOM 1: PERBANDINGAN SENILAI -->
+    <div class="column-card" style="border-color: #a7f3d0; background: #f0fdf4;">
+      <div>
+        <div class="col-header" style="background: #047857;">
+          🛒 BAGIAN A: PERBANDINGAN SENILAI (TOKO IMLA)
+        </div>
+        <div class="soal-box">
+          <div class="soal-text"><strong>1.</strong> Harga 3 botol Es Teh di Kantin Pondok adalah <strong>Rp 9.000</strong>. Berapakah harga yang harus dibayar jika santri membeli <strong>7 botol Es Teh</strong>?</div>
+          <div class="answer-line lines-2"></div>
+        </div>
+        <div class="soal-box">
+          <div class="soal-text"><strong>2.</strong> Satu dus Indomie berisi <strong>40 bungkus</strong>. Berapakah jumlah bungkus Indomie jika Toko Imla mengoper <strong>3,5 dus Indomie</strong>?</div>
+          <div class="answer-line lines-2"></div>
+        </div>
+        <div class="soal-box">
+          <div class="soal-text"><strong>3.</strong> Jika 4 pensil harganya <strong>Rp 8.000</strong>, tentukan harga untuk <strong>10 pensil</strong>!</div>
+          <div class="answer-line lines-2"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- KOLOM 2: FLOWCHART LOGIKA -->
+    <div class="column-card" style="border-color: #fde68a; background: #fffdf5;">
+      <div>
+        <div class="col-header" style="background: #d97706;">
+          💻 BAGIAN B: LOGIKA & FLOWCHART (S.KOM)
+        </div>
+        <div class="soal-box">
+          <div class="soal-text"><strong>1.</strong> Pasangkan 3 Simbol Flowchart dasar ini dengan fungsinya:
+            <br>• 🛑 Oval = ...................................
+            <br>• 🟦 Persegi Panjang = ...................................
+            <br>• 🔷 Belah Ketupat = ...................................
+          </div>
+          <div class="answer-line lines-2"></div>
+        </div>
+        <div class="soal-box">
+          <div class="soal-text"><strong>2.</strong> Gambarkan Flowchart sederhana 3 simbol untuk alur: <strong>Beli Roti Toko Imla ➔ Hitung Total Harga ➔ Cek Uang Cukup?</strong></div>
+          <div class="answer-line lines-4"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div style="text-align: center; font-size: 10px; font-style: italic; color: #64748b; border-top: 1px dashed #cbd5e1; padding-top: 4px; margin-top: 6px;">
+    “Tuntutlah ilmu dan belajarlah untuk tenang dan menghormati gurumu.” · Pesantren Al-Imam
+  </div>
+</div>
+
+</body>
+</html>

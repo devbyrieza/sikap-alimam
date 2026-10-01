@@ -146,6 +146,7 @@ model SantriAktif {
   nama_lengkap     String
   kelas_id         String    @db.Uuid
   jenis_kelamin    String?
+  tanggal_lahir    DateTime? @db.Date
   foto_url         String?
   is_active        Boolean   @default(true)
   status_kesiswaan String    @default("aktif") // aktif | mengundurkan_diri | dikeluarkan | mutasi | lulus

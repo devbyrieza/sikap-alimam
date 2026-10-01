@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Slide TV - Tantangan Misi Matematika Mukhayyam Kelas 7</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-main: #022c22;
+    --card-bg: #ffffff;
+    --primary: #064e3b;
+    --primary-light: #047857;
+    --accent: #d97706;
+    --text-dark: #0f172a;
+    --text-muted: #475569;
+    --border: #cbd5e1;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    font-family: 'Plus Jakarta Sans', 'Segoe UI', system-ui, sans-serif;
+    background-color: var(--bg-main);
+    color: var(--text-dark);
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    height: 100vh;
+    width: 100vw;
+  }
+
+  /* Slide Container Carousel */
+  .slide-container {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .slide {
+    min-width: 100vw;
+    height: 100vh;
+    padding: 24px 45px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    background-color: var(--bg-main);
+  }
+
+  .slide-card {
+    background: var(--card-bg);
+    border-radius: 20px;
+    padding: 28px 36px;
+    height: calc(100vh - 100px);
+    box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    border: 3px solid #10b981;
+    overflow-y: auto;
+  }
+
+  /* Header Slide */
+  .slide-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2.5px solid #e2e8f0;
+    padding-bottom: 12px;
+    margin-bottom: 16px;
+  }
+
+  .slide-title {
+    font-size: 24px;
+    font-weight: 900;
+    color: var(--primary);
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .badge-tag {
+    background: #fef3c7;
+    color: #92400e;
+    font-size: 14px;
+    font-weight: 800;
+    padding: 5px 16px;
+    border-radius: 20px;
+    border: 1.5px solid #fde68a;
+  }
+
+  /* Konten Soal TV (Font Besar & Nyaman Dibaca dari Jauh) */
+  .content-body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .story-tv-box {
+    background: #f8fafc;
+    border-left: 8px solid var(--primary-light);
+    border-radius: 0 16px 16px 0;
+    padding: 24px 30px;
+    font-size: 23px;
+    line-height: 1.6;
+    color: #1e293b;
+    font-weight: 600;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+  }
+
+  .question-tv-box {
+    background: #ecfdf5;
+    border: 2px solid #a7f3d0;
+    border-radius: 16px;
+    padding: 20px 28px;
+    font-size: 24px;
+    font-weight: 800;
+    color: #064e3b;
+    text-align: center;
+  }
+
+  /* Grid Kelompok di Slide Cover */
+  .grid-5-kelompok {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 12px;
+    margin-top: 16px;
+  }
+
+  .team-card {
+    background: #f8fafc;
+    border: 2px solid #cbd5e1;
+    border-radius: 12px;
+    padding: 12px;
+    font-size: 13px;
+  }
+
+  .team-card-header {
+    background: #064e3b;
+    color: white;
+    font-weight: 800;
+    font-size: 13px;
+    padding: 4px 8px;
+    border-radius: 6px;
+    text-align: center;
+    margin-bottom: 8px;
+  }
+
+  .team-list {
+    margin: 0;
+    padding-left: 16px;
+    line-height: 1.5;
+    font-weight: 600;
+    color: #334155;
+  }
+
+  .team-leader {
+    color: #92400e;
+    font-weight: 800;
+  }
+
+  /* All-in-One Dashboard Grid (Slide 7) */
+  .grid-all-missions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    flex: 1;
+  }
+
+  .mini-card {
+    background: #f8fafc;
+    border: 1.5px solid #cbd5e1;
+    border-radius: 12px;
+    padding: 12px 14px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  .mini-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: 800;
+    font-size: 14px;
+    color: var(--primary);
+    border-bottom: 1.5px solid #e2e8f0;
+    padding-bottom: 4px;
+    margin-bottom: 6px;
+  }
+
+  .mini-body {
+    font-size: 13.5px;
+    line-height: 1.45;
+    color: #1e293b;
+    font-weight: 600;
+  }
+
+  /* Navigasi Tombol */
+  .nav-bar {
+    position: fixed;
+    bottom: 14px;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    z-index: 1000;
+  }
+
+  .btn-nav {
+    background: #047857;
+    color: white;
+    border: none;
+    padding: 8px 22px;
+    font-size: 15px;
+    font-weight: 700;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+  }
+
+  .btn-nav:hover { background: #064e3b; transform: translateY(-1px); }
+
+  .slide-counter {
+    background: rgba(0,0,0,0.6);
+    color: #ffffff;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 800;
+  }
+</style>
+</head>
+<body>
+
+<div class="slide-container" id="slideContainer">
+
+  <!-- ==================== SLIDE 1: COVER & PEMBAGIAN KELOMPOK ==================== -->
+  <div class="slide">
+    <div class="slide-card" style="justify-content: space-between;">
+      <div style="text-align: center; border-bottom: 2px solid #e2e8f0; padding-bottom: 10px;">
+        <div style="font-size: 32px; margin-bottom: 4px;">⛺🧮🏕️</div>
+        <h1 style="font-size: 26px; color: var(--primary); margin: 0; font-weight: 900;">
+          TANTANGAN MISI MATEMATIKA: SIMULASI MUKHAYYAM TARBAWI
+        </h1>
+        <p style="font-size: 15px; color: var(--primary-light); font-weight: 700; margin: 4px 0 0 0;">
+          Kelas 7 MTs Al-Imam · Kerja Sama Kelompok &amp; Pemecahan Masalah
+        </p>
+      </div>
+
+      <div>
+        <div style="text-align: center; font-weight: 800; font-size: 15px; color: #92400e; margin-bottom: 8px;">
+          👥 DAFTAR ANGGOTA 5 KELOMPOK (KERJAKAN DI BUKU / SELEMBAR KERTAS TIM):
+        </div>
+        <div class="grid-5-kelompok">
+          <!-- KELOMPOK 1 -->
+          <div class="team-card">
+            <div class="team-card-header">⛺ KELOMPOK 1</div>
+            <ol class="team-list">
+              <li class="team-leader">Hafidz (Ketua)</li>
+              <li>Abdul Aziz Ali</li>
+              <li>Farros</li>
+              <li>M. Naufal Alfaniri</li>
+            </ol>
+          </div>
+
+          <!-- KELOMPOK 2 -->
+          <div class="team-card">
+            <div class="team-card-header">🍞 KELOMPOK 2</div>
+            <ol class="team-list">
+              <li class="team-leader">Labib (Ketua)</li>
+              <li>Azka Panji</li>
+              <li>Hakim</li>
+              <li>Muh Asrorin</li>
+            </ol>
+          </div>
+
+          <!-- KELOMPOK 3 -->
+          <div class="team-card">
+            <div class="team-card-header">🚌 KELOMPOK 3</div>
+            <ol class="team-list">
+              <li class="team-leader">Rifqi Hamid (Ketua)</li>
+              <li>Rifqi Arsyad</li>
+              <li>Fariq Malaibui</li>
+              <li>M. Azzam</li>
+            </ol>
+          </div>
+
+          <!-- KELOMPOK 4 -->
+          <div class="team-card">
+            <div class="team-card-header">🌡️ KELOMPOK 4</div>
+            <ol class="team-list">
+              <li class="team-leader">Fazril (Ketua)</li>
+              <li>Dzaki</li>
+              <li>Atqan</li>
+              <li>Iwan / Andi Ibra</li>
+            </ol>
+          </div>
+
+          <!-- KELOMPOK 5 -->
+          <div class="team-card" style="border-color: #fde68a; background: #fffdf5;">
+            <div class="team-card-header" style="background: #d97706;">🍜 KELOMPOK 5</div>
+            <ol class="team-list">
+              <li class="team-leader">Haidar (Ketua)</li>
+              <li style="color: #047857; font-weight: 800;">Khalish (Wakil)</li>
+              <li>Ayyash</li>
+            </ol>
+          </div>
+        </div>
+      </div>
+
+      <div style="text-align: center; font-size: 13px; font-weight: 700; color: #64748b;">
+        👉 Gunakan tombol panah ❮ ❯ pada keyboard untuk berpindah soal
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== SLIDE 2: MISI 1 (PLSV - TENDA) ==================== -->
+  <div class="slide">
+    <div class="slide-card">
+      <div class="slide-header">
+        <h2 class="slide-title">⛺ MISI 1: KEBUTUHAN TENDA KEMAH</h2>
+        <span class="badge-tag">Persamaan Linear Satu Variabel (PLSV)</span>
+      </div>
+      <div class="content-body">
+        <div class="story-tv-box">
+          “Panitia Mukhayyam membawa <strong>5 tenda besar</strong> yang masing-masing berkapasitas <strong>4 orang</strong> per tenda.<br><br>
+          Dari total <strong>28 santri</strong> yang hadir, sisa santri yang belum kebagian tenda besar akan dimasukkan ke dalam <strong>tenda kecil</strong> berkapasitas <strong>2 orang</strong> per tenda.”
+        </div>
+        <div class="question-tv-box">
+          ❓ Berapakah jumlah tenda kecil yang harus disediakan panitia?
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== SLIDE 3: MISI 2 (PERBANDINGAN SENILAI - SNACK) ==================== -->
+  <div class="slide">
+    <div class="slide-card">
+      <div class="slide-header">
+        <h2 class="slide-title">🍞 MISI 2: BAGI SNACK ADIL</h2>
+        <span class="badge-tag">Perbandingan Senilai</span>
+      </div>
+      <div class="content-body">
+        <div class="story-tv-box">
+          “Panitia menyediakan total <strong>50 bungkus snack</strong> untuk seluruh peserta mukhayyam.<br><br>
+          Snack tersebut harus dibagikan secara adil berdasarkan perbandingan rasio santri <strong>Laki-laki : Perempuan = 3 : 2</strong>.”
+        </div>
+        <div class="question-tv-box">
+          ❓ Berapakah jumlah bungkus snack yang dialokasikan khusus untuk santri laki-laki?
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== SLIDE 4: MISI 3 (BERBALIK NILAI - BUS) ==================== -->
+  <div class="slide">
+    <div class="slide-card">
+      <div class="slide-header">
+        <h2 class="slide-title">🚌 MISI 3: ESTIMASI WAKTU TEMPUH BUS</h2>
+        <span class="badge-tag">Perbandingan Berbalik Nilai</span>
+      </div>
+      <div class="content-body">
+        <div class="story-tv-box">
+          “Sebuah bus kafilah mukhayyam biasanya menempuh perjalanan dengan kecepatan normal <strong>60 km/jam</strong> dan sampai di lokasi dalam waktu <strong>4 jam</strong>.<br><br>
+          Saat hujan deras mengguyur jalan raya, sopir bus menurunkan kecepatan rata-rata menjadi <strong>40 km/jam</strong>.”
+        </div>
+        <div class="question-tv-box">
+          ❓ Berapa jam lama waktu tempuh yang dibutuhkan bus sampai ke lokasi perkemahan?
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== SLIDE 5: MISI 4 (BILANGAN BULAT - SUHU) ==================== -->
+  <div class="slide">
+    <div class="slide-card">
+      <div class="slide-header">
+        <h2 class="slide-title">🌡️ MISI 4: SUHU MALAM DI CAMPING GROUND</h2>
+        <span class="badge-tag">Operasi Bilangan Bulat</span>
+      </div>
+      <div class="content-body">
+        <div class="story-tv-box">
+          “Suhu udara di area camping ground pada pukul <strong>20.00 malam</strong> tercatat <strong>25°C</strong>.<br><br>
+          Seiring malam bertambah larut, udara semakin dingin dan suhu terus menurun secara stabil sebesar <strong>3°C setiap 1 jam</strong>.”
+        </div>
+        <div class="question-tv-box">
+          ❓ Berapakah suhu udara yang terukur saat santri bangun qiyamullail pada pukul 02.00 dini hari?
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== SLIDE 6: MISI 5 (SPLDV - ANGGARAN KONSUMSI) ==================== -->
+  <div class="slide">
+    <div class="slide-card">
+      <div class="slide-header">
+        <h2 class="slide-title">🍜 MISI 5: ANGGARAN LOGISTIK KONSUMSI</h2>
+        <span class="badge-tag">SPLDV Dasar</span>
+      </div>
+      <div class="content-body">
+        <div class="story-tv-box">
+          “Bendahara mukhayyam membeli perlengkapan logistik konsumsi darurat di 2 pos berbeda:<br><br>
+          • <strong>Pos A:</strong> Membeli <strong>3 bungkus mie + 2 botol air mineral = Rp21.000</strong><br>
+          • <strong>Pos B:</strong> Membeli <strong>2 bungkus mie + 3 botol air mineral = Rp19.000</strong>”
+        </div>
+        <div class="question-tv-box">
+          ❓ Berapakah harga satuan untuk 1 bungkus mie instan dan 1 botol air mineral?
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== SLIDE 7: RANGKUMAN 5 MISI (ALL-IN-ONE DASHBOARD) ==================== -->
+  <div class="slide">
+    <div class="slide-card">
+      <div class="slide-header" style="margin-bottom: 10px; padding-bottom: 8px;">
+        <h2 class="slide-title" style="font-size: 20px;">📋 PAPAN MISI UTUH (TAMPILKAN SAAT SANTRI BEKERJA)</h2>
+        <span class="badge-tag" style="background: #ecfdf5; color: #047857; border-color: #a7f3d0;">5 Misi Bersama</span>
+      </div>
+      <div class="grid-all-missions">
+        <!-- MISI 1 -->
+        <div class="mini-card">
+          <div class="mini-header">
+            <span>⛺ MISI 1: TENDA</span>
+            <span style="font-size: 11px; color: #92400e;">PLSV</span>
+          </div>
+          <div class="mini-body">
+            5 tenda besar (@4 orang). Sisa dari 28 santri masuk tenda kecil (@2 orang).<br>
+            <strong>Tanya:</strong> Berapa tenda kecil yang dibutuhkan?
+          </div>
+        </div>
+
+        <!-- MISI 2 -->
+        <div class="mini-card">
+          <div class="mini-header">
+            <span>🍞 MISI 2: SNACK</span>
+            <span style="font-size: 11px; color: #92400e;">Senilai</span>
+          </div>
+          <div class="mini-body">
+            50 snack dibagi rasio Laki-laki : Perempuan = 3 : 2.<br>
+            <strong>Tanya:</strong> Berapa bungkus snack untuk santri laki-laki?
+          </div>
+        </div>
+
+        <!-- MISI 3 -->
+        <div class="mini-card">
+          <div class="mini-header">
+            <span>🚌 MISI 3: BUS</span>
+            <span style="font-size: 11px; color: #92400e;">Berbalik Nilai</span>
+          </div>
+          <div class="mini-body">
+            Kecepatan 60 km/jam sampai dalam 4 jam. Saat hujan turun jadi 40 km/jam.<br>
+            <strong>Tanya:</strong> Berapa jam lama waktu tempuhnya?
+          </div>
+        </div>
+
+        <!-- MISI 4 -->
+        <div class="mini-card">
+          <div class="mini-header">
+            <span>🌡️ MISI 4: SUHU</span>
+            <span style="font-size: 11px; color: #92400e;">Bilangan Bulat</span>
+          </div>
+          <div class="mini-body">
+            Pukul 20.00 suhu 25°C. Turun 3°C setiap jam.<br>
+            <strong>Tanya:</strong> Berapakah suhu pada pukul 02.00 dini hari?
+          </div>
+        </div>
+
+        <!-- MISI 5 (LEBAR PENUH) -->
+        <div class="mini-card" style="grid-column: span 2; background: #fffdf5; border-color: #fcd34d;">
+          <div class="mini-header" style="color: #b45309;">
+            <span>🍜 MISI 5: ANGGARAN KONSUMSI (SPLDV)</span>
+            <span style="font-size: 11px; color: #92400e;">Eliminasi &amp; Substitusi</span>
+          </div>
+          <div class="mini-body" style="display: flex; justify-content: space-between; align-items: center;">
+            <div>
+              • Pos A: <strong>3 mie + 2 air = Rp21.000</strong><br>
+              • Pos B: <strong>2 mie + 3 air = Rp19.000</strong>
+            </div>
+            <div style="font-weight: 800; color: #064e3b; font-size: 15px;">
+              ❓ Hitung harga 1 mie dan 1 air mineral!
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- NAVIGASI BAWAH -->
+<div class="nav-bar">
+  <button class="btn-nav" onclick="prevSlide()">❮ Prev</button>
+  <div class="slide-counter" id="slideIndicator">Slide 1 / 7</div>
+  <button class="btn-nav" onclick="nextSlide()">Next ❯</button>
+</div>
+
+<script>
+  let currentSlide = 0;
+  const totalSlides = 7;
+  const container = document.getElementById('slideContainer');
+  const indicator = document.getElementById('slideIndicator');
+
+  function updateSlide() {
+    container.style.transform = `translateX(-${currentSlide * 100}vw)`;
+    indicator.textContent = `Slide ${currentSlide + 1} / ${totalSlides}`;
+  }
+
+  function nextSlide() {
+    if (currentSlide < totalSlides - 1) {
+      currentSlide++;
+      updateSlide();
+    }
+  }
+
+  function prevSlide() {
+    if (currentSlide > 0) {
+      currentSlide--;
+      updateSlide();
+    }
+  }
+
+  // Keyboard navigation
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') {
+      nextSlide();
+    } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+      prevSlide();
+    }
+  });
+</script>
+
+</body>
+</html>

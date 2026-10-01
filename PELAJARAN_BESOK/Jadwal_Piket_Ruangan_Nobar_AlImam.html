@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jadwal Piket Ruangan Nobar - Pesantren Al-Imam</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --primary: #064e3b;
+    --primary-light: #047857;
+    --accent: #b45309;
+    --bg-page: #f1f5f9;
+    --text-dark: #0f172a;
+    --text-muted: #334155;
+    --border: #cbd5e1;
+  }
+
+  * { box-sizing: border-box; }
+
+  @page {
+    size: A4 portrait;
+    margin: 5mm;
+  }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Plus Jakarta Sans', 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background-color: var(--bg-page);
+    color: var(--text-dark);
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  body {
+    padding: 6px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .page-container {
+    width: 100%;
+    max-width: 210mm;
+    min-height: 285mm;
+    height: 285mm;
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 13px 18px;
+    margin: 0 auto;
+    border: 3px solid var(--primary);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  /* Header Section */
+  .header {
+    text-align: center;
+    border-bottom: 2.5px solid var(--primary);
+    padding-bottom: 6px;
+    margin-bottom: 7px;
+  }
+
+  .header h1 {
+    margin: 0;
+    font-size: 20px;
+    color: var(--primary);
+    font-weight: 900;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+
+  .header-badge-row {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 4px;
+  }
+
+  .badge-pill {
+    background: #ecfdf5;
+    color: #065f46;
+    border: 1.5px solid #a7f3d0;
+    padding: 2.5px 10px;
+    border-radius: 20px;
+    font-size: 10.5px;
+    font-weight: 800;
+  }
+
+  .badge-pill.warning {
+    background: #fffbeb;
+    color: #92400e;
+    border-color: #fde68a;
+  }
+
+  /* SOP 2 FASE REALISTIS */
+  .sop-container {
+    display: grid;
+    grid-template-columns: 1fr 1.35fr;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+
+  .sop-card {
+    border-radius: 8px;
+    padding: 6px 10px;
+    font-size: 10.5px;
+    line-height: 1.38;
+    border: 1.5px solid;
+  }
+
+  .sop-card.fase-sore {
+    background: #f0fdf4;
+    border-color: #a7f3d0;
+  }
+  .sop-card.fase-malam {
+    background: #fffbeb;
+    border-color: #fcd34d;
+  }
+
+  .sop-card strong {
+    display: block;
+    font-size: 11px;
+    font-weight: 800;
+    margin-bottom: 3px;
+  }
+  .sop-card.fase-sore strong { color: #166534; }
+  .sop-card.fase-malam strong { color: #92400e; }
+
+  .sop-item-list {
+    margin: 0;
+    padding-left: 14px;
+  }
+
+  /* 8 Kelompok Grid (2 Kolom x 4 Baris) */
+  .grid-kelompok {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 7px;
+    flex: 1;
+  }
+
+  .card-kelompok {
+    border: 2px solid #cbd5e1;
+    border-radius: 9px;
+    background: #ffffff;
+    padding: 6px 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: linear-gradient(135deg, #064e3b 0%, #047857 100%);
+    color: white;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-weight: 900;
+    font-size: 12px;
+    letter-spacing: 0.3px;
+    margin-bottom: 4px;
+  }
+
+  .badge-rotasi {
+    background: #fef08a;
+    color: #854d0e;
+    font-size: 9.5px;
+    font-weight: 900;
+    padding: 1.5px 7px;
+    border-radius: 12px;
+  }
+
+  .member-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    font-size: 11.8px;
+  }
+
+  .member-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 2.2px 4px;
+    border-bottom: 1px solid #f1f5f9;
+    border-radius: 4px;
+  }
+
+  .member-item:nth-child(even) {
+    background-color: #f8fafc;
+  }
+
+  .member-item:last-child {
+    border-bottom: none;
+  }
+
+  .member-name {
+    font-weight: 600;
+    color: #0f172a;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .member-no {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 17px;
+    height: 17px;
+    background: #e2e8f0;
+    color: #475569;
+    border-radius: 50%;
+    font-size: 9.5px;
+    font-weight: 800;
+  }
+
+  .member-item.is-lead {
+    background: #fffbeb;
+    border-left: 3px solid #d97706;
+  }
+
+  .member-item.is-lead .member-name {
+    font-weight: 800;
+    color: #92400e;
+  }
+
+  .member-item.is-lead .member-no {
+    background: #fde68a;
+    color: #78350f;
+  }
+
+  .tag-role {
+    font-size: 9px;
+    font-weight: 800;
+    padding: 1.5px 6px;
+    border-radius: 4px;
+    letter-spacing: 0.2px;
+  }
+
+  .tag-ma { background: #fef3c7; color: #92400e; border: 1px solid #fde68a; }
+  .tag-il { background: #e0e7ff; color: #3730a3; border: 1px solid #c7d2fe; }
+  .tag-mts { background: #dcfce7; color: #166534; border: 1px solid #bbf7d0; }
+
+  /* Footer */
+  .footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 9.5px;
+    color: #475569;
+    border-top: 1.5px dashed #cbd5e1;
+    padding-top: 5px;
+    margin-top: 5px;
+  }
+
+  .footer-quote {
+    font-style: italic;
+    font-weight: 600;
+    color: #065f46;
+  }
+
+  @media print {
+    html, body {
+      background: white;
+      padding: 0;
+      margin: 0;
+    }
+    .page-container {
+      border: none;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      min-height: 100vh;
+      border-radius: 0;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div class="page-container">
+
+  <!-- HEADER -->
+  <div class="header">
+    <h1>🕌 JADWAL PIKET RUANGAN NOBAR PESANTREN AL-IMAM</h1>
+    <div class="header-badge-row">
+      <span class="badge-pill">🧹 Pukul 16.00 WIB (Kebersihan Ruangan)</span>
+      <span class="badge-pill warning">🔌 Ba'da Isya (Alat & Sandal)</span>
+      <span class="badge-pill">🔄 Rotasi 8 Pekan (1x / 2 Bulan)</span>
+      <span class="badge-pill">👥 6 Santri / Regu</span>
+    </div>
+  </div>
+
+  <!-- SOP 2 FASE TUGAS BERSAMA -->
+  <div class="sop-container">
+    <div class="sop-card fase-sore">
+      <strong>🧹 1. SORE (PUKUL 16.00 WIB) — TUGAS BERSAMA REGU</strong>
+      <ul class="sop-item-list">
+        <li>Seluruh anggota regu piket <strong>bekerja sama membersihkan ruangan</strong>.</li>
+        <li>Tugas: <strong>Menyapu lantai, mengepel hingga bersih, dan membuang sampah</strong> ke tempat pembuangan.</li>
+      </ul>
+    </div>
+    <div class="sop-card fase-malam">
+      <strong>🔌 2. MALAM (BA'DA ISYA SEBELUM MULAI) — PERANGKAT & SANDAL</strong>
+      <ul class="sop-item-list">
+        <li><strong>Alat Elektronik (Demi Keamanan):</strong> Mengambil & memasang <strong>TV LED Besar, Kabel Roll Panjang, Kabel HDMI, dan Speaker Audio</strong> sesaat sebelum nobar dimulai.</li>
+        <li><strong>Kerapian Luar:</strong> Menata barisan sandal santri di luar ruangan saat mereka masuk.</li>
+        <li><strong>Pasca Acara:</strong> Mengembalikan seluruh alat ke tempat aman & mengunci ruangan.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- 8 KELOMPOK PIKET (TOTAL 48 SANTRI) -->
+  <div class="grid-kelompok">
+
+    <!-- KELOMPOK 1 -->
+    <div class="card-kelompok">
+      <div class="card-header">
+        <span>KELOMPOK 1</span>
+        <span class="badge-rotasi">Pekan ke-1</span>
+      </div>
+      <ul class="member-list">
+        <li class="member-item is-lead">
+          <span class="member-name"><span class="member-no">1</span> Pandi Rianto</span>
+          <span class="tag-role tag-ma">MA (Koord)</span>
+        </li>
+        <li class="member-item">
+          <span class="member-name"><span class="member-no">2</span> Abdullah Rasyid</span>
+          <span class="tag-role tag-il">IL</span>
+        </li>
+        <li class="member-item">
+          <span class="member-name"><span class="member-no">3</span> Abdurrahim Pati Raja</span>
+          <span class="tag-role tag-il">IL</span>
+        </li>
+        <li class="member-item">
+          <span class="member-name"><span class="member-no">4</span> Daffa Muammar Dzaki</span>
+          <span class="tag-role tag-il">IL</span>
+        </li>
+        <li class="member-item">
+          <span class="member-name"><span class="member-no">5</span> Abdul Aziz Ali</span>
+          <span class="tag-role tag-mts">MTs</span>
+        </li>
+        <li class="member-item">
+          <span class="member-name"><span class="member-no">6</span> Abdul Hakim</span>
+          <span class="tag-role tag-mts">MTs</span>
+        </li>
+      </ul>
+    </div>
+
+    <!-- KELOMPOK 2 -->
+    <div class="card-kelompok">
+      <div class="card-header">
+        <span>KELOMPOK 2</span>
+        <span class="badge-rotasi">Pekan ke-2</span>
+      </div>
+      <ul class="member-list">
+        <li class="member-item is-lead">
+          <span class="member-name"><span class="member-no">1</span> M. Abdul Rahman</span>
+          <span class="tag-role tag-ma">MA (Koord)</span>
+        </li>
+        <li class="member-item">
+          <span class="member-name"><span class="member-no">2</span> Fanni Hariri Hamonangan</span>
+          <span class="tag-role tag-il">IL</span>
+        </li>
+        <li class="member-item">
+          <span class="member-name"><span class="member-no">3</span> Farid</span>
+          <span class="tag-role tag-il">IL</span>
+        </li>
+        <li class="member-item">
+          <span class="member-name"><span class="member-no">4</span> Favian Radi</span>
+          <span class="tag-role tag-il">IL</span>
+        </li>
+        <li class="member-item">
+          <span class="member-name"><span class="member-no">5</span> Ahmad Farros Al Barqy</span>
+          <span class="tag-role tag-mts">MTs</span>
+        </li>
+        <li class="member-item">
+          <span class="member-name"><span class="member-no">6</span> Andi Ibra Faeyza H.</span>
+          <span class="tag-role tag-mts">MTs</span>
+        </li>
+      </ul>
+    </div>
+
+    <!-- KELOMPOK 3 -->
+    <div class="card-kelompok">
+      <div class="card-header">
+        <span>KELOMPOK 3</span>
+        <span class="badge-rotasi">Pekan ke-3</span>
+      </div>
+      <ul class="member-list">
+        <li class="member-item is-lead">
+          <span class="member-name"><span class="member-no">1</span> M. Abdul Rahim</span>
+          <span class="tag-role tag-ma">MA (Koord)</span>
+        </li>
+        <li class="member-item">
+          <span class="member-name"><span class="member-no">2</span> Fiqri Ramdan Handoko</span>
+          <span class="tag-role tag-il">IL</span>
+        </li>
+        <li class="member-item">
+          <span class="member-name"><span class="member-no">3</span> Hibban Hibaturrahman</span>
+          <span class="tag-role tag-il">IL</span>
+        </li>
+        <li class="member-item">
+          <span class="member-name"><span class="member-no">4</span> Iman Prayogo</span>
+          <span class="tag-role tag-il">IL</span>
+        </li>
+        <li class="member-item">
+          <span class="member-name"><span class="member-no">5</span> Atqanul Ummah Ahmad</span>
+          <span class="tag-role tag-mts">MTs</span>
+        </li>
+        <li class="member-item">
+          <span class="member-name"><span class="member-no">6</span> Azka Panji Kusuma</span>
+          <span class="tag-role tag-mts">MTs</span>
+        </li>
+      </ul>
+    </div>
+
+    <!-- KELOMPOK 4 -->
+    <div class="card-kelompok">
+      <div class="card-header">
+        <span>KELOMPOK 4</span>
+        <span class="badge-rotasi">Pekan ke-4</span>
+      </div>
+      <ul class="member-list">
+        <li class="member-item is-lead">
+          <span class="member-name"><span class="member-no">1</span> Salman Abdulrahim Uran</span>
+          <span class="tag-role tag-ma">MA (Koord)</span>
+        </li>
+        <li class="member-item">
+          <span class="member-name"><span class="member-no">2</span> Ken Alfarezha Haryadi</span>
+          <span class="tag-role tag-il">IL</span>
+        </li>
+        <li class="member-item">
+          <span class="member-name"><span class="member-no">3</span> Khubaib Abdul Aziz</span>
+          <span class="tag-role tag-il">IL</span>
+        </li>
+        <li class="member-item">
+          <span class="member-name"><span class="member-no">4</span> Lalu M. Rizky Ananda</span>
+          <span class="tag-role tag-il">IL</span>
+        </li>
+        <li class="member-item">
+          <span class="member-name"><span class="member-no">5</span> Fariq Malaibui</span>
+          <span class="tag-role tag-mts">MTs</span>
+        </li>
+        <li class="member-item">
+          <span class="member-name"><span class="member-no">6</span> Haidar Ayyubi</span>
+          <span class="tag-role tag-mts">MTs</span>
+        </li>
+      </ul>
+    </div>
+
+    <!-- KELOMPOK 5 -->
+    <div class="card-kelompok">
+      <div class="card-header">
+        <span>KELOMPOK 5</span>
+        <span class="badge-rotasi">Pekan ke-5</span>
+      </div>
+      <ul class="member-list">
+        <li class="member-item is-lead">
+          <span class="member-name"><span class="member-no">1</span> Yasser Ali Nurdin</span>
+          <span class="tag-role tag-ma">MA (Koord)</span>
+        </li>
+        <li class="member-item">
+          <span class="member-name"><span class="member-no">2</span> Miizan Alghifary D.</span>
+          <span class="tag-role tag-il">IL</span>
+        </li>
+        <li class="member-item">
+          <span class="member-name"><span class="member-no">3</span> M. Hafidz Abdurrahman</span>
+          <span class="tag-role tag-il">IL</span>
+        </li>
+        <li class="member-item">
+          <span class="member-name"><span class="member-no">4</span> M. Khoirul Azzam</span>
+          <span class="tag-role tag-il">IL</span>
+        </li>
+        <li class="member-item">
+          <span class="member-name"><span class="member-no">5</span> Khalish</span>
+          <span class="tag-role tag-mts">MTs</span>
+        </li>
+        <li class="member-item">
+          <span class="member-name"><span class="member-no">6</span> Labibullah El Fatih</span>
+          <span class="tag-role tag-mts">MTs</span>
+        </li>
+      </ul>
+    </div>
+
+    <!-- KELOMPOK 6 -->
+    <div class="card-kelompok">
+      <div class="card-header">
+        <span>KELOMPOK 6</span>
+        <span class="badge-rotasi">Pekan ke-6</span>
+      </div>
+      <ul class="member-list">
+        <li class="member-item is-lead">
+          <span class="member-name"><span class="member-no">1</span> Syafiq Karimalai</span>
+          <span class="tag-role tag-ma">MA (Koord)</span>
+        </li>
+        <li class="member-item">
+          <span class="member-name"><span class="member-no">2</span> M. Rasyid Ridho</span>
+          <span class="tag-role tag-il">IL</span>
+        </li>
+        <li class="member-item">
+          <span class="member-name"><span class="member-no">3</span> Muhammad Rizky</span>
+          <span class="tag-role tag-il">IL</span>
+        </li>
+        <li class="member-item">
+          <span class="member-name"><span class="member-no">4</span> M. Fazril Alkais</span>
+          <span class="tag-role tag-mts">MTs</span>
+        </li>
+        <li class="member-item">
+          <span class="member-name"><span class="member-no">5</span> M. Naufal Alfaniri</span>
+          <span class="tag-role tag-mts">MTs</span>
+        </li>
+        <li class="member-item">
+          <span class="member-name"><span class="member-no">6</span> Muh Asrorin Da Silva</span>
+          <span class="tag-role tag-mts">MTs</span>
+        </li>
+      </ul>
+    </div>
+
+    <!-- KELOMPOK 7 -->
+    <div class="card-kelompok">
+      <div class="card-header">
+        <span>KELOMPOK 7</span>
+        <span class="badge-rotasi">Pekan ke-7</span>
+      </div>
+      <ul class="member-list">
+        <li class="member-item is-lead">
+          <span class="member-name"><span class="member-no">1</span> Radil</span>
+          <span class="tag-role tag-ma">MA (Koord)</span>
+        </li>
+        <li class="member-item">
+          <span class="member-name"><span class="member-no">2</span> Nurcahya Eka Putra</span>
+          <span class="tag-role tag-il">IL</span>
+        </li>
+        <li class="member-item">
+          <span class="member-name"><span class="member-no">3</span> Panji Ahmad</span>
+          <span class="tag-role tag-il">IL</span>
+        </li>
+        <li class="member-item">
+          <span class="member-name"><span class="member-no">4</span> M. Azzam Al Hafiz</span>
+          <span class="tag-role tag-mts">MTs</span>
+        </li>
+        <li class="member-item">
+          <span class="member-name"><span class="member-no">5</span> M. Hafidz Reo Afelano</span>
+          <span class="tag-role tag-mts">MTs</span>
+        </li>
+        <li class="member-item">
+          <span class="member-name"><span class="member-no">6</span> Muhammad Rifqi Hamid</span>
+          <span class="tag-role tag-mts">MTs</span>
+        </li>
+      </ul>
+    </div>
+
+    <!-- KELOMPOK 8 -->
+    <div class="card-kelompok">
+      <div class="card-header">
+        <span>KELOMPOK 8</span>
+        <span class="badge-rotasi">Pekan ke-8</span>
+      </div>
+      <ul class="member-list">
+        <li class="member-item is-lead">
+          <span class="member-name"><span class="member-no">1</span> Dicky Dwy AP</span>
+          <span class="tag-role tag-ma">MA (Koord)</span>
+        </li>
+        <li class="member-item">
+          <span class="member-name"><span class="member-no">2</span> Syeh Al Bani Irsyad A.</span>
+          <span class="tag-role tag-il">IL</span>
+        </li>
+        <li class="member-item">
+          <span class="member-name"><span class="member-no">3</span> Wahyu Hidayat</span>
+          <span class="tag-role tag-il">IL</span>
+        </li>
+        <li class="member-item">
+          <span class="member-name"><span class="member-no">4</span> M. Yahya Ayyash</span>
+          <span class="tag-role tag-mts">MTs</span>
+        </li>
+        <li class="member-item">
+          <span class="member-name"><span class="member-no">5</span> Naufal Dzakiy Purnama</span>
+          <span class="tag-role tag-mts">MTs</span>
+        </li>
+        <li class="member-item">
+          <span class="member-name"><span class="member-no">6</span> Rifqi Arsyad Fadilah</span>
+          <span class="tag-role tag-mts">MTs</span>
+        </li>
+      </ul>
+    </div>
+
+  </div>
+
+  <!-- FOOTER -->
+  <div class="footer">
+    <div style="flex: 1.2; font-size: 9.5px; line-height: 1.35; color: #065f46; font-style: italic;">
+      “Sesungguhnya Allah mencintai jika seseorang bekerja, ia melakukannya dengan itqan (rapi & sungguh-sungguh).” <strong>(HR. Al-Baihaqi)</strong>
+    </div>
+    <div style="flex: 1; text-align: right; line-height: 1.35;">
+      <span style="font-size: 9px; color: #64748b; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px;">Penanggung Jawab Kegiatan:</span><br>
+      <strong style="color: #064e3b; font-size: 10.5px; white-space: nowrap;">Kadiv Pengasuhan & Kadiv IT Pesantren Al-Imam</strong>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lembar Kerja Kelompok - Simulasi Mukhayyam Tarbawi (1 Halaman A4)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --primary: #064e3b;
+    --primary-light: #047857;
+    --accent: #b45309;
+    --text-dark: #0f172a;
+    --border: #cbd5e1;
+  }
+
+  * { box-sizing: border-box; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+
+  @page {
+    size: A4 portrait;
+    margin: 5mm;
+  }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Plus Jakarta Sans', 'Segoe UI', Arial, sans-serif;
+    background-color: #f1f5f9;
+    color: var(--text-dark);
+  }
+
+  body {
+    padding: 6px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .page-container {
+    width: 100%;
+    max-width: 210mm;
+    min-height: 285mm;
+    height: 285mm;
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 14px 18px;
+    margin: 0 auto;
+    border: 2.5px solid var(--primary);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  /* Header Compact */
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid var(--primary);
+    padding-bottom: 6px;
+    margin-bottom: 6px;
+  }
+
+  .header h1 {
+    margin: 0;
+    font-size: 18px;
+    color: var(--primary);
+    font-weight: 900;
+    letter-spacing: 0.3px;
+  }
+
+  .header p {
+    margin: 2px 0 0 0;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--primary-light);
+  }
+
+  .header-badge {
+    background: #ecfdf5;
+    border: 1.5px solid #059669;
+    color: #065f46;
+    padding: 3px 10px;
+    border-radius: 6px;
+    font-weight: 800;
+    font-size: 10.5px;
+    text-align: right;
+  }
+
+  /* Baris Identitas Kelompok */
+  .identity-bar {
+    display: grid;
+    grid-template-columns: 1.1fr 2.3fr 1.1fr 0.8fr;
+    gap: 8px;
+    background: #f8fafc;
+    border: 1.5px solid var(--border);
+    padding: 6px 10px;
+    border-radius: 7px;
+    font-size: 11px;
+    margin-bottom: 9px;
+  }
+
+  .identity-item {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-weight: 700;
+  }
+
+  .dots-line {
+    border-bottom: 1px dotted #94a3b8;
+    flex: 1;
+    height: 14px;
+    display: inline-block;
+  }
+
+  /* Grid 2 Kolom (Kiri 3 Soal, Kanan 2 Soal) */
+  .main-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    flex: 1;
+  }
+
+  .column {
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+  }
+
+  /* Card Soal Misi */
+  .card-misi {
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    background: #ffffff;
+    padding: 8px 11px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    flex: 1;
+  }
+
+  .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1.5px solid #e2e8f0;
+    padding-bottom: 4px;
+    margin-bottom: 5px;
+  }
+
+  .card-title {
+    font-size: 12px;
+    font-weight: 900;
+    color: var(--primary);
+    text-transform: uppercase;
+  }
+
+  .tag-topic {
+    font-size: 9.5px;
+    font-weight: 800;
+    padding: 1.5px 7px;
+    border-radius: 10px;
+    background: #fef3c7;
+    color: #92400e;
+    border: 1px solid #fde68a;
+    white-space: nowrap;
+  }
+
+  .soal-cerita {
+    font-size: 11px;
+    line-height: 1.45;
+    font-weight: 600;
+    color: #1e293b;
+    margin-bottom: 6px;
+  }
+
+  /* Area Menulis Jawaban Santri (Ekstra Lega & Bergaris Rapi) */
+  .answer-box {
+    flex: 1;
+    border: 1px dashed #94a3b8;
+    background-color: #fafafa;
+    border-radius: 6px;
+    background-image: repeating-linear-gradient(
+      transparent,
+      transparent 22px,
+      #e2e8f0 22px,
+      #e2e8f0 23px
+    );
+    background-position: 0 20px;
+    padding: 4px 8px;
+    position: relative;
+    min-height: 68px;
+  }
+
+  .answer-hint {
+    position: absolute;
+    right: 8px;
+    bottom: 3px;
+    font-size: 8.5px;
+    color: #94a3b8;
+    font-style: italic;
+    pointer-events: none;
+  }
+
+  /* Footer Sederhana Tanpa Tanda Tangan */
+  .footer-quote {
+    text-align: center;
+    font-size: 9.5px;
+    font-style: italic;
+    color: #64748b;
+    border-top: 1px dashed #cbd5e1;
+    padding-top: 4px;
+    margin-top: 6px;
+  }
+
+  @media print {
+    html, body {
+      background: white;
+      padding: 0;
+      margin: 0;
+    }
+    .page-container {
+      border: none;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      min-height: 100vh;
+      border-radius: 0;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div class="page-container">
+
+  <!-- HEADER COMPACT -->
+  <div class="header">
+    <div>
+      <h1>⛺ LEMBAR MISI KELOMPOK: SIMULASI MUKHAYYAM TARBAWI</h1>
+      <p>Mata Pelajaran: Matematika · Kelas 7 MTs Al-Imam (Kerja Sama Tim &amp; Diskusi Kelas)</p>
+    </div>
+    <div class="header-badge">
+      5 MISI MATEMATIKA
+    </div>
+  </div>
+
+  <!-- BARIS IDENTITAS KELOMPOK -->
+  <div class="identity-bar">
+    <div class="identity-item">
+      <span>Kelompok :</span>
+      <span class="dots-line"></span>
+    </div>
+    <div class="identity-item">
+      <span>Nama Anggota :</span>
+      <span class="dots-line"></span>
+    </div>
+    <div class="identity-item">
+      <span>Tanggal :</span>
+      <span class="dots-line"></span>
+    </div>
+    <div class="identity-item">
+      <span>Nilai :</span>
+      <span class="dots-line"></span>
+    </div>
+  </div>
+
+  <!-- MAIN GRID 2 KOLOM (PAS FULL 1 HALAMAN A4) -->
+  <div class="main-grid">
+
+    <!-- ================= KOLOM KIRI: MISI 1, 2, 3 ================= -->
+    <div class="column">
+
+      <!-- MISI 1: PLSV (TENDA) -->
+      <div class="card-misi">
+        <div class="card-header">
+          <span class="card-title">⛺ MISI 1: KEBUTUHAN TENDA</span>
+          <span class="tag-topic">PLSV</span>
+        </div>
+        <div class="soal-cerita">
+          Panitia membawa 5 tenda besar (muat 4 orang per tenda). Dari total 28 santri, sisa santri yang belum dapat tenda akan dimasukkan ke tenda kecil (muat 2 orang per tenda). <strong>Berapakah jumlah tenda kecil yang harus disediakan?</strong>
+        </div>
+        <div class="answer-box">
+          <span class="answer-hint">Jalan hitung &amp; jawaban Misi 1</span>
+        </div>
+      </div>
+
+      <!-- MISI 2: PERBANDINGAN SENILAI (SNACK) -->
+      <div class="card-misi">
+        <div class="card-header">
+          <span class="card-title">🍞 MISI 2: BAGI SNACK ADIL</span>
+          <span class="tag-topic">Perbandingan Senilai</span>
+        </div>
+        <div class="soal-cerita">
+          Sebanyak 50 bungkus snack dibagikan sesuai perbandingan rasio santri Laki-laki : Perempuan = 3 : 2. <strong>Berapakah jumlah bungkus snack yang dialokasikan khusus untuk santri laki-laki?</strong>
+        </div>
+        <div class="answer-box">
+          <span class="answer-hint">Jalan hitung &amp; jawaban Misi 2</span>
+        </div>
+      </div>
+
+      <!-- MISI 3: BERBALIK NILAI (WAKTU TEMPUH BUS) -->
+      <div class="card-misi">
+        <div class="card-header">
+          <span class="card-title">🚌 MISI 3: WAKTU TEMPUH BUS</span>
+          <span class="tag-topic">Berbalik Nilai</span>
+        </div>
+        <div class="soal-cerita">
+          Bus kafilah biasanya berkecepatan rata-rata 60 km/jam dan sampai dalam waktu 4 jam. Namun saat hujan deras, kecepatan turun menjadi 40 km/jam. <strong>Berapa jam lama waktu tempuh bus sampai ke lokasi?</strong>
+        </div>
+        <div class="answer-box">
+          <span class="answer-hint">Jalan hitung &amp; jawaban Misi 3</span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ================= KOLOM KANAN: MISI 4 & 5 ================= -->
+    <div class="column">
+
+      <!-- MISI 4: BILANGAN BULAT (SUHU CAMPING GROUND) -->
+      <div class="card-misi" style="flex: 1;">
+        <div class="card-header">
+          <span class="card-title">🌡️ MISI 4: SUHU CAMPING GROUND</span>
+          <span class="tag-topic">Bilangan Bulat</span>
+        </div>
+        <div class="soal-cerita">
+          Suhu udara di camping ground pada pukul 20.00 malam adalah 25°C. Seiring malam bertambah larut, suhu terus turun stabil sebesar 3°C setiap jamnya. <strong>Berapakah suhu udara saat santri bangun pukul 02.00 dini hari?</strong>
+        </div>
+        <div class="answer-box" style="min-height: 100px;">
+          <span class="answer-hint">Jalan hitung &amp; jawaban Misi 4</span>
+        </div>
+      </div>
+
+      <!-- MISI 5: SPLDV DASAR (ANGGARAN KONSUMSI) -->
+      <div class="card-misi" style="flex: 1.35;">
+        <div class="card-header">
+          <span class="card-title">🍜 MISI 5: ANGGARAN KONSUMSI</span>
+          <span class="tag-topic">SPLDV Dasar</span>
+        </div>
+        <div class="soal-cerita">
+          Bendahara membeli perlengkapan konsumsi di 2 pos:<br>
+          • Pos A: <strong>3 mie + 2 air mineral = Rp21.000</strong><br>
+          • Pos B: <strong>2 mie + 3 air mineral = Rp19.000</strong><br>
+          <strong>Berapakah harga satuan untuk 1 bungkus mie dan 1 botol air mineral?</strong>
+        </div>
+        <div class="answer-box" style="min-height: 140px;">
+          <span class="answer-hint">Jalan eliminasi, substitusi, &amp; jawaban Misi 5</span>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- FOOTER -->
+  <div class="footer-quote">
+    “Sesungguhnya Allah mencintai jika seseorang bekerja, ia melakukannya dengan itqan (rapi &amp; sungguh-sungguh).” (HR. Al-Baihaqi) · Kelas 7 MTs Al-Imam
+  </div>
+
+</div>
+
+</body>
+</html>

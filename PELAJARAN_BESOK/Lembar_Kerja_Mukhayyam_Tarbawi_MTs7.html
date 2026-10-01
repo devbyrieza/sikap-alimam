@@ -1,0 +1,849 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lembar Misi Mukhayyam Tarbawi - Matematika Kelas 7 MTs</title>
+<style>
+  /* ==========================================================================
+     PENGATURAN HALAMAN & CETAK (PRINT-FRIENDLY SPECIFICATION)
+     ========================================================================== */
+  @page {
+    size: A4 portrait;
+    margin: 1.5cm 1.8cm 1.5cm 1.8cm;
+  }
+
+  * {
+    box-sizing: border-box;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', Arial, -apple-system, BlinkMacSystemFont, sans-serif;
+    color: #0f172a;
+    background-color: #f1f5f9;
+    font-size: 13px;
+    line-height: 1.45;
+  }
+
+  /* Container Tiap Halaman Kelompok */
+  .page {
+    width: 100%;
+    max-width: 210mm;
+    min-height: 275mm;
+    height: 275mm;
+    margin: 0 auto 20px auto;
+    background: #ffffff;
+    padding: 10px 4px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    page-break-after: always;
+    break-after: page;
+  }
+
+  .page:last-child {
+    page-break-after: auto;
+    break-after: auto;
+    margin-bottom: 0;
+  }
+
+  @media screen {
+    body {
+      padding: 20px;
+    }
+    .page {
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      border-radius: 8px;
+      padding: 24px 30px;
+      margin-bottom: 30px;
+    }
+  }
+
+  @media print {
+    body {
+      background: transparent;
+      padding: 0;
+    }
+    .page {
+      box-shadow: none;
+      border-radius: 0;
+      padding: 0;
+      margin: 0;
+      width: 100%;
+      height: 100%;
+      min-height: 100vh;
+    }
+  }
+
+  /* ==========================================================================
+     HEADER DOKUMEN
+     ========================================================================== */
+  .header-container {
+    border-bottom: 2.5px solid #064e3b;
+    padding-bottom: 8px;
+    margin-bottom: 10px;
+  }
+
+  .header-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .header-title {
+    font-size: 17px;
+    font-weight: 900;
+    color: #064e3b;
+    letter-spacing: 0.5px;
+    margin: 0;
+    text-transform: uppercase;
+  }
+
+  .header-meta {
+    font-size: 11.5px;
+    font-weight: 700;
+    color: #047857;
+    margin-top: 2px;
+  }
+
+  .header-badge {
+    background: #ecfdf5;
+    border: 1.5px solid #059669;
+    color: #065f46;
+    padding: 4px 12px;
+    border-radius: 6px;
+    font-weight: 800;
+    font-size: 11.5px;
+    text-align: right;
+  }
+
+  /* Box Identitas Kelompok */
+  .identity-box {
+    display: grid;
+    grid-template-columns: 1.2fr 2.4fr 1.1fr;
+    gap: 10px;
+    background: #f8fafc;
+    border: 1.5px solid #cbd5e1;
+    border-radius: 8px;
+    padding: 7px 12px;
+    margin-bottom: 12px;
+    font-size: 11.5px;
+  }
+
+  .identity-item {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .identity-label {
+    font-size: 10px;
+    font-weight: 800;
+    color: #64748b;
+    text-transform: uppercase;
+    margin-bottom: 2px;
+  }
+
+  .identity-value {
+    font-weight: 700;
+    color: #0f172a;
+  }
+
+  .dots-line {
+    border-bottom: 1px dotted #94a3b8;
+    height: 16px;
+    width: 100%;
+    display: inline-block;
+  }
+
+  /* ==========================================================================
+     JUDUL MISI & FOKUS MATERI
+     ========================================================================== */
+  .mission-header {
+    background: linear-gradient(135deg, #064e3b 0%, #047857 100%);
+    color: #ffffff;
+    padding: 8px 14px;
+    border-radius: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+
+  .mission-title {
+    font-size: 14px;
+    font-weight: 900;
+    margin: 0;
+    letter-spacing: 0.3px;
+    text-transform: uppercase;
+  }
+
+  .mission-topic {
+    background: #fef08a;
+    color: #854d0e;
+    font-size: 11px;
+    font-weight: 800;
+    padding: 3px 10px;
+    border-radius: 20px;
+    white-space: nowrap;
+  }
+
+  /* ==========================================================================
+     SOAL CERITA & PANDUAN LANGKAH
+     ========================================================================== */
+  .story-box {
+    background: #ffffff;
+    border: 2px solid #047857;
+    border-left: 6px solid #064e3b;
+    border-radius: 8px;
+    padding: 10px 14px;
+    margin-bottom: 10px;
+    font-size: 13px;
+    line-height: 1.5;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  }
+
+  .story-label {
+    font-size: 11px;
+    font-weight: 800;
+    color: #064e3b;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 4px;
+  }
+
+  .story-text {
+    margin: 0;
+    font-weight: 600;
+    color: #1e293b;
+  }
+
+  .guidance-box {
+    background: #f8fafc;
+    border: 1.5px solid #cbd5e1;
+    border-radius: 8px;
+    padding: 8px 14px;
+    margin-bottom: 12px;
+  }
+
+  .guidance-title {
+    font-size: 11px;
+    font-weight: 800;
+    color: #334155;
+    text-transform: uppercase;
+    margin: 0 0 4px 0;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .guidance-list {
+    margin: 0;
+    padding-left: 18px;
+    font-size: 12px;
+    color: #334155;
+    line-height: 1.45;
+  }
+
+  .guidance-list li {
+    margin-bottom: 2px;
+  }
+
+  /* ==========================================================================
+     AREA JAWABAN SANTRI (RUANG MENULIS 9-10 CM BERGARIS)
+     ========================================================================== */
+  .answer-section {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 10px;
+  }
+
+  .answer-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 4px;
+  }
+
+  .answer-title {
+    font-size: 11.5px;
+    font-weight: 800;
+    color: #064e3b;
+    text-transform: uppercase;
+  }
+
+  .answer-hint {
+    font-size: 10px;
+    color: #64748b;
+    font-style: italic;
+  }
+
+  .ruled-workspace {
+    flex: 1;
+    min-height: 9.5cm;
+    border: 1.5px solid #94a3b8;
+    border-radius: 8px;
+    background-color: #ffffff;
+    background-image: repeating-linear-gradient(
+      transparent,
+      transparent 27px,
+      #e2e8f0 27px,
+      #e2e8f0 28px
+    );
+    background-position: 0 24px;
+    padding: 10px 14px;
+    position: relative;
+  }
+
+  .ruled-watermark {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 14px;
+    font-weight: 800;
+    color: rgba(148, 163, 184, 0.15);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    pointer-events: none;
+    user-select: none;
+  }
+
+  /* ==========================================================================
+     KOLOM TANDA TANGAN & PENILAIAN
+     ========================================================================== */
+  .signature-table {
+    width: 100%;
+    border-collapse: collapse;
+    border: 1.5px solid #cbd5e1;
+    border-radius: 8px;
+    overflow: hidden;
+    margin-top: 4px;
+  }
+
+  .signature-table td {
+    width: 33.33%;
+    border: 1px solid #cbd5e1;
+    padding: 6px 10px;
+    text-align: center;
+    vertical-align: bottom;
+    height: 60px;
+    font-size: 11px;
+  }
+
+  .sig-role {
+    font-size: 10px;
+    font-weight: 800;
+    color: #64748b;
+    text-transform: uppercase;
+    display: block;
+    margin-bottom: 28px;
+  }
+
+  .sig-name {
+    font-weight: 700;
+    color: #0f172a;
+    border-top: 1px solid #94a3b8;
+    display: inline-block;
+    min-width: 120px;
+    padding-top: 2px;
+  }
+
+  .footer-quote {
+    text-align: center;
+    font-size: 9.5px;
+    font-style: italic;
+    color: #64748b;
+    margin-top: 6px;
+    border-top: 1px dashed #e2e8f0;
+    padding-top: 4px;
+  }
+</style>
+</head>
+<body>
+
+  <!-- ========================================================================
+       HALAMAN 1 - KELOMPOK 1 : HITUNG KEBUTUHAN TENDA (PLSV)
+       ======================================================================== -->
+  <div class="page">
+    <div>
+      <!-- HEADER -->
+      <div class="header-container">
+        <div class="header-top">
+          <div>
+            <h1 class="header-title">⛺ LEMBAR MISI MUKHAYYAM TARBAWI</h1>
+            <div class="header-meta">Mata Pelajaran: Matematika · Kelas 7 MTs Al-Imam</div>
+          </div>
+          <div class="header-badge">
+            POST 1: LOGISTIK KEMAH
+          </div>
+        </div>
+      </div>
+
+      <!-- IDENTITAS KELOMPOK -->
+      <div class="identity-box">
+        <div class="identity-item">
+          <span class="identity-label">Kelompok:</span>
+          <span class="identity-value">KELOMPOK 1</span>
+        </div>
+        <div class="identity-item">
+          <span class="identity-label">Nama Anggota Kelompok:</span>
+          <span class="identity-value"><span class="dots-line"></span></span>
+        </div>
+        <div class="identity-item">
+          <span class="identity-label">Tanggal Pelaksanaan:</span>
+          <span class="identity-value"><span class="dots-line"></span></span>
+        </div>
+      </div>
+
+      <!-- JUDUL MISI & FOKUS MATERI -->
+      <div class="mission-header">
+        <span class="mission-title">🎯 MISI KELOMPOK 1: HITUNG KEBUTUHAN TENDA</span>
+        <span class="mission-topic">Fokus: Persamaan Linear Satu Variabel (PLSV)</span>
+      </div>
+
+      <!-- SOAL CERITA -->
+      <div class="story-box">
+        <div class="story-label">📋 Skenario Masalah:</div>
+        <p class="story-text">
+          “Panitia Mukhayyam membawa 5 tenda besar (masing-masing berkapasitas 4 orang). Dari total 28 santri yang hadir, sisa santri yang belum mendapat tempat akan dimasukkan ke dalam tenda kecil (masing-masing muat 2 orang). Berapakah jumlah tenda kecil yang harus disediakan?”
+        </p>
+      </div>
+
+      <!-- PANDUAN LANGKAH -->
+      <div class="guidance-box">
+        <div class="guidance-title">💡 Panduan Langkah Pengerjaan:</div>
+        <ol class="guidance-list">
+          <li>Hitung total kapasitas seluruh tenda besar: <strong>5 tenda × 4 orang = ... orang</strong>.</li>
+          <li>Hitung sisa santri yang belum kebagian tenda besar: <strong>Total santri (28) − Kapasitas tenda besar = ... orang</strong>.</li>
+          <li>Misalkan jumlah tenda kecil adalah <strong>x</strong>. Karena tiap tenda kecil muat 2 orang, susun persamaannya: <strong>2 × x = sisa santri</strong>.</li>
+          <li>Selesaikan persamaan linear tersebut untuk menemukan nilai <strong>x</strong> (jumlah tenda kecil)!</li>
+        </ol>
+      </div>
+    </div>
+
+    <!-- RUANG JAWABAN BERGARIS (9.5 CM) -->
+    <div class="answer-section">
+      <div class="answer-header">
+        <span class="answer-title">✍️ Lembar Jawaban &amp; Langkah Pengerjaan Manual:</span>
+        <span class="answer-hint">Tuliskan rumus, jalan hitung, dan kesimpulan jawaban secara rapi di garis bawah ini</span>
+      </div>
+      <div class="ruled-workspace">
+        <div class="ruled-watermark">RUANG PENGERJAAN SANTRI</div>
+      </div>
+    </div>
+
+    <!-- KOLOM TANDA TANGAN & PENILAIAN -->
+    <div>
+      <table class="signature-table">
+        <tr>
+          <td>
+            <span class="sig-role">Ketua Kelompok 1</span>
+            <span class="sig-name">( ............................................ )</span>
+          </td>
+          <td>
+            <span class="sig-role">Perwakilan Anggota</span>
+            <span class="sig-name">( ............................................ )</span>
+          </td>
+          <td>
+            <span class="sig-role">Nilai &amp; Paraf Ustaz / Penilai</span>
+            <span class="sig-name">Nilai: ............  Paraf: ........</span>
+          </td>
+        </tr>
+      </table>
+      <div class="footer-quote">“Sesungguhnya Allah mencintai jika seseorang beramal, ia melakukannya dengan itqan (rapi &amp; sungguh-sungguh).” · Mukhayyam Tarbawi MTs 7</div>
+    </div>
+  </div>
+
+
+  <!-- ========================================================================
+       HALAMAN 2 - KELOMPOK 2 : BAGI SNACK ADIL (PERBANDINGAN SENILAI)
+       ======================================================================== -->
+  <div class="page">
+    <div>
+      <!-- HEADER -->
+      <div class="header-container">
+        <div class="header-top">
+          <div>
+            <h1 class="header-title">🍞 LEMBAR MISI MUKHAYYAM TARBAWI</h1>
+            <div class="header-meta">Mata Pelajaran: Matematika · Kelas 7 MTs Al-Imam</div>
+          </div>
+          <div class="header-badge">
+            POST 2: KONSUMSI PESERTA
+          </div>
+        </div>
+      </div>
+
+      <!-- IDENTITAS KELOMPOK -->
+      <div class="identity-box">
+        <div class="identity-item">
+          <span class="identity-label">Kelompok:</span>
+          <span class="identity-value">KELOMPOK 2</span>
+        </div>
+        <div class="identity-item">
+          <span class="identity-label">Nama Anggota Kelompok:</span>
+          <span class="identity-value"><span class="dots-line"></span></span>
+        </div>
+        <div class="identity-item">
+          <span class="identity-label">Tanggal Pelaksanaan:</span>
+          <span class="identity-value"><span class="dots-line"></span></span>
+        </div>
+      </div>
+
+      <!-- JUDUL MISI & FOKUS MATERI -->
+      <div class="mission-header">
+        <span class="mission-title">🎯 MISI KELOMPOK 2: BAGI SNACK ADIL</span>
+        <span class="mission-topic">Fokus: Perbandingan Senilai</span>
+      </div>
+
+      <!-- SOAL CERITA -->
+      <div class="story-box">
+        <div class="story-label">📋 Skenario Masalah:</div>
+        <p class="story-text">
+          “Panitia menyediakan total 50 bungkus snack untuk peserta mukhayyam. Seluruh snack tersebut harus dibagikan secara adil berdasarkan perbandingan rasio santri Laki-laki : Perempuan = 3 : 2. Berapakah jumlah bungkus snack yang dialokasikan khusus untuk santri laki-laki?”
+        </p>
+      </div>
+
+      <!-- PANDUAN LANGKAH -->
+      <div class="guidance-box">
+        <div class="guidance-title">💡 Panduan Langkah Pengerjaan:</div>
+        <ol class="guidance-list">
+          <li>Tentukan rasio santri <strong>Laki-laki : Perempuan = 3 : 2</strong>.</li>
+          <li>Hitung jumlah total bagian rasio: <strong>3 + 2 = 5 bagian</strong>.</li>
+          <li>Ketahui total snack yang tersedia: <strong>50 bungkus</strong>.</li>
+          <li>Hitung nilai untuk 1 bagian: <strong>50 bungkus ÷ 5 bagian = ... bungkus per bagian</strong>.</li>
+          <li>Kalikan bagian laki-laki (3 bagian) dengan nilai 1 bagian untuk mendapatkan total snack laki-laki!</li>
+        </ol>
+      </div>
+    </div>
+
+    <!-- RUANG JAWABAN BERGARIS (9.5 CM) -->
+    <div class="answer-section">
+      <div class="answer-header">
+        <span class="answer-title">✍️ Lembar Jawaban &amp; Langkah Pengerjaan Manual:</span>
+        <span class="answer-hint">Tuliskan rumus, jalan hitung, dan kesimpulan jawaban secara rapi di garis bawah ini</span>
+      </div>
+      <div class="ruled-workspace">
+        <div class="ruled-watermark">RUANG PENGERJAAN SANTRI</div>
+      </div>
+    </div>
+
+    <!-- KOLOM TANDA TANGAN & PENILAIAN -->
+    <div>
+      <table class="signature-table">
+        <tr>
+          <td>
+            <span class="sig-role">Ketua Kelompok 2</span>
+            <span class="sig-name">( ............................................ )</span>
+          </td>
+          <td>
+            <span class="sig-role">Perwakilan Anggota</span>
+            <span class="sig-name">( ............................................ )</span>
+          </td>
+          <td>
+            <span class="sig-role">Nilai &amp; Paraf Ustaz / Penilai</span>
+            <span class="sig-name">Nilai: ............  Paraf: ........</span>
+          </td>
+        </tr>
+      </table>
+      <div class="footer-quote">“Sesungguhnya Allah mencintai jika seseorang beramal, ia melakukannya dengan itqan (rapi &amp; sungguh-sungguh).” · Mukhayyam Tarbawi MTs 7</div>
+    </div>
+  </div>
+
+
+  <!-- ========================================================================
+       HALAMAN 3 - KELOMPOK 3 : ESTIMASI WAKTU TEMPUH BUS (PERBANDINGAN BERBALIK NILAI)
+       ======================================================================== -->
+  <div class="page">
+    <div>
+      <!-- HEADER -->
+      <div class="header-container">
+        <div class="header-top">
+          <div>
+            <h1 class="header-title">🚌 LEMBAR MISI MUKHAYYAM TARBAWI</h1>
+            <div class="header-meta">Mata Pelajaran: Matematika · Kelas 7 MTs Al-Imam</div>
+          </div>
+          <div class="header-badge">
+            POST 3: TRANSPORTASI KAFILAH
+          </div>
+        </div>
+      </div>
+
+      <!-- IDENTITAS KELOMPOK -->
+      <div class="identity-box">
+        <div class="identity-item">
+          <span class="identity-label">Kelompok:</span>
+          <span class="identity-value">KELOMPOK 3</span>
+        </div>
+        <div class="identity-item">
+          <span class="identity-label">Nama Anggota Kelompok:</span>
+          <span class="identity-value"><span class="dots-line"></span></span>
+        </div>
+        <div class="identity-item">
+          <span class="identity-label">Tanggal Pelaksanaan:</span>
+          <span class="identity-value"><span class="dots-line"></span></span>
+        </div>
+      </div>
+
+      <!-- JUDUL MISI & FOKUS MATERI -->
+      <div class="mission-header">
+        <span class="mission-title">🎯 MISI KELOMPOK 3: ESTIMASI WAKTU TEMPUH BUS</span>
+        <span class="mission-topic">Fokus: Perbandingan Berbalik Nilai</span>
+      </div>
+
+      <!-- SOAL CERITA -->
+      <div class="story-box">
+        <div class="story-label">📋 Skenario Masalah:</div>
+        <p class="story-text">
+          “Bus kafilah mukhayyam biasanya menempuh jarak perjalanan dengan kecepatan normal 60 km/jam dan sampai dalam waktu 4 jam. Namun saat perjalanan turun hujan lebat, sopir menurunkan kecepatan rata-rata menjadi 40 km/jam. Berapa jam lama waktu tempuh yang dibutuhkan bus sampai ke lokasi?”
+        </p>
+      </div>
+
+      <!-- PANDUAN LANGKAH -->
+      <div class="guidance-box">
+        <div class="guidance-title">💡 Panduan Langkah Pengerjaan:</div>
+        <ol class="guidance-list">
+          <li>Pahami konsep: <em>Semakin pelan kecepatan kendaraan, maka waktu yang dibutuhkan akan semakin bertambah lama (Berbalik Nilai).</em></li>
+          <li>Kondisi 1: Kecepatan awal = <strong>60 km/jam</strong> → Waktu tempuh = <strong>4 jam</strong>.</li>
+          <li>Kondisi 2: Kecepatan hujan = <strong>40 km/jam</strong> → Waktu tempuh = <strong>x jam</strong>.</li>
+          <li>Gunakan rumus perkalian sejajar (berbalik nilai): <strong>60 × 4 = 40 × x</strong>.</li>
+          <li>Hitung 60 × 4 terlebih dahulu, lalu selesaikan persamaan untuk mencari nilai <strong>x</strong>!</li>
+        </ol>
+      </div>
+    </div>
+
+    <!-- RUANG JAWABAN BERGARIS (9.5 CM) -->
+    <div class="answer-section">
+      <div class="answer-header">
+        <span class="answer-title">✍️ Lembar Jawaban &amp; Langkah Pengerjaan Manual:</span>
+        <span class="answer-hint">Tuliskan rumus, jalan hitung, dan kesimpulan jawaban secara rapi di garis bawah ini</span>
+      </div>
+      <div class="ruled-workspace">
+        <div class="ruled-watermark">RUANG PENGERJAAN SANTRI</div>
+      </div>
+    </div>
+
+    <!-- KOLOM TANDA TANGAN & PENILAIAN -->
+    <div>
+      <table class="signature-table">
+        <tr>
+          <td>
+            <span class="sig-role">Ketua Kelompok 3</span>
+            <span class="sig-name">( ............................................ )</span>
+          </td>
+          <td>
+            <span class="sig-role">Perwakilan Anggota</span>
+            <span class="sig-name">( ............................................ )</span>
+          </td>
+          <td>
+            <span class="sig-role">Nilai &amp; Paraf Ustaz / Penilai</span>
+            <span class="sig-name">Nilai: ............  Paraf: ........</span>
+          </td>
+        </tr>
+      </table>
+      <div class="footer-quote">“Sesungguhnya Allah mencintai jika seseorang beramal, ia melakukannya dengan itqan (rapi &amp; sungguh-sungguh).” · Mukhayyam Tarbawi MTs 7</div>
+    </div>
+  </div>
+
+
+  <!-- ========================================================================
+       HALAMAN 4 - KELOMPOK 4 : SUHU MALAM CAMPING GROUND (BILANGAN BULAT)
+       ======================================================================== -->
+  <div class="page">
+    <div>
+      <!-- HEADER -->
+      <div class="header-container">
+        <div class="header-top">
+          <div>
+            <h1 class="header-title">🌡️ LEMBAR MISI MUKHAYYAM TARBAWI</h1>
+            <div class="header-meta">Mata Pelajaran: Matematika · Kelas 7 MTs Al-Imam</div>
+          </div>
+          <div class="header-badge">
+            POST 4: IKLIM &amp; CUACA
+          </div>
+        </div>
+      </div>
+
+      <!-- IDENTITAS KELOMPOK -->
+      <div class="identity-box">
+        <div class="identity-item">
+          <span class="identity-label">Kelompok:</span>
+          <span class="identity-value">KELOMPOK 4</span>
+        </div>
+        <div class="identity-item">
+          <span class="identity-label">Nama Anggota Kelompok:</span>
+          <span class="identity-value"><span class="dots-line"></span></span>
+        </div>
+        <div class="identity-item">
+          <span class="identity-label">Tanggal Pelaksanaan:</span>
+          <span class="identity-value"><span class="dots-line"></span></span>
+        </div>
+      </div>
+
+      <!-- JUDUL MISI & FOKUS MATERI -->
+      <div class="mission-header">
+        <span class="mission-title">🎯 MISI KELOMPOK 4: SUHU MALAM DI CAMPING GROUND</span>
+        <span class="mission-topic">Fokus: Operasi Bilangan Bulat Negatif</span>
+      </div>
+
+      <!-- SOAL CERITA -->
+      <div class="story-box">
+        <div class="story-label">📋 Skenario Masalah:</div>
+        <p class="story-text">
+          “Pada malam perkemahan, suhu udara di camping ground pada pukul 20.00 WIB tercatat 25°C. Seiring malam bertambah larut, suhu terus menurun secara stabil sebesar 3°C setiap 1 jam. Berapakah suhu udara di tenda perkemahan saat santri bangun qiyamullail pada pukul 02.00 dini hari?”
+        </p>
+      </div>
+
+      <!-- PANDUAN LANGKAH -->
+      <div class="guidance-box">
+        <div class="guidance-title">💡 Panduan Langkah Pengerjaan:</div>
+        <ol class="guidance-list">
+          <li>Catat suhu awal pada pukul 20.00: <strong>25°C</strong>.</li>
+          <li>Hitung selisih durasi waktu dari pukul 20.00 malam hingga pukul 02.00 dini hari: <strong>... jam</strong>.</li>
+          <li>Hitung total penurunan suhu: <strong>Durasi waktu (jam) × 3°C = ...°C</strong>.</li>
+          <li>Gunakan operasi pengurangan bilangan bulat: <strong>Suhu Akhir = Suhu Awal − Total Penurunan Suhu</strong>.</li>
+          <li>Tuliskan hasil akhir suhu pada pukul 02.00 dini hari dengan satuan derajat Celcius (°C)!</li>
+        </ol>
+      </div>
+    </div>
+
+    <!-- RUANG JAWABAN BERGARIS (9.5 CM) -->
+    <div class="answer-section">
+      <div class="answer-header">
+        <span class="answer-title">✍️ Lembar Jawaban &amp; Langkah Pengerjaan Manual:</span>
+        <span class="answer-hint">Tuliskan rumus, jalan hitung, dan kesimpulan jawaban secara rapi di garis bawah ini</span>
+      </div>
+      <div class="ruled-workspace">
+        <div class="ruled-watermark">RUANG PENGERJAAN SANTRI</div>
+      </div>
+    </div>
+
+    <!-- KOLOM TANDA TANGAN & PENILAIAN -->
+    <div>
+      <table class="signature-table">
+        <tr>
+          <td>
+            <span class="sig-role">Ketua Kelompok 4</span>
+            <span class="sig-name">( ............................................ )</span>
+          </td>
+          <td>
+            <span class="sig-role">Perwakilan Anggota</span>
+            <span class="sig-name">( ............................................ )</span>
+          </td>
+          <td>
+            <span class="sig-role">Nilai &amp; Paraf Ustaz / Penilai</span>
+            <span class="sig-name">Nilai: ............  Paraf: ........</span>
+          </td>
+        </tr>
+      </table>
+      <div class="footer-quote">“Sesungguhnya Allah mencintai jika seseorang beramal, ia melakukannya dengan itqan (rapi &amp; sungguh-sungguh).” · Mukhayyam Tarbawi MTs 7</div>
+    </div>
+  </div>
+
+
+  <!-- ========================================================================
+       HALAMAN 5 - KELOMPOK 5 : ANGGARAN KONSUMSI SEDERHANA (SPLDV DASAR)
+       ======================================================================== -->
+  <div class="page">
+    <div>
+      <!-- HEADER -->
+      <div class="header-container">
+        <div class="header-top">
+          <div>
+            <h1 class="header-title">🍜 LEMBAR MISI MUKHAYYAM TARBAWI</h1>
+            <div class="header-meta">Mata Pelajaran: Matematika · Kelas 7 MTs Al-Imam</div>
+          </div>
+          <div class="header-badge">
+            POST 5: LOGISTIK DARURAT
+          </div>
+        </div>
+      </div>
+
+      <!-- IDENTITAS KELOMPOK -->
+      <div class="identity-box">
+        <div class="identity-item">
+          <span class="identity-label">Kelompok:</span>
+          <span class="identity-value">KELOMPOK 5</span>
+        </div>
+        <div class="identity-item">
+          <span class="identity-label">Nama Anggota Kelompok:</span>
+          <span class="identity-value"><span class="dots-line"></span></span>
+        </div>
+        <div class="identity-item">
+          <span class="identity-label">Tanggal Pelaksanaan:</span>
+          <span class="identity-value"><span class="dots-line"></span></span>
+        </div>
+      </div>
+
+      <!-- JUDUL MISI & FOKUS MATERI -->
+      <div class="mission-header">
+        <span class="mission-title">🎯 MISI KELOMPOK 5: ANGGARAN KONSUMSI SEDERHANA</span>
+        <span class="mission-topic">Fokus: SPLDV Dasar (Metode Eliminasi &amp; Substitusi)</span>
+      </div>
+
+      <!-- SOAL CERITA -->
+      <div class="story-box">
+        <div class="story-label">📋 Skenario Masalah:</div>
+        <p class="story-text">
+          “Bendahara mukhayyam membeli perlengkapan logistik konsumsi. Di pos A, ia membeli 3 bungkus mie instan dan 2 botol air mineral seharga Rp21.000. Di pos B dengan harga satuan yang sama, ia membeli 2 bungkus mie instan dan 3 botol air mineral seharga Rp19.000. Berapakah harga 1 bungkus mie instan dan 1 botol air mineral?”
+        </p>
+      </div>
+
+      <!-- PANDUAN LANGKAH -->
+      <div class="guidance-box">
+        <div class="guidance-title">💡 Panduan Langkah Pengerjaan:</div>
+        <ol class="guidance-list">
+          <li>Misalkan: <strong>m = harga mie</strong> dan <strong>a = harga air mineral</strong>.</li>
+          <li>Susun sistem persamaannya:
+            <br>• Persamaan (1): <strong>3m + 2a = 21.000</strong>
+            <br>• Persamaan (2): <strong>2m + 3a = 19.000</strong>
+          </li>
+          <li>Samakan koefisien <strong>a</strong> (eliminasi): Kalikan Persamaan (1) dengan 3, dan kalikan Persamaan (2) dengan 2.</li>
+          <li>Kurangkan kedua persamaan tersebut untuk menemukan harga <strong>1 mie (m)</strong>.</li>
+          <li>Substitusikan nilai <strong>m</strong> ke salah satu persamaan awal untuk menemukan harga <strong>1 air mineral (a)</strong>!</li>
+        </ol>
+      </div>
+    </div>
+
+    <!-- RUANG JAWABAN BERGARIS (9.5 CM) -->
+    <div class="answer-section">
+      <div class="answer-header">
+        <span class="answer-title">✍️ Lembar Jawaban &amp; Langkah Pengerjaan Manual:</span>
+        <span class="answer-hint">Tuliskan rumus, jalan hitung, dan kesimpulan jawaban secara rapi di garis bawah ini</span>
+      </div>
+      <div class="ruled-workspace">
+        <div class="ruled-watermark">RUANG PENGERJAAN SANTRI</div>
+      </div>
+    </div>
+
+    <!-- KOLOM TANDA TANGAN & PENILAIAN -->
+    <div>
+      <table class="signature-table">
+        <tr>
+          <td>
+            <span class="sig-role">Ketua Kelompok 5</span>
+            <span class="sig-name">( ............................................ )</span>
+          </td>
+          <td>
+            <span class="sig-role">Perwakilan Anggota</span>
+            <span class="sig-name">( ............................................ )</span>
+          </td>
+          <td>
+            <span class="sig-role">Nilai &amp; Paraf Ustaz / Penilai</span>
+            <span class="sig-name">Nilai: ............  Paraf: ........</span>
+          </td>
+        </tr>
+      </table>
+      <div class="footer-quote">“Sesungguhnya Allah mencintai jika seseorang beramal, ia melakukannya dengan itqan (rapi &amp; sungguh-sungguh).” · Mukhayyam Tarbawi MTs 7</div>
+    </div>
+  </div>
+
+</body>
+</html>

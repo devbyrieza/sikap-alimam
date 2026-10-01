@@ -1,0 +1,1150 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Simulator & Panduan Visual Game 1: Robot Manusia - MTs Al-Imam</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-main: #061e14;
+    --bg-card: #ffffff;
+    --bg-grid: #f1f5f9;
+    --primary: #064e3b;
+    --primary-light: #059669;
+    --accent: #d97706;
+    --danger: #dc2626;
+    --gold: #f59e0b;
+    --cyan: #0284c7;
+    --text-dark: #0f172a;
+    --text-muted: #64748b;
+    --border: #cbd5e1;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    background-color: var(--bg-main);
+    color: var(--text-dark);
+    min-height: 100vh;
+    padding: 24px;
+    display: flex;
+    justify-content: center;
+  }
+
+  .container {
+    max-width: 1280px;
+    width: 100%;
+    background: #ffffff;
+    border-radius: 24px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Header */
+  .header {
+    background: linear-gradient(135deg, #022c22 0%, #064e3b 60%, #047857 100%);
+    color: #ffffff;
+    padding: 24px 32px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 4px solid var(--accent);
+  }
+
+  .header-titles h1 {
+    font-size: 24px;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .header-titles p {
+    font-size: 13px;
+    color: #a7f3d0;
+    margin-top: 4px;
+    font-weight: 500;
+  }
+
+  .badge-tag {
+    background: rgba(217, 119, 6, 0.25);
+    border: 1px solid #f59e0b;
+    color: #fef3c7;
+    padding: 6px 14px;
+    border-radius: 9999px;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  /* Main Layout */
+  .content-grid {
+    display: grid;
+    grid-template-columns: 540px 1fr;
+    gap: 28px;
+    padding: 28px 32px;
+    flex: 1;
+    background: #f8fafc;
+  }
+
+  @media (max-width: 1024px) {
+    .content-grid { grid-template-columns: 1fr; }
+  }
+
+  /* Arena Card */
+  .arena-panel {
+    background: #ffffff;
+    border-radius: 18px;
+    border: 1px solid var(--border);
+    padding: 20px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .panel-title {
+    width: 100%;
+    font-size: 15px;
+    font-weight: 800;
+    color: var(--primary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 14px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #f1f5f9;
+  }
+
+  /* Teacher Desk (Target) */
+  .target-zone {
+    width: 100%;
+    background: linear-gradient(90deg, #b45309, #d97706, #b45309);
+    color: #ffffff;
+    border-radius: 12px;
+    padding: 10px;
+    text-align: center;
+    font-weight: 800;
+    font-size: 14px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 4px 10px rgba(217, 119, 6, 0.3);
+    margin-bottom: 12px;
+    border: 2px solid #fde68a;
+  }
+
+  /* The Grid */
+  .grid-container {
+    display: grid;
+    grid-template-columns: repeat(7, 60px);
+    grid-template-rows: repeat(9, 52px);
+    gap: 4px;
+    background: #e2e8f0;
+    padding: 6px;
+    border-radius: 12px;
+    border: 3px solid #cbd5e1;
+    position: relative;
+    user-select: none;
+  }
+
+  .cell {
+    background: #ffffff;
+    border-radius: 6px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    font-size: 10px;
+    font-weight: 700;
+    color: #94a3b8;
+    transition: all 0.2s ease;
+  }
+
+  .cell .coord {
+    position: absolute;
+    top: 2px;
+    left: 4px;
+    font-size: 8px;
+    color: #cbd5e1;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  /* Cell Variations */
+  .cell.start-cell {
+    background: #ecfdf5;
+    border: 2px dashed #059669;
+    color: #065f46;
+  }
+  .cell.start-cell::after {
+    content: "START";
+    font-size: 9px;
+    font-weight: 800;
+    color: #059669;
+    margin-top: 14px;
+  }
+
+  .cell.finish-cell {
+    background: #fef3c7;
+    border: 2px dashed #d97706;
+  }
+
+  .cell.obstacle-chair {
+    background: #fee2e2;
+    border: 2px solid #ef4444;
+    color: #b91c1c;
+    box-shadow: inset 0 0 8px rgba(239, 68, 68, 0.2);
+  }
+
+  .cell.sensor-laser {
+    background: #ffe4e6;
+    border: 2px dashed #e11d48;
+    color: #be123c;
+    animation: pulseLaser 2s infinite;
+  }
+
+  @keyframes pulseLaser {
+    0%, 100% { opacity: 1; background: #ffe4e6; }
+    50% { opacity: 0.6; background: #fecdd3; }
+  }
+
+  .cell.key-cell {
+    background: #fef9c3;
+    border: 2px solid #ca8a04;
+    color: #854d0e;
+    animation: bounceKey 1.5s infinite alternate;
+  }
+
+  @keyframes bounceKey {
+    0% { transform: scale(1); }
+    100% { transform: scale(1.05); }
+  }
+
+  .cell.path-trace {
+    background: #d1fae5 !important;
+    border: 1px solid #6ee7b7 !important;
+  }
+  .cell.path-trace::before {
+    content: "•";
+    font-size: 16px;
+    color: #059669;
+  }
+
+  /* Robot Avatar */
+  .robot-token {
+    width: 44px;
+    height: 44px;
+    background: #0284c7;
+    border: 3px solid #ffffff;
+    box-shadow: 0 4px 12px rgba(2, 132, 199, 0.6);
+    border-radius: 50%;
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 22px;
+    transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+    z-index: 20;
+  }
+
+  .robot-arrow {
+    position: absolute;
+    width: 0;
+    height: 0;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-bottom: 8px solid #f59e0b;
+    top: -6px;
+  }
+
+  /* Bottom Controls under Grid */
+  .controls-bar {
+    width: 100%;
+    margin-top: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .btn-group {
+    display: flex;
+    gap: 8px;
+    width: 100%;
+  }
+
+  button {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 700;
+    cursor: pointer;
+    border: none;
+    border-radius: 10px;
+    padding: 10px 14px;
+    font-size: 12px;
+    transition: all 0.15s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+  }
+
+  button:active { transform: scale(0.97); }
+
+  .btn-primary {
+    background: var(--primary);
+    color: #ffffff;
+    flex: 1;
+  }
+  .btn-primary:hover { background: var(--primary-light); }
+
+  .btn-accent {
+    background: var(--accent);
+    color: #ffffff;
+    flex: 1;
+  }
+  .btn-accent:hover { background: #b45309; }
+
+  .btn-secondary {
+    background: #e2e8f0;
+    color: #334155;
+  }
+  .btn-secondary:hover { background: #cbd5e1; }
+
+  /* Info & Rules Panel (Right Side) */
+  .info-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+
+  .card-box {
+    background: #ffffff;
+    border-radius: 16px;
+    border: 1px solid var(--border);
+    padding: 18px 20px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+  }
+
+  .card-box h3 {
+    font-size: 15px;
+    font-weight: 800;
+    color: var(--primary);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  /* Setup Langkah Nyata di Kelas */
+  .setup-steps {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .step-item {
+    display: flex;
+    gap: 12px;
+    font-size: 13px;
+    line-height: 1.4;
+    color: #334155;
+  }
+
+  .step-num {
+    min-width: 24px;
+    height: 24px;
+    background: #047857;
+    color: #ffffff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 800;
+  }
+
+  /* Kunci Kemenangan & Rute Menantang */
+  .feature-tag {
+    display: inline-block;
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    color: #991b1b;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 6px;
+    margin-right: 6px;
+  }
+
+  /* Stopwatch & Live Score */
+  .stopwatch-box {
+    background: linear-gradient(135deg, #0f172a, #1e293b);
+    color: #ffffff;
+    border-radius: 14px;
+    padding: 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .time-display {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 32px;
+    font-weight: 800;
+    color: #38bdf8;
+    letter-spacing: 1px;
+  }
+
+  .status-text {
+    font-size: 12px;
+    color: #94a3b8;
+    margin-top: 4px;
+  }
+
+  /* Legend */
+  .legend-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+    margin-top: 6px;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    color: #475569;
+    font-weight: 600;
+  }
+
+  .legend-color {
+    width: 16px;
+    height: 16px;
+    border-radius: 4px;
+  }
+
+  /* Log Box */
+  .log-terminal {
+    background: #0f172a;
+    color: #38bdf8;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    padding: 10px 14px;
+    border-radius: 10px;
+    height: 90px;
+    overflow-y: auto;
+    border: 1px solid #334155;
+  }
+
+  .log-line { margin-bottom: 4px; }
+  .log-error { color: #f87171; font-weight: 700; }
+  .log-success { color: #4ade80; font-weight: 700; }
+  .log-gold { color: #fbbf24; font-weight: 700; }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- Header -->
+  <div class="header">
+    <div class="header-titles">
+      <h1>🤖 Panduan Visual & Simulator Game 1: Robot Manusia</h1>
+      <p>Kelas 7 MTs Al-Imam • Logika Algoritma, Koordinat Ubin & Geometri Rotasi 90°/180°</p>
+    </div>
+    <div class="badge-tag">Rute Menantang & Penentu Juara</div>
+  </div>
+
+  <!-- Content -->
+  <div class="content-grid">
+
+    <!-- LEFT: ARENA GRID SIMULATION -->
+    <div class="arena-panel">
+      <div class="panel-title">
+        <span>🗺️ Denah Lantai Kelas (Grid 7 × 9 Ubin)</span>
+        <span style="font-size: 11px; color: #047857; font-weight: 600;">1 Kotak = 1 Ubin Keramik</span>
+      </div>
+
+      <!-- Selector 3 Misi Anti-Nyontek -->
+      <div style="width: 100%; display: flex; gap: 6px; margin-bottom: 12px;">
+        <button id="btnMissionA" class="btn-primary" style="flex:1; padding: 7px 4px; font-size: 11px;" onclick="switchMission('A')">
+          🎯 Misi A (Kanan F4)
+        </button>
+        <button id="btnMissionB" class="btn-secondary" style="flex:1; padding: 7px 4px; font-size: 11px;" onclick="switchMission('B')">
+          🎯 Misi B (Kiri B4)
+        </button>
+        <button id="btnMissionC" class="btn-secondary" style="flex:1; padding: 7px 4px; font-size: 11px;" onclick="switchMission('C')">
+          🎯 Misi C (Tengah D5)
+        </button>
+      </div>
+
+      <!-- Target: Meja Guru -->
+      <div class="target-zone">
+        <span>🏆 MEJA GURU & PETI HARTA KARUN (Koordinat D1)</span>
+      </div>
+
+      <!-- Wrapper with Student Desks on Left/Right -->
+      <div style="display: flex; gap: 10px; align-items: stretch; width: 100%;">
+        <!-- Meja Murid Kiri -->
+        <div style="background: #e2e8f0; border: 2px dashed #94a3b8; border-radius: 10px; width: 50px; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 4px;">
+          <span style="font-size: 18px;">🪑</span>
+          <span style="font-size: 8.5px; font-weight: 800; color: #475569; writing-mode: vertical-rl; transform: rotate(180deg); margin-top: 6px;">MEJA SANTRI (KIRI)</span>
+        </div>
+
+        <!-- The 7x9 Grid -->
+        <div class="grid-container" id="gridArena">
+          <!-- Cells generated by JS -->
+          <div class="robot-token" id="robotAvatar" style="top: 0; left: 0;">
+            <div class="robot-arrow"></div>
+            🤖
+          </div>
+        </div>
+
+        <!-- Meja Murid Kanan -->
+        <div style="background: #e2e8f0; border: 2px dashed #94a3b8; border-radius: 10px; width: 50px; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 4px;">
+          <span style="font-size: 18px;">🪑</span>
+          <span style="font-size: 8.5px; font-weight: 800; color: #475569; writing-mode: vertical-rl; margin-top: 6px;">MEJA SANTRI (KANAN)</span>
+        </div>
+      </div>
+
+      <!-- Start Point Legend -->
+      <div style="font-size: 11px; font-weight: 700; color: #047857; margin-top: 8px;">
+        ▲ PINTU MASUK / TITIK AWAL: Koordinat D9
+      </div>
+
+      <!-- Interactive Controls for Testing / Demo -->
+      <div class="controls-bar">
+        <div class="btn-group">
+          <button class="btn-accent" onclick="runChampionDemo()" id="btnAutoDemo">
+            ▶️ Putar Demo Rute Juara (Otomatis)
+          </button>
+          <button class="btn-secondary" onclick="resetRobot()">
+            🔄 Reset Posisi
+          </button>
+          <button class="btn-secondary" onclick="toggleOptimalPath()">
+            🛣️ Tampilkan Rute Ideal
+          </button>
+        </div>
+
+        <!-- Manual Step Buttons (Programmer Test) -->
+        <div style="background: #f1f5f9; padding: 10px; border-radius: 10px; border: 1px solid #e2e8f0;">
+          <div style="font-size: 11px; font-weight: 800; color: #475569; margin-bottom: 6px; text-transform: uppercase;">
+            🎮 Uji Coba Tombol Perintah Programmer:
+          </div>
+          <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px;">
+            <button class="btn-primary" onclick="execCommand('MAJU')">⬆️ MAJU(1)</button>
+            <button class="btn-primary" onclick="execCommand('KANAN_90')">↷ KANAN 90°</button>
+            <button class="btn-primary" onclick="execCommand('KIRI_90')">↶ KIRI 90°</button>
+            <button class="btn-primary" onclick="execCommand('BALIK_180')">🔁 BALIK 180°</button>
+          </div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 6px;">
+            <button class="btn-secondary" style="background:#fef08a; color:#854d0e;" onclick="execCommand('AMBIL_KUNCI')">🔑 AMBIL KUNCI</button>
+            <button class="btn-secondary" style="background:#fed7aa; color:#9a3412;" onclick="execCommand('BUKA_HARTA')">🏆 BUKA HARTA</button>
+          </div>
+        </div>
+
+        <!-- Terminal Log -->
+        <div class="log-terminal" id="logTerminal">
+          <div class="log-line">> Sistem siap. Robot berdiri di [D9] menghadap UTARA.</div>
+          <div class="log-line">> Misi: Ambil KUNCI EMAS di [F4], lalu bawa ke MEJA GURU di [D1].</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: PEDAGOGICAL & LOGISTICAL GUIDE -->
+    <div class="info-panel">
+
+      <!-- Stopwatch Penilai -->
+      <div class="stopwatch-box">
+        <div>
+          <div style="font-size: 11px; text-transform: uppercase; color: #cbd5e1; font-weight: 700;">⏱️ Stopwatch Ujian Robot</div>
+          <div class="time-display" id="stopwatchText">00:00.0</div>
+          <div class="status-text" id="penaltyStatus">Penalti Tabrakan: 0 detik</div>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 6px;">
+          <button class="btn-accent" style="padding: 8px 16px;" onclick="toggleStopwatch()" id="btnStopwatch">▶️ Mulai Hitung</button>
+          <button class="btn-secondary" style="padding: 6px 16px; font-size: 11px;" onclick="resetStopwatch()">Reset Timer</button>
+        </div>
+      </div>
+
+      <!-- Mengapa Sulit Nemu Pemenang? Ini Solusinya! -->
+      <div class="card-box" style="border-left: 4px solid var(--accent); background: #fffbeb;">
+        <h3 style="color: #b45309;">
+          🎯 Mengapa Rute Ini Pasti Menghasilkan Pemenang yang Jelas?
+        </h3>
+        <p style="font-size: 12.5px; color: #78350f; line-height: 1.5; margin-bottom: 8px;">
+          Jika jalurnya cuma "maju lurus lalu belok 1 kali", semua anak pasti bisa dan nilainya sama. Di rute ini kita pasang <strong>3 Jebakan Logika</strong>:
+        </p>
+        <ul style="font-size: 12px; color: #92400e; padding-left: 18px; line-height: 1.6;">
+          <li><strong>Jebakan 1: Wajib Ambil Kunci Emas di [F4]:</strong> Pintu Meja Guru terkunci! Robot tidak bisa langsung ke Meja Guru. Dia harus belok kanan ke sayap [F4] mengambil kunci dulu.</li>
+          <li><strong>Jebakan 2: Disorientasi Kanan vs Kiri:</strong> Saat robot sudah putar balik 180° menghadap SELATAN, arah "kanan robot" menjadi kebalikan dari arah mata Programmer! Di sinilah 70% pasangan akan salah instruksi (Syntax Error).</li>
+        <ul style="font-size: 12px; color: #92400e; padding-left: 18px; line-height: 1.6;">
+          <li><strong>Jebakan 1: Pintu Meja Guru Terkunci:</strong> Robot tidak boleh langsung ke Meja Guru [D1]. Dia wajib belok ke sayap kanan [F4] untuk mengambil KUNCI EMAS (botol minum di atas kursi) terlebih dahulu.</li>
+          <li><strong>Jebakan 2: Disorientasi Kanan vs Kiri:</strong> Saat robot mengambil kunci di [F4] lalu putar balik 180° menghadap ke belakang (Selatan), arah kanan robot berkebalikan dari arah pandang Programmer! Ini menyebabkan 70% tim melakukan salah instruksi.</li>
+          <li><strong>Jebakan 3: Rintangan Kursi Berkelok:</strong> Lorong tengah ditutup oleh kursi-kursi santri, sehingga robot dipaksa melangkah zigzag mengitari kursi tanpa boleh menyenggolnya.</li>
+        </ul>
+      </div>
+
+      <!-- Cara Menata Fisik di Kelas Nyata -->
+      <div class="card-box">
+        <h3>🪑 Cara Menata di Kelas Nyata (Hanya Butuh 3 Menit!)</h3>
+        <div class="setup-steps">
+          <div class="step-item">
+            <div class="step-num">1</div>
+            <div>
+              <strong>Meja-Meja Santri (19 Meja):</strong> Digeser ke <strong>pinggir kiri, kanan, dan belakang</strong> kelas membentuk 5 pulau kelompok. Santri yang belum giliran duduk di mejanya masing-masing seperti penonton di tribun mengelilingi arena.
+            </div>
+          </div>
+          <div class="step-item">
+            <div class="step-num">2</div>
+            <div>
+              <strong>Letakkan 6 Kursi Santri di Ubin Tertentu:</strong>
+              <div style="font-size: 11.5px; color: #64748b; margin-top: 2px;">
+                • 1 Kursi di <strong>[D8]</strong> (persis menghalangi jalan lurus dari pintu masuk).<br>
+                • 1 Kursi di <strong>[B6]</strong> & 1 Kursi di <strong>[F6]</strong> (membatasi belokan).<br>
+                • 1 Kursi di <strong>[D4]</strong> (menutup lorong tengah).<br>
+                • 1 Kursi di <strong>[E7]</strong> & 1 Kursi di <strong>[C3]</strong> (rintangan belokan tajam).
+              </div>
+            </div>
+          </div>
+          <div class="step-item">
+            <div class="step-num">3</div>
+            <div>
+              <strong>Letakkan Kunci Emas di Kursi [F4]:</strong> Taruh 1 botol minum / kotak pensil di atas kursi [F4].
+            </div>
+          </div>
+          <div class="step-item">
+            <div class="step-num">4</div>
+            <div>
+              <strong>Taruh Harta Karun di Meja Guru [D1]:</strong> Hadiah/snack/spidol emas ditaruh di tengah meja guru.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Legenda Simbol -->
+      <div class="card-box">
+        <h3>📌 Keterangan Simbol Denah</h3>
+        <div class="legend-grid">
+          <div class="legend-item">
+            <div class="legend-color" style="background:#0284c7;"></div>
+            <span>🤖 Robot Manusia</span>
+          </div>
+          <div class="legend-item">
+            <div class="legend-color" style="background:#fee2e2; border:1px solid #ef4444;"></div>
+            <span>🪑 Kursi Santri (Jangan Ditabrak)</span>
+          </div>
+          <div class="legend-item">
+            <div class="legend-color" style="background:#fef9c3; border:1px solid #ca8a04;"></div>
+            <span>🔑 Kunci Emas (Botol di Kursi F4)</span>
+          </div>
+          <div class="legend-item">
+            <div class="legend-color" style="background:#e2e8f0; border:1px dashed #94a3b8;"></div>
+            <span>🪑 Meja Murid (Di Pinggir Kelas)</span>
+          </div>
+          <div class="legend-item">
+            <div class="legend-color" style="background:#fef3c7; border:1px dashed #d97706;"></div>
+            <span>🏆 Harta Karun (Meja Guru D1)</span>
+          </div>
+          <div class="legend-item">
+            <div class="legend-color" style="background:#ecfdf5; border:1px dashed #059669;"></div>
+            <span>🟢 Start Point (Pintu Belakang D9)</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Rumus Penentuan Juara 1, 2, 3 -->
+      <div class="card-box" style="background: #f0fdf4; border-color: #bbf7d0;">
+        <h3 style="color: #166534;">🏆 Rumus Menentukan Juara (Adil & Terukur)</h3>
+        <p style="font-size: 12px; color: #14532d; line-height: 1.5;">
+          <strong>Skor Akhir = Waktu Tempuh (detik) + (Jumlah Senggolan Kursi × 10 detik)</strong><br>
+          <span style="color: #047857; font-weight: 700;">➡️ Pasangan dengan Waktu Tercepat (Skor Terkecil) adalah JUARA 1!</span>
+        </p>
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+<script>
+  // Configuration: Grid 7 columns (A to G = 0 to 6), 9 rows (1 to 9 = 0 to 8)
+  const COLS = 7;
+  const ROWS = 9;
+  const COL_NAMES = ['A', 'B', 'C', 'D', 'E', 'F', 'G'];
+
+  // Obstacles: Pure Chairs! (row, col) - 0-indexed
+  const OBSTACLES = [
+    { r: 7, c: 3, label: '🪑 Kursi 1' }, // D8
+    { r: 5, c: 1, label: '🪑 Kursi 2' }, // B6
+    { r: 5, c: 5, label: '🪑 Kursi 3' }, // F6
+    { r: 6, c: 4, label: '🪑 Kursi 4' }, // E7
+    { r: 3, c: 3, label: '🪑 Kursi 5' }, // D4
+    { r: 2, c: 2, label: '🪑 Kursi 6' }, // C3
+    { r: 2, c: 1, label: '🪑 Kursi 7' }  // B3
+  ];
+
+  // Missions Configuration (Anti-Nyontek)
+  let currentMission = 'A';
+  let KEY_LOC = { r: 3, c: 5, label: '🔑 KUNCI' }; // Default Mission A (F4)
+
+  const MISSIONS = {
+    'A': {
+      name: 'Misi A (Sayap Kanan - F4)',
+      key: { r: 3, c: 5 },
+      desc: 'Botol Kunci di [F4] (Sayap Kanan). Cocok untuk Kelompok 1, 2, 3.',
+      demo: [
+        { act: 'KIRI_90', delay: 500 }, { act: 'MAJU', delay: 450 },
+        { act: 'KANAN_90', delay: 500 }, { act: 'MAJU', delay: 450 }, { act: 'MAJU', delay: 450 },
+        { act: 'KANAN_90', delay: 500 }, { act: 'MAJU', delay: 450 },
+        { act: 'KIRI_90', delay: 500 }, { act: 'MAJU', delay: 450 },
+        { act: 'KANAN_90', delay: 500 }, { act: 'MAJU', delay: 450 },
+        { act: 'KIRI_90', delay: 500 }, { act: 'MAJU', delay: 450 },
+        { act: 'KANAN_90', delay: 500 }, { act: 'MAJU', delay: 450 },
+        { act: 'KIRI_90', delay: 500 }, { act: 'MAJU', delay: 450 },
+        { act: 'AMBIL_KUNCI', delay: 700 },
+        { act: 'MAJU', delay: 450 },
+        { act: 'KIRI_90', delay: 500 }, { act: 'MAJU', delay: 450 }, { act: 'MAJU', delay: 450 },
+        { act: 'KANAN_90', delay: 500 }, { act: 'MAJU', delay: 450 }, { act: 'MAJU', delay: 450 },
+        { act: 'BUKA_HARTA', delay: 800 }
+      ]
+    },
+    'B': {
+      name: 'Misi B (Sayap Kiri - B4)',
+      key: { r: 3, c: 1 },
+      desc: 'Botol Kunci di [B4] (Sayap Kiri). Rute TERBALIK total! Menghancurkan hafalan kelompok 4, 5, 6.',
+      demo: [
+        { act: 'KANAN_90', delay: 500 }, { act: 'MAJU', delay: 450 },
+        { act: 'KIRI_90', delay: 500 }, { act: 'MAJU', delay: 450 }, { act: 'MAJU', delay: 450 },
+        { act: 'KIRI_90', delay: 500 }, { act: 'MAJU', delay: 450 },
+        { act: 'KANAN_90', delay: 500 }, { act: 'MAJU', delay: 450 },
+        { act: 'KIRI_90', delay: 500 }, { act: 'MAJU', delay: 450 },
+        { act: 'KANAN_90', delay: 500 }, { act: 'MAJU', delay: 450 },
+        { act: 'AMBIL_KUNCI', delay: 700 },
+        { act: 'KANAN_90', delay: 500 }, { act: 'MAJU', delay: 450 }, { act: 'MAJU', delay: 450 },
+        { act: 'KIRI_90', delay: 500 }, { act: 'MAJU', delay: 450 }, { act: 'MAJU', delay: 450 },
+        { act: 'BUKA_HARTA', delay: 800 }
+      ]
+    },
+    'C': {
+      name: 'Misi C (Jalur Tengah - D5)',
+      key: { r: 4, c: 3 },
+      desc: 'Botol Kunci di [D5] (Tengah). Zigzag cepat khusus Kelompok 7, 8, 9.',
+      demo: [
+        { act: 'KIRI_90', delay: 500 }, { act: 'MAJU', delay: 450 },
+        { act: 'KANAN_90', delay: 500 }, { act: 'MAJU', delay: 450 }, { act: 'MAJU', delay: 450 },
+        { act: 'KANAN_90', delay: 500 }, { act: 'MAJU', delay: 450 },
+        { act: 'KIRI_90', delay: 500 }, { act: 'MAJU', delay: 450 },
+        { act: 'AMBIL_KUNCI', delay: 700 },
+        { act: 'KANAN_90', delay: 500 }, { act: 'MAJU', delay: 450 },
+        { act: 'KIRI_90', delay: 500 }, { act: 'MAJU', delay: 450 }, { act: 'MAJU', delay: 450 },
+        { act: 'KIRI_90', delay: 500 }, { act: 'MAJU', delay: 450 },
+        { act: 'KANAN_90', delay: 500 }, { act: 'MAJU', delay: 450 }, { act: 'MAJU', delay: 450 },
+        { act: 'BUKA_HARTA', delay: 800 }
+      ]
+    }
+  };
+
+  function switchMission(missionKey) {
+    currentMission = missionKey;
+    KEY_LOC.r = MISSIONS[missionKey].key.r;
+    KEY_LOC.c = MISSIONS[missionKey].key.c;
+
+    // Update button states
+    ['A', 'B', 'C'].forEach(m => {
+      const btn = document.getElementById(`btnMission${m}`);
+      if (m === missionKey) {
+        btn.className = 'btn-primary';
+      } else {
+        btn.className = 'btn-secondary';
+      }
+    });
+
+    resetRobot();
+    buildGrid();
+    addLog(`🎯 BERGANTI KE ${MISSIONS[missionKey].name}`, 'gold');
+    addLog(`💡 Info: ${MISSIONS[missionKey].desc}`, 'normal');
+  }
+
+  // Finish Target
+  const FINISH_LOC = { r: 0, c: 3, label: '🏆 HARTA' }; // D1
+
+  // Start Point
+  const START_LOC = { r: 8, c: 3 }; // D9
+
+  // Optimal Champion Path (Sequence of coordinates)
+  const OPTIMAL_PATH = [
+    { r: 8, c: 3, dir: 0 }, // D9 (Start, North)
+    { r: 8, c: 2, dir: 3 }, // Turn Left to C9
+    { r: 7, c: 2, dir: 0 }, // Up to C8
+    { r: 6, c: 2, dir: 0 }, // Up to C7
+    { r: 6, c: 3, dir: 1 }, // Right to D7
+    { r: 5, c: 3, dir: 0 }, // Up to D6
+    { r: 5, c: 4, dir: 1 }, // Right to E6
+    { r: 4, c: 4, dir: 0 }, // Up to E5
+    { r: 4, c: 5, dir: 1 }, // Right to F5
+    { r: 3, c: 5, dir: 0 }, // Up to F4 (AMBIL KUNCI!)
+    // Backtracking from Key
+    { r: 2, c: 5, dir: 0 }, // Up to F3
+    { r: 2, c: 4, dir: 3 }, // Left to E3
+    { r: 2, c: 3, dir: 3 }, // Left to D3
+    { r: 1, c: 3, dir: 0 }, // Up to D2
+    { r: 0, c: 3, dir: 0 }  // Up to D1 (BUKA HARTA!)
+  ];
+
+  // Robot State
+  let robot = {
+    r: START_LOC.r,
+    c: START_LOC.c,
+    dir: 0, // 0: North, 1: East, 2: South, 3: West
+    hasKey: false,
+    hasTreasure: false,
+    crashes: 0
+  };
+
+  let showPath = false;
+  let isDemoRunning = false;
+
+  // Sound Synth using Web Audio API
+  let audioCtx = null;
+  function getAudioContext() {
+    if (!audioCtx) {
+      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    }
+    return audioCtx;
+  }
+
+  function playBeep(freq, type, duration) {
+    try {
+      const ctx = getAudioContext();
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = type;
+      osc.frequency.value = freq;
+      gain.gain.setValueAtTime(0.15, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + duration);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start();
+      osc.stop(ctx.currentTime + duration);
+    } catch(e) {}
+  }
+
+  function soundStep() { playBeep(520, 'sine', 0.08); }
+  function soundTurn() { playBeep(380, 'triangle', 0.12); }
+  function soundCrash() { playBeep(140, 'sawtooth', 0.35); }
+  function soundKey() {
+    playBeep(659, 'sine', 0.1);
+    setTimeout(() => playBeep(880, 'sine', 0.25), 100);
+  }
+  function soundVictory() {
+    playBeep(523.25, 'triangle', 0.15);
+    setTimeout(() => playBeep(659.25, 'triangle', 0.15), 150);
+    setTimeout(() => playBeep(783.99, 'triangle', 0.2), 300);
+    setTimeout(() => playBeep(1046.50, 'triangle', 0.4), 500);
+  }
+
+  // Initialize Grid
+  function buildGrid() {
+    const container = document.getElementById('gridArena');
+    // Clear existing cells except robot avatar
+    const cells = container.querySelectorAll('.cell');
+    cells.forEach(c => c.remove());
+
+    for (let r = 0; r < ROWS; r++) {
+      for (let c = 0; c < COLS; c++) {
+        const cell = document.createElement('div');
+        cell.className = 'cell';
+        cell.id = `cell-${r}-${c}`;
+        
+        const coordSpan = document.createElement('span');
+        coordSpan.className = 'coord';
+        coordSpan.innerText = `${COL_NAMES[c]}${r+1}`;
+        cell.appendChild(coordSpan);
+
+        // Check types
+        if (r === START_LOC.r && c === START_LOC.c) {
+          cell.classList.add('start-cell');
+        } else if (r === FINISH_LOC.r && c === FINISH_LOC.c) {
+          cell.classList.add('finish-cell');
+          const t = document.createElement('div');
+          t.innerHTML = "🏆";
+          t.style.fontSize = "20px";
+          cell.appendChild(t);
+        } else if (r === KEY_LOC.r && c === KEY_LOC.c) {
+          cell.classList.add('key-cell');
+          cell.innerHTML += "<span style='font-size:16px;'>🔑</span><span style='font-size:8px; font-weight:800;'>KUNCI</span>";
+        } else if (OBSTACLES.some(o => o.r === r && o.c === c)) {
+          cell.classList.add('obstacle-chair');
+          cell.innerHTML += "<span style='font-size:15px;'>🪑</span><span style='font-size:7.5px; font-weight:800;'>KURSI</span>";
+        }
+
+        container.appendChild(cell);
+      }
+    }
+    updateRobotVisual();
+  }
+
+  function updateRobotVisual() {
+    const avatar = document.getElementById('robotAvatar');
+    // Grid padding is 6px, cell width 60px, cell height 52px, gap 4px
+    const cellWidth = 60 + 4;
+    const cellHeight = 52 + 4;
+    const padding = 6;
+
+    const left = padding + (robot.c * cellWidth) + (60 - 44) / 2;
+    const top = padding + (robot.r * cellHeight) + (52 - 44) / 2;
+
+    avatar.style.left = `${left}px`;
+    avatar.style.top = `${top}px`;
+
+    // Rotate arrow according to dir: 0: North(0deg), 1: East(90deg), 2: South(180deg), 3: West(270deg)
+    const deg = robot.dir * 90;
+    avatar.style.transform = `rotate(${deg}deg)`;
+  }
+
+  function addLog(msg, type = 'normal') {
+    const term = document.getElementById('logTerminal');
+    const line = document.createElement('div');
+    line.className = 'log-line';
+    if (type === 'error') line.className += ' log-error';
+    if (type === 'success') line.className += ' log-success';
+    if (type === 'gold') line.className += ' log-gold';
+    line.innerHTML = msg;
+    term.appendChild(line);
+    term.scrollTop = term.scrollHeight;
+  }
+
+  function execCommand(cmd) {
+    if (robot.hasTreasure && cmd !== 'RESET') {
+      addLog("🏆 Harta Karun sudah didapat! Klik Reset untuk ronde baru.", "gold");
+      return;
+    }
+
+    const curCellName = `[${COL_NAMES[robot.c]}${robot.r + 1}]`;
+
+    if (cmd === 'KANAN_90') {
+      robot.dir = (robot.dir + 1) % 4;
+      soundTurn();
+      const dirs = ['UTARA', 'TIMUR', 'SELATAN', 'BARAT'];
+      addLog(`> PUTAR KANAN 90°: Robot menghadap ${dirs[robot.dir]}`, "normal");
+      updateRobotVisual();
+      return;
+    }
+
+    if (cmd === 'KIRI_90') {
+      robot.dir = (robot.dir + 3) % 4;
+      soundTurn();
+      const dirs = ['UTARA', 'TIMUR', 'SELATAN', 'BARAT'];
+      addLog(`> PUTAR KIRI 90°: Robot menghadap ${dirs[robot.dir]}`, "normal");
+      updateRobotVisual();
+      return;
+    }
+
+    if (cmd === 'BALIK_180') {
+      robot.dir = (robot.dir + 2) % 4;
+      soundTurn();
+      const dirs = ['UTARA', 'TIMUR', 'SELATAN', 'BARAT'];
+      addLog(`> PUTAR BALIK 180°: Robot menghadap ${dirs[robot.dir]}`, "normal");
+      updateRobotVisual();
+      return;
+    }
+
+    if (cmd === 'MAJU') {
+      let nr = robot.r;
+      let nc = robot.c;
+
+      if (robot.dir === 0) nr--; // North
+      else if (robot.dir === 1) nc++; // East
+      else if (robot.dir === 2) nr++; // South
+      else if (robot.dir === 3) nc--; // West
+
+      // Check wall boundary
+      if (nr < 0 || nr >= ROWS || nc < 0 || nc >= COLS) {
+        soundCrash();
+        robot.crashes++;
+        addCrashPenalty();
+        addLog(`🚨 SYNTAX ERROR: Robot menabrak DINDING KELAS di luar batas! (+10 Detik)`, "error");
+        return;
+      }
+
+      // Check Obstacle Chair
+      if (OBSTACLES.some(o => o.r === nr && o.c === nc)) {
+        soundCrash();
+        robot.crashes++;
+        addCrashPenalty();
+        addLog(`💥 TABRAKAN KURSI di [${COL_NAMES[nc]}${nr+1}]! Robot tersenggol kursi! (+10 Detik)`, "error");
+        return;
+      }
+
+      // Move is valid
+      robot.r = nr;
+      robot.c = nc;
+      soundStep();
+      updateRobotVisual();
+      addLog(`> MAJU 1 UBIN: Robot sekarang di [${COL_NAMES[nc]}${nr+1}]`, "normal");
+      return;
+    }
+
+    if (cmd === 'AMBIL_KUNCI') {
+      if (robot.r === KEY_LOC.r && robot.c === KEY_LOC.c) {
+        if (!robot.hasKey) {
+          robot.hasKey = true;
+          soundKey();
+          addLog(`🔑 BERHASIL! Robot mengambil KUNCI EMAS di [F4]! Meja Guru sekarang terbuka!`, "gold");
+        } else {
+          addLog(`> Kunci sudah ada di tangan robot.`, "normal");
+        }
+      } else {
+        soundCrash();
+        addLog(`❌ GAGAL: Robot meraba angin di [${COL_NAMES[robot.c]}${robot.r+1}]. Kunci ada di [F4]!`, "error");
+      }
+      return;
+    }
+
+    if (cmd === 'BUKA_HARTA') {
+      if (robot.r === FINISH_LOC.r && robot.c === FINISH_LOC.c) {
+        if (!robot.hasKey) {
+          soundCrash();
+          addLog(`🚫 ACCESS DENIED: Peti Meja Guru TERKUNCI! Robot harus ambil Kunci di [F4] dulu!`, "error");
+        } else {
+          robot.hasTreasure = true;
+          soundVictory();
+          stopStopwatch();
+          addLog(`🎉 TAKBIR! ALLAHU AKBAR! Robot berhasil mengangkat HARTA KARUN! 🏆`, "success");
+          addLog(`⏱️ Waktu Finish Tercatat! Silakan masukkan ke papan skor.`, "gold");
+        }
+      } else {
+        soundCrash();
+        addLog(`❌ GAGAL: Robot belum sampai di Meja Guru [D1]!`, "error");
+      }
+      return;
+    }
+  }
+
+  function resetRobot() {
+    robot = {
+      r: START_LOC.r,
+      c: START_LOC.c,
+      dir: 0,
+      hasKey: false,
+      hasTreasure: false,
+      crashes: 0
+    };
+    isDemoRunning = false;
+    updateRobotVisual();
+    addLog(`🔄 Posisi robot direset ke Titik Start [D9].`, "normal");
+  }
+
+  // Toggle Optimal Path Visualization
+  function toggleOptimalPath() {
+    showPath = !showPath;
+    OPTIMAL_PATH.forEach(pos => {
+      const el = document.getElementById(`cell-${pos.r}-${pos.c}`);
+      if (el) {
+        if (showPath) el.classList.add('path-trace');
+        else el.classList.remove('path-trace');
+      }
+    });
+    addLog(showPath ? `🛣️ Rute Ideal Ditampilkan di Grid.` : `🛣️ Rute Ideal Disembunyikan.`, "normal");
+  }
+
+  // Automated Champion Demo
+  async function runChampionDemo() {
+    if (isDemoRunning) return;
+    isDemoRunning = true;
+    resetRobot();
+    resetStopwatch();
+    startStopwatch();
+
+    const btn = document.getElementById('btnAutoDemo');
+    btn.innerText = "⏳ Menjalankan Rute...";
+    btn.disabled = true;
+
+    addLog(`🎬 MEMULAI SIMULASI DEMO JUARA... Perhatikan gerakannya!`, "gold");
+
+    const commands = MISSIONS[currentMission].demo;
+
+    for (let c of commands) {
+      if (!isDemoRunning) break;
+      execCommand(c.act);
+      await new Promise(r => setTimeout(r, c.delay));
+    }
+
+    btn.innerText = "▶️ Putar Demo Rute Juara (Otomatis)";
+    btn.disabled = false;
+    isDemoRunning = false;
+  }
+
+  // Stopwatch Implementation
+  let stopwatchTimer = null;
+  let startTime = 0;
+  let elapsedTime = 0;
+  let penaltySeconds = 0;
+
+  function formatTime(ms) {
+    const totalSec = Math.floor(ms / 1000);
+    const m = Math.floor(totalSec / 60).toString().padStart(2, '0');
+    const s = (totalSec % 60).toString().padStart(2, '0');
+    const tenths = Math.floor((ms % 1000) / 100);
+    return `${m}:${s}.${tenths}`;
+  }
+
+  function startStopwatch() {
+    if (stopwatchTimer) return;
+    startTime = Date.now() - elapsedTime;
+    stopwatchTimer = setInterval(() => {
+      elapsedTime = Date.now() - startTime;
+      document.getElementById('stopwatchText').innerText = formatTime(elapsedTime + (penaltySeconds * 1000));
+    }, 100);
+    document.getElementById('btnStopwatch').innerText = "⏸️ Jeda Timer";
+  }
+
+  function stopStopwatch() {
+    if (!stopwatchTimer) return;
+    clearInterval(stopwatchTimer);
+    stopwatchTimer = null;
+    document.getElementById('btnStopwatch').innerText = "▶️ Lanjut Timer";
+  }
+
+  function toggleStopwatch() {
+    if (stopwatchTimer) stopStopwatch();
+    else startStopwatch();
+  }
+
+  function resetStopwatch() {
+    stopStopwatch();
+    elapsedTime = 0;
+    penaltySeconds = 0;
+    document.getElementById('stopwatchText').innerText = "00:00.0";
+    document.getElementById('penaltyStatus').innerText = "Penalti Tabrakan: 0 detik";
+    document.getElementById('btnStopwatch').innerText = "▶️ Mulai Hitung";
+  }
+
+  function addCrashPenalty() {
+    penaltySeconds += 10;
+    document.getElementById('penaltyStatus').innerText = `Penalti Tabrakan: +${penaltySeconds} detik!`;
+    document.getElementById('stopwatchText').innerText = formatTime(elapsedTime + (penaltySeconds * 1000));
+  }
+
+  // Init on load
+  window.addEventListener('DOMContentLoaded', () => {
+    buildGrid();
+  });
+</script>
+
+</body>
+</html>
