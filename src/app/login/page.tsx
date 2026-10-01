@@ -25,7 +25,7 @@ export default function LoginPage() {
   const [showPass, setShowPass] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [activeTab, setActiveTab] = useState<"asatidzah" | "wali">("asatidzah");
+  const [activeTab, setActiveTab] = useState<"asatidzah" | "wali">("wali");
 
   const [requireRoleSelection, setRequireRoleSelection] = useState(false);
   const [availableRoles, setAvailableRoles] = useState<string[]>([]);
