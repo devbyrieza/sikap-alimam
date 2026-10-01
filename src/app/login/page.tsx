@@ -25,6 +25,7 @@ export default function LoginPage() {
   const [showPass, setShowPass] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [activeTab, setActiveTab] = useState<"asatidzah" | "wali">("asatidzah");
 
   const [requireRoleSelection, setRequireRoleSelection] = useState(false);
   const [availableRoles, setAvailableRoles] = useState<string[]>([]);
@@ -333,13 +334,58 @@ export default function LoginPage() {
                 color: "#0f172a",
                 letterSpacing: "-0.02em",
                 marginBottom: "4px",
+                textAlign: "center"
               }}
             >
               Masuk Portal SIKAP
             </h2>
-            <p style={{ fontSize: "12px", color: "#64748b", fontWeight: 400 }}>
-              Silakan masukkan kredensial akun Asatidzah, Musyrif, atau Wali Santri.
+            <p style={{ fontSize: "12px", color: "#64748b", fontWeight: 400, textAlign: "center", marginBottom: "20px" }}>
+              Silakan pilih jalur akses Anda.
             </p>
+
+            {/* TAB SELECTOR */}
+            <div style={{ display: 'flex', background: '#f8fafc', padding: '6px', borderRadius: '100px', marginBottom: '24px', gap: '4px' }}>
+              <button
+                type="button"
+                onClick={() => { setActiveTab("wali"); setEmail(""); setPassword(""); setError(""); }}
+                style={{
+                  flex: 1,
+                  padding: '10px',
+                  borderRadius: '100px',
+                  fontSize: '11px',
+                  fontWeight: 700,
+                  letterSpacing: '0.05em',
+                  transition: 'all 0.2s',
+                  background: activeTab === "wali" ? '#fff' : 'transparent',
+                  color: activeTab === "wali" ? '#550000' : '#64748b',
+                  boxShadow: activeTab === "wali" ? '0 2px 4px rgba(0,0,0,0.05)' : 'none',
+                  border: 'none',
+                  cursor: 'pointer'
+                }}
+              >
+                WALI SANTRI
+              </button>
+              <button
+                type="button"
+                onClick={() => { setActiveTab("asatidzah"); setEmail(""); setPassword(""); setError(""); }}
+                style={{
+                  flex: 1,
+                  padding: '10px',
+                  borderRadius: '100px',
+                  fontSize: '11px',
+                  fontWeight: 700,
+                  letterSpacing: '0.05em',
+                  transition: 'all 0.2s',
+                  background: activeTab === "asatidzah" ? '#fff' : 'transparent',
+                  color: activeTab === "asatidzah" ? '#550000' : '#64748b',
+                  boxShadow: activeTab === "asatidzah" ? '0 2px 4px rgba(0,0,0,0.05)' : 'none',
+                  border: 'none',
+                  cursor: 'pointer'
+                }}
+              >
+                ASATIDZAH / STAF
+              </button>
+            </div>
           </div>
 
           {/* Info banner */}
@@ -357,8 +403,10 @@ export default function LoginPage() {
           >
             <ShieldCheck style={{ width: 15, height: 15, color: "#550000", flexShrink: 0 }} />
             <span style={{ fontSize: "11px", color: "#550000", fontWeight: 500, lineHeight: 1.4 }}>
-              Login staf, asatidzah, dan wali santri menggunakan{" "}
-              <strong>Username / Email / No. WA</strong>.
+              {activeTab === "asatidzah" 
+                ? <><strong style={{fontWeight: 800}}>PORTAL STAF:</strong> Gunakan <strong>Username / Email / No. WA</strong> untuk masuk.</>
+                : <><strong style={{fontWeight: 800}}>PORTAL WALI:</strong> Gunakan <strong>Nomor Induk Santri (NIS)</strong> Anak Anda untuk masuk.</>
+              }
             </span>
           </div>
 
@@ -376,7 +424,7 @@ export default function LoginPage() {
                   letterSpacing: "0.06em",
                 }}
               >
-                Username / Email / No. WA <span style={{ color: "#ef4444" }}>*</span>
+                {activeTab === "asatidzah" ? "Username / Email / No. WA" : "NIS (Nomor Induk Santri)"} <span style={{ color: "#ef4444" }}>*</span>
               </label>
               <div style={{ position: "relative" }}>
                 <User
@@ -397,7 +445,7 @@ export default function LoginPage() {
                   autoComplete="username"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="Username / Email / No. WA"
+                  placeholder={activeTab === "asatidzah" ? "Username / Email / No. WA" : "Masukkan NIS Anak Anda"}
                   style={{
                     width: "100%",
                     height: "48px",
