@@ -563,10 +563,10 @@ export default function RaporWaliPage() {
                           <td className="py-3 px-4 text-center font-medium text-slate-600">{item.hasKomp ? item.kompetensi : "-"}</td>
                           <td className="py-3 px-4 text-center font-medium text-slate-600">{item.hasSikap ? item.sikap : "-"}</td>
                           <td className="py-3 px-4 text-center font-bold text-slate-800">{item.hasUjian ? item.ujian : "-"}</td>
-                          <td className="py-3 px-4 text-center text-slate-500 font-bold">75</td>
+                          <td className="py-3 px-4 text-center text-slate-500 font-bold">{item.mapel_kategori !== "umum" ? 85 : 80}</td>
                           <td className="py-3 px-4 text-center font-extrabold text-primary">
                             {item.nilaiAkhir ? (
-                              <span className={`px-2.5 py-1 rounded-lg ${Number(item.nilaiAkhir) >= 75 ? "bg-emerald-50 text-emerald-700" : "bg-amber-50 text-amber-700"}`}>
+                              <span className={`px-2.5 py-1 rounded-lg ${Number(item.nilaiAkhir) >= (item.mapel_kategori !== "umum" ? 85 : 80) ? "bg-emerald-50 text-emerald-700" : "bg-red-50 text-red-700"}`}>
                                 {item.nilaiAkhir}
                               </span>
                             ) : (
