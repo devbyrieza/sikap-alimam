@@ -28,7 +28,7 @@ export async function GET() {
     const [rawKelas, rawAsatidz, allMapel, rawAsatidzmMapel] = await Promise.all([
       prisma.kelas.findMany({ 
         where: { is_active: true },
-        select: { id: true, nama: true, jenjang: true } }),
+        select: { id: true, nama: true, jenjang: true, _count: { select: { santri: true } } } }),
       prisma.pegawai.findMany({
         where: {
           OR: [

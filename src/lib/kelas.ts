@@ -139,6 +139,17 @@ export function normalizeKelasList<T extends { id: string, nama: string, jenjang
     if (!seenKeys.has(key)) {
       seenKeys.add(key);
       result.push({ ...k, nama: cleanName, jenjang });
+    } else {
+      // Prioritaskan kelas yang memiliki jumlah santri lebih banyak
+      const existingIdx = result.findIndex(r => r.jenjang === jenjang && r.nama.toUpperCase() === cleanName.toUpperCase());
+      if (existingIdx !== -1) {
+        const existing = result[existingIdx];
+        const currentSantriCount = k._count?.santri || 0;
+        const existingSantriCount = existing._count?.santri || 0;
+        if (currentSantriCount > existingSantriCount) {
+          result[existingIdx] = { ...k, nama: cleanName, jenjang };
+        }
+      }
     }
   }
 
@@ -146,7 +157,7 @@ export function normalizeKelasList<T extends { id: string, nama: string, jenjang
 }
 
 export function normalizeMasterData<
-  TKelas extends { id: string; nama: string; jenjang?: string | null },
+  TKelas extends { id: string; nama: string; jenjang?: string | null, _count?: { santri: number } },
   TAsatidzmMapel extends { pegawai_id: string; mapel_id: string; kelas_id: string },
   TMapel extends { id: string; nama: string; kelas_id: string; kategori: string }
 >(
@@ -188,8 +199,30 @@ export function normalizeMasterData<
       canonicalIdMap.set(k.id, k.id);
       resultKelas.push({ ...k, nama: cleanName, jenjang });
     } else {
-      const canonicalId = seenKeys.get(key)!;
-      canonicalIdMap.set(k.id, canonicalId);
+      const existingIdx = resultKelas.findIndex(r => r.jenjang === jenjang && r.nama.toUpperCase() === cleanName.toUpperCase());
+      if (existingIdx !== -1) {
+        const existing = resultKelas[existingIdx];
+        const currentSantriCount = k._count?.santri || 0;
+        const existingSantriCount = existing._count?.santri || 0;
+        
+        if (currentSantriCount > existingSantriCount) {
+          // Ganti canonical ID lama dengan yang baru karena ini punya lebih banyak santri
+          const oldId = existing.id;
+          seenKeys.set(key, k.id);
+          canonicalIdMap.set(k.id, k.id);
+          canonicalIdMap.set(oldId, k.id); // Arahkan ID lama ke ID baru
+          
+          // Ganti di array hasil
+          resultKelas[existingIdx] = { ...k, nama: cleanName, jenjang };
+        } else {
+          // K yang sekarang lebih sedikit santrinya, jadi biarkan ID lama tetap canonical
+          const canonicalId = seenKeys.get(key)!;
+          canonicalIdMap.set(k.id, canonicalId);
+        }
+      } else {
+        const canonicalId = seenKeys.get(key)!;
+        canonicalIdMap.set(k.id, canonicalId);
+      }
     }
   }
 

@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { normalizeKelasList } from "@/lib/kelas";
 
+export const dynamic = "force-dynamic";
+
 // GET: Ambil daftar kelas (bisa semua atau hanya yang aktif)
 export async function GET(req: NextRequest) {
   try {

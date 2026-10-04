@@ -21,6 +21,7 @@ export async function GET(req: NextRequest) {
         ALTER TABLE santri_aktif ADD COLUMN IF NOT EXISTS nisn VARCHAR(50);
         ALTER TABLE santri_aktif ADD COLUMN IF NOT EXISTS tanggal_lahir DATE;
         UPDATE santri_aktif SET status_kesiswaan = 'aktif' WHERE status_kesiswaan IS NULL;
+        UPDATE santri_aktif SET is_active = true WHERE status_kesiswaan = 'aktif' AND is_active = false;
       `);
     } catch (migErr) {
       // Ignore
