@@ -66,7 +66,7 @@ export default function InputNilaiPage() {
 
   const isSpecialClass = useMemo(() => {
     const selectedKelasInfo = master?.kelas.find(k => k.id === kelas_id);
-    const nama = selectedKelasInfo?.nama.toLowerCase() || ""; return nama.includes("11 ma") || nama.includes("12 ma") || nama === "il";
+    const nama = selectedKelasInfo?.nama.toLowerCase() || ""; return nama.includes("11 ma") || nama.includes("12 ma");
   }, [kelas_id, master]);
   const [asatidId, setAsatidId] = useState("");
   const [isAdminSuper, setIsAdminSuper] = useState(false);
