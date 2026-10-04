@@ -54,11 +54,11 @@ jobs:
         run: |
           if [ -n "$COOLIFY_WEBHOOK" ] && [ -n "$COOLIFY_TOKEN" ]; then
             echo "Triggering Coolify webhook with Auth Token..."
-            curl -k -s -X GET "$COOLIFY_WEBHOOK" -H "Authorization: Bearer $COOLIFY_TOKEN"
+            curl -k -s -X POST "$COOLIFY_WEBHOOK" -H "Authorization: Bearer $COOLIFY_TOKEN"
             echo -e "\nWebhook triggered successfully!"
           elif [ -n "$COOLIFY_WEBHOOK" ]; then
             echo "Triggering Coolify webhook without auth..."
-            curl -k -s -X GET "$COOLIFY_WEBHOOK"
+            curl -k -s -X POST "$COOLIFY_WEBHOOK"
             echo -e "\nWebhook triggered successfully!"
           else
             echo "No COOLIFY_WEBHOOK secret found. Skipping automatic deployment."
