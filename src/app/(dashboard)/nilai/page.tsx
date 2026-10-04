@@ -298,7 +298,7 @@ export default function InputNilaiPage() {
     const u = Number(data.ujian) || 0;
     
     // Jika semua kosong, return null
-    if (!data.harian && !data.kompetensi && !data.sikap && !data.ujian) return null;
+    if (!data.harian && !data.kompetensi && !data.sikap && !data.ujian) return null;\n\n    // Mode PTS Murni: Jika hanya mengisi Ujian PTS, tampilkan murni PTS\n    if (!data.harian && !data.kompetensi && !data.sikap && data.ujian) return u.toFixed(1);
 
     return (0.3 * h + 0.2 * k + 0.1 * s + 0.4 * u).toFixed(1);
   };

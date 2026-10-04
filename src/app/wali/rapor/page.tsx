@@ -142,10 +142,12 @@ export default function RaporWaliPage() {
     });
 
     return Array.from(map.values()).map((item) => {
-      const isComplete = item.hasHarian || item.hasKomp || item.hasSikap || item.hasUjian;
-      const naNum = isComplete
-        ? (0.3 * item.harian + 0.2 * item.kompetensi + 0.1 * item.sikap + 0.4 * item.ujian)
-        : null;
+      let naNum = null;
+      if (item.hasUjian && !item.hasHarian && !item.hasKomp && !item.hasSikap) {
+        naNum = item.ujian;
+      } else if (item.hasHarian || item.hasKomp || item.hasSikap || item.hasUjian) {
+        naNum = (0.3 * item.harian + 0.2 * item.kompetensi + 0.1 * item.sikap + 0.4 * item.ujian);
+      }
       
       let predikat = "-";
       if (naNum !== null) {
