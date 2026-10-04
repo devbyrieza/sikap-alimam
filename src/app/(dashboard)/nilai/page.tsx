@@ -66,7 +66,7 @@ export default function InputNilaiPage() {
 
   const isSpecialClass = useMemo(() => {
     const selectedKelasInfo = master?.kelas.find(k => k.id === kelas_id);
-    return selectedKelasInfo?.nama.toLowerCase().includes("11 ma") || selectedKelasInfo?.nama.toLowerCase().includes("12 ma");
+    const nama = selectedKelasInfo?.nama.toLowerCase() || ""; return nama.includes("11 ma") || nama.includes("12 ma") || nama === "il";
   }, [kelas_id, master]);
   const [asatidId, setAsatidId] = useState("");
   const [isAdminSuper, setIsAdminSuper] = useState(false);
@@ -408,7 +408,7 @@ export default function InputNilaiPage() {
   };
 
   const selectedKelasNama = master?.kelas?.find((k) => k.id === kelas_id)?.nama || "";
-  const selectedMapelNama = mapelList.find((m) => m.id === mapel_id)?.nama || "";
+  const selectedMapelNama = isSpecialClass ? namaMapelCustom : (mapelList.find((m) => m.id === mapel_id)?.nama || "");
 
   return (
     <div className="page-container">
@@ -643,7 +643,7 @@ export default function InputNilaiPage() {
           </div>
 
           {/* Mandatory Parameter Warning Banner */}
-          {(!kelas_id || !mapel_id) && (
+          {(!kelas_id || (isSpecialClass ? !namaMapelCustom : !mapel_id)) && (
             <div style={{ background: "#fffbeb", borderRadius: "16px", padding: "16px 20px", border: "1.5px solid #fef08a", display: "flex", alignItems: "center", gap: "12px", color: "#92400e" }}>
               <AlertCircle size={22} style={{ color: "#d97706", flexShrink: 0 }} />
               <div style={{ fontSize: "13px", fontWeight: "600", color: "#b45309" }}>
@@ -662,19 +662,19 @@ export default function InputNilaiPage() {
             <button
               className="w-full sm:w-auto flex items-center justify-center gap-2"
               style={{
-                background: !kelas_id || !mapel_id ? "#e2e8f0" : "#550000",
+                background: !kelas_id || (isSpecialClass ? !namaMapelCustom : !mapel_id) ? "#e2e8f0" : "#550000",
                 color: !kelas_id || !mapel_id ? "#94a3b8" : "#ffffff",
                 padding: "13px 26px",
                 borderRadius: "14px",
                 fontWeight: 800,
                 fontSize: "14px",
                 border: "none",
-                cursor: !kelas_id || !mapel_id ? "not-allowed" : "pointer",
-                boxShadow: !kelas_id || !mapel_id ? "none" : "0 4px 14px rgba(85, 0, 0, 0.25)",
+                cursor: !kelas_id || (isSpecialClass ? !namaMapelCustom : !mapel_id) ? "not-allowed" : "pointer",
+                boxShadow: !kelas_id || (isSpecialClass ? !namaMapelCustom : !mapel_id) ? "none" : "0 4px 14px rgba(85, 0, 0, 0.25)",
                 transition: "all 0.2s" }}
-              disabled={!kelas_id || !mapel_id}
+              disabled={!kelas_id || (isSpecialClass ? !namaMapelCustom.trim() : !mapel_id)}
               onClick={() => {
-                if (!kelas_id || !mapel_id) {
+                if (!kelas_id || (isSpecialClass ? !namaMapelCustom.trim() : !mapel_id)) {
                   Swal.fire({
                     icon: "warning",
                     title: "Parameter Belum Lengkap",
