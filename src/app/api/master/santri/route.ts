@@ -42,7 +42,7 @@ export async function GET(req: NextRequest) {
       whereClause.status_kesiswaan = status;
     } else if (!status) {
       // Default to active santri for KBM & Nilai consumers unless status=all is specified
-      whereClause.is_active = true;
+      whereClause.status_kesiswaan = "aktif";
     }
 
     if (q) {
