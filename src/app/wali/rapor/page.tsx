@@ -540,6 +540,7 @@ export default function RaporWaliPage() {
                       <th className="py-3.5 px-4 text-center">Komp (20%)</th>
                       <th className="py-3.5 px-4 text-center">Sikap (10%)</th>
                       <th className="py-3.5 px-4 text-center">Ujian (40%)</th>
+                      <th className="py-3.5 px-4 text-center">KKM</th>
                       <th className="py-3.5 px-4 text-center">Nilai Akhir</th>
                       <th className="py-3.5 px-4 text-center">Predikat</th>
                     </tr>
@@ -562,6 +563,7 @@ export default function RaporWaliPage() {
                           <td className="py-3 px-4 text-center font-medium text-slate-600">{item.hasKomp ? item.kompetensi : "-"}</td>
                           <td className="py-3 px-4 text-center font-medium text-slate-600">{item.hasSikap ? item.sikap : "-"}</td>
                           <td className="py-3 px-4 text-center font-bold text-slate-800">{item.hasUjian ? item.ujian : "-"}</td>
+                          <td className="py-3 px-4 text-center text-slate-500 font-bold">75</td>
                           <td className="py-3 px-4 text-center font-extrabold text-primary">
                             {item.nilaiAkhir ? (
                               <span className={`px-2.5 py-1 rounded-lg ${Number(item.nilaiAkhir) >= 75 ? "bg-emerald-50 text-emerald-700" : "bg-amber-50 text-amber-700"}`}>
