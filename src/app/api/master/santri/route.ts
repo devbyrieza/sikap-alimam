@@ -19,6 +19,7 @@ export async function GET(req: NextRequest) {
         ALTER TABLE santri_aktif ADD COLUMN IF NOT EXISTS no_sk_keluar VARCHAR(255);
         ALTER TABLE santri_aktif ADD COLUMN IF NOT EXISTS catatan_keluar TEXT;
         ALTER TABLE santri_aktif ADD COLUMN IF NOT EXISTS nisn VARCHAR(50);
+        ALTER TABLE santri_aktif ADD COLUMN IF NOT EXISTS tanggal_lahir DATE;
         UPDATE santri_aktif SET status_kesiswaan = 'aktif' WHERE status_kesiswaan IS NULL;
       `);
     } catch (migErr) {
