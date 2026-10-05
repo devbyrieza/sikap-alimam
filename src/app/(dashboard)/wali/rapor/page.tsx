@@ -553,16 +553,15 @@ export default function RaporWaliPage() {
                     <tr className="bg-slate-50 text-slate-500 text-xs font-bold uppercase border-b border-slate-100">
                       <th className="py-3.5 px-4 w-12 text-center">No</th>
                       <th className="py-3.5 px-4">Mata Pelajaran</th>
-                      <th className="py-3.5 px-4 text-center">Nilai PTS</th>
                       <th className="py-3.5 px-4 text-center">KKM</th>
-                      <th className="py-3.5 px-4 text-center">Nilai Akhir</th>
+                      <th className="py-3.5 px-4 text-center">Nilai Akhir (PTS)</th>
                       <th className="py-3.5 px-4 text-center">Predikat</th>
                     </tr>
                   </thead>
                   <tbody>
                     {akademikGrouped.length === 0 ? (
                       <tr>
-                        <td colSpan={6} className="text-center py-10 text-slate-400 text-sm">
+                        <td colSpan={5} className="text-center py-10 text-slate-400 text-sm">
                           Belum ada data nilai akademik yang diinput oleh guru pengampu.
                         </td>
                       </tr>
@@ -582,7 +581,6 @@ export default function RaporWaliPage() {
                             <td className="py-3 px-4 font-bold text-slate-800">
                               {item.mapel_nama}
                             </td>
-                            <td className="py-3 px-4 text-center font-bold text-slate-800">{item.hasUjian ? item.ujian : "-"}</td>
                             <td className="py-3 px-4 text-center text-slate-500 font-bold">{item.mapel_kategori !== "umum" ? 85 : 80}</td>
                             <td className="py-3 px-4 text-center">
                               {item.nilaiAkhir ? (
