@@ -146,7 +146,7 @@ export default function RaporWaliPage() {
       // MURNI PTS MODE
       if (item.hasUjian) {
         naNum = item.ujian;
-
+      }
       
       let predikat = "-";
       if (naNum !== null) {
@@ -214,9 +214,9 @@ export default function RaporWaliPage() {
   const { santri, ringkasan, detail } = data;
 
   return (
-    <div className="min-h-screen bg-slate-50 pb-20">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-rose-50/30 to-slate-100 pb-20">
       {/* Top Bar Navigation */}
-      <div className="bg-white border-b border-slate-200/80 sticky top-0 z-30 shadow-sm">
+      <div className="bg-white/90 backdrop-blur border-b border-slate-200/80 sticky top-0 z-30 shadow-sm">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
           <a
             href="/wali"
@@ -248,14 +248,15 @@ export default function RaporWaliPage() {
 
       <div className="max-w-6xl mx-auto px-4 sm:px-6 pt-6 space-y-6">
         {/* Profile Card Banner */}
-        <div className="bg-gradient-to-r from-primary via-[#7e141a] to-[#4a080d] text-white rounded-3xl p-6 sm:p-8 shadow-xl shadow-primary/20 relative overflow-hidden">
+        <div className="bg-gradient-to-r from-primary via-[#7e141a] to-[#4a080d] text-white rounded-3xl p-8 sm:p-10 shadow-2xl shadow-primary/30 relative overflow-hidden">
           <div className="absolute top-0 right-0 p-8 opacity-10 pointer-events-none">
             <GraduationCap size={180} />
           </div>
+          <div className="absolute -right-10 -top-10 w-64 h-64 bg-white/5 rounded-full border border-white/10 pointer-events-none" />
 
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 relative z-10">
             <div className="flex items-center gap-4 sm:gap-6">
-              <div className="w-16 h-16 sm:w-20 sm:h-20 bg-white/20 backdrop-blur-md rounded-2xl border border-white/30 text-white flex items-center justify-center font-black text-2xl sm:text-3xl shadow-inner flex-shrink-0">
+              <div className="w-16 h-16 sm:w-20 sm:h-20 bg-white/20 backdrop-blur-md rounded-2xl border border-white/30 text-white flex items-center justify-center font-black text-2xl sm:text-3xl shadow-inner flex-shrink-0 ring-4 ring-white/20">
                 {(santri?.nama || "S").charAt(0)}
               </div>
               <div>
@@ -288,17 +289,17 @@ export default function RaporWaliPage() {
             </div>
 
             {/* Quick Pill Status */}
-            <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-3.5 sm:p-4 flex items-center gap-6 self-stretch sm:self-auto justify-around">
+            <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-4 sm:p-5 flex items-center gap-6 self-stretch sm:self-auto justify-around">
               <div className="text-center">
                 <p className="text-[11px] text-white/75 font-medium uppercase">Kehadiran</p>
                 <p className="text-xl sm:text-2xl font-black text-white">{ringkasan.persentaseKehadiran}%</p>
               </div>
-              <div className="h-8 w-px bg-white/20" />
+              <div className="h-10 w-px bg-white/20" />
               <div className="text-center">
                 <p className="text-[11px] text-white/75 font-medium uppercase">Total Mapel</p>
                 <p className="text-xl sm:text-2xl font-black text-white">{akademikGrouped.length || detail.mapelList?.length || 12}</p>
               </div>
-              <div className="h-8 w-px bg-white/20" />
+              <div className="h-10 w-px bg-white/20" />
               <div className="text-center">
                 <p className="text-[11px] text-white/75 font-medium uppercase">Shubuh Jamaah</p>
                 <p className="text-xl sm:text-2xl font-black text-white">{ringkasan.persentaseShubuh}%</p>
@@ -309,7 +310,7 @@ export default function RaporWaliPage() {
 
         {/* JIKA SPP TERKUNCI (Lewat Tgl 10 & Belum Bayar) -> Render Lock Screen */}
         {data?.spp?.lunas === false ? (
-          <div className="bg-white rounded-3xl border border-rose-200/80 p-8 sm:p-12 shadow-xl text-center space-y-6 max-w-3xl mx-auto">
+          <div className="bg-white/90 backdrop-blur rounded-3xl border border-rose-200/80 p-8 sm:p-12 shadow-xl shadow-primary/10 text-center space-y-6 max-w-3xl mx-auto">
             <div className="w-20 h-20 rounded-3xl bg-rose-50 border border-rose-200 text-rose-600 flex items-center justify-center mx-auto shadow-inner">
               <Lock size={38} className="animate-bounce" />
             </div>
@@ -328,7 +329,7 @@ export default function RaporWaliPage() {
             </div>
 
             {/* Kotak Rincian Tagihan */}
-            <div className="bg-slate-50 rounded-2xl border border-slate-200 p-5 max-w-lg mx-auto text-left space-y-3 text-xs">
+            <div className="bg-slate-50 rounded-2xl border border-slate-200 p-5 max-w-lg mx-auto text-left space-y-3 text-xs shadow-md">
               <div className="flex justify-between items-center py-1 border-b border-slate-200/60">
                 <span className="text-slate-500 font-medium">Bulan Tagihan</span>
                 <span className="font-bold text-slate-800">{data.spp.namaBulan} {data.spp.tahun}</span>
@@ -392,7 +393,7 @@ export default function RaporWaliPage() {
           <>
             {/* Grace Period Notification Banner (Tgl 1-10) */}
             {data?.spp?.isGracePeriod && (
-              <div className="bg-amber-50 border border-amber-200/90 rounded-2xl p-4 flex items-center justify-between gap-4 text-xs">
+              <div className="bg-amber-50/90 backdrop-blur border border-amber-200/90 rounded-2xl p-4 flex items-center justify-between gap-4 text-xs shadow-md">
                 <div className="flex items-center gap-3">
                   <div className="p-2 rounded-xl bg-amber-500 text-white shrink-0">
                     <Clock size={16} />
@@ -413,108 +414,115 @@ export default function RaporWaliPage() {
             )}
 
             {/* Tab Navigation Menu */}
-            <div className="flex items-center gap-2 overflow-x-auto pb-1 border-b border-slate-200 text-sm font-bold">
-          <button
-            onClick={() => setActiveTab("ringkasan")}
-            className={`px-4 py-2.5 rounded-xl transition-all flex items-center gap-2 whitespace-nowrap ${
-              activeTab === "ringkasan"
-                ? "bg-primary text-white shadow-md shadow-primary/30"
-                : "bg-white text-slate-600 hover:bg-slate-100 border border-slate-200/80"
-            }`}
-          >
-            <Activity size={16} />
-            <span>1. Ringkasan Rapor</span>
-          </button>
+            <div className="bg-white/80 backdrop-blur rounded-2xl border border-slate-200/60 p-1.5 shadow-sm">
+              <div className="flex gap-1 overflow-x-auto">
+                <button
+                  onClick={() => setActiveTab("ringkasan")}
+                  className={`px-4 py-2.5 rounded-xl transition-all flex items-center gap-2 whitespace-nowrap text-sm font-bold ${
+                    activeTab === "ringkasan"
+                      ? "bg-primary text-white shadow-md shadow-primary/30"
+                      : "text-slate-500 hover:bg-slate-100"
+                  }`}
+                >
+                  <Activity size={16} />
+                  <span>1. Ringkasan Rapor</span>
+                </button>
 
-          <button
-            onClick={() => setActiveTab("nilai")}
-            className={`px-4 py-2.5 rounded-xl transition-all flex items-center gap-2 whitespace-nowrap ${
-              activeTab === "nilai"
-                ? "bg-primary text-white shadow-md shadow-primary/30"
-                : "bg-white text-slate-600 hover:bg-slate-100 border border-slate-200/80"
-            }`}
-          >
-            <BookOpen size={16} />
-            <span>2. Nilai & Filter Mapel</span>
-          </button>
+                <button
+                  onClick={() => setActiveTab("nilai")}
+                  className={`px-4 py-2.5 rounded-xl transition-all flex items-center gap-2 whitespace-nowrap text-sm font-bold ${
+                    activeTab === "nilai"
+                      ? "bg-primary text-white shadow-md shadow-primary/30"
+                      : "text-slate-500 hover:bg-slate-100"
+                  }`}
+                >
+                  <BookOpen size={16} />
+                  <span>2. Nilai & Filter Mapel</span>
+                </button>
 
-          <button
-            onClick={() => setActiveTab("presensi")}
-            className={`px-4 py-2.5 rounded-xl transition-all flex items-center gap-2 whitespace-nowrap ${
-              activeTab === "presensi"
-                ? "bg-primary text-white shadow-md shadow-primary/30"
-                : "bg-white text-slate-600 hover:bg-slate-100 border border-slate-200/80"
-            }`}
-          >
-            <Calendar size={16} />
-            <span>3. Rekap Presensi Absen</span>
-          </button>
+                <button
+                  onClick={() => setActiveTab("presensi")}
+                  className={`px-4 py-2.5 rounded-xl transition-all flex items-center gap-2 whitespace-nowrap text-sm font-bold ${
+                    activeTab === "presensi"
+                      ? "bg-primary text-white shadow-md shadow-primary/30"
+                      : "text-slate-500 hover:bg-slate-100"
+                  }`}
+                >
+                  <Calendar size={16} />
+                  <span>3. Rekap Presensi Absen</span>
+                </button>
 
-          <button
-            onClick={() => setActiveTab("jurnal")}
-            className={`px-4 py-2.5 rounded-xl transition-all flex items-center gap-2 whitespace-nowrap ${
-              activeTab === "jurnal"
-                ? "bg-primary text-white shadow-md shadow-primary/30"
-                : "bg-white text-slate-600 hover:bg-slate-100 border border-slate-200/80"
-            }`}
-          >
-            <FileText size={16} />
-            <span>4. Jurnal Mengajar Guru</span>
-          </button>
+                <button
+                  onClick={() => setActiveTab("jurnal")}
+                  className={`px-4 py-2.5 rounded-xl transition-all flex items-center gap-2 whitespace-nowrap text-sm font-bold ${
+                    activeTab === "jurnal"
+                      ? "bg-primary text-white shadow-md shadow-primary/30"
+                      : "text-slate-500 hover:bg-slate-100"
+                  }`}
+                >
+                  <FileText size={16} />
+                  <span>4. Jurnal Mengajar Guru</span>
+                </button>
 
-          <button
-            onClick={() => setActiveTab("tahfidz")}
-            className={`px-4 py-2.5 rounded-xl transition-all flex items-center gap-2 whitespace-nowrap ${
-              activeTab === "tahfidz"
-                ? "bg-primary text-white shadow-md shadow-primary/30"
-                : "bg-white text-slate-600 hover:bg-slate-100 border border-slate-200/80"
-            }`}
-          >
-            <HeartHandshake size={16} />
-            <span>5. Tahfidz & Ibadah</span>
-          </button>
-        </div>
+                <button
+                  onClick={() => setActiveTab("tahfidz")}
+                  className={`px-4 py-2.5 rounded-xl transition-all flex items-center gap-2 whitespace-nowrap text-sm font-bold ${
+                    activeTab === "tahfidz"
+                      ? "bg-primary text-white shadow-md shadow-primary/30"
+                      : "text-slate-500 hover:bg-slate-100"
+                  }`}
+                >
+                  <HeartHandshake size={16} />
+                  <span>5. Tahfidz & Ibadah</span>
+                </button>
+              </div>
+            </div>
 
         {/* TAB 1: RINGKASAN RAPOR */}
         {activeTab === "ringkasan" && (
           <div className="space-y-6">
             {/* 4 Stats Grid */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              <div className="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm flex items-center gap-4">
-                <div className="p-3 bg-emerald-50 text-emerald-600 rounded-2xl"><Activity size={24} /></div>
-                <div>
-                  <p className="text-xs text-slate-500 font-medium">Tingkat Kehadiran</p>
-                  <p className="text-xl font-bold text-slate-800 mt-0.5">{ringkasan.persentaseKehadiran}%</p>
+              {/* Kehadiran */}
+              <div className="bg-gradient-to-br from-emerald-50 to-white rounded-2xl p-5 border border-emerald-100 shadow-md">
+                <div className="flex items-center justify-between mb-3">
+                  <span className="text-xs font-bold text-emerald-700 uppercase tracking-wide">Kehadiran</span>
+                  <div className="p-2 bg-emerald-500 rounded-xl text-white"><Activity size={16} /></div>
                 </div>
+                <p className="text-3xl font-black text-emerald-900">{ringkasan.persentaseKehadiran}%</p>
+                <p className="text-[11px] text-emerald-600 mt-1">Tingkat kedisiplinan</p>
               </div>
-
-              <div className="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm flex items-center gap-4">
-                <div className="p-3 bg-primary/10 text-primary rounded-2xl"><BookOpen size={24} /></div>
-                <div>
-                  <p className="text-xs text-slate-500 font-medium">Hafalan Tahfidz</p>
-                  <p className="text-xl font-bold text-slate-800 mt-0.5">Aktif (Lancar)</p>
+              {/* Tahfidz */}
+              <div className="bg-gradient-to-br from-blue-50 to-white rounded-2xl p-5 border border-blue-100 shadow-md">
+                <div className="flex items-center justify-between mb-3">
+                  <span className="text-xs font-bold text-blue-700 uppercase tracking-wide">Tahfidz</span>
+                  <div className="p-2 bg-blue-500 rounded-xl text-white"><BookOpen size={16} /></div>
                 </div>
+                <p className="text-3xl font-black text-blue-900">Aktif</p>
+                <p className="text-[11px] text-blue-600 mt-1">Status hafalan lancar</p>
               </div>
-
-              <div className="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm flex items-center gap-4">
-                <div className="p-3 bg-amber-50 text-amber-600 rounded-2xl"><Clock size={24} /></div>
-                <div>
-                  <p className="text-xs text-slate-500 font-medium">Shalat Berjamaah</p>
-                  <p className="text-xl font-bold text-slate-800 mt-0.5">{ringkasan.persentaseShubuh}%</p>
+              {/* Shalat */}
+              <div className="bg-gradient-to-br from-amber-50 to-white rounded-2xl p-5 border border-amber-100 shadow-md">
+                <div className="flex items-center justify-between mb-3">
+                  <span className="text-xs font-bold text-amber-700 uppercase tracking-wide">Shalat</span>
+                  <div className="p-2 bg-amber-500 rounded-xl text-white"><Clock size={16} /></div>
                 </div>
+                <p className="text-3xl font-black text-amber-900">{ringkasan.persentaseShubuh}%</p>
+                <p className="text-[11px] text-amber-600 mt-1">Shubuh berjamaah</p>
               </div>
-
-              <div className="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm flex items-center gap-4">
-                <div className="p-3 bg-purple-50 text-purple-600 rounded-2xl"><HeartHandshake size={24} /></div>
-                <div>
-                  <p className="text-xs text-slate-500 font-medium">Penilaian Sikap</p>
-                  <p className="text-xl font-bold text-slate-800 mt-0.5">Mumtaz (A)</p>
+              {/* Sikap */}
+              <div className="bg-gradient-to-br from-purple-50 to-white rounded-2xl p-5 border border-purple-100 shadow-md">
+                <div className="flex items-center justify-between mb-3">
+                  <span className="text-xs font-bold text-purple-700 uppercase tracking-wide">Sikap</span>
+                  <div className="p-2 bg-purple-500 rounded-xl text-white"><HeartHandshake size={16} /></div>
                 </div>
+                <p className="text-3xl font-black text-purple-900">Mumtaz</p>
+                <p className="text-[11px] text-purple-600 mt-1">Penilaian adab (A)</p>
               </div>
             </div>
 
             {/* Quick Academic Table */}
-            <div className="card p-0 overflow-hidden shadow-sm border border-slate-100 rounded-2xl bg-white">
+            <div className="card p-0 overflow-hidden shadow-xl shadow-primary/10 border border-slate-100 rounded-3xl bg-white/90 backdrop-blur">
               <div className="p-5 border-b border-slate-100 flex items-center justify-between">
                 <div>
                   <h3 className="font-bold text-slate-800 text-base">Rekapitulasi Nilai Akhir Mata Pelajaran</h3>
@@ -529,16 +537,20 @@ export default function RaporWaliPage() {
                 </button>
               </div>
 
-              <div className="overflow-x-auto">
+              <div className="mx-5 mb-4 mt-5 p-4 rounded-2xl bg-blue-50 border border-blue-200 flex gap-3 items-center shadow-sm">
+                <AlertCircle className="text-blue-600 shrink-0" size={18} />
+                <p className="text-xs text-blue-800">
+                  <strong>Rapor Bayangan PTS Semester 1</strong> — Nilai yang ditampilkan adalah Nilai Ujian PTS Murni sesuai arahan kurikulum pesantren.
+                </p>
+              </div>
+
+              <div className="overflow-x-auto pb-4">
                 <table className="w-full text-left border-collapse" style={{ minWidth: 600 }}>
                   <thead>
                     <tr className="bg-slate-50 text-slate-500 text-xs font-bold uppercase border-b border-slate-100">
                       <th className="py-3.5 px-4 w-12 text-center">No</th>
                       <th className="py-3.5 px-4">Mata Pelajaran</th>
-                      <th className="py-3.5 px-4 text-center">Harian (30%)</th>
-                      <th className="py-3.5 px-4 text-center">Komp (20%)</th>
-                      <th className="py-3.5 px-4 text-center">Sikap (10%)</th>
-                      <th className="py-3.5 px-4 text-center">Ujian (40%)</th>
+                      <th className="py-3.5 px-4 text-center">Nilai PTS</th>
                       <th className="py-3.5 px-4 text-center">KKM</th>
                       <th className="py-3.5 px-4 text-center">Nilai Akhir</th>
                       <th className="py-3.5 px-4 text-center">Predikat</th>
@@ -547,36 +559,43 @@ export default function RaporWaliPage() {
                   <tbody>
                     {akademikGrouped.length === 0 ? (
                       <tr>
-                        <td colSpan={8} className="text-center py-10 text-slate-400 text-sm">
+                        <td colSpan={6} className="text-center py-10 text-slate-400 text-sm">
                           Belum ada data nilai akademik yang diinput oleh guru pengampu.
                         </td>
                       </tr>
                     ) : (
-                      akademikGrouped.map((item, idx) => (
-                        <tr key={item.mapel_id} className="border-b border-slate-100 hover:bg-slate-50/60 transition-colors text-sm">
-                          <td className="py-3 px-4 text-center text-slate-400 font-semibold">{idx + 1}</td>
-                          <td className="py-3 px-4 font-bold text-slate-800">
-                            {item.mapel_nama}
-                          </td>
-                          <td className="py-3 px-4 text-center font-medium text-slate-600">{item.hasHarian ? item.harian : "-"}</td>
-                          <td className="py-3 px-4 text-center font-medium text-slate-600">{item.hasKomp ? item.kompetensi : "-"}</td>
-                          <td className="py-3 px-4 text-center font-medium text-slate-600">{item.hasSikap ? item.sikap : "-"}</td>
-                          <td className="py-3 px-4 text-center font-bold text-slate-800">{item.hasUjian ? item.ujian : "-"}</td>
-                          <td className="py-3 px-4 text-center text-slate-500 font-bold">{item.mapel_kategori !== "umum" ? 85 : 80}</td>
-                          <td className="py-3 px-4 text-center font-extrabold text-primary">
-                            {item.nilaiAkhir ? (
-                              <span className={`px-2.5 py-1 rounded-lg ${Number(item.nilaiAkhir) >= (item.mapel_kategori !== "umum" ? 85 : 80) ? "bg-emerald-50 text-emerald-700" : "bg-red-50 text-red-700"}`}>
-                                {item.nilaiAkhir}
-                              </span>
-                            ) : (
-                              <span className="text-slate-300">-</span>
-                            )}
-                          </td>
-                          <td className="py-3 px-4 text-center text-xs font-bold text-slate-700">
-                            {item.predikat}
-                          </td>
-                        </tr>
-                      ))
+                      akademikGrouped.map((item, idx) => {
+                        let badgeClass = "bg-slate-100 text-slate-800 font-bold";
+                        if (item.nilaiAkhir) {
+                          const na = Number(item.nilaiAkhir);
+                          if (na >= 90) badgeClass = "bg-emerald-100 text-emerald-800 font-black";
+                          else if (na >= 85) badgeClass = "bg-blue-100 text-blue-800 font-black";
+                          else if (na >= 80) badgeClass = "bg-amber-100 text-amber-800 font-bold";
+                          else badgeClass = "bg-red-100 text-red-800 font-bold";
+                        }
+                        return (
+                          <tr key={item.mapel_id} className="border-b border-slate-50 hover:bg-slate-50/60 transition-colors text-sm shadow-sm">
+                            <td className="py-3 px-4 text-center text-slate-400 font-semibold">{idx + 1}</td>
+                            <td className="py-3 px-4 font-bold text-slate-800">
+                              {item.mapel_nama}
+                            </td>
+                            <td className="py-3 px-4 text-center font-bold text-slate-800">{item.hasUjian ? item.ujian : "-"}</td>
+                            <td className="py-3 px-4 text-center text-slate-500 font-bold">{item.mapel_kategori !== "umum" ? 85 : 80}</td>
+                            <td className="py-3 px-4 text-center">
+                              {item.nilaiAkhir ? (
+                                <span className={`px-2.5 py-1 rounded-lg ${badgeClass}`}>
+                                  {item.nilaiAkhir}
+                                </span>
+                              ) : (
+                                <span className="text-slate-300">-</span>
+                              )}
+                            </td>
+                            <td className="py-3 px-4 text-center text-xs font-bold text-slate-700">
+                              {item.predikat}
+                            </td>
+                          </tr>
+                        );
+                      })
                     )}
                   </tbody>
                 </table>
@@ -589,7 +608,7 @@ export default function RaporWaliPage() {
         {activeTab === "nilai" && (
           <div className="space-y-6">
             {/* Filter Bar specifically for Mapel */}
-            <div className="card p-5 bg-white rounded-2xl border border-slate-100 shadow-sm flex flex-wrap items-center justify-between gap-4">
+            <div className="card p-5 bg-white/90 backdrop-blur rounded-2xl border border-slate-100 shadow-md flex flex-wrap items-center justify-between gap-4">
               <div className="flex items-center gap-3">
                 <div className="p-2.5 bg-primary/10 text-primary rounded-xl">
                   <Filter size={18} />
@@ -625,7 +644,7 @@ export default function RaporWaliPage() {
             {/* Detailed Cards for each filtered Mapel */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               {filteredAkademik.length === 0 ? (
-                <div className="col-span-full card p-12 text-center bg-white rounded-2xl border border-slate-100 text-slate-400">
+                <div className="col-span-full card p-12 text-center bg-white/90 backdrop-blur rounded-3xl border border-slate-100 text-slate-400 shadow-md">
                   <BookOpen size={40} className="mx-auto mb-3 opacity-30" />
                   <p className="font-bold text-slate-700">Belum ada nilai untuk mata pelajaran ini</p>
                   <p className="text-xs text-slate-400 mt-1">Silakan pilih mata pelajaran lain pada dropdown di atas.</p>
@@ -634,7 +653,7 @@ export default function RaporWaliPage() {
                 filteredAkademik.map((item) => (
                   <div
                     key={item.mapel_id}
-                    className="bg-white rounded-3xl p-6 border border-slate-100 shadow-sm hover:shadow-md transition-all space-y-4"
+                    className="bg-white/90 backdrop-blur rounded-2xl p-6 border border-slate-100 shadow-md hover:shadow-lg transition-all space-y-4"
                   >
                     <div className="flex items-start justify-between gap-4">
                       <div>
@@ -652,28 +671,16 @@ export default function RaporWaliPage() {
                       </div>
                     </div>
 
-                    {/* Breakdown 4 Component Boxes */}
-                    <div className="grid grid-cols-4 gap-2 pt-2 border-t border-slate-100 text-center">
-                      <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-100">
-                        <span className="text-[10px] font-medium text-slate-400 block">Harian (30%)</span>
-                        <span className="text-base font-bold text-slate-800 mt-0.5 block">{item.hasHarian ? item.harian : "-"}</span>
-                      </div>
-                      <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-100">
-                        <span className="text-[10px] font-medium text-slate-400 block">Komp (20%)</span>
-                        <span className="text-base font-bold text-slate-800 mt-0.5 block">{item.hasKomp ? item.kompetensi : "-"}</span>
-                      </div>
-                      <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-100">
-                        <span className="text-[10px] font-medium text-slate-400 block">Sikap (10%)</span>
-                        <span className="text-base font-bold text-slate-800 mt-0.5 block">{item.hasSikap ? item.sikap : "-"}</span>
-                      </div>
+                    {/* Breakdown 1 Component Boxes */}
+                    <div className="grid grid-cols-1 gap-2 pt-2 border-t border-slate-100 text-center">
                       <div className="bg-primary/5 p-2.5 rounded-xl border border-primary/15">
-                        <span className="text-[10px] font-bold text-primary block">Ujian (40%)</span>
+                        <span className="text-[10px] font-bold text-primary block">Nilai PTS Murni</span>
                         <span className="text-base font-black text-primary mt-0.5 block">{item.hasUjian ? item.ujian : "-"}</span>
                       </div>
                     </div>
 
                     <div className="flex items-center justify-between text-xs text-slate-500 pt-1">
-                      <span>Target KKM: <b>75.0</b></span>
+                      <span>Target KKM: <b>{item.mapel_kategori !== "umum" ? 85 : 80}.0</b></span>
                       <span className="inline-flex items-center gap-1 font-bold text-emerald-600">
                         <CheckCircle2 size={13} /> Tuntas Kurikulum
                       </span>
@@ -690,7 +697,7 @@ export default function RaporWaliPage() {
           <div className="space-y-6">
             {/* 4 Cards: Hadir, Sakit, Izin, Alpha */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-              <div className="bg-emerald-50/80 border border-emerald-200/80 p-5 rounded-2xl">
+              <div className="bg-emerald-50/80 border border-emerald-200/80 p-5 rounded-2xl shadow-md">
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-bold text-emerald-800 uppercase">Hadir</span>
                   <CheckCircle2 size={18} className="text-emerald-600" />
@@ -699,7 +706,7 @@ export default function RaporWaliPage() {
                 <span className="text-[11px] text-emerald-700 font-medium">Hari Mengikuti KBM</span>
               </div>
 
-              <div className="bg-amber-50/80 border border-amber-200/80 p-5 rounded-2xl">
+              <div className="bg-amber-50/80 border border-amber-200/80 p-5 rounded-2xl shadow-md">
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-bold text-amber-800 uppercase">Sakit</span>
                   <AlertCircle size={18} className="text-amber-600" />
@@ -708,7 +715,7 @@ export default function RaporWaliPage() {
                 <span className="text-[11px] text-amber-700 font-medium">Dengan Keterangan Medis</span>
               </div>
 
-              <div className="bg-blue-50/80 border border-blue-200/80 p-5 rounded-2xl">
+              <div className="bg-blue-50/80 border border-blue-200/80 p-5 rounded-2xl shadow-md">
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-bold text-blue-800 uppercase">Izin</span>
                   <HelpCircle size={18} className="text-blue-600" />
@@ -717,7 +724,7 @@ export default function RaporWaliPage() {
                 <span className="text-[11px] text-blue-700 font-medium">Izin Resmi Orang Tua</span>
               </div>
 
-              <div className="bg-rose-50/80 border border-rose-200/80 p-5 rounded-2xl">
+              <div className="bg-rose-50/80 border border-rose-200/80 p-5 rounded-2xl shadow-md">
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-bold text-rose-800 uppercase">Alpha</span>
                   <XCircle size={18} className="text-rose-600" />
@@ -728,7 +735,7 @@ export default function RaporWaliPage() {
             </div>
 
             {/* Presensi Table & Filter */}
-            <div className="card p-0 overflow-hidden shadow-sm border border-slate-100 rounded-2xl bg-white">
+            <div className="card p-0 overflow-hidden shadow-xl shadow-primary/10 border border-slate-100 rounded-3xl bg-white/90 backdrop-blur">
               <div className="p-5 border-b border-slate-100 flex flex-wrap items-center justify-between gap-4">
                 <div>
                   <h3 className="font-bold text-slate-800 text-base">Riwayat Detail Presensi Harian</h3>
@@ -739,7 +746,7 @@ export default function RaporWaliPage() {
                   <button
                     onClick={() => setFilterStatusPresensi("")}
                     className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
-                      filterStatusPresensi === "" ? "bg-primary text-white" : "bg-slate-100 text-slate-600"
+                      filterStatusPresensi === "" ? "bg-primary text-white shadow-md shadow-primary/30" : "bg-slate-100 text-slate-600 hover:bg-slate-200"
                     }`}
                   >
                     Semua ({data.detail.presensi?.length || 0})
@@ -747,7 +754,7 @@ export default function RaporWaliPage() {
                   <button
                     onClick={() => setFilterStatusPresensi("tidak_hadir")}
                     className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
-                      filterStatusPresensi === "tidak_hadir" ? "bg-amber-600 text-white" : "bg-slate-100 text-slate-600"
+                      filterStatusPresensi === "tidak_hadir" ? "bg-amber-600 text-white shadow-md shadow-amber-600/30" : "bg-slate-100 text-slate-600 hover:bg-slate-200"
                     }`}
                   >
                     Hanya Ketidakhadiran ({(ringkasan.totalSakit || 0) + (ringkasan.totalIzin || 0) + (ringkasan.totalAlpha || 0)})
@@ -788,7 +795,7 @@ export default function RaporWaliPage() {
                         }
 
                         return (
-                          <tr key={p.id || idx} className="border-b border-slate-100 hover:bg-slate-50/60 transition-colors text-sm">
+                          <tr key={p.id || idx} className="border-b border-slate-50 hover:bg-slate-50/60 transition-colors text-sm shadow-sm">
                             <td className="py-3 px-4 text-center text-slate-400 font-semibold">{idx + 1}</td>
                             <td className="py-3 px-4 font-bold text-slate-800">{formatTanggal(p.tanggal)}</td>
                             <td className="py-3 px-4 text-center">
@@ -814,7 +821,7 @@ export default function RaporWaliPage() {
         {activeTab === "jurnal" && (
           <div className="space-y-6">
             {/* Filter Jurnal */}
-            <div className="card p-5 bg-white rounded-2xl border border-slate-100 shadow-sm flex flex-wrap items-center justify-between gap-4">
+            <div className="card p-5 bg-white/90 backdrop-blur rounded-2xl border border-slate-100 shadow-md flex flex-wrap items-center justify-between gap-4">
               <div className="flex items-center gap-3">
                 <div className="p-2.5 bg-primary/10 text-primary rounded-xl">
                   <FileText size={18} />
@@ -837,12 +844,12 @@ export default function RaporWaliPage() {
             </div>
 
             {/* Guidance on Mobile */}
-            <div className="sm:hidden flex items-center gap-1.5 px-3 py-2 bg-amber-50/90 border border-amber-200/80 rounded-xl text-[12px] font-medium text-amber-900">
+            <div className="sm:hidden flex items-center gap-1.5 px-3 py-2 bg-amber-50/90 border border-amber-200/80 rounded-xl text-[12px] font-medium text-amber-900 shadow-sm">
               <ArrowRight className="w-4 h-4 text-amber-500 inline-block mr-1" /> Geser tabel ke kanan untuk melihat rincian guru, jam pelajaran, dan tombol detail.
             </div>
 
             {/* Jurnal Table */}
-            <div className="card p-0 overflow-hidden shadow-sm border border-slate-100 rounded-2xl bg-white">
+            <div className="card p-0 overflow-hidden shadow-xl shadow-primary/10 border border-slate-100 rounded-3xl bg-white/90 backdrop-blur">
               <div className="w-full overflow-x-auto">
                 <table className="w-full text-left border-collapse" style={{ minWidth: 700 }}>
                   <thead>
@@ -864,7 +871,7 @@ export default function RaporWaliPage() {
                       </tr>
                     ) : (
                       filteredJurnal.map((j: any) => (
-                        <tr key={j.id} className="border-b border-slate-100 hover:bg-slate-50/60 transition-colors text-sm">
+                        <tr key={j.id} className="border-b border-slate-50 hover:bg-slate-50/60 transition-colors text-sm shadow-sm">
                           <td
                             className="py-3.5 px-4 font-bold text-primary"
                             style={{ position: "sticky", left: 0, background: "#ffffff", zIndex: 5, boxShadow: "3px 0 6px -2px rgba(0,0,0,0.05)" }}
@@ -906,7 +913,7 @@ export default function RaporWaliPage() {
         {activeTab === "tahfidz" && (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Tahfidz Card */}
-            <div className="bg-white rounded-3xl p-6 border border-slate-100 shadow-sm space-y-4">
+            <div className="bg-white/90 backdrop-blur rounded-3xl p-6 border border-slate-100 shadow-xl shadow-primary/10 space-y-4">
               <div className="flex items-center gap-3 mb-2">
                 <div className="p-2.5 bg-emerald-50 text-emerald-700 rounded-xl">
                   <BookOpen size={20} />
@@ -922,7 +929,7 @@ export default function RaporWaliPage() {
               ) : (
                 <div className="space-y-3">
                   {detail.tahfidz?.map((t: any) => (
-                    <div key={t.id} className="p-4 rounded-2xl bg-slate-50/80 border border-slate-100 flex items-center justify-between gap-4">
+                    <div key={t.id} className="p-4 rounded-2xl bg-slate-50/80 border border-slate-100 flex items-center justify-between gap-4 shadow-sm">
                       <div>
                         <span className="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded bg-emerald-100 text-emerald-800">
                           {t.jenis}
@@ -940,7 +947,7 @@ export default function RaporWaliPage() {
             </div>
 
             {/* Ibadah Card */}
-            <div className="bg-white rounded-3xl p-6 border border-slate-100 shadow-sm space-y-4">
+            <div className="bg-white/90 backdrop-blur rounded-3xl p-6 border border-slate-100 shadow-xl shadow-primary/10 space-y-4">
               <div className="flex items-center gap-3 mb-2">
                 <div className="p-2.5 bg-amber-50 text-amber-700 rounded-xl">
                   <Clock size={20} />
@@ -956,7 +963,7 @@ export default function RaporWaliPage() {
               ) : (
                 <div className="space-y-3">
                   {detail.ibadah?.map((i: any) => (
-                    <div key={i.id} className="p-4 rounded-2xl bg-slate-50/80 border border-slate-100 flex items-center justify-between gap-4">
+                    <div key={i.id} className="p-4 rounded-2xl bg-slate-50/80 border border-slate-100 flex items-center justify-between gap-4 shadow-sm">
                       <div>
                         <h4 className="font-bold text-slate-800 text-sm">{formatTanggal(i.tanggal)}</h4>
                         <p className="text-xs text-slate-500 mt-0.5">
