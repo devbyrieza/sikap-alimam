@@ -300,8 +300,8 @@ export default function InputNilaiPage() {
     // Jika semua kosong, return null
     if (!data.harian && !data.kompetensi && !data.sikap && !data.ujian) return null;
 
-    // Mode PTS Murni: Jika hanya mengisi Ujian PTS, tampilkan murni PTS
-    if (!data.harian && !data.kompetensi && !data.sikap && data.ujian) return u.toFixed(1);
+    // MURNI PTS MODE
+    if (data.ujian) return u.toFixed(1);
 
     return (0.3 * h + 0.2 * k + 0.1 * s + 0.4 * u).toFixed(1);
   };

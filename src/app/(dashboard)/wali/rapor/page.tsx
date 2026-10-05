@@ -143,11 +143,10 @@ export default function RaporWaliPage() {
 
     return Array.from(map.values()).map((item) => {
       let naNum = null;
-      if (item.hasUjian && !item.hasHarian && !item.hasKomp && !item.hasSikap) {
+      // MURNI PTS MODE
+      if (item.hasUjian) {
         naNum = item.ujian;
-      } else if (item.hasHarian || item.hasKomp || item.hasSikap || item.hasUjian) {
-        naNum = (0.3 * item.harian + 0.2 * item.kompetensi + 0.1 * item.sikap + 0.4 * item.ujian);
-      }
+
       
       let predikat = "-";
       if (naNum !== null) {
