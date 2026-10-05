@@ -14,3 +14,16 @@ export async function POST() {
                     
   return NextResponse.json({ success: true });
 }
+
+
+export async function GET(req: NextRequest) {
+  await deleteSession();
+  const cookieStore = await cookies();
+  cookieStore.delete({ name: "siakad_session", domain: process.env.NEXT_PUBLIC_COOKIE_DOMAIN || undefined });
+  cookieStore.delete({ name: "app_session", domain: process.env.NEXT_PUBLIC_COOKIE_DOMAIN || undefined });
+  cookieStore.delete({ name: "ppdb_session", domain: process.env.NEXT_PUBLIC_COOKIE_DOMAIN || undefined });
+  cookieStore.delete("siakad_session");
+  cookieStore.delete("app_session");
+  cookieStore.delete("ppdb_session");
+  return NextResponse.redirect(new URL("/login", req.url));
+}
