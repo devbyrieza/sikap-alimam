@@ -246,7 +246,7 @@ export default function RaporWaliPage() {
         </div>
       </div>
 
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 pt-6 space-y-6">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 pt-8 space-y-8">
         {/* Profile Card Banner */}
         <div className="bg-gradient-to-r from-primary via-[#7e141a] to-[#4a080d] text-white rounded-3xl p-8 sm:p-10 shadow-2xl shadow-primary/30 relative overflow-hidden">
           <div className="absolute top-0 right-0 p-8 opacity-10 pointer-events-none">
@@ -477,7 +477,10 @@ export default function RaporWaliPage() {
                 </button>
               </div>
             </div>
+          </>
+        )}
 
+        {/* TAB CONTENT */}
         {/* TAB 1: RINGKASAN RAPOR */}
         {activeTab === "ringkasan" && (
           <div className="space-y-6">
@@ -982,9 +985,7 @@ export default function RaporWaliPage() {
             </div>
           </div>
         )}
-      </>
-    )}
-  </div>
+      </div>
 
       {/* Ultra-Premium Jurnal Detail Modal */}
       <JurnalDetailModal
