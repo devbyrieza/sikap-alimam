@@ -4,11 +4,11 @@ import React, { useState, useEffect } from "react";
 import { Search, Sun, Moon, Cloud, ArrowLeft, UserCheck, ArrowRight } from "lucide-react";
 import Link from "next/link";
 
-
-const SESI_INFO: Record<string, { label: string; icon: React.ReactNode; color: string; bg: string; border: string }> = {
-  subuh:   { label: "Subuh",          icon: <Sun size={15} />,   color: "#d97706", bg: "#fffbeb", border: "#fde68a" },
-  maghrib: { label: "Ba'da Maghrib",  icon: <Moon size={15} />,  color: "#7c3aed", bg: "#f5f3ff", border: "#ede9fe" },
-  dhuha:   { label: "Dhuha",          icon: <Cloud size={15} />, color: "#0284c7", bg: "#eff6ff", border: "#bfdbfe" } };
+const SESI_INFO: Record<string, { label: string; icon: React.ReactNode; tone: string }> = {
+  subuh:   { label: "Subuh",         icon: <Sun size={18} />,   tone: "bg-amber-50 text-amber-600 border-amber-200" },
+  maghrib: { label: "Ba'da Maghrib", icon: <Moon size={18} />,  tone: "bg-violet-50 text-violet-600 border-violet-200" },
+  dhuha:   { label: "Dhuha",         icon: <Cloud size={18} />, tone: "bg-sky-50 text-sky-600 border-sky-200" },
+};
 
 export default function BadalHalaqohPage() {
   const [kelompokList, setKelompokList] = useState<any[]>([]);
@@ -25,74 +25,84 @@ export default function BadalHalaqohPage() {
       .finally(() => setLoading(false));
   }, []);
 
-  const filteredGroups = kelompokList.filter(k => 
+  const filteredGroups = kelompokList.filter(k =>
     k.nama_kelompok?.toLowerCase().includes(searchQuery.toLowerCase()) ||
     k.pegawai?.nama_lengkap?.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
+  const now = new Date();
+  const tanggal = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
+
   return (
     <div className="page-container">
-      <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 24 }}>
+      {/* Header */}
+      <div className="flex items-center gap-3">
         <Link
           href="/halaqoh"
-          style={{ width: 40, height: 40, background: "white", border: "1.5px solid #e2e8f0", borderRadius: 12, display: "flex", alignItems: "center", justifyContent: "center", color: "#64748b" }}
-        ><ArrowLeft size={18} /></Link>
+          aria-label="Kembali ke halaqoh"
+          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-500 hover:border-primary/40 hover:text-primary"
+        >
+          <ArrowLeft size={18} />
+        </Link>
         <div>
-          <h1 style={{ margin: 0, fontSize: 22, fontWeight: 900, color: "#1e293b" }}>Setor Badal (Gantikan Pengampu)</h1>
-          <div style={{ fontSize: 13, color: "#64748b", fontWeight: 500, marginTop: 4 }}>Cari kelompok ustaz yang berhalangan hadir dan input setorannya.</div>
+          <h1 className="text-xl font-extrabold text-slate-900 sm:text-2xl">Setor badal (gantikan pengampu)</h1>
+          <p className="mt-1 text-[13px] font-medium text-slate-500">
+            Cari kelompok ustaz yang berhalangan hadir dan input setorannya.
+          </p>
         </div>
       </div>
 
-      <div style={{ position: "relative", marginBottom: 24, maxWidth: 500 }}>
-        <Search size={18} color="#94a3b8" style={{ position: "absolute", left: 16, top: "50%", transform: "translateY(-50%)", pointerEvents: "none" }} />
+      {/* Pencarian */}
+      <div className="relative w-full max-w-lg">
+        <Search size={18} className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
         <input
           type="text"
-          placeholder="Cari nama kelompok atau nama ustaz..."
+          placeholder="Cari nama kelompok atau nama ustaz"
           value={searchQuery}
           onChange={e => setSearchQuery(e.target.value)}
-          style={{ width: "100%", padding: "14px 20px 14px 44px", borderRadius: 16, border: "1.5px solid #e2e8f0", fontSize: 14, fontWeight: 600, outline: "none", transition: "border-color 0.2s" }}
-          onFocus={e => (e.currentTarget.style.borderColor = "#550000")}
-          onBlur={e => (e.currentTarget.style.borderColor = "#e2e8f0")}
+          className="w-full rounded-2xl border border-slate-200 bg-white py-3.5 pl-11 pr-5 text-sm font-semibold text-slate-800 outline-none transition focus:border-primary"
         />
       </div>
 
+      {/* Daftar */}
       {loading ? (
-        <div style={{ padding: 64, textAlign: "center", background: "white", borderRadius: 20, border: "1.5px solid #e2e8f0" }}>
-          <div style={{ width: 36, height: 36, border: "3px solid #e2e8f0", borderTopColor: "#550000", borderRadius: "50%", animation: "spin 0.8s linear infinite", margin: "0 auto 14px" }} />
-          <div style={{ fontWeight: 600, color: "#94a3b8" }}>Mencari data kelompok...</div>
+        <div className="rounded-3xl border border-slate-200 bg-white px-6 py-16 text-center">
+          <div className="mx-auto mb-3.5 h-9 w-9 animate-spin rounded-full border-[3px] border-slate-200 border-t-primary" />
+          <div className="font-semibold text-slate-400">Mencari data kelompok...</div>
         </div>
       ) : filteredGroups.length === 0 ? (
-        <div style={{ padding: 64, textAlign: "center", background: "white", borderRadius: 20, border: "1.5px solid #e2e8f0", color: "#64748b", fontWeight: 600 }}>
+        <div className="rounded-3xl border border-slate-200 bg-white px-6 py-16 text-center font-semibold text-slate-500">
           Tidak ada kelompok yang cocok dengan pencarian.
         </div>
       ) : (
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))", gap: 16 }}>
+        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
           {filteredGroups.map(k => {
             const info = SESI_INFO[k.sesi] || SESI_INFO.subuh;
             return (
-              <div key={k.id} style={{ background: "white", borderRadius: 16, border: "1.5px solid #e8d5b7", padding: 20, display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
+              <div
+                key={k.id}
+                className="flex flex-col justify-between gap-5 rounded-2xl border border-[#e8d5b7] bg-white p-5 shadow-sm shadow-primary/5"
+              >
                 <div>
-                  <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 16 }}>
-                    <div style={{ width: 44, height: 44, borderRadius: 12, display: "flex", alignItems: "center", justifyContent: "center", background: info.bg, color: info.color, border: `1.5px solid ${info.border}` }}>
+                  <div className="mb-4 flex items-center gap-3">
+                    <div className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border ${info.tone}`}>
                       {info.icon}
                     </div>
-                    <div>
-                      <div style={{ fontSize: 13, fontWeight: 700, color: "#64748b" }}>{k.nama_kelompok}</div>
-                      <div style={{ fontSize: 16, fontWeight: 900, color: "#1e293b" }}>{info.label}</div>
+                    <div className="min-w-0">
+                      <div className="truncate text-[13px] font-bold text-slate-500">{k.nama_kelompok}</div>
+                      <div className="text-base font-extrabold text-slate-900">{info.label}</div>
                     </div>
                   </div>
-                  <div style={{ fontSize: 13, color: "#64748b", fontWeight: 600, display: "flex", alignItems: "center", gap: 6, marginBottom: 20 }}>
-                    <UserCheck size={14} /> {k.pegawai?.nama_lengkap || "Tanpa Pengampu"}
+                  <div className="flex items-center gap-1.5 text-[13px] font-semibold text-slate-500">
+                    <UserCheck size={14} /> {k.pegawai?.nama_lengkap || "Tanpa pengampu"}
                   </div>
                 </div>
-                
+
                 <Link
-                  href={`/halaqoh/input?kelompok=${k.id}&sesi=${k.sesi}&tanggal=${`${new Date().getFullYear()}-${String(new Date().getMonth() + 1).padStart(2, "0")}-${String(new Date().getDate()).padStart(2, "0")}`}`}
-                  style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8, background: "#f8fafc", color: "#550000", border: "1.5px solid #e2e8f0", padding: "12px 20px", borderRadius: 13, fontWeight: 700, fontSize: 13, textDecoration: "none", transition: "all 0.2s" }}
-                  onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = "#550000"; (e.currentTarget as HTMLElement).style.color = "white"; (e.currentTarget as HTMLElement).style.borderColor = "#550000"; }}
-                  onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = "#f8fafc"; (e.currentTarget as HTMLElement).style.color = "#550000"; (e.currentTarget as HTMLElement).style.borderColor = "#e2e8f0"; }}
+                  href={`/halaqoh/input?kelompok=${k.id}&sesi=${k.sesi}&tanggal=${tanggal}`}
+                  className="flex items-center justify-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-5 py-3 text-[13px] font-bold text-primary transition-colors hover:border-primary hover:bg-primary hover:text-white"
                 >
-                  Isi Catatan Sesi <ArrowRight size={16} />
+                  Isi catatan sesi <ArrowRight size={16} />
                 </Link>
               </div>
             );

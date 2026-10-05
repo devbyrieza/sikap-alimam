@@ -1,21 +1,23 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-import { BookOpen, Users, Plus, Trash2, Save, Upload, Download, CheckCircle, Search, UserCheck } from "lucide-react";
+import { BookOpen, Users, Plus, Trash2, Save, Upload, Download, CheckCircle, Search, UserCheck, ArrowLeft } from "lucide-react";
 import Swal from "sweetalert2";
 import * as XLSX from "xlsx";
 import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
+
+const fieldClass =
+  "w-full rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-[13px] font-semibold text-slate-800 outline-none transition focus:border-primary";
 
 export default function DistribusiHalaqohPage() {
   const [asatidz, setAsatidz] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  
+
   const [selectedGuru, setSelectedGuru] = useState<any>(null);
   const [assignments, setAssignments] = useState<any[]>([]);
   const [isSaving, setIsSaving] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  
+
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -65,7 +67,7 @@ export default function DistribusiHalaqohPage() {
 
   const handleSave = async () => {
     if (!selectedGuru) return;
-    
+
     // Validasi
     for (const a of assignments) {
       if (!a.nama_kelompok || !a.sesi) {
@@ -84,7 +86,7 @@ export default function DistribusiHalaqohPage() {
           kelompok: assignments
         })
       });
-      
+
       const result = await res.json();
       if (result.success) {
         Swal.fire({
@@ -115,9 +117,9 @@ export default function DistribusiHalaqohPage() {
       { "Nama Pengampu": "Wahyudi Pranata", "Nama Kelompok": "Halaqoh Maghrib MTS", "Sesi": "Maghrib" },
     ];
     const ws = XLSX.utils.json_to_sheet(data);
-    
+
     ws["!cols"] = [{ wch: 30 }, { wch: 30 }, { wch: 15 }];
-    
+
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, "DistribusiHalaqoh");
     XLSX.writeFile(wb, "Template_Distribusi_Halaqoh.xlsx");
@@ -177,9 +179,9 @@ export default function DistribusiHalaqohPage() {
 
   if (loading) {
     return (
-      <div style={{ padding: 64, textAlign: "center", background: "white", borderRadius: 20, border: "1.5px solid #e2e8f0" }}>
-        <div style={{ width: 36, height: 36, border: "3px solid #e2e8f0", borderTopColor: "#550000", borderRadius: "50%", animation: "spin 0.8s linear infinite", margin: "0 auto 14px" }} />
-        <div style={{ fontWeight: 600, color: "#94a3b8" }}>Memuat daftar pengampu...</div>
+      <div className="m-6 rounded-3xl border border-slate-200 bg-white px-6 py-16 text-center">
+        <div className="mx-auto mb-3.5 h-9 w-9 animate-spin rounded-full border-[3px] border-slate-200 border-t-primary" />
+        <div className="font-semibold text-slate-400">Memuat daftar pengampu...</div>
       </div>
     );
   }
@@ -187,173 +189,186 @@ export default function DistribusiHalaqohPage() {
   const filteredAsatidz = asatidz.filter(g => g.nama_lengkap.toLowerCase().includes(searchQuery.toLowerCase()));
 
   return (
-    <div className="page-container" style={{ maxWidth: 1400, margin: "0 auto" }}>
-      
+    <div className="page-container" style={{ maxWidth: 1400 }}>
+
       {/* Header */}
-      <div style={{ background: "linear-gradient(135deg, #550000, #3a0000)", color: "white", padding: "32px 36px", borderRadius: 24, display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 20, boxShadow: "0 10px 25px rgba(85,0,0,0.2)", position: "relative", overflow: "hidden", marginBottom: 32 }}>
-        <div style={{ position: "absolute", top: -40, right: -40, width: 200, height: 200, borderRadius: "50%", background: "rgba(221,193,146,0.1)", pointerEvents: "none" }} />
-        <div style={{ position: "absolute", bottom: -60, right: 120, width: 160, height: 160, borderRadius: "50%", background: "rgba(221,193,146,0.05)", pointerEvents: "none" }} />
-        <div style={{ position: "relative", zIndex: 1 }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 12 }}>
+      <div className="relative flex flex-wrap items-center justify-between gap-5 overflow-hidden rounded-3xl bg-gradient-to-br from-primary to-[#3a0000] p-7 text-white shadow-xl shadow-primary/20 sm:p-9">
+        <div className="pointer-events-none absolute -right-10 -top-10 h-52 w-52 rounded-full bg-[#ddc192]/10" />
+        <div className="pointer-events-none absolute -bottom-16 right-28 h-40 w-40 rounded-full bg-[#ddc192]/5" />
+
+        <div className="relative z-10">
+          <div className="mb-3 flex items-center gap-3">
             <Link
               href="/halaqoh"
-              style={{ width: 36, height: 36, background: "rgba(255,255,255,0.1)", border: "1px solid rgba(255,255,255,0.2)", borderRadius: 12, display: "flex", alignItems: "center", justifyContent: "center", color: "white", transition: "all 0.2s" }}
-            ><ArrowLeft size={16} /></Link>
-            <BookOpen size={30} color="#ddc192" />
-            <h1 style={{ margin: 0, fontSize: 26, fontWeight: 900, letterSpacing: "-0.3px" }}>Distribusi Halaqoh</h1>
+              aria-label="Kembali ke halaqoh"
+              className="flex h-9 w-9 items-center justify-center rounded-xl border border-white/20 bg-white/10 text-white hover:bg-white/20"
+            >
+              <ArrowLeft size={16} />
+            </Link>
+            <BookOpen size={28} color="#ddc192" />
+            <h1 className="text-2xl font-black sm:text-[26px]">Distribusi halaqoh</h1>
           </div>
-          <p style={{ margin: 0, color: "rgba(255,255,255,0.85)", fontSize: 14, lineHeight: 1.6, maxWidth: 460 }}>
+          <p className="max-w-md text-sm leading-relaxed text-white/85">
             Atur beban dan ploting kelompok halaqoh tahfidz untuk setiap pengampu / ustaz.
           </p>
         </div>
-        
-        <div style={{ position: "relative", zIndex: 1, display: "flex", gap: 12, flexWrap: "wrap" }}>
-          <button onClick={downloadTemplate} style={{ background: "rgba(255,255,255,0.1)", color: "white", border: "1px solid rgba(255,255,255,0.2)", cursor: "pointer", fontWeight: 700, fontSize: 14, padding: "12px 22px", borderRadius: 14, display: "flex", alignItems: "center", gap: 8, backdropFilter: "blur(8px)", transition: "all 0.2s" }}>
+
+        <div className="relative z-10 flex flex-wrap gap-3">
+          <button
+            onClick={downloadTemplate}
+            className="flex items-center gap-2 rounded-xl border border-white/20 bg-white/10 px-5 py-3 text-sm font-bold text-white backdrop-blur hover:bg-white/20"
+          >
             <Download size={18} /> Template Excel
           </button>
-          <button onClick={() => fileInputRef.current?.click()} style={{ background: "linear-gradient(135deg, #ddc192, #c6a673)", color: "#550000", border: "none", cursor: "pointer", fontWeight: 900, fontSize: 14, padding: "12px 22px", borderRadius: 14, display: "flex", alignItems: "center", gap: 8, boxShadow: "0 4px 12px rgba(221,193,146,0.3)", transition: "all 0.2s" }}>
-            <Upload size={18} /> Import Massal
+          <button
+            onClick={() => fileInputRef.current?.click()}
+            className="flex items-center gap-2 rounded-xl bg-gradient-to-br from-[#ddc192] to-[#c6a673] px-5 py-3 text-sm font-black text-primary shadow-lg shadow-[#ddc192]/30 hover:brightness-105"
+          >
+            <Upload size={18} /> Import massal
           </button>
-          <input type="file" accept=".xlsx, .xls" ref={fileInputRef} onChange={handleFileUpload} style={{ display: "none" }} />
+          <input type="file" accept=".xlsx, .xls" ref={fileInputRef} onChange={handleFileUpload} className="hidden" />
         </div>
       </div>
 
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 2fr", gap: 24, alignItems: "start" }}>
-        
-        {/* Left Col: Teacher List */}
-        <div style={{ background: "white", borderRadius: 24, boxShadow: "0 10px 30px rgba(0,0,0,0.03)", border: "1px solid #f1f5f9", overflow: "hidden", display: "flex", flexDirection: "column", height: 700 }}>
-          <div style={{ padding: "20px 24px", borderBottom: "1.5px solid #f1f5f9", background: "#f8fafc" }}>
-            <h2 style={{ margin: 0, fontWeight: 800, color: "#1e293b", display: "flex", alignItems: "center", gap: 10, fontSize: 16 }}>
-              <Users size={20} color="#550000" /> Daftar Pengampu
+      <div className="grid items-start gap-6 lg:grid-cols-[1fr_2fr]">
+
+        {/* Kiri: daftar pengampu */}
+        <div className="flex h-[480px] flex-col overflow-hidden rounded-3xl border border-slate-100 bg-white shadow-sm lg:h-[700px]">
+          <div className="border-b border-slate-100 bg-slate-50 px-6 py-5">
+            <h2 className="flex items-center gap-2.5 text-base font-extrabold text-slate-800">
+              <Users size={20} className="text-primary" /> Daftar pengampu
             </h2>
-            <div style={{ position: "relative", marginTop: 16 }}>
-              <Search size={16} color="#94a3b8" style={{ position: "absolute", left: 14, top: "50%", transform: "translateY(-50%)" }} />
+            <div className="relative mt-4">
+              <Search size={16} className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
               <input
                 type="text"
-                placeholder="Cari nama ustaz..."
+                placeholder="Cari nama ustaz"
                 value={searchQuery}
                 onChange={e => setSearchQuery(e.target.value)}
-                style={{ width: "100%", padding: "12px 16px 12px 40px", borderRadius: 12, border: "1.5px solid #e2e8f0", fontSize: 13, fontWeight: 600, outline: "none" }}
+                className={`${fieldClass} pl-10`}
               />
             </div>
           </div>
-          <div className="custom-scrollbar" style={{ overflowY: "auto", flex: 1, padding: 20, display: "flex", flexDirection: "column", gap: 12 }}>
+
+          <div className="custom-scrollbar flex flex-1 flex-col gap-3 overflow-y-auto p-5">
             {filteredAsatidz.map(guru => {
               const active = selectedGuru?.id === guru.id;
-              const hasGroups = guru.halaqoh_kelompok?.length > 0;
+              const jumlah = guru.halaqoh_kelompok?.length || 0;
               return (
-                <div 
+                <button
+                  type="button"
                   key={guru.id}
                   onClick={() => handleSelectGuru(guru)}
-                  style={{
-                    padding: "16px", borderRadius: 16, cursor: "pointer", transition: "all 0.2s",
-                    border: active ? "2px solid #550000" : "2px solid #f1f5f9",
-                    background: active ? "#fffafa" : "white",
-                    display: "flex", alignItems: "center", gap: 14, position: "relative", overflow: "hidden"
-                  }}
+                  className={`flex w-full items-center gap-3.5 rounded-2xl border-2 p-4 text-left transition-colors ${
+                    active ? "border-primary bg-[#fffafa]" : "border-slate-100 bg-white hover:border-primary/30"
+                  }`}
                 >
-                  <div style={{ width: 44, height: 44, borderRadius: 14, background: active ? "#550000" : "#f1f5f9", color: active ? "white" : "#64748b", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 800, fontSize: 16, flexShrink: 0 }}>
+                  <div className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl text-base font-extrabold ${
+                    active ? "bg-primary text-white" : "bg-slate-100 text-slate-500"
+                  }`}>
                     {guru.nama_lengkap.charAt(0)}
                   </div>
-                  <div>
-                    <h3 style={{ margin: "0 0 4px", fontSize: 14, fontWeight: 800, color: active ? "#550000" : "#1e293b" }}>{guru.nama_lengkap}</h3>
-                    <div style={{ fontSize: 12, color: hasGroups ? "#059669" : "#94a3b8", fontWeight: 600, display: "flex", alignItems: "center", gap: 4 }}>
-                      <BookOpen size={12} /> {guru.halaqoh_kelompok?.length || 0} Kelompok
+                  <div className="min-w-0">
+                    <h3 className={`truncate text-sm font-extrabold ${active ? "text-primary" : "text-slate-800"}`}>
+                      {guru.nama_lengkap}
+                    </h3>
+                    <div className={`mt-1 flex items-center gap-1 text-xs font-semibold ${jumlah > 0 ? "text-emerald-600" : "text-slate-400"}`}>
+                      <BookOpen size={12} /> {jumlah} kelompok
                     </div>
                   </div>
-                </div>
+                </button>
               );
             })}
             {filteredAsatidz.length === 0 && (
-              <div style={{ padding: 30, textAlign: "center", color: "#94a3b8", fontWeight: 600, fontSize: 13 }}>Tidak ada ustaz ditemukan.</div>
+              <div className="p-8 text-center text-[13px] font-semibold text-slate-400">Tidak ada ustaz ditemukan.</div>
             )}
           </div>
         </div>
 
-        {/* Right Col: Editor */}
-        <div style={{ background: "white", borderRadius: 24, boxShadow: "0 10px 30px rgba(0,0,0,0.03)", border: "1px solid #f1f5f9", overflow: "hidden", display: "flex", flexDirection: "column", height: 700 }}>
+        {/* Kanan: editor */}
+        <div className="flex min-h-[420px] flex-col overflow-hidden rounded-3xl border border-slate-100 bg-white shadow-sm lg:h-[700px]">
           {selectedGuru ? (
             <>
-              <div style={{ padding: "20px 28px", borderBottom: "1.5px solid #f1f5f9", background: "#fffafa", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+              <div className="flex flex-wrap items-center justify-between gap-4 border-b border-slate-100 bg-[#fffafa] px-6 py-5 sm:px-7">
                 <div>
-                  <h2 style={{ margin: "0 0 6px", fontWeight: 900, color: "#550000", fontSize: 20 }}>
-                    {selectedGuru.nama_lengkap}
-                  </h2>
-                  <div style={{ fontSize: 13, color: "#64748b", fontWeight: 600, display: "flex", alignItems: "center", gap: 6 }}>
-                    <UserCheck size={14} /> Atur Plot Kelompok Halaqoh
+                  <h2 className="mb-1.5 text-xl font-black text-primary">{selectedGuru.nama_lengkap}</h2>
+                  <div className="flex items-center gap-1.5 text-[13px] font-semibold text-slate-500">
+                    <UserCheck size={14} /> Atur plot kelompok halaqoh
                   </div>
                 </div>
                 <button
                   onClick={handleSave}
                   disabled={isSaving}
-                  style={{ background: "#550000", color: "#ddc192", padding: "12px 24px", borderRadius: 14, fontWeight: 800, fontSize: 14, border: "none", cursor: "pointer", display: "flex", alignItems: "center", gap: 8, boxShadow: "0 4px 14px rgba(85,0,0,0.25)" }}
+                  className="flex items-center gap-2 rounded-xl bg-primary px-6 py-3 text-sm font-extrabold text-[#ddc192] shadow-md shadow-primary/25 hover:bg-primary-light disabled:opacity-60"
                 >
-                  {isSaving ? "Menyimpan..." : <><Save size={18} /> Simpan Distribusi</>}
+                  {isSaving ? "Menyimpan..." : <><Save size={18} /> Simpan distribusi</>}
                 </button>
               </div>
-              
-              <div className="custom-scrollbar" style={{ padding: 28, flex: 1, overflowY: "auto", background: "#f8fafc" }}>
-                
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
-                  <h3 style={{ margin: 0, fontSize: 15, fontWeight: 800, color: "#1e293b" }}>Daftar Kelompok Halaqoh</h3>
-                  <button onClick={addAssignment} style={{ background: "white", border: "1.5px solid #e2e8f0", color: "#334155", padding: "8px 16px", borderRadius: 12, fontWeight: 700, fontSize: 13, cursor: "pointer", display: "flex", alignItems: "center", gap: 6 }}>
-                    <Plus size={16} /> Tambah Kelompok
+
+              <div className="custom-scrollbar flex-1 overflow-y-auto bg-slate-50 p-5 sm:p-7">
+                <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
+                  <h3 className="text-[15px] font-extrabold text-slate-800">Daftar kelompok halaqoh</h3>
+                  <button
+                    onClick={addAssignment}
+                    className="flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-4 py-2 text-[13px] font-bold text-slate-700 hover:bg-slate-50"
+                  >
+                    <Plus size={16} /> Tambah kelompok
                   </button>
                 </div>
 
-                <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+                <div className="flex flex-col gap-3">
                   {assignments.length === 0 ? (
-                    <div style={{ padding: 40, textAlign: "center", border: "2px dashed #cbd5e1", borderRadius: 16, background: "white" }}>
-                      <CheckCircle size={32} color="#cbd5e1" style={{ margin: "0 auto 12px" }} />
-                      <div style={{ fontWeight: 700, color: "#64748b", fontSize: 14 }}>Belum ada kelompok.</div>
-                      <div style={{ fontSize: 13, color: "#94a3b8", marginTop: 4 }}>Klik tombol Tambah Kelompok di atas.</div>
+                    <div className="rounded-2xl border-2 border-dashed border-slate-300 bg-white p-10 text-center">
+                      <CheckCircle size={32} className="mx-auto mb-3 text-slate-300" />
+                      <div className="text-sm font-bold text-slate-500">Belum ada kelompok.</div>
+                      <div className="mt-1 text-[13px] text-slate-400">Klik tombol Tambah kelompok di atas.</div>
                     </div>
                   ) : assignments.map((asg, idx) => (
-                    <div key={idx} style={{ background: "white", border: "1.5px solid #e2e8f0", padding: "16px 20px", borderRadius: 16, display: "flex", gap: 16, alignItems: "center" }}>
-                      <div style={{ flex: 1 }}>
-                        <label style={{ display: "block", fontSize: 11, fontWeight: 800, color: "#64748b", marginBottom: 6, textTransform: "uppercase", letterSpacing: "0.05em" }}>Nama Kelompok</label>
-                        <input 
+                    <div key={idx} className="flex flex-wrap items-end gap-4 rounded-2xl border border-slate-200 bg-white p-4 sm:px-5">
+                      <div className="min-w-[200px] flex-1">
+                        <label className="mb-1.5 block text-[11px] font-extrabold uppercase tracking-wider text-slate-500">Nama kelompok</label>
+                        <input
                           type="text"
                           value={asg.nama_kelompok}
                           placeholder="Cth: Halaqoh Subuh MTs 1"
                           onChange={e => updateAssignment(idx, "nama_kelompok", e.target.value)}
-                          style={{ width: "100%", padding: "10px 14px", borderRadius: 10, border: "1.5px solid #e2e8f0", fontSize: 13, fontWeight: 600, outline: "none" }}
-                          onFocus={e => (e.currentTarget.style.borderColor = "#550000")}
-                          onBlur={e => (e.currentTarget.style.borderColor = "#e2e8f0")}
+                          className={fieldClass}
                         />
                       </div>
-                      <div style={{ width: 180 }}>
-                        <label style={{ display: "block", fontSize: 11, fontWeight: 800, color: "#64748b", marginBottom: 6, textTransform: "uppercase", letterSpacing: "0.05em" }}>Sesi</label>
+                      <div className="w-full sm:w-44">
+                        <label className="mb-1.5 block text-[11px] font-extrabold uppercase tracking-wider text-slate-500">Sesi</label>
                         <select
                           value={asg.sesi}
                           onChange={e => updateAssignment(idx, "sesi", e.target.value)}
-                          style={{ width: "100%", padding: "10px 14px", borderRadius: 10, border: "1.5px solid #e2e8f0", fontSize: 13, fontWeight: 700, outline: "none", cursor: "pointer", background: "white" }}
-                          onFocus={e => (e.currentTarget.style.borderColor = "#550000")}
-                          onBlur={e => (e.currentTarget.style.borderColor = "#e2e8f0")}
+                          className={`${fieldClass} cursor-pointer font-bold`}
                         >
                           <option value="subuh">Subuh</option>
                           <option value="dhuha">Dhuha</option>
                           <option value="maghrib">Ba'da Maghrib</option>
                         </select>
                       </div>
-                      <div style={{ paddingTop: 22 }}>
-                        <button onClick={() => removeAssignment(idx)} style={{ background: "#fff1f2", color: "#e11d48", border: "1px solid #ffe4e6", padding: 10, borderRadius: 10, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                          <Trash2 size={18} />
-                        </button>
-                      </div>
+                      <button
+                        onClick={() => removeAssignment(idx)}
+                        aria-label="Hapus kelompok"
+                        className="flex h-[42px] w-[42px] items-center justify-center rounded-xl border border-rose-100 bg-rose-50 text-rose-600 hover:bg-rose-100"
+                      >
+                        <Trash2 size={18} />
+                      </button>
                     </div>
                   ))}
                 </div>
-
               </div>
             </>
           ) : (
-            <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: 40, background: "#f8fafc" }}>
-              <div style={{ width: 80, height: 80, background: "white", borderRadius: "50%", boxShadow: "0 4px 20px rgba(0,0,0,0.05)", display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 20 }}>
-                <Users size={36} color="#cbd5e1" />
+            <div className="flex flex-1 flex-col items-center justify-center bg-slate-50 p-10">
+              <div className="mb-5 flex h-20 w-20 items-center justify-center rounded-full bg-white shadow-md">
+                <Users size={36} className="text-slate-300" />
               </div>
-              <p style={{ margin: "0 0 8px", fontWeight: 800, color: "#475569", fontSize: 18 }}>Pilih Pengampu di Sebelah Kiri</p>
-              <p style={{ margin: 0, fontSize: 14, color: "#94a3b8", maxWidth: 300, textAlign: "center", lineHeight: 1.6 }}>Anda dapat mengatur plot kelompok halaqoh untuk setiap ustaz, atau gunakan tombol <b style={{ color: "#550000" }}>Import Massal</b> untuk upload data Excel secara otomatis.</p>
+              <p className="mb-2 text-lg font-extrabold text-slate-600">Pilih pengampu di sebelah kiri</p>
+              <p className="max-w-xs text-center text-sm leading-relaxed text-slate-400">
+                Atur plot kelompok halaqoh untuk setiap ustaz, atau gunakan tombol{" "}
+                <b className="text-primary">Import massal</b> untuk upload data Excel secara otomatis.
+              </p>
             </div>
           )}
         </div>
