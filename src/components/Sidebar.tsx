@@ -33,7 +33,13 @@ const NAV: NavItem[] = [
   {
     href: "/dashboard",
     label: "Dashboard",
-    icon: <LayoutDashboard size={18} /> },
+    icon: <LayoutDashboard size={18} />,
+    roles: ["admin_super", "ADMIN_SUPER", "guru", "GURU", "musyrif", "MUSYRIF", "pengampu_halaqoh", "PENGAMPU_HALAQOH", "wali_kelas", "WALI_KELAS", "mudir", "MUDIR", "kepala_sekolah", "KEPALA_SEKOLAH", "kadiv_pengasuhan", "KADIV_PENGASUHAN", "kadiv_asrama", "KADIV_ASRAMA", "kadiv_kedisiplinan", "KADIV_KEDISIPLINAN", "kadiv_kurikulum", "KADIV_KURIKULUM", "admin_keuangan", "ADMIN_KEUANGAN"] },
+  {
+    href: "/wali/rapor",
+    label: "Rapor & Akademik",
+    icon: <BookOpen size={18} />,
+    roles: ["wali_santri", "WALI_SANTRI", "orang_tua", "wali"] },
   {
     href: "/keuangan",
     label: "Keuangan",
