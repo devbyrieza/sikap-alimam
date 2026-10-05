@@ -85,6 +85,7 @@ export async function GET(request: Request) {
 
     const ujianPekanan = ujianList.filter(u => u.jenis_ujian === 'ujian_pekanan');
     const ujianBulanan = ujianList.filter(u => u.jenis_ujian === 'ujian_bulanan');
+    const ujianPraTarget = ujianList.filter(u => u.jenis_ujian === 'ujian_pra_target');
     const ujianTarget = ujianList.filter(u => u.jenis_ujian === 'ujian_target');
     const ujianItqon = ujianList.filter(u => u.jenis_ujian === 'ujian_itqon' && u.is_lulus);
 
@@ -94,6 +95,10 @@ export async function GET(request: Request) {
       
     const ujian_bulanan_nilai = ujianBulanan.length 
       ? Math.round(ujianBulanan.reduce((acc, u) => acc + u.nilai_akhir, 0) / ujianBulanan.length)
+      : 0;
+
+    const ujian_pra_target_nilai = ujianPraTarget.length 
+      ? Math.round(ujianPraTarget.reduce((acc, u) => acc + u.nilai_akhir, 0) / ujianPraTarget.length)
       : 0;
 
     const ujian_target_nilai = ujianTarget.length 
@@ -126,6 +131,7 @@ export async function GET(request: Request) {
         avg_nilai_harian: catatanList.length === 0 ? 0 : avg_nilai_harian,
         ujian_pekanan_nilai,
         ujian_bulanan_nilai,
+        ujian_pra_target_nilai,
         ujian_target_nilai,
         ujian_itqon_nilai,
         ujian_itqon_count,

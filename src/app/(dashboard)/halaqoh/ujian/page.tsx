@@ -10,7 +10,8 @@ import { calculateHalaman } from "@/lib/quran-madinah";
 const JENIS_UJIAN_OPT = [
   { val: "ujian_pekanan", label: "Ujian Pekanan", target: "2 Halaman",             icon: <Clock size={18} />,       color: "#d97706", bg: "#fffbeb", border: "#fde68a" },
   { val: "ujian_bulanan", label: "Ujian Bulanan", target: "10 Halaman",            icon: <CalendarDays size={18} />, color: "#0284c7", bg: "#eff6ff", border: "#bfdbfe" },
-  { val: "ujian_target",  label: "Ujian Target",  target: "Sesuai Target Kelas",   icon: <Award size={18} />,        color: "#7c3aed", bg: "#f5f3ff", border: "#ede9fe" },
+  { val: "ujian_pra_target", label: "Ujian Pra-Target", target: "Setengah Target", icon: <Target size={18} />, color: "#059669", bg: "#ecfdf5", border: "#a7f3d0" },
+  { val: "ujian_target",  label: "Ujian Target",  target: "Full Target Kelas",     icon: <Award size={18} />,        color: "#7c3aed", bg: "#f5f3ff", border: "#ede9fe" },
   { val: "ujian_itqon",   label: "Ujian Itqon",   target: "per 5 Juz (Bonus +10)", icon: <Star size={18} />,         color: "#0891b2", bg: "#ecfeff", border: "#a5f3fc" },
 ];
 
