@@ -24,6 +24,9 @@ function formatJam(date: Date) {
 
 export default async function DashboardPage() {
   const session = await getSession();
+  const userRoles = (session?.role || "").toLowerCase().split(",").map(r => r.trim());
+  const isWaliSantri = userRoles.includes("wali_santri") || userRoles.includes("orang_tua") || userRoles.includes("wali");
+  if (isWaliSantri) { const { redirect } = await import("next/navigation"); redirect("/wali/rapor"); }
   
   // Auto-sync database jadwal pelajaran jika belum terisi
   await syncScheduleFromPDF().catch(() => {});
