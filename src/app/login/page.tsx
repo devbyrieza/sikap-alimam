@@ -500,6 +500,7 @@ export default function LoginPage() {
                 <button
                   type="button"
                   onClick={() => setShowForgotModal(true)}
+                  tabIndex={4}
                   style={{
                     fontSize: "11px",
                     fontWeight: 600,
