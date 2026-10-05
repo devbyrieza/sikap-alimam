@@ -124,8 +124,8 @@ export async function POST(req: NextRequest) {
         } else {
           // Auto-provision akun Wali Santri baru
           const bcrypt2 = await import("bcryptjs");
-                    // Gunakan DDMMYY dari tanggal_lahir sebagai password default, jika kosong fallback ke Sikap2026!
-          let defaultPassword = "Sikap2026!";
+                    // Gunakan DDMMYY dari tanggal_lahir sebagai password default, jika kosong fallback ke PAAS2026!
+          let defaultPassword = "PAAS2026!";
           if (santri.tanggal_lahir) {
             const d = new Date(santri.tanggal_lahir);
             const dd = String(d.getDate()).padStart(2, '0');
@@ -173,7 +173,7 @@ export async function POST(req: NextRequest) {
       password === "Paas2026!" ||
       password === "Puas2026!" ||
       password === "Andalus2026!" ||
-      password === "Sikap2026!" || 
+      password === "PAAS2026!" || 
       password === "GuruAlimam2026!" || 
       password === "AdminAlimam2026!";
 
