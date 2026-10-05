@@ -1,25 +1,81 @@
 import { getSession } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { BookMarked, ClipboardCheck, UserCheck, BarChart3, TrendingUp, Calendar, Clock, Hand, Zap, BookOpen, AlertTriangle, ArrowRight, FileText, Award, Users } from "lucide-react";
+import { BookMarked, ClipboardCheck, UserCheck, BarChart3, TrendingUp, Clock, Hand, Zap, BookOpen, AlertTriangle, ArrowRight, FileText, Award, Users } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 import Link from "next/link";
+import type { ReactNode } from "react";
 import RealtimeClock from "@/components/RealtimeClock";
 import { syncScheduleFromPDF } from "@/lib/syncScheduleFromPDF";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
-function formatTanggal(date: Date) {
-  return date.toLocaleDateString("id-ID", {
-    weekday: "long", year: "numeric", month: "long", day: "numeric",
-    timeZone: "Asia/Jakarta"
-  });
-}
-
 function formatJam(date: Date) {
   return date.toLocaleTimeString("id-ID", {
     hour: "2-digit", minute: "2-digit",
     timeZone: "Asia/Jakarta"
   });
+}
+
+/* ── Komponen kecil (tampilan saja) ─────────────────────────────────────── */
+
+function StatCard({ icon: Icon, tone, label, value, sub, subClass }: {
+  icon: LucideIcon; tone: "maroon" | "gold"; label: string; value: ReactNode; sub: string; subClass?: string;
+}) {
+  const toneClass = tone === "maroon"
+    ? "bg-[#fdf5f5] text-primary border border-[#fae4e4]"
+    : "bg-[#fdf8f0] text-[#b89758] border border-[#f6ecd9]";
+  return (
+    <div className="stat-card">
+      <div className={`stat-icon ${toneClass}`}><Icon size={28} /></div>
+      <div>
+        <div className="stat-label">{label}</div>
+        <div className="stat-value">{value}</div>
+        <div className={`mt-1.5 text-xs font-semibold ${subClass || "text-slate-400"}`}>{sub}</div>
+      </div>
+    </div>
+  );
+}
+
+function SectionCard({ title, icon: Icon, iconClass, href, linkLabel, children }: {
+  title: string; icon: LucideIcon; iconClass: string; href?: string; linkLabel?: string; children: ReactNode;
+}) {
+  return (
+    <section className="flex flex-col rounded-3xl border border-[#ebdcc3] bg-white p-6 shadow-sm shadow-primary/5">
+      <div className="mb-5 flex items-center justify-between gap-3">
+        <h3 className="flex items-center gap-2 text-base font-bold text-slate-900">
+          <Icon size={18} className={iconClass} /> {title}
+        </h3>
+        {href && (
+          <Link href={href} className="flex items-center gap-1 text-xs font-bold text-primary hover:underline">
+            {linkLabel} <ArrowRight size={14} />
+          </Link>
+        )}
+      </div>
+      {children}
+    </section>
+  );
+}
+
+function Empty({ children }: { children: ReactNode }) {
+  return (
+    <div className="flex flex-1 items-center justify-center rounded-2xl border border-dashed border-[#ebdcc3] bg-[#fcfaf8] p-8 text-center text-sm text-slate-400">
+      {children}
+    </div>
+  );
+}
+
+function QuickLink({ href, icon: Icon, primary, children }: {
+  href: string; icon: LucideIcon; primary?: boolean; children: ReactNode;
+}) {
+  const cls = primary
+    ? "border-[#751414] bg-primary text-white shadow-md shadow-primary/25 hover:bg-primary-light"
+    : "border-[#ebdcc3] bg-[#fdf8f0] text-primary hover:bg-[#fdf5f5]";
+  return (
+    <Link href={href} className={`inline-flex items-center gap-2 rounded-xl border px-5 py-2.5 text-[13px] font-bold transition-colors ${cls}`}>
+      <Icon size={16} className={primary ? "text-[#ddc192]" : "text-primary"} /> {children}
+    </Link>
+  );
 }
 
 export default async function DashboardPage() {
@@ -119,8 +175,6 @@ export default async function DashboardPage() {
     console.error("DashboardPage: error fetching stats:", err);
   }
 
-
-
   const totalPresensiSantri = presensiSantri.length;
   const santriHadir = presensiSantri.filter((p) => p.status === "hadir").length;
   const santriSakit = presensiSantri.filter((p) => p.status === "sakit").length;
@@ -133,8 +187,6 @@ export default async function DashboardPage() {
   const isGuru = userRolesStr.includes("GURU") || userRolesStr.includes("TEACHER");
   const isPengampu = userRolesStr.includes("MUSYRIF") || userRolesStr.includes("PENGAMPU");
   const isWaliKelas = userRolesStr.includes("WALI_KELAS");
-  const isKadivKurikulum = userRolesStr.includes("KADIV_KURIKULUM");
-  const isKadivPengasuhan = userRolesStr.includes("KADIV_PENGASUHAN");
 
   let greetingName = "Ust. User";
   if (session?.nama_panggilan) {
@@ -148,332 +200,224 @@ export default async function DashboardPage() {
     }
   }
 
+  const pct = (n: number) => (totalPresensiSantri > 0 ? (n / totalPresensiSantri) * 100 : 0);
+  const statusSantri = [
+    { label: "Hadir", count: santriHadir, dot: "bg-[#16a34a]", text: "text-[#16a34a]", bg: "bg-[#f0fdf4]" },
+    { label: "Sakit", count: santriSakit, dot: "bg-[#d97706]", text: "text-[#d97706]", bg: "bg-[#fffbeb]" },
+    { label: "Izin", count: santriIzin, dot: "bg-[#b89758]", text: "text-[#b89758]", bg: "bg-[#fdf8f0]" },
+    { label: "Alpha", count: santriAlpha, dot: "bg-[#dc2626]", text: "text-[#dc2626]", bg: "bg-[#fef2f2]" },
+  ];
+
   return (
     <div className="page-container">
-      
+
       {isDefaultPassword && (
-        <div style={{ background: "#fef3c7", border: "1px solid #fde68a", padding: "12px 16px", borderRadius: "12px", marginBottom: "20px" }}>
-          <h3 style={{ margin: 0, color: "#92400e", fontSize: "14px", fontWeight: "bold", display: "flex", alignItems: "center", gap: "6px" }}>
-            <AlertTriangle size={16} /> Peringatan Keamanan
-          </h3>
-          <p style={{ margin: "4px 0 0", color: "#92400e", fontSize: "13px" }}>Anda masih menggunakan kata sandi default. Segera ganti kata sandi Anda demi keamanan akun.</p>
-          <div style={{ marginTop: "12px" }}>
-            <Link href="/profile" style={{ background: "#f59e0b", color: "white", padding: "8px 16px", borderRadius: "6px", fontSize: "12px", fontWeight: "bold", textDecoration: "none" }}>
-              Ganti Password
-            </Link>
+        <div className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-amber-200 bg-amber-50 p-4 sm:px-5">
+          <div className="flex items-start gap-3">
+            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-amber-100 text-amber-700">
+              <AlertTriangle size={18} />
+            </span>
+            <div>
+              <h3 className="text-sm font-bold text-amber-900">Peringatan keamanan</h3>
+              <p className="mt-0.5 text-[13px] text-amber-800">
+                Anda masih memakai kata sandi default. Segera ganti demi keamanan akun.
+              </p>
+            </div>
           </div>
+          <Link href="/profile" className="rounded-xl bg-amber-500 px-4 py-2 text-xs font-bold text-white hover:bg-amber-600">
+            Ganti password
+          </Link>
         </div>
       )}
 
-      {/* ── Premium Hero Banner ─────────────────────────────────────────────── */}
+      {/* Hero */}
       <div className="hero-banner">
-        {/* Decorative Background Elements */}
-        <div style={{ position:"absolute", top:0, right:0, width:256, height:256, background:"rgba(221, 193, 146, 0.15)", borderRadius:"50%", filter:"blur(40px)", transform:"translate(30%, -50%)", pointerEvents:"none" }}></div>
-        <div style={{ position:"absolute", bottom:0, left:0, width:192, height:192, background:"rgba(221, 193, 146, 0.1)", borderRadius:"50%", filter:"blur(40px)", transform:"translate(-25%, 50%)", pointerEvents:"none" }}></div>
-        
-        <div style={{ position:"relative", zIndex:1, flex:1, minWidth:0, width: "100%" }}>
-          <div style={{ display:"flex", alignItems:"center", gap:10, marginBottom:6, flexWrap: "wrap" }}>
-            <div style={{ display:"flex", alignItems:"center", gap:6, background:"rgba(221, 193, 146, 0.18)", padding:"6px 14px", borderRadius:20, border:"1px solid rgba(221, 193, 146, 0.4)", backdropFilter:"blur(8px)" }}>
-              <div style={{ width:8, height:8, borderRadius:"50%", background:"#ddc192", boxShadow:"0 0 8px rgba(221, 193, 146, 0.9)" }}></div>
-              <span style={{ fontSize:11, fontWeight:800, letterSpacing:"0.6px", color:"#fdf8f0", textTransform:"uppercase" }}>SIKAP • Sistem Informasi Kependidikan Akademik dan Pengasuhan</span>
-            </div>
+        <div className="pointer-events-none absolute right-0 top-0 h-64 w-64 -translate-y-1/2 translate-x-[30%] rounded-full bg-[#ddc192]/15 blur-3xl" />
+        <div className="pointer-events-none absolute bottom-0 left-0 h-48 w-48 -translate-x-1/4 translate-y-1/2 rounded-full bg-[#ddc192]/10 blur-3xl" />
+
+        <div className="relative z-10 w-full min-w-0 flex-1">
+          <div className="mb-3 inline-flex flex-wrap items-center gap-2 rounded-full border border-[#ddc192]/40 bg-[#ddc192]/20 px-3.5 py-1.5 text-[11px] font-extrabold uppercase tracking-wide text-[#fdf8f0] backdrop-blur">
+            <span className="h-2 w-2 rounded-full bg-[#ddc192] shadow-[0_0_8px_rgba(221,193,146,0.9)]" />
+            SIKAP • Sistem Informasi Kependidikan Akademik dan Pengasuhan
           </div>
-          <h1 style={{ fontSize: "clamp(20px, 4vw, 32px)", fontWeight:800, margin:"0 0 8px 0", display:"flex", alignItems:"center", gap:10, letterSpacing:"-0.5px", flexWrap: "wrap", wordBreak: "break-word" }}>
+          <h1 className="mb-2 flex flex-wrap items-center gap-2.5 break-words text-[clamp(20px,4vw,32px)] font-extrabold">
             Ahlan wa Sahlan, {greetingName} <Hand size={24} color="#ddc192" />
           </h1>
           <RealtimeClock />
         </div>
 
-
-        <div style={{ position:"relative", zIndex:1, textAlign:"left" }}>
-          <div style={{ fontSize: "clamp(20px, 4vw, 28px)", fontFamily:"var(--font-arabic)", color:"#ddc192", fontWeight:600, textShadow:"0 2px 12px rgba(221, 193, 146, 0.4)" }}>
-            بسم الله الرحمن الرحيم
-          </div>
+        <div
+          className="font-arabic relative z-10 text-left text-[clamp(20px,4vw,28px)] font-semibold text-[#ddc192]"
+          style={{ textShadow: "0 2px 12px rgba(221, 193, 146, 0.4)" }}
+        >
+          بسم الله الرحمن الرحيم
         </div>
       </div>
 
-      {/* ── Key Metrics Grid ────────────────────────────────────────────────── */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: 28 }}>
-        {/* Guru Hadir (Hanya Admin) */}
+      {/* Metrik utama */}
+      <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-4">
         {isSuperAdmin && (
-          <div className="stat-card animate-slide-up" style={{ animationDelay: "0.05s" }}>
-            <div className="stat-icon" style={{ background:"#fdf5f5", color:"#550000", border:"1px solid #fae4e4" }}>
-              <UserCheck size={28} />
-            </div>
-            <div>
-              <div className="stat-label">Guru Hadir Hari Ini</div>
-              <div className="stat-value">
-                {hadirAsatidz} <span style={{ fontSize:16, color:"#94a3b8", fontWeight:600 }}>/ {totalAsatidz}</span>
-              </div>
-              <div style={{ fontSize:12, fontWeight:700, color: pctHadir >= 80 ? "#16a34a" : "#d97706", marginTop:6 }}>
-                {pctHadir}% Kehadiran
-              </div>
-            </div>
-          </div>
+          <StatCard
+            icon={UserCheck} tone="maroon" label="Guru hadir hari ini"
+            value={<>{hadirAsatidz} <span className="text-base font-semibold text-slate-400">/ {totalAsatidz}</span></>}
+            sub={`${pctHadir}% kehadiran`}
+            subClass={pctHadir >= 80 ? "!text-[#16a34a] !font-bold" : "!text-[#d97706] !font-bold"}
+          />
         )}
-
-        {/* Jurnal */}
-        <div className="stat-card animate-slide-up" style={{ animationDelay: "0.1s" }}>
-          <div className="stat-icon" style={{ background:"#fdf8f0", color:"#b89758", border:"1px solid #f6ecd9" }}>
-            <BookMarked size={28} />
-          </div>
-          <div>
-            <div className="stat-label">Jurnal Terisi</div>
-            <div className="stat-value">
-              {jurnalHariIni}
-            </div>
-            <div style={{ fontSize:12, fontWeight:600, color:"#94a3b8", marginTop:6 }}>Entri hari ini</div>
-          </div>
-        </div>
-
-        {/* Santri Aktif */}
-        <div className="stat-card animate-slide-up" style={{ animationDelay: "0.15s" }}>
-          <div className="stat-icon" style={{ background:"#fdf5f5", color:"#550000", border:"1px solid #fae4e4" }}>
-            <ClipboardCheck size={28} />
-          </div>
-          <div>
-            <div className="stat-label">Total Santri Aktif</div>
-            <div className="stat-value">
-              {totalSantri}
-            </div>
-            <div style={{ fontSize:12, fontWeight:600, color:"#94a3b8", marginTop:6 }}>Terdaftar di sistem</div>
-          </div>
-        </div>
-
-        {/* Guru Aktif (Hanya Admin) */}
+        <StatCard icon={BookMarked} tone="gold" label="Jurnal terisi" value={jurnalHariIni} sub="Entri hari ini" />
+        <StatCard icon={ClipboardCheck} tone="maroon" label="Total santri aktif" value={totalSantri} sub="Terdaftar di sistem" />
         {isSuperAdmin && (
-          <div className="stat-card animate-slide-up" style={{ animationDelay: "0.2s" }}>
-            <div className="stat-icon" style={{ background:"#fdf8f0", color:"#b89758", border:"1px solid #f6ecd9" }}>
-              <TrendingUp size={28} />
-            </div>
-            <div>
-              <div className="stat-label">Total Asatidz / Guru</div>
-              <div className="stat-value">
-                {totalAsatidz}
-              </div>
-              <div style={{ fontSize:12, fontWeight:600, color:"#94a3b8", marginTop:6 }}>Aktif Mengajar</div>
-            </div>
-          </div>
+          <StatCard icon={TrendingUp} tone="gold" label="Total asatidz / guru" value={totalAsatidz} sub="Aktif mengajar" />
         )}
       </div>
 
-      {/* ── Jadwal Mengajar Widget ────────────────────────────────────────────── */}
+      {/* Jadwal mengajar */}
       {(asatidzId || !isSuperAdmin) && (
-
-        <div style={{ background:"white", borderRadius:20, padding:24, border:"1px solid #ebdcc3", boxShadow:"0 4px 20px rgba(85,0,0,0.03)" }}>
-          <h3 style={{ margin:"0 0 16px 0", fontSize:16, fontWeight:700, color:"#1a1a1a", display:"flex", alignItems:"center", gap:8 }}>
-            <Clock size={18} color="#550000" /> Jadwal Mengajar Hari Ini
-          </h3>
-          
+        <SectionCard title="Jadwal mengajar hari ini" icon={Clock} iconClass="text-primary">
           {jadwalHariIni.length === 0 ? (
-            <div style={{ padding:20, background:"#fcfaf8", borderRadius:12, border:"1px dashed #ebdcc3", color:"#94a3b8", fontSize:13, textAlign:"center" }}>
-              Alhamdulillah, tidak ada jadwal mengajar untuk hari ini.
-            </div>
+            <Empty>Alhamdulillah, tidak ada jadwal mengajar untuk hari ini.</Empty>
           ) : (
-            <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fit, minmax(250px, 1fr))", gap:12 }}>
+            <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
               {jadwalHariIni.map((j) => (
-                <div key={j.id} style={{ display:"flex", alignItems:"center", gap:16, background:"#fdfaf7", padding:16, borderRadius:12, borderLeft:"4px solid #550000", border:"1px solid #ebdcc3", borderLeftWidth:"4px" }}>
-                  <div style={{ flexShrink:0, background:"rgba(85, 0, 0, 0.05)", width:48, height:48, borderRadius:"50%", display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", color:"#550000" }}>
-                    <span style={{ fontSize:10, fontWeight:600, textTransform:"uppercase", letterSpacing:0.5 }}>Jam</span>
-                    <span style={{ fontSize:16, fontWeight:800, lineHeight:1 }}>{j.jam_ke}</span>
+                <div key={j.id} className="flex items-center gap-4 rounded-2xl border border-l-4 border-[#ebdcc3] border-l-primary bg-[#fdfaf7] p-4">
+                  <div className="flex h-12 w-12 shrink-0 flex-col items-center justify-center rounded-full bg-primary/5 text-primary">
+                    <span className="text-[10px] font-semibold uppercase">Jam</span>
+                    <span className="text-base font-extrabold leading-none">{j.jam_ke}</span>
                   </div>
-                  <div style={{ flex:1 }}>
-                    <div style={{ fontSize:14, fontWeight:700, color:"#1a1a1a", marginBottom:4 }}>
-                      {j.mapel?.nama || "Mapel Kosong"}
-                    </div>
-                    <div style={{ fontSize:12, color:"#64748b", display:"flex", alignItems:"center", gap:4 }}>
-                      <span style={{ display:"inline-flex", padding:"2px 6px", background:"#fdf5f5", color:"#550000", borderRadius:4, fontWeight:600 }}>Kelas {j.kelas?.nama}</span>
-                      <span>• {j.waktu_mulai} - {j.waktu_selesai}</span>
+                  <div className="min-w-0 flex-1">
+                    <div className="mb-1 truncate text-sm font-bold text-slate-900">{j.mapel?.nama || "Mapel kosong"}</div>
+                    <div className="flex flex-wrap items-center gap-1.5 text-xs text-slate-500">
+                      <span className="rounded bg-[#fdf5f5] px-1.5 py-0.5 font-semibold text-primary">Kelas {j.kelas?.nama}</span>
+                      <span>{j.waktu_mulai} - {j.waktu_selesai}</span>
                     </div>
                   </div>
                 </div>
               ))}
             </div>
           )}
-        </div>
+        </SectionCard>
       )}
 
-      {/* ── Quick Actions ─────────────────────────────────────────────────────── */}
-      <div style={{ background:"white", borderRadius:20, padding:24, border:"1px solid #ebdcc3", boxShadow:"0 4px 20px rgba(85,0,0,0.03)" }}>
-        <h3 style={{ margin:"0 0 16px 0", fontSize:16, fontWeight:700, color:"#1a1a1a", display:"flex", alignItems:"center", gap:8 }}>
-          <Zap size={18} color="#b89758" /> Aksi Cepat
-        </h3>
-        <div style={{ display:"flex", flexWrap:"wrap", gap:12 }}>
-          {/* Tombol Guru Mapel */}
+      {/* Aksi cepat */}
+      <SectionCard title="Aksi cepat" icon={Zap} iconClass="text-[#b89758]">
+        <div className="flex flex-wrap gap-3">
           {(isGuru || isSuperAdmin) && (
             <>
-              <Link href="/jurnal/tambah" style={{ display:"inline-flex", alignItems:"center", gap:8, background:"#550000", color:"white", border:"1px solid #751414", padding:"10px 20px", borderRadius:12, fontSize:13, fontWeight:700, textDecoration:"none", transition:"all 0.2s", boxShadow:"0 4px 14px rgba(85,0,0,0.25)" }}>
-                <BookMarked size={16} color="#ddc192" /> Tambah Jurnal
-              </Link>
-              <Link href="/presensi/santri" style={{ display:"inline-flex", alignItems:"center", gap:8, background:"#fdf5f5", color:"#550000", border:"1px solid #ebdcc3", padding:"10px 20px", borderRadius:12, fontSize:13, fontWeight:700, textDecoration:"none", transition:"all 0.2s", boxShadow:"0 2px 8px rgba(85,0,0,0.04)" }}>
-                <ClipboardCheck size={16} color="#550000" /> Presensi Kelas
-              </Link>
-              <Link href="/nilai" style={{ display:"inline-flex", alignItems:"center", gap:8, background:"#fdf8f0", color:"#550000", border:"1px solid #ebdcc3", padding:"10px 20px", borderRadius:12, fontSize:13, fontWeight:700, textDecoration:"none", transition:"all 0.2s", boxShadow:"0 2px 8px rgba(85,0,0,0.04)" }}>
-                <BarChart3 size={16} color="#550000" /> Input Nilai
-              </Link>
+              <QuickLink href="/jurnal/tambah" icon={BookMarked} primary>Tambah jurnal</QuickLink>
+              <QuickLink href="/presensi/santri" icon={ClipboardCheck}>Presensi kelas</QuickLink>
+              <QuickLink href="/nilai" icon={BarChart3}>Input nilai</QuickLink>
             </>
           )}
-
-          {/* Tombol Pengampu Halaqoh */}
           {(isPengampu || isSuperAdmin) && (
             <>
-              <Link href="/halaqoh" style={{ display:"inline-flex", alignItems:"center", gap:8, background: isGuru ? "#fdf8f0" : "#550000", color: isGuru ? "#550000" : "white", border: isGuru ? "1px solid #ebdcc3" : "1px solid #751414", padding:"10px 20px", borderRadius:12, fontSize:13, fontWeight:700, textDecoration:"none", transition:"all 0.2s", boxShadow: isGuru ? "0 2px 8px rgba(85,0,0,0.04)" : "0 4px 14px rgba(85,0,0,0.25)" }}>
-                <BookOpen size={16} color={isGuru ? "#b89758" : "#ddc192"} /> Setoran Halaqoh
-              </Link>
-              <Link href="/halaqoh/ujian" style={{ display:"inline-flex", alignItems:"center", gap:8, background:"#fdf5f5", color:"#550000", border:"1px solid #ebdcc3", padding:"10px 20px", borderRadius:12, fontSize:13, fontWeight:700, textDecoration:"none", transition:"all 0.2s", boxShadow:"0 2px 8px rgba(85,0,0,0.04)" }}>
-                <Award size={16} color="#550000" /> Ujian Tahfidz
-              </Link>
-              <Link href="/halaqoh/laporan" style={{ display:"inline-flex", alignItems:"center", gap:8, background:"#fdf8f0", color:"#550000", border:"1px solid #ebdcc3", padding:"10px 20px", borderRadius:12, fontSize:13, fontWeight:700, textDecoration:"none", transition:"all 0.2s", boxShadow:"0 2px 8px rgba(85,0,0,0.04)" }}>
-                <FileText size={16} color="#550000" /> Laporan Halaqoh
-              </Link>
+              <QuickLink href="/halaqoh" icon={BookOpen} primary={!isGuru}>Setoran halaqoh</QuickLink>
+              <QuickLink href="/halaqoh/ujian" icon={Award}>Ujian tahfidz</QuickLink>
+              <QuickLink href="/halaqoh/laporan" icon={FileText}>Laporan halaqoh</QuickLink>
             </>
           )}
-
-          {/* Tombol Wali Kelas */}
           {(isWaliKelas || isSuperAdmin) && (
-            <Link href="/wali-kelas" style={{ display:"inline-flex", alignItems:"center", gap:8, background:"#fdf5f5", color:"#550000", border:"1px solid #ebdcc3", padding:"10px 20px", borderRadius:12, fontSize:13, fontWeight:700, textDecoration:"none", transition:"all 0.2s", boxShadow:"0 2px 8px rgba(85,0,0,0.04)" }}>
-              <Users size={16} color="#550000" /> Hub Wali Kelas
-            </Link>
+            <QuickLink href="/wali-kelas" icon={Users}>Hub wali kelas</QuickLink>
           )}
-
-          {/* Tombol Absensi Guru (Check-in) */}
           {(isGuru || isSuperAdmin) && (
-            <Link href="/presensi/asatidz" style={{ display:"inline-flex", alignItems:"center", gap:8, background:"#fdf8f0", color:"#550000", border:"1px solid #ebdcc3", padding:"10px 20px", borderRadius:12, fontSize:13, fontWeight:700, textDecoration:"none", transition:"all 0.2s", boxShadow:"0 2px 8px rgba(85,0,0,0.04)" }}>
-              <UserCheck size={16} color="#b89758" /> Absensi Guru
-            </Link>
+            <QuickLink href="/presensi/asatidz" icon={UserCheck}>Absensi guru</QuickLink>
           )}
-
-          {/* Tombol Admin Super */}
           {isSuperAdmin && (
-            <Link href="/master/kelas" style={{ display:"inline-flex", alignItems:"center", gap:8, background:"#751414", color:"white", border:"1px solid #550000", padding:"10px 20px", borderRadius:12, fontSize:13, fontWeight:700, textDecoration:"none", transition:"all 0.2s", boxShadow:"0 4px 14px rgba(117,20,20,0.25)" }}>
-              <UserCheck size={16} color="#ddc192" /> Assign Wali Kelas
-            </Link>
+            <QuickLink href="/master/kelas" icon={UserCheck} primary>Assign wali kelas</QuickLink>
           )}
         </div>
-      </div>
+      </SectionCard>
 
-      {/* ── Main Dashboard Sections ───────────────────────────────────────────── */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))", gap: 24 }}>
-        
-        {/* Jurnal Terbaru */}
-        <div style={{ background:"white", borderRadius:20, padding:24, border:"1px solid #ebdcc3", boxShadow:"0 4px 20px rgba(85,0,0,0.03)", display:"flex", flexDirection:"column" }}>
-          <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:20 }}>
-            <h3 style={{ margin:0, fontSize:16, fontWeight:700, color:"#1a1a1a", display:"flex", alignItems:"center", gap:8 }}>
-              <BookOpen size={18} color="#550000" /> Jurnal Terbaru
-            </h3>
-            <Link href="/jurnal" style={{ fontSize:12, fontWeight:700, color:"#550000", textDecoration:"none", display: "flex", alignItems: "center", gap: "4px" }}>Lihat Semua <ArrowRight size={14} /></Link>
-          </div>
-          
+      {/* Bagian utama */}
+      <div className="grid gap-6 lg:grid-cols-2 2xl:grid-cols-3">
+
+        {/* Jurnal terbaru */}
+        <SectionCard title="Jurnal terbaru" icon={BookOpen} iconClass="text-primary" href="/jurnal" linkLabel="Lihat semua">
           {jurnalTerbaru.length === 0 ? (
-            <div style={{ flex:1, display:"flex", alignItems:"center", justifyContent:"center", color:"#94a3b8", fontSize:13, padding:32, background:"#fcfaf8", borderRadius:12, border:"1px dashed #ebdcc3" }}>
-              Belum ada entri jurnal hari ini
-            </div>
+            <Empty>Belum ada entri jurnal hari ini</Empty>
           ) : (
-            <div style={{ display:"flex", flexDirection:"column", gap:12 }}>
+            <div className="flex flex-col gap-3">
               {jurnalTerbaru.map((j) => (
-                <div key={j.id} style={{ background:"#fdfaf7", padding:16, borderRadius:12, borderLeft:"4px solid #550000", border:"1px solid #ebdcc3", borderLeftWidth:"4px" }}>
-                  <div style={{ fontSize:14, fontWeight:700, color:"#1a1a1a", marginBottom:4 }}>
-                    {j.mapel?.nama || "Mapel Kosong"} — Kelas {j.kelas?.nama || "?"}
+                <div key={j.id} className="rounded-2xl border border-l-4 border-[#ebdcc3] border-l-primary bg-[#fdfaf7] p-4">
+                  <div className="mb-1 text-sm font-bold text-slate-900">
+                    {j.mapel?.nama || "Mapel kosong"} — Kelas {j.kelas?.nama || "?"}
                   </div>
-                  <div style={{ fontSize:12, color:"#64748b", marginBottom:8, display:"flex", alignItems:"center", gap:6 }}>
-                    <span style={{ fontWeight:600, color:"#550000" }}>{j.pegawai?.nama_lengkap || "Guru"}</span> • {j.tanggal.toLocaleDateString("id-ID", { day:"numeric", month:"short" })}
+                  <div className="mb-2 text-xs text-slate-500">
+                    <span className="font-semibold text-primary">{j.pegawai?.nama_lengkap || "Guru"}</span>
+                    {" • "}
+                    {j.tanggal.toLocaleDateString("id-ID", { day: "numeric", month: "short" })}
                   </div>
-                  <div style={{ fontSize:13, color:"#475569", lineHeight:1.5, display:"-webkit-box", WebkitLineClamp:1, WebkitBoxOrient:"vertical", overflow:"hidden" }}>
-                    {j.materi}
-                  </div>
+                  <div className="line-clamp-1 text-[13px] text-slate-600">{j.materi}</div>
                 </div>
               ))}
             </div>
           )}
-        </div>
+        </SectionCard>
 
-        {/* Presensi Santri Overview */}
-        <div style={{ background:"white", borderRadius:20, padding:24, border:"1px solid #ebdcc3", boxShadow:"0 4px 20px rgba(85,0,0,0.03)", display:"flex", flexDirection:"column" }}>
-          <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:20 }}>
-            <h3 style={{ margin:0, fontSize:16, fontWeight:700, color:"#1a1a1a", display:"flex", alignItems:"center", gap:8 }}>
-              <BarChart3 size={18} color="#b89758" /> Presensi Santri (Hari Ini)
-            </h3>
-            <Link href="/presensi/santri" style={{ fontSize:12, fontWeight:700, color:"#550000", textDecoration:"none", display: "flex", alignItems: "center", gap: "4px" }}>Kelola <ArrowRight size={14} /></Link>
-          </div>
-
+        {/* Presensi santri */}
+        <SectionCard title="Presensi santri hari ini" icon={BarChart3} iconClass="text-[#b89758]" href="/presensi/santri" linkLabel="Kelola">
           {totalPresensiSantri === 0 ? (
-            <div style={{ flex:1, display:"flex", alignItems:"center", justifyContent:"center", color:"#94a3b8", fontSize:13, padding:32, background:"#fcfaf8", borderRadius:12, border:"1px dashed #ebdcc3" }}>
-              Belum ada presensi santri hari ini
-            </div>
+            <Empty>Belum ada presensi santri hari ini</Empty>
           ) : (
             <div>
-              <div style={{ display:"flex", alignItems:"flex-end", gap:16, marginBottom:24 }}>
-                <div style={{ flex:1 }}>
-                  <div style={{ fontSize:40, fontWeight:800, color:"#550000", lineHeight:1, letterSpacing:"-1px" }}>
-                    {Math.round((santriHadir / totalPresensiSantri) * 100)}%
+              <div className="mb-6 flex items-end gap-4">
+                <div className="flex-1">
+                  <div className="text-[40px] font-extrabold leading-none text-primary">
+                    {Math.round(pct(santriHadir))}%
                   </div>
-                  <div style={{ fontSize:13, fontWeight:600, color:"#64748b", marginTop:8 }}>Tingkat Kehadiran Santri</div>
+                  <div className="mt-2 text-[13px] font-semibold text-slate-500">Tingkat kehadiran santri</div>
                 </div>
-                <div style={{ textAlign:"right" }}>
-                  <div style={{ fontSize:20, fontWeight:800, color:"#1a1a1a" }}>{totalPresensiSantri}</div>
-                  <div style={{ fontSize:12, fontWeight:600, color:"#94a3b8" }}>Total Diabsen</div>
+                <div className="text-right">
+                  <div className="text-xl font-extrabold text-slate-900">{totalPresensiSantri}</div>
+                  <div className="text-xs font-semibold text-slate-400">Total diabsen</div>
                 </div>
               </div>
 
-              {/* Chart Bar */}
-              <div style={{ display:"flex", height:16, borderRadius:8, overflow:"hidden", marginBottom:24, background:"#f1f5f9" }}>
-                <div style={{ width:`${(santriHadir / totalPresensiSantri) * 100}%`, background:"#16a34a" }} title={`Hadir: ${santriHadir}`} />
-                <div style={{ width:`${(santriSakit / totalPresensiSantri) * 100}%`, background:"#d97706" }} title={`Sakit: ${santriSakit}`} />
-                <div style={{ width:`${(santriIzin / totalPresensiSantri) * 100}%`, background:"#b89758" }} title={`Izin: ${santriIzin}`} />
-                <div style={{ width:`${(santriAlpha / totalPresensiSantri) * 100}%`, background:"#dc2626" }} title={`Alpha: ${santriAlpha}`} />
+              <div className="mb-6 flex h-4 overflow-hidden rounded-lg bg-slate-100">
+                {statusSantri.map((s) => (
+                  <div key={s.label} className={s.dot} style={{ width: `${pct(s.count)}%` }} title={`${s.label}: ${s.count}`} />
+                ))}
               </div>
 
-              {/* Legends */}
-              <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:12 }}>
-                {[
-                  { label: "Hadir", count: santriHadir, color: "#16a34a", bg: "#f0fdf4" },
-                  { label: "Sakit", count: santriSakit, color: "#d97706", bg: "#fffbeb" },
-                  { label: "Izin", count: santriIzin, color: "#b89758", bg: "#fdf8f0" },
-                  { label: "Alpha", count: santriAlpha, color: "#dc2626", bg: "#fef2f2" }
-                ].map(item => (
-                  <div key={item.label} style={{ display:"flex", justifyContent:"space-between", alignItems:"center", padding:"12px 16px", background:item.bg, borderRadius:12, border:"1px solid #ebdcc3" }}>
-                    <div style={{ display:"flex", alignItems:"center", gap:8, fontSize:13, fontWeight:700, color:"#1a1a1a" }}>
-                      <div style={{ width:10, height:10, borderRadius:"50%", background:item.color }} /> {item.label}
+              <div className="grid grid-cols-2 gap-3">
+                {statusSantri.map((s) => (
+                  <div key={s.label} className={`flex items-center justify-between rounded-xl border border-[#ebdcc3] px-4 py-3 ${s.bg}`}>
+                    <div className="flex items-center gap-2 text-[13px] font-bold text-slate-900">
+                      <span className={`h-2.5 w-2.5 rounded-full ${s.dot}`} /> {s.label}
                     </div>
-                    <span style={{ fontSize:14, fontWeight:800, color:item.color }}>{item.count}</span>
+                    <span className={`text-sm font-extrabold ${s.text}`}>{s.count}</span>
                   </div>
                 ))}
               </div>
             </div>
           )}
-        </div>
+        </SectionCard>
 
-        {/* Presensi Asatidz */}
-        <div style={{ background:"white", borderRadius:20, padding:24, border:"1px solid #ebdcc3", boxShadow:"0 4px 20px rgba(85,0,0,0.03)", display:"flex", flexDirection:"column" }}>
-          <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:20 }}>
-            <h3 style={{ margin:0, fontSize:16, fontWeight:700, color:"#1a1a1a", display:"flex", alignItems:"center", gap:8 }}>
-              <Clock size={18} color="#550000" /> Log Kehadiran Guru
-            </h3>
-            <Link href="/presensi/asatidz" style={{ fontSize:12, fontWeight:700, color:"#550000", textDecoration:"none", display: "flex", alignItems: "center", gap: "4px" }}>Lihat Semua <ArrowRight size={14} /></Link>
-          </div>
-
+        {/* Kehadiran guru */}
+        <SectionCard title="Log kehadiran guru" icon={Clock} iconClass="text-primary" href="/presensi/asatidz" linkLabel="Lihat semua">
           {absenHariIni.length === 0 ? (
-            <div style={{ flex:1, display:"flex", alignItems:"center", justifyContent:"center", color:"#94a3b8", fontSize:13, padding:32, background:"#fcfaf8", borderRadius:12, border:"1px dashed #ebdcc3" }}>
-              Belum ada guru yang presensi
-            </div>
+            <Empty>Belum ada guru yang presensi</Empty>
           ) : (
-            <div style={{ display:"flex", flexDirection:"column", gap:10 }}>
+            <div className="flex flex-col gap-2.5">
               {absenHariIni.map((a) => (
-                <div key={a.id} style={{ display:"flex", alignItems:"center", justifyContent:"space-between", padding:"12px 16px", background:"#fdfaf7", borderRadius:12, border:"1px solid #ebdcc3" }}>
-                  <div style={{ fontSize:13, fontWeight:700, color:"#1a1a1a" }}>
-                    {a.pegawai?.nama_lengkap || "Tanpa Nama"}
+                <div key={a.id} className="flex items-center justify-between gap-3 rounded-xl border border-[#ebdcc3] bg-[#fdfaf7] px-4 py-3">
+                  <div className="min-w-0 truncate text-[13px] font-bold text-slate-900">
+                    {a.pegawai?.nama_lengkap || "Tanpa nama"}
                   </div>
-                  <div style={{ display:"flex", alignItems:"center", gap:12 }}>
+                  <div className="flex shrink-0 items-center gap-3">
                     {a.jam_masuk && (
-                      <span style={{ fontSize:12, fontWeight:600, color:"#64748b", display:"flex", alignItems:"center", gap:4 }}>
+                      <span className="flex items-center gap-1 text-xs font-semibold text-slate-500">
                         <Clock size={12} /> {formatJam(new Date(a.jam_masuk))}
                       </span>
                     )}
-                    <span style={{
-                      fontSize:10, fontWeight:800, textTransform:"uppercase", letterSpacing:"0.5px", padding:"4px 8px", borderRadius:6,
-                      background: a.status === 'hadir' ? '#dcfce7' : a.status === 'telat' ? '#fef9c3' : '#fee2e2',
-                      color: a.status === 'hadir' ? '#166534' : a.status === 'telat' ? '#854d0e' : '#991b1b'
-                    }}>
+                    <span
+                      className={`rounded-md px-2 py-1 text-[10px] font-extrabold uppercase ${
+                        a.status === "hadir"
+                          ? "bg-green-100 text-green-800"
+                          : a.status === "telat"
+                          ? "bg-yellow-100 text-yellow-800"
+                          : "bg-red-100 text-red-800"
+                      }`}
+                    >
                       {a.status}
                     </span>
                   </div>
@@ -481,7 +425,7 @@ export default async function DashboardPage() {
               ))}
             </div>
           )}
-        </div>
+        </SectionCard>
 
       </div>
     </div>
