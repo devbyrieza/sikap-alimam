@@ -110,9 +110,7 @@ export async function POST(req: NextRequest) {
 
       if (santri) {
         // Cek SPP bulan ini
-        let isSppLunas = santri.pembayaran_spp[0]?.status === 'lunas';
-        // BYPASS KHUSUS DEMO UNTUK ABDUL AZIZ ALI
-        if (santri.nis === '2601070002') isSppLunas = true;
+        const isSppLunas = santri.pembayaran_spp[0]?.status === 'lunas';
         const sppBlocked = !isSppLunas;
         const sppReason = sppBlocked ? `SPP Bulan ${new Date().toLocaleString('id-ID', {month:'long'})} ${new Date().getFullYear()} Belum Lunas` : null;
 
