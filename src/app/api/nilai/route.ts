@@ -129,6 +129,21 @@ export async function POST(req: NextRequest) {
         }
         count++;
       } else if (value === '' || value === null) {
+        // Hapus record jika user mengosongkan form
+        const existing = await prisma.nilaiSantri.findFirst({
+          where: {
+            santri_id: item.santri_id,
+            mapel_id: finalMapelId,
+            kelas_id,
+            semester,
+            jenis,
+            tahun_ajaran }
+        });
+        if (existing) {
+          await prisma.nilaiSantri.delete({ where: { id: existing.id } });
+          count++;
+        }
+      } else if (value === '' || value === null) {
          // Optionally, if value is explicitly empty, we could delete it, 
          // but for safety in MVP, we just ignore it.
       }
