@@ -45,6 +45,14 @@ export async function POST(req: NextRequest) {
     // return NextResponse.json({ error: 'Unauthorized' }, { status: 401 }); // DISABLED FOR MVP/TESTING
   }
 
+  // Cek Kunci Nilai
+  const lockSetting = await prisma.kalenderAkademik.findFirst({
+    where: { kategori: "PENGATURAN_SISTEM", nama_kegiatan: "LOCK_INPUT_NILAI" }
+  });
+  if (lockSetting?.is_libur && !session?.role?.includes("ADMIN_SUPER")) {
+    return NextResponse.json({ error: "Akses Ditolak: Penginputan nilai sudah dikunci oleh Admin Kurikulum." }, { status: 403 });
+  }
+
   const body = await req.json();
   const { data, mapel_id, kelas_id, semester, tahun_ajaran, periode, nama_mapel_custom } = body;
 

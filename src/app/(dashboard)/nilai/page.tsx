@@ -79,14 +79,19 @@ export default function InputNilaiPage() {
   const [loadingKelas, setLoadingKelas] = useState(true);
   const [loadingSantri, setLoadingSantri] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [isLocked, setIsLocked] = useState(false);
 
   // Fetch profile & master data
   useEffect(() => {
     Promise.all([
       fetch("/api/profile").then((r) => r.json()),
       fetch("/api/master").then((r) => r.json()),
+      fetch("/api/setting-nilai").then((r) => r.json()),
     ])
-      .then(([profileRes, masterRes]) => {
+      .then(([profileRes, masterRes, settingRes]) => {
+        if (settingRes?.is_locked) {
+          setIsLocked(true);
+        }
         const pegawaiObj = profileRes?.pegawai;
         const userObj = profileRes?.user;
         if (pegawaiObj?.id) {
@@ -721,11 +726,20 @@ export default function InputNilaiPage() {
             </div>
           </div>
 
+          {isLocked && (
+            <div className="bg-rose-50 border border-rose-200 px-4 py-3 rounded-2xl flex items-center gap-2.5 font-medium shadow-sm text-rose-800 text-sm">
+              <AlertCircle className="w-5 h-5 shrink-0" />
+              <span><strong>Akses Ditutup:</strong> Penginputan nilai sudah dikunci oleh Admin Kurikulum. Hubungi Admin jika butuh perbaikan.</span>
+            </div>
+          )}
+
           {/* Banner info on mobile */}
-          <div className="md:hidden text-xs text-amber-900 bg-amber-50/90 border border-amber-200/80 px-4 py-3 rounded-2xl flex items-center gap-2.5 font-medium shadow-sm">
-            <Lightbulb className="w-5 h-5 text-amber-700 shrink-0" />
-            <span><strong>Lebih Praktis!</strong> Isi nilai santri langsung pada kartu di bawah ini.</span>
-          </div>
+          {!isLocked && (
+            <div className="md:hidden text-xs text-amber-900 bg-amber-50/90 border border-amber-200/80 px-4 py-3 rounded-2xl flex items-center gap-2.5 font-medium shadow-sm">
+              <Lightbulb className="w-5 h-5 text-amber-700 shrink-0" />
+              <span><strong>Lebih Praktis!</strong> Isi nilai santri langsung pada kartu di bawah ini.</span>
+            </div>
+          )}
 
           {/* ── MOBILE CARD VIEW (Responsive) ── */}
           <div className="md:hidden flex flex-col gap-4">
@@ -742,7 +756,7 @@ export default function InputNilaiPage() {
                 const isLulus = nilaiAkhir ? Number(nilaiAkhir) >= 80 : true;
 
                 return (
-                  <div key={`mobile-${s.id}`} className="bg-white rounded-3xl border border-amber-200/60 shadow-sm overflow-hidden flex flex-col gap-4 relative p-6">
+                  <div key={`mobile-${s.id}`} className={`bg-white rounded-3xl border shadow-sm overflow-hidden flex flex-col gap-4 relative p-6 ${isLocked ? 'border-slate-200 opacity-80' : 'border-amber-200/60'}`}>
                     <div className="absolute top-6 right-6">
                       <div className={`px-3 py-2 rounded-xl text-xs font-black border flex flex-col items-center justify-center min-w-[54px] shadow-sm ${nilaiAkhir ? (isLulus ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-rose-50 text-rose-700 border-rose-200') : 'bg-stone-50 text-stone-400 border-stone-200'}`}>
                         <span style={{ fontSize: 9, opacity: 0.8, marginBottom: 2, letterSpacing: '0.05em' }}>AKHIR</span>
@@ -761,28 +775,28 @@ export default function InputNilaiPage() {
                           <span>Harian</span>
                           <span className="text-[10px] text-amber-900 bg-amber-50 px-1.5 py-0.5 rounded border border-amber-200/60">(30%)</span>
                         </label>
-                        <input type="number" inputMode="decimal" style={{ textAlign: "left", fontSize: 16, fontWeight: 800, padding: "10px 14px", height: 46, borderRadius: 14, background: "#fdf8f0", border: "1px solid #ebdcc3", outline: "none" }} placeholder="-" value={data.harian} onChange={(e) => handleInputChange(s.id, "harian", e.target.value)} />
+                        <input disabled={isLocked} type="number" inputMode="decimal" style={{ textAlign: "left", fontSize: 16, fontWeight: 800, padding: "10px 14px", height: 46, borderRadius: 14, background: isLocked ? "#f1f5f9" : "#fdf8f0", border: "1px solid #ebdcc3", outline: "none" }} placeholder="-" value={data.harian} onChange={(e) => handleInputChange(s.id, "harian", e.target.value)} />
                       </div>
                       <div className="flex flex-col">
                         <label className="text-[12px] font-bold text-stone-700 mb-1.5 flex items-center justify-between">
                           <span>Komp.</span>
                           <span className="text-[10px] text-amber-900 bg-amber-50 px-1.5 py-0.5 rounded border border-amber-200/60">(20%)</span>
                         </label>
-                        <input type="number" inputMode="decimal" style={{ textAlign: "left", fontSize: 16, fontWeight: 800, padding: "10px 14px", height: 46, borderRadius: 14, background: "#fdf8f0", border: "1px solid #ebdcc3", outline: "none" }} placeholder="-" value={data.kompetensi} onChange={(e) => handleInputChange(s.id, "kompetensi", e.target.value)} />
+                        <input disabled={isLocked} type="number" inputMode="decimal" style={{ textAlign: "left", fontSize: 16, fontWeight: 800, padding: "10px 14px", height: 46, borderRadius: 14, background: isLocked ? "#f1f5f9" : "#fdf8f0", border: "1px solid #ebdcc3", outline: "none" }} placeholder="-" value={data.kompetensi} onChange={(e) => handleInputChange(s.id, "kompetensi", e.target.value)} />
                       </div>
                       <div className="flex flex-col">
                         <label className="text-[12px] font-bold text-stone-700 mb-1.5 flex items-center justify-between">
                           <span>Sikap</span>
                           <span className="text-[10px] text-amber-900 bg-amber-50 px-1.5 py-0.5 rounded border border-amber-200/60">(10%)</span>
                         </label>
-                        <input type="number" inputMode="decimal" style={{ textAlign: "left", fontSize: 16, fontWeight: 800, padding: "10px 14px", height: 46, borderRadius: 14, background: "#fdf8f0", border: "1px solid #ebdcc3", outline: "none" }} placeholder="-" value={data.sikap} onChange={(e) => handleInputChange(s.id, "sikap", e.target.value)} />
+                        <input disabled={isLocked} type="number" inputMode="decimal" style={{ textAlign: "left", fontSize: 16, fontWeight: 800, padding: "10px 14px", height: 46, borderRadius: 14, background: isLocked ? "#f1f5f9" : "#fdf8f0", border: "1px solid #ebdcc3", outline: "none" }} placeholder="-" value={data.sikap} onChange={(e) => handleInputChange(s.id, "sikap", e.target.value)} />
                       </div>
                       <div className="flex flex-col">
                         <label className="text-[12px] font-bold text-stone-700 mb-1.5 flex items-center justify-between">
                           <span className="truncate max-w-[60px]">{periode}</span>
                           <span className="text-[10px] text-amber-900 bg-amber-50 px-1.5 py-0.5 rounded shrink-0 border border-amber-200/60">(40%)</span>
                         </label>
-                        <input type="number" inputMode="decimal" style={{ textAlign: "left", fontSize: 16, fontWeight: 800, padding: "10px 14px", height: 46, borderRadius: 14, background: "#fdf8f0", border: "1px solid #ebdcc3", outline: "none" }} placeholder="-" value={data.ujian} onChange={(e) => handleInputChange(s.id, "ujian", e.target.value)} />
+                        <input disabled={isLocked} type="number" inputMode="decimal" style={{ textAlign: "left", fontSize: 16, fontWeight: 800, padding: "10px 14px", height: 46, borderRadius: 14, background: isLocked ? "#f1f5f9" : "#fdf8f0", border: "1px solid #ebdcc3", outline: "none" }} placeholder="-" value={data.ujian} onChange={(e) => handleInputChange(s.id, "ujian", e.target.value)} />
                       </div>
                     </div>
                   </div>
@@ -861,16 +875,16 @@ export default function InputNilaiPage() {
                             </div>
                           </td>
                           <td style={{ padding: "12px 12px", textAlign: "center", borderBottom: "1px solid #f5ede1" }}>
-                            <input type="number" inputMode="decimal" style={{ fontSize: "15px", padding: "10px", textAlign: "center", fontWeight: "bold", width: "100%", maxWidth: 80, margin: "0 auto", borderRadius: "10px", border: "1px solid #ebdcc3", background: "#fdf8f0", outline: "none" }} placeholder="-" value={data.harian} onChange={(e) => handleInputChange(s.id, "harian", e.target.value)} />
+                            <input disabled={isLocked} type="number" inputMode="decimal" style={{ fontSize: "15px", padding: "10px", textAlign: "center", fontWeight: "bold", width: "100%", maxWidth: 80, margin: "0 auto", borderRadius: "10px", border: "1px solid #ebdcc3", background: isLocked ? "#f1f5f9" : "#fdf8f0", outline: "none" }} placeholder="-" value={data.harian} onChange={(e) => handleInputChange(s.id, "harian", e.target.value)} />
                           </td>
                           <td style={{ padding: "12px 12px", textAlign: "center", borderBottom: "1px solid #f5ede1" }}>
-                            <input type="number" inputMode="decimal" style={{ fontSize: "15px", padding: "10px", textAlign: "center", fontWeight: "bold", width: "100%", maxWidth: 80, margin: "0 auto", borderRadius: "10px", border: "1px solid #ebdcc3", background: "#fdf8f0", outline: "none" }} placeholder="-" value={data.kompetensi} onChange={(e) => handleInputChange(s.id, "kompetensi", e.target.value)} />
+                            <input disabled={isLocked} type="number" inputMode="decimal" style={{ fontSize: "15px", padding: "10px", textAlign: "center", fontWeight: "bold", width: "100%", maxWidth: 80, margin: "0 auto", borderRadius: "10px", border: "1px solid #ebdcc3", background: isLocked ? "#f1f5f9" : "#fdf8f0", outline: "none" }} placeholder="-" value={data.kompetensi} onChange={(e) => handleInputChange(s.id, "kompetensi", e.target.value)} />
                           </td>
                           <td style={{ padding: "12px 12px", textAlign: "center", borderBottom: "1px solid #f5ede1" }}>
-                            <input type="number" inputMode="decimal" style={{ fontSize: "15px", padding: "10px", textAlign: "center", fontWeight: "bold", width: "100%", maxWidth: 80, margin: "0 auto", borderRadius: "10px", border: "1px solid #ebdcc3", background: "#fdf8f0", outline: "none" }} placeholder="-" value={data.sikap} onChange={(e) => handleInputChange(s.id, "sikap", e.target.value)} />
+                            <input disabled={isLocked} type="number" inputMode="decimal" style={{ fontSize: "15px", padding: "10px", textAlign: "center", fontWeight: "bold", width: "100%", maxWidth: 80, margin: "0 auto", borderRadius: "10px", border: "1px solid #ebdcc3", background: isLocked ? "#f1f5f9" : "#fdf8f0", outline: "none" }} placeholder="-" value={data.sikap} onChange={(e) => handleInputChange(s.id, "sikap", e.target.value)} />
                           </td>
                           <td style={{ padding: "12px 12px", textAlign: "center", borderBottom: "1px solid #f5ede1" }}>
-                            <input type="number" inputMode="decimal" style={{ fontSize: "15px", padding: "10px", textAlign: "center", fontWeight: "bold", width: "100%", maxWidth: 80, margin: "0 auto", borderRadius: "10px", border: "1px solid #ebdcc3", background: "#fdf8f0", outline: "none" }} placeholder="-" value={data.ujian} onChange={(e) => handleInputChange(s.id, "ujian", e.target.value)} />
+                            <input disabled={isLocked} type="number" inputMode="decimal" style={{ fontSize: "15px", padding: "10px", textAlign: "center", fontWeight: "bold", width: "100%", maxWidth: 80, margin: "0 auto", borderRadius: "10px", border: "1px solid #ebdcc3", background: isLocked ? "#f1f5f9" : "#fdf8f0", outline: "none" }} placeholder="-" value={data.ujian} onChange={(e) => handleInputChange(s.id, "ujian", e.target.value)} />
                           </td>
                           <td style={{ padding: "16px 20px", textAlign: "right", borderBottom: "1px solid #f5ede1" }}>
                             <div style={{ display: "inline-block", padding: "6px 14px", borderRadius: "10px", background: nilaiAkhir ? isLulus ? "#dcfce7" : "#fee2e2" : "#fdf8f0", color: nilaiAkhir ? isLulus ? "#15803d" : "#b91c1c" : "#94a3b8", fontWeight: "800", fontSize: "14px", minWidth: 60, textAlign: "center", border: "1px solid #ebdcc3" }}>
@@ -930,9 +944,9 @@ export default function InputNilaiPage() {
             <button
               type="button"
               className="w-full sm:w-auto flex items-center justify-center gap-2"
-              style={{ background: "#550000", color: "white", padding: "12px 26px", borderRadius: "14px", fontWeight: "800", border: "none", cursor: saving || loadingSantri ? "not-allowed" : "pointer", boxShadow: "0 4px 14px rgba(85,0,0,0.25)" }}
+              style={{ background: isLocked ? "#cbd5e1" : "#550000", color: "white", padding: "12px 26px", borderRadius: "14px", fontWeight: "800", border: "none", cursor: saving || loadingSantri || isLocked ? "not-allowed" : "pointer", boxShadow: isLocked ? "none" : "0 4px 14px rgba(85,0,0,0.25)" }}
               onClick={handleSimpan}
-              disabled={saving || loadingSantri}
+              disabled={saving || loadingSantri || isLocked}
             >
               {saving ? (
                 <><Loader2 size={18} className="animate-spin" /> Menyimpan...</>

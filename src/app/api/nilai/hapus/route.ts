@@ -9,6 +9,14 @@ export async function DELETE(req: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
+    // Cek Kunci Nilai
+    const lockSetting = await prisma.kalenderAkademik.findFirst({
+      where: { kategori: "PENGATURAN_SISTEM", nama_kegiatan: "LOCK_INPUT_NILAI" }
+    });
+    if (lockSetting?.is_libur && !session.role?.includes("ADMIN_SUPER")) {
+      return NextResponse.json({ error: "Akses Ditolak: Penginputan nilai sudah dikunci oleh Admin Kurikulum." }, { status: 403 });
+    }
+
     const { searchParams } = new URL(req.url);
     const santri_id = searchParams.get("santri_id");
     let mapel_id = searchParams.get("mapel_id");
