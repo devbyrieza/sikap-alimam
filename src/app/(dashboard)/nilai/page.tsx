@@ -155,16 +155,22 @@ export default function InputNilaiPage() {
   }, [mapelList, mapel_id]);
 
 
+  // Helper to get unique draft key
+  const getDraftKey = useCallback(() => {
+    const mId = isSpecialClass ? namaMapelCustom : mapel_id;
+    return `nilai_draft_${kelas_id}_${mId}_${semester}_${tahun_ajaran}_${periode}`;
+  }, [kelas_id, mapel_id, namaMapelCustom, isSpecialClass, semester, tahun_ajaran, periode]);
+
   // AUTOSAVE: Load Draft from localStorage on mount (for Step 2)
   useEffect(() => {
     if (step === 2) {
       try {
-        const draft = localStorage.getItem("nilai_form_draft");
+        const draft = localStorage.getItem(getDraftKey());
         if (draft) {
           const parsed = JSON.parse(draft);
           if (
             parsed.kelas === kelas_id &&
-            parsed.mapel === mapel_id &&
+            parsed.mapel === (isSpecialClass ? namaMapelCustom : mapel_id) &&
             parsed.semester === semester &&
             parsed.tahun === tahun_ajaran &&
             parsed.periode === periode
@@ -176,23 +182,23 @@ export default function InputNilaiPage() {
         console.error("Gagal parse draft nilai", e);
       }
     }
-  }, [step, kelas_id, mapel_id, semester, tahun_ajaran]);
+  }, [step, kelas_id, mapel_id, namaMapelCustom, isSpecialClass, semester, tahun_ajaran, periode, getDraftKey]);
 
   // AUTOSAVE: Save to localStorage whenever inputData changes
   useEffect(() => {
     if (step === 2 && Object.keys(inputData).length > 0) {
       localStorage.setItem(
-        "nilai_form_draft",
+        getDraftKey(),
         JSON.stringify({
           kelas: kelas_id,
-          mapel: mapel_id,
+          mapel: isSpecialClass ? namaMapelCustom : mapel_id,
           semester: semester,
           tahun: tahun_ajaran,
           periode: periode,
           data: inputData })
       );
     }
-  }, [inputData, step, kelas_id, mapel_id, namaMapelCustom, isSpecialClass, semester, tahun_ajaran, periode]);
+  }, [inputData, step, kelas_id, mapel_id, namaMapelCustom, isSpecialClass, semester, tahun_ajaran, periode, getDraftKey]);
 
   // Fetch santri + nilai existing saat step 2
   const fetchStep2 = useCallback(async () => {
@@ -216,7 +222,7 @@ export default function InputNilaiPage() {
       setSantriList(santri);
 
       // Cek Draft
-      const draftStr = localStorage.getItem("nilai_form_draft");
+      const draftStr = localStorage.getItem(getDraftKey());
       let draftData: Record<string, CapaianNilai> = {};
       if (draftStr) {
         try {
@@ -390,7 +396,7 @@ export default function InputNilaiPage() {
       if (!res.ok) throw new Error(data.error);
 
       // Clear draft on success
-      localStorage.removeItem("nilai_form_draft");
+      localStorage.removeItem(getDraftKey());
 
       Swal.fire({
         icon: "success",
