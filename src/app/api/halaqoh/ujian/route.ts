@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { getSession } from "@/lib/auth";
 
 export const dynamic = 'force-dynamic';
 
@@ -45,6 +46,16 @@ export async function GET(request: Request) {
 
 export async function POST(request: Request) {
   try {
+    const session = await getSession();
+
+    // Cek Kunci Nilai Halaqoh
+    const lockSetting = await prisma.kalenderAkademik.findFirst({
+      where: { kategori: "PENGATURAN_SISTEM", nama_kegiatan: "LOCK_INPUT_HALAQOH" }
+    });
+    if (lockSetting?.is_libur && !session?.role?.includes("ADMIN_SUPER")) {
+      return NextResponse.json({ error: "Akses Ditolak: Penginputan Ujian Halaqoh sudah dikunci oleh Admin Kurikulum." }, { status: 403 });
+    }
+
     const body = await request.json();
     const {
       id,

@@ -100,6 +100,11 @@ const NAV: NavItem[] = [
     icon: <UserCheck size={18} />,
     roles: ["guru", "GURU", "musyrif", "MUSYRIF", "pengampu", "PENGAMPU", "wali_kelas", "WALI_KELAS", "kepala_sekolah", "KEPALA_SEKOLAH", "kadiv_kurikulum", "KADIV_KURIKULUM", "kadiv_pengasuhan", "KADIV_PENGASUHAN", "admin_super", "ADMIN_SUPER", "mudir", "MUDIR"] },
   {
+    href: "/pengaturan/kendali",
+    label: "Pusat Kendali",
+    icon: <Settings size={18} />,
+    roles: ["admin_super", "ADMIN_SUPER", "kadiv_kurikulum", "KADIV_KURIKULUM", "mudir", "MUDIR"] },
+  {
     href: "/master",
     label: "Master Data",
     icon: <Database size={18} />,
@@ -457,3 +462,4 @@ export default function Sidebar({ user }: SidebarProps) {
     </>
   );
 }
+

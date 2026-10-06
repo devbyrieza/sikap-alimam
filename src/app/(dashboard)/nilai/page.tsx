@@ -86,10 +86,10 @@ export default function InputNilaiPage() {
     Promise.all([
       fetch("/api/profile").then((r) => r.json()),
       fetch("/api/master").then((r) => r.json()),
-      fetch("/api/setting-nilai").then((r) => r.json()),
+      fetch("/api/pengaturan/kendali").then((r) => r.json()),
     ])
       .then(([profileRes, masterRes, settingRes]) => {
-        if (settingRes?.is_locked) {
+        if (settingRes?.config?.LOCK_INPUT_NILAI && !settingRes?.isAdminSuper) {
           setIsLocked(true);
         }
         const pegawaiObj = profileRes?.pegawai;

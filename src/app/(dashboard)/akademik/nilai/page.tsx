@@ -1,7 +1,8 @@
 "use client";
 
 import React, { useState, useEffect, useMemo } from "react";
-import { Search, Filter, Download, BookOpen, Users, TrendingUp, Trophy, Inbox } from "lucide-react";
+import Link from "next/link";
+import { Search, Filter, Download, BookOpen, Users, TrendingUp, Trophy, Inbox, Settings } from "lucide-react";
 
 interface NilaiRow {
   id: string;
@@ -129,27 +130,6 @@ export default function FilterNilaiPage() {
       .catch(console.error);
   }, []);
 
-  const toggleLock = async () => {
-    if (!confirm(isLocked ? "Buka kembali akses penginputan nilai untuk seluruh guru?" : "Kunci akses penginputan nilai? Guru tidak akan bisa lagi menyimpan atau mengubah nilai.")) return;
-    setLoadingLock(true);
-    try {
-      const res = await fetch("/api/setting-nilai", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ is_locked: !isLocked })
-      });
-      if (res.ok) {
-        setIsLocked(!isLocked);
-      } else {
-        alert("Gagal merubah pengaturan");
-      }
-    } catch (e) {
-      console.error(e);
-    } finally {
-      setLoadingLock(false);
-    }
-  };
-
   return (
     <div className="mx-auto flex w-full max-w-6xl flex-col gap-6 px-4 py-6 sm:px-7">
       {/* Banner */}
@@ -168,25 +148,10 @@ export default function FilterNilaiPage() {
         </div>
         
         <div className="relative z-10 shrink-0">
-          <button 
-            onClick={toggleLock} 
-            disabled={loadingLock}
-            className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold transition-all shadow-md ${isLocked ? 'bg-rose-500 hover:bg-rose-600 text-white shadow-rose-900/50' : 'bg-emerald-500 hover:bg-emerald-600 text-white shadow-emerald-900/50'}`}
-          >
-            {loadingLock ? (
-              <span>Loading...</span>
-            ) : isLocked ? (
-              <>
-                <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5"><path strokeLinecap="round" strokeLinejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
-                <span>Akses Guru Dikunci</span>
-              </>
-            ) : (
-              <>
-                <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5"><path strokeLinecap="round" strokeLinejoin="round" d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z" /></svg>
-                <span>Akses Guru Terbuka</span>
-              </>
-            )}
-          </button>
+          <Link href="/pengaturan/kendali" className="flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold transition-all shadow-md bg-white/10 hover:bg-white/20 text-white backdrop-blur-md border border-white/20">
+            <Settings size={18} />
+            <span>Pusat Kendali Sistem</span>
+          </Link>
         </div>
       </div>
 
