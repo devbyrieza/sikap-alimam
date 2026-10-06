@@ -465,7 +465,7 @@ export default function InputNilaiPage() {
                 fontSize: "14px",
                 boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
                 transition: "all 0.2s" }}
-              onClick={() => setStep(1)}
+              onClick={() => { setStep(1); setInputData({}); }}
             >
               <ArrowLeft size={16} color="#550000" /> Kembali
             </button>
@@ -917,7 +917,7 @@ export default function InputNilaiPage() {
               type="button"
               className="w-full sm:w-auto"
               style={{ background: "white", color: "#550000", padding: "12px 20px", borderRadius: "14px", fontWeight: "700", border: "1px solid #ebdcc3", cursor: "pointer" }}
-              onClick={() => setStep(1)}
+              onClick={() => { setStep(1); setInputData({}); }}
             >
               Batal
             </button>
