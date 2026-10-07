@@ -768,14 +768,25 @@ export default function RaporWaliPage() {
                   <p className="text-xs text-slate-500 mt-0.5">Catatan seluruh tanggal kehadiran dan ketidakhadiran ananda di kelas</p>
                 </div>
 
-                <div className="flex items-center gap-2">
+                <div className="flex flex-wrap items-center gap-2">
+                  <select
+                    className="form-control max-w-[200px] text-xs py-1.5"
+                    value={filterMapelPresensi}
+                    onChange={(e) => setFilterMapelPresensi(e.target.value)}
+                  >
+                    <option value="">Semua Mapel & Asrama</option>
+                    <option value="Harian / Asrama">Harian / Asrama</option>
+                    {(data.detail?.mapelList || []).map((m: any) => (
+                      <option key={m.id || m.nama} value={m.nama}>{m.nama}</option>
+                    ))}
+                  </select>
                   <button
                     onClick={() => setFilterStatusPresensi("")}
                     className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
                       filterStatusPresensi === "" ? "bg-primary text-white shadow-md shadow-primary/30" : "bg-slate-100 text-slate-600 hover:bg-slate-200"
                     }`}
                   >
-                    Semua ({data.detail.presensi?.length || 0})
+                    Semua Status ({data.detail.presensi?.length || 0})
                   </button>
                   <button
                     onClick={() => setFilterStatusPresensi("tidak_hadir")}
@@ -783,7 +794,7 @@ export default function RaporWaliPage() {
                       filterStatusPresensi === "tidak_hadir" ? "bg-amber-600 text-white shadow-md shadow-amber-600/30" : "bg-slate-100 text-slate-600 hover:bg-slate-200"
                     }`}
                   >
-                    Hanya Ketidakhadiran ({(ringkasan.totalSakit || 0) + (ringkasan.totalIzin || 0) + (ringkasan.totalAlpha || 0)})
+                    Ketidakhadiran ({(ringkasan.totalSakit || 0) + (ringkasan.totalIzin || 0) + (ringkasan.totalAlpha || 0)})
                   </button>
                 </div>
               </div>
@@ -867,13 +878,23 @@ export default function RaporWaliPage() {
                 </div>
               </div>
 
-              <div className="w-full sm:w-72">
-                <input
-                  type="text"
-                  placeholder="Cari mata pelajaran atau topik..."
-                  className="form-control"
+              <div className="w-full sm:w-auto flex flex-col sm:flex-row gap-3">
+                <select
+                  className="form-control text-sm"
                   value={filterMapelJurnal}
                   onChange={(e) => setFilterMapelJurnal(e.target.value)}
+                >
+                  <option value="">Semua Mata Pelajaran</option>
+                  {(data.detail?.mapelList || []).map((m: any) => (
+                    <option key={m.id || m.nama} value={m.nama}>{m.nama}</option>
+                  ))}
+                </select>
+                <input
+                  type="text"
+                  placeholder="Cari topik materi..."
+                  className="form-control text-sm"
+                  value={filterKeywordJurnal}
+                  onChange={(e) => setFilterKeywordJurnal(e.target.value)}
                 />
               </div>
             </div>
