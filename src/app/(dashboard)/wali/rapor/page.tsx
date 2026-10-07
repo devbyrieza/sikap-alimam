@@ -912,6 +912,7 @@ export default function RaporWaliPage() {
         )}
 
         {/* TAB 5: TAHFIDZ & IBADAH */}
+        {activeTab === "tahfidz" && (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <div className="flex flex-col gap-6">
               {/* Ujian Tahfidz Card */}
@@ -965,7 +966,7 @@ export default function RaporWaliPage() {
                         </div>
                         {u.catatan && (
                           <div className="bg-amber-50/50 p-2 rounded-lg border border-amber-100/50 mt-1">
-                            <p className="text-[10px] italic text-amber-700">"{u.catatan}"</p>
+                            <p className="text-[10px] italic text-amber-700">&quot;{u.catatan}&quot;</p>
                           </div>
                         )}
                       </div>
