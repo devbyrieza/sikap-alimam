@@ -90,11 +90,16 @@ export async function GET(req: NextRequest) {
       kegiatan: j.kegiatan,
       catatan: j.catatan || "" }));
 
-    // 4. Get Tahfidz
+    // 4. Get Tahfidz & Ujian
     const tahfidz = await prisma.capaianTahfidz.findMany({
       where: { santri_id },
       orderBy: { tanggal: "desc" },
       take: 15 });
+
+    const ujianTahfidz = await prisma.ujianTahfidz.findMany({
+      where: { santri_id },
+      orderBy: { tanggal: "desc" }
+    });
 
     // 5. Get Akademik (Nilai Santri)
     const akademik = await prisma.nilaiSantri.findMany({
@@ -179,6 +184,7 @@ export async function GET(req: NextRequest) {
           keterangan: a.keterangan })),
         mapelList,
         tahfidz,
+        ujianTahfidz,
         ibadah } });
   } catch (error) {
     console.error("Error generating rapor:", error);

@@ -24,6 +24,7 @@ import {
   Target,
   User,
   MessageSquare,
+  Trophy,
   Sparkles,
   Lock,
   CreditCard,
@@ -911,40 +912,101 @@ export default function RaporWaliPage() {
         )}
 
         {/* TAB 5: TAHFIDZ & IBADAH */}
-        {activeTab === "tahfidz" && (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* Tahfidz Card */}
-            <div className="bg-white/90 backdrop-blur rounded-3xl p-6 border border-slate-100 shadow-xl shadow-primary/10 space-y-4">
-              <div className="flex items-center gap-3 mb-2">
-                <div className="p-2.5 bg-emerald-50 text-emerald-700 rounded-xl">
-                  <BookOpen size={20} />
+            <div className="flex flex-col gap-6">
+              {/* Ujian Tahfidz Card */}
+              <div className="bg-white/90 backdrop-blur rounded-3xl p-6 border border-slate-100 shadow-xl shadow-primary/10 space-y-4">
+                <div className="flex items-center gap-3 mb-2">
+                  <div className="p-2.5 bg-blue-50 text-blue-700 rounded-xl">
+                    <Trophy size={20} />
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-slate-800 text-base">Hasil Ujian Tahfidz</h3>
+                    <p className="text-xs text-slate-500">Ujian Pra-Target, Target, dan Itqon</p>
+                  </div>
                 </div>
-                <div>
-                  <h3 className="font-bold text-slate-800 text-base">Capaian Mutabaah Tahfidz</h3>
-                  <p className="text-xs text-slate-500">Ziyadah (hafalan baru) & Murojaah harian</p>
-                </div>
+
+                {(!detail.ujianTahfidz || detail.ujianTahfidz.length === 0) ? (
+                  <p className="text-center text-slate-400 py-8 text-sm">Belum ada nilai ujian tahfidz.</p>
+                ) : (
+                  <div className="space-y-3">
+                    {detail.ujianTahfidz?.map((u: any) => (
+                      <div key={u.id} className="p-4 rounded-2xl bg-slate-50/80 border border-slate-100 flex flex-col gap-3 shadow-sm">
+                        <div className="flex items-start justify-between">
+                          <div>
+                            <span className="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded bg-blue-100 text-blue-800">
+                              {u.jenis_ujian.replace(/_/g, " ")}
+                            </span>
+                            <h4 className="font-bold text-slate-800 text-sm mt-1">
+                              {u.juz ? `Juz ${u.juz}` : u.surah_nama} {u.surah_selesai_nama && u.surah_selesai_nama !== u.surah_nama ? `- ${u.surah_selesai_nama}` : ""}
+                            </h4>
+                            <p className="text-[11px] text-slate-500 mt-0.5">{formatTanggal(u.tanggal)}</p>
+                          </div>
+                          <div className="text-right">
+                            <span className={`px-3 py-1 rounded-xl bg-white border border-slate-200 text-sm font-black shadow-sm ${u.is_lulus ? 'text-emerald-600' : 'text-rose-600'}`}>
+                              {u.nilai_akhir}
+                            </span>
+                            <p className="text-[10px] font-bold mt-1 text-slate-400 uppercase">{u.is_lulus ? 'LULUS' : 'MENGULANG'}</p>
+                          </div>
+                        </div>
+                        <div className="grid grid-cols-3 gap-2 pt-3 border-t border-slate-200/60">
+                          <div className="text-center bg-white rounded-lg p-1.5 border border-slate-100 shadow-sm">
+                            <p className="text-[9px] text-slate-500 uppercase font-bold">Kelancaran</p>
+                            <p className="font-bold text-slate-700 text-xs">{u.nilai_kelancaran || "-"}</p>
+                          </div>
+                          <div className="text-center bg-white rounded-lg p-1.5 border border-slate-100 shadow-sm">
+                            <p className="text-[9px] text-slate-500 uppercase font-bold">Fashohah</p>
+                            <p className="font-bold text-slate-700 text-xs">{u.nilai_bacaan || "-"}</p>
+                          </div>
+                          <div className="text-center bg-white rounded-lg p-1.5 border border-slate-100 shadow-sm">
+                            <p className="text-[9px] text-slate-500 uppercase font-bold">Adab</p>
+                            <p className="font-bold text-slate-700 text-xs">{u.nilai_sikap || "-"}</p>
+                          </div>
+                        </div>
+                        {u.catatan && (
+                          <div className="bg-amber-50/50 p-2 rounded-lg border border-amber-100/50 mt-1">
+                            <p className="text-[10px] italic text-amber-700">"{u.catatan}"</p>
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
 
-              {detail.tahfidz?.length === 0 ? (
-                <p className="text-center text-slate-400 py-8 text-sm">Belum ada riwayat setoran tahfidz tercatat.</p>
-              ) : (
-                <div className="space-y-3">
-                  {detail.tahfidz?.map((t: any) => (
-                    <div key={t.id} className="p-4 rounded-2xl bg-slate-50/80 border border-slate-100 flex items-center justify-between gap-4 shadow-sm">
-                      <div>
-                        <span className="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded bg-emerald-100 text-emerald-800">
-                          {t.jenis}
-                        </span>
-                        <h4 className="font-bold text-slate-800 text-sm mt-1">{t.surat} {t.ayat ? `(Ayat ${t.ayat})` : ""}</h4>
-                        <p className="text-[11px] text-slate-500 mt-0.5">{formatTanggal(t.tanggal)}</p>
-                      </div>
-                      <span className="px-3 py-1 rounded-xl bg-white border border-slate-200 text-xs font-bold text-emerald-700 shadow-sm">
-                        {t.keterangan || "Lancar"}
-                      </span>
-                    </div>
-                  ))}
+              {/* Tahfidz Card */}
+              <div className="bg-white/90 backdrop-blur rounded-3xl p-6 border border-slate-100 shadow-xl shadow-primary/10 space-y-4">
+                <div className="flex items-center gap-3 mb-2">
+                  <div className="p-2.5 bg-emerald-50 text-emerald-700 rounded-xl">
+                    <BookOpen size={20} />
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-slate-800 text-base">Capaian Mutabaah Tahfidz</h3>
+                    <p className="text-xs text-slate-500">Ziyadah (hafalan baru) & Murojaah harian</p>
+                  </div>
                 </div>
-              )}
+
+                {detail.tahfidz?.length === 0 ? (
+                  <p className="text-center text-slate-400 py-8 text-sm">Belum ada riwayat setoran tahfidz tercatat.</p>
+                ) : (
+                  <div className="space-y-3">
+                    {detail.tahfidz?.map((t: any) => (
+                      <div key={t.id} className="p-4 rounded-2xl bg-slate-50/80 border border-slate-100 flex items-center justify-between gap-4 shadow-sm">
+                        <div>
+                          <span className="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded bg-emerald-100 text-emerald-800">
+                            {t.jenis}
+                          </span>
+                          <h4 className="font-bold text-slate-800 text-sm mt-1">{t.surat} {t.ayat ? `(Ayat ${t.ayat})` : ""}</h4>
+                          <p className="text-[11px] text-slate-500 mt-0.5">{formatTanggal(t.tanggal)}</p>
+                        </div>
+                        <span className="px-3 py-1 rounded-xl bg-white border border-slate-200 text-xs font-bold text-emerald-700 shadow-sm">
+                          {t.keterangan || "Lancar"}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
 
             {/* Ibadah Card */}
