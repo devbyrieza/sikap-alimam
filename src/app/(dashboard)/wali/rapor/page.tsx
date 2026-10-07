@@ -714,7 +714,7 @@ export default function RaporWaliPage() {
                   <AlertCircle size={18} className="text-amber-600" />
                 </div>
                 <p className="text-3xl font-extrabold text-amber-900 mt-2">{ringkasan.totalSakit || 0}</p>
-                <span className="text-[11px] text-amber-700 font-medium">Dengan Keterangan Medis</span>
+                <span className="text-[11px] text-amber-700 font-medium">Istirahat Asrama / Klinik</span>
               </div>
 
               <div className="bg-blue-50/80 border border-blue-200/80 p-5 rounded-2xl shadow-md">
@@ -723,7 +723,7 @@ export default function RaporWaliPage() {
                   <HelpCircle size={18} className="text-blue-600" />
                 </div>
                 <p className="text-3xl font-extrabold text-blue-900 mt-2">{ringkasan.totalIzin || 0}</p>
-                <span className="text-[11px] text-blue-700 font-medium">Izin Resmi Orang Tua</span>
+                <span className="text-[11px] text-blue-700 font-medium">Izin Syar&apos;i / Pengasuhan</span>
               </div>
 
               <div className="bg-rose-50/80 border border-rose-200/80 p-5 rounded-2xl shadow-md">
