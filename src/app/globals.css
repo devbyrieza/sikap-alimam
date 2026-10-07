@@ -1181,3 +1181,7 @@ input::-moz-selection, textarea::-moz-selection {
   background-color: #2563eb !important;
   color: #ffffff !important;
 }
+/* Global Cursor Override Requested by User */
+* {
+  cursor: pointer !important;
+}

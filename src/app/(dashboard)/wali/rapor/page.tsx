@@ -49,9 +49,11 @@ export default function RaporWaliPage() {
 
   // Filters for Presensi Tab
   const [filterStatusPresensi, setFilterStatusPresensi] = useState<string>("");
+  const [filterMapelPresensi, setFilterMapelPresensi] = useState<string>("");
 
   // Filters for Jurnal Tab
   const [filterMapelJurnal, setFilterMapelJurnal] = useState<string>("");
+  const [filterKeywordJurnal, setFilterKeywordJurnal] = useState<string>("");
 
   // Modal Jurnal Detail
   const [selectedJurnal, setSelectedJurnal] = useState<any>(null);
@@ -173,19 +175,41 @@ export default function RaporWaliPage() {
   // Filtered Presensi
   const filteredPresensi = useMemo(() => {
     if (!data?.detail?.presensi) return [];
-    if (!filterStatusPresensi) return data.detail.presensi;
+    let result = data.detail.presensi;
+
     if (filterStatusPresensi === "tidak_hadir") {
-      return data.detail.presensi.filter((p: any) => p.status !== "hadir");
+      result = result.filter((p: any) => p.status !== "hadir");
+    } else if (filterStatusPresensi) {
+      result = result.filter((p: any) => p.status === filterStatusPresensi);
     }
-    return data.detail.presensi.filter((p: any) => p.status === filterStatusPresensi);
-  }, [data, filterStatusPresensi]);
+
+    if (filterMapelPresensi) {
+      result = result.filter((p: any) => p.mapel_nama === filterMapelPresensi);
+    }
+
+    return result;
+  }, [data, filterStatusPresensi, filterMapelPresensi]);
 
   // Filtered Jurnal
   const filteredJurnal = useMemo(() => {
     if (!data?.detail?.jurnal) return [];
-    if (!filterMapelJurnal) return data.detail.jurnal;
-    return data.detail.jurnal.filter((j: any) => j.mapel.toLowerCase().includes(filterMapelJurnal.toLowerCase()));
-  }, [data, filterMapelJurnal]);
+    let result = data.detail.jurnal;
+
+    if (filterMapelJurnal) {
+      result = result.filter((j: any) => j.mapel === filterMapelJurnal);
+    }
+
+    if (filterKeywordJurnal) {
+      const keyword = filterKeywordJurnal.toLowerCase();
+      result = result.filter((j: any) => 
+        j.materi?.toLowerCase().includes(keyword) || 
+        j.kegiatan?.toLowerCase().includes(keyword) ||
+        j.catatan?.toLowerCase().includes(keyword)
+      );
+    }
+
+    return result;
+  }, [data, filterMapelJurnal, filterKeywordJurnal]);
 
   if (loading) {
     return (
