@@ -57,7 +57,7 @@ export async function POST(request: Request) {
     }
 
     const body = await request.json();
-    const {
+    let {
       id,
       santri_id,
       pegawai_id,
@@ -77,6 +77,21 @@ export async function POST(request: Request) {
       is_lulus,
       catatan
     } = body;
+
+    if (!pegawai_id && session) {
+      if (session.asatidz_id) {
+        pegawai_id = session.asatidz_id;
+      } else if (session.userId) {
+        const pegawai = await prisma.pegawai.findFirst({
+          where: { user_id: session.userId }
+        });
+        if (pegawai) pegawai_id = pegawai.id;
+      }
+    }
+
+    if (!pegawai_id) {
+      return NextResponse.json({ error: "Data Pegawai/Musyrif tidak ditemukan. Harap lengkapi profil terlebih dahulu." }, { status: 400 });
+    }
 
     let nilai_akhir = Math.round((Number(nilai_bacaan) + Number(nilai_kelancaran || 0) + Number(nilai_sikap)) / 3);
     if (jenis_ujian === 'ujian_itqon' && is_lulus) {

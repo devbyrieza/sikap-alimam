@@ -312,8 +312,12 @@ export default function UjianTahfidzPage() {
     setSaving(true);
     setError(null);
     try {
+      const selectedSantriData = allSantri.find(s => s.id === selectedSantriId);
+      const pengampuId = selectedSantriData?.pengampu_id;
+
       const body = {
         santri_id: selectedSantriId,
+        pegawai_id: pengampuId || undefined,
         tanggal,
         jenis_ujian: jenisUjian,
         juz: jenisUjian === "ujian_itqon" ? juz : undefined,
