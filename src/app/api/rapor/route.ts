@@ -32,6 +32,7 @@ export async function GET(req: NextRequest) {
     // 2. Get Presensi & Breakdown
     const presensi = await prisma.presensiSiswa.findMany({
       where: { santri_id },
+      include: { mapel: { select: { nama: true } } },
       orderBy: { tanggal: "desc" } });
     
     // Karena absen sekarang per mapel, kita harus menghitung total hari unik per status.
@@ -172,6 +173,8 @@ export async function GET(req: NextRequest) {
           id: p.id,
           tanggal: p.tanggal.toISOString().split("T")[0],
           status: p.status,
+          mapel_nama: p.mapel?.nama ? p.mapel.nama.replace(/^\[.*?\]\s*/, "") : null,
+          jam_ke: p.jam_ke,
           keterangan: p.keterangan || "" })),
         jurnal: formattedJurnal,
         akademik: akademik.map((a) => ({

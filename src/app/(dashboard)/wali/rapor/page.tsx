@@ -769,7 +769,8 @@ export default function RaporWaliPage() {
                   <thead>
                     <tr className="bg-slate-50 text-slate-500 text-xs font-bold uppercase border-b border-slate-100">
                       <th className="py-3.5 px-4 w-12 text-center">No</th>
-                      <th className="py-3.5 px-4">Tanggal Presensi</th>
+                      <th className="py-3.5 px-4">Tanggal & Waktu</th>
+                      <th className="py-3.5 px-4">Mata Pelajaran</th>
                       <th className="py-3.5 px-4 text-center">Status Kehadiran</th>
                       <th className="py-3.5 px-4">Keterangan / Alasan</th>
                     </tr>
@@ -777,7 +778,7 @@ export default function RaporWaliPage() {
                   <tbody>
                     {filteredPresensi.length === 0 ? (
                       <tr>
-                        <td colSpan={4} className="text-center py-10 text-slate-400 text-sm">
+                        <td colSpan={5} className="text-center py-10 text-slate-400 text-sm">
                           Tidak ada catatan presensi pada filter ini.
                         </td>
                       </tr>
@@ -799,7 +800,15 @@ export default function RaporWaliPage() {
                         return (
                           <tr key={p.id || idx} className="border-b border-slate-50 hover:bg-slate-50/60 transition-colors text-sm shadow-sm">
                             <td className="py-3 px-4 text-center text-slate-400 font-semibold">{idx + 1}</td>
-                            <td className="py-3 px-4 font-bold text-slate-800">{formatTanggal(p.tanggal)}</td>
+                            <td className="py-3 px-4">
+                              <span className="font-bold text-slate-800 block">{formatTanggal(p.tanggal)}</span>
+                              {p.jam_ke && <span className="text-[10px] text-slate-500 mt-0.5">Jam ke-{p.jam_ke}</span>}
+                            </td>
+                            <td className="py-3 px-4">
+                              <span className="font-semibold text-slate-700 text-xs">
+                                {p.mapel_nama || "Harian / Asrama"}
+                              </span>
+                            </td>
                             <td className="py-3 px-4 text-center">
                               <span className={`px-3 py-1 rounded-full text-xs font-extrabold uppercase border ${badgeClass}`}>
                                 {statusText}
