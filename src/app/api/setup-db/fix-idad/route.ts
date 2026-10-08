@@ -23,39 +23,29 @@ export async function GET() {
       });
       logs.push(`Memindahkan ${updateSantri.count} santri ke IL.`);
 
-      // Hapus dependensi
-      const mapels = await prisma.mataPelajaran.findMany({ where: { kelas_id: classIdad.id } });
-      const mapelIds = mapels.map(m => m.id);
+      // Lakukan pemusnahan mutlak berdasarkan kelas_id untuk semua tabel anak
+      
+      const p1 = await prisma.nilaiSantri.deleteMany({ where: { kelas_id: classIdad.id } });
+      logs.push(`Menghapus ${p1.count} NilaiSantri sisa.`);
 
-      if (mapelIds.length > 0) {
-        const delNilai = await prisma.nilaiSantri.deleteMany({ where: { mapel_id: { in: mapelIds } } });
-        logs.push(`Menghapus ${delNilai.count} NilaiSantri duplikat.`);
+      const p2 = await prisma.presensiSiswa.deleteMany({ where: { kelas_id: classIdad.id } });
+      logs.push(`Menghapus ${p2.count} PresensiSiswa sisa.`);
 
-        const delPresensi = await prisma.presensiSiswa.deleteMany({ where: { mapel_id: { in: mapelIds } } });
-        logs.push(`Menghapus ${delPresensi.count} PresensiSiswa duplikat.`);
+      const p3 = await prisma.jadwalPelajaran.deleteMany({ where: { kelas_id: classIdad.id } });
+      logs.push(`Menghapus ${p3.count} JadwalPelajaran sisa.`);
 
-        const delJadwal = await prisma.jadwalPelajaran.deleteMany({ where: { mapel_id: { in: mapelIds } } });
-        logs.push(`Menghapus ${delJadwal.count} JadwalPelajaran duplikat.`);
+      const p4 = await prisma.jurnalMengajar.deleteMany({ where: { kelas_id: classIdad.id } });
+      logs.push(`Menghapus ${p4.count} JurnalMengajar sisa.`);
 
-        const delJurnal = await prisma.jurnalMengajar.deleteMany({ where: { mapel_id: { in: mapelIds } } });
-        logs.push(`Menghapus ${delJurnal.count} JurnalMengajar lintas kelas.`);
+      const p5 = await prisma.asatidzmMapel.deleteMany({ where: { kelas_id: classIdad.id } });
+      logs.push(`Menghapus ${p5.count} AsatidzmMapel sisa.`);
 
-        const delMapelAssign = await prisma.asatidzmMapel.deleteMany({ where: { mapel_id: { in: mapelIds } } });
-        logs.push(`Menghapus ${delMapelAssign.count} AsatidzmMapel lintas kelas.`);
-      }
-
-      const deleteJurnalSelf = await prisma.jurnalMengajar.deleteMany({ where: { kelas_id: classIdad.id } });
-      logs.push(`Menghapus ${deleteJurnalSelf.count} jurnal sisa.`);
-
-      const deleteMapelAssignSelf = await prisma.asatidzmMapel.deleteMany({ where: { kelas_id: classIdad.id } });
-      logs.push(`Menghapus ${deleteMapelAssignSelf.count} mapping sisa.`);
-
-      const deleteMataPelajaran = await prisma.mataPelajaran.deleteMany({ where: { kelas_id: classIdad.id } });
-      logs.push(`Menghapus ${deleteMataPelajaran.count} mata pelajaran duplikat.`);
+      const p6 = await prisma.mataPelajaran.deleteMany({ where: { kelas_id: classIdad.id } });
+      logs.push(`Menghapus ${p6.count} MataPelajaran duplikat.`);
 
       // Hapus Kelas
       await prisma.kelas.delete({ where: { id: classIdad.id } });
-      logs.push("🗑️ Kelas I'dad Lughowy berhasil dihapus.");
+      logs.push("🗑️ Kelas I'dad Lughowy berhasil dihapus sepenuhnya.");
     } else {
       logs.push("Kelas I'dad Lughowy sudah tidak ditemukan (mungkin sudah terhapus).");
     }
