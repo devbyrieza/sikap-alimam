@@ -13,6 +13,7 @@ const NILAI_OPTIONS = OPSI_NILAI.map(n => ({ value: n as number, label: String(n
 const OPSI_SIKAP = [
   { value: 100, label: "Sangat Baik" },
   { value: 90, label: "Baik" },
+  
   { value: 80, label: "Cukup" },
   { value: 70, label: "Kurang" },
   { value: 60, label: "Sangat Kurang" },
