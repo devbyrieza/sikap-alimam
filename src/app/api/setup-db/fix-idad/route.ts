@@ -36,13 +36,19 @@ export async function GET() {
 
         const delJadwal = await prisma.jadwalPelajaran.deleteMany({ where: { mapel_id: { in: mapelIds } } });
         logs.push(`Menghapus ${delJadwal.count} JadwalPelajaran duplikat.`);
+
+        const delJurnal = await prisma.jurnalMengajar.deleteMany({ where: { mapel_id: { in: mapelIds } } });
+        logs.push(`Menghapus ${delJurnal.count} JurnalMengajar lintas kelas.`);
+
+        const delMapelAssign = await prisma.asatidzmMapel.deleteMany({ where: { mapel_id: { in: mapelIds } } });
+        logs.push(`Menghapus ${delMapelAssign.count} AsatidzmMapel lintas kelas.`);
       }
 
-      const deleteJurnal = await prisma.jurnalMengajar.deleteMany({ where: { kelas_id: classIdad.id } });
-      logs.push(`Menghapus ${deleteJurnal.count} jurnal duplikat.`);
+      const deleteJurnalSelf = await prisma.jurnalMengajar.deleteMany({ where: { kelas_id: classIdad.id } });
+      logs.push(`Menghapus ${deleteJurnalSelf.count} jurnal sisa.`);
 
-      const deleteMapelAssign = await prisma.asatidzmMapel.deleteMany({ where: { kelas_id: classIdad.id } });
-      logs.push(`Menghapus ${deleteMapelAssign.count} mapping guru duplikat.`);
+      const deleteMapelAssignSelf = await prisma.asatidzmMapel.deleteMany({ where: { kelas_id: classIdad.id } });
+      logs.push(`Menghapus ${deleteMapelAssignSelf.count} mapping sisa.`);
 
       const deleteMataPelajaran = await prisma.mataPelajaran.deleteMany({ where: { kelas_id: classIdad.id } });
       logs.push(`Menghapus ${deleteMataPelajaran.count} mata pelajaran duplikat.`);
