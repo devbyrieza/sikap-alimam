@@ -293,9 +293,10 @@ export default function UjianTahfidzPage() {
     if (!selectedSurah) return;
     const d = Math.max(1, ayatDari || 1);
     const k = Math.max(d, ayatKe || d);
-    const calc = calculateHalaman(selectedSurah.nomor, d, k);
+    const akhirNomor = selectedSurahAkhir ? selectedSurahAkhir.nomor : undefined;
+    const calc = calculateHalaman(selectedSurah.nomor, d, k, akhirNomor);
     if (calc > 0) setJumlahHalaman(calc);
-  }, [selectedSurah, ayatDari, ayatKe]);
+  }, [selectedSurah, selectedSurahAkhir, ayatDari, ayatKe]);
 
   const selectedSantri = allSantri.find(s => s.id === selectedSantriId);
   const filteredSantri = allSantri.filter(s =>
