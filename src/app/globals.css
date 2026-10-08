@@ -1,4 +1,4 @@
-﻿/* -- Google Fonts ---------------------------------------------------- */
+/* -- Google Fonts ---------------------------------------------------- */
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Amiri:wght@400;700&display=swap');
 
 @import "tailwindcss";
@@ -1055,8 +1055,6 @@ html, body {
 .custom-scrollbar {
   scrollbar-width: thin;
   scrollbar-color: #cbd5e1 transparent;
-  overscroll-behavior: contain !important;
-  overscroll-behavior-y: contain !important;
   -webkit-overflow-scrolling: touch;
 }
 
@@ -1079,8 +1077,6 @@ html, body {
 }
 
 .overscroll-contain {
-  overscroll-behavior: contain !important;
-  overscroll-behavior-y: contain !important;
 }
 
 /* Sidebar Scroll Isolation:
@@ -1090,8 +1086,6 @@ aside,
 .app-sidebar,
 nav[aria-label*="sidebar" i],
 .sidebar-nav {
-  overscroll-behavior: contain !important;
-  overscroll-behavior-y: contain !important;
 }
 
 /* Modal, Dialog & Pop-up Scroll Isolation:
@@ -1103,8 +1097,6 @@ nav[aria-label*="sidebar" i],
 .modal-container,
 .swal2-container,
 .swal2-popup {
-  overscroll-behavior: contain !important;
-  overscroll-behavior-y: contain !important;
 }
 
 /* Universal Background Scroll Lock when Modal / Dialog is active */
@@ -1125,7 +1117,6 @@ body:has(.swal2-popup),
 body.modal-open,
 body.swal2-shown {
   overflow: hidden !important;
-  overscroll-behavior: contain !important;
 }
 
 
@@ -1185,3 +1176,4 @@ input::-moz-selection, textarea::-moz-selection {
 * {
   cursor: pointer !important;
 }
+
