@@ -30,43 +30,40 @@ export async function GET() {
       { mapel: "Tahfidz", guru: "Zeidhan" }
     ];
 
-    for (const item of mapping) {
-      // Find or create Mapel
-      let mapel = await prisma.mataPelajaran.findFirst({ 
-        where: { nama: { contains: item.mapel, mode: 'insensitive' } } 
-      });
-      if (!mapel) {
-        mapel = await prisma.mataPelajaran.create({
-          data: { nama: item.mapel, is_active: true }
+    const kelasList = [kelas11, kelas12];
+
+    for (const k of kelasList) {
+      for (const item of mapping) {
+        // Find Guru
+        const guru = await prisma.pegawai.findFirst({
+          where: { nama_lengkap: { contains: item.guru, mode: 'insensitive' } }
         });
-        logs.push(`Mata Pelajaran dibuat: ${item.mapel}`);
+
+        if (!guru) {
+          logs.push(`⚠️ GAGAL: Guru tidak ditemukan untuk pencarian "${item.guru}"`);
+          continue;
+        }
+
+        // Find or create Mapel specifically for this class
+        let mapel = await prisma.mataPelajaran.findFirst({ 
+          where: { nama: { equals: item.mapel, mode: 'insensitive' }, kelas_id: k.id } 
+        });
+        if (!mapel) {
+          mapel = await prisma.mataPelajaran.create({
+            data: { nama: item.mapel, is_active: true, kelas_id: k.id }
+          });
+          logs.push(`Mata Pelajaran dibuat: ${item.mapel} (Kelas ${k.nama})`);
+        }
+
+        // Assign
+        await prisma.asatidzmMapel.upsert({
+          where: { pegawai_id_mapel_id_kelas_id: { pegawai_id: guru.id, mapel_id: mapel.id, kelas_id: k.id } },
+          update: {},
+          create: { pegawai_id: guru.id, mapel_id: mapel.id, kelas_id: k.id }
+        });
+
+        logs.push(`✅ Sukses: ${item.mapel} -> ${guru.nama_lengkap} (Kelas ${k.nama})`);
       }
-
-      // Find Guru
-      const guru = await prisma.pegawai.findFirst({
-        where: { nama_lengkap: { contains: item.guru, mode: 'insensitive' } }
-      });
-
-      if (!guru) {
-        logs.push(`⚠️ GAGAL: Guru tidak ditemukan untuk pencarian "${item.guru}"`);
-        continue;
-      }
-
-      // Assign to Kelas 11
-      await prisma.asatidzmMapel.upsert({
-        where: { pegawai_id_mapel_id_kelas_id: { pegawai_id: guru.id, mapel_id: mapel.id, kelas_id: kelas11.id } },
-        update: {},
-        create: { pegawai_id: guru.id, mapel_id: mapel.id, kelas_id: kelas11.id }
-      });
-
-      // Assign to Kelas 12
-      await prisma.asatidzmMapel.upsert({
-        where: { pegawai_id_mapel_id_kelas_id: { pegawai_id: guru.id, mapel_id: mapel.id, kelas_id: kelas12.id } },
-        update: {},
-        create: { pegawai_id: guru.id, mapel_id: mapel.id, kelas_id: kelas12.id }
-      });
-
-      logs.push(`✅ Sukses: ${item.mapel} -> ${guru.nama_lengkap}`);
     }
 
     return NextResponse.json({ success: true, message: "Sinkronisasi Distribusi Mapel MA Berhasil", logs });
