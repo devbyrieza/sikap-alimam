@@ -6,10 +6,10 @@ export const dynamic = 'force-dynamic';
 export async function GET() {
   const kelas = await prisma.kelas.findMany({
     include: {
-      _count: {
-        select: { santri: true, asatidz_mapel: true }
-      }
+      santri: { select: { id: true } }
     }
   });
-  return NextResponse.json({ kelas });
+  return NextResponse.json({ 
+    kelas: kelas.map(k => ({ id: k.id, nama: k.nama, jenjang: k.jenjang, is_active: k.is_active, santri_count: k.santri.length })) 
+  });
 }
