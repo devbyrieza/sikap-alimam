@@ -37,7 +37,7 @@ export async function GET() {
       });
       if (!mapel) {
         mapel = await prisma.mataPelajaran.create({
-          data: { nama: item.mapel, is_active: true, jenis: "pesantren" }
+          data: { nama: item.mapel, is_active: true }
         });
         logs.push(`Mata Pelajaran dibuat: ${item.mapel}`);
       }
