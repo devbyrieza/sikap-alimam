@@ -61,6 +61,11 @@ const NAV: NavItem[] = [
     icon: <BarChart3 size={18} />,
     roles: ["guru", "GURU", "wali_kelas", "WALI_KELAS", "kadiv_kurikulum", "KADIV_KURIKULUM", "kepala_sekolah", "KEPALA_SEKOLAH", "admin_super", "ADMIN_SUPER", "mudir", "MUDIR"] },
   {
+    href: "/akademik/pantau-nilai",
+    label: "Pantau Nilai",
+    icon: <BarChart3 size={18} />,
+    roles: ["kadiv_kurikulum", "KADIV_KURIKULUM", "kepala_sekolah", "KEPALA_SEKOLAH", "admin_super", "ADMIN_SUPER", "mudir", "MUDIR"] },
+  {
     href: "/wali-kelas",
     label: "Hub Wali Kelas",
     icon: <Users size={18} />,

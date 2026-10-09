@@ -10,6 +10,7 @@ export async function GET(req: NextRequest) {
   const semester = searchParams.get('semester');
   const tahun_ajaran = searchParams.get('tahun_ajaran');
   const nama_mapel_custom = searchParams.get('nama_mapel_custom');
+  const santri_id = searchParams.get('santri_id');
 
   if (!mapel_id && nama_mapel_custom) {
     const existingMapel = await prisma.mataPelajaran.findFirst({
@@ -17,7 +18,7 @@ export async function GET(req: NextRequest) {
     });
     if (existingMapel) {
       mapel_id = existingMapel.id;
-    } else {
+    } else if (!santri_id) { // Jika query bukan by santri_id
       return NextResponse.json({ nilai: [] });
     }
   }
@@ -27,6 +28,7 @@ export async function GET(req: NextRequest) {
   if (kelas_id) where.kelas_id = kelas_id;
   if (semester) where.semester = semester;
   if (tahun_ajaran) where.tahun_ajaran = tahun_ajaran;
+  if (santri_id) where.santri_id = santri_id;
 
   const nilai = await prisma.nilaiSantri.findMany({
     where,
