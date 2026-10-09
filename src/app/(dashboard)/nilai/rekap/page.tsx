@@ -267,15 +267,15 @@ export default function RekapNilaiPage() {
               </div>
 
               <div style={{ overflowX: "auto", WebkitOverflowScrolling: "touch" }}>
-                <table className="platinum-table" style={{ width: "100%", borderCollapse: "collapse", fontSize: "14px", minWidth: 600 }}>
+                <table className="platinum-table" style={{ width: "100%", borderCollapse: "collapse", fontSize: "14px", minWidth: "max-content" }}>
                   <thead>
                     <tr style={{ background: "#fdf8f0" }}>
                       <th className="sticky-col" style={{ position: "sticky", left: 0, zIndex: 20, background: "#fdf8f0", width: 40, textAlign: "center", borderBottom: "1px solid #ebdcc3", padding: "14px 16px", color: "#550000", fontWeight: 800 }}>#</th>
                       <th className="sticky-col" style={{ position: "sticky", left: 40, zIndex: 20, background: "#fdf8f0", minWidth: 170, maxWidth: 220, borderBottom: "1px solid #ebdcc3", borderRight: "1px solid #ebdcc3", padding: "14px 18px", textAlign: "left", color: "#550000", fontWeight: 800 }}>Nama Santri</th>
                       <th style={{ width: 90, borderBottom: "1px solid #ebdcc3", padding: "14px 16px", textAlign: "left", color: "#550000", fontWeight: 800 }}>NIS</th>
                       {mapelList.map((m) => (
-                        <th key={m.id} style={{ textAlign: "center", minWidth: 100, borderBottom: "1px solid #ebdcc3", padding: "14px 16px", color: "#550000", fontWeight: 800 }} title={m.nama}>
-                          {m.nama.length > 14 ? m.nama.substring(0, 14) + "…" : m.nama}
+                        <th key={m.id} style={{ textAlign: "center", minWidth: 120, borderBottom: "1px solid #ebdcc3", padding: "14px 16px", color: "#550000", fontWeight: 800 }} title={m.nama}>
+                          {m.nama.length > 14 ? m.nama.substring(0, 25) + "…" : m.nama}
                         </th>
                       ))}
                     </tr>
