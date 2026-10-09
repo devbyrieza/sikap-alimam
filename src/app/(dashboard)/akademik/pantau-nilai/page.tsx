@@ -35,51 +35,60 @@ export default function PantauNilaiPage() {
   const [loadingData, setLoadingData] = useState(false);
   const [nilaiData, setNilaiData] = useState<NilaiEntry[]>([]);
 
-  // 1. Initial Load Kelas
+  const [allSantri, setAllSantri] = useState<Santri[]>([]);
+
+  // 1. Initial Load Kelas & Semua Santri (Global Search)
   useEffect(() => {
-    fetch("/api/master/kelas")
-      .then(r => r.json())
-      .then(d => setKelasList(d.kelas || []))
-      .catch(() => {})
+    Promise.all([
+      fetch("/api/master/kelas").then(r => r.json()),
+      fetch("/api/master/santri").then(r => r.json())
+    ]).then(([kelasRes, santriRes]) => {
+      setKelasList(kelasRes.kelas || []);
+      setAllSantri(santriRes.data || santriRes.santri || []);
+    }).catch(() => {})
       .finally(() => setLoadingInitial(false));
   }, []);
 
-  // 2. Fetch Mapel & Santri if Kelas selected
+  // 2. Fetch Mapel & Filter Santri
   useEffect(() => {
     if (!kelasId) {
       setMapelList([]);
-      setSantriList([]);
+      setSantriList(allSantri);
       setMapelId("");
-      setSantriId("");
-      setNilaiData([]);
       return;
     }
 
-    Promise.all([
-      fetch(`/api/master/mapel?kelas_id=${kelasId}`).then(r => r.json()),
-      fetch(`/api/master/santri?kelas_id=${kelasId}`).then(r => r.json())
-    ]).then(([mapelRes, santriRes]) => {
-      setMapelList(mapelRes.mapel || []);
-      setSantriList(santriRes.data || santriRes.santri || []);
-      // Reset selections
-      setMapelId("");
-      setSantriId("");
-      setNilaiData([]);
-    }).catch(() => {});
-  }, [kelasId]);
+    setSantriList(allSantri); // Walaupun ada kelas, list bisa menampung semua atau biarkan backend memfilter nanti, tapi krn di frontend kita punya allSantri, biarkan saja.
+    // Tapi user minta bisa filter:
+    fetch(`/api/master/mapel?kelas_id=${kelasId}`)
+      .then(r => r.json())
+      .then(d => {
+        setMapelList(d.mapel || []);
+        setMapelId("");
+      }).catch(() => {});
+  }, [kelasId, allSantri]);
 
   // 3. Fetch Nilai
   const fetchData = useCallback(async () => {
-    if (!kelasId) return;
+    // Boleh fetch asal ada Kelas ATAU ada Santri yang dipilih
+    if (!kelasId && !santriId) return;
     setLoadingData(true);
     
-    let url = `/api/nilai?kelas_id=${kelasId}&semester=${semester}&tahun_ajaran=${encodeURIComponent(tahunAjaran)}`;
+    let url = `/api/nilai?semester=${semester}&tahun_ajaran=${encodeURIComponent(tahunAjaran)}`;
+    if (kelasId) url += `&kelas_id=${kelasId}`;
     if (mapelId) url += `&mapel_id=${mapelId}`;
     if (santriId) url += `&santri_id=${santriId}`;
 
     try {
       const res = await fetch(url);
       const data = await res.json();
+      
+      // Jika mode pencarian santri tanpa kelas, mungkin list mapel kosong. Kita ambil mapel unik dari data nilai
+      if (!kelasId && santriId) {
+         const uniqueMapels = Array.from(new Map(data.nilai.map((n: any) => [n.mapel.id, n.mapel])).values()) as Mapel[];
+         setMapelList(uniqueMapels);
+      }
+
       setNilaiData(data.nilai || []);
     } catch {
       Swal.fire("Gagal", "Gagal memuat data nilai.", "error");
@@ -186,15 +195,24 @@ export default function PantauNilaiPage() {
 
           <div>
              <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-2">Pilih Santri (Opsional)</label>
-             <select
-                className="w-full bg-slate-50 border border-slate-200 text-slate-800 text-sm font-bold rounded-xl focus:ring-2 focus:ring-primary focus:border-primary block p-3 appearance-none shadow-sm cursor-pointer"
-                value={santriId}
-                onChange={e => { setSantriId(e.target.value); if(e.target.value) setMapelId(""); }}
-                disabled={!kelasId || santriList.length === 0}
-              >
-                <option value="">Semua Santri</option>
-                {filteredSantriList.map(s => <option key={s.id} value={s.id}>{s.nama_lengkap}</option>)}
-              </select>
+             <div className="flex gap-2">
+               <input 
+                 type="text" 
+                 placeholder="Cari..." 
+                 className="w-1/3 bg-slate-50 border border-slate-200 text-slate-800 text-sm font-bold rounded-xl focus:ring-2 focus:ring-primary focus:border-primary px-3 shadow-sm"
+                 value={searchSantri}
+                 onChange={e => setSearchSantri(e.target.value)}
+               />
+               <select
+                  className="w-2/3 bg-slate-50 border border-slate-200 text-slate-800 text-sm font-bold rounded-xl focus:ring-2 focus:ring-primary focus:border-primary block p-3 appearance-none shadow-sm cursor-pointer"
+                  value={santriId}
+                  onChange={e => { setSantriId(e.target.value); if(e.target.value) setMapelId(""); }}
+                  disabled={santriList.length === 0}
+                >
+                  <option value="">Semua Santri</option>
+                  {filteredSantriList.map(s => <option key={s.id} value={s.id}>{s.nama_lengkap}</option>)}
+                </select>
+             </div>
           </div>
 
           <div>
@@ -222,7 +240,7 @@ export default function PantauNilaiPage() {
       </div>
 
       {/* DATA VIEW */}
-      {kelasId && !loadingInitial ? (
+      {(kelasId || santriId) && !loadingInitial ? (
         <div className="bg-white/90 backdrop-blur rounded-2xl shadow-xl border border-slate-200/60 overflow-hidden">
           {loadingData ? (
             <div className="p-20 flex flex-col items-center justify-center text-slate-500">
@@ -246,7 +264,7 @@ export default function PantauNilaiPage() {
                    </div>
 
                    {mapelList.length === 0 ? (
-                      <div className="p-8 text-center text-slate-500 bg-slate-50 rounded-xl border border-slate-200">Tidak ada mata pelajaran di kelas ini.</div>
+                      <div className="p-8 text-center text-slate-500 bg-slate-50 rounded-xl border border-slate-200">Tidak ada mata pelajaran untuk santri ini.</div>
                    ) : (
                      <div className="overflow-x-auto custom-scrollbar rounded-xl border border-slate-200">
                         <table className="w-full text-sm text-left">
@@ -354,11 +372,11 @@ export default function PantauNilaiPage() {
             </div>
           )}
         </div>
-      ) : !kelasId ? (
+      ) : (!kelasId && !santriId) ? (
          <div className="flex flex-col items-center justify-center p-20 text-center bg-white/50 backdrop-blur rounded-2xl border border-slate-200 border-dashed">
             <BookOpen className="text-slate-300 mb-4" size={64} />
-            <h3 className="text-xl font-black text-slate-700 mb-2">Pilih Kelas Terlebih Dahulu</h3>
-            <p className="text-slate-500 text-sm">Anda harus memilih kelas di bagian filter atas untuk mulai memantau nilai akademik.</p>
+            <h3 className="text-xl font-black text-slate-700 mb-2">Pilih Kelas Atau Cari Santri</h3>
+            <p className="text-slate-500 text-sm">Anda bisa memilih kelas terlebih dahulu, atau langsung mencari nama santri di kotak filter untuk memantau nilai akademik.</p>
          </div>
       ) : null}
 
