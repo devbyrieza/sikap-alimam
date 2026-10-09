@@ -105,11 +105,8 @@ export default function PantauNilaiPage() {
       return vals.some(v => v.jenis === `harian${suffix}` || v.jenis === `kompetensi${suffix}` || v.jenis === `sikap${suffix}` || v.jenis === ujianKey);
     };
     const calcFormula = (suffix: string, ujianKey: string) => {
-      const harian = getVal(`harian${suffix}`);
-      const komp = getVal(`kompetensi${suffix}`);
-      const sikap = getVal(`sikap${suffix}`);
-      const ujian = getVal(ujianKey);
-      return (harian * 0.3) + (komp * 0.2) + (sikap * 0.1) + (ujian * 0.4);
+      // MURNI PTS / UJIAN MODE: Nilai Akhir adalah nilai ujian murni
+      return getVal(ujianKey);
     };
 
     if (hasPeriode("_pas", "pas")) {
