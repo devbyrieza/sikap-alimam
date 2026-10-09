@@ -110,13 +110,9 @@ export default function RekapNilaiPage() {
       return vals.some(v => v.jenis === `harian${suffix}` || v.jenis === `kompetensi${suffix}` || v.jenis === `sikap${suffix}` || v.jenis === ujianKey);
     };
 
-    // Hitung formula 30% Harian + 20% Komp + 10% Sikap + 40% Ujian
+    // MURNI PTS / PAS MODE
     const calcFormula = (suffix: string, ujianKey: string) => {
-      const h = getVal(`harian${suffix}`);
-      const k = getVal(`kompetensi${suffix}`);
-      const s = getVal(`sikap${suffix}`);
-      const u = getVal(ujianKey);
-      return (0.3 * h) + (0.2 * k) + (0.1 * s) + (0.4 * u);
+      return getVal(ujianKey);
     };
 
     // Jika PAS ada, gunakan PAS. Jika tidak, gunakan PTS.
@@ -124,6 +120,11 @@ export default function RekapNilaiPage() {
       return Math.round(calcFormula("_pas", "pas") * 10) / 10;
     } else if (hasPeriode("_pts", "pts")) {
       return Math.round(calcFormula("_pts", "pts") * 10) / 10;
+    }
+
+    // MURNI UJIAN MODE (Fallback)
+    if (vals.some(v => v.jenis === "ujian")) {
+       return Math.round(getVal("ujian") * 10) / 10;
     }
 
     return null;
