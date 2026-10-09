@@ -1176,4 +1176,12 @@ input::-moz-selection, textarea::-moz-selection {
 * {
   cursor: pointer !important;
 }
-
+input, textarea, [contenteditable="true"] {
+  cursor: text !important;
+}
+input[type="checkbox"], input[type="radio"], input[type="submit"], input[type="button"], input[type="file"] {
+  cursor: pointer !important;
+}
+:disabled {
+  cursor: not-allowed !important;
+}
