@@ -327,14 +327,18 @@ export default function CetakRaporPage() {
 
             let headTitle = "Kepala Madrasah";
             let headName = "Aziz Basuki, S.H.I., M.Pd.";
+            let waliKelasName = "........................................";
 
             if (isMTs) {
               headName = "Ade Supyana, S.Pd.I.";
+              waliKelasName = "Agus Cahyono";
             } else if (isMA) {
               headName = "Rethna Kartika Septianiar, S.Pd.";
+              waliKelasName = "Muhammad Thoriq Ibn Ziyad, Lc., M.Ag.";
             } else if (isIL) {
               headTitle = "Mudir";
               headName = "Wahab Rajasam, M.Pd.";
+              waliKelasName = "Imron Abdillah";
             }
 
             return (
@@ -351,7 +355,7 @@ export default function CetakRaporPage() {
                   <div>
                     <p style={{ marginBottom: "8px" }}>Sukabumi, 18 Desember 2026</p>
                     <p style={{ marginBottom: "48px" }}>Wali Kelas</p>
-                    <p style={{ fontWeight: "bold", whiteSpace: "nowrap" }}>( ........................................ )</p>
+                    <p style={{ fontWeight: "bold", whiteSpace: "nowrap" }}>( {waliKelasName} )</p>
                   </div>
                   
                   {/* QR CODE (Anti-Forgery) dipindah ke sebelah kiri Wali Kelas agar tidak menabrak batas margin kanan */}
