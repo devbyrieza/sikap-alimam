@@ -197,23 +197,31 @@ export default function CetakRaporPage() {
 
         {/* Biodata */}
         <div style={{ display: "flex", justifyContent: "space-between", fontSize: "13px", marginBottom: "16px", fontWeight: "bold" }}>
-          <div>
-            <table style={{ width: "100%" }}>
-              <tbody>
-                <tr style={{ borderBottom: "none" }}><td style={{ width: 80, padding: "4px 0" , borderBottom: "none"}}>Nama</td><td style={{ padding: "4px" , borderBottom: "none"}}>:</td><td style={{ textTransform: "uppercase", padding: "4px 0" , borderBottom: "none"}}>{santri.nama}</td></tr>
-                <tr style={{ borderBottom: "none" }}><td style={{ width: 80, padding: "4px 0" , borderBottom: "none"}}>Kelas</td><td style={{ padding: "4px" , borderBottom: "none"}}>:</td><td style={{ padding: "4px 0" , borderBottom: "none"}}>{santri.kelas.replace(/\s*(MTs|MA|SMP|SMA|SD|TK)\b/gi, "")}</td></tr>
-              </tbody>
-            </table>
+            <div>
+              <table style={{ width: "100%" }}>
+                <tbody>
+                  <tr style={{ borderBottom: "none" }}><td style={{ width: 80, padding: "4px 0" , borderBottom: "none"}}>Nama</td><td style={{ padding: "4px" , borderBottom: "none"}}>:</td><td style={{ textTransform: "uppercase", padding: "4px 0" , borderBottom: "none"}}>{santri.nama}</td></tr>
+                  <tr style={{ borderBottom: "none" }}><td style={{ width: 80, padding: "4px 0" , borderBottom: "none"}}>Kelas</td><td style={{ padding: "4px" , borderBottom: "none"}}>:</td><td style={{ padding: "4px 0" , borderBottom: "none"}}>{santri.kelas.replace(/\s*(MTs|MA|SMP|SMA|SD|TK)\b/gi, "")}</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <div>
+              <table style={{ width: "100%" }}>
+                <tbody>
+                  <tr style={{ borderBottom: "none" }}>
+                    <td style={{ padding: "4px 0", whiteSpace: "nowrap" , borderBottom: "none", textAlign: "right" }}>Semester</td>
+                    <td style={{ padding: "4px 8px" , borderBottom: "none"}}>:</td>
+                    <td style={{ padding: "4px 0" , borderBottom: "none", textAlign: "right"}}>{santri.semester.includes("Ganjil") || santri.semester === "1" ? "Ganjil" : santri.semester.includes("Genap") || santri.semester === "2" ? "Genap" : santri.semester}</td>
+                  </tr>
+                  <tr style={{ borderBottom: "none" }}>
+                    <td style={{ padding: "4px 0", whiteSpace: "nowrap" , borderBottom: "none", textAlign: "right" }}>Tahun Pelajaran</td>
+                    <td style={{ padding: "4px 8px" , borderBottom: "none"}}>:</td>
+                    <td style={{ padding: "4px 0" , borderBottom: "none", textAlign: "right"}}>{santri.tahun_ajaran}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
           </div>
-          <div>
-            <table style={{ width: "100%" }}>
-              <tbody>
-                <tr style={{ borderBottom: "none" }}><td style={{ width: 120, padding: "4px 0", whiteSpace: "nowrap" , borderBottom: "none"}}>Semester</td><td style={{ padding: "4px" , borderBottom: "none"}}>:</td><td style={{ padding: "4px 0" , borderBottom: "none"}}>{santri.semester.includes("Ganjil") || santri.semester === "1" ? "Ganjil" : santri.semester.includes("Genap") || santri.semester === "2" ? "Genap" : santri.semester}</td></tr>
-                <tr style={{ borderBottom: "none" }}><td style={{ width: 120, padding: "4px 0", whiteSpace: "nowrap" , borderBottom: "none"}}>Tahun Pelajaran</td><td style={{ padding: "4px" , borderBottom: "none"}}>:</td><td style={{ padding: "4px 0" , borderBottom: "none"}}>{santri.tahun_ajaran}</td></tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
 
         {/* Tabel Utama 10 Kolom */}
         <table style={{ width: "100%", borderCollapse: "collapse", border: "2px solid #1a1a1a", fontSize: "13px", marginBottom: "16px" }}>
