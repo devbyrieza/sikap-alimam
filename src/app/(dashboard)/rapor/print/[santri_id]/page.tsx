@@ -468,7 +468,7 @@ export default function CetakRaporPage() {
                   </div>
                   <div style={{ position: "relative", display: "flex", flexDirection: "column", justifyContent: "space-between", height: "135px" }}>
                     <div>
-                      <p style={{ marginBottom: "4px" }}>Sukabumi, 18 Desember 2026</p>
+                      <p style={{ marginBottom: "4px" }}>Sukabumi, 11 Oktober 2026</p>
                       <p>Wali Kelas</p>
                     </div>
                     
