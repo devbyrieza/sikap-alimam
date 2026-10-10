@@ -314,10 +314,10 @@ export default function CetakRaporPage() {
             <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "11px", fontFamily: "Georgia, serif" }}>
               <thead>
                 <tr style={{ backgroundColor: "#f1f5f9" }}>
-                  <th colSpan={3} style={{ border: "1px solid #1a1a1a", padding: "6px 8px", textAlign: "left", color: "#64748b" }}>LAPORAN TAHFIDZ & UJIAN (PRA TARGET)</th>
+                  <th colSpan={3} style={{ border: "1px solid #1a1a1a", padding: "6px 8px", textAlign: "left", color: "#64748b" }}>LAPORAN TAHSIN & TAHFIDZ</th>
                 </tr>
                 <tr style={{ backgroundColor: "#fdf8f0" }}>
-                  <th style={{ border: "1px solid #1a1a1a", padding: "6px 8px", textAlign: "left" }}>Jenis / Pencapaian Hafalan</th>
+                  <th style={{ border: "1px solid #1a1a1a", padding: "6px 8px", textAlign: "left" }}>Jenis / Materi Ujian</th>
                   <th style={{ border: "1px solid #1a1a1a", padding: "6px 8px", width: "15%" }}>Nilai Ujian</th>
                   <th style={{ border: "1px solid #1a1a1a", padding: "6px 8px", width: "20%" }}>Keterangan</th>
                 </tr>
@@ -350,7 +350,7 @@ export default function CetakRaporPage() {
               <table style={{ width: "100%", borderCollapse: "collapse", border: "2px solid #1a1a1a", fontSize: "12px" }}>
                 <thead>
                   <tr style={{ backgroundColor: "#f1f5f9" }}>
-                    <th style={{ border: "1px solid #1a1a1a", padding: "6px 8px", textAlign: "left" }}>Evaluasi Pencapaian Tahfidz</th>
+                    <th style={{ border: "1px solid #1a1a1a", padding: "6px 8px", textAlign: "left" }}>Evaluasi Pencapaian Al-Qur'an</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -359,18 +359,18 @@ export default function CetakRaporPage() {
                       {(() => {
                         const ujian = data?.ujian_tahfidz || [];
                         if (ujian.length === 0) {
-                          return "Ananda belum mengikuti ujian tahfidz pada periode ini. Tingkatkan semangat ziyadah dan muraja'ah bersama Musyrif di halaqoh.";
+                          return "Ananda belum mengikuti ujian tahsin/tahfidz pada periode ini. Tingkatkan semangat tilawah dan muraja'ah bersama Musyrif di halaqoh.";
                         }
                         
                         const passed = ujian.filter((u: any) => u.is_lulus).length;
                         const total = ujian.length;
                         
                         if (passed === total) {
-                          return "Alhamdulillah, pencapaian hafalan Ananda sangat baik (Lulus Ujian 100%). Terus tingkatkan muraja'ah mandiri agar hafalan semakin mutqin dan terjaga.";
+                          return "Alhamdulillah, pencapaian Al-Qur'an Ananda sangat memuaskan (Lulus Ujian 100%). Terus tingkatkan muraja'ah mandiri agar hafalan semakin mutqin dan terjaga.";
                         } else if (passed > 0) {
-                          return "Pencapaian hafalan Ananda sudah cukup baik, namun perlu lebih memperbanyak porsi muraja'ah untuk mengulang target yang belum tuntas.";
+                          return "Pencapaian Ananda sudah cukup baik, namun perlu lebih memperbanyak porsi muraja'ah dan tahsin untuk mengulang target yang belum tuntas.";
                         } else {
-                          return "Ananda perlu memberikan perhatian ekstra pada program tahfidz. Perbanyak waktu tilawah dan muraja'ah bersama rekan halaqoh agar bisa lulus ujian.";
+                          return "Ananda perlu memberikan perhatian ekstra pada program Al-Qur'an. Perbanyak waktu tilawah dan muraja'ah bersama rekan halaqoh agar bisa lulus ujian.";
                         }
                       })()}
                     </td>
