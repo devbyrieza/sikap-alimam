@@ -99,7 +99,7 @@ export default function InputNilaiPage() {
         }
         if (userObj?.role) {
           const role = (userObj.role || "").toLowerCase();
-          setIsAdminSuper(role.includes("admin_super"));
+          setIsAdminSuper(["admin_super", "kadiv_kurikulum", "kepala_sekolah", "mudir"].some(r => role.includes(r)));
         }
         if (masterRes) {
           setMaster(masterRes);
@@ -114,26 +114,42 @@ export default function InputNilaiPage() {
   const availableJenjangs = useMemo(() => {
     const defaultJenjangs = ["MTs", "IL", "MA"];
     if (!master?.kelas) return defaultJenjangs;
-    const uniqueJenjangs = Array.from(new Set(master.kelas.map(k => k.jenjang).filter(Boolean))) as string[];
+    let uniqueJenjangs = Array.from(new Set(master.kelas.map(k => k.jenjang).filter(Boolean))) as string[];
+    
+    // Jika BUKAN Admin Super, saring jenjang yang diajar saja
+    if (!isAdminSuper && asatidId) {
+      const allowedKelasIds = master?.asatidzmMapel
+         .filter(am => am.pegawai_id === asatidId)
+         .map(am => am.kelas_id) || [];
+      const allowedJenjangs = Array.from(new Set(master.kelas.filter(k => allowedKelasIds.includes(k.id)).map(k => k.jenjang).filter(Boolean))) as string[];
+      if (allowedJenjangs.length > 0) uniqueJenjangs = allowedJenjangs;
+    }
+
     return uniqueJenjangs.length > 0 ? uniqueJenjangs : defaultJenjangs;
-  }, [master]);
+  }, [master, isAdminSuper, asatidId]);
 
   // Auto-select Jenjang HANYA jika hanya ada 1 pilihan. Jika > 1, HARUS minta user memilih ("")
   useEffect(() => {
     if (availableJenjangs.length === 1) {
       setJenjangFilter(availableJenjangs[0]);
-    } else if (availableJenjangs.length > 1 && !jenjangFilter) {
-      // Tidak mereset state yang sudah dipilih sebelumnya
     }
-  }, [availableJenjangs, jenjangFilter]);
-
+  }, [availableJenjangs]);
 
   // Filtered Kelas List
   const filteredKelasList = useMemo(() => {
     if (!jenjangFilter) return [];
-    return (master?.kelas || []).filter((k) => k.jenjang === jenjangFilter);
-  }, [jenjangFilter, master]);
-
+    let list = (master?.kelas || []).filter((k) => k.jenjang === jenjangFilter);
+    
+    // Jika BUKAN Admin Super, saring kelas yang diajar saja
+    if (!isAdminSuper && asatidId) {
+      const allowedKelasIds = master?.asatidzmMapel
+         .filter(am => am.pegawai_id === asatidId)
+         .map(am => am.kelas_id) || [];
+      list = list.filter(k => allowedKelasIds.includes(k.id));
+    }
+    
+    return list;
+  }, [jenjangFilter, master, isAdminSuper, asatidId]);
 
   // Auto-select Kelas jika hanya ada 1 kelas
   useEffect(() => {
@@ -147,8 +163,18 @@ export default function InputNilaiPage() {
 
   // Mapel List
   const mapelList = useMemo(() => {
-    return (kelas_id && master?.mapel?.[kelas_id]) || [];
-  }, [kelas_id, master]);
+    let list = (kelas_id && master?.mapel?.[kelas_id]) || [];
+    
+    // Jika BUKAN Admin Super, saring mapel khusus yang diajar oleh guru ini saja di kelas ini
+    if (!isAdminSuper && asatidId) {
+      const allowedMapelIds = master?.asatidzmMapel
+         .filter(am => am.pegawai_id === asatidId && am.kelas_id === kelas_id)
+         .map(am => am.mapel_id) || [];
+      list = list.filter(m => allowedMapelIds.includes(m.id));
+    }
+    
+    return list;
+  }, [kelas_id, master, isAdminSuper, asatidId]);
 
   // Auto-select Mapel jika hanya ada 1 mapel
   useEffect(() => {
@@ -514,8 +540,7 @@ export default function InputNilaiPage() {
               <select
                 className="w-full min-w-0 box-border"
                 style={{ padding: "12px 14px", borderRadius: "12px", border: "1px solid #ebdcc3", background: "#fdf8f0", fontSize: "14px", outline: "none", fontWeight: 600 }}
-                value={asatidId}
-                onChange={(e) => setAsatidId(e.target.value)}
+                value={asatidId} onChange={(e) => setAsatidId(e.target.value)} disabled={!isAdminSuper}
               >
                 <option value="">-- Pilih Guru --</option>
                 {master?.asatidz?.map((a: any) => (
