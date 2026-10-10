@@ -107,9 +107,7 @@ export default function CetakRaporPage() {
             .app-layout { padding: 0 !important; margin: 0 !important; display: block !important; }
             .app-content { margin: 0 !important; padding: 0 !important; width: 100% !important; max-width: 100% !important; }
             
-            /* Prevent content from starting below hidden sticky headers */
-            * { position: static !important; }
-            .print\\:block { position: relative !important; }
+            
             
             /* --- COMPRESSION AGAR MUAT 1 HALAMAN --- */
             /* Matikan Flexbox karena sangat bug/merusak layout halaman saat di-print */
