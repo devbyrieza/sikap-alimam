@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { ArrowRight, FileText, Loader2, ArrowLeft, BookOpen, BarChart3 } from "lucide-react";
 import ModuleTabs from "@/components/ModuleTabs";
 
@@ -40,6 +40,7 @@ export default function RekapNilaiPage() {
   const [loadingKelas, setLoadingKelas] = useState(true);
   const [loadingData, setLoadingData] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [sortConfig, setSortConfig] = useState<{ key: string, direction: "asc" | "desc" } | null>(null);
 
   // Fetch kelas
   useEffect(() => {
@@ -164,6 +165,53 @@ export default function RekapNilaiPage() {
     });
   }
   // ---------------------
+
+  
+  const requestSort = (key: string) => {
+    let direction: "asc" | "desc" = "asc";
+    if (sortConfig && sortConfig.key === key && sortConfig.direction === "asc") {
+      direction = "desc";
+    }
+    setSortConfig({ key, direction });
+  };
+
+  const sortedSantriList = useMemo(() => {
+    let sortableItems = [...santriList];
+    if (searchQuery) {
+      sortableItems = sortableItems.filter(s => s.nama_lengkap.toLowerCase().includes(searchQuery.toLowerCase()));
+    }
+    if (sortConfig !== null) {
+      sortableItems.sort((a, b) => {
+        let valA: any = 0;
+        let valB: any = 0;
+        if (sortConfig.key === 'nama') {
+          valA = a.nama_lengkap.toLowerCase();
+          valB = b.nama_lengkap.toLowerCase();
+        } else if (sortConfig.key === 'nis') {
+          valA = a.nis || "";
+          valB = b.nis || "";
+        } else if (sortConfig.key === 'total') {
+          valA = rankMap.get(a.id)?.total || 0;
+          valB = rankMap.get(b.id)?.total || 0;
+        } else if (sortConfig.key === 'rata-rata') {
+          valA = rankMap.get(a.id)?.average || 0;
+          valB = rankMap.get(b.id)?.average || 0;
+        } else if (sortConfig.key === 'peringkat') {
+          valA = rankMap.get(a.id)?.rank || 9999;
+          valB = rankMap.get(b.id)?.rank || 9999;
+        } else {
+          const avgA = getAvg(a.id, sortConfig.key);
+          const avgB = getAvg(b.id, sortConfig.key);
+          valA = avgA !== undefined && avgA !== null ? avgA : -1;
+          valB = avgB !== undefined && avgB !== null ? avgB : -1;
+        }
+        if (valA < valB) return sortConfig.direction === 'asc' ? -1 : 1;
+        if (valA > valB) return sortConfig.direction === 'asc' ? 1 : -1;
+        return 0;
+      });
+    }
+    return sortableItems;
+  }, [santriList, rankMap, sortConfig, searchQuery]);
 
   return (
     <div className="page-container">
@@ -306,28 +354,29 @@ export default function RekapNilaiPage() {
                   <thead>
                     <tr style={{ background: "#fdf8f0" }}>
                       <th className="sticky-col" style={{ position: "sticky", left: 0, zIndex: 20, background: "#fdf8f0", width: 40, textAlign: "center", borderBottom: "1px solid #ebdcc3", padding: "14px 16px", color: "#550000", fontWeight: 800 }}>#</th>
-                      <th className="sticky-col" style={{ position: "sticky", left: 40, zIndex: 20, background: "#fdf8f0", minWidth: 170, maxWidth: 220, borderBottom: "1px solid #ebdcc3", borderRight: "1px solid #ebdcc3", padding: "14px 18px", textAlign: "left", color: "#550000", fontWeight: 800 }}>Nama Santri</th>
-                      <th style={{ width: 90, borderBottom: "1px solid #ebdcc3", padding: "14px 16px", textAlign: "left", color: "#550000", fontWeight: 800 }}>NIS</th>
+                      <th className="sticky-col" style={{ position: "sticky", left: 40, zIndex: 20, background: "#fdf8f0", minWidth: 170, maxWidth: 220, borderBottom: "1px solid #ebdcc3", borderRight: "1px solid #ebdcc3", padding: "14px 18px", textAlign: "left", color: "#550000", fontWeight: 800, cursor: "pointer" }} onClick={() => requestSort("nama")}>Nama Santri {sortConfig?.key === "nama" ? (sortConfig.direction === "asc" ? "↑" : "↓") : "↕"}</th>
+                      <th style={{ width: 90, borderBottom: "1px solid #ebdcc3", padding: "14px 16px", textAlign: "left", color: "#550000", fontWeight: 800, cursor: "pointer" }} onClick={() => requestSort("nis")}>NIS {sortConfig?.key === "nis" ? (sortConfig.direction === "asc" ? "↑" : "↓") : "↕"}</th>
                       {mapelList.map((m) => (
                           <th key={m.id} style={{ textAlign: "center", minWidth: 120, borderBottom: "1px solid #ebdcc3", padding: "14px", color: "#550000", fontWeight: 800 }} title={m.nama}>
                             {m.nama.length > 25 ? m.nama.substring(0, 25) + "…" : m.nama}
                           </th>
                         ))}
-                        <th style={{ textAlign: "center", minWidth: 90, borderBottom: "1px solid #ebdcc3", padding: "14px 16px", color: "#1a1a1a", fontWeight: 800 }}>Total Nilai</th>
-                        <th style={{ textAlign: "center", minWidth: 90, borderBottom: "1px solid #ebdcc3", padding: "14px 16px", color: "#1a1a1a", fontWeight: 800 }}>Rata-rata</th>
-                        <th style={{ textAlign: "center", minWidth: 90, borderBottom: "1px solid #ebdcc3", padding: "14px 16px", color: "#1a1a1a", fontWeight: 800 }}>Peringkat</th>
+                        <th style={{ textAlign: "center", minWidth: 90, borderBottom: "1px solid #ebdcc3", padding: "14px 16px", color: "#1a1a1a", fontWeight: 800, cursor: "pointer" }} onClick={() => requestSort("total")}>Total Nilai {sortConfig?.key === "total" ? (sortConfig.direction === "asc" ? "↑" : "↓") : "↕"}</th>
+                        <th style={{ textAlign: "center", minWidth: 90, borderBottom: "1px solid #ebdcc3", padding: "14px 16px", color: "#1a1a1a", fontWeight: 800, cursor: "pointer" }} onClick={() => requestSort("rata-rata")}>Rata-rata {sortConfig?.key === "rata-rata" ? (sortConfig.direction === "asc" ? "↑" : "↓") : "↕"}</th>
+                        <th style={{ textAlign: "center", minWidth: 90, borderBottom: "1px solid #ebdcc3", padding: "14px 16px", color: "#1a1a1a", fontWeight: 800, cursor: "pointer" }} onClick={() => requestSort("peringkat")}>Peringkat {sortConfig?.key === "peringkat" ? (sortConfig.direction === "asc" ? "↑" : "↓") : "↕"}</th>
+                          <th style={{ textAlign: "center", minWidth: 90, borderBottom: "1px solid #ebdcc3", padding: "14px 16px", color: "#1a1a1a", fontWeight: 800 }}>Aksi</th>
                           <th style={{ textAlign: "center", minWidth: 90, borderBottom: "1px solid #ebdcc3", padding: "14px 16px", color: "#1a1a1a", fontWeight: 800 }}>Aksi</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {santriList.length === 0 ? (
+                    {sortedSantriList.length === 0 ? (
                       <tr>
                         <td colSpan={7 + mapelList.length} style={{ textAlign: "center", padding: "36px", color: "#64748b" }}>
                           Belum ada data nilai untuk filter ini
                         </td>
                       </tr>
                     ) : (
-                      santriList.map((santri, i) => {
+                      sortedSantriList.map((santri, i) => {
                         const bgRow = i % 2 === 0 ? "#ffffff" : "#fdfcf9";
                         return (
                           <tr key={santri.id} style={{ background: bgRow }}>
