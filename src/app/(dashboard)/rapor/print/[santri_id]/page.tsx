@@ -163,10 +163,23 @@ export default function CetakRaporPage() {
         </div>
 
         {/* Judul Arab */}
-        <div className="text-center mb-6">
-          <h1 className="text-2xl font-bold font-arabic mb-1" dir="rtl" style={{ fontFamily: "Traditional Arabic, serif" }}>كشف الدرجات للمرحلة المتوسطة</h1>
-          <h2 className="text-lg font-bold font-arabic mb-1" dir="rtl" style={{ fontFamily: "Traditional Arabic, serif" }}>بمعهد الإمام الإسلامي</h2>
-        </div>
+          <div className="text-center mb-6">
+            {(() => {
+              const kls = santri.kelas.toUpperCase();
+              let marhalah = "للمرحلة المتوسطة"; // Default MTs
+              if (kls.includes("MA")) {
+                marhalah = "للمرحلة الثانوية";
+              } else if (kls.includes("IL")) {
+                marhalah = "لبرنامج الإعداد اللغوي";
+              }
+              return (
+                <h1 className="text-2xl font-bold font-arabic mb-1" dir="rtl" style={{ fontFamily: "Traditional Arabic, serif" }}>
+                  كشف الدرجات {marhalah}
+                </h1>
+              );
+            })()}
+            <h2 className="text-lg font-bold font-arabic mb-1" dir="rtl" style={{ fontFamily: "Traditional Arabic, serif" }}>بمعهد الإمام الإسلامي</h2>
+          </div>
 
         {/* Biodata */}
         <div style={{ display: "flex", justifyContent: "space-between", fontSize: "13px", marginBottom: "16px", fontWeight: "bold" }}>
@@ -236,7 +249,7 @@ export default function CetakRaporPage() {
                 <td style={{ border: "1px solid #1a1a1a", padding: "6px 8px", textAlign: "center", fontWeight: "bold", fontSize: "13px" }}>{kedisiplinan.jumlahSantri}</td>
                 <td colSpan={2} style={{ border: "1px solid #1a1a1a", padding: "6px 8px", backgroundColor: "#fafafa" }}></td>
                 <td style={{ border: "1px solid #1a1a1a", padding: "6px 8px", textAlign: "center", fontWeight: "bold", fontSize: "14px" }} dir="rtl">{toArabicNum(kedisiplinan.jumlahSantri)}</td>
-                <td colSpan={3} style={{ border: "1px solid #1a1a1a", padding: "6px 8px", textAlign: "right", fontWeight: "bold", fontFamily: "Traditional Arabic, serif" }} dir="rtl">عددالطلاب</td>
+                <td colSpan={3} style={{ border: "1px solid #1a1a1a", padding: "6px 8px", textAlign: "right", fontWeight: "bold", fontFamily: "Traditional Arabic, serif" }} dir="rtl">عدد الطلاب</td>
               </tr>
             </tbody>
         </table>
