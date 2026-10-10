@@ -15,13 +15,13 @@ export async function GET() {
       let newKategori = m.kategori || "umum";
 
       // 1. SYARI'AH
-      if (nama.includes("akidah") || nama.includes("aqidah")) { newNama = "Aqidah"; newKategori = "syariah"; }
+      if (nama.includes("akidah") || nama.includes("aqidah")) { newNama = "Akidah"; newKategori = "syariah"; }
       else if (nama.includes("fiqh") || nama.includes("fiqih")) { newNama = "Fiqh"; newKategori = "syariah"; }
       else if (nama.includes("hadis") || nama.includes("hadits")) { newNama = "Hadits"; newKategori = "syariah"; }
       else if (nama.includes("tafsir")) { newNama = "Tafsir"; newKategori = "syariah"; }
       else if (nama.includes("siroh") || nama.includes("sirah")) { newNama = "Siroh"; newKategori = "syariah"; }
       else if (nama.includes("akhlaq") || nama.includes("akhlak")) { newNama = "Akhlaq"; newKategori = "syariah"; }
-      else if (nama.includes("tahsin")) { newNama = "Tahsin Al-Qur'an"; newKategori = "syariah"; } // Formal
+      else if (nama.includes("tahsin")) { newNama = "Tahsin"; newKategori = "syariah"; } // Formal
       else if (nama.includes("tajwid")) { newNama = "Tajwid"; newKategori = "syariah"; }
       else if (nama.includes("mahfudzot") || nama.includes("mahfudot")) { newNama = "Mahfudzot"; newKategori = "syariah"; }
       else if (nama.includes("quran") || nama.includes("qur'an") || nama.includes("tahfidz")) { newNama = "Tahfidz Al-Qur'an"; newKategori = "syariah"; }
@@ -40,12 +40,12 @@ export async function GET() {
       else if (nama.includes("kitabah")) { newNama = "Kitabah"; newKategori = "bahasa"; }
 
       // 3. UMUM
-      else if (nama.includes("ipa")) { newNama = "Ilmu Pengetahuan Alam (IPA)"; newKategori = "umum"; }
-      else if (nama.includes("ips")) { newNama = "Ilmu Pengetahuan Sosial (IPS)"; newKategori = "umum"; }
+      else if (nama.includes("ipa")) { newNama = "IPA"; newKategori = "umum"; }
+      else if (nama.includes("ips")) { newNama = "IPS"; newKategori = "umum"; }
       else if (nama.includes("matematika") || nama.includes("mtk")) { newNama = "Matematika"; newKategori = "umum"; }
       else if (nama.includes("pkn") || nama.includes("kewarganegaraan")) { newNama = "Pendidikan Kewarganegaraan (PKN)"; newKategori = "umum"; }
       else if (nama.includes("tik") || nama.includes("komputer")) { newNama = "Komputer & TIK"; newKategori = "umum"; }
-      else if (nama.includes("entrepreneur") || nama.includes("kewirausahaan")) { newNama = "Kewirausahaan"; newKategori = "umum"; }
+      else if (nama.includes("entrepreneur") || nama.includes("kewirausahaan")) { newNama = "Entrepreneurship"; newKategori = "umum"; }
       else if (nama.includes("pjok") || nama.includes("olahraga")) { newNama = "PJOK"; newKategori = "umum"; }
 
       if (m.nama !== newNama || m.kategori !== newKategori) {
