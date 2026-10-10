@@ -217,9 +217,9 @@ export default function CetakRaporPage() {
         </table>
 
         {/* Tabel Ekstra: Kepribadian & Absensi */}
-        <div style={{ display: "flex", gap: "24px", marginBottom: "32px", pageBreakInside: "avoid" }}>
-          <div style={{ flex: 1 }}></div>
-          <div style={{ flex: 1 }}>
+        <div style={{ display: "flex", justifyContent: "center", marginBottom: "32px", pageBreakInside: "avoid" }}>
+          
+          <div style={{ width: "50%" }}>
             <table style={{ width: "100%", borderCollapse: "collapse", border: "2px solid #1a1a1a", fontSize: "13px" }}>
               <thead>
                 <tr style={{ backgroundColor: "#f1f5f9" }}>
