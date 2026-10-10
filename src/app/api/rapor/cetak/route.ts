@@ -115,7 +115,7 @@ export async function GET(req: NextRequest) {
              nama_arab: n.mapel.nama_arab || n.mapel.nama,
              kkm: 75, // Default KKM
              nilai: n.nilai,
-             rata_rata_kelas: Math.round(classAvg * 10) / 10
+             rata_rata_kelas: Math.round(classAvg)
            };
         });
     };
@@ -181,8 +181,8 @@ export async function GET(req: NextRequest) {
         umum
       },
       kedisiplinan: {
-        totalNilai: Math.round(studentTotalNilai * 10) / 10,
-        rataRata: Math.round(rataRataTotal * 10) / 10,
+        totalNilai: Math.round(studentTotalNilai),
+        rataRata: Math.round(rataRataTotal),
         ranking: studentRank,
         jumlahSantri
       },
