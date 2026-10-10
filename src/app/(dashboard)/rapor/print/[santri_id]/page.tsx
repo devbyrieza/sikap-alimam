@@ -289,27 +289,27 @@ export default function CetakRaporPage() {
         </div>
 
         {/* Tanda Tangan */}
-
-        <div className="flex justify-between mt-12 text-[13px] text-center px-8 page-break-inside-avoid" style={{ pageBreakInside: "avoid" }}>
-          <div>
-            <p className="mb-20">Mengetahui<br/><br/>Orang Tua</p>
-            <p className="font-semibold px-4 inline-block min-w-[150px]">( ......................................... )</p>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", textAlign: "center", marginTop: "40px", fontSize: "13px", pageBreakInside: "avoid", fontFamily: "Georgia, 'Times New Roman', serif" }}>
+            <div>
+              <p style={{ marginBottom: "70px" }}>Mengetahui,<br/>Orang Tua / Wali</p>
+              <p style={{ fontWeight: "bold" }}>(&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;)</p>
+            </div>
+            <div>
+              <p style={{ marginBottom: "70px" }}>Mengetahui,<br/>Kepala Madrasah</p>
+              <p style={{ fontWeight: "bold" }}>( Aziz Basuki, S.H.I., M.Pd. )</p>
+            </div>
+            <div style={{ position: "relative" }}>
+              <p style={{ marginBottom: "8px" }}>Sukabumi, 18 Desember 2026</p>
+              <p style={{ marginBottom: "48px" }}>Wali Kelas</p>
+              <p style={{ fontWeight: "bold" }}>(&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;)</p>
+              
+              {/* QR CODE (Anti-Forgery) */}
+              <div style={{ position: "absolute", bottom: "-10px", right: "0px", display: "flex", flexDirection: "column", alignItems: "center" }}>
+                <img src={`https://api.qrserver.com/v1/create-qr-code/?size=60x60&data=https://sikap.pesantren-alimam.com/verify/${santriId}`} alt="QR Code Verifikasi" style={{ width: "55px", height: "55px", border: "1px solid #ccc", padding: "2px", borderRadius: "4px", backgroundColor: "white" }} />
+                <p style={{ fontSize: "8px", marginTop: "2px", color: "#666", fontFamily: "Arial, sans-serif" }}>Scan Autentikasi</p>
+              </div>
+            </div>
           </div>
-          <div>
-            <p className="mb-20">Sukabumi, 18 Desember 2026<br/><br/>Kepala Madrasah</p>
-            <p className="font-semibold px-4 inline-block min-w-[150px]">( Aziz Basuki, S.H.I, M.Pd. )</p>
-          </div>
-
-          <div>
-            <p className="mb-20"><br/><br/>Wali Kelas</p>
-            <p className="font-semibold px-4 inline-block min-w-[150px]">( ......................................... )</p>
-          </div>
-          <div style={{ position: "relative", width: "100px", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "flex-end" }}>
-            <img src={`https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=https://sikap.pesantren-alimam.com/verify/${santriId}`} alt="QR Code Verifikasi" style={{ width: "80px", height: "80px" }} />
-            <p style={{ fontSize: "9px", marginTop: "4px", color: "#666" }}>Scan Rapor Digital</p>
-          </div>
-
-        </div>
 
         </div>
       </div>
