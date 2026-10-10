@@ -173,16 +173,16 @@ export default function CetakRaporPage() {
           <div>
             <table style={{ width: "100%" }}>
               <tbody>
-                <tr><td style={{ width: 80, padding: "4px 0" }}>Nama</td><td style={{ padding: "4px" }}>:</td><td style={{ textTransform: "uppercase", padding: "4px 0" }}>{santri.nama}</td></tr>
-                <tr><td style={{ width: 80, padding: "4px 0" }}>Kelas</td><td style={{ padding: "4px" }}>:</td><td style={{ padding: "4px 0" }}>{santri.kelas.replace(/\s*(MTs|MA|SMP|SMA|IL|SD|TK)\b/gi, "")}</td></tr>
+                <tr style={{ borderBottom: "none" }}><td style={{ width: 80, padding: "4px 0" , borderBottom: "none"}}>Nama</td><td style={{ padding: "4px" , borderBottom: "none"}}>:</td><td style={{ textTransform: "uppercase", padding: "4px 0" , borderBottom: "none"}}>{santri.nama}</td></tr>
+                <tr style={{ borderBottom: "none" }}><td style={{ width: 80, padding: "4px 0" , borderBottom: "none"}}>Kelas</td><td style={{ padding: "4px" , borderBottom: "none"}}>:</td><td style={{ padding: "4px 0" , borderBottom: "none"}}>{santri.kelas.replace(/\s*(MTs|MA|SMP|SMA|IL|SD|TK)\b/gi, "")}</td></tr>
               </tbody>
             </table>
           </div>
           <div>
             <table style={{ width: "100%" }}>
               <tbody>
-                <tr><td style={{ width: 120, padding: "4px 0", whiteSpace: "nowrap" }}>Semester</td><td style={{ padding: "4px" }}>:</td><td style={{ padding: "4px 0" }}>{santri.semester.includes("Ganjil") || santri.semester === "1" ? "Ganjil" : santri.semester.includes("Genap") || santri.semester === "2" ? "Genap" : santri.semester}</td></tr>
-                <tr><td style={{ width: 120, padding: "4px 0", whiteSpace: "nowrap" }}>Tahun Pelajaran</td><td style={{ padding: "4px" }}>:</td><td style={{ padding: "4px 0" }}>{santri.tahun_ajaran}</td></tr>
+                <tr style={{ borderBottom: "none" }}><td style={{ width: 120, padding: "4px 0", whiteSpace: "nowrap" , borderBottom: "none"}}>Semester</td><td style={{ padding: "4px" , borderBottom: "none"}}>:</td><td style={{ padding: "4px 0" , borderBottom: "none"}}>{santri.semester.includes("Ganjil") || santri.semester === "1" ? "Ganjil" : santri.semester.includes("Genap") || santri.semester === "2" ? "Genap" : santri.semester}</td></tr>
+                <tr style={{ borderBottom: "none" }}><td style={{ width: 120, padding: "4px 0", whiteSpace: "nowrap" , borderBottom: "none"}}>Tahun Pelajaran</td><td style={{ padding: "4px" , borderBottom: "none"}}>:</td><td style={{ padding: "4px 0" , borderBottom: "none"}}>{santri.tahun_ajaran}</td></tr>
               </tbody>
             </table>
           </div>
