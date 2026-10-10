@@ -222,8 +222,8 @@ export default function CetakRaporPage() {
               <th style={{ border: "1px solid #1a1a1a", padding: "8px", textAlign: "center" }}>Mata Pelajaran</th>
               <th style={{ border: "1px solid #1a1a1a", padding: "8px", width: "45px", textAlign: "center" }}>KKM</th>
               <th style={{ border: "1px solid #1a1a1a", padding: "8px", width: "50px", textAlign: "center" }}>Nilai</th>
-              <th style={{ border: "1px solid #1a1a1a", padding: "8px", width: "55px", textAlign: "center" }}>Rata-<br/>Rata</th>
-              <th style={{ border: "1px solid #1a1a1a", padding: "8px", width: "65px", textAlign: "center", fontFamily: "Traditional Arabic, serif" }} dir="rtl">المعدل<br/>التراكمي</th>
+              <th style={{ border: "1px solid #1a1a1a", padding: "8px", width: "55px", textAlign: "center" }}>Rata-Rata<br/>Kelas</th>
+              <th style={{ border: "1px solid #1a1a1a", padding: "8px", width: "65px", textAlign: "center", fontFamily: "Traditional Arabic, serif" }} dir="rtl">معدل<br/>الفصل</th>
               <th style={{ border: "1px solid #1a1a1a", padding: "8px", width: "60px", textAlign: "center", fontFamily: "Traditional Arabic, serif" }} dir="rtl">النتيجة</th>
               <th style={{ border: "1px solid #1a1a1a", padding: "8px", width: "55px", textAlign: "center", fontFamily: "Traditional Arabic, serif" }} dir="rtl">الدرجة<br/>الصغرى</th>
               <th style={{ border: "1px solid #1a1a1a", padding: "8px", textAlign: "center", fontFamily: "Traditional Arabic, serif" }} dir="rtl">المواد الدراسية</th>
@@ -244,7 +244,7 @@ export default function CetakRaporPage() {
                 <td colSpan={3} style={{ border: "1px solid #1a1a1a", padding: "6px 8px", textAlign: "right", fontWeight: "bold", fontFamily: "Traditional Arabic, serif" }} dir="rtl">مجموع الدرجات</td>
               </tr>
               <tr style={{ backgroundColor: "#fafafa" }}>
-                <td colSpan={3} style={{ border: "1px solid #1a1a1a", padding: "6px 8px", fontWeight: "bold" }}>Rata-rata</td>
+                <td colSpan={3} style={{ border: "1px solid #1a1a1a", padding: "6px 8px", fontWeight: "bold" }}>Rata-Rata Santri</td>
                 <td style={{ border: "1px solid #1a1a1a", padding: "6px 8px", textAlign: "center", fontWeight: "bold", fontSize: "13px" }}>{kedisiplinan.rataRata}</td>
                 <td colSpan={2} style={{ border: "1px solid #1a1a1a", padding: "6px 8px", backgroundColor: "#fafafa" }}></td>
                 <td style={{ border: "1px solid #1a1a1a", padding: "6px 8px", textAlign: "center", fontWeight: "bold", fontSize: "14px" }} dir="rtl">{toArabicNum(kedisiplinan.rataRata)}</td>
