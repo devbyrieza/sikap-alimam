@@ -9,6 +9,7 @@ export default function CetakRaporPage() {
   const searchParams = useSearchParams();
   const santriId = params.santri_id as string;
   const semester = searchParams.get("semester") || "1";
+  const tahun_ajaran = searchParams.get("tahun_ajaran") || "2026/2027";
   
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -18,7 +19,7 @@ export default function CetakRaporPage() {
 
     const fetchData = async () => {
       try {
-        const res = await fetch(`/api/rapor/cetak?santri_id=${santriId}&semester=${semester}`);
+        const res = await fetch(`/api/rapor/cetak?santri_id=${santriId}&semester=${semester}&tahun_ajaran=${encodeURIComponent(tahun_ajaran)}`);
         if (res.ok) {
           const json = await res.json();
           setData(json);
@@ -31,7 +32,7 @@ export default function CetakRaporPage() {
     };
 
     fetchData();
-  }, [santriId, semester]);
+  }, [santriId, semester, tahun_ajaran]);
 
   if (loading) {
     return <div className="p-10 text-center">Memuat Rapor...</div>;
@@ -41,7 +42,7 @@ export default function CetakRaporPage() {
     return <div className="p-10 text-center text-red-500">Data rapor tidak ditemukan.</div>;
   }
 
-  const { santri, nilai_akademik, kedisiplinan, kepribadian, absen, tahfidz } = data;
+  const { santri, nilai_akademik, kedisiplinan, kepribadian, absen, tahfidz, ujian_tahfidz } = data;
 
   const toArabicNum = (num: number | string) => {
     if (num === null || num === undefined) return "-";
@@ -159,7 +160,7 @@ export default function CetakRaporPage() {
           <div>
             <table style={{ width: "100%" }}>
               <tbody>
-                <tr><td style={{ width: 96, padding: "4px 0" }}>Semester</td><td style={{ padding: "4px" }}>:</td><td style={{ padding: "4px 0" }}>{santri.semester === "1" ? "Gasal" : "Genap"}</td></tr>
+                <tr><td style={{ width: 96, padding: "4px 0" }}>Semester</td><td style={{ padding: "4px" }}>:</td><td style={{ padding: "4px 0" }}>{santri.semester.includes("Ganjil") || santri.semester === "1" ? "Ganjil" : santri.semester.includes("Genap") || santri.semester === "2" ? "Genap" : santri.semester}</td></tr>
                 <tr><td style={{ width: 96, padding: "4px 0" }}>Tahun Pelajaran</td><td style={{ padding: "4px" }}>:</td><td style={{ padding: "4px 0" }}>{santri.tahun_ajaran}</td></tr>
               </tbody>
             </table>
@@ -248,7 +249,40 @@ export default function CetakRaporPage() {
           </div>
         </div>
 
+
+        {/* TABEL TAHFIDZ */}
+        <div style={{ marginTop: "20px" }}>
+          <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "11px", fontFamily: "Georgia, serif" }}>
+            <thead>
+              <tr style={{ backgroundColor: "#f1f5f9" }}>
+                <th colSpan={4} style={{ border: "1px solid #1a1a1a", padding: "6px 8px", textAlign: "left", color: "#64748b" }}>LAPORAN TAHFIDZ & UJIAN (PRA TARGET)</th>
+              </tr>
+              <tr style={{ backgroundColor: "#fdf8f0" }}>
+                <th style={{ border: "1px solid #1a1a1a", padding: "6px 8px" }}>Tanggal</th>
+                <th style={{ border: "1px solid #1a1a1a", padding: "6px 8px" }}>Jenis / Hafalan</th>
+                <th style={{ border: "1px solid #1a1a1a", padding: "6px 8px" }}>Nilai</th>
+                <th style={{ border: "1px solid #1a1a1a", padding: "6px 8px" }}>Keterangan</th>
+              </tr>
+            </thead>
+            <tbody>
+              {data.ujian_tahfidz && data.ujian_tahfidz.length > 0 ? data.ujian_tahfidz.map((u: any, i: number) => (
+                <tr key={i} style={{ backgroundColor: "white" }}>
+                  <td style={{ border: "1px solid #1a1a1a", padding: "6px 8px", textAlign: "center" }}>{new Date(u.tanggal).toLocaleDateString('id-ID')}</td>
+                  <td style={{ border: "1px solid #1a1a1a", padding: "6px 8px", textAlign: "center" }}>{u.jenis_ujian.replace(/_/g, ' ').toUpperCase()} (Juz {u.juz})</td>
+                  <td style={{ border: "1px solid #1a1a1a", padding: "6px 8px", textAlign: "center", fontWeight: "bold" }}>{Math.round((u.nilai_bacaan + u.nilai_sikap) / 2)}</td>
+                  <td style={{ border: "1px solid #1a1a1a", padding: "6px 8px", textAlign: "center" }}>{u.is_lulus ? 'Lulus' : 'Belum Lulus'}</td>
+                </tr>
+              )) : (
+                <tr style={{ backgroundColor: "white" }}>
+                  <td colSpan={4} style={{ border: "1px solid #1a1a1a", padding: "6px 8px", textAlign: "center" }}>Belum ada data ujian tahfidz</td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+
         {/* Tanda Tangan */}
+
         <div className="flex justify-between mt-12 text-[13px] text-center px-8 page-break-inside-avoid" style={{ pageBreakInside: "avoid" }}>
           <div>
             <p className="mb-20">Mengetahui<br/><br/>Orang Tua</p>

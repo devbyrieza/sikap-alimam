@@ -160,6 +160,12 @@ export async function GET(req: NextRequest) {
       orderBy: { tanggal: "desc" },
       take: 10
     });
+    
+    const ujian_tahfidz = await prisma.ujianTahfidz.findMany({
+      where: { santri_id },
+      orderBy: { tanggal: "desc" },
+      take: 5
+    });
 
     return NextResponse.json({
       santri: {
@@ -181,6 +187,7 @@ export async function GET(req: NextRequest) {
         jumlahSantri
       },
       tahfidz,
+      ujian_tahfidz,
       absen,
       kepribadian
     });
