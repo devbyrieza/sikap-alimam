@@ -310,28 +310,50 @@ export default function CetakRaporPage() {
             </table>
           </div>
 
-        {/* Tanda Tangan */}
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", textAlign: "center", marginTop: "40px", fontSize: "13px", pageBreakInside: "avoid", fontFamily: "Georgia, 'Times New Roman', serif" }}>
-            <div>
-              <p style={{ marginBottom: "70px" }}>Mengetahui,<br/>Orang Tua / Wali</p>
-              <p style={{ fontWeight: "bold" }}>(&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;)</p>
-            </div>
-            <div>
-              <p style={{ marginBottom: "70px" }}>Mengetahui,<br/>Kepala Madrasah</p>
-              <p style={{ fontWeight: "bold" }}>( Aziz Basuki, S.H.I., M.Pd. )</p>
-            </div>
-            <div style={{ position: "relative" }}>
-              <p style={{ marginBottom: "8px" }}>Sukabumi, 18 Desember 2026</p>
-              <p style={{ marginBottom: "48px" }}>Wali Kelas</p>
-              <p style={{ fontWeight: "bold" }}>(&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;)</p>
-              
-              {/* QR CODE (Anti-Forgery) */}
-              <div style={{ position: "absolute", bottom: "-10px", right: "0px", display: "flex", flexDirection: "column", alignItems: "center" }}>
-                <img src={`https://api.qrserver.com/v1/create-qr-code/?size=60x60&data=https://sikap.pesantren-alimam.com/verify/${santriId}`} alt="QR Code Verifikasi" style={{ width: "55px", height: "55px", border: "1px solid #ccc", padding: "2px", borderRadius: "4px", backgroundColor: "white" }} />
-                <p style={{ fontSize: "8px", marginTop: "2px", color: "#666", fontFamily: "Arial, sans-serif" }}>Scan Autentikasi</p>
+        
+          {/* Tanda Tangan */}
+          {(() => {
+            const isMTs = santri.kelas.toUpperCase().includes("MTS");
+            const isMA = santri.kelas.toUpperCase().includes("MA");
+            const isIL = santri.kelas.toUpperCase().includes("IL");
+
+            let headTitle = "Kepala Madrasah";
+            let headName = "Aziz Basuki, S.H.I., M.Pd.";
+
+            if (isMTs) {
+              headName = "Ade Supyana, S.Pd.I.";
+            } else if (isMA) {
+              headName = "Rethna Kartika Septianiar, S.Pd.";
+            } else if (isIL) {
+              headTitle = "Mudir";
+              headName = "Wahab Rajasam, M.Pd.";
+            }
+
+            return (
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", textAlign: "center", marginTop: "40px", fontSize: "13px", pageBreakInside: "avoid", fontFamily: "Georgia, 'Times New Roman', serif" }}>
+                <div>
+                  <p style={{ marginBottom: "70px" }}>Mengetahui,<br/>Orang Tua / Wali</p>
+                  <p style={{ fontWeight: "bold", whiteSpace: "nowrap" }}>( ........................................ )</p>
+                </div>
+                <div>
+                  <p style={{ marginBottom: "70px" }}>Mengetahui,<br/>{headTitle}</p>
+                  <p style={{ fontWeight: "bold", whiteSpace: "nowrap" }}>( {headName} )</p>
+                </div>
+                <div style={{ position: "relative" }}>
+                  <p style={{ marginBottom: "8px" }}>Sukabumi, 18 Desember 2026</p>
+                  <p style={{ marginBottom: "48px" }}>Wali Kelas</p>
+                  <p style={{ fontWeight: "bold", whiteSpace: "nowrap" }}>( ........................................ )</p>
+                  
+                  {/* QR CODE (Anti-Forgery) */}
+                  <div style={{ position: "absolute", bottom: "-10px", right: "0px", display: "flex", flexDirection: "column", alignItems: "center" }}>
+                    <img src={`https://api.qrserver.com/v1/create-qr-code/?size=60x60&data=https://sikap.pesantren-alimam.com/verify/${santriId}`} alt="QR Code Verifikasi" style={{ width: "55px", height: "55px", border: "1px solid #ccc", padding: "2px", borderRadius: "4px", backgroundColor: "white" }} />
+                    <p style={{ fontSize: "8px", marginTop: "2px", color: "#666", fontFamily: "Arial, sans-serif" }}>Scan Autentikasi</p>
+                  </div>
+                </div>
               </div>
-            </div>
-          </div>
+            );
+          })()}
+
 
         </div>
       </div>
