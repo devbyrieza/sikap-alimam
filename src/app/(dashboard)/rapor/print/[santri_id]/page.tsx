@@ -91,7 +91,7 @@ export default function CetakRaporPage() {
   };
 
   return (
-    <div style={{ padding: "24px 28px", maxWidth: 1200, margin: "0 auto", display: "flex", flexDirection: "column", gap: 24 }} className="print:p-0 print:m-0 print:max-w-none print:block bg-gray-50 min-h-screen font-serif text-black">
+    <div id="rapor-print-container" style={{ padding: "24px 28px", maxWidth: 1200, margin: "0 auto", display: "flex", flexDirection: "column", gap: 24 }} className="print:p-0 print:m-0 print:max-w-none print:block bg-gray-50 min-h-screen font-serif text-black">
       <style dangerouslySetInnerHTML={{__html: `
           @media print {
             @page { size: A4; margin: 10mm; }
@@ -112,6 +112,37 @@ export default function CetakRaporPage() {
             .print\\:block { position: relative !important; }
             
             /* --- COMPRESSION AGAR MUAT 1 HALAMAN --- */
+            #rapor-print-container { padding: 0 !important; margin: 0 !important; gap: 8px !important; background: white !important; }
+            .bg-gray-50 { background-color: white !important; }
+            
+            /* Paksa margin kertas jadi super tipis (5mm) */
+            @page { size: A4; margin: 5mm; }
+            
+            /* Kompresi Tabel Super Ekstrem */
+            table td, table th { padding: 2px 3px !important; font-size: 10px !important; line-height: 1.1 !important; }
+            
+            /* Perkecil Kop Surat secara masif */
+            img[alt="Logo"] { width: 45px !important; height: 45px !important; }
+            img[alt="Andalus Logo"] { width: 35px !important; }
+            h1.font-arabic { font-size: 16px !important; margin-bottom: 0 !important; }
+            h2.font-arabic { font-size: 12px !important; margin-bottom: 0 !important; }
+            h3 { font-size: 10px !important; margin-top: 0 !important; }
+            h4 { font-size: 9px !important; margin-top: 0 !important; }
+            
+            /* Pangkas semua jarak kosong / line-height */
+            p { margin-bottom: 0 !important; line-height: 1.2 !important; }
+            div[style*="marginBottom: \"16px\""] { margin-bottom: 6px !important; }
+            div[style*="marginBottom: \"24px\""] { margin-bottom: 8px !important; }
+            div[style*="marginTop: \"24px\""] { margin-top: 8px !important; }
+            div[style*="marginTop: \"40px\""] { margin-top: 10px !important; }
+            div[style*="padding: \"16px\""] { padding: 8px !important; }
+            
+            /* Perkecil Tanda Tangan */
+            div[style*="height: 135px"] { height: 75px !important; }
+            
+            /* Jangan pernah break page di tengah tabel! */
+            table, tr, td, th { page-break-inside: avoid !important; }
+            
             /* 1. Perkecil padding tabel & font */
             table td, table th { 
               padding: 2.5px 4px !important; 
