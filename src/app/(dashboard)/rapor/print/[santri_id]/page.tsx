@@ -296,9 +296,9 @@ export default function CetakRaporPage() {
               <th style={{ border: "1px solid #1a1a1a", padding: "8px", width: "55px", textAlign: "center" }}>KKM</th>
               <th style={{ border: "1px solid #1a1a1a", padding: "8px", width: "55px", textAlign: "center" }}>Nilai</th>
               <th style={{ border: "1px solid #1a1a1a", padding: "8px", width: "55px", textAlign: "center" }}>Rata-<br/>Rata<br/>Kelas</th>
-              <th style={{ border: "1px solid #1a1a1a", padding: "8px", width: "55px", textAlign: "center", fontFamily: "Traditional Arabic, serif" }} dir="rtl">الدرجة<br/>الصغرى</th>
-              <th style={{ border: "1px solid #1a1a1a", padding: "8px", width: "55px", textAlign: "center", fontFamily: "Traditional Arabic, serif" }} dir="rtl">النتيجة</th>
-              <th style={{ border: "1px solid #1a1a1a", padding: "8px", width: "55px", textAlign: "center", fontFamily: "Traditional Arabic, serif" }} dir="rtl">الدرجة<br/>الصغرى</th>
+              <th style={{ border: "1px solid #1a1a1a", padding: "8px", width: "55px", textAlign: "center", fontFamily: "Traditional Arabic, serif" }} dir="rtl">متوسط<br/>الفصل</th>
+                        <th style={{ border: "1px solid #1a1a1a", padding: "8px", width: "55px", textAlign: "center", fontFamily: "Traditional Arabic, serif" }} dir="rtl">النتيجة</th>
+                        <th style={{ border: "1px solid #1a1a1a", padding: "8px", width: "55px", textAlign: "center", fontFamily: "Traditional Arabic, serif" }} dir="rtl">الدرجة<br/>الصغرى</th>
               <th style={{ border: "1px solid #1a1a1a", padding: "8px", textAlign: "center", fontFamily: "Traditional Arabic, serif" }} dir="rtl">المواد الدراسية</th>
               <th style={{ border: "1px solid #1a1a1a", padding: "8px", width: "40px", textAlign: "center", fontFamily: "Traditional Arabic, serif" }} dir="rtl">رقم</th>
             </tr>
