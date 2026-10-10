@@ -478,7 +478,7 @@ export default function CetakRaporPage() {
                         const total = ujian.length;
                         
                         if (passed === total) {
-                          return "Alhamdulillah, pencapaian ujian Al-Qur'an sangat memuaskan. Terus tingkatkan muraja'ah mandiri agar hafalan semakin mutqin dan terjaga.";
+                          return "Alhamdulillah, pencapaian Al-Qur'an ananda memuaskan. Terus tingkatkan kualitas Tahsin (Makharijul Huruf & Tajwid) serta rutinkan tilawah harian sebagai pondasi kokoh sebelum memperbanyak Ziyadah (Hafalan Baru).";
                         } else if (passed > 0) {
                           return "Pencapaian Al-Qur'an sudah cukup baik, namun perlu lebih memperbanyak porsi muraja'ah dan tahsin untuk menyelesaikan target ujian yang belum tuntas.";
                         } else {
