@@ -316,12 +316,13 @@ export default function RekapNilaiPage() {
                         <th style={{ textAlign: "center", minWidth: 90, borderBottom: "1px solid #ebdcc3", padding: "14px 16px", color: "#1a1a1a", fontWeight: 800 }}>Total Nilai</th>
                         <th style={{ textAlign: "center", minWidth: 90, borderBottom: "1px solid #ebdcc3", padding: "14px 16px", color: "#1a1a1a", fontWeight: 800 }}>Rata-rata</th>
                         <th style={{ textAlign: "center", minWidth: 90, borderBottom: "1px solid #ebdcc3", padding: "14px 16px", color: "#1a1a1a", fontWeight: 800 }}>Peringkat</th>
+                          <th style={{ textAlign: "center", minWidth: 90, borderBottom: "1px solid #ebdcc3", padding: "14px 16px", color: "#1a1a1a", fontWeight: 800 }}>Aksi</th>
                     </tr>
                   </thead>
                   <tbody>
                     {santriList.length === 0 ? (
                       <tr>
-                        <td colSpan={6 + mapelList.length} style={{ textAlign: "center", padding: "36px", color: "#64748b" }}>
+                        <td colSpan={7 + mapelList.length} style={{ textAlign: "center", padding: "36px", color: "#64748b" }}>
                           Belum ada data nilai untuk filter ini
                         </td>
                       </tr>
