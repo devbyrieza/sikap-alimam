@@ -218,21 +218,7 @@ export default function CetakRaporPage() {
 
         {/* Tabel Ekstra: Kepribadian & Absensi */}
         <div style={{ display: "flex", gap: "24px", marginBottom: "32px", pageBreakInside: "avoid" }}>
-          <div style={{ flex: 1 }}>
-            <table style={{ width: "100%", borderCollapse: "collapse", border: "2px solid #1a1a1a", fontSize: "13px" }}>
-              <thead>
-                <tr style={{ backgroundColor: "#f1f5f9" }}>
-                  <th colSpan={2} style={{ border: "1px solid #1a1a1a", padding: "6px 8px" }}>Kepribadian Santri</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr style={{ backgroundColor: "white" }}><td style={{ border: "1px solid #1a1a1a", padding: "4px 8px" }}>Perilaku</td><td style={{ border: "1px solid #1a1a1a", padding: "4px 8px", textAlign: "center", fontWeight: "bold" }}>{kepribadian.perilaku}</td></tr>
-                <tr style={{ backgroundColor: "#fafafa" }}><td style={{ border: "1px solid #1a1a1a", padding: "4px 8px" }}>Kedisiplinan</td><td style={{ border: "1px solid #1a1a1a", padding: "4px 8px", textAlign: "center", fontWeight: "bold" }}>{kepribadian.kedisiplinan}</td></tr>
-                <tr style={{ backgroundColor: "white" }}><td style={{ border: "1px solid #1a1a1a", padding: "4px 8px" }}>Kerajinan</td><td style={{ border: "1px solid #1a1a1a", padding: "4px 8px", textAlign: "center", fontWeight: "bold" }}>{kepribadian.kerajinan}</td></tr>
-                <tr style={{ backgroundColor: "#fafafa" }}><td style={{ border: "1px solid #1a1a1a", padding: "4px 8px" }}>Kebersihan</td><td style={{ border: "1px solid #1a1a1a", padding: "4px 8px", textAlign: "center", fontWeight: "bold" }}>{kepribadian.kebersihan}</td></tr>
-              </tbody>
-            </table>
-          </div>
+          <div style={{ flex: 1 }}></div>
           <div style={{ flex: 1 }}>
             <table style={{ width: "100%", borderCollapse: "collapse", border: "2px solid #1a1a1a", fontSize: "13px" }}>
               <thead>
