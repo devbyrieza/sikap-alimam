@@ -28,7 +28,6 @@ export async function GET() {
           await prisma.mataPelajaran.create({
             data: {
               nama: mapel.nama,
-              kkm: mapel.kkm,
               kelas_id: kelas.id,
               is_active: true
             }
