@@ -452,21 +452,21 @@ export default function CetakRaporPage() {
 
             return (
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", textAlign: "center", marginTop: "40px", fontSize: "13px", pageBreakInside: "avoid", fontFamily: "Georgia, 'Times New Roman', serif" }}>
-                  <div style={{ display: "flex", flexDirection: "column", justifyContent: "space-between", height: "110px" }}>
+                  <div style={{ display: "flex", flexDirection: "column", justifyContent: "space-between", height: "135px" }}>
                     <div>
                       <p style={{ marginBottom: "4px" }}>Mengetahui,</p>
                       <p>Orang Tua / Wali</p>
                     </div>
                     <p style={{ fontWeight: "bold", whiteSpace: "nowrap" }}>........................................</p>
                   </div>
-                  <div style={{ display: "flex", flexDirection: "column", justifyContent: "space-between", height: "110px" }}>
+                  <div style={{ display: "flex", flexDirection: "column", justifyContent: "space-between", height: "135px" }}>
                     <div>
                       <p style={{ marginBottom: "4px" }}>Mengetahui,</p>
                       <p>{headTitle}</p>
                     </div>
-                    <p style={{ fontWeight: "bold", whiteSpace: "nowrap" }}><span style={{ textDecoration: "underline" }}>{headName}</span></p>
+                    <p style={{ fontWeight: "bold", whiteSpace: "nowrap" }}><span>{headName}</span></p>
                   </div>
-                  <div style={{ position: "relative", display: "flex", flexDirection: "column", justifyContent: "space-between", height: "110px" }}>
+                  <div style={{ position: "relative", display: "flex", flexDirection: "column", justifyContent: "space-between", height: "135px" }}>
                     <div>
                       <p style={{ marginBottom: "4px" }}>Sukabumi, 18 Desember 2026</p>
                       <p>Wali Kelas</p>
@@ -474,7 +474,7 @@ export default function CetakRaporPage() {
                     
                     
                     
-                    <p style={{ fontWeight: "bold", whiteSpace: "nowrap", marginLeft: "15px" }}><span style={{ textDecoration: "underline" }}>{waliKelasName}</span></p>
+                    <p style={{ fontWeight: "bold", whiteSpace: "nowrap", marginLeft: "15px" }}><span>{waliKelasName}</span></p>
                   </div>
                 
                 {/* Footer QR Code Validasi */}
