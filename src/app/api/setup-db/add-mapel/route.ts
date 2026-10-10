@@ -7,11 +7,19 @@ export async function GET() {
   try {
     const logs: string[] = [];
     
-    const kelas11 = await prisma.kelas.findFirst({ where: { nama: '11 MA' } });
-    const kelas12 = await prisma.kelas.findFirst({ where: { nama: '12 MA' } });
+    const allKelas = await prisma.kelas.findMany({
+      where: { is_active: true }
+    });
+    
+    const kelas11 = allKelas.find(k => k.nama.includes('11') && (k.nama.includes('MA') || k.jenjang?.includes('MA')));
+    const kelas12 = allKelas.find(k => k.nama.includes('12') && (k.nama.includes('MA') || k.jenjang?.includes('MA')));
     
     if (!kelas11 || !kelas12) {
-      return NextResponse.json({ success: false, logs: ["Kelas MA tidak ditemukan"] });
+      return NextResponse.json({ 
+        success: false, 
+        logs: ["Kelas MA tidak ditemukan"], 
+        available_classes: allKelas.map(k => ({ id: k.id, nama: k.nama, jenjang: k.jenjang }))
+      });
     }
     
     const mapelsToInsert = [
