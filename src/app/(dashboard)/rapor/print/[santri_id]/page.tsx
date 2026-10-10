@@ -457,14 +457,14 @@ export default function CetakRaporPage() {
                       <p style={{ marginBottom: "4px" }}>Mengetahui,</p>
                       <p>Orang Tua / Wali</p>
                     </div>
-                    <p style={{ fontWeight: "bold", whiteSpace: "nowrap" }}>( ........................................ )</p>
+                    <p style={{ fontWeight: "bold", whiteSpace: "nowrap" }}>........................................</p>
                   </div>
                   <div style={{ display: "flex", flexDirection: "column", justifyContent: "space-between", height: "110px" }}>
                     <div>
                       <p style={{ marginBottom: "4px" }}>Mengetahui,</p>
                       <p>{headTitle}</p>
                     </div>
-                    <p style={{ fontWeight: "bold", whiteSpace: "nowrap" }}>( {headName} )</p>
+                    <p style={{ fontWeight: "bold", whiteSpace: "nowrap" }}><span style={{ textDecoration: "underline" }}>{headName}</span></p>
                   </div>
                   <div style={{ position: "relative", display: "flex", flexDirection: "column", justifyContent: "space-between", height: "110px" }}>
                     <div>
@@ -478,7 +478,7 @@ export default function CetakRaporPage() {
                       <p style={{ fontSize: "7px", marginTop: "2px", color: "#666", fontFamily: "Arial, sans-serif", whiteSpace: "nowrap", fontWeight: "bold" }}>Scan Validasi</p>
                     </div>
                     
-                    <p style={{ fontWeight: "bold", whiteSpace: "nowrap", marginLeft: "15px" }}>( {waliKelasName} )</p>
+                    <p style={{ fontWeight: "bold", whiteSpace: "nowrap", marginLeft: "15px" }}><span style={{ textDecoration: "underline" }}>{waliKelasName}</span></p>
                   </div>
                 </div>
               );
