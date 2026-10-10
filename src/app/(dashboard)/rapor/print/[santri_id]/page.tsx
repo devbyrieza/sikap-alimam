@@ -209,11 +209,7 @@ export default function CetakRaporPage() {
             {renderTabelKategori("B. Ilmu Bahasa", "ب. علوم اللغة العربية", nilai_akademik.bahasa, nilai_akademik.syariah.length + 1)}
             {renderTabelKategori("C. Ilmu Pengetahuan Umum", "جـ . العلوم العامة", nilai_akademik.umum, nilai_akademik.syariah.length + nilai_akademik.bahasa.length + 1)}
             
-            {/* Bagian D. Kedisiplinan & Akumulasi */}
-            <tr style={{ backgroundColor: "#f1f5f9" }}>
-              <td colSpan={5} style={{ border: "1px solid #1a1a1a", padding: "6px 8px", fontWeight: "bold", fontSize: "13px" }}>D. Kedisiplinan</td>
-              <td colSpan={5} style={{ border: "1px solid #1a1a1a", padding: "6px 8px", fontWeight: "bold", fontSize: "13px", textAlign: "right" }} dir="rtl">د . المواظبة</td>
-            </tr>
+            {/* Akumulasi Nilai */}
             <tr style={{ backgroundColor: "white" }}>
                 <td colSpan={3} style={{ border: "1px solid #1a1a1a", padding: "6px 8px", fontWeight: "bold" }}>Jumlah Nilai</td>
                 <td style={{ border: "1px solid #1a1a1a", padding: "6px 8px", textAlign: "center", fontWeight: "bold", fontSize: "13px" }}>{kedisiplinan.totalNilai}</td>
