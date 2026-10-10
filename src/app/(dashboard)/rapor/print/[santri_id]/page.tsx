@@ -258,35 +258,40 @@ export default function CetakRaporPage() {
 
 
         {/* TABEL TAHFIDZ */}
-        <div style={{ marginTop: "20px" }}>
-          <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "11px", fontFamily: "Georgia, serif" }}>
-            <thead>
-              <tr style={{ backgroundColor: "#f1f5f9" }}>
-                <th colSpan={4} style={{ border: "1px solid #1a1a1a", padding: "6px 8px", textAlign: "left", color: "#64748b" }}>LAPORAN TAHFIDZ & UJIAN (PRA TARGET)</th>
-              </tr>
-              <tr style={{ backgroundColor: "#fdf8f0" }}>
-                <th style={{ border: "1px solid #1a1a1a", padding: "6px 8px" }}>Tanggal</th>
-                <th style={{ border: "1px solid #1a1a1a", padding: "6px 8px" }}>Jenis / Hafalan</th>
-                <th style={{ border: "1px solid #1a1a1a", padding: "6px 8px" }}>Nilai</th>
-                <th style={{ border: "1px solid #1a1a1a", padding: "6px 8px" }}>Keterangan</th>
-              </tr>
-            </thead>
-            <tbody>
-              {data.ujian_tahfidz && data.ujian_tahfidz.length > 0 ? data.ujian_tahfidz.map((u: any, i: number) => (
-                <tr key={i} style={{ backgroundColor: "white" }}>
-                  <td style={{ border: "1px solid #1a1a1a", padding: "6px 8px", textAlign: "center" }}>{new Date(u.tanggal).toLocaleDateString('id-ID')}</td>
-                  <td style={{ border: "1px solid #1a1a1a", padding: "6px 8px", textAlign: "center" }}>{u.jenis_ujian.replace(/_/g, ' ').toUpperCase()} (Juz {u.juz})</td>
-                  <td style={{ border: "1px solid #1a1a1a", padding: "6px 8px", textAlign: "center", fontWeight: "bold" }}>{Math.round((u.nilai_bacaan + u.nilai_sikap) / 2)}</td>
-                  <td style={{ border: "1px solid #1a1a1a", padding: "6px 8px", textAlign: "center" }}>{u.is_lulus ? 'Lulus' : 'Belum Lulus'}</td>
+          <div style={{ marginTop: "20px" }}>
+            <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "11px", fontFamily: "Georgia, serif" }}>
+              <thead>
+                <tr style={{ backgroundColor: "#f1f5f9" }}>
+                  <th colSpan={3} style={{ border: "1px solid #1a1a1a", padding: "6px 8px", textAlign: "left", color: "#64748b" }}>LAPORAN TAHFIDZ & UJIAN (PRA TARGET)</th>
                 </tr>
-              )) : (
-                <tr style={{ backgroundColor: "white" }}>
-                  <td colSpan={4} style={{ border: "1px solid #1a1a1a", padding: "6px 8px", textAlign: "center" }}>Belum ada data ujian tahfidz</td>
+                <tr style={{ backgroundColor: "#fdf8f0" }}>
+                  <th style={{ border: "1px solid #1a1a1a", padding: "6px 8px", textAlign: "left" }}>Jenis / Pencapaian Hafalan</th>
+                  <th style={{ border: "1px solid #1a1a1a", padding: "6px 8px", width: "15%" }}>Nilai Ujian</th>
+                  <th style={{ border: "1px solid #1a1a1a", padding: "6px 8px", width: "20%" }}>Keterangan</th>
                 </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody>
+                {data.ujian_tahfidz && data.ujian_tahfidz.length > 0 ? data.ujian_tahfidz.map((u: any, i: number) => (
+                  <tr key={i} style={{ backgroundColor: "white" }}>
+                    <td style={{ border: "1px solid #1a1a1a", padding: "6px 8px" }}>
+                      {u.jenis_ujian.replace(/_/g, ' ').toUpperCase()}
+                      {u.juz ? ` (Juz ${u.juz})` : u.surah_nama ? ` (Surah ${u.surah_nama})` : ''}
+                    </td>
+                    <td style={{ border: "1px solid #1a1a1a", padding: "6px 8px", textAlign: "center", fontWeight: "bold" }}>
+                      {Math.round(((u.nilai_bacaan || 0) + (u.nilai_kelancaran || u.nilai_sikap || 0)) / 2)}
+                    </td>
+                    <td style={{ border: "1px solid #1a1a1a", padding: "6px 8px", textAlign: "center" }}>
+                      {u.is_lulus ? 'Lulus' : 'Belum Lulus'}
+                    </td>
+                  </tr>
+                )) : (
+                  <tr style={{ backgroundColor: "white" }}>
+                    <td colSpan={3} style={{ border: "1px solid #1a1a1a", padding: "6px 8px", textAlign: "center" }}>Belum ada data ujian tahfidz</td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
 
         {/* Tanda Tangan */}
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", textAlign: "center", marginTop: "40px", fontSize: "13px", pageBreakInside: "avoid", fontFamily: "Georgia, 'Times New Roman', serif" }}>
