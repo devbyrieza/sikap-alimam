@@ -62,7 +62,7 @@ export async function GET() {
 
     return NextResponse.json({
       success: true,
-      message: \`Successfully standardized \${updates.length} mapel records.\`,
+      message: `Successfully standardized ${updates.length} mapel records.`,
       total_mapel: allMapel.length
     });
 
