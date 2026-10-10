@@ -237,10 +237,27 @@ export default function CetakRaporPage() {
           </tbody>
         </table>
 
-        {/* Tabel Ekstra: Kepribadian & Absensi */}
-        <div style={{ display: "flex", justifyContent: "center", marginBottom: "32px", pageBreakInside: "avoid" }}>
-          
-          <div style={{ width: "50%" }}>
+        {/* Tabel Ekstra: Catatan & Absensi */}
+          <div style={{ display: "flex", justifyContent: "space-between", gap: "24px", marginBottom: "32px", pageBreakInside: "avoid" }}>
+            
+            <div style={{ width: "48%" }}>
+              <table style={{ width: "100%", height: "100%", borderCollapse: "collapse", border: "2px solid #1a1a1a", fontSize: "13px" }}>
+                <thead>
+                  <tr style={{ backgroundColor: "#f1f5f9" }}>
+                    <th style={{ border: "1px solid #1a1a1a", padding: "6px 8px", textAlign: "center" }}>Catatan Wali Kelas</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr style={{ backgroundColor: "white" }}>
+                    <td style={{ border: "1px solid #1a1a1a", padding: "8px", verticalAlign: "top", color: "#333", fontStyle: "italic" }}>
+                      Pertahankan prestasi dan semangat belajarmu. Tingkatkan ibadah, perbanyak muraja'ah, dan selalu jaga adab di pesantren.
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div style={{ width: "48%" }}>
             <table style={{ width: "100%", borderCollapse: "collapse", border: "2px solid #1a1a1a", fontSize: "13px" }}>
               <thead>
                 <tr style={{ backgroundColor: "#f1f5f9" }}>
