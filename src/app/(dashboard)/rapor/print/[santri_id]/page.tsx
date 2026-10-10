@@ -215,26 +215,34 @@ export default function CetakRaporPage() {
               <td colSpan={5} style={{ border: "1px solid #1a1a1a", padding: "6px 8px", fontWeight: "bold", fontSize: "13px", textAlign: "right" }} dir="rtl">د . المواظبة</td>
             </tr>
             <tr style={{ backgroundColor: "white" }}>
-              <td colSpan={4} style={{ border: "1px solid #1a1a1a", padding: "6px 8px", fontWeight: "bold" }}>Jumlah Nilai</td>
-              <td colSpan={2} style={{ border: "1px solid #1a1a1a", padding: "6px 8px", textAlign: "center", fontWeight: "bold" }}>{kedisiplinan.totalNilai}</td>
-              <td colSpan={4} style={{ border: "1px solid #1a1a1a", padding: "6px 8px", textAlign: "right", fontWeight: "bold" }} dir="rtl">مجموع الدرجات</td>
-            </tr>
-            <tr style={{ backgroundColor: "#fafafa" }}>
-              <td colSpan={4} style={{ border: "1px solid #1a1a1a", padding: "6px 8px", fontWeight: "bold" }}>Rata-rata</td>
-              <td colSpan={2} style={{ border: "1px solid #1a1a1a", padding: "6px 8px", textAlign: "center", fontWeight: "bold" }}>{kedisiplinan.rataRata}</td>
-              <td colSpan={4} style={{ border: "1px solid #1a1a1a", padding: "6px 8px", textAlign: "right", fontWeight: "bold" }} dir="rtl">المعدل التراكمي</td>
-            </tr>
-            <tr style={{ backgroundColor: "white" }}>
-              <td colSpan={4} style={{ border: "1px solid #1a1a1a", padding: "6px 8px", fontWeight: "bold" }}>Ranking</td>
-              <td colSpan={2} style={{ border: "1px solid #1a1a1a", padding: "6px 8px", textAlign: "center", fontWeight: "bold" }}>{kedisiplinan.ranking}</td>
-              <td colSpan={4} style={{ border: "1px solid #1a1a1a", padding: "6px 8px", textAlign: "right", fontWeight: "bold" }} dir="rtl">الترتيب</td>
-            </tr>
-            <tr style={{ backgroundColor: "#fafafa" }}>
-              <td colSpan={4} style={{ border: "1px solid #1a1a1a", padding: "6px 8px", fontWeight: "bold" }}>Jumlah Santri</td>
-              <td colSpan={2} style={{ border: "1px solid #1a1a1a", padding: "6px 8px", textAlign: "center", fontWeight: "bold" }}>{kedisiplinan.jumlahSantri}</td>
-              <td colSpan={4} style={{ border: "1px solid #1a1a1a", padding: "6px 8px", textAlign: "right", fontWeight: "bold" }} dir="rtl">عددالطلاب</td>
-            </tr>
-          </tbody>
+                <td colSpan={3} style={{ border: "1px solid #1a1a1a", padding: "6px 8px", fontWeight: "bold" }}>Jumlah Nilai</td>
+                <td style={{ border: "1px solid #1a1a1a", padding: "6px 8px", textAlign: "center", fontWeight: "bold", fontSize: "13px" }}>{kedisiplinan.totalNilai}</td>
+                <td colSpan={2} style={{ border: "1px solid #1a1a1a", padding: "6px 8px", backgroundColor: "white" }}></td>
+                <td style={{ border: "1px solid #1a1a1a", padding: "6px 8px", textAlign: "center", fontWeight: "bold", fontSize: "14px" }} dir="rtl">{toArabicNum(kedisiplinan.totalNilai)}</td>
+                <td colSpan={3} style={{ border: "1px solid #1a1a1a", padding: "6px 8px", textAlign: "right", fontWeight: "bold", fontFamily: "Traditional Arabic, serif" }} dir="rtl">مجموع الدرجات</td>
+              </tr>
+              <tr style={{ backgroundColor: "#fafafa" }}>
+                <td colSpan={3} style={{ border: "1px solid #1a1a1a", padding: "6px 8px", fontWeight: "bold" }}>Rata-rata</td>
+                <td style={{ border: "1px solid #1a1a1a", padding: "6px 8px", textAlign: "center", fontWeight: "bold", fontSize: "13px" }}>{kedisiplinan.rataRata}</td>
+                <td colSpan={2} style={{ border: "1px solid #1a1a1a", padding: "6px 8px", backgroundColor: "#fafafa" }}></td>
+                <td style={{ border: "1px solid #1a1a1a", padding: "6px 8px", textAlign: "center", fontWeight: "bold", fontSize: "14px" }} dir="rtl">{toArabicNum(kedisiplinan.rataRata)}</td>
+                <td colSpan={3} style={{ border: "1px solid #1a1a1a", padding: "6px 8px", textAlign: "right", fontWeight: "bold", fontFamily: "Traditional Arabic, serif" }} dir="rtl">المعدل التراكمي</td>
+              </tr>
+              <tr style={{ backgroundColor: "white" }}>
+                <td colSpan={3} style={{ border: "1px solid #1a1a1a", padding: "6px 8px", fontWeight: "bold" }}>Ranking</td>
+                <td style={{ border: "1px solid #1a1a1a", padding: "6px 8px", textAlign: "center", fontWeight: "bold", fontSize: "13px" }}>{kedisiplinan.ranking}</td>
+                <td colSpan={2} style={{ border: "1px solid #1a1a1a", padding: "6px 8px", backgroundColor: "white" }}></td>
+                <td style={{ border: "1px solid #1a1a1a", padding: "6px 8px", textAlign: "center", fontWeight: "bold", fontSize: "14px" }} dir="rtl">{toArabicNum(kedisiplinan.ranking)}</td>
+                <td colSpan={3} style={{ border: "1px solid #1a1a1a", padding: "6px 8px", textAlign: "right", fontWeight: "bold", fontFamily: "Traditional Arabic, serif" }} dir="rtl">الترتيب</td>
+              </tr>
+              <tr style={{ backgroundColor: "#fafafa" }}>
+                <td colSpan={3} style={{ border: "1px solid #1a1a1a", padding: "6px 8px", fontWeight: "bold" }}>Jumlah Santri</td>
+                <td style={{ border: "1px solid #1a1a1a", padding: "6px 8px", textAlign: "center", fontWeight: "bold", fontSize: "13px" }}>{kedisiplinan.jumlahSantri}</td>
+                <td colSpan={2} style={{ border: "1px solid #1a1a1a", padding: "6px 8px", backgroundColor: "#fafafa" }}></td>
+                <td style={{ border: "1px solid #1a1a1a", padding: "6px 8px", textAlign: "center", fontWeight: "bold", fontSize: "14px" }} dir="rtl">{toArabicNum(kedisiplinan.jumlahSantri)}</td>
+                <td colSpan={3} style={{ border: "1px solid #1a1a1a", padding: "6px 8px", textAlign: "right", fontWeight: "bold", fontFamily: "Traditional Arabic, serif" }} dir="rtl">عددالطلاب</td>
+              </tr>
+            </tbody>
         </table>
 
         {/* Tabel Ekstra: Catatan & Absensi */}
