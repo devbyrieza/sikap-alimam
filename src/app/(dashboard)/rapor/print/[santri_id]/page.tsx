@@ -93,12 +93,25 @@ export default function CetakRaporPage() {
   return (
     <div style={{ padding: "24px 28px", maxWidth: 1200, margin: "0 auto", display: "flex", flexDirection: "column", gap: 24 }} className="print:p-0 print:m-0 print:max-w-none print:block bg-gray-50 min-h-screen font-serif text-black">
       <style dangerouslySetInnerHTML={{__html: `
-        @media print {
-          @page { size: A4; margin: 10mm; }
-          body { background: white; -webkit-print-color-adjust: exact; color: black; }
-          .no-print { display: none !important; }
-        }
-      `}} />
+          @media print {
+            @page { size: A4; margin: 10mm; }
+            body { background: white !important; -webkit-print-color-adjust: exact; color: black; }
+            
+            /* Sembunyikan elemen dashboard UI (Header & Sidebar & Security Banner) */
+            .no-print, .mobile-header, .app-sidebar, .sidebar-nav { display: none !important; }
+            
+            /* Sembunyikan alert keamanan spesifik */
+            .app-content > div:has(a[href="/profile"]) { display: none !important; }
+            
+            /* Hilangkan wrapper gap dan margin bawaan Dashboard */
+            .app-layout { padding: 0 !important; margin: 0 !important; display: block !important; }
+            .app-content { margin: 0 !important; padding: 0 !important; width: 100% !important; max-width: 100% !important; }
+            
+            /* Prevent content from starting below hidden sticky headers */
+            * { position: static !important; }
+            .print\:block { position: relative !important; }
+          }
+        `}} />
 
       {/* Hero Banner for Print Page */}
       <div className="no-print" style={{
