@@ -102,6 +102,55 @@ export async function GET(req: NextRequest) {
     const mapelCount = studentNilai.length;
     const rataRataTotal = mapelCount > 0 ? (studentTotalNilai / mapelCount) : 0;
 
+        // Auto-translate dictionary fallback
+    const translateArab = (nama: string) => {
+      const dict: Record<string, string> = {
+        "Akidah": "العقيدة",
+        "Fiqh": "الفقه",
+        "Hadits": "الحديث",
+        "Siroh": "السيرة",
+        "Tahsin": "التحسين",
+        "Bahasa Arab": "اللغة العربية",
+        "Kitabah": "الكتابة",
+        "Nahwu": "النحو",
+        "Shorf": "الصرف",
+        "Tafsir": "التفسير",
+        "Tajwid": "التجويد",
+        "Ushul Fiqh": "أصول الفقه",
+        "Mustholah Hadits": "مصطلح الحديث",
+        "Khot": "الخط",
+        "Imla": "الإملاء",
+        "Muhadatsah": "المحادثة",
+        "Mutholaah": "المطالعة",
+        "Mahfudzot": "المحفوظات",
+        "Matematika": "الرياضيات",
+        "IPA": "العلوم",
+        "IPS": "العلوم الاجتماعية",
+        "Bahasa Indonesia": "اللغة الإندونيسية",
+        "Bahasa Inggris": "اللغة الإنجليزية",
+        "PKn": "التربية الوطنية",
+        "PJOK": "التربية البدنية",
+        "Prakarya": "الحرف اليدوية",
+        "Sejarah": "التاريخ",
+        "Geografi": "الجغرافيا",
+        "Ekonomi": "الاقتصاد",
+        "Sosiologi": "علم الاجتماع",
+        "Biologi": "علم الأحياء",
+        "Fisika": "الفيزياء",
+        "Kimia": "الكيمياء",
+        "TIK": "تكنولوجيا المعلومات",
+        "Entrepreneurship": "ريادة الأعمال",
+        "Tadribat Alal Anmath": "تدريبات على الأنماط"
+      };
+      
+      for (const key in dict) {
+        if (nama.toLowerCase().includes(key.toLowerCase())) {
+          return dict[key];
+        }
+      }
+      return nama;
+    };
+
     // Build the lists per category
     const formatMapel = (kategori: string) => {
       return studentNilai
@@ -112,7 +161,7 @@ export async function GET(req: NextRequest) {
            const classAvg = classAvgStats && classAvgStats.count > 0 ? (classAvgStats.total / classAvgStats.count) : 0;
            return {
              nama: n.mapel.nama.replace(/^\[.*?\]\s*/, ""),
-             nama_arab: n.mapel.nama_arab || n.mapel.nama,
+             nama_arab: n.mapel.nama_arab || translateArab(n.mapel.nama),
              kkm: 75, // Default KKM
              nilai: n.nilai,
              rata_rata_kelas: Math.round(classAvg)
