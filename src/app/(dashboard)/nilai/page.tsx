@@ -99,7 +99,7 @@ export default function InputNilaiPage() {
         }
         if (userObj?.role) {
           const role = (userObj.role || "").toLowerCase();
-          setIsAdminSuper(["admin_super", "kadiv_kurikulum", "kepala_sekolah", "mudir"].some(r => role.includes(r)));
+          setIsAdminSuper(["admin_super", "kadiv_kurikulum", "kepala_sekolah", "mudir", "admin_rapor"].some(r => role.includes(r)));
         }
         if (masterRes) {
           setMaster(masterRes);

@@ -3,7 +3,7 @@ const prisma = new PrismaClient();
 async function main() {
   const adinda = await prisma.pegawai.findFirst({
     where: { nama_lengkap: { contains: 'Adinda' } },
-    include: { asatidz_mapel: true }
+    include: { mengajar: true }
   });
   console.log('Adinda:', JSON.stringify(adinda, null, 2));
 }
