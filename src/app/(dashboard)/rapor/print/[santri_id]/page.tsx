@@ -155,7 +155,11 @@ export default function CetakRaporPage() {
             tr, td, th { page-break-inside: avoid !important; }
             
             /* Force Chrome zoom level if needed */
-            body { zoom: 0.96; }
+            #rapor-print-container { zoom: 0.88; transform-origin: top center; }
+            div[style*="margin-bottom: 16px"] { margin-bottom: 4px !important; }
+            div[style*="margin-bottom: 24px"] { margin-bottom: 4px !important; }
+            div[style*="margin-top: 24px"] { margin-top: 4px !important; }
+            div[style*="margin-top: 40px"] { margin-top: 4px !important; }
           }
         `}} />
 
