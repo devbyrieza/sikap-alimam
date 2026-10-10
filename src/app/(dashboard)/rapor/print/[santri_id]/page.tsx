@@ -127,10 +127,10 @@ export default function CetakRaporPage() {
             @page { size: A4; margin: 5mm; }
             
             /* BUNUH minHeight 297mm yang menyebabkan selalu tumpah ke halaman 2! */
-            div[style*="minHeight: \"297mm\""] { min-height: 0 !important; border-radius: 0 !important; }
+            div[style*="min-height: 297mm"] { min-height: 0 !important; border-radius: 0 !important; }
             
             /* Kompresi Tabel Ekstrem */
-            table td, table th { padding: 2px 3px !important; font-size: 10px !important; line-height: 1.1 !important; }
+            table td, table th { padding: 3px 4px !important; font-size: 10px !important; line-height: 1.1 !important; }
             
             /* Perkecil Kop Surat secara masif */
             img[alt="Logo"] { width: 50px !important; height: 50px !important; }
@@ -140,19 +140,22 @@ export default function CetakRaporPage() {
             h3 { font-size: 11px !important; margin-top: 0 !important; }
             h4 { font-size: 10px !important; margin-top: 0 !important; }
             
-            /* Pangkas semua jarak kosong / line-height */
+            /* Pangkas semua jarak kosong / line-height (Gunakan KEBAB-CASE karena React merender ke DOM dg Kebab Case!) */
             p { margin-bottom: 0 !important; line-height: 1.15 !important; }
-            div[style*="marginBottom: \"16px\""] { margin-bottom: 6px !important; }
-            div[style*="marginBottom: \"24px\""] { margin-bottom: 8px !important; }
-            div[style*="marginTop: \"24px\""] { margin-top: 8px !important; }
-            div[style*="marginTop: \"40px\""] { margin-top: 10px !important; }
-            div[style*="padding: \"16px\""] { padding: 6px !important; }
+            div[style*="margin-bottom: 16px"] { margin-bottom: 6px !important; }
+            div[style*="margin-bottom: 24px"] { margin-bottom: 8px !important; }
+            div[style*="margin-top: 24px"] { margin-top: 8px !important; }
+            div[style*="margin-top: 40px"] { margin-top: 10px !important; }
+            div[style*="padding: 16px"] { padding: 6px !important; }
             
             /* Perkecil Tanda Tangan */
             div[style*="height: 135px"] { height: 75px !important; }
             
             /* HANYA tr yang tidak boleh terpotong, tabel BOLEH terpotong jika terpaksa */
             tr, td, th { page-break-inside: avoid !important; }
+            
+            /* Force Chrome zoom level if needed */
+            body { zoom: 0.96; }
           }
         `}} />
 
