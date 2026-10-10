@@ -303,13 +303,13 @@ export default function CetakRaporPage() {
                             
                             // Logika Predikat (Menggabungkan Nilai & Kompetisi Kelas)
                             if (rata >= 90 && persentil <= 0.3) {
-                              note = `Prestasi akademik ${namaPanggilan} sangat memuaskan (Mumtaz). Pertahankan semangat belajar yang tinggi dan jangan cepat berpuas diri.`;
+                              note = `Prestasi akademik sangat memuaskan (Mumtaz). Pertahankan semangat belajar yang tinggi dan jangan cepat berpuas diri.`;
                             } else if (rata >= 80 && persentil <= 0.5) {
-                              note = `Prestasi akademik ${namaPanggilan} sudah baik (Jayyid Jiddan). Tingkatkan lagi kefokusan dalam belajar agar mencapai peringkat yang lebih maksimal.`;
+                              note = `Prestasi akademik sudah baik (Jayyid Jiddan). Tingkatkan lagi kefokusan dalam belajar agar mencapai target yang lebih maksimal.`;
                             } else if (rata >= 80 && persentil > 0.5) {
-                              note = `Pencapaian nilai ${namaPanggilan} secara rata-rata sudah baik, namun persaingan di kelas sangat ketat. Perbanyak mengulang pelajaran agar tidak tertinggal dari teman-teman yang lain.`;
+                              note = `Pencapaian nilai secara rata-rata sudah baik, namun persaingan di kelas sangat ketat. Perbanyak mengulang pelajaran agar tidak tertinggal dari teman-teman yang lain.`;
                             } else {
-                              note = `${namaPanggilan} perlu lebih giat dan tekun dalam belajar. Jangan mudah menyerah, perbanyak mengulang pelajaran di asrama, dan selalu patuhi tata tertib pesantren.`;
+                              note = `Perlu lebih giat dan tekun dalam belajar. Jangan mudah menyerah, perbanyak mengulang pelajaran di asrama, dan selalu patuhi tata tertib pesantren.`;
                             }
 
                             if (totalAbsen > 10 || (absen?.alpha || 0) > 3) {
@@ -407,18 +407,18 @@ export default function CetakRaporPage() {
                       {(() => {
                         const ujian = data?.ujian_tahfidz || [];
                         if (ujian.length === 0) {
-                          return "Ananda belum mengikuti ujian tahsin/tahfidz pada periode ini. Tingkatkan semangat tilawah dan muraja'ah bersama Musyrif di halaqoh.";
+                          return "Belum ada riwayat ujian tahsin/tahfidz pada periode ini. Tingkatkan semangat tilawah dan muraja'ah bersama Musyrif di halaqoh.";
                         }
                         
                         const passed = ujian.filter((u: any) => u.is_lulus).length;
                         const total = ujian.length;
                         
                         if (passed === total) {
-                          return "Alhamdulillah, pencapaian Al-Qur'an Ananda sangat memuaskan (Lulus Ujian 100%). Terus tingkatkan muraja'ah mandiri agar hafalan semakin mutqin dan terjaga.";
+                          return "Alhamdulillah, pencapaian ujian Al-Qur'an sangat memuaskan. Terus tingkatkan muraja'ah mandiri agar hafalan semakin mutqin dan terjaga.";
                         } else if (passed > 0) {
-                          return "Pencapaian Ananda sudah cukup baik, namun perlu lebih memperbanyak porsi muraja'ah dan tahsin untuk mengulang target yang belum tuntas.";
+                          return "Pencapaian Al-Qur'an sudah cukup baik, namun perlu lebih memperbanyak porsi muraja'ah dan tahsin untuk menyelesaikan target ujian yang belum tuntas.";
                         } else {
-                          return "Ananda perlu memberikan perhatian ekstra pada program Al-Qur'an. Perbanyak waktu tilawah dan muraja'ah bersama rekan halaqoh agar bisa lulus ujian.";
+                          return "Perlu memberikan perhatian ekstra pada program Al-Qur'an. Perbanyak waktu tilawah dan muraja'ah bersama rekan halaqoh agar bisa mencapai target ujian.";
                         }
                       })()}
                     </td>
