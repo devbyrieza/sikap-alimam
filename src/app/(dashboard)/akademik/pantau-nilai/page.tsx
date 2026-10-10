@@ -58,8 +58,11 @@ export default function PantauNilaiPage() {
       return;
     }
 
-    setSantriList(allSantri); // Walaupun ada kelas, list bisa menampung semua atau biarkan backend memfilter nanti, tapi krn di frontend kita punya allSantri, biarkan saja.
-    // Tapi user minta bisa filter:
+    const filtered = allSantri.filter((s: any) => s.kelas_id === kelasId || s.kelas?.id === kelasId);
+    setSantriList(filtered);
+    setSantriId(""); // Reset pilihan santri jika kelas diganti
+    
+    // Tapi user minta bisa filter mapel juga:
     fetch(`/api/master/mapel?kelas_id=${kelasId}`)
       .then(r => r.json())
       .then(d => {
