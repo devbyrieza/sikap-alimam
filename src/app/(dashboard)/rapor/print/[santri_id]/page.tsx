@@ -205,18 +205,18 @@ export default function CetakRaporPage() {
                 </tbody>
               </table>
             </div>
-            <div>
-              <table style={{ width: "100%" }}>
+            <div style={{ textAlign: "right" }}>
+              <table style={{ display: "inline-block", textAlign: "left" }}>
                 <tbody>
                   <tr style={{ borderBottom: "none" }}>
-                    <td style={{ padding: "4px 0", whiteSpace: "nowrap" , borderBottom: "none", textAlign: "right" }}>Semester</td>
+                    <td style={{ padding: "4px 0", whiteSpace: "nowrap" , borderBottom: "none" }}>Semester</td>
                     <td style={{ padding: "4px 8px" , borderBottom: "none"}}>:</td>
-                    <td style={{ padding: "4px 0" , borderBottom: "none", textAlign: "right"}}>{santri.semester.includes("Ganjil") || santri.semester === "1" ? "Ganjil" : santri.semester.includes("Genap") || santri.semester === "2" ? "Genap" : santri.semester}</td>
+                    <td style={{ padding: "4px 0" , borderBottom: "none" }}>{santri.semester.includes("Ganjil") || santri.semester === "1" ? "Ganjil" : santri.semester.includes("Genap") || santri.semester === "2" ? "Genap" : santri.semester}</td>
                   </tr>
                   <tr style={{ borderBottom: "none" }}>
-                    <td style={{ padding: "4px 0", whiteSpace: "nowrap" , borderBottom: "none", textAlign: "right" }}>Tahun Pelajaran</td>
+                    <td style={{ padding: "4px 0", whiteSpace: "nowrap" , borderBottom: "none" }}>Tahun Pelajaran</td>
                     <td style={{ padding: "4px 8px" , borderBottom: "none"}}>:</td>
-                    <td style={{ padding: "4px 0" , borderBottom: "none", textAlign: "right"}}>{santri.tahun_ajaran}</td>
+                    <td style={{ padding: "4px 0" , borderBottom: "none" }}>{santri.tahun_ajaran}</td>
                   </tr>
                 </tbody>
               </table>
