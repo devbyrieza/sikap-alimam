@@ -139,7 +139,7 @@ export default function CetakRaporPage() {
         </button>
       </div>
 
-      <div className="max-w-[210mm] mx-auto bg-white p-[10mm] shadow-xl print:shadow-none print:p-0 print:max-w-full relative" style={{ borderRadius: "24px", minHeight: "297mm", position: "relative" }}>
+      <div className="max-w-[210mm] mx-auto bg-white p-[10mm] shadow-xl print:shadow-none print:p-0 print:max-w-full relative" style={{ borderRadius: "24px", minHeight: "297mm", position: "relative", fontFamily: "\"Georgia\", \"Times New Roman\", serif" }}>
         
 
         {/* WATERMARK */}
