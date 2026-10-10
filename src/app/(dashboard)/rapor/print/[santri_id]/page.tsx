@@ -482,7 +482,7 @@ export default function CetakRaporPage() {
                   <img src={`https://api.qrserver.com/v1/create-qr-code/?size=60x60&data=https://sikap.pesantren-alimam.com/verify/${santriId}`} alt="QR Code Verifikasi" style={{ width: "45px", height: "45px", padding: "2px", border: "1px solid #ccc", borderRadius: "4px" }} />
                   <div style={{ fontSize: "10px", color: "#666", lineHeight: "1.4", fontFamily: "Arial, sans-serif" }}>
                     <strong>Verifikasi Keaslian Dokumen</strong><br/>
-                    Scan QR Code ini menggunakan kamera untuk memvalidasi keaslian rapor di database SIKAP Pesantren Al-Imam Al-Islami.
+                    Scan QR Code ini menggunakan kamera ponsel untuk memvalidasi keaslian rapor pada database terpusat SIKAP Pesantren Al-Imam Al-Islami (Managed by Al-Andalus IIBS).
                   </div>
                 </div>
               </div>
