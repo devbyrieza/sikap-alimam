@@ -155,7 +155,7 @@ export default function CetakRaporPage() {
             tr, td, th { page-break-inside: avoid !important; }
             
             /* Force Chrome zoom level if needed */
-            #rapor-print-container { zoom: 0.88; transform-origin: top center; padding-right: 2px !important; }
+            #rapor-print-container { zoom: 0.88; transform-origin: top center; margin-left: 6.8% !important; padding-right: 2px !important; }
             table { width: 99.8% !important; margin: 0 auto; }
             div[style*="margin-bottom: 16px"] { margin-bottom: 4px !important; }
             div[style*="margin-bottom: 24px"] { margin-bottom: 4px !important; }
@@ -203,7 +203,7 @@ export default function CetakRaporPage() {
         </button>
       </div>
 
-      <div className="max-w-[210mm] mx-auto bg-white p-[10mm] shadow-xl print:shadow-none print:p-0 print:max-w-full relative" style={{ borderRadius: "24px", minHeight: "297mm", position: "relative", fontFamily: "\"Georgia\", \"Times New Roman\", serif" }}>
+      <div className="max-w-[210mm] mx-auto bg-white p-[10mm] shadow-xl print:shadow-none print:p-0 print:max-w-full relative" style={{ borderRadius: "24px", minHeight: "297mm", position: "relative", fontFamily: "\"Times New Roman\", Times, serif" }}>
         
 
         {/* WATERMARK */}
@@ -515,7 +515,7 @@ export default function CetakRaporPage() {
             }
 
             return (
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", textAlign: "center", marginTop: "40px", fontSize: "13px", pageBreakInside: "avoid", fontFamily: "Georgia, 'Times New Roman', serif" }}>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", textAlign: "center", marginTop: "40px", fontSize: "13px", pageBreakInside: "avoid", fontFamily: "\"Times New Roman\", Times, serif" }}>
                   <div style={{ display: "flex", flexDirection: "column", justifyContent: "space-between", height: "135px" }}>
                     <div>
                       <p style={{ marginBottom: "4px" }}>Mengetahui,</p>
