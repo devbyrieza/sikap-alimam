@@ -34,17 +34,31 @@ export async function GET(req: NextRequest) {
     const jumlahSantri = temanSekelas.length;
 
     // 3. Get All Grades for the Class (PTS Murni)
-    const allNilai = await prisma.nilaiSantri.findMany({
-      where: {
-        santri: { kelas_id: kelas_id },
-        semester,
-        tahun_ajaran,
-        jenis: "pts" // MURNI PTS MODE
-      },
-      include: { mapel: true }
-    });
+    const allNilaiRaw = await prisma.nilaiSantri.findMany({
+        where: {
+          santri: { kelas_id: kelas_id },
+          semester,
+          tahun_ajaran
+        },
+        include: { mapel: true }
+      });
 
-    // 4. Calculate Class Averages per Mapel
+      // Aggregate / Deduplicate grades per student per mapel
+      const deduplicatedNilai = new Map<string, any>();
+      allNilaiRaw.forEach(n => {
+        const key = `${n.santri_id}_${n.mapel_id}`;
+        if (!deduplicatedNilai.has(key)) {
+          deduplicatedNilai.set(key, { ...n, sum: n.nilai, count: 1 });
+        } else {
+          const existing = deduplicatedNilai.get(key);
+          existing.sum += n.nilai;
+          existing.count += 1;
+          existing.nilai = Math.round(existing.sum / existing.count);
+        }
+      });
+      const allNilai = Array.from(deduplicatedNilai.values());
+
+      // 4. Calculate Class Averages per Mapel
     const mapelAverages = new Map<string, { total: number; count: number }>();
     allNilai.forEach(n => {
       if (!mapelAverages.has(n.mapel_id)) {
