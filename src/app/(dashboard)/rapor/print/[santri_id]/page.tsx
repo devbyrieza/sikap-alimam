@@ -112,22 +112,32 @@ export default function CetakRaporPage() {
             .print\\:block { position: relative !important; }
             
             /* --- COMPRESSION AGAR MUAT 1 HALAMAN --- */
-            #rapor-print-container { padding: 0 !important; margin: 0 !important; gap: 8px !important; background: white !important; }
+            /* Matikan Flexbox karena sangat bug/merusak layout halaman saat di-print */
+            #rapor-print-container { 
+              padding: 0 !important; 
+              margin: 0 !important; 
+              background: white !important; 
+              display: block !important; 
+            }
+            #rapor-print-container > div {
+              margin-bottom: 12px !important;
+            }
+            
             .bg-gray-50 { background-color: white !important; }
             
             /* Paksa margin kertas jadi super tipis (5mm) */
             @page { size: A4; margin: 5mm; }
             
-            /* Kompresi Tabel Super Ekstrem */
-            table td, table th { padding: 2px 3px !important; font-size: 10px !important; line-height: 1.1 !important; }
+            /* Kompresi Tabel Ekstrem */
+            table td, table th { padding: 3px 4px !important; font-size: 10.5px !important; line-height: 1.1 !important; }
             
             /* Perkecil Kop Surat secara masif */
-            img[alt="Logo"] { width: 45px !important; height: 45px !important; }
-            img[alt="Andalus Logo"] { width: 35px !important; }
+            img[alt="Logo"] { width: 55px !important; height: 55px !important; }
+            img[alt="Andalus Logo"] { width: 45px !important; }
             h1.font-arabic { font-size: 16px !important; margin-bottom: 0 !important; }
             h2.font-arabic { font-size: 12px !important; margin-bottom: 0 !important; }
-            h3 { font-size: 10px !important; margin-top: 0 !important; }
-            h4 { font-size: 9px !important; margin-top: 0 !important; }
+            h3 { font-size: 11px !important; margin-top: 0 !important; }
+            h4 { font-size: 10px !important; margin-top: 0 !important; }
             
             /* Pangkas semua jarak kosong / line-height */
             p { margin-bottom: 0 !important; line-height: 1.2 !important; }
@@ -138,38 +148,10 @@ export default function CetakRaporPage() {
             div[style*="padding: \"16px\""] { padding: 8px !important; }
             
             /* Perkecil Tanda Tangan */
-            div[style*="height: 135px"] { height: 75px !important; }
+            div[style*="height: 135px"] { height: 85px !important; }
             
-            /* Jangan pernah break page di tengah tabel! */
-            table, tr, td, th { page-break-inside: avoid !important; }
-            
-            /* 1. Perkecil padding tabel & font */
-            table td, table th { 
-              padding: 2.5px 4px !important; 
-              font-size: 10.5px !important; 
-            }
-            /* 2. Perkecil ruang Kosong Kop Surat */
-            div[style*="borderBottom: \"2px solid black\""] { 
-              padding-bottom: 6px !important; 
-              margin-bottom: 8px !important; 
-            }
-            img[alt="Logo"] { width: 55px !important; height: 55px !important; }
-            img[alt="Andalus Logo"] { width: 45px !important; }
-            
-            /* 3. Perkecil Header Rapor (Kasyf Darojat) */
-            h1.font-arabic { font-size: 18px !important; margin-bottom: 2px !important; }
-            h2.font-arabic { font-size: 14px !important; margin-bottom: 2px !important; }
-            h3 { font-size: 11px !important; margin-top: 2px !important; }
-            h4 { font-size: 10px !important; margin-top: 2px !important; }
-            div[style*="marginBottom: \"24px\""] { margin-bottom: 12px !important; }
-            
-            /* 4. Rapatkan margin antar seksi */
-            div[style*="gap: 24"] { gap: 10px !important; }
-            div[style*="marginTop: \"24px\""] { margin-top: 10px !important; }
-            div[style*="marginTop: \"40px\""] { margin-top: 15px !important; }
-            
-            /* 5. Kurangi tinggi spasi Tanda Tangan */
-            div[style*="height: 135px"] { height: 95px !important; }
+            /* HANYA tr yang tidak boleh terpotong, tabel BOLEH terpotong jika terpaksa */
+            tr, td, th { page-break-inside: avoid !important; }
           }
         `}} />
 
