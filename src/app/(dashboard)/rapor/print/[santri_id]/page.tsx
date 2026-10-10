@@ -118,7 +118,7 @@ export default function CetakRaporPage() {
               display: block !important; 
             }
             #rapor-print-container > div {
-              margin-bottom: 12px !important;
+              margin-bottom: 8px !important;
             }
             
             .bg-gray-50 { background-color: white !important; }
@@ -126,27 +126,30 @@ export default function CetakRaporPage() {
             /* Paksa margin kertas jadi super tipis (5mm) */
             @page { size: A4; margin: 5mm; }
             
+            /* BUNUH minHeight 297mm yang menyebabkan selalu tumpah ke halaman 2! */
+            div[style*="minHeight: \"297mm\""] { min-height: 0 !important; border-radius: 0 !important; }
+            
             /* Kompresi Tabel Ekstrem */
-            table td, table th { padding: 3px 4px !important; font-size: 10.5px !important; line-height: 1.1 !important; }
+            table td, table th { padding: 2px 3px !important; font-size: 10px !important; line-height: 1.1 !important; }
             
             /* Perkecil Kop Surat secara masif */
-            img[alt="Logo"] { width: 55px !important; height: 55px !important; }
-            img[alt="Andalus Logo"] { width: 45px !important; }
+            img[alt="Logo"] { width: 50px !important; height: 50px !important; }
+            img[alt="Andalus Logo"] { width: 40px !important; }
             h1.font-arabic { font-size: 16px !important; margin-bottom: 0 !important; }
             h2.font-arabic { font-size: 12px !important; margin-bottom: 0 !important; }
             h3 { font-size: 11px !important; margin-top: 0 !important; }
             h4 { font-size: 10px !important; margin-top: 0 !important; }
             
             /* Pangkas semua jarak kosong / line-height */
-            p { margin-bottom: 0 !important; line-height: 1.2 !important; }
+            p { margin-bottom: 0 !important; line-height: 1.15 !important; }
             div[style*="marginBottom: \"16px\""] { margin-bottom: 6px !important; }
             div[style*="marginBottom: \"24px\""] { margin-bottom: 8px !important; }
             div[style*="marginTop: \"24px\""] { margin-top: 8px !important; }
             div[style*="marginTop: \"40px\""] { margin-top: 10px !important; }
-            div[style*="padding: \"16px\""] { padding: 8px !important; }
+            div[style*="padding: \"16px\""] { padding: 6px !important; }
             
             /* Perkecil Tanda Tangan */
-            div[style*="height: 135px"] { height: 85px !important; }
+            div[style*="height: 135px"] { height: 75px !important; }
             
             /* HANYA tr yang tidak boleh terpotong, tabel BOLEH terpotong jika terpaksa */
             tr, td, th { page-break-inside: avoid !important; }
