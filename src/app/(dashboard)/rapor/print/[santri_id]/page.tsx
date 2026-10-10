@@ -256,23 +256,34 @@ export default function CetakRaporPage() {
                       <td style={{ border: "1px solid #1a1a1a", padding: "8px", verticalAlign: "top", height: "80px", color: "#333", fontStyle: "italic", lineHeight: "1.6" }}>
                         {(() => {
                           const rata = kedisiplinan?.rataRata || 0;
-                          const totalAbsen = (absen?.sakit || 0) + (absen?.izin || 0) + (absen?.alpha || 0);
-                          let note = "";
-                          
-                          if (rata >= 90) {
-                            note = "Prestasi akademik Ananda sangat memuaskan (Mumtaz). Pertahankan semangat belajar dan tingkatkan terus hafalannya.";
-                          } else if (rata >= 80) {
-                            note = "Prestasi akademik Ananda sudah baik (Jayyid Jiddan). Tingkatkan lagi kefokusan dalam belajar agar mencapai hasil yang lebih maksimal.";
-                          } else {
-                            note = "Ananda perlu lebih giat dan tekun dalam belajar. Jangan mudah menyerah, perbanyak mengulang pelajaran di asrama, dan selalu patuhi tata tertib pesantren.";
-                          }
+                            const totalAbsen = (absen?.sakit || 0) + (absen?.izin || 0) + (absen?.alpha || 0);
+                            const ranking = kedisiplinan?.ranking || 0;
+                            const totalSantri = kedisiplinan?.jumlahSantri || 1;
+                            
+                            // Ambil nama panggilan (kata pertama)
+                            let namaPanggilan = santri?.nama ? santri.nama.split(" ")[0] : "Ananda";
+                            namaPanggilan = namaPanggilan.charAt(0).toUpperCase() + namaPanggilan.slice(1).toLowerCase();
+                            
+                            let note = "";
+                            const persentil = ranking / totalSantri; // 0.1 = top 10%, 0.9 = bottom 10%
+                            
+                            // Logika Predikat (Menggabungkan Nilai & Kompetisi Kelas)
+                            if (rata >= 90 && persentil <= 0.3) {
+                              note = `Prestasi akademik ${namaPanggilan} sangat memuaskan (Mumtaz). Pertahankan semangat belajar yang tinggi dan jangan cepat berpuas diri.`;
+                            } else if (rata >= 80 && persentil <= 0.5) {
+                              note = `Prestasi akademik ${namaPanggilan} sudah baik (Jayyid Jiddan). Tingkatkan lagi kefokusan dalam belajar agar mencapai peringkat yang lebih maksimal.`;
+                            } else if (rata >= 80 && persentil > 0.5) {
+                              note = `Pencapaian nilai ${namaPanggilan} secara rata-rata sudah baik, namun persaingan di kelas sangat ketat. Perbanyak muraja'ah agar tidak tertinggal dari teman-teman yang lain.`;
+                            } else {
+                              note = `${namaPanggilan} perlu lebih giat dan tekun dalam belajar. Jangan mudah menyerah, perbanyak mengulang pelajaran di asrama, dan selalu patuhi tata tertib pesantren.`;
+                            }
 
-                          if (totalAbsen > 10 || (absen?.alpha || 0) > 3) {
-                            note += " Catatan tambahan: Tingkatkan kedisiplinan kehadiran di kelas, hindari ketidakhadiran tanpa udzur syar'i.";
-                          }
-
-                          return note;
-                        })()}
+                            if (totalAbsen > 10 || (absen?.alpha || 0) > 3) {
+                              note += " Catatan: Evaluasi kehadiran kelas juga perlu diperhatikan, hindari ketidakhadiran tanpa udzur syar'i.";
+                            }
+                            
+                            return note;
+                          })()}
                       </td>
                   </tr>
                 </tbody>
