@@ -358,7 +358,7 @@ export default function CetakRaporPage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {(data.ujian_tahfidz || []).filter((u: any) => u.jenis_ujian === 'ujian_pratarget').length > 0 ? (data.ujian_tahfidz || []).filter((u: any) => u.jenis_ujian === 'ujian_pratarget').map((u: any, i: number) => {
+                  {(data.ujian_tahfidz || []).filter((u: any) => u.jenis_ujian === 'ujian_pra_target').length > 0 ? (data.ujian_tahfidz || []).filter((u: any) => u.jenis_ujian === 'ujian_pra_target').map((u: any, i: number) => {
                     let sikapStr = "Baik";
                     if (u.nilai_sikap >= 90) sikapStr = "Sangat Baik";
                     else if (u.nilai_sikap >= 80) sikapStr = "Baik";
@@ -405,7 +405,7 @@ export default function CetakRaporPage() {
                   <tr style={{ backgroundColor: "white" }}>
                     <td style={{ border: "1px solid #1a1a1a", padding: "8px", verticalAlign: "top", color: "#333", fontStyle: "italic", lineHeight: "1.6" }}>
                       {(() => {
-                        const ujian = (data?.ujian_tahfidz || []).filter((u: any) => u.jenis_ujian === 'ujian_pratarget');
+                        const ujian = (data?.ujian_tahfidz || []).filter((u: any) => u.jenis_ujian === 'ujian_pra_target');
                         if (ujian.length === 0) {
                           return "Belum ada riwayat ujian tahsin/tahfidz pada periode ini. Tingkatkan semangat tilawah dan muraja'ah bersama Musyrif di halaqoh.";
                         }
