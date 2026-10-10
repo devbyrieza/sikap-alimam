@@ -255,8 +255,8 @@ export default function CetakRaporPage() {
                     <tr style={{ backgroundColor: "white" }}>
                       <td style={{ border: "1px solid #1a1a1a", padding: "8px", verticalAlign: "top", height: "80px", color: "#333", fontStyle: "italic", lineHeight: "1.6" }}>
                         {(() => {
-                          const rata = kedisiplinan.rataRata || 0;
-                          const totalAbsen = (absen.sakit || 0) + (absen.izin || 0) + (absen.alpha || 0);
+                          const rata = kedisiplinan?.rataRata || 0;
+                          const totalAbsen = (absen?.sakit || 0) + (absen?.izin || 0) + (absen?.alpha || 0);
                           let note = "";
                           
                           if (rata >= 90) {
@@ -267,7 +267,7 @@ export default function CetakRaporPage() {
                             note = "Ananda perlu lebih giat dan tekun dalam belajar. Jangan mudah menyerah, perbanyak mengulang pelajaran di asrama, dan selalu patuhi tata tertib pesantren.";
                           }
 
-                          if (totalAbsen > 10 || (absen.alpha || 0) > 3) {
+                          if (totalAbsen > 10 || (absen?.alpha || 0) > 3) {
                             note += " Catatan tambahan: Tingkatkan kedisiplinan kehadiran di kelas, hindari ketidakhadiran tanpa udzur syar'i.";
                           }
 
@@ -279,39 +279,7 @@ export default function CetakRaporPage() {
               </table>
             </div>
 
-            {/* Evaluasi Tahfidz Box */}
-            <div style={{ marginTop: "12px", pageBreakInside: "avoid" }}>
-              <table style={{ width: "100%", borderCollapse: "collapse", border: "2px solid #1a1a1a", fontSize: "12px" }}>
-                <thead>
-                  <tr style={{ backgroundColor: "#f1f5f9" }}>
-                    <th style={{ border: "1px solid #1a1a1a", padding: "6px 8px", textAlign: "left" }}>Evaluasi Pencapaian Tahfidz</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr style={{ backgroundColor: "white" }}>
-                    <td style={{ border: "1px solid #1a1a1a", padding: "8px", verticalAlign: "top", color: "#333", fontStyle: "italic", lineHeight: "1.6" }}>
-                      {(() => {
-                        const ujian = data.ujian_tahfidz || [];
-                        if (ujian.length === 0) {
-                          return "Ananda belum mengikuti ujian tahfidz pada periode ini. Tingkatkan semangat ziyadah dan muraja'ah bersama Musyrif di halaqoh.";
-                        }
-                        
-                        const passed = ujian.filter((u: any) => u.is_lulus).length;
-                        const total = ujian.length;
-                        
-                        if (passed === total) {
-                          return "Alhamdulillah, pencapaian hafalan Ananda sangat baik (Lulus Ujian 100%). Terus tingkatkan muraja'ah mandiri agar hafalan semakin mutqin dan terjaga.";
-                        } else if (passed > 0) {
-                          return "Pencapaian hafalan Ananda sudah cukup baik, namun perlu lebih memperbanyak porsi muraja'ah untuk mengulang target yang belum tuntas.";
-                        } else {
-                          return "Ananda perlu memberikan perhatian ekstra pada program tahfidz. Perbanyak waktu tilawah dan muraja'ah bersama rekan halaqoh agar bisa lulus ujian.";
-                        }
-                      })()}
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
+            
 
             <div style={{ width: "48%" }}>
             <table style={{ width: "100%", borderCollapse: "collapse", border: "2px solid #1a1a1a", fontSize: "13px" }}>
@@ -360,11 +328,45 @@ export default function CetakRaporPage() {
                 )) : (
                   <tr style={{ backgroundColor: "white" }}>
                     <td colSpan={3} style={{ border: "1px solid #1a1a1a", padding: "6px 8px", textAlign: "center" }}>Belum ada data ujian tahfidz</td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Evaluasi Tahfidz Box */}
+            <div style={{ marginTop: "12px", pageBreakInside: "avoid", marginBottom: "32px" }}>
+              <table style={{ width: "100%", borderCollapse: "collapse", border: "2px solid #1a1a1a", fontSize: "12px" }}>
+                <thead>
+                  <tr style={{ backgroundColor: "#f1f5f9" }}>
+                    <th style={{ border: "1px solid #1a1a1a", padding: "6px 8px", textAlign: "left" }}>Evaluasi Pencapaian Tahfidz</th>
                   </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
+                </thead>
+                <tbody>
+                  <tr style={{ backgroundColor: "white" }}>
+                    <td style={{ border: "1px solid #1a1a1a", padding: "8px", verticalAlign: "top", color: "#333", fontStyle: "italic", lineHeight: "1.6" }}>
+                      {(() => {
+                        const ujian = data?.ujian_tahfidz || [];
+                        if (ujian.length === 0) {
+                          return "Ananda belum mengikuti ujian tahfidz pada periode ini. Tingkatkan semangat ziyadah dan muraja'ah bersama Musyrif di halaqoh.";
+                        }
+                        
+                        const passed = ujian.filter((u: any) => u.is_lulus).length;
+                        const total = ujian.length;
+                        
+                        if (passed === total) {
+                          return "Alhamdulillah, pencapaian hafalan Ananda sangat baik (Lulus Ujian 100%). Terus tingkatkan muraja'ah mandiri agar hafalan semakin mutqin dan terjaga.";
+                        } else if (passed > 0) {
+                          return "Pencapaian hafalan Ananda sudah cukup baik, namun perlu lebih memperbanyak porsi muraja'ah untuk mengulang target yang belum tuntas.";
+                        } else {
+                          return "Ananda perlu memberikan perhatian ekstra pada program tahfidz. Perbanyak waktu tilawah dan muraja'ah bersama rekan halaqoh agar bisa lulus ujian.";
+                        }
+                      })()}
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
 
         
           {/* Tanda Tangan */}
