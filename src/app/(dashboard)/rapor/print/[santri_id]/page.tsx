@@ -162,23 +162,36 @@ export default function CetakRaporPage() {
           <div style={{ width: "80px" }}></div>
         </div>
 
-        {/* Judul Arab */}
+        {/* Judul Arab & Terjemahan */}
           <div className="text-center mb-6">
             {(() => {
               const kls = santri.kelas.toUpperCase();
               let marhalah = "للمرحلة المتوسطة"; // Default MTs
+              let indoMarhalah = "TINGKAT MADRASAH TSANAWIYAH (MTs)";
+              
               if (kls.includes("MA")) {
                 marhalah = "للمرحلة الثانوية";
-              } else if (kls.includes("IL")) {
+                indoMarhalah = "TINGKAT MADRASAH ALIYAH (MA)";
+              } else if (kls.includes("IL") || kls.includes("I'DAD") || kls.includes("IDAD")) {
                 marhalah = "لبرنامج الإعداد اللغوي";
+                indoMarhalah = "PROGRAM I'DAD LUGHOWI (IL)";
               }
+              
               return (
-                <h1 className="text-2xl font-bold font-arabic mb-1" dir="rtl" style={{ fontFamily: "Traditional Arabic, serif" }}>
-                  كشف الدرجات {marhalah}
-                </h1>
+                <>
+                  <h1 className="text-2xl font-bold font-arabic mb-1" dir="rtl" style={{ fontFamily: "Traditional Arabic, serif" }}>
+                    كشف الدرجات {marhalah}
+                  </h1>
+                  <h2 className="text-lg font-bold font-arabic mb-2" dir="rtl" style={{ fontFamily: "Traditional Arabic, serif" }}>بمعهد الإمام الإسلامي</h2>
+                  <h3 className="text-[13px] font-bold text-slate-800 tracking-wider mt-1 uppercase">
+                    Laporan Hasil Evaluasi Belajar (Rapor)
+                  </h3>
+                  <h4 className="text-[12px] font-bold text-slate-600 tracking-wide mt-0.5 uppercase">
+                    {indoMarhalah}
+                  </h4>
+                </>
               );
             })()}
-            <h2 className="text-lg font-bold font-arabic mb-1" dir="rtl" style={{ fontFamily: "Traditional Arabic, serif" }}>بمعهد الإمام الإسلامي</h2>
           </div>
 
         {/* Biodata */}
