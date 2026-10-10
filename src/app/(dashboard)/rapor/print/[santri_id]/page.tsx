@@ -447,35 +447,42 @@ export default function CetakRaporPage() {
             } else if (isIL) {
               headTitle = "Mudir";
               headName = "Wahab Rajasam, M.Pd.";
-              waliKelasName = "Imron Abdillah";
+              waliKelasName = "Imron Abdillah, S.Pd.";
             }
 
             return (
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", textAlign: "center", marginTop: "40px", fontSize: "13px", pageBreakInside: "avoid", fontFamily: "Georgia, 'Times New Roman', serif" }}>
-                <div>
-                  <p style={{ marginBottom: "70px" }}>Mengetahui,<br/>Orang Tua / Wali</p>
-                  <p style={{ fontWeight: "bold", whiteSpace: "nowrap" }}>( ........................................ )</p>
-                </div>
-                <div>
-                  <p style={{ marginBottom: "70px" }}>Mengetahui,<br/>{headTitle}</p>
-                  <p style={{ fontWeight: "bold", whiteSpace: "nowrap" }}>( {headName} )</p>
-                </div>
-                <div style={{ position: "relative", display: "flex", justifyContent: "center" }}>
-                  <div>
-                    <p style={{ marginBottom: "8px" }}>Sukabumi, 18 Desember 2026</p>
-                    <p style={{ marginBottom: "48px" }}>Wali Kelas</p>
-                    <p style={{ fontWeight: "bold", whiteSpace: "nowrap" }}>( {waliKelasName} )</p>
+                  <div style={{ display: "flex", flexDirection: "column", justifyContent: "space-between", height: "110px" }}>
+                    <div>
+                      <p style={{ marginBottom: "4px" }}>Mengetahui,</p>
+                      <p>Orang Tua / Wali</p>
+                    </div>
+                    <p style={{ fontWeight: "bold", whiteSpace: "nowrap" }}>( ........................................ )</p>
                   </div>
-                  
-                  {/* QR CODE (Anti-Forgery) dipindah ke sebelah kiri Wali Kelas agar tidak menabrak batas margin kanan */}
-                  <div style={{ position: "absolute", bottom: "-10px", left: "-20px", display: "flex", flexDirection: "column", alignItems: "center" }}>
-                    <img src={`https://api.qrserver.com/v1/create-qr-code/?size=60x60&data=https://sikap.pesantren-alimam.com/verify/${santriId}`} alt="QR Code Verifikasi" style={{ width: "55px", height: "55px", border: "1px solid #ccc", padding: "2px", borderRadius: "4px", backgroundColor: "white" }} />
-                    <p style={{ fontSize: "8px", marginTop: "2px", color: "#666", fontFamily: "Arial, sans-serif", whiteSpace: "nowrap", fontWeight: "bold" }}>Scan Validasi</p>
+                  <div style={{ display: "flex", flexDirection: "column", justifyContent: "space-between", height: "110px" }}>
+                    <div>
+                      <p style={{ marginBottom: "4px" }}>Mengetahui,</p>
+                      <p>{headTitle}</p>
+                    </div>
+                    <p style={{ fontWeight: "bold", whiteSpace: "nowrap" }}>( {headName} )</p>
+                  </div>
+                  <div style={{ position: "relative", display: "flex", flexDirection: "column", justifyContent: "space-between", height: "110px" }}>
+                    <div>
+                      <p style={{ marginBottom: "4px" }}>Sukabumi, 18 Desember 2026</p>
+                      <p>Wali Kelas</p>
+                    </div>
+                    
+                    {/* QR CODE */}
+                    <div style={{ position: "absolute", bottom: "-5px", left: "-25px", display: "flex", flexDirection: "column", alignItems: "center" }}>
+                      <img src={`https://api.qrserver.com/v1/create-qr-code/?size=60x60&data=https://sikap.pesantren-alimam.com/verify/${santriId}`} alt="QR Code Verifikasi" style={{ width: "50px", height: "50px", border: "1px solid #ccc", padding: "2px", borderRadius: "4px", backgroundColor: "white" }} />
+                      <p style={{ fontSize: "7px", marginTop: "2px", color: "#666", fontFamily: "Arial, sans-serif", whiteSpace: "nowrap", fontWeight: "bold" }}>Scan Validasi</p>
+                    </div>
+                    
+                    <p style={{ fontWeight: "bold", whiteSpace: "nowrap", marginLeft: "15px" }}>( {waliKelasName} )</p>
                   </div>
                 </div>
-              </div>
-            );
-          })()}
+              );
+            })()}
 
         </div>
       </div>
