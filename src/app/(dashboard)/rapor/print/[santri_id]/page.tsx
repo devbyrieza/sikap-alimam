@@ -338,17 +338,15 @@ export default function CetakRaporPage() {
         {/* TABEL TAHFIDZ */}
           <div style={{ marginTop: "20px" }}>
             <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "11px", fontFamily: "Georgia, serif" }}>
-              <thead>
-                <tr style={{ backgroundColor: "#f1f5f9" }}>
-                  <th colSpan={6} style={{ border: "1px solid #1a1a1a", padding: "6px 8px", textAlign: "left", color: "#64748b", fontWeight: "bold" }}>LAPORAN TAHSIN & TAHFIDZ</th>
+                <thead>
+                  <tr style={{ backgroundColor: "#f1f5f9" }}>
+                    <th colSpan={4} style={{ border: "1px solid #1a1a1a", padding: "6px 8px", textAlign: "left", color: "#64748b", fontWeight: "bold" }}>LAPORAN TAHSIN & TAHFIDZ</th>
                   </tr>
                   <tr style={{ backgroundColor: "#fdf8f0" }}>
                     <th style={{ border: "1px solid #1a1a1a", padding: "6px 8px", textAlign: "left" }}>Jenis / Materi Ujian</th>
-                    <th style={{ border: "1px solid #1a1a1a", padding: "6px 8px", width: "10%", textAlign: "center" }}>Bacaan</th>
-                    <th style={{ border: "1px solid #1a1a1a", padding: "6px 8px", width: "12%", textAlign: "center" }}>Kelancaran</th>
-                    <th style={{ border: "1px solid #1a1a1a", padding: "6px 8px", width: "12%", textAlign: "center" }}>Sikap</th>
-                    <th style={{ border: "1px solid #1a1a1a", padding: "6px 8px", width: "12%", textAlign: "center" }}>Nilai Akhir</th>
-                    <th style={{ border: "1px solid #1a1a1a", padding: "6px 8px", width: "15%", textAlign: "center" }}>Keterangan</th>
+                    <th style={{ border: "1px solid #1a1a1a", padding: "6px 8px", width: "15%", textAlign: "center" }}>Sikap</th>
+                    <th style={{ border: "1px solid #1a1a1a", padding: "6px 8px", width: "15%", textAlign: "center" }}>Nilai Ujian</th>
+                    <th style={{ border: "1px solid #1a1a1a", padding: "6px 8px", width: "20%", textAlign: "center" }}>Keterangan</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -368,15 +366,9 @@ export default function CetakRaporPage() {
                           {u.juz ? ` (Juz ${u.juz})` : u.surah_nama ? ` (Surah ${u.surah_nama})` : ''}
                         </td>
                         <td style={{ border: "1px solid #1a1a1a", padding: "6px 8px", textAlign: "center" }}>
-                          {u.nilai_bacaan || 0}
-                        </td>
-                        <td style={{ border: "1px solid #1a1a1a", padding: "6px 8px", textAlign: "center" }}>
-                          {u.nilai_kelancaran || 0}
-                        </td>
-                        <td style={{ border: "1px solid #1a1a1a", padding: "6px 8px", textAlign: "center" }}>
                           {sikapStr}
                         </td>
-                        <td style={{ border: "1px solid #1a1a1a", padding: "6px 8px", textAlign: "center", fontWeight: "bold" }}>
+                        <td style={{ border: "1px solid #1a1a1a", padding: "6px 8px", textAlign: "center", fontWeight: "bold", fontSize: "12px" }}>
                           {nilaiAkhir}
                         </td>
                         <td style={{ border: "1px solid #1a1a1a", padding: "6px 8px", textAlign: "center", color: u.is_lulus ? "#047857" : "#be123c", fontWeight: "bold" }}>
@@ -386,7 +378,7 @@ export default function CetakRaporPage() {
                     );
                   }) : (
                     <tr style={{ backgroundColor: "white" }}>
-                      <td colSpan={6} style={{ border: "1px solid #1a1a1a", padding: "6px 8px", textAlign: "center" }}>Belum ada data ujian</td>
+                      <td colSpan={4} style={{ border: "1px solid #1a1a1a", padding: "6px 8px", textAlign: "center" }}>Belum ada data ujian</td>
                     </tr>
                   )}
                 </tbody>
