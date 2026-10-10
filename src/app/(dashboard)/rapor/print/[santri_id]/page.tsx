@@ -339,21 +339,22 @@ export default function CetakRaporPage() {
                   <p style={{ marginBottom: "70px" }}>Mengetahui,<br/>{headTitle}</p>
                   <p style={{ fontWeight: "bold", whiteSpace: "nowrap" }}>( {headName} )</p>
                 </div>
-                <div style={{ position: "relative" }}>
-                  <p style={{ marginBottom: "8px" }}>Sukabumi, 18 Desember 2026</p>
-                  <p style={{ marginBottom: "48px" }}>Wali Kelas</p>
-                  <p style={{ fontWeight: "bold", whiteSpace: "nowrap" }}>( ........................................ )</p>
+                <div style={{ position: "relative", display: "flex", justifyContent: "center" }}>
+                  <div>
+                    <p style={{ marginBottom: "8px" }}>Sukabumi, 18 Desember 2026</p>
+                    <p style={{ marginBottom: "48px" }}>Wali Kelas</p>
+                    <p style={{ fontWeight: "bold", whiteSpace: "nowrap" }}>( ........................................ )</p>
+                  </div>
                   
-                  {/* QR CODE (Anti-Forgery) */}
-                  <div style={{ position: "absolute", bottom: "-10px", right: "0px", display: "flex", flexDirection: "column", alignItems: "center" }}>
+                  {/* QR CODE (Anti-Forgery) dipindah ke sebelah kiri Wali Kelas agar tidak menabrak batas margin kanan */}
+                  <div style={{ position: "absolute", bottom: "-10px", left: "-20px", display: "flex", flexDirection: "column", alignItems: "center" }}>
                     <img src={`https://api.qrserver.com/v1/create-qr-code/?size=60x60&data=https://sikap.pesantren-alimam.com/verify/${santriId}`} alt="QR Code Verifikasi" style={{ width: "55px", height: "55px", border: "1px solid #ccc", padding: "2px", borderRadius: "4px", backgroundColor: "white" }} />
-                    <p style={{ fontSize: "8px", marginTop: "2px", color: "#666", fontFamily: "Arial, sans-serif" }}>Scan Autentikasi</p>
+                    <p style={{ fontSize: "8px", marginTop: "2px", color: "#666", fontFamily: "Arial, sans-serif", whiteSpace: "nowrap", fontWeight: "bold" }}>Scan Validasi</p>
                   </div>
                 </div>
               </div>
             );
           })()}
-
 
         </div>
       </div>
