@@ -445,8 +445,8 @@ export default function CetakRaporPage() {
               headName = "Rethna Kartika Septianiar, S.Pd.";
               waliKelasName = "Muhammad Thoriq Ibn Ziyad, Lc., M.Ag.";
             } else if (isIL) {
-              headTitle = "Mudir";
-              headName = "Wahab Rajasam, M.Pd.";
+              headTitle = "Kepala Kurikulum";
+              headName = "Imron Abdillah, S.Pd.";
               waliKelasName = "Imron Abdillah, S.Pd.";
             }
 
