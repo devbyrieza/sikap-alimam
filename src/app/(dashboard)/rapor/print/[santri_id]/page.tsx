@@ -472,17 +472,22 @@ export default function CetakRaporPage() {
                       <p>Wali Kelas</p>
                     </div>
                     
-                    {/* QR CODE */}
-                    <div style={{ position: "absolute", bottom: "-5px", left: "-25px", display: "flex", flexDirection: "column", alignItems: "center" }}>
-                      <img src={`https://api.qrserver.com/v1/create-qr-code/?size=60x60&data=https://sikap.pesantren-alimam.com/verify/${santriId}`} alt="QR Code Verifikasi" style={{ width: "50px", height: "50px", border: "1px solid #ccc", padding: "2px", borderRadius: "4px", backgroundColor: "white" }} />
-                      <p style={{ fontSize: "7px", marginTop: "2px", color: "#666", fontFamily: "Arial, sans-serif", whiteSpace: "nowrap", fontWeight: "bold" }}>Scan Validasi</p>
-                    </div>
+                    
                     
                     <p style={{ fontWeight: "bold", whiteSpace: "nowrap", marginLeft: "15px" }}><span style={{ textDecoration: "underline" }}>{waliKelasName}</span></p>
                   </div>
+                
+                {/* Footer QR Code Validasi */}
+                <div style={{ display: "flex", alignItems: "center", gap: "12px", marginTop: "40px", borderTop: "1px dashed #ccc", paddingTop: "12px", pageBreakInside: "avoid" }}>
+                  <img src={`https://api.qrserver.com/v1/create-qr-code/?size=60x60&data=https://sikap.pesantren-alimam.com/verify/${santriId}`} alt="QR Code Verifikasi" style={{ width: "45px", height: "45px", padding: "2px", border: "1px solid #ccc", borderRadius: "4px" }} />
+                  <div style={{ fontSize: "10px", color: "#666", lineHeight: "1.4", fontFamily: "Arial, sans-serif" }}>
+                    <strong>Verifikasi Keaslian Dokumen</strong><br/>
+                    Scan QR Code ini menggunakan kamera untuk memvalidasi keaslian rapor di database SIKAP Pesantren Al-Imam Al-Islami.
+                  </div>
                 </div>
-              );
-            })()}
+              </div>
+            );
+          })()}
 
         </div>
       </div>
