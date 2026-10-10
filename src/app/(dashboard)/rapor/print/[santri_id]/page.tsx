@@ -307,7 +307,7 @@ export default function CetakRaporPage() {
                             } else if (rata >= 80 && persentil <= 0.5) {
                               note = `Prestasi akademik ${namaPanggilan} sudah baik (Jayyid Jiddan). Tingkatkan lagi kefokusan dalam belajar agar mencapai peringkat yang lebih maksimal.`;
                             } else if (rata >= 80 && persentil > 0.5) {
-                              note = `Pencapaian nilai ${namaPanggilan} secara rata-rata sudah baik, namun persaingan di kelas sangat ketat. Perbanyak mengulang pelajaran (muthola'ah) agar tidak tertinggal dari teman-teman yang lain.`;
+                              note = `Pencapaian nilai ${namaPanggilan} secara rata-rata sudah baik, namun persaingan di kelas sangat ketat. Perbanyak mengulang pelajaran agar tidak tertinggal dari teman-teman yang lain.`;
                             } else {
                               note = `${namaPanggilan} perlu lebih giat dan tekun dalam belajar. Jangan mudah menyerah, perbanyak mengulang pelajaran di asrama, dan selalu patuhi tata tertib pesantren.`;
                             }
