@@ -139,9 +139,29 @@ export default function CetakRaporPage() {
         </button>
       </div>
 
-      <div className="max-w-[210mm] mx-auto bg-white p-[10mm] shadow-xl print:shadow-none print:p-0 print:max-w-full relative" style={{ borderRadius: "24px" }}>
+      <div className="max-w-[210mm] mx-auto bg-white p-[10mm] shadow-xl print:shadow-none print:p-0 print:max-w-full relative" style={{ borderRadius: "24px", minHeight: "297mm", position: "relative" }}>
         
-        {/* Kop Surat */}
+
+        {/* WATERMARK */}
+        <div style={{ position: "absolute", top: 0, left: 0, right: 0, bottom: 0, display: "flex", justifyContent: "center", alignItems: "center", zIndex: 0, pointerEvents: "none", opacity: 0.05 }}>
+          <img src="/logo.png" alt="Watermark" style={{ width: "60%" }} />
+        </div>
+
+        {/* CONTENT WRAPPER */}
+        <div style={{ position: "relative", zIndex: 1 }}>
+
+        {/* Kop Surat Resmi */}
+        <div style={{ display: "flex", alignItems: "center", borderBottom: "3px solid #1a1a1a", paddingBottom: "16px", marginBottom: "24px" }}>
+          <img src="/logo.png" alt="Logo Al-Imam" style={{ width: "80px", height: "80px", objectFit: "contain" }} />
+          <div style={{ flex: 1, textAlign: "center" }}>
+            <h1 style={{ fontSize: "22px", fontWeight: "900", margin: 0, letterSpacing: "1px", color: "#1a1a1a" }}>PESANTREN AL-IMAM</h1>
+            <p style={{ margin: "4px 0 0 0", fontSize: "13px", fontWeight: "bold", color: "#333" }}>Mencetak Generasi Qur'ani, Berakhlak Mulia, dan Berprestasi</p>
+            <p style={{ margin: "2px 0 0 0", fontSize: "11px", color: "#555" }}>Jl. Raya Susukan, Kab. Semarang, Jawa Tengah | Website: sikap.pesantren-alimam.com</p>
+          </div>
+          <div style={{ width: "80px" }}></div>
+        </div>
+
+        {/* Judul Arab */}
         <div className="text-center mb-6">
           <h1 className="text-2xl font-bold font-arabic mb-1" dir="rtl" style={{ fontFamily: "Traditional Arabic, serif" }}>كشف الدرجات للمرحلة المتوسطة</h1>
           <h2 className="text-lg font-bold font-arabic mb-1" dir="rtl" style={{ fontFamily: "Traditional Arabic, serif" }}>بمعهد الإمام الإسلامي</h2>
@@ -290,6 +310,7 @@ export default function CetakRaporPage() {
 
         </div>
 
+        </div>
       </div>
     </div>
   );
