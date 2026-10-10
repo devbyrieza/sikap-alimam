@@ -149,7 +149,7 @@ export default function CetakRaporPage() {
             div[style*="padding: 16px"] { padding: 6px !important; }
             
             /* Perkecil Tanda Tangan */
-            div[style*="height: 135px"] { height: 75px !important; }
+            div[style*="height: 135px"] { height: 110px !important; }
             
             /* HANYA tr yang tidak boleh terpotong, tabel BOLEH terpotong jika terpaksa */
             tr, td, th { page-break-inside: avoid !important; }
