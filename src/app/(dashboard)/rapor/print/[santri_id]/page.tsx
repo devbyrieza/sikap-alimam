@@ -154,9 +154,9 @@ export default function CetakRaporPage() {
         <div style={{ display: "flex", alignItems: "center", borderBottom: "3px solid #1a1a1a", paddingBottom: "16px", marginBottom: "24px" }}>
           <img src="/logo.png" alt="Logo Al-Imam" style={{ width: "80px", height: "80px", objectFit: "contain" }} />
           <div style={{ flex: 1, textAlign: "center" }}>
-            <h1 style={{ fontSize: "22px", fontWeight: "900", margin: 0, letterSpacing: "1px", color: "#1a1a1a" }}>PESANTREN AL-IMAM</h1>
-            <p style={{ margin: "4px 0 0 0", fontSize: "13px", fontWeight: "bold", color: "#333" }}>Mencetak Generasi Qur'ani, Berakhlak Mulia, dan Berprestasi</p>
-            <p style={{ margin: "2px 0 0 0", fontSize: "11px", color: "#555" }}>Jl. Raya Susukan, Kab. Semarang, Jawa Tengah | Website: sikap.pesantren-alimam.com</p>
+            <h1 style={{ fontSize: "22px", fontWeight: "900", margin: 0, letterSpacing: "1px", color: "#1a1a1a" }}>PESANTREN AL-IMAM AL-ISLAMI</h1>
+            <p style={{ margin: "4px 0 0 0", fontSize: "13px", fontWeight: "bold", color: "#333" }}>Kaderisasi Ummat Hanif, Kontributif, dan Adaptif</p>
+            <p style={{ margin: "2px 0 0 0", fontSize: "11px", color: "#555" }}>Jl. Pelabuhan II, Gg. Cirengkol, Kampung Pupunjul, Cikembar, Kab. Sukabumi, Jawa Barat 43157 | Web: pesantren-alimam.com</p>
           </div>
           <div style={{ width: "80px" }}></div>
         </div>
@@ -295,7 +295,7 @@ export default function CetakRaporPage() {
             <p className="font-semibold px-4 inline-block min-w-[150px]">( ......................................... )</p>
           </div>
           <div>
-            <p className="mb-20">Tengaran, 18 Desember 2026<br/><br/>Kepala Madrasah</p>
+            <p className="mb-20">Sukabumi, 18 Desember 2026<br/><br/>Kepala Madrasah</p>
             <p className="font-semibold px-4 inline-block min-w-[150px]">( Aziz Basuki, S.H.I, M.Pd. )</p>
           </div>
 
