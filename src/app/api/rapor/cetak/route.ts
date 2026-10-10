@@ -161,11 +161,23 @@ export async function GET(req: NextRequest) {
       take: 10
     });
     
-    const ujian_tahfidz = await prisma.ujianTahfidz.findMany({
+    const raw_ujian_tahfidz = await prisma.ujianTahfidz.findMany({
       where: { santri_id },
       orderBy: { tanggal: "desc" },
-      take: 5
+      take: 20
     });
+
+    // Filter unik berdasarkan jenis_ujian + juz + surah (Ambil yang paling terbaru saja)
+    const seenUjian = new Set();
+    const ujian_tahfidz = [];
+    for (const u of raw_ujian_tahfidz) {
+      const key = `${u.jenis_ujian}_${u.juz || 'nojuz'}_${u.surah_nama || 'nosurah'}`;
+      if (!seenUjian.has(key)) {
+        seenUjian.add(key);
+        ujian_tahfidz.push(u);
+      }
+      if (ujian_tahfidz.length >= 5) break; // maksimal 5 baris di rapor
+    }
 
     return NextResponse.json({
       santri: {
