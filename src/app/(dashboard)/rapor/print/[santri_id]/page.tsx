@@ -248,7 +248,7 @@ export default function CetakRaporPage() {
               <table style={{ width: "100%", height: "100%", borderCollapse: "collapse", border: "2px solid #1a1a1a", fontSize: "13px" }}>
                 <thead>
                   <tr style={{ backgroundColor: "#f1f5f9" }}>
-                    <th style={{ border: "1px solid #1a1a1a", padding: "6px 8px", textAlign: "center" }}>Evaluasi Akademik & Adab</th>
+                    <th style={{ border: "1px solid #1a1a1a", padding: "6px 8px", textAlign: "center" }}>Evaluasi Akademik</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -260,9 +260,9 @@ export default function CetakRaporPage() {
                           let note = "";
                           
                           if (rata >= 90) {
-                            note = "Prestasi akademik Ananda sangat memuaskan (Mumtaz). Pertahankan semangat belajar dan tingkatkan terus hafalannya. Selalu jaga adab dan akhlak di lingkungan pesantren.";
+                            note = "Prestasi akademik Ananda sangat memuaskan (Mumtaz). Pertahankan semangat belajar dan tingkatkan terus hafalannya.";
                           } else if (rata >= 80) {
-                            note = "Prestasi akademik Ananda sudah baik (Jayyid Jiddan). Tingkatkan lagi kefokusan dalam belajar agar mencapai hasil yang lebih maksimal. Perbanyak muraja'ah dan jaga niat yang ikhlas.";
+                            note = "Prestasi akademik Ananda sudah baik (Jayyid Jiddan). Tingkatkan lagi kefokusan dalam belajar agar mencapai hasil yang lebih maksimal.";
                           } else {
                             note = "Ananda perlu lebih giat dan tekun dalam belajar. Jangan mudah menyerah, perbanyak mengulang pelajaran di asrama, dan selalu patuhi tata tertib pesantren.";
                           }
@@ -274,6 +274,40 @@ export default function CetakRaporPage() {
                           return note;
                         })()}
                       </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            {/* Evaluasi Tahfidz Box */}
+            <div style={{ marginTop: "12px", pageBreakInside: "avoid" }}>
+              <table style={{ width: "100%", borderCollapse: "collapse", border: "2px solid #1a1a1a", fontSize: "12px" }}>
+                <thead>
+                  <tr style={{ backgroundColor: "#f1f5f9" }}>
+                    <th style={{ border: "1px solid #1a1a1a", padding: "6px 8px", textAlign: "left" }}>Evaluasi Pencapaian Tahfidz</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr style={{ backgroundColor: "white" }}>
+                    <td style={{ border: "1px solid #1a1a1a", padding: "8px", verticalAlign: "top", color: "#333", fontStyle: "italic", lineHeight: "1.6" }}>
+                      {(() => {
+                        const ujian = data.ujian_tahfidz || [];
+                        if (ujian.length === 0) {
+                          return "Ananda belum mengikuti ujian tahfidz pada periode ini. Tingkatkan semangat ziyadah dan muraja'ah bersama Musyrif di halaqoh.";
+                        }
+                        
+                        const passed = ujian.filter((u: any) => u.is_lulus).length;
+                        const total = ujian.length;
+                        
+                        if (passed === total) {
+                          return "Alhamdulillah, pencapaian hafalan Ananda sangat baik (Lulus Ujian 100%). Terus tingkatkan muraja'ah mandiri agar hafalan semakin mutqin dan terjaga.";
+                        } else if (passed > 0) {
+                          return "Pencapaian hafalan Ananda sudah cukup baik, namun perlu lebih memperbanyak porsi muraja'ah untuk mengulang target yang belum tuntas.";
+                        } else {
+                          return "Ananda perlu memberikan perhatian ekstra pada program tahfidz. Perbanyak waktu tilawah dan muraja'ah bersama rekan halaqoh agar bisa lulus ujian.";
+                        }
+                      })()}
+                    </td>
                   </tr>
                 </tbody>
               </table>
