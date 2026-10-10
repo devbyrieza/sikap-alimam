@@ -109,7 +109,36 @@ export default function CetakRaporPage() {
             
             /* Prevent content from starting below hidden sticky headers */
             * { position: static !important; }
-            .print\:block { position: relative !important; }
+            .print\\:block { position: relative !important; }
+            
+            /* --- COMPRESSION AGAR MUAT 1 HALAMAN --- */
+            /* 1. Perkecil padding tabel & font */
+            table td, table th { 
+              padding: 2.5px 4px !important; 
+              font-size: 10.5px !important; 
+            }
+            /* 2. Perkecil ruang Kosong Kop Surat */
+            div[style*="borderBottom: \"2px solid black\""] { 
+              padding-bottom: 6px !important; 
+              margin-bottom: 8px !important; 
+            }
+            img[alt="Logo"] { width: 55px !important; height: 55px !important; }
+            img[alt="Andalus Logo"] { width: 45px !important; }
+            
+            /* 3. Perkecil Header Rapor (Kasyf Darojat) */
+            h1.font-arabic { font-size: 18px !important; margin-bottom: 2px !important; }
+            h2.font-arabic { font-size: 14px !important; margin-bottom: 2px !important; }
+            h3 { font-size: 11px !important; margin-top: 2px !important; }
+            h4 { font-size: 10px !important; margin-top: 2px !important; }
+            div[style*="marginBottom: \"24px\""] { margin-bottom: 12px !important; }
+            
+            /* 4. Rapatkan margin antar seksi */
+            div[style*="gap: 24"] { gap: 10px !important; }
+            div[style*="marginTop: \"24px\""] { margin-top: 10px !important; }
+            div[style*="marginTop: \"40px\""] { margin-top: 15px !important; }
+            
+            /* 5. Kurangi tinggi spasi Tanda Tangan */
+            div[style*="height: 135px"] { height: 95px !important; }
           }
         `}} />
 
