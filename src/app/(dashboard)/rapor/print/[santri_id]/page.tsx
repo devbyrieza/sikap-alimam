@@ -157,8 +157,8 @@ export default function CetakRaporPage() {
             <h1 style={{ fontSize: "22px", fontWeight: "900", margin: 0, letterSpacing: "1px", color: "#1a1a1a" }}>PESANTREN AL-IMAM AL-ISLAMI</h1>
               <p style={{ margin: "2px 0 4px 0", fontSize: "12px", fontWeight: "bold", color: "#666", fontStyle: "italic" }}>Managed by Al-Andalus International Islamic Boarding School</p>
             <p style={{ margin: "4px 0 0 0", fontSize: "13px", fontWeight: "bold", color: "#333" }}>Kaderisasi Ummat Hanif, Kontributif, dan Adaptif</p>
-            <p style={{ margin: "2px 0 0 0", fontSize: "11px", color: "#555" }}>Jl. Pelabuhan II, Gg. Cirengkol, Kampung Pupunjul, Desa Cikembar, Kec. Cikembar, Kab. Sukabumi, Jawa Barat 43157</p>
-            <p style={{ margin: "2px 0 0 0", fontSize: "11px", color: "#555" }}>Website: pesantren-alimam.com</p>
+            <p style={{ margin: "2px 0 0 0", fontSize: "10px", color: "#555", whiteSpace: "nowrap" }}>Jl. Pelabuhan II, Gg. Cirengkol, Kampung Pupunjul, Desa Cikembar, Kec. Cikembar, Kab. Sukabumi, Jawa Barat 43157 | Website: pesantren-alimam.com</p>
+            
           </div>
           <img src="/logo-andalus.png" alt="Logo Al-Andalus" style={{ width: "80px", height: "80px", objectFit: "contain" }} />
         </div>
