@@ -244,7 +244,7 @@ export default function CetakRaporPage() {
                 <td colSpan={3} style={{ border: "1px solid #1a1a1a", padding: "6px 8px", textAlign: "right", fontWeight: "bold", fontFamily: "Traditional Arabic, serif" }} dir="rtl">مجموع الدرجات</td>
               </tr>
               <tr style={{ backgroundColor: "#fafafa" }}>
-                <td colSpan={3} style={{ border: "1px solid #1a1a1a", padding: "6px 8px", fontWeight: "bold" }}>Rata-Rata Santri</td>
+                <td colSpan={3} style={{ border: "1px solid #1a1a1a", padding: "6px 8px", fontWeight: "bold" }}>Nilai Rata-rata</td>
                 <td style={{ border: "1px solid #1a1a1a", padding: "6px 8px", textAlign: "center", fontWeight: "bold", fontSize: "13px" }}>{kedisiplinan.rataRata}</td>
                 <td colSpan={2} style={{ border: "1px solid #1a1a1a", padding: "6px 8px", backgroundColor: "#fafafa" }}></td>
                 <td style={{ border: "1px solid #1a1a1a", padding: "6px 8px", textAlign: "center", fontWeight: "bold", fontSize: "14px" }} dir="rtl">{toArabicNum(kedisiplinan.rataRata)}</td>
@@ -287,8 +287,7 @@ export default function CetakRaporPage() {
                             const totalSantri = kedisiplinan?.jumlahSantri || 1;
                             
                             // Ambil nama panggilan (kata pertama)
-                            let namaPanggilan = santri?.nama ? santri.nama.split(" ")[0] : "Ananda";
-                            namaPanggilan = namaPanggilan.charAt(0).toUpperCase() + namaPanggilan.slice(1).toLowerCase();
+                            let namaPanggilan = "Ananda";
                             
                             let note = "";
                             const persentil = ranking / totalSantri; // 0.1 = top 10%, 0.9 = bottom 10%
