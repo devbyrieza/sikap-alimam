@@ -257,9 +257,7 @@ export default function CetakRaporPage() {
                 </thead>
                 <tbody>
                   <tr style={{ backgroundColor: "white" }}>
-                    <td style={{ border: "1px solid #1a1a1a", padding: "8px", verticalAlign: "top", color: "#333", fontStyle: "italic" }}>
-                      Pertahankan prestasi dan semangat belajarmu. Tingkatkan ibadah, perbanyak muraja'ah, dan selalu jaga adab di pesantren.
-                    </td>
+                    <td style={{ border: "1px solid #1a1a1a", padding: "8px", verticalAlign: "top", height: "80px" }}></td>
                   </tr>
                 </tbody>
               </table>
