@@ -278,10 +278,16 @@ export default function CetakRaporPage() {
             <p className="mb-20">Tengaran, 18 Desember 2026<br/><br/>Kepala Madrasah</p>
             <p className="font-semibold px-4 inline-block min-w-[150px]">( Aziz Basuki, S.H.I, M.Pd. )</p>
           </div>
+
           <div>
             <p className="mb-20"><br/><br/>Wali Kelas</p>
             <p className="font-semibold px-4 inline-block min-w-[150px]">( ......................................... )</p>
           </div>
+          <div style={{ position: "relative", width: "100px", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "flex-end" }}>
+            <img src={`https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=https://sikap.pesantren-alimam.com/verify/${santriId}`} alt="QR Code Verifikasi" style={{ width: "80px", height: "80px" }} />
+            <p style={{ fontSize: "9px", marginTop: "4px", color: "#666" }}>Scan Rapor Digital</p>
+          </div>
+
         </div>
 
       </div>
