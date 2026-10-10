@@ -56,6 +56,7 @@ export async function DELETE(
 }
 
 // Update Guru
+
 export async function PUT(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -68,23 +69,26 @@ export async function PUT(
     const updated = await prisma.pegawai.update({
       where: { id },
       data: {
-        nik,
+        nik: nik || null,
         nama_lengkap,
-        nama_panggilan,
-        no_hp,
-        email,
-        mata_pelajaran,
-        foto_url,
-        ttd_url,
+        nama_panggilan: nama_panggilan || null,
+        no_hp: no_hp || null,
+        email: email || null,
+        mata_pelajaran: mata_pelajaran || null,
+        foto_url: foto_url || null,
+        ttd_url: ttd_url || null,
       },
     });
 
-    if (wali_kelas_id) {
-      await prisma.kelas.updateMany({ where: { wali_kelas_id: id }, data: { wali_kelas_id: null } });
+    // Clear their existing wali kelas status
+    await prisma.kelas.updateMany({ where: { wali_kelas_id: id }, data: { wali_kelas_id: null } });
+    
+    // Assign new wali kelas if provided
+    if (wali_kelas_id && wali_kelas_id !== "") {
       await prisma.kelas.update({ where: { id: wali_kelas_id }, data: { wali_kelas_id: id } });
     }
 
-    if (roles) {
+    if (roles && roles.length > 0) {
       const user = await prisma.user.findFirst({ where: { pegawai: { id } } });
       if (user) {
         await prisma.user.update({ where: { id: user.id }, data: { role: roles[0] || 'GURU' } });
@@ -92,7 +96,9 @@ export async function PUT(
     }
 
     return NextResponse.json({ success: true, data: updated });
-  } catch (error) {
-    return NextResponse.json({ error: "Gagal update data" }, { status: 500 });
+  } catch (error: any) {
+    console.error("PUT Guru Error:", error);
+    return NextResponse.json({ error: "Gagal update data", detail: error.message }, { status: 500 });
   }
 }
+
