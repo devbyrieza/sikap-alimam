@@ -39,6 +39,7 @@ export default function RekapNilaiPage() {
 
   const [loadingKelas, setLoadingKelas] = useState(true);
   const [loadingData, setLoadingData] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
 
   // Fetch kelas
   useEffect(() => {
