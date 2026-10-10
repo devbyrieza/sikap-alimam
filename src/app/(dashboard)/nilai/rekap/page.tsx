@@ -132,25 +132,31 @@ export default function RekapNilaiPage() {
 
 
   // --- RANKING LOGIC ---
-  const rankMap = new Map<string, { total: number; rank: number }>();
+  const rankMap = new Map<string, { total: number; average: number; rank: number }>();
   if (santriList.length > 0 && mapelList.length > 0) {
     const santriTotals = santriList.map(santri => {
        let total = 0;
+       let count = 0;
        mapelList.forEach(m => {
           const val = getAvg(santri.id, m.id);
-          if (val !== null) total += val;
+          if (val !== null) {
+            total += val;
+            count++;
+          }
        });
-       return { id: santri.id, total: Math.round(total * 10) / 10 };
+       const average = count > 0 ? Math.round((total / count) * 10) / 10 : 0;
+       return { id: santri.id, total: Math.round(total * 10) / 10, average };
     });
     
+    // Sort descending by total
     const rankedSantri = [...santriTotals].sort((a, b) => b.total - a.total);
     let prevTotal = -1;
     let prevRank = 1;
     rankedSantri.forEach((s, index) => {
       if (prevTotal === s.total) {
-         rankMap.set(s.id, { total: s.total, rank: prevRank });
+         rankMap.set(s.id, { total: s.total, average: s.average, rank: prevRank });
       } else {
-         rankMap.set(s.id, { total: s.total, rank: index + 1 });
+         rankMap.set(s.id, { total: s.total, average: s.average, rank: index + 1 });
          prevRank = index + 1;
          prevTotal = s.total;
       }
@@ -307,13 +313,14 @@ export default function RekapNilaiPage() {
                           </th>
                         ))}
                         <th style={{ textAlign: "center", minWidth: 90, borderBottom: "1px solid #ebdcc3", padding: "14px 16px", color: "#1a1a1a", fontWeight: 800 }}>Total Nilai</th>
+                        <th style={{ textAlign: "center", minWidth: 90, borderBottom: "1px solid #ebdcc3", padding: "14px 16px", color: "#1a1a1a", fontWeight: 800 }}>Rata-rata</th>
                         <th style={{ textAlign: "center", minWidth: 90, borderBottom: "1px solid #ebdcc3", padding: "14px 16px", color: "#1a1a1a", fontWeight: 800 }}>Peringkat</th>
                     </tr>
                   </thead>
                   <tbody>
                     {santriList.length === 0 ? (
                       <tr>
-                        <td colSpan={5 + mapelList.length} style={{ textAlign: "center", padding: "36px", color: "#64748b" }}>
+                        <td colSpan={6 + mapelList.length} style={{ textAlign: "center", padding: "36px", color: "#64748b" }}>
                           Belum ada data nilai untuk filter ini
                         </td>
                       </tr>
@@ -344,6 +351,9 @@ export default function RekapNilaiPage() {
                               })}
                               <td style={{ textAlign: "center", fontWeight: "800", color: "#1a1a1a", borderBottom: "1px solid #f5ede1", padding: "14px 16px" }}>
                                 {rankMap.get(santri.id)?.total || 0}
+                              </td>
+                              <td style={{ textAlign: "center", fontWeight: "800", color: "#0ea5e9", borderBottom: "1px solid #f5ede1", padding: "14px 16px" }}>
+                                {rankMap.get(santri.id)?.average || 0}
                               </td>
                               <td style={{ textAlign: "center", fontWeight: "900", color: "#550000", borderBottom: "1px solid #f5ede1", padding: "14px 16px" }}>
                                 <div style={{ display: "inline-block", background: rankMap.get(santri.id)?.rank === 1 ? "#fef08a" : rankMap.get(santri.id)?.rank === 2 ? "#e2e8f0" : rankMap.get(santri.id)?.rank === 3 ? "#fed7aa" : "#fdf8f0", padding: "4px 12px", borderRadius: "100px", border: "1px solid #ebdcc3" }}>
