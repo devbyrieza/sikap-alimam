@@ -910,8 +910,20 @@ export default function CetakRaporPage() {
                     <p style={{ margin: "3px 0 0 0" }}>Orang Tua / Wali</p>
                   </div>
                   <div style={{ minHeight: "36px", display: "flex", alignItems: "flex-end", justifyContent: "center" }}>
-                    <p style={{ fontWeight: "bold", margin: 0, fontSize: "11.5px", whiteSpace: "nowrap" }}>
-                      (&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;)
+                    <p style={{ 
+                      fontWeight: "bold", 
+                      margin: 0, 
+                      fontSize: paperSize === "F4" ? "12px" : "11.5px", 
+                      whiteSpace: "nowrap",
+                      display: "inline-flex",
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                      width: "100%",
+                      maxWidth: paperSize === "F4" ? "195px" : "175px"
+                    }}>
+                      <span>(</span>
+                      <span style={{ display: "inline-block", flex: 1, minWidth: paperSize === "F4" ? "170px" : "150px" }}>&nbsp;</span>
+                      <span>)</span>
                     </p>
                   </div>
                 </div>
