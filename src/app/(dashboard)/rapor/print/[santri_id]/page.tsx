@@ -609,7 +609,7 @@ export default function CetakRaporPage() {
                       const total = praTargetUjian.length;
                       
                       if (passed === total) {
-                        return "Alhamdulillah, pencapaian Al-Qur'an ananda memuaskan. Terus tingkatkan kualitas Tahsin (Makharijul Huruf & Tajwid) serta rutinkan tilawah harian sebagai pondasi kokoh sebelum memperbanyak Ziyadah (Hafalan Baru).";
+                        return "Alhamdulillah, pencapaian pembelajaran Al-Qur'an pada periode ini menunjukkan hasil yang memuaskan. Terus tingkatkan kualitas Tahsin (Makharijul Huruf & Tajwid) serta rutinkan tilawah harian sebagai pondasi kokoh sebelum memperbanyak Ziyadah (Hafalan Baru).";
                       } else if (passed > 0) {
                         return "Pencapaian Al-Qur'an sudah cukup baik, namun perlu lebih memperbanyak porsi muraja'ah dan tahsin untuk menyelesaikan target ujian yang belum tuntas.";
                       } else {
@@ -661,7 +661,7 @@ export default function CetakRaporPage() {
                   <div style={{ display: "flex", flexDirection: "column", justifyContent: "space-between", height: "125px" }}>
                     <div>
                       <p style={{ margin: 0, opacity: 0 }}>Mengetahui</p>
-                      <p style={{ margin: "3px 0 0 0" }}>Orang Tua</p>
+                      <p style={{ margin: "3px 0 0 0" }}>Orang Tua / Wali</p>
                     </div>
                     <p style={{ fontWeight: "bold", margin: 0 }}>( &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; )</p>
                   </div>
