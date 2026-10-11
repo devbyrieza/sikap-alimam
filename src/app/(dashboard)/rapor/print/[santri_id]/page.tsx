@@ -102,7 +102,7 @@ export default function CetakRaporPage() {
               {/* Kolom 1 (No): width 4.5% */}
               <td style={{ border: "1px solid #1a1a1a", padding: "6px 4px", textAlign: "center", fontSize: "12.5px", fontFamily: "Arial, Helvetica, sans-serif" }}>{startIndex + index}</td>
               {/* Kolom 2 (Mata Pelajaran): width 25.5% (Times New Roman) */}
-              <td style={{ border: "1px solid #1a1a1a", padding: "6px 8px", fontSize: "13px", fontFamily: '"Times New Roman", Times, serif', fontWeight: "bold", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{m.nama}</td>
+              <td style={{ border: "1px solid #1a1a1a", padding: "6px 8px", fontSize: "13px", fontFamily: '"Times New Roman", Times, serif', fontWeight: "bold", whiteSpace: "normal", lineHeight: "1.25" }}>{m.nama}</td>
               {/* Kolom 3 (KKM): width 6.5% */}
               <td style={{ border: "1px solid #1a1a1a", padding: "6px 4px", textAlign: "center", fontSize: "12.5px", fontFamily: "Arial, Helvetica, sans-serif" }}>{m.kkm}</td>
               {/* Kolom 4 (Nilai): width 6.5% */}
@@ -117,7 +117,7 @@ export default function CetakRaporPage() {
               {/* Kolom 8 (الدرجة الصغرى): width 6.5% (Mirror Kolom 3) */}
               <td style={{ border: "1px solid #1a1a1a", padding: "6px 4px", textAlign: "center", fontSize: "12.5px", fontFamily: "Arial, Helvetica, sans-serif" }} dir="rtl">{toArabicNum(m.kkm)}</td>
               {/* Kolom 9 (المواد الدراسية): width 25.5% (Mirror Kolom 2 - Traditional Arabic) */}
-              <td style={{ border: "1px solid #1a1a1a", padding: "6px 8px", textAlign: "right", fontSize: "15px", fontFamily: "'Traditional Arabic', serif", fontWeight: "bold", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }} dir="rtl">{m.nama_arab}</td>
+              <td style={{ border: "1px solid #1a1a1a", padding: "6px 8px", textAlign: "right", fontSize: "15px", fontFamily: "'Traditional Arabic', serif", fontWeight: "bold", whiteSpace: "normal", lineHeight: "1.25" }} dir="rtl">{m.nama_arab}</td>
               {/* Kolom 10 (رقم): width 4.5% (Mirror Kolom 1) */}
               <td style={{ border: "1px solid #1a1a1a", padding: "6px 4px", textAlign: "center", fontSize: "12.5px", fontFamily: "Arial, Helvetica, sans-serif" }} dir="rtl">{toArabicNum(startIndex + index)}</td>
             </tr>
@@ -341,34 +341,34 @@ export default function CetakRaporPage() {
             <colgroup>
               {/* Sisi Kiri (50%) */}
               <col style={{ width: "4.5%" }} />   {/* 1. No */}
-              <col style={{ width: "25.5%" }} />  {/* 2. Mata Pelajaran */}
-              <col style={{ width: "6.5%" }} />   {/* 3. KKM */}
-              <col style={{ width: "6.5%" }} />   {/* 4. Nilai */}
-              <col style={{ width: "7%" }} />     {/* 5. Rata-Rata */}
+              <col style={{ width: "21.5%" }} />  {/* 2. Mata Pelajaran */}
+              <col style={{ width: "7.5%" }} />   {/* 3. KKM */}
+              <col style={{ width: "7.5%" }} />   {/* 4. Nilai */}
+              <col style={{ width: "9%" }} />     {/* 5. Rata-Rata */}
               
               {/* Sisi Kanan (50% Mirror Sempurna) */}
-              <col style={{ width: "7%" }} />     {/* 6. المعدل التراكمي */}
-              <col style={{ width: "6.5%" }} />   {/* 7. النتيجة */}
-              <col style={{ width: "6.5%" }} />   {/* 8. الدرجة الصغرى */}
-              <col style={{ width: "25.5%" }} />  {/* 9. المواد الدراسية */}
+              <col style={{ width: "9%" }} />     {/* 6. المعدل التراكمي */}
+              <col style={{ width: "7.5%" }} />   {/* 7. النتيجة */}
+              <col style={{ width: "7.5%" }} />   {/* 8. الدرجة الصغرى */}
+              <col style={{ width: "21.5%" }} />  {/* 9. المواد الدراسية */}
               <col style={{ width: "4.5%" }} />   {/* 10. رقم */}
             </colgroup>
             <thead>
               <tr style={{ backgroundColor: "#f0f0f0", fontWeight: "bold" }}>
                 {/* Sisi Kiri: Bahasa Indonesia */}
-                <th style={{ border: "1px solid #1a1a1a", padding: "7px 4px", textAlign: "center", fontFamily: "Arial, Helvetica, sans-serif" }}>No</th>
-                <th style={{ border: "1px solid #1a1a1a", padding: "7px 8px", textAlign: "center", fontFamily: "Arial, Helvetica, sans-serif" }}>Mata Pelajaran</th>
-                <th style={{ border: "1px solid #1a1a1a", padding: "7px 4px", textAlign: "center", fontFamily: "Arial, Helvetica, sans-serif" }}>KKM</th>
-                <th style={{ border: "1px solid #1a1a1a", padding: "7px 4px", textAlign: "center", fontFamily: "Arial, Helvetica, sans-serif" }}>Nilai</th>
-                {/* Kolom 5: Rata-Rata dengan Pemisah Tengah Tebal 2.5px */}
-                <th style={{ border: "1px solid #1a1a1a", borderRight: "2.5px solid #1a1a1a", padding: "7px 4px", textAlign: "center", fontFamily: "Arial, Helvetica, sans-serif" }}>Rata-Rata</th>
+                <th style={{ border: "1px solid #1a1a1a", padding: "6px 2px", textAlign: "center", fontFamily: "Arial, Helvetica, sans-serif", fontSize: "12px" }}>No</th>
+                <th style={{ border: "1px solid #1a1a1a", padding: "6px 6px", textAlign: "center", fontFamily: "Arial, Helvetica, sans-serif", fontSize: "12px" }}>Mata Pelajaran</th>
+                <th style={{ border: "1px solid #1a1a1a", padding: "6px 2px", textAlign: "center", fontFamily: "Arial, Helvetica, sans-serif", fontSize: "12px" }}>KKM</th>
+                <th style={{ border: "1px solid #1a1a1a", padding: "6px 2px", textAlign: "center", fontFamily: "Arial, Helvetica, sans-serif", fontSize: "12px" }}>Nilai</th>
+                {/* Kolom 5: Rata-Rata 2 baris agar pas sempurna */}
+                <th style={{ border: "1px solid #1a1a1a", borderRight: "2.5px solid #1a1a1a", padding: "6px 2px", textAlign: "center", fontFamily: "Arial, Helvetica, sans-serif", fontSize: "11px", lineHeight: "1.15" }}>Rata-<br/>Rata</th>
                 
-                {/* Sisi Kanan: Bahasa Arab (Mirror Persis) */}
-                <th style={{ border: "1px solid #1a1a1a", padding: "7px 4px", textAlign: "center", fontFamily: "'Traditional Arabic', serif", fontSize: "14px" }} dir="rtl">المعدل التراكمي</th>
-                <th style={{ border: "1px solid #1a1a1a", padding: "7px 4px", textAlign: "center", fontFamily: "'Traditional Arabic', serif", fontSize: "14px" }} dir="rtl">النتيجة</th>
-                <th style={{ border: "1px solid #1a1a1a", padding: "7px 4px", textAlign: "center", fontFamily: "'Traditional Arabic', serif", fontSize: "14px" }} dir="rtl">الدرجة الصغرى</th>
-                <th style={{ border: "1px solid #1a1a1a", padding: "7px 8px", textAlign: "center", fontFamily: "'Traditional Arabic', serif", fontSize: "14px" }} dir="rtl">المواد الدراسية</th>
-                <th style={{ border: "1px solid #1a1a1a", padding: "7px 4px", textAlign: "center", fontFamily: "'Traditional Arabic', serif", fontSize: "14px" }} dir="rtl">رقم</th>
+                {/* Sisi Kanan: Bahasa Arab (Mirror Persis 2 baris) */}
+                <th style={{ border: "1px solid #1a1a1a", padding: "6px 2px", textAlign: "center", fontFamily: "'Traditional Arabic', serif", fontSize: "13px", lineHeight: "1.1" }}>المعدل<br/>التراكمي</th>
+                <th style={{ border: "1px solid #1a1a1a", padding: "6px 2px", textAlign: "center", fontFamily: "'Traditional Arabic', serif", fontSize: "13px" }}>النتيجة</th>
+                <th style={{ border: "1px solid #1a1a1a", padding: "6px 2px", textAlign: "center", fontFamily: "'Traditional Arabic', serif", fontSize: "13px", lineHeight: "1.1" }}>الدرجة<br/>الصغرى</th>
+                <th style={{ border: "1px solid #1a1a1a", padding: "6px 6px", textAlign: "center", fontFamily: "'Traditional Arabic', serif", fontSize: "13.5px" }}>المواد الدراسية</th>
+                <th style={{ border: "1px solid #1a1a1a", padding: "6px 2px", textAlign: "center", fontFamily: "'Traditional Arabic', serif", fontSize: "13px" }}>رقم</th>
               </tr>
             </thead>
             <tbody>
