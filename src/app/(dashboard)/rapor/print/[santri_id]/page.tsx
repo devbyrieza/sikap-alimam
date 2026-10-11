@@ -82,14 +82,20 @@ export default function CetakRaporPage() {
 
   const renderTabelKategori = (judul: string, judulArab: string, mapelList: any[], startIndex: number = 1) => {
     if (!mapelList || mapelList.length === 0) return null;
+    const isF4 = paperSize === "F4";
+    const cellPad = isF4 ? "7.5px 4px" : "5.5px 4px";
+    const namePad = isF4 ? "7.5px 8px" : "5.5px 8px";
+    const headPad = isF4 ? "7.5px 10px" : "6px 10px";
+    const fontSize = isF4 ? "13px" : "12px";
+
     return (
       <>
         {/* Header Kategori Bilateral (50% Kiri Indonesia | 50% Kanan Arab) */}
         <tr style={{ backgroundColor: "#e8e8e8" }}>
-          <td colSpan={5} style={{ border: "1px solid #1a1a1a", borderRight: "2.5px solid #1a1a1a", padding: "6px 10px", fontWeight: "bold", fontSize: "13px", fontFamily: "Arial, Helvetica, sans-serif" }}>
+          <td colSpan={5} style={{ border: "1px solid #1a1a1a", borderRight: "2.5px solid #1a1a1a", padding: headPad, fontWeight: "bold", fontSize: isF4 ? "13.5px" : "12.5px", fontFamily: "Arial, Helvetica, sans-serif" }}>
             {judul}
           </td>
-          <td colSpan={5} style={{ border: "1px solid #1a1a1a", padding: "6px 10px", fontWeight: "bold", fontSize: "15px", textAlign: "right", fontFamily: "'Traditional Arabic', serif" }} dir="rtl">
+          <td colSpan={5} style={{ border: "1px solid #1a1a1a", padding: headPad, fontWeight: "bold", fontSize: isF4 ? "15.5px" : "14px", textAlign: "right", fontFamily: "'Traditional Arabic', serif" }} dir="rtl">
             {judulArab}
           </td>
         </tr>
@@ -102,26 +108,26 @@ export default function CetakRaporPage() {
               style={{ backgroundColor: isEven ? "white" : "#fafafa" }}
             >
               {/* Kolom 1 (No): width 4.5% */}
-              <td style={{ border: "1px solid #1a1a1a", padding: "6px 4px", textAlign: "center", fontSize: "12.5px", fontFamily: "Arial, Helvetica, sans-serif" }}>{startIndex + index}</td>
-              {/* Kolom 2 (Mata Pelajaran): width 25.5% (Times New Roman) */}
-              <td style={{ border: "1px solid #1a1a1a", padding: "6px 8px", fontSize: "13px", fontFamily: '"Times New Roman", Times, serif', fontWeight: "bold", whiteSpace: "normal", lineHeight: "1.25" }}>{m.nama}</td>
-              {/* Kolom 3 (KKM): width 6.5% */}
-              <td style={{ border: "1px solid #1a1a1a", padding: "6px 4px", textAlign: "center", fontSize: "12.5px", fontFamily: "Arial, Helvetica, sans-serif" }}>{m.kkm}</td>
-              {/* Kolom 4 (Nilai): width 6.5% */}
-              <td style={{ border: "1px solid #1a1a1a", padding: "6px 4px", textAlign: "center", fontSize: "12.5px", fontFamily: "Arial, Helvetica, sans-serif", fontWeight: "bold" }}>{m.nilai}</td>
-              {/* Kolom 5 (Rata-Rata): width 7% dengan Garis Tengah Tebal 2.5px */}
-              <td style={{ border: "1px solid #1a1a1a", borderRight: "2.5px solid #1a1a1a", padding: "6px 4px", textAlign: "center", fontSize: "12.5px", fontFamily: "Arial, Helvetica, sans-serif" }}>{m.rata_rata_kelas}</td>
+              <td style={{ border: "1px solid #1a1a1a", padding: cellPad, textAlign: "center", fontSize: fontSize, fontFamily: "Arial, Helvetica, sans-serif" }}>{startIndex + index}</td>
+              {/* Kolom 2 (Mata Pelajaran): width 21% (Times New Roman) */}
+              <td style={{ border: "1px solid #1a1a1a", padding: namePad, fontSize: fontSize, fontFamily: '"Times New Roman", Times, serif', fontWeight: "bold", whiteSpace: "normal", lineHeight: "1.25" }}>{m.nama}</td>
+              {/* Kolom 3 (KKM): width 7% */}
+              <td style={{ border: "1px solid #1a1a1a", padding: cellPad, textAlign: "center", fontSize: fontSize, fontFamily: "Arial, Helvetica, sans-serif" }}>{m.kkm}</td>
+              {/* Kolom 4 (Nilai): width 7% */}
+              <td style={{ border: "1px solid #1a1a1a", padding: cellPad, textAlign: "center", fontSize: fontSize, fontFamily: "Arial, Helvetica, sans-serif", fontWeight: "bold" }}>{m.nilai}</td>
+              {/* Kolom 5 (Rata-Rata): width 10.5% dengan Garis Tengah Tebal 2.5px */}
+              <td style={{ border: "1px solid #1a1a1a", borderRight: "2.5px solid #1a1a1a", padding: cellPad, textAlign: "center", fontSize: fontSize, fontFamily: "Arial, Helvetica, sans-serif" }}>{m.rata_rata_kelas}</td>
               
-              {/* Kolom 6 (المعدل التراكمي): width 7% (Mirror Kolom 5) */}
-              <td style={{ border: "1px solid #1a1a1a", padding: "6px 4px", textAlign: "center", fontSize: "12.5px", fontFamily: "Arial, Helvetica, sans-serif" }} dir="rtl">{toArabicNum(m.rata_rata_kelas)}</td>
-              {/* Kolom 7 (النتيجة): width 6.5% (Mirror Kolom 4) */}
-              <td style={{ border: "1px solid #1a1a1a", padding: "6px 4px", textAlign: "center", fontSize: "12.5px", fontFamily: "Arial, Helvetica, sans-serif", fontWeight: "bold" }} dir="rtl">{toArabicNum(m.nilai)}</td>
-              {/* Kolom 8 (الدرجة الصغرى): width 6.5% (Mirror Kolom 3) */}
-              <td style={{ border: "1px solid #1a1a1a", padding: "6px 4px", textAlign: "center", fontSize: "12.5px", fontFamily: "Arial, Helvetica, sans-serif" }} dir="rtl">{toArabicNum(m.kkm)}</td>
-              {/* Kolom 9 (المواد الدراسية): width 25.5% (Mirror Kolom 2 - Traditional Arabic) */}
-              <td style={{ border: "1px solid #1a1a1a", padding: "6px 8px", textAlign: "right", fontSize: "15px", fontFamily: "'Traditional Arabic', serif", fontWeight: "bold", whiteSpace: "normal", lineHeight: "1.25" }} dir="rtl">{m.nama_arab}</td>
+              {/* Kolom 6 (المعدل التراكمي): width 10.5% (Mirror Kolom 5) */}
+              <td style={{ border: "1px solid #1a1a1a", padding: cellPad, textAlign: "center", fontSize: fontSize, fontFamily: "Arial, Helvetica, sans-serif" }} dir="rtl">{toArabicNum(m.rata_rata_kelas)}</td>
+              {/* Kolom 7 (النتيجة): width 7% (Mirror Kolom 4) */}
+              <td style={{ border: "1px solid #1a1a1a", padding: cellPad, textAlign: "center", fontSize: fontSize, fontFamily: "Arial, Helvetica, sans-serif", fontWeight: "bold" }} dir="rtl">{toArabicNum(m.nilai)}</td>
+              {/* Kolom 8 (الدرجة الصغرى): width 7% (Mirror Kolom 3) */}
+              <td style={{ border: "1px solid #1a1a1a", padding: cellPad, textAlign: "center", fontSize: fontSize, fontFamily: "Arial, Helvetica, sans-serif" }} dir="rtl">{toArabicNum(m.kkm)}</td>
+              {/* Kolom 9 (المواد الدراسية): width 21% (Mirror Kolom 2 - Traditional Arabic) */}
+              <td style={{ border: "1px solid #1a1a1a", padding: namePad, textAlign: "right", fontSize: isF4 ? "15.5px" : "14px", fontFamily: "'Traditional Arabic', serif", fontWeight: "bold", whiteSpace: "normal", lineHeight: "1.25" }} dir="rtl">{m.nama_arab}</td>
               {/* Kolom 10 (رقم): width 4.5% (Mirror Kolom 1) */}
-              <td style={{ border: "1px solid #1a1a1a", padding: "6px 4px", textAlign: "center", fontSize: "12.5px", fontFamily: "Arial, Helvetica, sans-serif" }} dir="rtl">{toArabicNum(startIndex + index)}</td>
+              <td style={{ border: "1px solid #1a1a1a", padding: cellPad, textAlign: "center", fontSize: fontSize, fontFamily: "Arial, Helvetica, sans-serif" }} dir="rtl">{toArabicNum(startIndex + index)}</td>
             </tr>
           );
         })}
@@ -171,9 +177,10 @@ export default function CetakRaporPage() {
         display: "flex", 
         flexDirection: "column", 
         gap: 24,
-        fontFamily: "Arial, Helvetica, sans-serif"
+        fontFamily: "Arial, Helvetica, sans-serif",
+        backgroundColor: "white"
       }} 
-      className="print:p-0 print:m-0 print:max-w-none print:block bg-gray-50 min-h-screen text-black"
+      className="print:p-0 print:m-0 print:max-w-none print:block bg-white print:bg-white min-h-screen text-black"
     >
       <style dangerouslySetInnerHTML={{__html: `
           .arabic-text { font-family: 'Traditional Arabic', serif !important; }
@@ -184,26 +191,35 @@ export default function CetakRaporPage() {
               size: ${paperSize === "F4" ? "215mm 330mm" : "A4"}; 
               margin: 12mm 12mm 12mm 12mm; 
             }
-            body { 
-              background: white !important; 
-              -webkit-print-color-adjust: exact; 
-              color: black; 
+            * {
+              -webkit-print-color-adjust: exact !important;
+              print-color-adjust: exact !important;
+            }
+            html, body { 
+              background: #ffffff !important; 
+              background-color: #ffffff !important;
+              color: black !important; 
+              margin: 0 !important;
+              padding: 0 !important;
             }
             .arabic-text { font-family: 'Traditional Arabic', serif !important; }
             
             /* Sembunyikan elemen dashboard UI */
             .no-print, .mobile-header, .app-sidebar, .sidebar-nav { display: none !important; }
             .app-content > div:has(a[href="/profile"]) { display: none !important; }
-            .app-layout { padding: 0 !important; margin: 0 !important; display: block !important; }
-            .app-content { margin: 0 !important; padding: 0 !important; width: 100% !important; max-width: 100% !important; }
+            .app-layout { padding: 0 !important; margin: 0 !important; display: block !important; background: #ffffff !important; background-color: #ffffff !important; }
+            .app-content { margin: 0 !important; padding: 0 !important; width: 100% !important; max-width: 100% !important; background: #ffffff !important; background-color: #ffffff !important; }
             
-            /* Container Cetak Bersih tanpa Zoom */
+            /* Container Cetak Bersih tanpa Zoom & Bebas Latar Belakang Abu */
             #rapor-print-container { 
               padding: 0 !important; 
               margin: 0 !important; 
-              background: white !important; 
+              background: #ffffff !important; 
+              background-color: #ffffff !important;
               display: block !important; 
               width: 100% !important;
+              min-height: 0 !important;
+              box-shadow: none !important;
             }
             
             .rapor-page {
@@ -211,9 +227,18 @@ export default function CetakRaporPage() {
               padding: 0 !important;
               max-width: 100% !important;
               width: 100% !important;
-              min-height: auto !important;
+              height: ${paperSize === "F4" ? "305mm" : "272mm"} !important;
+              min-height: ${paperSize === "F4" ? "305mm" : "272mm"} !important;
+              box-sizing: border-box !important;
               border-radius: 0 !important;
-              margin-bottom: 0 !important;
+              margin: 0 !important;
+              background: #ffffff !important;
+              background-color: #ffffff !important;
+              display: flex !important;
+              flex-direction: column !important;
+              justify-content: space-between !important;
+              position: relative !important;
+              overflow: hidden !important;
             }
             
             /* Pemisah Halaman Tegas untuk 2 Halaman */
@@ -226,14 +251,13 @@ export default function CetakRaporPage() {
             }
             
             table td { 
-              font-size: 12.5px !important; 
               line-height: 1.25 !important; 
             }
             
             th.col-rata-rata {
-              font-size: 10px !important;
+              font-size: 10.5px !important;
               letter-spacing: -0.2px !important;
-              padding: 5px 1px !important;
+              padding: 6px 1px !important;
             }
             
             table { width: 100% !important; }
@@ -336,189 +360,198 @@ export default function CetakRaporPage() {
       >
 
         {/* CONTENT WRAPPER HALAMAN 1 */}
-        <div style={{ position: "relative", zIndex: 1 }}>
-
-          {/* Kop Surat Resmi (Times New Roman Berwibawa) */}
-          <div style={{ display: "flex", alignItems: "center", borderBottom: "3px solid #1a1a1a", paddingBottom: "16px", marginBottom: "22px", fontFamily: '"Times New Roman", Times, serif' }}>
-            <img src="/logo.png" alt="Logo Al-Imam" style={{ width: "80px", height: "80px", objectFit: "contain" }} />
-            <div style={{ flex: 1, textAlign: "center", fontFamily: '"Times New Roman", Times, serif' }}>
-              <h1 style={{ fontSize: "22px", fontWeight: "900", margin: 0, letterSpacing: "1px", color: "#1a1a1a", fontFamily: '"Times New Roman", Times, serif' }}>PESANTREN AL-IMAM AL-ISLAMI</h1>
-              <p style={{ margin: "2px 0 4px 0", fontSize: "12px", fontWeight: "bold", color: "#666", fontStyle: "italic", fontFamily: '"Times New Roman", Times, serif' }}>Managed by Al-Andalus International Islamic Boarding School</p>
-              <p style={{ margin: "4px 0 0 0", fontSize: "13px", fontWeight: "bold", color: "#333", fontFamily: '"Times New Roman", Times, serif' }}>Kaderisasi Ummat Hanif, Kontributif, dan Adaptif</p>
-              <p style={{ margin: "2px 0 0 0", fontSize: "8.5px", color: "#555", whiteSpace: "nowrap", letterSpacing: "-0.1px", fontFamily: '"Times New Roman", Times, serif' }}>Jl. Pelabuhan II, Gg. Cirengkol, Kampung Pupunjul, Desa Cikembar, Kec. Cikembar, Kab. Sukabumi, Jawa Barat 43157 | Website: pesantren-alimam.com</p>
+        <div style={{ 
+          position: "relative", 
+          zIndex: 1, 
+          display: "flex", 
+          flexDirection: "column", 
+          justifyContent: "space-between", 
+          minHeight: paperSize === "F4" ? "305mm" : "272mm",
+          height: "100%"
+        }}>
+          <div>
+            {/* Kop Surat Resmi (Times New Roman Berwibawa) */}
+            <div style={{ display: "flex", alignItems: "center", borderBottom: "3px solid #1a1a1a", paddingBottom: paperSize === "F4" ? "16px" : "12px", marginBottom: paperSize === "F4" ? "20px" : "14px", fontFamily: '"Times New Roman", Times, serif' }}>
+              <img src="/logo.png" alt="Logo Al-Imam" style={{ width: paperSize === "F4" ? "80px" : "72px", height: paperSize === "F4" ? "80px" : "72px", objectFit: "contain" }} />
+              <div style={{ flex: 1, textAlign: "center", fontFamily: '"Times New Roman", Times, serif' }}>
+                <h1 style={{ fontSize: paperSize === "F4" ? "22px" : "20px", fontWeight: "900", margin: 0, letterSpacing: "1px", color: "#1a1a1a", fontFamily: '"Times New Roman", Times, serif' }}>PESANTREN AL-IMAM AL-ISLAMI</h1>
+                <p style={{ margin: "2px 0 4px 0", fontSize: paperSize === "F4" ? "12px" : "11px", fontWeight: "bold", color: "#666", fontStyle: "italic", fontFamily: '"Times New Roman", Times, serif' }}>Managed by Al-Andalus International Islamic Boarding School</p>
+                <p style={{ margin: "3px 0 0 0", fontSize: paperSize === "F4" ? "13px" : "12px", fontWeight: "bold", color: "#333", fontFamily: '"Times New Roman", Times, serif' }}>Kaderisasi Ummat Hanif, Kontributif, dan Adaptif</p>
+                <p style={{ margin: "2px 0 0 0", fontSize: paperSize === "F4" ? "8.5px" : "8px", color: "#555", whiteSpace: "nowrap", letterSpacing: "-0.1px", fontFamily: '"Times New Roman", Times, serif' }}>Jl. Pelabuhan II, Gg. Cirengkol, Kampung Pupunjul, Desa Cikembar, Kec. Cikembar, Kab. Sukabumi, Jawa Barat 43157 | Website: pesantren-alimam.com</p>
+              </div>
+              <img src="/logo-andalus.png" alt="Logo Al-Andalus" style={{ width: paperSize === "F4" ? "80px" : "72px", height: paperSize === "F4" ? "80px" : "72px", objectFit: "contain" }} />
             </div>
-            <img src="/logo-andalus.png" alt="Logo Al-Andalus" style={{ width: "80px", height: "80px", objectFit: "contain" }} />
-          </div>
 
-          {/* Judul Arab & Terjemahan */}
-          <div className="text-center mb-5">
-            {(() => {
-              const kls = (santri?.kelas || "").toUpperCase();
-              let marhalah = "للمرحلة المتوسطة"; // Default MTs
-              let indoMarhalah = "TINGKAT MADRASAH TSANAWIYAH (MTs)";
-              
-              if (kls.includes("MA")) {
-                marhalah = "للمرحلة الثانوية";
-                indoMarhalah = "TINGKAT MADRASAH ALIYAH (MA)";
-              } else if (kls.includes("IL") || kls.includes("I'DAD") || kls.includes("IDAD")) {
-                marhalah = "لبرنامج الإعداد اللغوي";
-                indoMarhalah = "PROGRAM I'DAD LUGHOWI (IL)";
-              }
-
-              const isGanjil = santri?.semester?.includes("Ganjil") || santri?.semester === "1" || !santri?.semester?.includes("Genap");
-              const semesterArab = isGanjil ? "الأول" : "الثاني";
-              
-              return (
-                <>
-                  <h1 className="text-2xl font-bold arabic-text mb-1" dir="rtl" style={{ fontFamily: "'Traditional Arabic', serif" }}>
-                    كشف درجات منتصف الفصل الدراسي {semesterArab}
-                  </h1>
-                  <h2 className="text-lg font-bold arabic-text mb-2" dir="rtl" style={{ fontFamily: "'Traditional Arabic', serif" }}>
-                    {marhalah} بمعهد الإمام الإسلامي
-                  </h2>
-                  <h3 className="text-[13.5px] font-bold text-slate-800 tracking-wider mt-1 uppercase" style={{ fontFamily: "Arial, Helvetica, sans-serif" }}>
-                    LAPORAN HASIL EVALUASI BELAJAR TENGAH SEMESTER (PTS)
-                  </h3>
-                  <h4 className="text-[12px] font-bold text-slate-600 tracking-wide mt-0.5 uppercase" style={{ fontFamily: "Arial, Helvetica, sans-serif" }}>
-                    RAPOR BAYANGAN • {indoMarhalah}
-                  </h4>
-                </>
-              );
-            })()}
-          </div>
-
-          {/* Biodata Santri */}
-          <div style={{ display: "flex", justifyContent: "space-between", fontSize: "13px", marginBottom: "16px", fontWeight: "bold", fontFamily: "Arial, Helvetica, sans-serif" }}>
-            <div>
-              <table style={{ width: "100%" }}>
-                <tbody>
-                  <tr style={{ borderBottom: "none" }}>
-                    <td style={{ width: 85, padding: "3px 0", borderBottom: "none" }}>Nama</td>
-                    <td style={{ padding: "3px 6px", borderBottom: "none" }}>:</td>
-                    <td style={{ textTransform: "uppercase", padding: "3px 0", borderBottom: "none" }}>{santri?.nama}</td>
-                  </tr>
-                  <tr style={{ borderBottom: "none" }}>
-                    <td style={{ width: 85, padding: "3px 0", borderBottom: "none" }}>NIS</td>
-                    <td style={{ padding: "3px 6px", borderBottom: "none" }}>:</td>
-                    <td style={{ padding: "3px 0", borderBottom: "none", letterSpacing: "0.5px" }}>{santri?.nis || "-"}</td>
-                  </tr>
-                  <tr style={{ borderBottom: "none" }}>
-                    <td style={{ width: 85, padding: "3px 0", borderBottom: "none" }}>Kelas</td>
-                    <td style={{ padding: "3px 6px", borderBottom: "none" }}>:</td>
-                    <td style={{ padding: "3px 0", borderBottom: "none" }}>{(santri?.kelas || "").replace(/\s*(MTs|MA|SMP|SMA|SD|TK)\b/gi, "")}</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-            <div style={{ textAlign: "right" }}>
-              <table style={{ display: "inline-block", textAlign: "left" }}>
-                <tbody>
-                  <tr style={{ borderBottom: "none" }}>
-                    <td style={{ padding: "3px 0", whiteSpace: "nowrap", borderBottom: "none" }}>Semester</td>
-                    <td style={{ padding: "3px 6px", borderBottom: "none" }}>:</td>
-                    <td style={{ padding: "3px 0", borderBottom: "none" }}>
-                      {santri?.semester?.includes("Ganjil") || santri?.semester === "1" ? "Ganjil" : santri?.semester?.includes("Genap") || santri?.semester === "2" ? "Genap" : santri?.semester} (Tengah Semester / PTS)
-                    </td>
-                  </tr>
-                  <tr style={{ borderBottom: "none" }}>
-                    <td style={{ padding: "3px 0", whiteSpace: "nowrap", borderBottom: "none" }}>Tahun Pelajaran</td>
-                    <td style={{ padding: "3px 6px", borderBottom: "none" }}>:</td>
-                    <td style={{ padding: "3px 0", borderBottom: "none" }}>{santri?.tahun_ajaran}</td>
-                  </tr>
-                  <tr style={{ borderBottom: "none" }}>
-                    <td style={{ padding: "3px 0", whiteSpace: "nowrap", borderBottom: "none" }}>Wali Kelas</td>
-                    <td style={{ padding: "3px 6px", borderBottom: "none" }}>:</td>
-                    <td style={{ padding: "3px 0", borderBottom: "none" }}>{waliKelasName}</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-
-          {/* TABEL UTAMA AKADEMIK (10 Kolom Bilateral Simetris 100% Sempurna) */}
-          <table style={{ width: "100%", tableLayout: "fixed", borderCollapse: "collapse", border: "2px solid #1a1a1a", fontSize: "12.5px" }}>
-            <colgroup>
-              {/* Sisi Kiri (50%) */}
-              <col style={{ width: "4.5%" }} />   {/* 1. No */}
-              <col style={{ width: "21%" }} />    {/* 2. Mata Pelajaran */}
-              <col style={{ width: "7%" }} />     {/* 3. KKM */}
-              <col style={{ width: "7%" }} />     {/* 4. Nilai */}
-              <col style={{ width: "10.5%" }} />  {/* 5. Rata-Rata Kelas */}
-              
-              {/* Sisi Kanan (50% Mirror Sempurna) */}
-              <col style={{ width: "10.5%" }} />  {/* 6. متوسط الفصل */}
-              <col style={{ width: "7%" }} />     {/* 7. النتيجة */}
-              <col style={{ width: "7%" }} />     {/* 8. الدرجة الصغرى */}
-              <col style={{ width: "21%" }} />    {/* 9. المواد الدراسية */}
-              <col style={{ width: "4.5%" }} />   {/* 10. رقم */}
-            </colgroup>
-            <thead>
-              <tr style={{ backgroundColor: "#f0f0f0", fontWeight: "bold" }}>
-                {/* Sisi Kiri: Bahasa Indonesia */}
-                <th style={{ border: "1px solid #1a1a1a", padding: "6px 2px", textAlign: "center", fontFamily: "Arial, Helvetica, sans-serif", fontSize: "12px" }}>No</th>
-                <th style={{ border: "1px solid #1a1a1a", padding: "6px 6px", textAlign: "center", fontFamily: "Arial, Helvetica, sans-serif", fontSize: "12px" }}>Mata Pelajaran</th>
-                <th style={{ border: "1px solid #1a1a1a", padding: "6px 2px", textAlign: "center", fontFamily: "Arial, Helvetica, sans-serif", fontSize: "12px" }}>KKM</th>
-                <th style={{ border: "1px solid #1a1a1a", padding: "6px 2px", textAlign: "center", fontFamily: "Arial, Helvetica, sans-serif", fontSize: "12px" }}>Nilai</th>
-                {/* Kolom 5: Rata-Rata Kelas (Lega 10.5% & Tulisan Utuh Rapi) */}
-                <th className="col-rata-rata" style={{ border: "1px solid #1a1a1a", borderRight: "2.5px solid #1a1a1a", padding: "6px 1px", textAlign: "center", fontFamily: "Arial, Helvetica, sans-serif", fontSize: "10.5px", lineHeight: "1.15", letterSpacing: "-0.2px" }}>Rata-Rata<br/>Kelas</th>
+            {/* Judul Arab & Terjemahan */}
+            <div className="text-center" style={{ marginBottom: paperSize === "F4" ? "18px" : "14px" }}>
+              {(() => {
+                const kls = (santri?.kelas || "").toUpperCase();
+                let marhalah = "للمرحلة المتوسطة"; // Default MTs
+                let indoMarhalah = "TINGKAT MADRASAH TSANAWIYAH (MTs)";
                 
-                {/* Sisi Kanan: Bahasa Arab (Mirror Persis 10.5%) */}
-                <th className="col-rata-rata" style={{ border: "1px solid #1a1a1a", padding: "6px 1px", textAlign: "center", fontFamily: "'Traditional Arabic', serif", fontSize: "13px", lineHeight: "1.1" }}>متوسط<br/>الفصل</th>
-                <th style={{ border: "1px solid #1a1a1a", padding: "6px 2px", textAlign: "center", fontFamily: "'Traditional Arabic', serif", fontSize: "13px" }}>النتيجة</th>
-                <th style={{ border: "1px solid #1a1a1a", padding: "6px 2px", textAlign: "center", fontFamily: "'Traditional Arabic', serif", fontSize: "13px", lineHeight: "1.1" }}>الدرجة<br/>الصغرى</th>
-                <th style={{ border: "1px solid #1a1a1a", padding: "6px 6px", textAlign: "center", fontFamily: "'Traditional Arabic', serif", fontSize: "13.5px" }}>المواد الدراسية</th>
-                <th style={{ border: "1px solid #1a1a1a", padding: "6px 2px", textAlign: "center", fontFamily: "'Traditional Arabic', serif", fontSize: "13px" }}>رقم</th>
-              </tr>
-            </thead>
-            <tbody>
-              {renderTabelKategori("A. Ilmu Syari'ah", "أ. العلوم الشرعية", nilai_akademik?.syariah || [], 1)}
-              {renderTabelKategori("B. Ilmu Bahasa", "ب. علوم اللغة العربية", nilai_akademik?.bahasa || [], (nilai_akademik?.syariah?.length || 0) + 1)}
-              {renderTabelKategori("C. Ilmu Pengetahuan Umum", "جـ . العلوم العامة", nilai_akademik?.umum || [], (nilai_akademik?.syariah?.length || 0) + (nilai_akademik?.bahasa?.length || 0) + 1)}
+                if (kls.includes("MA")) {
+                  marhalah = "للمرحلة الثانوية";
+                  indoMarhalah = "TINGKAT MADRASAH ALIYAH (MA)";
+                } else if (kls.includes("IL") || kls.includes("I'DAD") || kls.includes("IDAD")) {
+                  marhalah = "لبرنامج الإعداد اللغوي";
+                  indoMarhalah = "PROGRAM I'DAD LUGHOWI (IL)";
+                }
 
-              {/* Section D. Kedisiplinan header row */}
-              <tr style={{ backgroundColor: "#e8e8e8" }}>
-                <td colSpan={5} style={{ border: "1px solid #1a1a1a", borderRight: "2.5px solid #1a1a1a", padding: "6px 10px", fontWeight: "bold", fontSize: "13px", fontFamily: "Arial, Helvetica, sans-serif" }}>D. Kedisiplinan</td>
-                <td colSpan={5} style={{ border: "1px solid #1a1a1a", padding: "6px 10px", fontWeight: "bold", textAlign: "right", fontFamily: "'Traditional Arabic', serif", fontSize: "15px" }} dir="rtl">د. المواظبة</td>
-              </tr>
-              
-              {/* Summary rows (dengan pembatas tengah tebal 2.5px) */}
-              <tr style={{ backgroundColor: "white", fontFamily: "Arial, Helvetica, sans-serif" }}>
-                <td colSpan={3} style={{ border: "1px solid #1a1a1a", padding: "6px 8px", fontWeight: "bold" }}>Jumlah Nilai</td>
-                <td style={{ border: "1px solid #1a1a1a", padding: "6px 4px", textAlign: "center", fontWeight: "bold", fontSize: "13px" }}>{kedisiplinan?.totalNilai}</td>
-                <td style={{ border: "1px solid #1a1a1a", borderRight: "2.5px solid #1a1a1a", padding: "6px 4px", backgroundColor: "transparent" }}></td>
-                <td style={{ border: "1px solid #1a1a1a", padding: "6px 4px", backgroundColor: "transparent" }}></td>
-                <td style={{ border: "1px solid #1a1a1a", padding: "6px 4px", textAlign: "center", fontWeight: "bold", fontSize: "13.5px" }} dir="rtl">{toArabicNum(kedisiplinan?.totalNilai)}</td>
-                <td colSpan={3} style={{ border: "1px solid #1a1a1a", padding: "6px 8px", textAlign: "right", fontWeight: "bold", fontFamily: "'Traditional Arabic', serif", fontSize: "14px" }} dir="rtl">مجموع الدرجات</td>
-              </tr>
-              <tr style={{ backgroundColor: "#fafafa", fontFamily: "Arial, Helvetica, sans-serif" }}>
-                <td colSpan={3} style={{ border: "1px solid #1a1a1a", padding: "6px 8px", fontWeight: "bold" }}>Rata-Rata Santri</td>
-                <td style={{ border: "1px solid #1a1a1a", padding: "6px 4px", textAlign: "center", fontWeight: "bold", fontSize: "13px" }}>{Math.round(Number(kedisiplinan?.rataRata || 0))}</td>
-                <td style={{ border: "1px solid #1a1a1a", borderRight: "2.5px solid #1a1a1a", padding: "6px 4px", backgroundColor: "rgba(0, 0, 0, 0.025)" }}></td>
-                <td style={{ border: "1px solid #1a1a1a", padding: "6px 4px", backgroundColor: "rgba(0, 0, 0, 0.025)" }}></td>
-                <td style={{ border: "1px solid #1a1a1a", padding: "6px 4px", textAlign: "center", fontWeight: "bold", fontSize: "13.5px" }} dir="rtl">{toArabicNum(Math.round(Number(kedisiplinan?.rataRata || 0)))}</td>
-                <td colSpan={3} style={{ border: "1px solid #1a1a1a", padding: "6px 8px", textAlign: "right", fontWeight: "bold", fontFamily: "'Traditional Arabic', serif", fontSize: "14px" }} dir="rtl">المعدل التراكمي</td>
-              </tr>
-              <tr style={{ backgroundColor: "white", fontFamily: "Arial, Helvetica, sans-serif" }}>
-                <td colSpan={3} style={{ border: "1px solid #1a1a1a", padding: "6px 8px", fontWeight: "bold" }}>Ranking</td>
-                <td style={{ border: "1px solid #1a1a1a", padding: "6px 4px", textAlign: "center", fontWeight: "bold", fontSize: "13px" }}>{kedisiplinan?.ranking}</td>
-                <td style={{ border: "1px solid #1a1a1a", borderRight: "2.5px solid #1a1a1a", padding: "6px 4px", backgroundColor: "transparent" }}></td>
-                <td style={{ border: "1px solid #1a1a1a", padding: "6px 4px", backgroundColor: "transparent" }}></td>
-                <td style={{ border: "1px solid #1a1a1a", padding: "6px 4px", textAlign: "center", fontWeight: "bold", fontSize: "13.5px" }} dir="rtl">{toArabicNum(kedisiplinan?.ranking)}</td>
-                <td colSpan={3} style={{ border: "1px solid #1a1a1a", padding: "6px 8px", textAlign: "right", fontWeight: "bold", fontFamily: "'Traditional Arabic', serif", fontSize: "14px" }} dir="rtl">الترتيب</td>
-              </tr>
-              <tr style={{ backgroundColor: "#fafafa", fontFamily: "Arial, Helvetica, sans-serif" }}>
-                <td colSpan={3} style={{ border: "1px solid #1a1a1a", padding: "6px 8px", fontWeight: "bold" }}>Jumlah Santri</td>
-                <td style={{ border: "1px solid #1a1a1a", padding: "6px 4px", textAlign: "center", fontWeight: "bold", fontSize: "13px" }}>{kedisiplinan?.jumlahSantri}</td>
-                <td style={{ border: "1px solid #1a1a1a", borderRight: "2.5px solid #1a1a1a", padding: "6px 4px", backgroundColor: "rgba(0, 0, 0, 0.025)" }}></td>
-                <td style={{ border: "1px solid #1a1a1a", padding: "6px 4px", backgroundColor: "rgba(0, 0, 0, 0.025)" }}></td>
-                <td style={{ border: "1px solid #1a1a1a", padding: "6px 4px", textAlign: "center", fontWeight: "bold", fontSize: "13.5px" }} dir="rtl">{toArabicNum(kedisiplinan?.jumlahSantri)}</td>
-                <td colSpan={3} style={{ border: "1px solid #1a1a1a", padding: "6px 8px", textAlign: "right", fontWeight: "bold", fontFamily: "'Traditional Arabic', serif", fontSize: "14px" }} dir="rtl">عدد الطلاب</td>
-              </tr>
-            </tbody>
-          </table>
+                const isGanjil = santri?.semester?.includes("Ganjil") || santri?.semester === "1" || !santri?.semester?.includes("Genap");
+                const semesterArab = isGanjil ? "الأول" : "الثاني";
+                
+                return (
+                  <>
+                    <h1 className="text-2xl font-bold arabic-text mb-1" dir="rtl" style={{ fontFamily: "'Traditional Arabic', serif", fontSize: paperSize === "F4" ? "24px" : "21px" }}>
+                      كشف درجات منتصف الفصل الدراسي {semesterArab}
+                    </h1>
+                    <h2 className="text-lg font-bold arabic-text mb-2" dir="rtl" style={{ fontFamily: "'Traditional Arabic', serif", fontSize: paperSize === "F4" ? "18px" : "16px" }}>
+                      {marhalah} بمعهد الإمام الإسلامي
+                    </h2>
+                    <h3 className="font-bold text-slate-800 tracking-wider mt-1 uppercase" style={{ fontFamily: "Arial, Helvetica, sans-serif", fontSize: paperSize === "F4" ? "13.5px" : "12.5px" }}>
+                      LAPORAN HASIL EVALUASI BELAJAR TENGAH SEMESTER (PTS)
+                    </h3>
+                    <h4 className="font-bold text-slate-600 tracking-wide mt-0.5 uppercase" style={{ fontFamily: "Arial, Helvetica, sans-serif", fontSize: paperSize === "F4" ? "12px" : "11px" }}>
+                      RAPOR BAYANGAN • {indoMarhalah}
+                    </h4>
+                  </>
+                );
+              })()}
+            </div>
+
+            {/* Biodata Santri */}
+            <div style={{ display: "flex", justifyContent: "space-between", fontSize: paperSize === "F4" ? "13px" : "12px", marginBottom: paperSize === "F4" ? "16px" : "12px", fontWeight: "bold", fontFamily: "Arial, Helvetica, sans-serif" }}>
+              <div>
+                <table style={{ width: "100%" }}>
+                  <tbody>
+                    <tr style={{ borderBottom: "none" }}>
+                      <td style={{ width: 85, padding: "2.5px 0", borderBottom: "none" }}>Nama</td>
+                      <td style={{ padding: "2.5px 6px", borderBottom: "none" }}>:</td>
+                      <td style={{ textTransform: "uppercase", padding: "2.5px 0", borderBottom: "none" }}>{santri?.nama}</td>
+                    </tr>
+                    <tr style={{ borderBottom: "none" }}>
+                      <td style={{ width: 85, padding: "2.5px 0", borderBottom: "none" }}>NIS</td>
+                      <td style={{ padding: "2.5px 6px", borderBottom: "none" }}>:</td>
+                      <td style={{ padding: "2.5px 0", borderBottom: "none", letterSpacing: "0.5px" }}>{santri?.nis || "-"}</td>
+                    </tr>
+                    <tr style={{ borderBottom: "none" }}>
+                      <td style={{ width: 85, padding: "2.5px 0", borderBottom: "none" }}>Kelas</td>
+                      <td style={{ padding: "2.5px 6px", borderBottom: "none" }}>:</td>
+                      <td style={{ padding: "2.5px 0", borderBottom: "none" }}>{(santri?.kelas || "").replace(/\s*(MTs|MA|SMP|SMA|SD|TK)\b/gi, "")}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <div style={{ textAlign: "right" }}>
+                <table style={{ display: "inline-block", textAlign: "left" }}>
+                  <tbody>
+                    <tr style={{ borderBottom: "none" }}>
+                      <td style={{ padding: "2.5px 0", whiteSpace: "nowrap", borderBottom: "none" }}>Semester</td>
+                      <td style={{ padding: "2.5px 6px", borderBottom: "none" }}>:</td>
+                      <td style={{ padding: "2.5px 0", borderBottom: "none" }}>
+                        {santri?.semester?.includes("Ganjil") || santri?.semester === "1" ? "Ganjil" : santri?.semester?.includes("Genap") || santri?.semester === "2" ? "Genap" : santri?.semester} (Tengah Semester / PTS)
+                      </td>
+                    </tr>
+                    <tr style={{ borderBottom: "none" }}>
+                      <td style={{ padding: "2.5px 0", whiteSpace: "nowrap", borderBottom: "none" }}>Tahun Pelajaran</td>
+                      <td style={{ padding: "2.5px 6px", borderBottom: "none" }}>:</td>
+                      <td style={{ padding: "2.5px 0", borderBottom: "none" }}>{santri?.tahun_ajaran}</td>
+                    </tr>
+                    <tr style={{ borderBottom: "none" }}>
+                      <td style={{ padding: "2.5px 0", whiteSpace: "nowrap", borderBottom: "none" }}>Wali Kelas</td>
+                      <td style={{ padding: "2.5px 6px", borderBottom: "none" }}>:</td>
+                      <td style={{ padding: "2.5px 0", borderBottom: "none" }}>{waliKelasName}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            {/* TABEL UTAMA AKADEMIK (10 Kolom Bilateral Simetris 100% Sempurna) */}
+            <table style={{ width: "100%", tableLayout: "fixed", borderCollapse: "collapse", border: "2px solid #1a1a1a", fontSize: paperSize === "F4" ? "13px" : "12px" }}>
+              <colgroup>
+                {/* Sisi Kiri (50%) */}
+                <col style={{ width: "4.5%" }} />   {/* 1. No */}
+                <col style={{ width: "21%" }} />    {/* 2. Mata Pelajaran */}
+                <col style={{ width: "7%" }} />     {/* 3. KKM */}
+                <col style={{ width: "7%" }} />     {/* 4. Nilai */}
+                <col style={{ width: "10.5%" }} />  {/* 5. Rata-Rata Kelas */}
+                
+                {/* Sisi Kanan (50% Mirror Sempurna) */}
+                <col style={{ width: "10.5%" }} />  {/* 6. متوسط الفصل */}
+                <col style={{ width: "7%" }} />     {/* 7. النتيجة */}
+                <col style={{ width: "7%" }} />     {/* 8. الدرجة الصغرى */}
+                <col style={{ width: "21%" }} />    {/* 9. المواد الدراسية */}
+                <col style={{ width: "4.5%" }} />   {/* 10. رقم */}
+              </colgroup>
+              <thead>
+                <tr style={{ backgroundColor: "#f0f0f0", fontWeight: "bold" }}>
+                  {/* Sisi Kiri: Bahasa Indonesia */}
+                  <th style={{ border: "1px solid #1a1a1a", padding: paperSize === "F4" ? "7px 2px" : "5.5px 2px", textAlign: "center", fontFamily: "Arial, Helvetica, sans-serif", fontSize: paperSize === "F4" ? "12px" : "11px" }}>No</th>
+                  <th style={{ border: "1px solid #1a1a1a", padding: paperSize === "F4" ? "7px 6px" : "5.5px 6px", textAlign: "center", fontFamily: "Arial, Helvetica, sans-serif", fontSize: paperSize === "F4" ? "12.5px" : "11.5px" }}>Mata Pelajaran</th>
+                  <th style={{ border: "1px solid #1a1a1a", padding: paperSize === "F4" ? "7px 2px" : "5.5px 2px", textAlign: "center", fontFamily: "Arial, Helvetica, sans-serif", fontSize: paperSize === "F4" ? "12px" : "11px" }}>KKM</th>
+                  <th style={{ border: "1px solid #1a1a1a", padding: paperSize === "F4" ? "7px 2px" : "5.5px 2px", textAlign: "center", fontFamily: "Arial, Helvetica, sans-serif", fontSize: paperSize === "F4" ? "12px" : "11px" }}>Nilai</th>
+                  {/* Kolom 5: Rata-Rata Kelas (Lega 10.5% & Tulisan Utuh Rapi) */}
+                  <th className="col-rata-rata" style={{ border: "1px solid #1a1a1a", borderRight: "2.5px solid #1a1a1a", padding: paperSize === "F4" ? "6px 1px" : "5px 1px", textAlign: "center", fontFamily: "Arial, Helvetica, sans-serif", fontSize: "10.5px", lineHeight: "1.15", letterSpacing: "-0.2px" }}>Rata-Rata<br/>Kelas</th>
+                  
+                  {/* Sisi Kanan: Bahasa Arab (Mirror Persis 10.5%) */}
+                  <th className="col-rata-rata" style={{ border: "1px solid #1a1a1a", padding: paperSize === "F4" ? "6px 1px" : "5px 1px", textAlign: "center", fontFamily: "'Traditional Arabic', serif", fontSize: "13px", lineHeight: "1.1" }}>متوسط<br/>الفصل</th>
+                  <th style={{ border: "1px solid #1a1a1a", padding: paperSize === "F4" ? "7px 2px" : "5.5px 2px", textAlign: "center", fontFamily: "'Traditional Arabic', serif", fontSize: "13px" }}>النتيجة</th>
+                  <th style={{ border: "1px solid #1a1a1a", padding: paperSize === "F4" ? "7px 2px" : "5.5px 2px", textAlign: "center", fontFamily: "'Traditional Arabic', serif", fontSize: "13px", lineHeight: "1.1" }}>الدرجة<br/>الصغرى</th>
+                  <th style={{ border: "1px solid #1a1a1a", padding: paperSize === "F4" ? "7px 6px" : "5.5px 6px", textAlign: "center", fontFamily: "'Traditional Arabic', serif", fontSize: paperSize === "F4" ? "14px" : "13px" }}>المواد الدراسية</th>
+                  <th style={{ border: "1px solid #1a1a1a", padding: paperSize === "F4" ? "7px 2px" : "5.5px 2px", textAlign: "center", fontFamily: "'Traditional Arabic', serif", fontSize: "13px" }}>رقم</th>
+                </tr>
+              </thead>
+              <tbody>
+                {renderTabelKategori("A. Ilmu Syari'ah", "أ. العلوم الشرعية", nilai_akademik?.syariah || [], 1)}
+                {renderTabelKategori("B. Ilmu Bahasa", "ب. علوم اللغة العربية", nilai_akademik?.bahasa || [], (nilai_akademik?.syariah?.length || 0) + 1)}
+                {renderTabelKategori("C. Ilmu Pengetahuan Umum", "جـ . العلوم العامة", nilai_akademik?.umum || [], (nilai_akademik?.syariah?.length || 0) + (nilai_akademik?.bahasa?.length || 0) + 1)}
+
+                {/* Section D. Kedisiplinan header row */}
+                <tr style={{ backgroundColor: "#e8e8e8" }}>
+                  <td colSpan={5} style={{ border: "1px solid #1a1a1a", borderRight: "2.5px solid #1a1a1a", padding: paperSize === "F4" ? "7.5px 10px" : "6px 10px", fontWeight: "bold", fontSize: paperSize === "F4" ? "13.5px" : "12.5px", fontFamily: "Arial, Helvetica, sans-serif" }}>D. Kedisiplinan</td>
+                  <td colSpan={5} style={{ border: "1px solid #1a1a1a", padding: paperSize === "F4" ? "7.5px 10px" : "6px 10px", fontWeight: "bold", textAlign: "right", fontFamily: "'Traditional Arabic', serif", fontSize: paperSize === "F4" ? "15.5px" : "14px" }} dir="rtl">د. المواظبة</td>
+                </tr>
+                
+                {/* Summary rows (dengan pembatas tengah tebal 2.5px) */}
+                <tr style={{ backgroundColor: "white", fontFamily: "Arial, Helvetica, sans-serif" }}>
+                  <td colSpan={3} style={{ border: "1px solid #1a1a1a", padding: paperSize === "F4" ? "7px 8px" : "5.5px 8px", fontWeight: "bold", fontSize: paperSize === "F4" ? "13px" : "12px" }}>Jumlah Nilai</td>
+                  <td style={{ border: "1px solid #1a1a1a", padding: paperSize === "F4" ? "7px 4px" : "5.5px 4px", textAlign: "center", fontWeight: "bold", fontSize: paperSize === "F4" ? "13.5px" : "12.5px" }}>{kedisiplinan?.totalNilai}</td>
+                  <td style={{ border: "1px solid #1a1a1a", borderRight: "2.5px solid #1a1a1a", padding: paperSize === "F4" ? "7px 4px" : "5.5px 4px", backgroundColor: "transparent" }}></td>
+                  <td style={{ border: "1px solid #1a1a1a", padding: paperSize === "F4" ? "7px 4px" : "5.5px 4px", backgroundColor: "transparent" }}></td>
+                  <td style={{ border: "1px solid #1a1a1a", padding: paperSize === "F4" ? "7px 4px" : "5.5px 4px", textAlign: "center", fontWeight: "bold", fontSize: paperSize === "F4" ? "14px" : "13px" }} dir="rtl">{toArabicNum(kedisiplinan?.totalNilai)}</td>
+                  <td colSpan={3} style={{ border: "1px solid #1a1a1a", padding: paperSize === "F4" ? "7px 8px" : "5.5px 8px", textAlign: "right", fontWeight: "bold", fontFamily: "'Traditional Arabic', serif", fontSize: paperSize === "F4" ? "14.5px" : "13.5px" }} dir="rtl">مجموع الدرجات</td>
+                </tr>
+                <tr style={{ backgroundColor: "#fafafa", fontFamily: "Arial, Helvetica, sans-serif" }}>
+                  <td colSpan={3} style={{ border: "1px solid #1a1a1a", padding: paperSize === "F4" ? "7px 8px" : "5.5px 8px", fontWeight: "bold", fontSize: paperSize === "F4" ? "13px" : "12px" }}>Rata-Rata Santri</td>
+                  <td style={{ border: "1px solid #1a1a1a", padding: paperSize === "F4" ? "7px 4px" : "5.5px 4px", textAlign: "center", fontWeight: "bold", fontSize: paperSize === "F4" ? "13.5px" : "12.5px" }}>{Math.round(Number(kedisiplinan?.rataRata || 0))}</td>
+                  <td style={{ border: "1px solid #1a1a1a", borderRight: "2.5px solid #1a1a1a", padding: paperSize === "F4" ? "7px 4px" : "5.5px 4px", backgroundColor: "rgba(0, 0, 0, 0.025)" }}></td>
+                  <td style={{ border: "1px solid #1a1a1a", padding: paperSize === "F4" ? "7px 4px" : "5.5px 4px", backgroundColor: "rgba(0, 0, 0, 0.025)" }}></td>
+                  <td style={{ border: "1px solid #1a1a1a", padding: paperSize === "F4" ? "7px 4px" : "5.5px 4px", textAlign: "center", fontWeight: "bold", fontSize: paperSize === "F4" ? "14px" : "13px" }} dir="rtl">{toArabicNum(Math.round(Number(kedisiplinan?.rataRata || 0)))}</td>
+                  <td colSpan={3} style={{ border: "1px solid #1a1a1a", padding: paperSize === "F4" ? "7px 8px" : "5.5px 8px", textAlign: "right", fontWeight: "bold", fontFamily: "'Traditional Arabic', serif", fontSize: paperSize === "F4" ? "14.5px" : "13.5px" }} dir="rtl">المعدل التراكمي</td>
+                </tr>
+                <tr style={{ backgroundColor: "white", fontFamily: "Arial, Helvetica, sans-serif" }}>
+                  <td colSpan={3} style={{ border: "1px solid #1a1a1a", padding: paperSize === "F4" ? "7px 8px" : "5.5px 8px", fontWeight: "bold", fontSize: paperSize === "F4" ? "13px" : "12px" }}>Ranking</td>
+                  <td style={{ border: "1px solid #1a1a1a", padding: paperSize === "F4" ? "7px 4px" : "5.5px 4px", textAlign: "center", fontWeight: "bold", fontSize: paperSize === "F4" ? "13.5px" : "12.5px" }}>{kedisiplinan?.ranking}</td>
+                  <td style={{ border: "1px solid #1a1a1a", borderRight: "2.5px solid #1a1a1a", padding: paperSize === "F4" ? "7px 4px" : "5.5px 4px", backgroundColor: "transparent" }}></td>
+                  <td style={{ border: "1px solid #1a1a1a", padding: paperSize === "F4" ? "7px 4px" : "5.5px 4px", backgroundColor: "transparent" }}></td>
+                  <td style={{ border: "1px solid #1a1a1a", padding: paperSize === "F4" ? "7px 4px" : "5.5px 4px", textAlign: "center", fontWeight: "bold", fontSize: paperSize === "F4" ? "14px" : "13px" }} dir="rtl">{toArabicNum(kedisiplinan?.ranking)}</td>
+                  <td colSpan={3} style={{ border: "1px solid #1a1a1a", padding: paperSize === "F4" ? "7px 8px" : "5.5px 8px", textAlign: "right", fontWeight: "bold", fontFamily: "'Traditional Arabic', serif", fontSize: paperSize === "F4" ? "14.5px" : "13.5px" }} dir="rtl">الترتيب</td>
+                </tr>
+                <tr style={{ backgroundColor: "#fafafa", fontFamily: "Arial, Helvetica, sans-serif" }}>
+                  <td colSpan={3} style={{ border: "1px solid #1a1a1a", padding: paperSize === "F4" ? "7px 8px" : "5.5px 8px", fontWeight: "bold", fontSize: paperSize === "F4" ? "13px" : "12px" }}>Jumlah Santri</td>
+                  <td style={{ border: "1px solid #1a1a1a", padding: paperSize === "F4" ? "7px 4px" : "5.5px 4px", textAlign: "center", fontWeight: "bold", fontSize: paperSize === "F4" ? "13.5px" : "12.5px" }}>{kedisiplinan?.jumlahSantri}</td>
+                  <td style={{ border: "1px solid #1a1a1a", borderRight: "2.5px solid #1a1a1a", padding: paperSize === "F4" ? "7px 4px" : "5.5px 4px", backgroundColor: "rgba(0, 0, 0, 0.025)" }}></td>
+                  <td style={{ border: "1px solid #1a1a1a", padding: paperSize === "F4" ? "7px 4px" : "5.5px 4px", backgroundColor: "rgba(0, 0, 0, 0.025)" }}></td>
+                  <td style={{ border: "1px solid #1a1a1a", padding: paperSize === "F4" ? "7px 4px" : "5.5px 4px", textAlign: "center", fontWeight: "bold", fontSize: paperSize === "F4" ? "14px" : "13px" }} dir="rtl">{toArabicNum(kedisiplinan?.jumlahSantri)}</td>
+                  <td colSpan={3} style={{ border: "1px solid #1a1a1a", padding: paperSize === "F4" ? "7px 8px" : "5.5px 8px", textAlign: "right", fontWeight: "bold", fontFamily: "'Traditional Arabic', serif", fontSize: paperSize === "F4" ? "14.5px" : "13.5px" }} dir="rtl">عدد الطلاب</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
 
           {/* Catatan Kaki Halaman 1 */}
-          <div style={{ marginTop: "16px", display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: "10.5px", color: "#666", fontStyle: "italic", gap: "16px" }}>
+          <div style={{ marginTop: "auto", paddingTop: "12px", display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: "10.5px", color: "#666", fontStyle: "italic", gap: "16px" }}>
             <p style={{ margin: 0, flex: 1 }}>* Nilai di atas merupakan Hasil Evaluasi Belajar Penilaian Tengah Semester (PTS) Murni.</p>
             <p style={{ margin: 0, fontWeight: "bold", whiteSpace: "nowrap", flexShrink: 0 }}>Halaman 1 dari 2 ({paperSize})</p>
           </div>
@@ -545,253 +578,262 @@ export default function CetakRaporPage() {
       >
 
         {/* CONTENT WRAPPER HALAMAN 2 */}
-        <div style={{ position: "relative", zIndex: 1 }}>
-
-          {/* Sub-Header Identitas Dokumen Halaman 2 */}
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", borderBottom: "2.5px solid #1a1a1a", paddingBottom: "12px", marginBottom: "20px" }}>
-            <div>
-              <h2 style={{ fontSize: "17px", fontWeight: "900", margin: 0, letterSpacing: "0.5px", fontFamily: '"Times New Roman", Times, serif' }}>PESANTREN AL-IMAM AL-ISLAMI</h2>
-              <p style={{ margin: "1px 0 2px 0", fontSize: "10.5px", fontWeight: "bold", color: "#666", fontStyle: "italic", fontFamily: '"Times New Roman", Times, serif' }}>Managed by Al-Andalus International Islamic Boarding School</p>
-              <p style={{ margin: "2px 0 0 0", fontSize: "11.5px", color: "#555" }}>Laporan Tengah Semester (PTS) — Kepribadian, Tahsin & Tahfidz</p>
+        <div style={{ 
+          position: "relative", 
+          zIndex: 1, 
+          display: "flex", 
+          flexDirection: "column", 
+          justifyContent: "space-between", 
+          minHeight: paperSize === "F4" ? "305mm" : "272mm",
+          height: "100%"
+        }}>
+          <div>
+            {/* Sub-Header Identitas Dokumen Halaman 2 */}
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", borderBottom: "2.5px solid #1a1a1a", paddingBottom: paperSize === "F4" ? "12px" : "10px", marginBottom: paperSize === "F4" ? "20px" : "16px" }}>
+              <div>
+                <h2 style={{ fontSize: paperSize === "F4" ? "17px" : "16px", fontWeight: "900", margin: 0, letterSpacing: "0.5px", fontFamily: '"Times New Roman", Times, serif' }}>PESANTREN AL-IMAM AL-ISLAMI</h2>
+                <p style={{ margin: "1px 0 2px 0", fontSize: paperSize === "F4" ? "10.5px" : "9.5px", fontWeight: "bold", color: "#666", fontStyle: "italic", fontFamily: '"Times New Roman", Times, serif' }}>Managed by Al-Andalus International Islamic Boarding School</p>
+                <p style={{ margin: "2px 0 0 0", fontSize: paperSize === "F4" ? "11.5px" : "10.5px", color: "#555" }}>Laporan Tengah Semester (PTS) — Kepribadian, Tahsin & Tahfidz</p>
+              </div>
+              <div style={{ textAlign: "right", fontSize: paperSize === "F4" ? "12px" : "11px", fontWeight: "bold" }}>
+                <p style={{ margin: 0 }}>Nama: <span style={{ textTransform: "uppercase" }}>{santri?.nama}</span></p>
+                <p style={{ margin: "2px 0 0 0", color: "#555" }}>NIS: {santri?.nis || "-"} &nbsp;|&nbsp; Kelas: {(santri?.kelas || "").replace(/\s*(MTs|MA|SMP|SMA|SD|TK)\b/gi, "")} &nbsp;|&nbsp; Semester {santri?.semester?.includes("Ganjil") || santri?.semester === "1" ? "Ganjil" : santri?.semester} (PTS)</p>
+              </div>
             </div>
-            <div style={{ textAlign: "right", fontSize: "12px", fontWeight: "bold" }}>
-              <p style={{ margin: 0 }}>Nama: <span style={{ textTransform: "uppercase" }}>{santri?.nama}</span></p>
-              <p style={{ margin: "2px 0 0 0", color: "#555" }}>NIS: {santri?.nis || "-"} &nbsp;|&nbsp; Kelas: {(santri?.kelas || "").replace(/\s*(MTs|MA|SMP|SMA|SD|TK)\b/gi, "")} &nbsp;|&nbsp; Semester {santri?.semester?.includes("Ganjil") || santri?.semester === "1" ? "Ganjil" : santri?.semester} (PTS)</p>
-            </div>
-          </div>
 
-          {/* 1. KEPRIBADIAN SANTRI (KIRI) & KETIDAKHADIRAN (KANAN) - SATU TABEL SIMETRIS UTUH */}
-          <table 
-            style={{ 
-              width: "100%", 
-              tableLayout: "fixed", 
-              borderCollapse: "collapse", 
-              border: "2px solid #1a1a1a", 
-              marginBottom: "20px", 
-              pageBreakInside: "avoid", 
-              fontFamily: "Arial, Helvetica, sans-serif",
-              fontSize: "12.5px"
-            }}
-          >
-            <colgroup>
-              {/* Sisi Kiri (50%): Kepribadian Santri */}
-              <col style={{ width: "32%" }} />  {/* Aspek Penilaian */}
-              <col style={{ width: "18%" }} />  {/* Predikat */}
-              {/* Sisi Kanan (50%): Ketidakhadiran */}
-              <col style={{ width: "22%" }} />  {/* Absensi */}
-              <col style={{ width: "28%" }} />  {/* Jumlah */}
-            </colgroup>
-            <thead>
-              <tr style={{ backgroundColor: "#f0f0f0" }}>
-                <th colSpan={2} style={{ borderBottom: "1px solid #1a1a1a", borderRight: "2.5px solid #1a1a1a", padding: "7px 10px", textAlign: "center", fontWeight: "bold", fontSize: "13px" }}>
-                  Kepribadian Santri
-                </th>
-                <th colSpan={2} style={{ borderBottom: "1px solid #1a1a1a", padding: "7px 10px", textAlign: "center", fontWeight: "bold", fontSize: "13px" }}>
-                  Ketidakhadiran
-                </th>
-              </tr>
-              <tr style={{ backgroundColor: "#e8e8e8", fontSize: "12px" }}>
-                <th style={{ borderBottom: "1px solid #1a1a1a", borderRight: "1px solid #1a1a1a", padding: "5px 10px", textAlign: "center" }}>Aspek Penilaian</th>
-                <th style={{ borderBottom: "1px solid #1a1a1a", borderRight: "2.5px solid #1a1a1a", padding: "5px 10px", textAlign: "center" }}>Predikat</th>
-                <th style={{ borderBottom: "1px solid #1a1a1a", borderRight: "1px solid #1a1a1a", padding: "5px 10px", textAlign: "center" }}>Absensi</th>
-                <th style={{ borderBottom: "1px solid #1a1a1a", padding: "5px 10px", textAlign: "center" }}>Jumlah</th>
-              </tr>
-            </thead>
-            <tbody>
-              {/* Baris 1: Perilaku & Sakit */}
-              <tr style={{ backgroundColor: "transparent" }}>
-                <td style={{ borderBottom: "1px solid #1a1a1a", borderRight: "1px solid #1a1a1a", padding: "6px 12px" }}>Perilaku</td>
-                <td style={{ borderBottom: "1px solid #1a1a1a", borderRight: "2.5px solid #1a1a1a", padding: "6px 10px", textAlign: "center", fontWeight: "bold", fontSize: "13px" }}>{sikapGrade}</td>
-                <td style={{ borderBottom: "1px solid #1a1a1a", borderRight: "1px solid #1a1a1a", padding: "6px 12px", textAlign: "center" }}>Sakit</td>
-                <td style={{ borderBottom: "1px solid #1a1a1a", padding: "6px 12px", textAlign: "center", fontSize: "12.5px" }}>
-                  <strong style={{ fontSize: "13px" }}>{absen?.sakit || 0}</strong> <span style={{ color: "#444" }}>Jam Pelajaran</span>
-                </td>
-              </tr>
-              {/* Baris 2: Kedisiplinan & Izin */}
-              <tr style={{ backgroundColor: "rgba(0, 0, 0, 0.02)" }}>
-                <td style={{ borderBottom: "1px solid #1a1a1a", borderRight: "1px solid #1a1a1a", padding: "6px 12px" }}>Kedisiplinan</td>
-                <td style={{ borderBottom: "1px solid #1a1a1a", borderRight: "2.5px solid #1a1a1a", padding: "6px 10px", textAlign: "center", fontWeight: "bold", fontSize: "13px" }}>{disiplinGrade}</td>
-                <td style={{ borderBottom: "1px solid #1a1a1a", borderRight: "1px solid #1a1a1a", padding: "6px 12px", textAlign: "center" }}>Izin</td>
-                <td style={{ borderBottom: "1px solid #1a1a1a", padding: "6px 12px", textAlign: "center", fontSize: "12.5px" }}>
-                  <strong style={{ fontSize: "13px" }}>{absen?.izin || 0}</strong> <span style={{ color: "#444" }}>Jam Pelajaran</span>
-                </td>
-              </tr>
-              {/* Baris 3: Kerajinan & Alpha */}
-              <tr style={{ backgroundColor: "transparent" }}>
-                <td style={{ borderBottom: "1px solid #1a1a1a", borderRight: "1px solid #1a1a1a", padding: "6px 12px" }}>Kerajinan</td>
-                <td style={{ borderBottom: "1px solid #1a1a1a", borderRight: "2.5px solid #1a1a1a", padding: "6px 10px", textAlign: "center", fontWeight: "bold", fontSize: "13px" }}>{sikapGrade}</td>
-                <td style={{ borderBottom: "1px solid #1a1a1a", borderRight: "1px solid #1a1a1a", padding: "6px 12px", textAlign: "center" }}>Alpha</td>
-                <td style={{ borderBottom: "1px solid #1a1a1a", padding: "6px 12px", textAlign: "center", fontSize: "12.5px" }}>
-                  <strong style={{ fontSize: "13px" }}>{absen?.alpha || 0}</strong> <span style={{ color: "#444" }}>Jam Pelajaran</span>
-                </td>
-              </tr>
-              {/* Baris 4: Kebersihan & Total (Sempurna & Seimbang) */}
-              <tr style={{ backgroundColor: "rgba(0, 0, 0, 0.02)" }}>
-                <td style={{ borderRight: "1px solid #1a1a1a", padding: "6px 12px" }}>Kebersihan</td>
-                <td style={{ borderRight: "2.5px solid #1a1a1a", padding: "6px 10px", textAlign: "center", fontWeight: "bold", fontSize: "13px" }}>{sikapGrade}</td>
-                <td style={{ borderRight: "1px solid #1a1a1a", padding: "6px 12px", textAlign: "center", fontWeight: "bold" }}>Total</td>
-                <td style={{ padding: "6px 12px", textAlign: "center", fontSize: "12.5px" }}>
-                  <strong style={{ fontSize: "13px" }}>{(absen?.sakit || 0) + (absen?.izin || 0) + (absen?.alpha || 0)}</strong> <span style={{ color: "#444" }}>Jam Pelajaran</span>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-
-          {/* 2. LAPORAN TAHSIN & TAHFIDZ (UJIAN PRA TARGET RESMI) */}
-          <div style={{ marginBottom: "18px", pageBreakInside: "avoid" }}>
-            <table style={{ width: "100%", borderCollapse: "collapse", border: "2px solid #1a1a1a", fontSize: "12.5px", fontFamily: "Arial, Helvetica, sans-serif" }}>
+            {/* 1. KEPRIBADIAN SANTRI (KIRI) & KETIDAKHADIRAN (KANAN) - SATU TABEL SIMETRIS UTUH */}
+            <table 
+              style={{ 
+                width: "100%", 
+                tableLayout: "fixed", 
+                borderCollapse: "collapse", 
+                border: "2px solid #1a1a1a", 
+                marginBottom: paperSize === "F4" ? "20px" : "16px", 
+                pageBreakInside: "avoid", 
+                fontFamily: "Arial, Helvetica, sans-serif",
+                fontSize: paperSize === "F4" ? "13px" : "12px"
+              }}
+            >
+              <colgroup>
+                {/* Sisi Kiri (50%): Kepribadian Santri */}
+                <col style={{ width: "32%" }} />  {/* Aspek Penilaian */}
+                <col style={{ width: "18%" }} />  {/* Predikat */}
+                {/* Sisi Kanan (50%): Ketidakhadiran */}
+                <col style={{ width: "22%" }} />  {/* Absensi */}
+                <col style={{ width: "28%" }} />  {/* Jumlah */}
+              </colgroup>
               <thead>
                 <tr style={{ backgroundColor: "#f0f0f0" }}>
-                  <th colSpan={4} style={{ border: "1px solid #1a1a1a", padding: "7px 10px", textAlign: "left", color: "#1a1a1a", fontWeight: "bold", fontSize: "13px" }}>
-                    LAPORAN TAHSIN & TAHFIDZ (PROGRAM AL-QUR'AN)
+                  <th colSpan={2} style={{ borderBottom: "1px solid #1a1a1a", borderRight: "2.5px solid #1a1a1a", padding: paperSize === "F4" ? "7.5px 10px" : "6px 10px", textAlign: "center", fontWeight: "bold", fontSize: paperSize === "F4" ? "13.5px" : "12.5px" }}>
+                    Kepribadian Santri
+                  </th>
+                  <th colSpan={2} style={{ borderBottom: "1px solid #1a1a1a", padding: paperSize === "F4" ? "7.5px 10px" : "6px 10px", textAlign: "center", fontWeight: "bold", fontSize: paperSize === "F4" ? "13.5px" : "12.5px" }}>
+                    Ketidakhadiran
                   </th>
                 </tr>
-                <tr style={{ backgroundColor: "#e8e8e8" }}>
-                  <th style={{ border: "1px solid #1a1a1a", padding: "6px 10px", textAlign: "left" }}>Jenis / Materi Ujian</th>
-                  <th style={{ border: "1px solid #1a1a1a", padding: "6px 10px", width: "15%", textAlign: "center" }}>Sikap</th>
-                  <th style={{ border: "1px solid #1a1a1a", padding: "6px 10px", width: "15%", textAlign: "center" }}>Nilai Ujian</th>
-                  <th style={{ border: "1px solid #1a1a1a", padding: "6px 10px", width: "20%", textAlign: "center" }}>Keterangan</th>
+                <tr style={{ backgroundColor: "#e8e8e8", fontSize: paperSize === "F4" ? "12.5px" : "11.5px" }}>
+                  <th style={{ borderBottom: "1px solid #1a1a1a", borderRight: "1px solid #1a1a1a", padding: paperSize === "F4" ? "5.5px 10px" : "4.5px 10px", textAlign: "center" }}>Aspek Penilaian</th>
+                  <th style={{ borderBottom: "1px solid #1a1a1a", borderRight: "2.5px solid #1a1a1a", padding: paperSize === "F4" ? "5.5px 10px" : "4.5px 10px", textAlign: "center" }}>Predikat</th>
+                  <th style={{ borderBottom: "1px solid #1a1a1a", borderRight: "1px solid #1a1a1a", padding: paperSize === "F4" ? "5.5px 10px" : "4.5px 10px", textAlign: "center" }}>Absensi</th>
+                  <th style={{ borderBottom: "1px solid #1a1a1a", padding: paperSize === "F4" ? "5.5px 10px" : "4.5px 10px", textAlign: "center" }}>Jumlah</th>
                 </tr>
               </thead>
               <tbody>
-                {praTargetUjian.length > 0 ? praTargetUjian.map((u: any, i: number) => {
-                  let sikapStr = "Baik";
-                  if (u.nilai_sikap >= 90) sikapStr = "Sangat Baik";
-                  else if (u.nilai_sikap >= 80) sikapStr = "Baik";
-                  else if (u.nilai_sikap >= 70) sikapStr = "Cukup";
-                  else sikapStr = "Kurang";
-                  
-                  const nilaiAkhir = u.nilai_akhir ? Math.round(u.nilai_akhir) : Math.round(((u.nilai_bacaan || 0) + (u.nilai_kelancaran || u.nilai_sikap || 0)) / 2);
-                  
-                  return (
-                    <tr key={i} style={{ backgroundColor: "transparent" }}>
-                      <td style={{ border: "1px solid #1a1a1a", padding: "7px 10px", fontWeight: "bold" }}>
-                        {u.jenis_ujian ? u.jenis_ujian.replace(/_/g, " ").toUpperCase() : "UJIAN PRA TARGET"}
-                        {u.juz ? ` (Juz ${u.juz})` : u.surah_nama ? ` (Surah ${u.surah_nama})` : ""}
-                      </td>
-                      <td style={{ border: "1px solid #1a1a1a", padding: "7px 10px", textAlign: "center" }}>
-                        {sikapStr}
-                      </td>
-                      <td style={{ border: "1px solid #1a1a1a", padding: "7px 10px", textAlign: "center", fontWeight: "bold", fontSize: "13px" }}>
-                        {nilaiAkhir}
-                      </td>
-                      <td style={{ border: "1px solid #1a1a1a", padding: "7px 10px", textAlign: "center", color: u.is_lulus ? "#047857" : "#be123c", fontWeight: "bold" }}>
-                        {u.is_lulus ? "LULUS" : "MENGULANG"}
-                      </td>
-                    </tr>
-                  );
-                }) : (
-                  <tr style={{ backgroundColor: "transparent" }}>
-                    <td colSpan={4} style={{ border: "1px solid #1a1a1a", padding: "8px 10px", textAlign: "center" }}>Belum ada data riwayat ujian pra-target</td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
-
-          {/* 3. EVALUASI PENCAPAIAN AL-QUR'AN */}
-          <div style={{ marginBottom: "28px", pageBreakInside: "avoid" }}>
-            <table style={{ width: "100%", borderCollapse: "collapse", border: "2px solid #1a1a1a", fontSize: "12.5px", fontFamily: "Arial, Helvetica, sans-serif" }}>
-              <thead>
-                <tr style={{ backgroundColor: "#f0f0f0" }}>
-                  <th style={{ border: "1px solid #1a1a1a", padding: "6px 10px", textAlign: "left", fontSize: "13px" }}>EVALUASI PENCAPAIAN AL-QUR'AN</th>
-                </tr>
-              </thead>
-              <tbody>
+                {/* Baris 1: Perilaku & Sakit */}
                 <tr style={{ backgroundColor: "transparent" }}>
-                  <td style={{ border: "1px solid #1a1a1a", padding: "10px 12px", verticalAlign: "top", color: "#333", fontStyle: "italic", lineHeight: "1.6", textAlign: "justify", textJustify: "inter-word" }}>
-                    {(() => {
-                      if (praTargetUjian.length === 0) {
-                        return "Belum ada riwayat ujian tahsin/tahfidz pada periode ini. Tingkatkan semangat tilawah dan muraja'ah bersama Musyrif di halaqoh.";
-                      }
-                      
-                      const passed = praTargetUjian.filter((u: any) => u.is_lulus).length;
-                      const total = praTargetUjian.length;
-                      
-                      if (passed === total) {
-                        return "Alhamdulillah, pencapaian pembelajaran Al-Qur'an pada periode ini menunjukkan hasil yang memuaskan. Terus tingkatkan kualitas Tahsin (Makharijul Huruf & Tajwid) serta rutinkan tilawah harian sebagai pondasi kokoh sebelum memperbanyak Ziyadah (Hafalan Baru).";
-                      } else if (passed > 0) {
-                        return "Pencapaian Al-Qur'an sudah cukup baik, namun perlu lebih memperbanyak porsi muraja'ah dan tahsin untuk menyelesaikan target ujian yang belum tuntas.";
-                      } else {
-                        return "Perlu memberikan perhatian ekstra pada program Al-Qur'an. Perbanyak waktu tilawah dan muraja'ah bersama rekan halaqoh agar bisa mencapai target ujian.";
-                      }
-                    })()}
+                  <td style={{ borderBottom: "1px solid #1a1a1a", borderRight: "1px solid #1a1a1a", padding: paperSize === "F4" ? "7px 12px" : "5.5px 10px" }}>Perilaku</td>
+                  <td style={{ borderBottom: "1px solid #1a1a1a", borderRight: "2.5px solid #1a1a1a", padding: paperSize === "F4" ? "7px 10px" : "5.5px 8px", textAlign: "center", fontWeight: "bold", fontSize: paperSize === "F4" ? "13.5px" : "12.5px" }}>{sikapGrade}</td>
+                  <td style={{ borderBottom: "1px solid #1a1a1a", borderRight: "1px solid #1a1a1a", padding: paperSize === "F4" ? "7px 12px" : "5.5px 10px", textAlign: "center" }}>Sakit</td>
+                  <td style={{ borderBottom: "1px solid #1a1a1a", padding: paperSize === "F4" ? "7px 12px" : "5.5px 10px", textAlign: "center", fontSize: paperSize === "F4" ? "13px" : "12px" }}>
+                    <strong style={{ fontSize: paperSize === "F4" ? "13.5px" : "12.5px" }}>{absen?.sakit || 0}</strong> <span style={{ color: "#444" }}>Jam Pelajaran</span>
+                  </td>
+                </tr>
+                {/* Baris 2: Kedisiplinan & Izin */}
+                <tr style={{ backgroundColor: "rgba(0, 0, 0, 0.02)" }}>
+                  <td style={{ borderBottom: "1px solid #1a1a1a", borderRight: "1px solid #1a1a1a", padding: paperSize === "F4" ? "7px 12px" : "5.5px 10px" }}>Kedisiplinan</td>
+                  <td style={{ borderBottom: "1px solid #1a1a1a", borderRight: "2.5px solid #1a1a1a", padding: paperSize === "F4" ? "7px 10px" : "5.5px 8px", textAlign: "center", fontWeight: "bold", fontSize: paperSize === "F4" ? "13.5px" : "12.5px" }}>{disiplinGrade}</td>
+                  <td style={{ borderBottom: "1px solid #1a1a1a", borderRight: "1px solid #1a1a1a", padding: paperSize === "F4" ? "7px 12px" : "5.5px 10px", textAlign: "center" }}>Izin</td>
+                  <td style={{ borderBottom: "1px solid #1a1a1a", padding: paperSize === "F4" ? "7px 12px" : "5.5px 10px", textAlign: "center", fontSize: paperSize === "F4" ? "13px" : "12px" }}>
+                    <strong style={{ fontSize: paperSize === "F4" ? "13.5px" : "12.5px" }}>{absen?.izin || 0}</strong> <span style={{ color: "#444" }}>Jam Pelajaran</span>
+                  </td>
+                </tr>
+                {/* Baris 3: Kerajinan & Alpha */}
+                <tr style={{ backgroundColor: "transparent" }}>
+                  <td style={{ borderBottom: "1px solid #1a1a1a", borderRight: "1px solid #1a1a1a", padding: paperSize === "F4" ? "7px 12px" : "5.5px 10px" }}>Kerajinan</td>
+                  <td style={{ borderBottom: "1px solid #1a1a1a", borderRight: "2.5px solid #1a1a1a", padding: paperSize === "F4" ? "7px 10px" : "5.5px 8px", textAlign: "center", fontWeight: "bold", fontSize: paperSize === "F4" ? "13.5px" : "12.5px" }}>{sikapGrade}</td>
+                  <td style={{ borderBottom: "1px solid #1a1a1a", borderRight: "1px solid #1a1a1a", padding: paperSize === "F4" ? "7px 12px" : "5.5px 10px", textAlign: "center" }}>Alpha</td>
+                  <td style={{ borderBottom: "1px solid #1a1a1a", padding: paperSize === "F4" ? "7px 12px" : "5.5px 10px", textAlign: "center", fontSize: paperSize === "F4" ? "13px" : "12px" }}>
+                    <strong style={{ fontSize: paperSize === "F4" ? "13.5px" : "12.5px" }}>{absen?.alpha || 0}</strong> <span style={{ color: "#444" }}>Jam Pelajaran</span>
+                  </td>
+                </tr>
+                {/* Baris 4: Kebersihan & Total (Sempurna & Seimbang) */}
+                <tr style={{ backgroundColor: "rgba(0, 0, 0, 0.02)" }}>
+                  <td style={{ borderRight: "1px solid #1a1a1a", padding: paperSize === "F4" ? "7px 12px" : "5.5px 10px" }}>Kebersihan</td>
+                  <td style={{ borderRight: "2.5px solid #1a1a1a", padding: paperSize === "F4" ? "7px 10px" : "5.5px 8px", textAlign: "center", fontWeight: "bold", fontSize: paperSize === "F4" ? "13.5px" : "12.5px" }}>{sikapGrade}</td>
+                  <td style={{ borderRight: "1px solid #1a1a1a", padding: paperSize === "F4" ? "7px 12px" : "5.5px 10px", textAlign: "center", fontWeight: "bold" }}>Total</td>
+                  <td style={{ padding: paperSize === "F4" ? "7px 12px" : "5.5px 10px", textAlign: "center", fontSize: paperSize === "F4" ? "13px" : "12px" }}>
+                    <strong style={{ fontSize: paperSize === "F4" ? "13.5px" : "12.5px" }}>{(absen?.sakit || 0) + (absen?.izin || 0) + (absen?.alpha || 0)}</strong> <span style={{ color: "#444" }}>Jam Pelajaran</span>
                   </td>
                 </tr>
               </tbody>
             </table>
-          </div>
 
-          {/* 4. AREA TANDA TANGAN (3 Kolom) + QR CODE BESAR (Kanan) - LEGA & BERWIBAWA */}
-          <div 
-            style={{ 
-              display: "grid", 
-              gridTemplateColumns: "1fr 145px", 
-              gap: "18px",
-              marginTop: "20px", 
-              pageBreakInside: "avoid", 
-              fontFamily: "Arial, Helvetica, sans-serif" 
-            }}
-          >
-            {/* Sisi Kiri: 3 Kolom Tanda Tangan Berjarak Ekstra Lega (Tinggi 195px - Ruang TTD Bertambah Lega & Proporsional) */}
-            <div style={{ display: "grid", gridTemplateColumns: "115px 1.05fr 1.15fr", textAlign: "center", fontSize: "13px", gap: "10px" }}>
-              {/* Kolom 1: Orang Tua */}
-              <div style={{ display: "flex", flexDirection: "column", justifyContent: "space-between", height: "195px", padding: "0 4px" }}>
-                <div>
-                  <p style={{ margin: 0, opacity: 0 }}>Mengetahui</p>
-                  <p style={{ margin: "3px 0 0 0" }}>Orang Tua / Wali</p>
+            {/* 2. LAPORAN TAHSIN & TAHFIDZ (UJIAN PRA TARGET RESMI) */}
+            <div style={{ marginBottom: paperSize === "F4" ? "20px" : "16px", pageBreakInside: "avoid" }}>
+              <table style={{ width: "100%", borderCollapse: "collapse", border: "2px solid #1a1a1a", fontSize: paperSize === "F4" ? "13px" : "12px", fontFamily: "Arial, Helvetica, sans-serif" }}>
+                <thead>
+                  <tr style={{ backgroundColor: "#f0f0f0" }}>
+                    <th colSpan={4} style={{ border: "1px solid #1a1a1a", padding: paperSize === "F4" ? "7.5px 10px" : "6px 10px", textAlign: "left", color: "#1a1a1a", fontWeight: "bold", fontSize: paperSize === "F4" ? "13.5px" : "12.5px" }}>
+                      LAPORAN TAHSIN & TAHFIDZ (PROGRAM AL-QUR'AN)
+                    </th>
+                  </tr>
+                  <tr style={{ backgroundColor: "#e8e8e8" }}>
+                    <th style={{ border: "1px solid #1a1a1a", padding: paperSize === "F4" ? "6.5px 10px" : "5.5px 10px", textAlign: "left" }}>Jenis / Materi Ujian</th>
+                    <th style={{ border: "1px solid #1a1a1a", padding: paperSize === "F4" ? "6.5px 10px" : "5.5px 10px", width: "15%", textAlign: "center" }}>Sikap</th>
+                    <th style={{ border: "1px solid #1a1a1a", padding: paperSize === "F4" ? "6.5px 10px" : "5.5px 10px", width: "15%", textAlign: "center" }}>Nilai Ujian</th>
+                    <th style={{ border: "1px solid #1a1a1a", padding: paperSize === "F4" ? "6.5px 10px" : "5.5px 10px", width: "20%", textAlign: "center" }}>Keterangan</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {praTargetUjian.length > 0 ? praTargetUjian.map((u: any, i: number) => {
+                    let sikapStr = "Baik";
+                    if (u.nilai_sikap >= 90) sikapStr = "Sangat Baik";
+                    else if (u.nilai_sikap >= 80) sikapStr = "Baik";
+                    else if (u.nilai_sikap >= 70) sikapStr = "Cukup";
+                    else sikapStr = "Kurang";
+                    
+                    const nilaiAkhir = u.nilai_akhir ? Math.round(u.nilai_akhir) : Math.round(((u.nilai_bacaan || 0) + (u.nilai_kelancaran || u.nilai_sikap || 0)) / 2);
+                    
+                    return (
+                      <tr key={i} style={{ backgroundColor: "transparent" }}>
+                        <td style={{ border: "1px solid #1a1a1a", padding: paperSize === "F4" ? "7.5px 10px" : "6px 10px", fontWeight: "bold" }}>
+                          {u.jenis_ujian ? u.jenis_ujian.replace(/_/g, " ").toUpperCase() : "UJIAN PRA TARGET"}
+                          {u.juz ? ` (Juz ${u.juz})` : u.surah_nama ? ` (Surah ${u.surah_nama})` : ""}
+                        </td>
+                        <td style={{ border: "1px solid #1a1a1a", padding: paperSize === "F4" ? "7.5px 10px" : "6px 10px", textAlign: "center" }}>
+                          {sikapStr}
+                        </td>
+                        <td style={{ border: "1px solid #1a1a1a", padding: paperSize === "F4" ? "7.5px 10px" : "6px 10px", textAlign: "center", fontWeight: "bold", fontSize: paperSize === "F4" ? "13.5px" : "12.5px" }}>
+                          {nilaiAkhir}
+                        </td>
+                        <td style={{ border: "1px solid #1a1a1a", padding: paperSize === "F4" ? "7.5px 10px" : "6px 10px", textAlign: "center", color: u.is_lulus ? "#047857" : "#be123c", fontWeight: "bold" }}>
+                          {u.is_lulus ? "LULUS" : "MENGULANG"}
+                        </td>
+                      </tr>
+                    );
+                  }) : (
+                    <tr style={{ backgroundColor: "transparent" }}>
+                      <td colSpan={4} style={{ border: "1px solid #1a1a1a", padding: "8px 10px", textAlign: "center" }}>Belum ada data riwayat ujian pra-target</td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+
+            {/* 3. EVALUASI PENCAPAIAN AL-QUR'AN */}
+            <div style={{ marginBottom: paperSize === "F4" ? "22px" : "16px", pageBreakInside: "avoid" }}>
+              <table style={{ width: "100%", borderCollapse: "collapse", border: "2px solid #1a1a1a", fontSize: paperSize === "F4" ? "13px" : "12px", fontFamily: "Arial, Helvetica, sans-serif" }}>
+                <thead>
+                  <tr style={{ backgroundColor: "#f0f0f0" }}>
+                    <th style={{ border: "1px solid #1a1a1a", padding: paperSize === "F4" ? "7px 10px" : "6px 10px", textAlign: "left", fontSize: paperSize === "F4" ? "13.5px" : "12.5px" }}>EVALUASI PENCAPAIAN AL-QUR'AN</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr style={{ backgroundColor: "transparent" }}>
+                    <td style={{ border: "1px solid #1a1a1a", padding: paperSize === "F4" ? "11px 14px" : "9px 12px", verticalAlign: "top", color: "#333", fontStyle: "italic", lineHeight: "1.6", textAlign: "justify", textJustify: "inter-word" }}>
+                      {(() => {
+                        if (praTargetUjian.length === 0) {
+                          return "Belum ada riwayat ujian tahsin/tahfidz pada periode ini. Tingkatkan semangat tilawah dan muraja'ah bersama Musyrif di halaqoh.";
+                        }
+                        
+                        const passed = praTargetUjian.filter((u: any) => u.is_lulus).length;
+                        const total = praTargetUjian.length;
+                        
+                        if (passed === total) {
+                          return "Alhamdulillah, pencapaian pembelajaran Al-Qur'an pada periode ini menunjukkan hasil yang memuaskan. Terus tingkatkan kualitas Tahsin (Makharijul Huruf & Tajwid) serta rutinkan tilawah harian sebagai pondasi kokoh sebelum memperbanyak Ziyadah (Hafalan Baru).";
+                        } else if (passed > 0) {
+                          return "Pencapaian Al-Qur'an sudah cukup baik, namun perlu lebih memperbanyak porsi muraja'ah dan tahsin untuk menyelesaikan target ujian yang belum tuntas.";
+                        } else {
+                          return "Perlu memberikan perhatian ekstra pada program Al-Qur'an. Perbanyak waktu tilawah dan muraja'ah bersama rekan halaqoh agar bisa mencapai target ujian.";
+                        }
+                      })()}
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            {/* 4. AREA TANDA TANGAN (3 Kolom) + QR CODE BESAR (Kanan) - LEGA & BERWIBAWA */}
+            <div 
+              style={{ 
+                display: "grid", 
+                gridTemplateColumns: "1fr 145px", 
+                gap: "18px",
+                marginTop: paperSize === "F4" ? "20px" : "14px", 
+                pageBreakInside: "avoid", 
+                fontFamily: "Arial, Helvetica, sans-serif" 
+              }}
+            >
+              {/* Sisi Kiri: 3 Kolom Tanda Tangan Berjarak Ekstra Lega (Tinggi 195px - Ruang TTD Bertambah Lega & Proporsional) */}
+              <div style={{ display: "grid", gridTemplateColumns: "115px 1.05fr 1.15fr", textAlign: "center", fontSize: paperSize === "F4" ? "13px" : "12px", gap: "10px" }}>
+                {/* Kolom 1: Orang Tua */}
+                <div style={{ display: "flex", flexDirection: "column", justifyContent: "space-between", height: paperSize === "F4" ? "195px" : "175px", padding: "0 4px" }}>
+                  <div>
+                    <p style={{ margin: 0, opacity: 0 }}>Mengetahui</p>
+                    <p style={{ margin: "3px 0 0 0" }}>Orang Tua / Wali</p>
+                  </div>
+                  <div style={{ minHeight: "36px", display: "flex", alignItems: "flex-end", justifyContent: "center" }}>
+                    <div style={{ display: "flex", justifyContent: "space-between", width: "100%", fontWeight: "bold", margin: 0, fontSize: "13px" }}>
+                      <span>(</span><span>)</span>
+                    </div>
+                  </div>
                 </div>
-                <div style={{ minHeight: "36px", display: "flex", alignItems: "flex-end", justifyContent: "center" }}>
-                  <div style={{ display: "flex", justifyContent: "space-between", width: "100%", fontWeight: "bold", margin: 0, fontSize: "13px" }}>
-                    <span>(</span><span>)</span>
+
+                {/* Kolom 2: Kepala Madrasah */}
+                <div style={{ display: "flex", flexDirection: "column", justifyContent: "space-between", height: paperSize === "F4" ? "195px" : "175px", padding: "0 2px" }}>
+                  <div>
+                    <p style={{ margin: 0 }}>Mengetahui</p>
+                    <p style={{ margin: "3px 0 0 0" }}>{headTitle}</p>
+                  </div>
+                  <div style={{ minHeight: "36px", display: "flex", alignItems: "flex-end", justifyContent: "center" }}>
+                    <p style={{ fontWeight: "bold", margin: 0, fontSize: "11.5px", whiteSpace: "nowrap", letterSpacing: "-0.2px" }}>
+                      ({headName})
+                    </p>
+                  </div>
+                </div>
+
+                {/* Kolom 3: Wali Kelas */}
+                <div style={{ display: "flex", flexDirection: "column", justifyContent: "space-between", height: paperSize === "F4" ? "195px" : "175px", padding: "0 2px" }}>
+                  <div>
+                    <p style={{ margin: 0 }}>Sukabumi, 11 Oktober 2026</p>
+                    <p style={{ margin: "3px 0 0 0" }}>Wali Kelas</p>
+                  </div>
+                  <div style={{ minHeight: "36px", display: "flex", alignItems: "flex-end", justifyContent: "center" }}>
+                    <p style={{ fontWeight: "bold", margin: 0, fontSize: "11.5px", whiteSpace: "nowrap", letterSpacing: "-0.2px" }}>
+                      ({waliKelasName})
+                    </p>
                   </div>
                 </div>
               </div>
 
-              {/* Kolom 2: Kepala Madrasah */}
-              <div style={{ display: "flex", flexDirection: "column", justifyContent: "space-between", height: "195px", padding: "0 2px" }}>
-                <div>
-                  <p style={{ margin: 0 }}>Mengetahui</p>
-                  <p style={{ margin: "3px 0 0 0" }}>{headTitle}</p>
+              {/* Sisi Kanan: Barcode / QR Code Besar Gagah (Seimbang Sempurna dan Sejajar dengan Seluruh Kolom Tanda Tangan) */}
+              <div style={{ display: "flex", flexDirection: "column", justifyContent: "space-between", alignItems: "center", height: paperSize === "F4" ? "195px" : "175px" }}>
+                <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", flex: 1 }}>
+                  <img 
+                    src={`https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=https://sikap.pesantren-alimam.com/verify/${santriId}`}
+                    alt="QR Code Verifikasi"
+                    style={{ width: paperSize === "F4" ? "135px" : "120px", height: paperSize === "F4" ? "135px" : "120px", border: "1.5px solid #1a1a1a", padding: "4px", backgroundColor: "white" }}
+                  />
                 </div>
                 <div style={{ minHeight: "36px", display: "flex", alignItems: "flex-end", justifyContent: "center" }}>
-                  <p style={{ fontWeight: "bold", margin: 0, fontSize: "11.5px", whiteSpace: "nowrap", letterSpacing: "-0.2px" }}>
-                    ({headName})
-                  </p>
+                  <p style={{ fontSize: "9.5px", color: "#666", margin: 0, textAlign: "center", lineHeight: "1.3" }}>Scan Verifikasi Dokumen</p>
                 </div>
-              </div>
-
-              {/* Kolom 3: Wali Kelas */}
-              <div style={{ display: "flex", flexDirection: "column", justifyContent: "space-between", height: "195px", padding: "0 2px" }}>
-                <div>
-                  <p style={{ margin: 0 }}>Sukabumi, 11 Oktober 2026</p>
-                  <p style={{ margin: "3px 0 0 0" }}>Wali Kelas</p>
-                </div>
-                <div style={{ minHeight: "36px", display: "flex", alignItems: "flex-end", justifyContent: "center" }}>
-                  <p style={{ fontWeight: "bold", margin: 0, fontSize: "11.5px", whiteSpace: "nowrap", letterSpacing: "-0.2px" }}>
-                    ({waliKelasName})
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            {/* Sisi Kanan: Barcode / QR Code Besar Gagah (Seimbang Sempurna dan Sejajar dengan Seluruh Kolom Tanda Tangan) */}
-            <div style={{ display: "flex", flexDirection: "column", justifyContent: "space-between", alignItems: "center", height: "195px" }}>
-              <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", flex: 1 }}>
-                <img 
-                  src={`https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=https://sikap.pesantren-alimam.com/verify/${santriId}`}
-                  alt="QR Code Verifikasi"
-                  style={{ width: "135px", height: "135px", border: "1.5px solid #1a1a1a", padding: "4px", backgroundColor: "transparent" }}
-                />
-              </div>
-              <div style={{ minHeight: "36px", display: "flex", alignItems: "flex-end", justifyContent: "center" }}>
-                <p style={{ fontSize: "9.5px", color: "#666", margin: 0, textAlign: "center", lineHeight: "1.3" }}>Scan Verifikasi Dokumen</p>
               </div>
             </div>
           </div>
 
           {/* Catatan Kaki Halaman 2 (Simetris dengan Halaman 1, 1 Baris Rapi & Elegan) */}
-          <div style={{ marginTop: "20px", display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: "10.5px", color: "#666", fontStyle: "italic", gap: "16px" }}>
+          <div style={{ marginTop: "auto", paddingTop: "12px", display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: "10.5px", color: "#666", fontStyle: "italic", gap: "16px" }}>
             <p style={{ margin: 0, flex: 1 }}>* Dokumen rapor ini sah dan diterbitkan secara resmi oleh Pesantren Al-Imam Al-Islami (Managed by Al-Andalus IIBS).</p>
             <p style={{ margin: 0, fontWeight: "bold", whiteSpace: "nowrap", flexShrink: 0 }}>Halaman 2 dari 2 ({paperSize})</p>
           </div>
