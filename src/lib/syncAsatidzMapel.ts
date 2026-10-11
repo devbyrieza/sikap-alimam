@@ -25,7 +25,11 @@ export async function syncAsatidzMapel(pegawaiId: string, mapelString: string | 
       if (group.includes(":")) {
         const [kelasPart, mapelsPart] = group.split(":");
         const kelasNama = kelasPart.trim();
-        const jenjang = kelasNama.toUpperCase().includes("MTS") ? "MTs" : "Islamiyah";
+        const jenjang = kelasNama.toUpperCase().includes("MA")
+          ? "MA"
+          : kelasNama.toUpperCase().includes("MTS")
+          ? "MTs"
+          : "IL";
         const mapels = mapelsPart.split(",").map((m) => m.trim()).filter(Boolean);
 
         for (const mapelNama of mapels) {
@@ -51,7 +55,7 @@ export async function syncAsatidzMapel(pegawaiId: string, mapelString: string | 
               ? "MA"
               : kelasNama.toUpperCase().includes("MTS")
               ? "MTs"
-              : "Islamiyah";
+              : "IL";
             targetAssignments.push({ kelasNama, jenjang, mapelNama });
           } else {
             // Default to 7 MTs if no class specified

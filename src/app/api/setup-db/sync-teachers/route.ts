@@ -8,6 +8,20 @@ export async function GET() {
   try {
     const logs: string[] = [];
 
+    // 0. Normalize any legacy 'Islamiyah' jenjang in Kelas table to 'IL'
+    const updatedIslamiyah = await prisma.kelas.updateMany({
+      where: {
+        OR: [
+          { jenjang: { equals: "Islamiyah", mode: "insensitive" } },
+          { jenjang: { contains: "Islam", mode: "insensitive" } },
+        ]
+      },
+      data: { jenjang: "IL" }
+    });
+    if (updatedIslamiyah.count > 0) {
+      logs.push(`Updated ${updatedIslamiyah.count} classes with jenjang 'Islamiyah' to 'IL'.`);
+    }
+
     // Ensure IL class exists
     let classIL = await prisma.kelas.findFirst({
       where: {

@@ -94,7 +94,18 @@ export async function GET() {
       logs.push('Updated Pegawai record: ' + pegawai.nama_lengkap);
     }
 
-    // 3. Ensure Kelas IL exists
+    // 3. Normalize any legacy 'Islamiyah' jenjang in Kelas table to 'IL'
+    await prisma.kelas.updateMany({
+      where: {
+        OR: [
+          { jenjang: { equals: "Islamiyah", mode: "insensitive" } },
+          { jenjang: { contains: "Islam", mode: "insensitive" } },
+        ]
+      },
+      data: { jenjang: "IL" }
+    });
+
+    // Ensure Kelas IL exists
     let classIL = await prisma.kelas.findFirst({
       where: {
         is_active: true,

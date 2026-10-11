@@ -24,15 +24,18 @@ export function getJenjangFromKelas(nama: string, jenjangDb?: string | null): Je
     return "MA";
   }
 
-  // Cek IL / I'dad Lughowy / Islamiyah
+  // Cek IL / I'dad Lughowi
   if (
-    upperJenjang.includes("ISLAM") || 
     upperJenjang === "IL" || 
+    upperJenjang.includes("I'DAD") ||
+    upperJenjang.includes("IDAD") ||
+    upperJenjang.includes("LUGHO") ||
+    upperJenjang.includes("ISLAM") || 
     upperName === "IL" ||
     upperName.startsWith("IL ") ||
     upperName.includes("I'DAD") || 
     upperName.includes("IDAD") || 
-    upperName.includes("LUGHOWY")
+    upperName.includes("LUGHO")
   ) {
     return "IL";
   }

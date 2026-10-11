@@ -17,7 +17,8 @@ interface KelasItem {
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 const jenjangColor: Record<string, { bg: string; text: string }> = {
   MTs:       { bg: "#eff6ff", text: "#1d4ed8" },
-  Islamiyah: { bg: "#f0fdf4", text: "#15803d" },
+  IL:        { bg: "#f0fdf4", text: "#15803d" },
+  "I'dad Lughowi": { bg: "#f0fdf4", text: "#15803d" },
   MA:        { bg: "#fdf4ff", text: "#7e22ce" },
   Umum:      { bg: "#f1f5f9", text: "#475569" } };
 
@@ -204,7 +205,7 @@ export default function MasterKelasPage() {
               <label style={{ display:"block", fontSize:13, fontWeight:600, color:"#374151", marginBottom:6 }}>Jenjang</label>
               <select className="form-control" value={form.jenjang} onChange={e => setForm({ ...form, jenjang: e.target.value })}>
                 <option value="MTs">Madrasah Tsanawiyah (MTs)</option>
-                <option value="Islamiyah">Islamiyah / I'dad Lughowy (IL)</option>
+                <option value="IL">I'dad Lughowi (IL)</option>
                 <option value="MA">Madrasah Aliyah (MA)</option>
                 <option value="Umum">Umum / Lainnya</option>
               </select>
@@ -297,7 +298,7 @@ export default function MasterKelasPage() {
                         {isEditing ? (
                           <select className="form-control" value={editForm.jenjang} onChange={e => setEditForm({ ...editForm, jenjang: e.target.value })} style={{ padding:"6px 10px", fontSize:13 }}>
                             <option value="MTs">MTs</option>
-                            <option value="Islamiyah">IL</option>
+                            <option value="IL">IL (I'dad Lughowi)</option>
                             <option value="MA">MA</option>
                             <option value="Umum">Umum</option>
                           </select>

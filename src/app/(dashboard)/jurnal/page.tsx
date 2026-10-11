@@ -79,7 +79,7 @@ export default async function JurnalPage() {
     normalizedKelasList.push({ id: "kelas-7-mts", nama: "7 MTs", jenjang: "MTs" });
   }
   if (!seenKelas.has("IL")) {
-    normalizedKelasList.push({ id: "kelas-il", nama: "IL", jenjang: "Islamiyah" });
+    normalizedKelasList.push({ id: "kelas-il", nama: "IL", jenjang: "IL" });
   }
 
   const kelasList = sortKelas(normalizedKelasList);
