@@ -7,7 +7,9 @@ export async function GET() {
   try {
     const assignments = [
       { nama_guru: "Agus Cahyono", nama_kelas: "7 MTs" },
-      { nama_guru: "Imron Abdillah", nama_kelas: "IL" }
+      { nama_guru: "Imron Abdillah", nama_kelas: "IL" },
+      { nama_guru: "Thoriq", nama_kelas: "11" },
+      { nama_guru: "Thoriq", nama_kelas: "12" }
     ];
 
     const results = [];

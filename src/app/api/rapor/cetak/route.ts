@@ -18,7 +18,11 @@ export async function GET(req: NextRequest) {
     // 1. Get Santri & Kelas
     const santri = await prisma.santriAktif.findUnique({
       where: { id: santri_id },
-      include: { kelas: true }
+      include: {
+        kelas: {
+          include: { wali_kelas: true }
+        }
+      }
     });
 
     if (!santri) {
@@ -26,11 +30,16 @@ export async function GET(req: NextRequest) {
     }
 
     const kelas_id = santri.kelas_id;
+    const klsNama = santri.kelas?.nama?.toUpperCase() || "";
     const isMA = santri.kelas && (
       santri.kelas.jenjang === "MA" || 
-      santri.kelas.nama.toUpperCase().includes("MA") || 
-      santri.kelas.nama.startsWith("11") || 
-      santri.kelas.nama.startsWith("12")
+      klsNama.includes("MA") || 
+      klsNama === "10" || 
+      klsNama === "11" || 
+      klsNama === "12" ||
+      klsNama.startsWith("10") || 
+      klsNama.startsWith("11") || 
+      klsNama.startsWith("12")
     );
 
     // 2. Get All Santri in the same Class (for Ranking)
@@ -321,11 +330,26 @@ export async function GET(req: NextRequest) {
       if (ujian_tahfidz.length >= 5) break;
     }
 
+    const defaultWali = isMA
+      ? "Muhammad Thoriq Ibn Ziyad, Lc., M.Ag."
+      : klsNama.includes("IL")
+      ? "Imron Abdillah, S.Pd."
+      : "Agus Cahyono";
+
+    const defaultHead = isMA
+      ? "Rethna Kartika Septianiar, S.Pd."
+      : klsNama.includes("IL")
+      ? "Imron Abdillah, S.Pd."
+      : "Ade Supyana, S.Pd.I.";
+
     return NextResponse.json({
       santri: {
         nama: santri.nama_lengkap,
         nis: santri.nis,
         kelas: santri.kelas.nama,
+        jenjang: santri.kelas.jenjang,
+        wali_kelas: santri.kelas.wali_kelas?.nama_lengkap || defaultWali,
+        kepala_madrasah: defaultHead,
         semester: isGanjil ? "Ganjil" : "Genap",
         tahun_ajaran
       },

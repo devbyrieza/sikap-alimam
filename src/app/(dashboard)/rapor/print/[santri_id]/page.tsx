@@ -128,24 +128,35 @@ export default function CetakRaporPage() {
   };
 
   const klsUpper = (santri?.kelas || "").toUpperCase();
-  const isMTs = klsUpper.includes("MTS");
-  const isMA = klsUpper.includes("MA");
-  const isIL = klsUpper.includes("IL");
+  const jenjangUpper = (santri?.jenjang || "").toUpperCase();
+
+  const isMTs = klsUpper.includes("MTS") || 
+                jenjangUpper === "MTS" || 
+                ["7", "8", "9"].some(k => klsUpper === k || klsUpper.startsWith(k + " "));
+
+  const isMA = klsUpper.includes("MA") || 
+               jenjangUpper === "MA" || 
+               ["10", "11", "12"].some(k => klsUpper === k || klsUpper.startsWith(k + " ") || klsUpper.startsWith(k));
+
+  const isIL = klsUpper.includes("IL") || 
+               klsUpper.includes("I'DAD") || 
+               jenjangUpper.includes("I'DAD") || 
+               jenjangUpper.includes("IL");
 
   let headTitle = "Kepala Madrasah";
-  let headName = "Aziz Basuki, S.H.I., M.Pd.";
-  let waliKelasName = "...........................";
+  let headName = santri?.kepala_madrasah || "Aziz Basuki, S.H.I., M.Pd.";
+  let waliKelasName = santri?.wali_kelas || "...........................";
 
-  if (isMTs) {
-    headName = "Ade Supyana, S.Pd.I.";
-    waliKelasName = "Agus Cahyono";
-  } else if (isMA) {
+  if (isMA) {
     headName = "Rethna Kartika Septianiar, S.Pd.";
     waliKelasName = "Muhammad Thoriq Ibn Ziyad, Lc., M.Ag.";
+  } else if (isMTs) {
+    headName = "Ade Supyana, S.Pd.I.";
+    waliKelasName = santri?.wali_kelas || "Agus Cahyono";
   } else if (isIL) {
     headTitle = "Kepala Kurikulum";
     headName = "Imron Abdillah, S.Pd.";
-    waliKelasName = "Imron Abdillah, S.Pd.";
+    waliKelasName = santri?.wali_kelas || "Imron Abdillah, S.Pd.";
   }
 
   return (
