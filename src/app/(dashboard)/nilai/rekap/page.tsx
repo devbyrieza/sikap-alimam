@@ -145,14 +145,14 @@ export default function RekapNilaiPage() {
 
     // Jika PAS ada, gunakan PAS. Jika tidak, gunakan PTS.
     if (hasPeriode("_pas", "pas")) {
-      return Math.round(calcFormula("_pas", "pas") * 10) / 10;
+      return Math.round(calcFormula("_pas", "pas"));
     } else if (hasPeriode("_pts", "pts")) {
-      return Math.round(calcFormula("_pts", "pts") * 10) / 10;
+      return Math.round(calcFormula("_pts", "pts"));
     }
 
     // MURNI UJIAN MODE (Fallback)
     if (vals.some(v => v.jenis === "ujian")) {
-       return Math.round(getVal("ujian") * 10) / 10;
+       return Math.round(getVal("ujian"));
     }
 
     return null;
@@ -172,8 +172,8 @@ export default function RekapNilaiPage() {
             count++;
           }
        });
-       const average = count > 0 ? Math.round((total / count) * 10) / 10 : 0;
-       return { id: santri.id, total: Math.round(total * 10) / 10, average };
+       const average = count > 0 ? Math.round(total / count) : 0;
+       return { id: santri.id, total: Math.round(total), average };
     });
     
     // Sort descending by total

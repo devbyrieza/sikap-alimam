@@ -431,10 +431,10 @@ export default function CetakRaporPage() {
               </tr>
               <tr style={{ backgroundColor: "#fafafa", fontFamily: "Arial, Helvetica, sans-serif" }}>
                 <td colSpan={3} style={{ border: "1px solid #1a1a1a", padding: "6px 8px", fontWeight: "bold" }}>Rata-Rata Santri</td>
-                <td style={{ border: "1px solid #1a1a1a", padding: "6px 4px", textAlign: "center", fontWeight: "bold", fontSize: "13px" }}>{kedisiplinan?.rataRata}</td>
+                <td style={{ border: "1px solid #1a1a1a", padding: "6px 4px", textAlign: "center", fontWeight: "bold", fontSize: "13px" }}>{Math.round(Number(kedisiplinan?.rataRata || 0))}</td>
                 <td style={{ border: "1px solid #1a1a1a", borderRight: "2.5px solid #1a1a1a", padding: "6px 4px", backgroundColor: "rgba(0, 0, 0, 0.025)" }}></td>
                 <td style={{ border: "1px solid #1a1a1a", padding: "6px 4px", backgroundColor: "rgba(0, 0, 0, 0.025)" }}></td>
-                <td style={{ border: "1px solid #1a1a1a", padding: "6px 4px", textAlign: "center", fontWeight: "bold", fontSize: "13.5px" }} dir="rtl">{toArabicNum(kedisiplinan?.rataRata)}</td>
+                <td style={{ border: "1px solid #1a1a1a", padding: "6px 4px", textAlign: "center", fontWeight: "bold", fontSize: "13.5px" }} dir="rtl">{toArabicNum(Math.round(Number(kedisiplinan?.rataRata || 0)))}</td>
                 <td colSpan={3} style={{ border: "1px solid #1a1a1a", padding: "6px 8px", textAlign: "right", fontWeight: "bold", fontFamily: "'Traditional Arabic', serif", fontSize: "14px" }} dir="rtl">المعدل التراكمي</td>
               </tr>
               <tr style={{ backgroundColor: "white", fontFamily: "Arial, Helvetica, sans-serif" }}>

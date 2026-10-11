@@ -77,16 +77,16 @@ export async function GET(req: NextRequest) {
 
       // MURNI PTS / PAS MODE
       if (hasPeriode("_pas", "pas")) {
-        return Math.round(getVal("pas") * 10) / 10;
+        return Math.round(getVal("pas"));
       } else if (hasPeriode("_pts", "pts")) {
-        return Math.round(getVal("pts") * 10) / 10;
+        return Math.round(getVal("pts"));
       }
 
       if (vals.some(v => v.jenis === "ujian")) {
-        return Math.round(getVal("ujian") * 10) / 10;
+        return Math.round(getVal("ujian"));
       }
 
-      return Math.round(Number(vals[0].nilai) * 10) / 10;
+      return Math.round(Number(vals[0].nilai));
     };
 
     // Ambil daftar mapel standar yang ada di kelas ini
@@ -115,8 +115,8 @@ export async function GET(req: NextRequest) {
           count++;
         }
       });
-      const average = count > 0 ? Math.round((total / count) * 10) / 10 : 0;
-      return { id: s.id, total: Math.round(total * 10) / 10, average };
+      const average = count > 0 ? Math.round(total / count) : 0;
+      return { id: s.id, total: Math.round(total), average };
     });
 
     // Sort descending by total
@@ -336,7 +336,7 @@ export async function GET(req: NextRequest) {
       },
       kedisiplinan: {
         totalNilai: Math.round(studentTotalNilai),
-        rataRata: Math.round(rataRataTotal * 10) / 10,
+        rataRata: Math.round(rataRataTotal),
         ranking: studentRank,
         jumlahSantri
       },
