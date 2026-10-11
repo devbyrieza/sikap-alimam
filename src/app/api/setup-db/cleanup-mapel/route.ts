@@ -192,7 +192,8 @@ export async function GET() {
         .replace(/\bB\. Indonesia\b/gi, "Bahasa Indonesia")
         .replace(/\bB\. Arab\b/gi, "Bahasa Arab")
         .replace(/\bB\. Inggris\b/gi, "Bahasa Inggris")
-        .replace(/\bMTK\b/gi, "Matematika");
+        .replace(/\bMTK\b/gi, "Matematika")
+        .replace(/\bKhitobah\b/gi, "Kitabah");
 
       if (cleanedStr !== t.mata_pelajaran) {
         await prisma.pegawai.update({
@@ -205,6 +206,23 @@ export async function GET() {
       // Sinkronkan kembali relasi asatidz_mapel
       await syncAsatidzMapel(t.id, cleanedStr);
       teacherSyncCount++;
+    }
+
+    // 3. Bersihkan sisa mapel Khitobah yang kosong jika masih ada
+    const emptyKhitobahs = await prisma.mataPelajaran.findMany({
+      where: {
+        nama: { equals: "Khitobah", mode: "insensitive" }
+      },
+      include: {
+        _count: { select: { nilai: true, jurnal: true } }
+      }
+    });
+    for (const ek of emptyKhitobahs) {
+      if (ek._count.nilai === 0 && ek._count.jurnal === 0) {
+        await prisma.asatidzmMapel.deleteMany({ where: { mapel_id: ek.id } });
+        await prisma.mataPelajaran.delete({ where: { id: ek.id } });
+        logs.push(`Deleted empty Khitobah (ID: ${ek.id})`);
+      }
     }
 
     return NextResponse.json({

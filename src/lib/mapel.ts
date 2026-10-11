@@ -75,7 +75,7 @@ export function getStandardMapelName(rawName: string, isMA: boolean = false): st
   if (low === "shorf" || low === "shorof" || low === "sharaf") {
     return "Shorof";
   }
-  if (low === "kitabah") {
+  if (low === "kitabah" || low === "khitobah") {
     return "Kitabah";
   }
   if (low.includes("muthola") || low.includes("mutola")) {
@@ -96,9 +96,6 @@ export function getStandardMapelName(rawName: string, isMA: boolean = false): st
   if (low.includes("tadribat")) {
     return "Tadribat 'alal Anmath";
   }
-  if (low.includes("khitobah")) {
-    return "Khitobah";
-  }
   if (low.includes("tafsir")) {
     return "Tafsir";
   }
@@ -111,6 +108,7 @@ export function getStandardMapelName(rawName: string, isMA: boolean = false): st
 
 export function getMapelAliases(standardName: string): string[] {
   const low = standardName.toLowerCase().trim();
+  if (low === "kitabah") return ["Kitabah", "Khitobah"];
   if (low === "akidah") return ["Akidah", "Aqidah", "Tauhid"];
   if (low === "fikih") return ["Fikih", "Fiqih", "Fiqh"];
   if (low === "ushul fikih") return ["Ushul Fikih", "Ushul Fiqih", "Ushul Fiqh", "Fikih", "Fiqih"];
