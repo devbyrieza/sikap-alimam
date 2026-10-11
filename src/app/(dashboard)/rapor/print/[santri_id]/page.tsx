@@ -460,7 +460,7 @@ export default function CetakRaporPage() {
             </div>
             <div style={{ textAlign: "right", fontSize: "12px", fontWeight: "bold" }}>
               <p style={{ margin: 0 }}>Nama: <span style={{ textTransform: "uppercase" }}>{santri?.nama}</span> ({santri?.nis || "-"})</p>
-              <p style={{ margin: "2px 0 0 0", color: "#555" }}>Kelas: {(santri?.kelas || "").replace(/\s*(MTs|MA|SMP|SMA|SD|TK)\b/gi, "")} &nbsp;|&nbsp; Semester {santri?.semester?.includes("Ganjil") || santri?.semester === "1" ? "Ganjil" : santri?.semester} &nbsp;|&nbsp; Halaman 2 dari 2</p>
+              <p style={{ margin: "2px 0 0 0", color: "#555" }}>Kelas: {(santri?.kelas || "").replace(/\s*(MTs|MA|SMP|SMA|SD|TK)\b/gi, "")} &nbsp;|&nbsp; Semester {santri?.semester?.includes("Ganjil") || santri?.semester === "1" ? "Ganjil" : santri?.semester} </p>
             </div>
           </div>
 
@@ -692,6 +692,12 @@ export default function CetakRaporPage() {
               </div>
             );
           })()}
+
+          {/* Catatan Kaki Halaman 2 (Simetris dengan Halaman 1) */}
+          <div style={{ marginTop: "18px", display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: "11px", color: "#666", fontStyle: "italic" }}>
+            <p style={{ margin: 0 }}>* Dokumen rapor ini sah dan diterbitkan secara resmi oleh Pesantren Al-Imam Al-Islami.</p>
+            <p style={{ margin: 0, fontWeight: "bold" }}>Halaman 2 dari 2</p>
+          </div>
 
         </div>
       </div>
