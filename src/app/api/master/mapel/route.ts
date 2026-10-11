@@ -58,8 +58,8 @@ export async function GET(req: NextRequest) {
         else if (low === "hadits") targetName = "Hadis";
         else if (low === "siroh" || low === "siroh nabi" || low === "sirah nabi") targetName = "Sirah";
         else if (low === "akhlaq") targetName = "Akhlak";
-        else if (low.includes("tahsin")) targetName = "Tahsin Al-Qur'an";
-        else if (low.includes("tahfidz") || low.includes("tahfiz")) targetName = "Tahfidz Al-Qur'an";
+        else if (low.includes("tahsin")) targetName = "Tahsin";
+        else if (low.includes("tahfidz") || low.includes("tahfiz")) targetName = "Tahfidz";
         else if (low.includes("tadribat")) targetName = "Tadribat 'alal Anmath";
 
         // 3. Fikih & Ushul Fikih

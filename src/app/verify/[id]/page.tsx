@@ -85,7 +85,7 @@ export default async function VerifyPage({ params }: { params: Promise<{ id: str
             <div className="p-4 bg-blue-50 rounded-2xl border border-blue-100 flex items-start gap-3">
               <AlertTriangle className="text-blue-500 shrink-0 mt-0.5" size={16} />
               <p className="text-xs text-blue-800 leading-relaxed">
-                Dokumen rapor fisik yang Anda pegang adalah sah dan otentik diterbitkan oleh <strong>Pesantren Al-Imam Al-Islami</strong> apabila data di atas sesuai dengan fisik dokumen.
+                Dokumen rapor fisik yang Anda pegang adalah sah dan otentik diterbitkan oleh <strong>Pesantren Al-Imam Al-Islami (Managed by Al-Andalus International Islamic Boarding School)</strong> apabila data di atas sesuai dengan fisik dokumen.
               </p>
             </div>
           </div>

@@ -49,9 +49,9 @@ export async function GET() {
       
       // 5. Standardize Tahsin & Tahfidz
       if (newName.toLowerCase().includes("tahsin")) {
-        newName = "Tahsin Al-Qur'an";
+        newName = "Tahsin";
       } else if (newName.toLowerCase().includes("tahfidz") || newName.toLowerCase().includes("tahfiz")) {
-        newName = "Tahfidz Al-Qur'an";
+        newName = "Tahfidz";
       }
 
       if (newName !== m.nama) {

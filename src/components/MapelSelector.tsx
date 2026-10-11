@@ -14,18 +14,20 @@ export const MAPEL_PER_KELAS: Record<string, { kategori: string; items: string[]
         "Hadis",
         "Fikih",
         "Sirah",
-        "Tahsin Al-Qur'an",
-        "Tahfidz Al-Qur'an",
+        "Tahsin",
+        "Tahfidz",
         "Adab & Akhlak",
         "Khitobah",
-      ] },
+      ],
+    },
     {
       kategori: "Bahasa & Lughoh",
       items: [
         "Bahasa Arab",
         "Kitabah",
         "Shorf",
-      ] },
+      ],
+    },
     {
       kategori: "Umum & Keterampilan",
       items: [
@@ -34,29 +36,36 @@ export const MAPEL_PER_KELAS: Record<string, { kategori: string; items: string[]
         "Matematika",
         "IPA Terpadu",
         "Entrepreneurship",
-      ] },
+      ],
+    },
   ],
   "8 MTs": [
     {
       kategori: "Syariah & Diniyah",
-      items: ["Akidah", "Hadis", "Fikih", "Sirah", "Tahsin Al-Qur'an", "Tahfidz Al-Qur'an", "Adab & Akhlak", "Khitobah"] },
+      items: ["Akidah", "Hadis", "Fikih", "Sirah", "Tahsin", "Tahfidz", "Adab & Akhlak", "Khitobah"],
+    },
     {
       kategori: "Bahasa & Lughoh",
-      items: ["Bahasa Arab", "Kitabah", "Shorf", "Nahwu"] },
+      items: ["Bahasa Arab", "Kitabah", "Shorf", "Nahwu"],
+    },
     {
       kategori: "Umum & Keterampilan",
-      items: ["Bahasa Indonesia", "Bahasa Inggris", "Matematika", "IPA Terpadu", "Entrepreneurship"] },
+      items: ["Bahasa Indonesia", "Bahasa Inggris", "Matematika", "IPA Terpadu", "Entrepreneurship"],
+    },
   ],
   "9 MTs": [
     {
       kategori: "Syariah & Diniyah",
-      items: ["Akidah", "Hadis", "Fikih", "Sirah", "Tahsin Al-Qur'an", "Tahfidz Al-Qur'an", "Adab & Akhlak", "Khitobah"] },
+      items: ["Akidah", "Hadis", "Fikih", "Sirah", "Tahsin", "Tahfidz", "Adab & Akhlak", "Khitobah"],
+    },
     {
       kategori: "Bahasa & Lughoh",
-      items: ["Bahasa Arab", "Kitabah", "Shorf", "Nahwu"] },
+      items: ["Bahasa Arab", "Kitabah", "Shorf", "Nahwu"],
+    },
     {
       kategori: "Umum & Keterampilan",
-      items: ["Bahasa Indonesia", "Bahasa Inggris", "Matematika", "IPA Terpadu", "Entrepreneurship"] },
+      items: ["Bahasa Indonesia", "Bahasa Inggris", "Matematika", "IPA Terpadu", "Entrepreneurship"],
+    },
   ],
   "IL": [
     {
@@ -67,7 +76,8 @@ export const MAPEL_PER_KELAS: Record<string, { kategori: string; items: string[]
         "Shorf",
         "Kitabah",
         "Tadribat 'alal Anmath",
-      ] },
+      ],
+    },
     {
       kategori: "Syariah & Diniyah",
       items: [
@@ -75,50 +85,62 @@ export const MAPEL_PER_KELAS: Record<string, { kategori: string; items: string[]
         "Hadis",
         "Fikih",
         "Sirah",
-        "Tahsin Al-Qur'an",
-        "Tahfidz Al-Qur'an",
+        "Tahsin",
+        "Tahfidz",
         "Adab & Akhlak",
         "Khitobah",
-      ] },
+      ],
+    },
     {
       kategori: "Keterampilan",
       items: [
         "Entrepreneurship",
-      ] },
+      ],
+    },
   ],
   "10 MA": [
     {
       kategori: "Syariah & Diniyah",
-      items: ["Tafsir", "Hadis", "Ushul Fikih", "Akidah", "Tahsin Al-Qur'an", "Tahfidz Al-Qur'an"] },
+      items: ["Tafsir", "Hadis", "Ushul Fikih", "Akidah", "Tahsin", "Tahfidz"],
+    },
     {
       kategori: "Bahasa & Lughoh",
-      items: ["Bahasa Arab", "Nahwu", "Shorf", "Balaghah"] },
+      items: ["Bahasa Arab", "Nahwu", "Shorf", "Balaghah"],
+    },
     {
       kategori: "Umum & Keterampilan",
-      items: ["Bahasa Indonesia", "Bahasa Inggris", "Matematika", "IPA Terpadu", "Entrepreneurship"] },
+      items: ["Bahasa Indonesia", "Bahasa Inggris", "Matematika", "IPA Terpadu", "Entrepreneurship"],
+    },
   ],
   "11 MA": [
     {
       kategori: "Syariah & Diniyah",
-      items: ["Tafsir", "Hadis", "Ushul Fikih", "Tauhid", "Akidah", "Adab", "Sirah", "Tahsin Al-Qur'an", "Tahfidz Al-Qur'an"] },
+      items: ["Tafsir", "Hadis", "Ushul Fikih", "Tauhid", "Akidah", "Adab", "Sirah", "Tahsin", "Tahfidz"],
+    },
     {
       kategori: "Bahasa & Lughoh",
-      items: ["Bahasa Arab", "Nahwu", "Shorf", "Balaghah"] },
+      items: ["Bahasa Arab", "Nahwu", "Shorf", "Balaghah"],
+    },
     {
       kategori: "Umum & Keterampilan",
-      items: ["Bahasa Indonesia", "Bahasa Inggris", "Matematika", "Entrepreneurship"] },
+      items: ["Bahasa Indonesia", "Bahasa Inggris", "Matematika", "Entrepreneurship"],
+    },
   ],
   "12 MA": [
     {
       kategori: "Syariah & Diniyah",
-      items: ["Tafsir", "Hadis", "Ushul Fikih", "Tauhid", "Akidah", "Adab", "Sirah", "Tahsin Al-Qur'an", "Tahfidz Al-Qur'an"] },
+      items: ["Tafsir", "Hadis", "Ushul Fikih", "Tauhid", "Akidah", "Adab", "Sirah", "Tahsin", "Tahfidz"],
+    },
     {
       kategori: "Bahasa & Lughoh",
-      items: ["Bahasa Arab", "Nahwu", "Shorf", "Balaghah"] },
+      items: ["Bahasa Arab", "Nahwu", "Shorf", "Balaghah"],
+    },
     {
       kategori: "Umum & Keterampilan",
-      items: ["Bahasa Indonesia", "Bahasa Inggris", "Matematika", "Entrepreneurship"] },
-  ] };
+      items: ["Bahasa Indonesia", "Bahasa Inggris", "Matematika", "Entrepreneurship"],
+    },
+  ],
+};
 
 const JENJANG_DEFINITIONS = [
   { 

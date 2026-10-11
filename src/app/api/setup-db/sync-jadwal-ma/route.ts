@@ -29,7 +29,7 @@ export async function GET() {
       { mapel: "Hadis", guru: "Wahyudi Pranata", arab: "الحديث", kat: "syariah" },
       { mapel: "Sirah", guru: "Muhammad Thoriq", arab: "السيرة", kat: "syariah" },
       { mapel: "Ushul Fikih", guru: "Muhammad Thoriq", arab: "أصول الفقه", kat: "syariah" },
-      { mapel: "Tahfidz Al-Qur'an", guru: "Zeidan", arab: "التحفيظ", kat: "syariah" }
+      { mapel: "Tahfidz", guru: "Zeidan", arab: "التحفيظ", kat: "syariah" }
     ];
 
     const kelasList = [kelas11, kelas12];
@@ -49,7 +49,7 @@ export async function GET() {
             { nama: { in: ["MTK", "mtk"], mode: "insensitive" } },
             { nama: { in: ["Hadits", "hadits"], mode: "insensitive" } },
             { nama: { in: ["Siroh", "siroh", "Siroh Nabi"], mode: "insensitive" } },
-            { nama: { in: ["Tahfidz", "tahfidz"], mode: "insensitive" } }
+            { nama: { in: ["Tahfidz Al-Qur'an", "Tahfidz Al-Quran"], mode: "insensitive" } }
           ]
         }
       });
@@ -64,7 +64,7 @@ export async function GET() {
         else if (low === "mtk") targetBaku = "Matematika";
         else if (low === "hadits") targetBaku = "Hadis";
         else if (["siroh", "siroh nabi"].includes(low)) targetBaku = "Sirah";
-        else if (low === "tahfidz") targetBaku = "Tahfidz Al-Qur'an";
+        else if (low.includes("tahfidz") || low.includes("tahfiz")) targetBaku = "Tahfidz";
 
         if (targetBaku !== nb.nama) {
           const existing = await prisma.mataPelajaran.findFirst({

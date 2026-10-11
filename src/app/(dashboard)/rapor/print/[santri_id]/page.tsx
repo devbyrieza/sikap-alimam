@@ -485,6 +485,7 @@ export default function CetakRaporPage() {
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", borderBottom: "2.5px solid #1a1a1a", paddingBottom: "12px", marginBottom: "20px" }}>
             <div>
               <h2 style={{ fontSize: "17px", fontWeight: "900", margin: 0, letterSpacing: "0.5px", fontFamily: '"Times New Roman", Times, serif' }}>PESANTREN AL-IMAM AL-ISLAMI</h2>
+              <p style={{ margin: "1px 0 2px 0", fontSize: "10.5px", fontWeight: "bold", color: "#666", fontStyle: "italic", fontFamily: '"Times New Roman", Times, serif' }}>Managed by Al-Andalus International Islamic Boarding School</p>
               <p style={{ margin: "2px 0 0 0", fontSize: "11.5px", color: "#555" }}>Laporan Kepribadian serta Tahsin & Tahfidz Al-Qur'an</p>
             </div>
             <div style={{ textAlign: "right", fontSize: "12px", fontWeight: "bold" }}>
@@ -708,7 +709,7 @@ export default function CetakRaporPage() {
 
           {/* Catatan Kaki Halaman 2 (Simetris dengan Halaman 1) */}
           <div style={{ marginTop: "18px", display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: "11px", color: "#666", fontStyle: "italic" }}>
-            <p style={{ margin: 0 }}>* Dokumen rapor ini sah dan diterbitkan secara resmi oleh Pesantren Al-Imam Al-Islami.</p>
+            <p style={{ margin: 0 }}>* Dokumen rapor ini sah dan diterbitkan secara resmi oleh Pesantren Al-Imam Al-Islami (Managed by Al-Andalus International Islamic Boarding School).</p>
             <p style={{ margin: 0, fontWeight: "bold" }}>Halaman 2 dari 2</p>
           </div>
 

@@ -69,7 +69,7 @@ export async function GET() {
         newKategori = "syariah";
         newNamaArab = "الأخلاق";
       } else if (nama.includes("tahsin")) {
-        newNama = "Tahsin Al-Qur'an";
+        newNama = "Tahsin";
         newKategori = "syariah";
         newNamaArab = "التحسين";
       } else if (nama.includes("tajwid")) {
@@ -81,7 +81,7 @@ export async function GET() {
         newKategori = "syariah";
         newNamaArab = "المحفوظات";
       } else if (nama.includes("quran") || nama.includes("qur'an") || nama.includes("tahfidz") || nama.includes("tahfiz")) {
-        newNama = "Tahfidz Al-Qur'an";
+        newNama = "Tahfidz";
         newKategori = "syariah";
         newNamaArab = "التحفيظ";
       }
