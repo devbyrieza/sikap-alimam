@@ -722,7 +722,7 @@ export default function CetakRaporPage() {
         >
           <div>
             {/* Kop Surat Resmi Halaman 2 (Identik & Seragam Sempurna dengan Halaman 1) */}
-            <div style={{ display: "flex", alignItems: "center", borderBottom: "3px solid #000000", paddingBottom: paperSize === "F4" ? "10px" : "8px", marginBottom: paperSize === "F4" ? "20px" : "15px", fontFamily: '"Times New Roman", Times, serif' }}>
+            <div style={{ display: "flex", alignItems: "center", borderBottom: "3px solid #000000", paddingBottom: paperSize === "F4" ? "10px" : "8px", marginBottom: paperSize === "F4" ? "12px" : "9px", fontFamily: '"Times New Roman", Times, serif' }}>
               <img src="/logo.png" alt="Logo Al-Imam" style={{ width: paperSize === "F4" ? "74px" : "66px", height: paperSize === "F4" ? "74px" : "66px", objectFit: "contain" }} />
               <div style={{ flex: 1, textAlign: "center", fontFamily: '"Times New Roman", Times, serif' }}>
                 <h1 style={{ fontSize: paperSize === "F4" ? "21px" : "19px", fontWeight: "900", margin: 0, letterSpacing: "1px", color: "#000000", fontFamily: '"Times New Roman", Times, serif' }}>PESANTREN AL-IMAM AL-ISLAMI</h1>
@@ -731,6 +731,36 @@ export default function CetakRaporPage() {
                 <p style={{ margin: "2px 0 0 0", fontSize: paperSize === "F4" ? "8.5px" : "8px", color: "#555", whiteSpace: "nowrap", letterSpacing: "-0.1px", fontFamily: '"Times New Roman", Times, serif' }}>Jl. Pelabuhan II, Gg. Cirengkol, Kampung Pupunjul, Desa Cikembar, Kec. Cikembar, Kab. Sukabumi, Jawa Barat 43157 | Website: pesantren-alimam.com</p>
               </div>
               <img src="/logo-andalus.png" alt="Logo Al-Andalus" style={{ width: paperSize === "F4" ? "74px" : "66px", height: paperSize === "F4" ? "74px" : "66px", objectFit: "contain" }} />
+            </div>
+
+            {/* Judul Resmi Halaman 2 (Tengah, Rapi, Sejajar dengan Halaman 1) */}
+            <div className="text-center" style={{ marginBottom: paperSize === "F4" ? "12px" : "9px" }}>
+              <h3 style={{ fontSize: paperSize === "F4" ? "13px" : "12px", fontWeight: "bold", margin: "0 0 3px 0", textTransform: "uppercase", letterSpacing: "0.5px", color: "#000000", fontFamily: "Arial, Helvetica, sans-serif" }}>
+                LAPORAN HASIL EVALUASI BELAJAR TENGAH SEMESTER (PTS)
+              </h3>
+              <h4 style={{ fontSize: paperSize === "F4" ? "11.5px" : "10.5px", fontWeight: "bold", color: "#444444", margin: 0, textTransform: "uppercase", letterSpacing: "0.3px", fontFamily: "Arial, Helvetica, sans-serif" }}>
+                RAPOR BAYANGAN • KEPRIBADIAN, TAHSIN & TAHFIDZ AL-QUR'AN
+              </h4>
+            </div>
+
+            {/* Identitas Santri Halaman 2 (1 Baris Penuh Bersih & Tanpa Terpotong) */}
+            <div style={{ 
+              display: "flex", 
+              justifyContent: "space-between", 
+              alignItems: "center", 
+              fontSize: paperSize === "F4" ? "11.5px" : "10.5px", 
+              fontWeight: "bold", 
+              marginBottom: paperSize === "F4" ? "14px" : "10px",
+              paddingBottom: "5px",
+              borderBottom: "1.5px solid #000000",
+              color: "#000000",
+              fontFamily: "Arial, Helvetica, sans-serif"
+            }}>
+              <div>Nama: <span style={{ textTransform: "uppercase" }}>{santri?.nama}</span></div>
+              <div>NIS: <span>{displayNis}</span></div>
+              <div>Kelas: <span>{(santri?.kelas || "").replace(/\s*(MTs|MA|SMP|SMA|SD|TK)\b/gi, "")}</span></div>
+              <div>Semester: <span>{santri?.semester?.includes("Ganjil") || santri?.semester === "1" ? "Ganjil" : santri?.semester} (PTS)</span></div>
+              <div>Tahun Pelajaran: <span>{santri?.tahun_ajaran || "-"}</span></div>
             </div>
 
             {/* 1. KEPRIBADIAN SANTRI (KIRI) & KETIDAKHADIRAN (KANAN) - SATU TABEL SIMETRIS UTUH */}
