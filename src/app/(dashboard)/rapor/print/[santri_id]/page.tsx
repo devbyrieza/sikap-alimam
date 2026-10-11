@@ -722,7 +722,7 @@ export default function CetakRaporPage() {
         >
           <div>
             {/* Kop Surat Resmi Halaman 2 (Identik & Seragam Sempurna dengan Halaman 1) */}
-            <div style={{ display: "flex", alignItems: "center", borderBottom: "3px solid #000000", paddingBottom: paperSize === "F4" ? "10px" : "8px", marginBottom: paperSize === "F4" ? "12px" : "9px", fontFamily: '"Times New Roman", Times, serif' }}>
+            <div style={{ display: "flex", alignItems: "center", borderBottom: "3px solid #000000", paddingBottom: paperSize === "F4" ? "10px" : "8px", marginBottom: paperSize === "F4" ? "14px" : "10px", fontFamily: '"Times New Roman", Times, serif' }}>
               <img src="/logo.png" alt="Logo Al-Imam" style={{ width: paperSize === "F4" ? "74px" : "66px", height: paperSize === "F4" ? "74px" : "66px", objectFit: "contain" }} />
               <div style={{ flex: 1, textAlign: "center", fontFamily: '"Times New Roman", Times, serif' }}>
                 <h1 style={{ fontSize: paperSize === "F4" ? "21px" : "19px", fontWeight: "900", margin: 0, letterSpacing: "1px", color: "#000000", fontFamily: '"Times New Roman", Times, serif' }}>PESANTREN AL-IMAM AL-ISLAMI</h1>
@@ -734,8 +734,8 @@ export default function CetakRaporPage() {
             </div>
 
             {/* Judul Resmi Halaman 2 (Tengah, Rapi, Sejajar dengan Halaman 1) */}
-            <div className="text-center" style={{ marginBottom: paperSize === "F4" ? "12px" : "9px" }}>
-              <h2 className="text-xl font-bold arabic-text" dir="rtl" style={{ fontFamily: "'Traditional Arabic', serif", fontSize: paperSize === "F4" ? "20px" : "18px", margin: "0 0 3px 0", color: "#000000" }}>
+            <div className="text-center" style={{ marginBottom: paperSize === "F4" ? "14px" : "10px" }}>
+              <h2 className="text-xl font-bold arabic-text" dir="rtl" style={{ fontFamily: "'Traditional Arabic', serif", fontSize: paperSize === "F4" ? "20px" : "18px", margin: paperSize === "F4" ? "0 0 6px 0" : "0 0 5px 0", color: "#000000" }}>
                 تقرير السلوك والبرنامج القرآني
               </h2>
               <h3 style={{ fontSize: paperSize === "F4" ? "13px" : "12px", fontWeight: "bold", margin: "0 0 3px 0", textTransform: "uppercase", letterSpacing: "0.5px", color: "#000000", fontFamily: "Arial, Helvetica, sans-serif" }}>
