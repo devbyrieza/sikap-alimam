@@ -97,7 +97,7 @@ export default function CetakRaporPage() {
           return (
             <tr 
               key={index} 
-              style={{ backgroundColor: isEven ? "white" : "#fafafa" }}
+              style={{ backgroundColor: isEven ? "transparent" : "rgba(0, 0, 0, 0.025)" }}
             >
               {/* Kolom 1 (No): width 4.5% */}
               <td style={{ border: "1px solid #1a1a1a", padding: "6px 4px", textAlign: "center", fontSize: "12.5px", fontFamily: "Arial, Helvetica, sans-serif" }}>{startIndex + index}</td>
@@ -247,7 +247,7 @@ export default function CetakRaporPage() {
         }}
       >
         {/* WATERMARK AL-IMAM HALAMAN 1 */}
-        <div style={{ position: "absolute", top: 0, left: 0, right: 0, bottom: 0, display: "flex", justifyContent: "center", alignItems: "center", zIndex: 0, pointerEvents: "none", opacity: 0.05 }}>
+        <div style={{ position: "absolute", top: 0, left: 0, right: 0, bottom: 0, display: "flex", justifyContent: "center", alignItems: "center", zIndex: 0, pointerEvents: "none", opacity: 0.07 }}>
           <img src="/logo.png" alt="Watermark" style={{ width: "65%" }} />
         </div>
 
@@ -383,7 +383,7 @@ export default function CetakRaporPage() {
               </tr>
               
               {/* Summary rows (dengan pembatas tengah tebal 2.5px) */}
-              <tr style={{ backgroundColor: "white", fontFamily: "Arial, Helvetica, sans-serif" }}>
+              <tr style={{ backgroundColor: "transparent", fontFamily: "Arial, Helvetica, sans-serif" }}>
                 <td colSpan={3} style={{ border: "1px solid #1a1a1a", padding: "6px 8px", fontWeight: "bold" }}>Jumlah Nilai</td>
                 <td style={{ border: "1px solid #1a1a1a", padding: "6px 4px", textAlign: "center", fontWeight: "bold", fontSize: "13px" }}>{kedisiplinan?.totalNilai}</td>
                 <td style={{ border: "1px solid #1a1a1a", borderRight: "2.5px solid #1a1a1a", padding: "6px 4px", backgroundColor: "white" }}></td>
@@ -391,7 +391,7 @@ export default function CetakRaporPage() {
                 <td style={{ border: "1px solid #1a1a1a", padding: "6px 4px", textAlign: "center", fontWeight: "bold", fontSize: "13.5px" }} dir="rtl">{toArabicNum(kedisiplinan?.totalNilai)}</td>
                 <td colSpan={3} style={{ border: "1px solid #1a1a1a", padding: "6px 8px", textAlign: "right", fontWeight: "bold", fontFamily: "'Traditional Arabic', serif", fontSize: "14px" }} dir="rtl">مجموع الدرجات</td>
               </tr>
-              <tr style={{ backgroundColor: "#fafafa", fontFamily: "Arial, Helvetica, sans-serif" }}>
+              <tr style={{ backgroundColor: "rgba(0, 0, 0, 0.025)", fontFamily: "Arial, Helvetica, sans-serif" }}>
                 <td colSpan={3} style={{ border: "1px solid #1a1a1a", padding: "6px 8px", fontWeight: "bold" }}>Nilai Rata-rata</td>
                 <td style={{ border: "1px solid #1a1a1a", padding: "6px 4px", textAlign: "center", fontWeight: "bold", fontSize: "13px" }}>{kedisiplinan?.rataRata}</td>
                 <td style={{ border: "1px solid #1a1a1a", borderRight: "2.5px solid #1a1a1a", padding: "6px 4px", backgroundColor: "#fafafa" }}></td>
@@ -399,7 +399,7 @@ export default function CetakRaporPage() {
                 <td style={{ border: "1px solid #1a1a1a", padding: "6px 4px", textAlign: "center", fontWeight: "bold", fontSize: "13.5px" }} dir="rtl">{toArabicNum(kedisiplinan?.rataRata)}</td>
                 <td colSpan={3} style={{ border: "1px solid #1a1a1a", padding: "6px 8px", textAlign: "right", fontWeight: "bold", fontFamily: "'Traditional Arabic', serif", fontSize: "14px" }} dir="rtl">المعدل التراكمي</td>
               </tr>
-              <tr style={{ backgroundColor: "white", fontFamily: "Arial, Helvetica, sans-serif" }}>
+              <tr style={{ backgroundColor: "transparent", fontFamily: "Arial, Helvetica, sans-serif" }}>
                 <td colSpan={3} style={{ border: "1px solid #1a1a1a", padding: "6px 8px", fontWeight: "bold" }}>Ranking</td>
                 <td style={{ border: "1px solid #1a1a1a", padding: "6px 4px", textAlign: "center", fontWeight: "bold", fontSize: "13px" }}>{kedisiplinan?.ranking}</td>
                 <td style={{ border: "1px solid #1a1a1a", borderRight: "2.5px solid #1a1a1a", padding: "6px 4px", backgroundColor: "white" }}></td>
@@ -407,7 +407,7 @@ export default function CetakRaporPage() {
                 <td style={{ border: "1px solid #1a1a1a", padding: "6px 4px", textAlign: "center", fontWeight: "bold", fontSize: "13.5px" }} dir="rtl">{toArabicNum(kedisiplinan?.ranking)}</td>
                 <td colSpan={3} style={{ border: "1px solid #1a1a1a", padding: "6px 8px", textAlign: "right", fontWeight: "bold", fontFamily: "'Traditional Arabic', serif", fontSize: "14px" }} dir="rtl">الترتيب</td>
               </tr>
-              <tr style={{ backgroundColor: "#fafafa", fontFamily: "Arial, Helvetica, sans-serif" }}>
+              <tr style={{ backgroundColor: "rgba(0, 0, 0, 0.025)", fontFamily: "Arial, Helvetica, sans-serif" }}>
                 <td colSpan={3} style={{ border: "1px solid #1a1a1a", padding: "6px 8px", fontWeight: "bold" }}>Jumlah Santri</td>
                 <td style={{ border: "1px solid #1a1a1a", padding: "6px 4px", textAlign: "center", fontWeight: "bold", fontSize: "13px" }}>{kedisiplinan?.jumlahSantri}</td>
                 <td style={{ border: "1px solid #1a1a1a", borderRight: "2.5px solid #1a1a1a", padding: "6px 4px", backgroundColor: "#fafafa" }}></td>
@@ -445,7 +445,7 @@ export default function CetakRaporPage() {
         }}
       >
         {/* WATERMARK AL-IMAM HALAMAN 2 */}
-        <div style={{ position: "absolute", top: 0, left: 0, right: 0, bottom: 0, display: "flex", justifyContent: "center", alignItems: "center", zIndex: 0, pointerEvents: "none", opacity: 0.05 }}>
+        <div style={{ position: "absolute", top: 0, left: 0, right: 0, bottom: 0, display: "flex", justifyContent: "center", alignItems: "center", zIndex: 0, pointerEvents: "none", opacity: 0.07 }}>
           <img src="/logo.png" alt="Watermark" style={{ width: "65%" }} />
         </div>
 
