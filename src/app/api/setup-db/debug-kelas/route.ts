@@ -4,20 +4,12 @@ import { prisma } from "@/lib/prisma";
 export const dynamic = 'force-dynamic';
 
 export async function GET() {
-  const jadwalKitabah = await prisma.jadwalPelajaran.findMany({
-    where: {
-      mapel: {
-        nama: { contains: "kitab", mode: "insensitive" }
-      }
-    },
+  const kelas = await prisma.kelas.findMany({
     include: {
-      mapel: true,
-      kelas: true,
-      guru: {
-        select: { id: true, nama_lengkap: true, mata_pelajaran: true }
-      }
+      santri: { select: { id: true } }
     }
   });
-
-  return NextResponse.json({ jadwalKitabah });
+  return NextResponse.json({ 
+    kelas: kelas.map(k => ({ id: k.id, nama: k.nama, jenjang: k.jenjang, is_active: k.is_active, santri_count: k.santri.length })) 
+  });
 }
