@@ -732,20 +732,27 @@ export default function CetakRaporPage() {
               <img src="/logo-andalus.png" alt="Logo Al-Andalus" style={{ width: paperSize === "F4" ? "74px" : "66px", height: paperSize === "F4" ? "74px" : "66px", objectFit: "contain" }} />
             </div>
 
-            {/* Judul Resmi Halaman 2 (Tengah, Rapi, Sejajar Sempurna dengan Halaman 1: 2 Baris Arab + 2 Baris Latin) */}
+            {/* Judul Arab & Terjemahan Halaman 2 (100% Kembar Identik dengan Halaman 1) */}
             <div className="text-center" style={{ marginBottom: paperSize === "F4" ? "14px" : "10px" }}>
               {(() => {
                 let marhalah = "للمرحلة المتوسطة"; // Default MTs
+                let indoMarhalah = "TINGKAT MADRASAH TSANAWIYAH (MTs)";
+                
                 if (isMA) {
                   marhalah = "للمرحلة الثانوية";
+                  indoMarhalah = "TINGKAT MADRASAH ALIYAH (MA)";
                 } else if (isIL) {
                   marhalah = "لبرنامج الإعداد اللغوي";
+                  indoMarhalah = "PROGRAM I'DAD LUGHOWI (IL)";
                 }
 
+                const isGanjil = santri?.semester?.includes("Ganjil") || santri?.semester === "1" || !santri?.semester?.includes("Genap");
+                const semesterArab = isGanjil ? "الأول" : "الثاني";
+                
                 return (
                   <>
                     <h1 className="text-2xl font-bold arabic-text" dir="rtl" style={{ fontFamily: "'Traditional Arabic', serif", fontSize: paperSize === "F4" ? "23px" : "20px", margin: "0 0 3px 0" }}>
-                      تقرير السلوك والبرنامج القرآني
+                      كشف درجات وتقويم منتصف الفصل الدراسي {semesterArab}
                     </h1>
                     <h2 className="text-lg font-bold arabic-text" dir="rtl" style={{ fontFamily: "'Traditional Arabic', serif", fontSize: paperSize === "F4" ? "17px" : "15px", margin: paperSize === "F4" ? "0 0 8px 0" : "0 0 6px 0" }}>
                       {marhalah} بمعهد الإمام الإسلامي
@@ -754,31 +761,59 @@ export default function CetakRaporPage() {
                       LAPORAN HASIL EVALUASI BELAJAR TENGAH SEMESTER (PTS)
                     </h3>
                     <h4 className="font-bold text-slate-600 tracking-wide uppercase" style={{ fontFamily: "Arial, Helvetica, sans-serif", fontSize: paperSize === "F4" ? "11.5px" : "10.5px", margin: 0 }}>
-                      RAPOR BAYANGAN • KEPRIBADIAN, TAHSIN & TAHFIDZ AL-QUR'AN
+                      RAPOR BAYANGAN • {indoMarhalah}
                     </h4>
                   </>
                 );
               })()}
             </div>
 
-            {/* Identitas Santri Halaman 2 (1 Baris Penuh Bersih & Tanpa Terpotong) */}
-            <div style={{ 
-              display: "flex", 
-              justifyContent: "space-between", 
-              alignItems: "center", 
-              fontSize: paperSize === "F4" ? "11.5px" : "10.5px", 
-              fontWeight: "bold", 
-              marginBottom: paperSize === "F4" ? "14px" : "10px",
-              paddingBottom: "5px",
-              borderBottom: "1.5px solid #000000",
-              color: "#000000",
-              fontFamily: "Arial, Helvetica, sans-serif"
-            }}>
-              <div>Nama: <span style={{ textTransform: "uppercase" }}>{santri?.nama}</span></div>
-              <div>NIS: <span>{displayNis}</span></div>
-              <div>Kelas: <span>{(santri?.kelas || "").replace(/\s*(MTs|MA|SMP|SMA|SD|TK)\b/gi, "")}</span></div>
-              <div>Semester: <span>{santri?.semester?.includes("Ganjil") || santri?.semester === "1" ? "Ganjil" : santri?.semester} (PTS)</span></div>
-              <div>Tahun Pelajaran: <span>{santri?.tahun_ajaran || "-"}</span></div>
+            {/* Biodata Santri Halaman 2 (100% Borderless, Bersih, Kembar Identik dengan Halaman 1) */}
+            <div style={{ display: "flex", justifyContent: "space-between", fontSize: paperSize === "F4" ? "12.5px" : "11.5px", marginBottom: paperSize === "F4" ? "14px" : "10px", fontWeight: "bold", fontFamily: "Arial, Helvetica, sans-serif" }}>
+              <div>
+                <table className="biodata-table" style={{ width: "100%", border: "none", borderCollapse: "separate" }}>
+                  <tbody>
+                    <tr style={{ border: "none" }}>
+                      <td style={{ width: 85, padding: "2.5px 0", border: "none" }}>Nama</td>
+                      <td style={{ padding: "2.5px 6px", border: "none" }}>:</td>
+                      <td style={{ textTransform: "uppercase", padding: "2.5px 0", border: "none" }}>{santri?.nama}</td>
+                    </tr>
+                    <tr style={{ border: "none" }}>
+                      <td style={{ width: 85, padding: "2.5px 0", border: "none" }}>NIS</td>
+                      <td style={{ padding: "2.5px 6px", border: "none" }}>:</td>
+                      <td style={{ padding: "2.5px 0", border: "none", letterSpacing: "0.5px" }}>{displayNis}</td>
+                    </tr>
+                    <tr style={{ border: "none" }}>
+                      <td style={{ width: 85, padding: "2.5px 0", border: "none" }}>Kelas</td>
+                      <td style={{ padding: "2.5px 6px", border: "none" }}>:</td>
+                      <td style={{ padding: "2.5px 0", border: "none" }}>{(santri?.kelas || "").replace(/\s*(MTs|MA|SMP|SMA|SD|TK)\b/gi, "")}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <div style={{ textAlign: "right" }}>
+                <table className="biodata-table" style={{ display: "inline-block", textAlign: "left", border: "none", borderCollapse: "separate" }}>
+                  <tbody>
+                    <tr style={{ border: "none" }}>
+                      <td style={{ padding: "2.5px 0", whiteSpace: "nowrap", border: "none" }}>Semester</td>
+                      <td style={{ padding: "2.5px 6px", border: "none" }}>:</td>
+                      <td style={{ padding: "2.5px 0", border: "none" }}>
+                        {santri?.semester?.includes("Ganjil") || santri?.semester === "1" ? "Ganjil" : santri?.semester?.includes("Genap") || santri?.semester === "2" ? "Genap" : santri?.semester} (PTS)
+                      </td>
+                    </tr>
+                    <tr style={{ border: "none" }}>
+                      <td style={{ padding: "2.5px 0", whiteSpace: "nowrap", border: "none" }}>Tahun Pelajaran</td>
+                      <td style={{ padding: "2.5px 6px", border: "none" }}>:</td>
+                      <td style={{ padding: "2.5px 0", border: "none" }}>{santri?.tahun_ajaran || "-"}</td>
+                    </tr>
+                    <tr style={{ border: "none" }}>
+                      <td style={{ padding: "2.5px 0", whiteSpace: "nowrap", border: "none" }}>Wali Kelas</td>
+                      <td style={{ padding: "2.5px 6px", border: "none" }}>:</td>
+                      <td style={{ padding: "2.5px 0", border: "none" }}>{waliKelasName}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
             </div>
 
             {/* 1. KEPRIBADIAN SANTRI (KIRI) & KETIDAKHADIRAN (KANAN) - SATU TABEL SIMETRIS UTUH */}
