@@ -906,7 +906,7 @@ export default function CetakRaporPage() {
                 {/* Kolom 1: Orang Tua */}
                 <div style={{ display: "flex", flexDirection: "column", justifyContent: "space-between", height: paperSize === "F4" ? "195px" : "175px", padding: "0 4px" }}>
                   <div>
-                    <p style={{ margin: 0, opacity: 0 }}>Mengetahui</p>
+                    <p style={{ margin: 0 }}>Mengetahui</p>
                     <p style={{ margin: "3px 0 0 0" }}>Orang Tua / Wali</p>
                   </div>
                   <div style={{ minHeight: "36px", display: "flex", alignItems: "flex-end", justifyContent: "center" }}>
