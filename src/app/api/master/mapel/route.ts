@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { sortKelas } from "@/lib/kelas";
 import { getSession } from "@/lib/auth";
+import { getStandardMapelName } from "@/lib/mapel";
 
 export async function GET(req: NextRequest) {
   try {
@@ -32,7 +33,7 @@ export async function GET(req: NextRequest) {
       orderBy: {
         nama: "asc" } });
 
-    // Auto-heal mapels across all classes to standard baku Indonesian & Kemenag terms
+    // Auto-heal and deduplicate mapels across all classes to standard baku terms
     const healedMapel = await Promise.all(
       rawMapel.map(async (m) => {
         const isMA = m.kelas && (
@@ -42,37 +43,15 @@ export async function GET(req: NextRequest) {
           m.kelas.nama.startsWith("12")
         );
 
-        let targetName = m.nama;
-        const low = m.nama.toLowerCase().trim();
-
-        // 1. General & Languages
-        if (low === "b. indonesia" || low === "indonesia") targetName = "Bahasa Indonesia";
-        else if (low === "b. arab" || low === "arab") targetName = "Bahasa Arab";
-        else if (low === "b. inggris" || low === "inggris" || low === "english") targetName = "Bahasa Inggris";
-        else if (low === "mtk") targetName = "Matematika";
-        else if (low === "ipa") targetName = "IPA Terpadu";
-        else if (low === "ips") targetName = "IPS Terpadu";
-
-        // 2. Islamic Studies
-        else if (low === "aqidah") targetName = "Akidah";
-        else if (low === "hadits") targetName = "Hadis";
-        else if (low === "siroh" || low === "siroh nabi" || low === "sirah nabi") targetName = "Sirah";
-        else if (low === "akhlaq") targetName = "Akhlak";
-        else if (low.includes("tahsin")) targetName = "Tahsin";
-        else if (low.includes("tahfidz") || low.includes("tahfiz")) targetName = "Tahfidz";
-        else if (low.includes("tadribat")) targetName = "Tadribat 'alal Anmath";
-
-        // 3. Fikih & Ushul Fikih
-        else if (low === "fiqh" || low === "fiqih" || low === "fikih" || low === "ushul fiqh" || low === "ushul fiqih" || low === "ushul fikih") {
-          targetName = isMA ? "Ushul Fikih" : "Fikih";
-        }
+        const targetName = getStandardMapelName(m.nama, isMA);
 
         if (targetName !== m.nama) {
           const exists = rawMapel.find(other => 
             other.kelas_id === m.kelas_id && 
             other.id !== m.id && 
-            other.nama.toLowerCase() === targetName.toLowerCase()
+            (other.nama.toLowerCase() === targetName.toLowerCase() || getStandardMapelName(other.nama, isMA).toLowerCase() === targetName.toLowerCase())
           );
+
           if (!exists) {
             try {
               await prisma.mataPelajaran.update({
@@ -83,14 +62,43 @@ export async function GET(req: NextRequest) {
             } catch (e) {
               console.error("Auto-heal rename error:", e);
             }
+          } else {
+            // MERGE: Pindahkan semua data ke 'exists' dan hapus duplikat 'm'
+            try {
+              const keepId = exists.id;
+              const dropId = m.id;
+              await prisma.nilaiSantri.updateMany({ where: { mapel_id: dropId }, data: { mapel_id: keepId } });
+              await prisma.jurnalMengajar.updateMany({ where: { mapel_id: dropId }, data: { mapel_id: keepId } });
+              await prisma.jadwalPelajaran.updateMany({ where: { mapel_id: dropId }, data: { mapel_id: keepId } });
+              await prisma.presensiSiswa.updateMany({ where: { mapel_id: dropId }, data: { mapel_id: keepId } });
+              
+              // Relink asatidz_mapel
+              const asatidzDrop = await prisma.asatidzmMapel.findMany({ where: { mapel_id: dropId } });
+              for (const a of asatidzDrop) {
+                const alreadyLinked = await prisma.asatidzmMapel.findFirst({
+                  where: { pegawai_id: a.pegawai_id, mapel_id: keepId, kelas_id: a.kelas_id }
+                });
+                if (!alreadyLinked) {
+                  await prisma.asatidzmMapel.create({
+                    data: { pegawai_id: a.pegawai_id, mapel_id: keepId, kelas_id: a.kelas_id }
+                  }).catch(() => {});
+                }
+              }
+              await prisma.asatidzmMapel.deleteMany({ where: { mapel_id: dropId } });
+              await prisma.mataPelajaran.delete({ where: { id: dropId } }).catch(() => {});
+              (m as any)._isDeleted = true;
+            } catch (mergeErr) {
+              console.error("Auto-merge mapel duplicate error:", mergeErr);
+            }
           }
         }
         return m;
       })
     );
 
-    // Filter out redundant non-MA/MA duplicates
-    const cleanedMapel = healedMapel.filter((m, idx, arr) => {
+    // Filter out deleted and redundant duplicates
+    const cleanedMapel = healedMapel.filter((m: any, idx, arr) => {
+      if (m._isDeleted) return false;
       const isMA = m.kelas && (
         m.kelas.jenjang === "MA" || 
         m.kelas.nama.toUpperCase().includes("MA") || 
@@ -100,7 +108,7 @@ export async function GET(req: NextRequest) {
       if (isMA && (m.nama.toLowerCase() === "fiqh" || m.nama.toLowerCase() === "fiqih")) {
         return false;
       }
-      return arr.findIndex(other => other.kelas_id === m.kelas_id && other.nama.toLowerCase() === m.nama.toLowerCase()) === idx;
+      return arr.findIndex((other: any) => !other._isDeleted && other.kelas_id === m.kelas_id && getStandardMapelName(other.nama, isMA).toLowerCase() === getStandardMapelName(m.nama, isMA).toLowerCase()) === idx;
     });
 
     // Urutkan mapel berdasarkan urutan logis kelasnya

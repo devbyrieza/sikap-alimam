@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
 import { ArrowRight, FileText, Loader2, ArrowLeft, BookOpen, BarChart3 } from "lucide-react";
 import ModuleTabs from "@/components/ModuleTabs";
+import { getStandardMapelName } from "@/lib/mapel";
 
 interface Kelas {
   id: string;
@@ -84,6 +85,18 @@ export default function RekapNilaiPage() {
     fetchRekap();
   }, [fetchRekap]);
 
+  // Deduplikasi mapelList agar kolom tidak double (misal Akidah & Aqidah, Fikih & Fiqih, Shorf & Shorof)
+  const displayMapelList = useMemo(() => {
+    const seen = new Map<string, MapelItem>();
+    for (const m of mapelList) {
+      const standardName = getStandardMapelName(m.nama);
+      if (!seen.has(standardName)) {
+        seen.set(standardName, { ...m, nama: standardName });
+      }
+    }
+    return Array.from(seen.values());
+  }, [mapelList]);
+
   // Kalkulasi data tabel
   // Santri unik
   const santriMap = new Map<string, { id: string; nama_lengkap: string; nis?: string }>();
@@ -95,9 +108,22 @@ export default function RekapNilaiPage() {
   );
 
   // Kalkulasi Nilai Akhir per santri per mapel
-  const getAvg = (santri_id: string, mapel_id: string): number | null => {
+  const getAvg = (santri_id: string, mapelOrId: MapelItem | string): number | null => {
+    let standardTarget = "";
+    let mId = "";
+    if (typeof mapelOrId === "string") {
+      mId = mapelOrId;
+      const found = displayMapelList.find((m) => m.id === mapelOrId) || mapelList.find((m) => m.id === mapelOrId);
+      if (found) standardTarget = getStandardMapelName(found.nama);
+    } else {
+      mId = mapelOrId.id;
+      standardTarget = getStandardMapelName(mapelOrId.nama);
+    }
     const vals = nilaiData.filter(
-      (n) => n.santri.id === santri_id && n.mapel.id === mapel_id
+      (n) => n.santri.id === santri_id && (
+        n.mapel.id === mId ||
+        (standardTarget ? getStandardMapelName(n.mapel.nama) === standardTarget : false)
+      )
     );
     if (vals.length === 0) return null;
 
@@ -135,12 +161,12 @@ export default function RekapNilaiPage() {
 
   // --- RANKING LOGIC ---
   const rankMap = new Map<string, { total: number; average: number; rank: number }>();
-  if (santriList.length > 0 && mapelList.length > 0) {
+  if (santriList.length > 0 && displayMapelList.length > 0) {
     const santriTotals = santriList.map(santri => {
        let total = 0;
        let count = 0;
-       mapelList.forEach(m => {
-          const val = getAvg(santri.id, m.id);
+       displayMapelList.forEach(m => {
+          const val = getAvg(santri.id, m);
           if (val !== null) {
             total += val;
             count++;
@@ -356,7 +382,7 @@ export default function RekapNilaiPage() {
                       <th className="sticky-col" style={{ position: "sticky", left: 0, zIndex: 20, background: "#fdf8f0", width: 40, textAlign: "center", borderBottom: "1px solid #ebdcc3", padding: "14px 16px", color: "#550000", fontWeight: 800 }}>#</th>
                       <th className="sticky-col" style={{ position: "sticky", left: 40, zIndex: 20, background: "#fdf8f0", minWidth: 170, maxWidth: 220, borderBottom: "1px solid #ebdcc3", borderRight: "1px solid #ebdcc3", padding: "14px 18px", textAlign: "left", color: "#550000", fontWeight: 800, cursor: "pointer" }} onClick={() => requestSort("nama")}>Nama Santri {sortConfig?.key === "nama" ? (sortConfig.direction === "asc" ? "↑" : "↓") : "↕"}</th>
                       <th style={{ width: 90, borderBottom: "1px solid #ebdcc3", padding: "14px 16px", textAlign: "left", color: "#550000", fontWeight: 800, cursor: "pointer" }} onClick={() => requestSort("nis")}>NIS {sortConfig?.key === "nis" ? (sortConfig.direction === "asc" ? "↑" : "↓") : "↕"}</th>
-                      {mapelList.map((m) => (
+                      {displayMapelList.map((m) => (
                           <th key={m.id} style={{ textAlign: "center", minWidth: 120, borderBottom: "1px solid #ebdcc3", padding: "14px", color: "#550000", fontWeight: 800 }} title={m.nama}>
                             {m.nama.length > 25 ? m.nama.substring(0, 25) + "…" : m.nama}
                           </th>
@@ -370,7 +396,7 @@ export default function RekapNilaiPage() {
                   <tbody>
                     {sortedSantriList.length === 0 ? (
                       <tr>
-                        <td colSpan={7 + mapelList.length} style={{ textAlign: "center", padding: "36px", color: "#64748b" }}>
+                        <td colSpan={7 + displayMapelList.length} style={{ textAlign: "center", padding: "36px", color: "#64748b" }}>
                           Belum ada data nilai untuk filter ini
                         </td>
                       </tr>
@@ -384,8 +410,8 @@ export default function RekapNilaiPage() {
                               <div className="truncate" style={{ color: "#1a1a1a" }}>{santri.nama_lengkap}</div>
                             </td>
                             <td style={{ color: "#64748b", fontSize: "12px", borderBottom: "1px solid #f5ede1", padding: "14px 16px" }}>{santri.nis || "—"}</td>
-                            {mapelList.map((m) => {
-                              const avg = getAvg(santri.id, m.id);
+                            {displayMapelList.map((m) => {
+                              const avg = getAvg(santri.id, m);
                               const isBawah = avg !== null && avg < 75;
                               return (
                                 <td key={m.id} style={{ textAlign: "center", borderBottom: "1px solid #f5ede1", padding: "14px 16px" }}>

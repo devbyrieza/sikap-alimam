@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma";
+import { getStandardMapelName, getMapelAliases } from "@/lib/mapel";
 
 /**
  * Helper to sync a teacher's `mata_pelajaran` text representation (e.g. "7 MTs: Aqidah, Fiqih; IL: Nahwu")
@@ -152,18 +153,15 @@ export async function syncAsatidzMapel(pegawaiId: string, mapelString: string | 
         });
       }
 
-      // 2. Ensure MataPelajaran exists
-      const mName = assignment.mapelNama.trim();
+      // 2. Ensure MataPelajaran exists with canonical naming
+      const standardMapelNama = getStandardMapelName(assignment.mapelNama, kelas.jenjang === "MA");
+      const aliases = getMapelAliases(standardMapelNama);
+
       const mapelOR: any[] = [
-        { nama: { equals: mName, mode: "insensitive" } },
-        { nama: { contains: mName, mode: "insensitive" } },
+        { nama: { equals: standardMapelNama, mode: "insensitive" } },
+        { nama: { equals: assignment.mapelNama.trim(), mode: "insensitive" } },
+        ...aliases.map((al) => ({ nama: { equals: al, mode: "insensitive" } })),
       ];
-      if (mName.toLowerCase().includes("tahsin")) {
-        mapelOR.push({ nama: { contains: "Tahsin", mode: "insensitive" } });
-      }
-      if (mName.toLowerCase().includes("nahwu")) {
-        mapelOR.push({ nama: { contains: "Nahwu", mode: "insensitive" } });
-      }
 
       let mapel = await prisma.mataPelajaran.findFirst({
         where: {
@@ -175,12 +173,18 @@ export async function syncAsatidzMapel(pegawaiId: string, mapelString: string | 
       if (!mapel) {
         mapel = await prisma.mataPelajaran.create({
           data: {
-            nama: assignment.mapelNama,
+            nama: standardMapelNama,
             kelas_id: kelas.id,
             kategori: "syariah",
             is_active: true
           }
         });
+      } else if (mapel.nama !== standardMapelNama) {
+        await prisma.mataPelajaran.update({
+          where: { id: mapel.id },
+          data: { nama: standardMapelNama }
+        }).catch(() => {});
+        mapel.nama = standardMapelNama;
       }
 
       // 3. Upsert AsatidzmMapel
