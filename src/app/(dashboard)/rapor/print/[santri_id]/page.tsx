@@ -465,7 +465,7 @@ export default function CetakRaporPage() {
         }}>
           <div>
             {/* Kop Surat Resmi (Times New Roman Berwibawa) */}
-            <div style={{ display: "flex", alignItems: "center", borderBottom: "3px solid #000000", paddingBottom: paperSize === "F4" ? "16px" : "12px", marginBottom: paperSize === "F4" ? "20px" : "14px", fontFamily: '"Times New Roman", Times, serif' }}>
+            <div style={{ display: "flex", alignItems: "center", borderBottom: "3px solid #000000", paddingBottom: paperSize === "F4" ? "16px" : "12px", marginBottom: paperSize === "F4" ? "24px" : "18px", fontFamily: '"Times New Roman", Times, serif' }}>
               <img src="/logo.png" alt="Logo Al-Imam" style={{ width: paperSize === "F4" ? "80px" : "72px", height: paperSize === "F4" ? "80px" : "72px", objectFit: "contain" }} />
               <div style={{ flex: 1, textAlign: "center", fontFamily: '"Times New Roman", Times, serif' }}>
                 <h1 style={{ fontSize: paperSize === "F4" ? "22px" : "20px", fontWeight: "900", margin: 0, letterSpacing: "1px", color: "#000000", fontFamily: '"Times New Roman", Times, serif' }}>PESANTREN AL-IMAM AL-ISLAMI</h1>
@@ -477,7 +477,7 @@ export default function CetakRaporPage() {
             </div>
 
             {/* Judul Arab & Terjemahan */}
-            <div className="text-center" style={{ marginBottom: paperSize === "F4" ? "18px" : "14px" }}>
+            <div className="text-center" style={{ marginBottom: paperSize === "F4" ? "24px" : "18px" }}>
               {(() => {
                 const kls = (santri?.kelas || "").toUpperCase();
                 let marhalah = "للمرحلة المتوسطة"; // Default MTs
@@ -496,16 +496,16 @@ export default function CetakRaporPage() {
                 
                 return (
                   <>
-                    <h1 className="text-2xl font-bold arabic-text mb-1" dir="rtl" style={{ fontFamily: "'Traditional Arabic', serif", fontSize: paperSize === "F4" ? "24px" : "21px" }}>
+                    <h1 className="text-2xl font-bold arabic-text" dir="rtl" style={{ fontFamily: "'Traditional Arabic', serif", fontSize: paperSize === "F4" ? "24px" : "21px", margin: "0 0 4px 0" }}>
                       كشف درجات منتصف الفصل الدراسي {semesterArab}
                     </h1>
-                    <h2 className="text-lg font-bold arabic-text mb-2" dir="rtl" style={{ fontFamily: "'Traditional Arabic', serif", fontSize: paperSize === "F4" ? "18px" : "16px" }}>
+                    <h2 className="text-lg font-bold arabic-text" dir="rtl" style={{ fontFamily: "'Traditional Arabic', serif", fontSize: paperSize === "F4" ? "18px" : "16px", margin: paperSize === "F4" ? "0 0 16px 0" : "0 0 12px 0" }}>
                       {marhalah} بمعهد الإمام الإسلامي
                     </h2>
-                    <h3 className="font-bold text-slate-800 tracking-wider mt-1 uppercase" style={{ fontFamily: "Arial, Helvetica, sans-serif", fontSize: paperSize === "F4" ? "13.5px" : "12.5px" }}>
+                    <h3 className="font-bold text-slate-800 tracking-wider uppercase" style={{ fontFamily: "Arial, Helvetica, sans-serif", fontSize: paperSize === "F4" ? "13.5px" : "12.5px", margin: "0 0 4px 0" }}>
                       LAPORAN HASIL EVALUASI BELAJAR TENGAH SEMESTER (PTS)
                     </h3>
-                    <h4 className="font-bold text-slate-600 tracking-wide mt-0.5 uppercase" style={{ fontFamily: "Arial, Helvetica, sans-serif", fontSize: paperSize === "F4" ? "12px" : "11px" }}>
+                    <h4 className="font-bold text-slate-600 tracking-wide uppercase" style={{ fontFamily: "Arial, Helvetica, sans-serif", fontSize: paperSize === "F4" ? "12px" : "11px", margin: 0 }}>
                       RAPOR BAYANGAN • {indoMarhalah}
                     </h4>
                   </>
@@ -514,7 +514,7 @@ export default function CetakRaporPage() {
             </div>
 
             {/* Biodata Santri (100% Borderless, Bersih, Elegan) */}
-            <div style={{ display: "flex", justifyContent: "space-between", fontSize: paperSize === "F4" ? "13px" : "12px", marginBottom: paperSize === "F4" ? "16px" : "12px", fontWeight: "bold", fontFamily: "Arial, Helvetica, sans-serif" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", fontSize: paperSize === "F4" ? "13px" : "12px", marginBottom: paperSize === "F4" ? "22px" : "16px", fontWeight: "bold", fontFamily: "Arial, Helvetica, sans-serif" }}>
               <div>
                 <table className="biodata-table" style={{ width: "100%", border: "none", borderCollapse: "separate" }}>
                   <tbody>
@@ -683,7 +683,7 @@ export default function CetakRaporPage() {
         }}>
           <div>
             {/* Kop Surat Resmi Halaman 2 (Identik & Seragam Sempurna dengan Halaman 1) */}
-            <div style={{ display: "flex", alignItems: "center", borderBottom: "3px solid #000000", paddingBottom: paperSize === "F4" ? "14px" : "11px", marginBottom: paperSize === "F4" ? "16px" : "12px", fontFamily: '"Times New Roman", Times, serif' }}>
+            <div style={{ display: "flex", alignItems: "center", borderBottom: "3px solid #000000", paddingBottom: paperSize === "F4" ? "14px" : "11px", marginBottom: paperSize === "F4" ? "24px" : "18px", fontFamily: '"Times New Roman", Times, serif' }}>
               <img src="/logo.png" alt="Logo Al-Imam" style={{ width: paperSize === "F4" ? "80px" : "72px", height: paperSize === "F4" ? "80px" : "72px", objectFit: "contain" }} />
               <div style={{ flex: 1, textAlign: "center", fontFamily: '"Times New Roman", Times, serif' }}>
                 <h1 style={{ fontSize: paperSize === "F4" ? "22px" : "20px", fontWeight: "900", margin: 0, letterSpacing: "1px", color: "#000000", fontFamily: '"Times New Roman", Times, serif' }}>PESANTREN AL-IMAM AL-ISLAMI</h1>
@@ -695,11 +695,11 @@ export default function CetakRaporPage() {
             </div>
 
             {/* Judul Resmi Halaman 2 (Tengah, Rapi, Sejajar dengan Halaman 1) */}
-            <div className="text-center" style={{ marginBottom: paperSize === "F4" ? "10px" : "8px" }}>
-              <h3 style={{ fontSize: paperSize === "F4" ? "13.5px" : "12.5px", fontWeight: "bold", margin: 0, textTransform: "uppercase", letterSpacing: "0.5px", color: "#000000", fontFamily: "Arial, Helvetica, sans-serif" }}>
+            <div className="text-center" style={{ marginBottom: paperSize === "F4" ? "22px" : "16px" }}>
+              <h3 style={{ fontSize: paperSize === "F4" ? "13.5px" : "12.5px", fontWeight: "bold", margin: "0 0 4px 0", textTransform: "uppercase", letterSpacing: "0.5px", color: "#000000", fontFamily: "Arial, Helvetica, sans-serif" }}>
                 LAPORAN HASIL EVALUASI BELAJAR TENGAH SEMESTER (PTS)
               </h3>
-              <h4 style={{ fontSize: paperSize === "F4" ? "12px" : "11px", fontWeight: "bold", color: "#444444", margin: "2px 0 0 0", textTransform: "uppercase", letterSpacing: "0.3px", fontFamily: "Arial, Helvetica, sans-serif" }}>
+              <h4 style={{ fontSize: paperSize === "F4" ? "12px" : "11px", fontWeight: "bold", color: "#444444", margin: 0, textTransform: "uppercase", letterSpacing: "0.3px", fontFamily: "Arial, Helvetica, sans-serif" }}>
                 RAPOR BAYANGAN • KEPRIBADIAN, TAHSIN & TAHFIDZ AL-QUR'AN
               </h4>
             </div>
@@ -711,8 +711,8 @@ export default function CetakRaporPage() {
               alignItems: "center", 
               fontSize: paperSize === "F4" ? "12px" : "11px", 
               fontWeight: "bold", 
-              marginBottom: paperSize === "F4" ? "16px" : "12px",
-              paddingBottom: "6px",
+              marginBottom: paperSize === "F4" ? "22px" : "16px",
+              paddingBottom: "8px",
               borderBottom: "1.5px solid #000000",
               color: "#000000",
               fontFamily: "Arial, Helvetica, sans-serif"
