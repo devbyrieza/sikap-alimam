@@ -361,10 +361,10 @@ export default function CetakRaporPage() {
                 <th style={{ border: "1px solid #1a1a1a", padding: "6px 2px", textAlign: "center", fontFamily: "Arial, Helvetica, sans-serif", fontSize: "12px" }}>KKM</th>
                 <th style={{ border: "1px solid #1a1a1a", padding: "6px 2px", textAlign: "center", fontFamily: "Arial, Helvetica, sans-serif", fontSize: "12px" }}>Nilai</th>
                 {/* Kolom 5: Rata-Rata 2 baris agar pas sempurna */}
-                <th style={{ border: "1px solid #1a1a1a", borderRight: "2.5px solid #1a1a1a", padding: "6px 2px", textAlign: "center", fontFamily: "Arial, Helvetica, sans-serif", fontSize: "11px", lineHeight: "1.15" }}>Rata-<br/>Rata</th>
+                <th style={{ border: "1px solid #1a1a1a", borderRight: "2.5px solid #1a1a1a", padding: "6px 2px", textAlign: "center", fontFamily: "Arial, Helvetica, sans-serif", fontSize: "11px", lineHeight: "1.15" }}>Rata-Rata<br/>Kelas</th>
                 
                 {/* Sisi Kanan: Bahasa Arab (Mirror Persis 2 baris) */}
-                <th style={{ border: "1px solid #1a1a1a", padding: "6px 2px", textAlign: "center", fontFamily: "'Traditional Arabic', serif", fontSize: "13px", lineHeight: "1.1" }}>المعدل<br/>التراكمي</th>
+                <th style={{ border: "1px solid #1a1a1a", padding: "6px 2px", textAlign: "center", fontFamily: "'Traditional Arabic', serif", fontSize: "13px", lineHeight: "1.1" }}>متوسط<br/>الفصل</th>
                 <th style={{ border: "1px solid #1a1a1a", padding: "6px 2px", textAlign: "center", fontFamily: "'Traditional Arabic', serif", fontSize: "13px" }}>النتيجة</th>
                 <th style={{ border: "1px solid #1a1a1a", padding: "6px 2px", textAlign: "center", fontFamily: "'Traditional Arabic', serif", fontSize: "13px", lineHeight: "1.1" }}>الدرجة<br/>الصغرى</th>
                 <th style={{ border: "1px solid #1a1a1a", padding: "6px 6px", textAlign: "center", fontFamily: "'Traditional Arabic', serif", fontSize: "13.5px" }}>المواد الدراسية</th>
@@ -392,7 +392,7 @@ export default function CetakRaporPage() {
                 <td colSpan={3} style={{ border: "1px solid #1a1a1a", padding: "6px 8px", textAlign: "right", fontWeight: "bold", fontFamily: "'Traditional Arabic', serif", fontSize: "14px" }} dir="rtl">مجموع الدرجات</td>
               </tr>
               <tr style={{ backgroundColor: "rgba(0, 0, 0, 0.025)", fontFamily: "Arial, Helvetica, sans-serif" }}>
-                <td colSpan={3} style={{ border: "1px solid #1a1a1a", padding: "6px 8px", fontWeight: "bold" }}>Nilai Rata-rata</td>
+                <td colSpan={3} style={{ border: "1px solid #1a1a1a", padding: "6px 8px", fontWeight: "bold" }}>Rata-Rata Santri</td>
                 <td style={{ border: "1px solid #1a1a1a", padding: "6px 4px", textAlign: "center", fontWeight: "bold", fontSize: "13px" }}>{kedisiplinan?.rataRata}</td>
                 <td style={{ border: "1px solid #1a1a1a", borderRight: "2.5px solid #1a1a1a", padding: "6px 4px", backgroundColor: "#fafafa" }}></td>
                 <td style={{ border: "1px solid #1a1a1a", padding: "6px 4px", backgroundColor: "#fafafa" }}></td>
