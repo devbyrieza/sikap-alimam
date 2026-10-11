@@ -211,9 +211,15 @@ export default function CetakRaporPage() {
               padding: 0 !important;
             }
             
-            table td, table th { 
+            table td { 
               font-size: 12.5px !important; 
               line-height: 1.25 !important; 
+            }
+            
+            th.col-rata-rata {
+              font-size: 10px !important;
+              letter-spacing: -0.2px !important;
+              padding: 5px 1px !important;
             }
             
             table { width: 100% !important; }
@@ -368,16 +374,16 @@ export default function CetakRaporPage() {
             <colgroup>
               {/* Sisi Kiri (50%) */}
               <col style={{ width: "4.5%" }} />   {/* 1. No */}
-              <col style={{ width: "21.5%" }} />  {/* 2. Mata Pelajaran */}
-              <col style={{ width: "7.5%" }} />   {/* 3. KKM */}
-              <col style={{ width: "7.5%" }} />   {/* 4. Nilai */}
-              <col style={{ width: "9%" }} />     {/* 5. Rata-Rata */}
+              <col style={{ width: "21%" }} />    {/* 2. Mata Pelajaran */}
+              <col style={{ width: "7%" }} />     {/* 3. KKM */}
+              <col style={{ width: "7%" }} />     {/* 4. Nilai */}
+              <col style={{ width: "10.5%" }} />  {/* 5. Rata-Rata Kelas */}
               
               {/* Sisi Kanan (50% Mirror Sempurna) */}
-              <col style={{ width: "9%" }} />     {/* 6. المعدل التراكمي */}
-              <col style={{ width: "7.5%" }} />   {/* 7. النتيجة */}
-              <col style={{ width: "7.5%" }} />   {/* 8. الدرجة الصغرى */}
-              <col style={{ width: "21.5%" }} />  {/* 9. المواد الدراسية */}
+              <col style={{ width: "10.5%" }} />  {/* 6. متوسط الفصل */}
+              <col style={{ width: "7%" }} />     {/* 7. النتيجة */}
+              <col style={{ width: "7%" }} />     {/* 8. الدرجة الصغرى */}
+              <col style={{ width: "21%" }} />    {/* 9. المواد الدراسية */}
               <col style={{ width: "4.5%" }} />   {/* 10. رقم */}
             </colgroup>
             <thead>
@@ -387,11 +393,11 @@ export default function CetakRaporPage() {
                 <th style={{ border: "1px solid #1a1a1a", padding: "6px 6px", textAlign: "center", fontFamily: "Arial, Helvetica, sans-serif", fontSize: "12px" }}>Mata Pelajaran</th>
                 <th style={{ border: "1px solid #1a1a1a", padding: "6px 2px", textAlign: "center", fontFamily: "Arial, Helvetica, sans-serif", fontSize: "12px" }}>KKM</th>
                 <th style={{ border: "1px solid #1a1a1a", padding: "6px 2px", textAlign: "center", fontFamily: "Arial, Helvetica, sans-serif", fontSize: "12px" }}>Nilai</th>
-                {/* Kolom 5: Rata-Rata 2 baris agar pas sempurna */}
-                <th style={{ border: "1px solid #1a1a1a", borderRight: "2.5px solid #1a1a1a", padding: "6px 2px", textAlign: "center", fontFamily: "Arial, Helvetica, sans-serif", fontSize: "11px", lineHeight: "1.15" }}>Rata-Rata<br/>Kelas</th>
+                {/* Kolom 5: Rata-Rata Kelas (Lega 10.5% & Tulisan Utuh Rapi) */}
+                <th className="col-rata-rata" style={{ border: "1px solid #1a1a1a", borderRight: "2.5px solid #1a1a1a", padding: "6px 1px", textAlign: "center", fontFamily: "Arial, Helvetica, sans-serif", fontSize: "10.5px", lineHeight: "1.15", letterSpacing: "-0.2px" }}>Rata-Rata<br/>Kelas</th>
                 
-                {/* Sisi Kanan: Bahasa Arab (Mirror Persis 2 baris) */}
-                <th style={{ border: "1px solid #1a1a1a", padding: "6px 2px", textAlign: "center", fontFamily: "'Traditional Arabic', serif", fontSize: "13px", lineHeight: "1.1" }}>متوسط<br/>الفصل</th>
+                {/* Sisi Kanan: Bahasa Arab (Mirror Persis 10.5%) */}
+                <th className="col-rata-rata" style={{ border: "1px solid #1a1a1a", padding: "6px 1px", textAlign: "center", fontFamily: "'Traditional Arabic', serif", fontSize: "13px", lineHeight: "1.1" }}>متوسط<br/>الفصل</th>
                 <th style={{ border: "1px solid #1a1a1a", padding: "6px 2px", textAlign: "center", fontFamily: "'Traditional Arabic', serif", fontSize: "13px" }}>النتيجة</th>
                 <th style={{ border: "1px solid #1a1a1a", padding: "6px 2px", textAlign: "center", fontFamily: "'Traditional Arabic', serif", fontSize: "13px", lineHeight: "1.1" }}>الدرجة<br/>الصغرى</th>
                 <th style={{ border: "1px solid #1a1a1a", padding: "6px 6px", textAlign: "center", fontFamily: "'Traditional Arabic', serif", fontSize: "13.5px" }}>المواد الدراسية</th>
