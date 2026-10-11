@@ -485,7 +485,7 @@ export default function CetakRaporPage() {
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", borderBottom: "2.5px solid #1a1a1a", paddingBottom: "12px", marginBottom: "20px" }}>
             <div>
               <h2 style={{ fontSize: "17px", fontWeight: "900", margin: 0, letterSpacing: "0.5px", fontFamily: '"Times New Roman", Times, serif' }}>PESANTREN AL-IMAM AL-ISLAMI</h2>
-              <p style={{ margin: "2px 0 0 0", fontSize: "11.5px", color: "#555" }}>Laporan Kepribadian, Tahsin & Tahfidz, dan Pengesahan Rapor Santri</p>
+              <p style={{ margin: "2px 0 0 0", fontSize: "11.5px", color: "#555" }}>Laporan Kepribadian serta Tahsin & Tahfidz Al-Qur'an</p>
             </div>
             <div style={{ textAlign: "right", fontSize: "12px", fontWeight: "bold" }}>
               <p style={{ margin: 0 }}>Nama: <span style={{ textTransform: "uppercase" }}>{santri?.nama}</span></p>
