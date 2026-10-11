@@ -694,26 +694,33 @@ export default function CetakRaporPage() {
               <img src="/logo-andalus.png" alt="Logo Al-Andalus" style={{ width: paperSize === "F4" ? "80px" : "72px", height: paperSize === "F4" ? "80px" : "72px", objectFit: "contain" }} />
             </div>
 
-            {/* Sub-Header Judul Dokumen Halaman 2 & Identitas Santri */}
+            {/* Judul Resmi Halaman 2 (Tengah, Rapi, Sejajar dengan Halaman 1) */}
+            <div className="text-center" style={{ marginBottom: paperSize === "F4" ? "10px" : "8px" }}>
+              <h3 style={{ fontSize: paperSize === "F4" ? "13.5px" : "12.5px", fontWeight: "bold", margin: 0, textTransform: "uppercase", letterSpacing: "0.5px", color: "#000000", fontFamily: "Arial, Helvetica, sans-serif" }}>
+                LAPORAN HASIL EVALUASI BELAJAR TENGAH SEMESTER (PTS)
+              </h3>
+              <h4 style={{ fontSize: paperSize === "F4" ? "12px" : "11px", fontWeight: "bold", color: "#444444", margin: "2px 0 0 0", textTransform: "uppercase", letterSpacing: "0.3px", fontFamily: "Arial, Helvetica, sans-serif" }}>
+                RAPOR BAYANGAN • KEPRIBADIAN, TAHSIN & TAHFIDZ AL-QUR'AN
+              </h4>
+            </div>
+
+            {/* Identitas Santri Halaman 2 (1 Baris Penuh Bersih & Tanpa Terpotong) */}
             <div style={{ 
               display: "flex", 
               justifyContent: "space-between", 
               alignItems: "center", 
+              fontSize: paperSize === "F4" ? "12.5px" : "11.5px", 
+              fontWeight: "bold", 
               marginBottom: paperSize === "F4" ? "16px" : "12px",
-              fontSize: paperSize === "F4" ? "12.5px" : "11.5px",
-              fontWeight: "bold",
+              paddingBottom: "6px",
+              borderBottom: "1.5px solid #000000",
+              color: "#000000",
               fontFamily: "Arial, Helvetica, sans-serif"
             }}>
-              <div>
-                <p style={{ margin: 0, textTransform: "uppercase", letterSpacing: "0.5px", color: "#111" }}>
-                  RAPOR EVALUASI BELAJAR (PTS) • KEPRIBADIAN, TAHSIN & TAHFIDZ
-                </p>
-              </div>
-              <div style={{ textAlign: "right", color: "#111" }}>
-                <p style={{ margin: 0 }}>
-                  Nama: <span style={{ textTransform: "uppercase" }}>{santri?.nama}</span> &nbsp;|&nbsp; NIS: {santri?.nis || "-"} &nbsp;|&nbsp; Kelas: {(santri?.kelas || "").replace(/\s*(MTs|MA|SMP|SMA|SD|TK)\b/gi, "")}
-                </p>
-              </div>
+              <div>Nama: <span style={{ textTransform: "uppercase" }}>{santri?.nama}</span></div>
+              <div>NIS: <span>{santri?.nis || "-"}</span></div>
+              <div>Kelas: <span>{(santri?.kelas || "").replace(/\s*(MTs|MA|SMP|SMA|SD|TK)\b/gi, "")}</span></div>
+              <div>Semester: <span>{santri?.semester?.includes("Ganjil") || santri?.semester === "1" ? "Ganjil" : santri?.semester} (PTS)</span></div>
             </div>
 
             {/* 1. KEPRIBADIAN SANTRI (KIRI) & KETIDAKHADIRAN (KANAN) - SATU TABEL SIMETRIS UTUH */}
