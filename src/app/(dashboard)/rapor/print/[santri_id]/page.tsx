@@ -668,12 +668,12 @@ export default function CetakRaporPage() {
                 {/* Sisi Kiri: 3 Kolom Tanda Tangan Berjarak Lega & Proporsional (Tinggi 165px - Ruang TTD Ekstra Lega) */}
                 <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", textAlign: "center", fontSize: "13px" }}>
                   {/* Kolom 1: Orang Tua */}
-                  <div style={{ display: "flex", flexDirection: "column", justifyContent: "space-between", height: "165px" }}>
+                  <div style={{ display: "flex", flexDirection: "column", justifyContent: "space-between", height: "165px", padding: "0 8px" }}>
                     <div>
                       <p style={{ margin: 0, opacity: 0 }}>Mengetahui</p>
                       <p style={{ margin: "3px 0 0 0" }}>Orang Tua / Wali</p>
                     </div>
-                    <p style={{ fontWeight: "bold", margin: 0 }}>( &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; )</p>
+                    <div style={{ display: "flex", justifyContent: "space-between", width: "100%", fontWeight: "bold", margin: 0, fontSize: "13px" }}><span>(</span><span>)</span></div>
                   </div>
 
                   {/* Kolom 2: Kepala Madrasah */}
