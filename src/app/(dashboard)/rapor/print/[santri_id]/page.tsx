@@ -929,21 +929,32 @@ export default function CetakRaporPage() {
               </table>
             </div>
 
-            {/* 4. AREA TANDA TANGAN (3 Kolom) + QR CODE BESAR (Kanan) - LEGA & BERWIBAWA */}
+            {/* 4. AREA TANDA TANGAN (3 Kolom) + QR CODE (Kanan Sejajar Flush dengan Kotak Evaluasi) */}
             <div 
               style={{ 
-                display: "grid", 
-                gridTemplateColumns: "1fr 135px", 
-                gap: "16px",
+                display: "flex", 
+                justifyContent: "space-between", 
+                alignItems: "stretch",
+                width: "100%",
+                boxSizing: "border-box",
                 marginTop: paperSize === "F4" ? "14px" : "10px", 
                 pageBreakInside: "avoid", 
                 fontFamily: "Arial, Helvetica, sans-serif" 
               }}
             >
-              {/* Sisi Kiri: 3 Kolom Tanda Tangan Simetris Presisi (Kepala Madrasah Tepat di Tengah-Tengah Antara Orang Tua & Wali Kelas) */}
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", textAlign: "center", fontSize: paperSize === "F4" ? "12.5px" : "11.5px", gap: "12px" }}>
+              {/* Sisi Kiri: 3 Kolom Tanda Tangan Simetris Presisi & Proporsional */}
+              <div style={{ 
+                display: "grid", 
+                gridTemplateColumns: "1fr 1.15fr 1.35fr", 
+                textAlign: "center", 
+                fontSize: paperSize === "F4" ? "12px" : "11px", 
+                gap: paperSize === "F4" ? "10px" : "6px",
+                flex: 1,
+                marginRight: paperSize === "F4" ? "16px" : "12px",
+                minWidth: 0
+              }}>
                 {/* Kolom 1: Orang Tua */}
-                <div style={{ display: "flex", flexDirection: "column", justifyContent: "space-between", height: paperSize === "F4" ? "165px" : "145px", padding: "0 4px" }}>
+                <div style={{ display: "flex", flexDirection: "column", justifyContent: "space-between", height: paperSize === "F4" ? "165px" : "145px", padding: "0 2px" }}>
                   <div>
                     <p style={{ margin: 0 }}>Mengetahui</p>
                     <p style={{ margin: "3px 0 0 0" }}>Orang Tua / Wali</p>
@@ -952,59 +963,76 @@ export default function CetakRaporPage() {
                     <p style={{ 
                       fontWeight: "bold", 
                       margin: 0, 
-                      fontSize: paperSize === "F4" ? "12px" : "11.5px", 
+                      fontSize: paperSize === "F4" ? "11.5px" : "11px", 
                       whiteSpace: "nowrap",
                       display: "inline-flex",
                       alignItems: "center",
                       justifyContent: "space-between",
                       width: "100%",
-                      maxWidth: paperSize === "F4" ? "195px" : "175px"
+                      maxWidth: paperSize === "F4" ? "165px" : "145px"
                     }}>
                       <span>(</span>
-                      <span style={{ display: "inline-block", flex: 1, minWidth: paperSize === "F4" ? "170px" : "150px" }}>&nbsp;</span>
+                      <span style={{ display: "inline-block", flex: 1, minWidth: paperSize === "F4" ? "135px" : "115px" }}>&nbsp;</span>
                       <span>)</span>
                     </p>
                   </div>
                 </div>
 
                 {/* Kolom 2: Kepala Madrasah (Tepat di Tengah) */}
-                <div style={{ display: "flex", flexDirection: "column", justifyContent: "space-between", height: paperSize === "F4" ? "165px" : "145px", padding: "0 4px" }}>
+                <div style={{ display: "flex", flexDirection: "column", justifyContent: "space-between", height: paperSize === "F4" ? "165px" : "145px", padding: "0 2px" }}>
                   <div>
                     <p style={{ margin: 0 }}>Mengetahui</p>
                     <p style={{ margin: "3px 0 0 0" }}>{headTitle}</p>
                   </div>
                   <div style={{ minHeight: "32px", display: "flex", alignItems: "flex-end", justifyContent: "center" }}>
-                    <p style={{ fontWeight: "bold", margin: 0, fontSize: "11.5px", whiteSpace: "nowrap", letterSpacing: "-0.2px" }}>
+                    <p style={{ fontWeight: "bold", margin: 0, fontSize: paperSize === "F4" ? "11px" : "10.5px", whiteSpace: "nowrap", letterSpacing: "-0.2px" }}>
                       ({headName})
                     </p>
                   </div>
                 </div>
 
                 {/* Kolom 3: Wali Kelas */}
-                <div style={{ display: "flex", flexDirection: "column", justifyContent: "space-between", height: paperSize === "F4" ? "165px" : "145px", padding: "0 4px" }}>
+                <div style={{ display: "flex", flexDirection: "column", justifyContent: "space-between", height: paperSize === "F4" ? "165px" : "145px", padding: "0 2px" }}>
                   <div>
                     <p style={{ margin: 0 }}>Sukabumi, 11 Oktober 2026</p>
                     <p style={{ margin: "3px 0 0 0" }}>Wali Kelas</p>
                   </div>
                   <div style={{ minHeight: "32px", display: "flex", alignItems: "flex-end", justifyContent: "center" }}>
-                    <p style={{ fontWeight: "bold", margin: 0, fontSize: "11.5px", whiteSpace: "nowrap", letterSpacing: "-0.2px" }}>
+                    <p style={{ fontWeight: "bold", margin: 0, fontSize: paperSize === "F4" ? "11px" : "10px", whiteSpace: "nowrap", letterSpacing: "-0.2px" }}>
                       ({waliKelasName})
                     </p>
                   </div>
                 </div>
               </div>
 
-              {/* Sisi Kanan: Barcode / QR Code Besar Gagah (Seimbang Sempurna dan Sejajar dengan Seluruh Kolom Tanda Tangan) */}
-              <div style={{ display: "flex", flexDirection: "column", justifyContent: "space-between", alignItems: "center", height: paperSize === "F4" ? "165px" : "145px" }}>
-                <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", flex: 1 }}>
+              {/* Sisi Kanan: Barcode / QR Code (100% Sejajar Rata Kanan / Flush dengan Garis Ujung Kotak Evaluasi Al-Qur'an) */}
+              <div style={{ 
+                display: "flex", 
+                flexDirection: "column", 
+                justifyContent: "space-between", 
+                alignItems: "flex-end", 
+                height: paperSize === "F4" ? "165px" : "145px",
+                flexShrink: 0
+              }}>
+                <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", justifyContent: "center", flex: 1 }}>
                   <img 
                     src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https://sikap.pesantren-alimam.com/verify/${santriId}`}
                     alt="QR Code Verifikasi"
-                    style={{ width: paperSize === "F4" ? "115px" : "100px", height: paperSize === "F4" ? "115px" : "100px", border: "1.5px solid #000000", padding: "3px", backgroundColor: "white" }}
+                    style={{ 
+                      width: paperSize === "F4" ? "105px" : "95px", 
+                      height: paperSize === "F4" ? "105px" : "95px", 
+                      border: "1.5px solid #000000", 
+                      padding: "3px", 
+                      backgroundColor: "white",
+                      display: "block",
+                      boxSizing: "border-box"
+                    }}
                   />
                 </div>
-                <div style={{ minHeight: "32px", display: "flex", alignItems: "flex-end", justifyContent: "center" }}>
-                  <p style={{ fontSize: "9px", color: "#666", margin: 0, textAlign: "center", lineHeight: "1.2" }}>Scan Verifikasi Dokumen</p>
+                <div style={{ minHeight: "32px", display: "flex", alignItems: "flex-end", justifyContent: "flex-end", width: "100%" }}>
+                  <p style={{ fontSize: "8.5px", color: "#666", margin: 0, textAlign: "right", lineHeight: "1.2", whiteSpace: "nowrap" }}>
+                    Scan Verifikasi Dokumen
+                  </p>
                 </div>
               </div>
             </div>
