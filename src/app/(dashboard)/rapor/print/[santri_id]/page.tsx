@@ -898,8 +898,8 @@ export default function CetakRaporPage() {
                 fontFamily: "Arial, Helvetica, sans-serif" 
               }}
             >
-              {/* Sisi Kiri: 3 Kolom Tanda Tangan Berjarak Ekstra Lega (Tinggi 195px - Ruang TTD Bertambah Lega & Proporsional) */}
-              <div style={{ display: "grid", gridTemplateColumns: "115px 1.05fr 1.15fr", textAlign: "center", fontSize: paperSize === "F4" ? "13px" : "12px", gap: "10px" }}>
+              {/* Sisi Kiri: 3 Kolom Tanda Tangan Simetris Presisi (Kepala Madrasah Tepat di Tengah-Tengah Antara Orang Tua & Wali Kelas) */}
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", textAlign: "center", fontSize: paperSize === "F4" ? "13px" : "12px", gap: "14px" }}>
                 {/* Kolom 1: Orang Tua */}
                 <div style={{ display: "flex", flexDirection: "column", justifyContent: "space-between", height: paperSize === "F4" ? "195px" : "175px", padding: "0 4px" }}>
                   <div>
@@ -908,13 +908,13 @@ export default function CetakRaporPage() {
                   </div>
                   <div style={{ minHeight: "36px", display: "flex", alignItems: "flex-end", justifyContent: "center" }}>
                     <p style={{ fontWeight: "bold", margin: 0, fontSize: "11.5px", whiteSpace: "nowrap" }}>
-                      ( .................................... )
+                      (&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;)
                     </p>
                   </div>
                 </div>
 
-                {/* Kolom 2: Kepala Madrasah */}
-                <div style={{ display: "flex", flexDirection: "column", justifyContent: "space-between", height: paperSize === "F4" ? "195px" : "175px", padding: "0 2px" }}>
+                {/* Kolom 2: Kepala Madrasah (Tepat di Tengah) */}
+                <div style={{ display: "flex", flexDirection: "column", justifyContent: "space-between", height: paperSize === "F4" ? "195px" : "175px", padding: "0 4px" }}>
                   <div>
                     <p style={{ margin: 0 }}>Mengetahui</p>
                     <p style={{ margin: "3px 0 0 0" }}>{headTitle}</p>
@@ -927,7 +927,7 @@ export default function CetakRaporPage() {
                 </div>
 
                 {/* Kolom 3: Wali Kelas */}
-                <div style={{ display: "flex", flexDirection: "column", justifyContent: "space-between", height: paperSize === "F4" ? "195px" : "175px", padding: "0 2px" }}>
+                <div style={{ display: "flex", flexDirection: "column", justifyContent: "space-between", height: paperSize === "F4" ? "195px" : "175px", padding: "0 4px" }}>
                   <div>
                     <p style={{ margin: 0 }}>Sukabumi, 11 Oktober 2026</p>
                     <p style={{ margin: "3px 0 0 0" }}>Wali Kelas</p>
