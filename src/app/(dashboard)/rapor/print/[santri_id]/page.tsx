@@ -626,7 +626,7 @@ export default function CetakRaporPage() {
               </thead>
               <tbody>
                 <tr style={{ backgroundColor: "transparent" }}>
-                  <td style={{ border: "1px solid #1a1a1a", padding: "10px 12px", verticalAlign: "top", color: "#333", fontStyle: "italic", lineHeight: "1.6" }}>
+                  <td style={{ border: "1px solid #1a1a1a", padding: "10px 12px", verticalAlign: "top", color: "#333", fontStyle: "italic", lineHeight: "1.6", textAlign: "justify", textJustify: "inter-word" }}>
                     {(() => {
                       if (praTargetUjian.length === 0) {
                         return "Belum ada riwayat ujian tahsin/tahfidz pada periode ini. Tingkatkan semangat tilawah dan muraja'ah bersama Musyrif di halaqoh.";
