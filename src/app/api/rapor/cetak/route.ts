@@ -210,7 +210,7 @@ export async function GET(req: NextRequest) {
         "IPA": "العلوم",
         "IPS Terpadu": "العلوم الاجتماعية",
         "IPS": "العلوم الاجتماعية",
-        "Bahasa Indonesia": "اللغة الإندونisية",
+        "Bahasa Indonesia": "اللغة الإندونيسية",
         "B. Indonesia": "اللغة الإندونيسية",
         "Bahasa Inggris": "اللغة الإنجليزية",
         "B. Inggris": "اللغة الإنجليزية",
