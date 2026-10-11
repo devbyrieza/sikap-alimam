@@ -70,22 +70,46 @@ export async function syncAsatidzMapel(pegawaiId: string, mapelString: string | 
       const kName = assignment.kelasNama.trim();
       const kUpper = kName.toUpperCase();
 
-      const OR_conditions: any[] = [
-        { nama: { equals: kName, mode: "insensitive" } },
-        { nama: { contains: kName, mode: "insensitive" } },
-      ];
+      let kelas = null;
 
-      if (kUpper === "IL" || kUpper.includes("IDAD") || kUpper.includes("I'DAD") || kUpper.includes("LUGHO") || kUpper.includes("ISLAM")) {
-        OR_conditions.push(
-          { nama: { contains: "I'dad", mode: "insensitive" } },
-          { nama: { contains: "Idad", mode: "insensitive" } },
-          { nama: { contains: "Lugho", mode: "insensitive" } },
-          { nama: { equals: "IL", mode: "insensitive" } },
-          { jenjang: { equals: "I'dad Lughowi", mode: "insensitive" } },
-          { jenjang: { equals: "IL", mode: "insensitive" } },
-          { jenjang: { contains: "Islam", mode: "insensitive" } }
-        );
+      // 1. Ensure Kelas exists
+      if (kUpper === "IL" || kUpper.includes("IDAD") || kUpper.includes("I'DAD") || kUpper.includes("LUGHO")) {
+        // Direct exact match for IL class
+        kelas = await prisma.kelas.findFirst({
+          where: {
+            is_active: true,
+            OR: [
+              { nama: { equals: "IL", mode: "insensitive" } },
+              { jenjang: { equals: "IL", mode: "insensitive" } },
+              { nama: { contains: "I'dad", mode: "insensitive" } },
+              { nama: { contains: "Idad", mode: "insensitive" } },
+              { jenjang: { equals: "I'dad Lughowi", mode: "insensitive" } },
+            ]
+          },
+          include: {
+            _count: { select: { santri: true } }
+          },
+          orderBy: {
+            santri: { _count: "desc" }
+          }
+        }).catch(async () => {
+          return await prisma.kelas.findFirst({
+            where: {
+              is_active: true,
+              OR: [
+                { nama: { equals: "IL", mode: "insensitive" } },
+                { jenjang: { equals: "IL", mode: "insensitive" } },
+                { nama: { contains: "I'dad", mode: "insensitive" } },
+              ]
+            }
+          });
+        });
       } else {
+        const OR_conditions: any[] = [
+          { nama: { equals: kName, mode: "insensitive" } },
+          { nama: { contains: kName, mode: "insensitive" } },
+        ];
+
         const numMatch = kName.match(/\d+/);
         if (numMatch) {
           const num = numMatch[0];
@@ -95,28 +119,33 @@ export async function syncAsatidzMapel(pegawaiId: string, mapelString: string | 
             { nama: { contains: `${num} MA`, mode: "insensitive" } }
           );
         }
-      }
 
-      // 1. Ensure Kelas exists
-      let kelas = await prisma.kelas.findFirst({
-        where: {
-          is_active: true,
-          OR: OR_conditions },
-        include: {
-          _count: { select: { santri: true } } },
-        orderBy: {
-          santri: { _count: "desc" } } }).catch(async () => {
-        // Fallback without sort if santri relation ordering fails
-        return await prisma.kelas.findFirst({
-          where: { is_active: true, OR: OR_conditions } });
-      });
+        kelas = await prisma.kelas.findFirst({
+          where: {
+            is_active: true,
+            OR: OR_conditions
+          },
+          include: {
+            _count: { select: { santri: true } }
+          },
+          orderBy: {
+            santri: { _count: "desc" }
+          }
+        }).catch(async () => {
+          return await prisma.kelas.findFirst({
+            where: { is_active: true, OR: OR_conditions }
+          });
+        });
+      }
 
       if (!kelas) {
         kelas = await prisma.kelas.create({
           data: {
-            nama: assignment.kelasNama,
-            jenjang: assignment.jenjang,
-            is_active: true } });
+            nama: kUpper === "IL" ? "IL" : assignment.kelasNama,
+            jenjang: kUpper === "IL" ? "IL" : assignment.jenjang,
+            is_active: true
+          }
+        });
       }
 
       // 2. Ensure MataPelajaran exists
@@ -128,11 +157,16 @@ export async function syncAsatidzMapel(pegawaiId: string, mapelString: string | 
       if (mName.toLowerCase().includes("tahsin")) {
         mapelOR.push({ nama: { contains: "Tahsin", mode: "insensitive" } });
       }
+      if (mName.toLowerCase().includes("nahwu")) {
+        mapelOR.push({ nama: { contains: "Nahwu", mode: "insensitive" } });
+      }
 
       let mapel = await prisma.mataPelajaran.findFirst({
         where: {
           kelas_id: kelas.id,
-          OR: mapelOR } });
+          OR: mapelOR
+        }
+      });
 
       if (!mapel) {
         mapel = await prisma.mataPelajaran.create({
@@ -140,7 +174,9 @@ export async function syncAsatidzMapel(pegawaiId: string, mapelString: string | 
             nama: assignment.mapelNama,
             kelas_id: kelas.id,
             kategori: "syariah",
-            is_active: true } });
+            is_active: true
+          }
+        });
       }
 
       // 3. Upsert AsatidzmMapel

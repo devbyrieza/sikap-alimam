@@ -62,6 +62,8 @@ export async function GET() {
       }
     });
 
+    const azzamMapel = "[IL] Tahsin Al-Qur'an, [IL] Nahwu, [11 MA] Tafsir, [12 MA] Tafsir, [11 MA] Nahwu";
+
     const pegawaiData = {
       nama_lengkap: 'Ust. Azzam Aghnia Ilman Azzauhari',
       nama_panggilan: 'Azzam',
@@ -74,6 +76,7 @@ export async function GET() {
       kategori_pegawai: 'ASATIDZ,MUSYRIF',
       divisi: 'Kepengasuhan',
       jabatan: 'Pengasuh & Pengampu Halaqoh',
+      mata_pelajaran: azzamMapel,
       unit_kerja: 'Pesantren Al-Imam',
       user_id: user.id
     };
@@ -91,7 +94,43 @@ export async function GET() {
       logs.push('Updated Pegawai record: ' + pegawai.nama_lengkap);
     }
 
-    // 3. Sync Halaqoh Groups for Azzam
+    // 3. Ensure Kelas IL exists
+    let classIL = await prisma.kelas.findFirst({
+      where: {
+        is_active: true,
+        OR: [
+          { nama: 'IL' },
+          { jenjang: 'IL' },
+          { nama: { contains: "I'dad", mode: "insensitive" } }
+        ]
+      }
+    });
+
+    if (!classIL) {
+      classIL = await prisma.kelas.create({
+        data: {
+          nama: 'IL',
+          jenjang: 'IL',
+          is_active: true
+        }
+      });
+      logs.push('Created Kelas IL');
+    } else {
+      logs.push(`Found Kelas IL (ID: ${classIL.id}, Nama: ${classIL.nama})`);
+    }
+
+    // 4. Sync Asatidz Mapel for Azzam (IL & MA)
+    const { syncAsatidzMapel } = await import('@/lib/syncAsatidzMapel');
+    await syncAsatidzMapel(pegawai.id, azzamMapel);
+    logs.push('Synced asatidz_mapel for Ust. Azzam: ' + azzamMapel);
+
+    const teacherAssignments = await prisma.asatidzmMapel.findMany({
+      where: { pegawai_id: pegawai.id },
+      include: { kelas: true, mapel: true }
+    });
+    logs.push(`Total relational assignments: ${teacherAssignments.length} (${teacherAssignments.map(a => `[${a.kelas.nama}] ${a.mapel.nama}`).join(', ')})`);
+
+    // 5. Sync Halaqoh Groups for Azzam
     const groups = await prisma.halaqohKelompok.findMany();
     let updatedGroupsCount = 0;
 

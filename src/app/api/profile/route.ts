@@ -46,6 +46,13 @@ export async function GET() {
       }
     }
 
+    // Auto-sync penugasan mata pelajaran jika akun adalah pengajar / guru
+    if (pegawai?.id && pegawai?.mata_pelajaran && pegawai.mata_pelajaran.trim()) {
+      await syncAsatidzMapel(pegawai.id, pegawai.mata_pelajaran).catch((err) => {
+        console.warn("Auto-sync asatidz_mapel in profile GET skipped:", err);
+      });
+    }
+
     // Check completeness
     const missingFields: string[] = [];
     if (!pegawai?.nama_lengkap || !pegawai.nama_lengkap.trim()) missingFields.push("Nama Lengkap");

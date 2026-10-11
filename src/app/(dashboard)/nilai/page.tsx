@@ -69,6 +69,7 @@ export default function InputNilaiPage() {
     const nama = selectedKelasInfo?.nama.toLowerCase() || ""; return nama.includes("11 ma") || nama.includes("12 ma");
   }, [kelas_id, master]);
   const [asatidId, setAsatidId] = useState("");
+  const [asatidMapelStr, setAsatidMapelStr] = useState("");
   const [isAdminSuper, setIsAdminSuper] = useState(false);
 
   const [santriList, setSantriList] = useState<Santri[]>([]);
@@ -97,6 +98,9 @@ export default function InputNilaiPage() {
         if (pegawaiObj?.id) {
           setAsatidId(pegawaiObj.id);
         }
+        if (pegawaiObj?.mata_pelajaran) {
+          setAsatidMapelStr(pegawaiObj.mata_pelajaran);
+        }
         if (userObj?.role) {
           const role = (userObj.role || "").toLowerCase();
           setIsAdminSuper(["admin_super", "kadiv_kurikulum", "kepala_sekolah", "mudir", "admin_rapor"].some(r => role.includes(r)));
@@ -122,11 +126,45 @@ export default function InputNilaiPage() {
          .filter(am => am.pegawai_id === asatidId)
          .map(am => am.kelas_id) || [];
       const allowedJenjangs = Array.from(new Set(master.kelas.filter(k => allowedKelasIds.includes(k.id)).map(k => k.jenjang).filter(Boolean))) as string[];
+
+      // Resilient Fallback: Periksa apakah ada jenjang di teks penugasan guru yang belum tercatat di relasi
+      if (asatidMapelStr) {
+        const upperStr = asatidMapelStr.toUpperCase();
+        if (
+          upperStr.includes("[IL]") || 
+          upperStr.includes("IL:") || 
+          upperStr.includes("IL -") || 
+          upperStr.includes("I'DAD") || 
+          upperStr.includes("IDAD")
+        ) {
+          if (!allowedJenjangs.includes("IL")) allowedJenjangs.push("IL");
+        }
+        if (
+          upperStr.includes("MA]") || 
+          upperStr.includes("MA:") || 
+          upperStr.includes("MA -") || 
+          upperStr.includes("ALIYAH")
+        ) {
+          if (!allowedJenjangs.includes("MA")) allowedJenjangs.push("MA");
+        }
+        if (
+          upperStr.includes("MTS]") || 
+          upperStr.includes("MTS:") || 
+          upperStr.includes("MTS -") || 
+          upperStr.includes("TSANAWIYAH")
+        ) {
+          if (!allowedJenjangs.includes("MTs")) allowedJenjangs.push("MTs");
+        }
+      }
+
       if (allowedJenjangs.length > 0) uniqueJenjangs = allowedJenjangs;
     }
 
-    return uniqueJenjangs.length > 0 ? uniqueJenjangs : defaultJenjangs;
-  }, [master, isAdminSuper, asatidId]);
+    const order = ["MTs", "IL", "MA"];
+    return (uniqueJenjangs.length > 0 ? uniqueJenjangs : defaultJenjangs).sort(
+      (a, b) => order.indexOf(a) - order.indexOf(b)
+    );
+  }, [master, isAdminSuper, asatidId, asatidMapelStr]);
 
   // Auto-select Jenjang HANYA jika hanya ada 1 pilihan. Jika > 1, HARUS minta user memilih ("")
   useEffect(() => {
@@ -145,7 +183,12 @@ export default function InputNilaiPage() {
       const allowedKelasIds = master?.asatidzmMapel
          .filter(am => am.pegawai_id === asatidId)
          .map(am => am.kelas_id) || [];
-      list = list.filter(k => allowedKelasIds.includes(k.id));
+      const teacherClassList = list.filter(k => allowedKelasIds.includes(k.id));
+      if (teacherClassList.length > 0) {
+        list = teacherClassList;
+      }
+      // Jika teacherClassList kosong (misal relasi kelas IL belum terhubung di asatidz_mapel),
+      // tetap sediakan kelas IL agar guru tidak terblokir
     }
     
     return list;
@@ -170,11 +213,21 @@ export default function InputNilaiPage() {
       const allowedMapelIds = master?.asatidzmMapel
          .filter(am => am.pegawai_id === asatidId && am.kelas_id === kelas_id)
          .map(am => am.mapel_id) || [];
-      list = list.filter(m => allowedMapelIds.includes(m.id));
+      const teacherMapels = list.filter(m => allowedMapelIds.includes(m.id));
+      if (teacherMapels.length > 0) {
+        list = teacherMapels;
+      } else if (asatidMapelStr) {
+        // Fallback: jika relasi asatidz_mapel belum tersinkron, cocokkan nama mapel kelas dengan teks pengajaran guru
+        const lowerStr = asatidMapelStr.toLowerCase();
+        const matched = list.filter(m => lowerStr.includes(m.nama.toLowerCase()));
+        if (matched.length > 0) {
+          list = matched;
+        }
+      }
     }
     
     return list;
-  }, [kelas_id, master, isAdminSuper, asatidId]);
+  }, [kelas_id, master, isAdminSuper, asatidId, asatidMapelStr]);
 
   // Auto-select Mapel jika hanya ada 1 mapel
   useEffect(() => {

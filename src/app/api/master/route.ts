@@ -51,10 +51,40 @@ export async function GET() {
         select: { pegawai_id: true, mapel_id: true, kelas_id: true } }),
     ]);
 
+    let finalAsatidzmMapel = rawAsatidzmMapel;
+    let finalAllMapel = allMapel;
+
+    // Auto-sync any teacher who has mata_pelajaran string but 0 asatidzmMapel records in the DB
+    const teachersNeedingSync = rawAsatidz.filter(
+      (a) => a.mata_pelajaran && a.mata_pelajaran.trim() && !rawAsatidzmMapel.some((am) => am.pegawai_id === a.id)
+    );
+
+    if (teachersNeedingSync.length > 0) {
+      try {
+        const { syncAsatidzMapel } = await import("@/lib/syncAsatidzMapel");
+        await Promise.all(teachersNeedingSync.map((t) => syncAsatidzMapel(t.id, t.mata_pelajaran)));
+        // Re-fetch updated asatidzmMapel and allMapel
+        const [refetchedAm, refetchedMapel] = await Promise.all([
+          prisma.asatidzmMapel.findMany({
+            select: { pegawai_id: true, mapel_id: true, kelas_id: true }
+          }),
+          prisma.mataPelajaran.findMany({
+            where: { is_active: true },
+            orderBy: { nama: "asc" },
+            select: { id: true, nama: true, kelas_id: true, kategori: true }
+          })
+        ]);
+        finalAsatidzmMapel = refetchedAm;
+        finalAllMapel = refetchedMapel;
+      } catch (syncErr) {
+        console.warn("Auto-sync missing teacher mapel in master route failed:", syncErr);
+      }
+    }
+
     const { kelas, asatidzmMapel, mapelByKelas } = normalizeMasterData(
       rawKelas,
-      rawAsatidzmMapel,
-      allMapel,
+      finalAsatidzmMapel,
+      finalAllMapel,
       normalizeMapelName
     );
 
