@@ -665,10 +665,10 @@ export default function CetakRaporPage() {
               fontFamily: "Arial, Helvetica, sans-serif" 
             }}
           >
-                {/* Sisi Kiri: 3 Kolom Tanda Tangan Berjarak Lega & Proporsional (Tinggi 140px) */}
+                {/* Sisi Kiri: 3 Kolom Tanda Tangan Berjarak Lega & Proporsional (Tinggi 165px - Ruang TTD Ekstra Lega) */}
                 <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", textAlign: "center", fontSize: "13px" }}>
                   {/* Kolom 1: Orang Tua */}
-                  <div style={{ display: "flex", flexDirection: "column", justifyContent: "space-between", height: "140px" }}>
+                  <div style={{ display: "flex", flexDirection: "column", justifyContent: "space-between", height: "165px" }}>
                     <div>
                       <p style={{ margin: 0, opacity: 0 }}>Mengetahui</p>
                       <p style={{ margin: "3px 0 0 0" }}>Orang Tua / Wali</p>
@@ -677,7 +677,7 @@ export default function CetakRaporPage() {
                   </div>
 
                   {/* Kolom 2: Kepala Madrasah */}
-                  <div style={{ display: "flex", flexDirection: "column", justifyContent: "space-between", height: "140px" }}>
+                  <div style={{ display: "flex", flexDirection: "column", justifyContent: "space-between", height: "165px" }}>
                     <div>
                       <p style={{ margin: 0 }}>Mengetahui</p>
                       <p style={{ margin: "3px 0 0 0" }}>{headTitle}</p>
@@ -686,7 +686,7 @@ export default function CetakRaporPage() {
                   </div>
 
                   {/* Kolom 3: Wali Kelas */}
-                  <div style={{ display: "flex", flexDirection: "column", justifyContent: "space-between", height: "140px" }}>
+                  <div style={{ display: "flex", flexDirection: "column", justifyContent: "space-between", height: "165px" }}>
                     <div>
                       <p style={{ margin: 0 }}>Sukabumi, 11 Oktober 2026</p>
                       <p style={{ margin: "3px 0 0 0" }}>Wali Kelas</p>
@@ -695,14 +695,14 @@ export default function CetakRaporPage() {
                   </div>
                 </div>
 
-                {/* Sisi Kanan: Barcode / QR Code Besar Gagah (Resolusi Tinggi 120px, Seimbang dengan Tanda Tangan) */}
+                {/* Sisi Kanan: Barcode / QR Code Besar Gagah (Resolusi Tinggi 135px, Seimbang Sempurna dengan Tanda Tangan) */}
                 <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center" }}>
                   <img 
-                    src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https://sikap.pesantren-alimam.com/verify/${santriId}`}
+                    src={`https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=https://sikap.pesantren-alimam.com/verify/${santriId}`}
                     alt="QR Code Verifikasi"
-                    style={{ width: "120px", height: "120px", border: "1.5px solid #1a1a1a", padding: "4px", backgroundColor: "transparent" }}
+                    style={{ width: "135px", height: "135px", border: "1.5px solid #1a1a1a", padding: "4px", backgroundColor: "transparent" }}
                   />
-                  <p style={{ fontSize: "9px", color: "#666", margin: "6px 0 0 0", textAlign: "center" }}>Scan Verifikasi Dokumen</p>
+                  <p style={{ fontSize: "9.5px", color: "#666", margin: "6px 0 0 0", textAlign: "center" }}>Scan Verifikasi Dokumen</p>
                 </div>
               </div>
 
