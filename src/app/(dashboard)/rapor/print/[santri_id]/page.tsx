@@ -296,8 +296,7 @@ export default function CetakRaporPage() {
               padding: 0 !important;
               max-width: 100% !important;
               width: 100% !important;
-              height: ${paperSize === "F4" ? "305mm" : "272mm"} !important;
-              min-height: ${paperSize === "F4" ? "305mm" : "272mm"} !important;
+              min-height: ${paperSize === "F4" ? "292mm" : "262mm"} !important;
               box-sizing: border-box !important;
               border-radius: 0 !important;
               margin: 0 !important;
@@ -307,7 +306,9 @@ export default function CetakRaporPage() {
               flex-direction: column !important;
               justify-content: space-between !important;
               position: relative !important;
-              overflow: hidden !important;
+              overflow: visible !important;
+              page-break-inside: avoid !important;
+              break-inside: avoid !important;
             }
             
             .rapor-table {
@@ -460,7 +461,7 @@ export default function CetakRaporPage() {
           display: "flex", 
           flexDirection: "column", 
           justifyContent: "space-between", 
-          minHeight: paperSize === "F4" ? "305mm" : "272mm",
+          minHeight: paperSize === "F4" ? "292mm" : "262mm",
           height: "100%"
         }}>
           <div>
@@ -645,9 +646,9 @@ export default function CetakRaporPage() {
           </div>
 
           {/* Catatan Kaki Halaman 1 */}
-          <div style={{ marginTop: "auto", paddingTop: "12px", display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: "10.5px", color: "#666", fontStyle: "italic", gap: "16px" }}>
-            <p style={{ margin: 0, flex: 1 }}>* Nilai di atas merupakan Hasil Evaluasi Belajar Penilaian Tengah Semester (PTS) Murni.</p>
-            <p style={{ margin: 0, fontWeight: "bold", whiteSpace: "nowrap", flexShrink: 0 }}>Halaman 1 dari 2 ({paperSize})</p>
+          <div style={{ marginTop: "auto", paddingTop: paperSize === "F4" ? "12px" : "8px", display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: "10.5px", color: "#111111", fontStyle: "italic", gap: "16px" }}>
+            <p style={{ margin: 0, flex: 1, color: "#111111" }}>* Nilai di atas merupakan Hasil Evaluasi Belajar Penilaian Tengah Semester (PTS) Murni.</p>
+            <p style={{ margin: 0, fontWeight: "bold", whiteSpace: "nowrap", flexShrink: 0, color: "#111111" }}>Halaman 1 dari 2</p>
           </div>
 
         </div>
@@ -678,7 +679,7 @@ export default function CetakRaporPage() {
           display: "flex", 
           flexDirection: "column", 
           justifyContent: "space-between", 
-          minHeight: paperSize === "F4" ? "305mm" : "272mm",
+          minHeight: paperSize === "F4" ? "292mm" : "262mm",
           height: "100%"
         }}>
           <div>
@@ -957,9 +958,9 @@ export default function CetakRaporPage() {
           </div>
 
           {/* Catatan Kaki Halaman 2 (Simetris dengan Halaman 1, 1 Baris Rapi & Elegan) */}
-          <div style={{ marginTop: "auto", paddingTop: "12px", display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: "10.5px", color: "#666", fontStyle: "italic", gap: "16px" }}>
-            <p style={{ margin: 0, flex: 1 }}>* Dokumen rapor ini sah dan diterbitkan secara resmi oleh Pesantren Al-Imam Al-Islami (Managed by Al-Andalus IIBS).</p>
-            <p style={{ margin: 0, fontWeight: "bold", whiteSpace: "nowrap", flexShrink: 0 }}>Halaman 2 dari 2 ({paperSize})</p>
+          <div style={{ marginTop: "auto", paddingTop: paperSize === "F4" ? "12px" : "8px", display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: "10.5px", color: "#111111", fontStyle: "italic", gap: "16px" }}>
+            <p style={{ margin: 0, flex: 1, color: "#111111" }}>* Dokumen rapor ini sah dan diterbitkan secara resmi oleh Pesantren Al-Imam Al-Islami (Managed by Al-Andalus IIBS).</p>
+            <p style={{ margin: 0, fontWeight: "bold", whiteSpace: "nowrap", flexShrink: 0, color: "#111111" }}>Halaman 2 dari 2</p>
           </div>
 
         </div>
