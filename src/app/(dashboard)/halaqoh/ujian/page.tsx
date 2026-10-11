@@ -424,6 +424,28 @@ export default function UjianTahfidzPage() {
             Penilaian Ujian Pekanan, Bulanan, Target, &amp; Ujian Itqon (Bonus +10)
           </p>
         </div>
+
+        <div style={{ position: "relative", zIndex: 1, display: "flex", gap: 10, flexWrap: "wrap", alignItems: "center" }}>
+          <Link
+            href="/halaqoh/monitoring"
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 8,
+              background: "#22c55e",
+              color: "white",
+              padding: "10px 18px",
+              borderRadius: 14,
+              fontSize: 13,
+              fontWeight: 800,
+              textDecoration: "none",
+              boxShadow: "0 4px 14px rgba(34,197,94,0.35)",
+              whiteSpace: "nowrap"
+            }}
+          >
+            <Target size={16} /> Pantau Monitoring Nilai
+          </Link>
+        </div>
       </div>
 
       {/* ── MAIN FORM CARD ── */}

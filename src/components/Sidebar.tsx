@@ -18,7 +18,8 @@ import {
   Database,
   CreditCard,
   HeartHandshake,
-  BookHeart
+  BookHeart,
+  Award
 } from "lucide-react";
 import { useState } from "react";
 
@@ -79,6 +80,19 @@ const NAV: NavItem[] = [
       "musyrif", "MUSYRIF",
       "guru", "GURU",
       "wali_kelas", "WALI_KELAS",
+      "kadiv_pengasuhan", "KADIV_PENGASUHAN",
+      "kadiv_asrama", "KADIV_ASRAMA",
+      "kadiv_kurikulum", "KADIV_KURIKULUM",
+      "admin_super", "ADMIN_SUPER",
+      "mudir", "MUDIR",
+    ] },
+  {
+    href: "/halaqoh/monitoring",
+    label: "Pantau Ujian Tahfidz",
+    icon: <Award size={18} />,
+    roles: [
+      "pengampu", "PENGAMPU",
+      "musyrif", "MUSYRIF",
       "kadiv_pengasuhan", "KADIV_PENGASUHAN",
       "kadiv_asrama", "KADIV_ASRAMA",
       "kadiv_kurikulum", "KADIV_KURIKULUM",
