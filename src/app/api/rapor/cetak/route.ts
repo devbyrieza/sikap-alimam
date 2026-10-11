@@ -1,13 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { getStandardMapelName } from "@/lib/mapel";
 
 export const dynamic = 'force-dynamic';
 
 export async function GET(req: NextRequest) {
   const searchParams = req.nextUrl.searchParams;
   const santri_id = searchParams.get("santri_id");
-  const semester = searchParams.get("semester") || "1";
-  const tahun_ajaran = searchParams.get("tahun_ajaran") || "2025/2026";
+  const rawSemester = searchParams.get("semester") || "Ganjil";
+  const tahun_ajaran = searchParams.get("tahun_ajaran") || "2026/2027";
 
   if (!santri_id) {
     return NextResponse.json({ error: "santri_id is required" }, { status: 400 });
@@ -25,6 +26,12 @@ export async function GET(req: NextRequest) {
     }
 
     const kelas_id = santri.kelas_id;
+    const isMA = santri.kelas && (
+      santri.kelas.jenjang === "MA" || 
+      santri.kelas.nama.toUpperCase().includes("MA") || 
+      santri.kelas.nama.startsWith("11") || 
+      santri.kelas.nama.startsWith("12")
+    );
 
     // 2. Get All Santri in the same Class (for Ranking)
     const temanSekelas = await prisma.santriAktif.findMany({
@@ -33,76 +40,122 @@ export async function GET(req: NextRequest) {
     });
     const jumlahSantri = temanSekelas.length;
 
-    // 3. Get All Grades for the Class (PTS Murni)
-    const allNilaiRaw = await prisma.nilaiSantri.findMany({
-        where: {
-          santri: { kelas_id: kelas_id },
-          semester,
-          tahun_ajaran
-        },
-        include: { mapel: true }
-      });
+    // Normalisasi filter semester: mendukung "Ganjil" / "1" atau "Genap" / "2"
+    const isGanjil = rawSemester === "1" || rawSemester.toLowerCase() === "ganjil";
+    const semesterVariants = isGanjil ? ["Ganjil", "1"] : ["Genap", "2"];
 
-      // Aggregate / Deduplicate grades per student per mapel
-      const deduplicatedNilai = new Map<string, any>();
-      allNilaiRaw.forEach(n => {
-        const key = `${n.santri_id}_${n.mapel_id}`;
-        if (!deduplicatedNilai.has(key)) {
-          deduplicatedNilai.set(key, { ...n, sum: n.nilai, count: 1 });
-        } else {
-          const existing = deduplicatedNilai.get(key);
-          existing.sum += n.nilai;
-          existing.count += 1;
-          existing.nilai = Math.round(existing.sum / existing.count);
+    // 3. Get All Grades for the Class
+    const allNilaiRaw = await prisma.nilaiSantri.findMany({
+      where: {
+        santri: { kelas_id: kelas_id },
+        semester: { in: semesterVariants },
+        tahun_ajaran
+      },
+      include: { mapel: true }
+    });
+
+    // Helper: Hitung Nilai Murni PTS per santri per mapel (100% selaras dengan Rekap Nilai)
+    const getStudentScore = (sId: string, targetStandardName: string): number | null => {
+      const vals = allNilaiRaw.filter(
+        n => n.santri_id === sId && getStandardMapelName(n.mapel.nama, isMA) === targetStandardName
+      );
+      if (vals.length === 0) return null;
+
+      const getVal = (jenis: string) => {
+        const entry = vals.find(v => v.jenis === jenis);
+        return entry ? Number(entry.nilai) : 0;
+      };
+
+      const hasPeriode = (suffix: string, ujianKey: string) => {
+        return vals.some(
+          v => v.jenis === `harian${suffix}` || 
+               v.jenis === `kompetensi${suffix}` || 
+               v.jenis === `sikap${suffix}` || 
+               v.jenis === ujianKey
+        );
+      };
+
+      // MURNI PTS / PAS MODE
+      if (hasPeriode("_pas", "pas")) {
+        return Math.round(getVal("pas") * 10) / 10;
+      } else if (hasPeriode("_pts", "pts")) {
+        return Math.round(getVal("pts") * 10) / 10;
+      }
+
+      if (vals.some(v => v.jenis === "ujian")) {
+        return Math.round(getVal("ujian") * 10) / 10;
+      }
+
+      return Math.round(Number(vals[0].nilai) * 10) / 10;
+    };
+
+    // Ambil daftar mapel standar yang ada di kelas ini
+    const mapelStandardMap = new Map<string, { standardName: string; rawNama: string; nama_arab?: string | null; kategori: string }>();
+    allNilaiRaw.forEach(n => {
+      const std = getStandardMapelName(n.mapel.nama, isMA);
+      if (!mapelStandardMap.has(std)) {
+        mapelStandardMap.set(std, {
+          standardName: std,
+          rawNama: n.mapel.nama,
+          nama_arab: n.mapel.nama_arab,
+          kategori: n.mapel.kategori || "syariah"
+        });
+      }
+    });
+    const classStandardMapels = Array.from(mapelStandardMap.values());
+
+    // 4. Hitung Total dan Ranking untuk Setiap Santri di Kelas
+    const santriTotals = temanSekelas.map(s => {
+      let total = 0;
+      let count = 0;
+      classStandardMapels.forEach(m => {
+        const val = getStudentScore(s.id, m.standardName);
+        if (val !== null) {
+          total += val;
+          count++;
         }
       });
-      const allNilai = Array.from(deduplicatedNilai.values());
-
-      // 4. Calculate Class Averages per Mapel
-    const mapelAverages = new Map<string, { total: number; count: number }>();
-    allNilai.forEach(n => {
-      if (!mapelAverages.has(n.mapel_id)) {
-        mapelAverages.set(n.mapel_id, { total: 0, count: 0 });
-      }
-      const m = mapelAverages.get(n.mapel_id)!;
-      m.total += n.nilai;
-      m.count++;
+      const average = count > 0 ? Math.round((total / count) * 10) / 10 : 0;
+      return { id: s.id, total: Math.round(total * 10) / 10, average };
     });
 
-    // 5. Calculate Total Scores for Ranking
-    const santriTotals = new Map<string, number>();
-    temanSekelas.forEach(t => santriTotals.set(t.id, 0));
-    allNilai.forEach(n => {
-      if (santriTotals.has(n.santri_id)) {
-        santriTotals.set(n.santri_id, santriTotals.get(n.santri_id)! + n.nilai);
-      }
-    });
-
-    // Sort to find rank
-    const sortedTotals = Array.from(santriTotals.entries()).sort((a, b) => b[1] - a[1]);
+    // Sort descending by total
+    const sortedTotals = [...santriTotals].sort((a, b) => b.total - a.total);
     let prevTotal = -1;
     let prevRank = 1;
     const rankMap = new Map<string, number>();
-    
+
     sortedTotals.forEach((st, index) => {
-      if (prevTotal === st[1]) {
-        rankMap.set(st[0], prevRank);
+      if (prevTotal === st.total) {
+        rankMap.set(st.id, prevRank);
       } else {
-        rankMap.set(st[0], index + 1);
+        rankMap.set(st.id, index + 1);
         prevRank = index + 1;
-        prevTotal = st[1];
+        prevTotal = st.total;
       }
     });
 
-    const studentTotalNilai = santriTotals.get(santri_id) || 0;
+    const currentSantriData = santriTotals.find(s => s.id === santri_id);
+    const studentTotalNilai = currentSantriData?.total || 0;
+    const rataRataTotal = currentSantriData?.average || 0;
     const studentRank = rankMap.get(santri_id) || 1;
-    
-    // Extract mapels for the current student
-    const studentNilai = allNilai.filter(n => n.santri_id === santri_id);
-    const mapelCount = studentNilai.length;
-    const rataRataTotal = mapelCount > 0 ? (studentTotalNilai / mapelCount) : 0;
 
-        // Auto-translate dictionary fallback
+    // 5. Hitung Rata-Rata Kelas per Mapel
+    const mapelAverages = new Map<string, number>();
+    classStandardMapels.forEach(m => {
+      let sum = 0;
+      let count = 0;
+      temanSekelas.forEach(s => {
+        const v = getStudentScore(s.id, m.standardName);
+        if (v !== null) {
+          sum += v;
+          count++;
+        }
+      });
+      mapelAverages.set(m.standardName, count > 0 ? Math.round((sum / count) * 10) / 10 : 0);
+    });
+
+    // Auto-translate dictionary fallback
     const translateArab = (nama: string) => {
       const dict: Record<string, string> = {
         "Ushul Fikih": "أصول الفقه",
@@ -130,6 +183,7 @@ export async function GET(req: NextRequest) {
         "B. Arab": "اللغة العربية",
         "Kitabah": "الكتابة",
         "Nahwu": "النحو",
+        "Shorof": "الصرف",
         "Shorf": "الصرف",
         "Sharaf": "الصرف",
         "Tafsir": "التفسير",
@@ -147,7 +201,7 @@ export async function GET(req: NextRequest) {
         "IPA": "العلوم",
         "IPS Terpadu": "العلوم الاجتماعية",
         "IPS": "العلوم الاجتماعية",
-        "Bahasa Indonesia": "اللغة الإندونيسية",
+        "Bahasa Indonesia": "اللغة الإندونisية",
         "B. Indonesia": "اللغة الإندونيسية",
         "Bahasa Inggris": "اللغة الإنجليزية",
         "B. Inggris": "اللغة الإنجليزية",
@@ -170,7 +224,6 @@ export async function GET(req: NextRequest) {
         "Tadribat Alal Anmath": "تدريبات على الأنماط"
       };
       
-      // Sort keys by descending length so "Ushul Fiqh" matches before "Fiqh", etc.
       const keys = Object.keys(dict).sort((a, b) => b.length - a.length);
       for (const key of keys) {
         if (nama.toLowerCase().includes(key.toLowerCase())) {
@@ -180,22 +233,33 @@ export async function GET(req: NextRequest) {
       return nama;
     };
 
-    // Build the lists per category
-    const formatMapel = (kategori: string) => {
-      return studentNilai
-        .filter(n => (n.mapel.kategori || "umum") === kategori)
-        .sort((a, b) => a.mapel.nama.localeCompare(b.mapel.nama))
-        .map(n => {
-           const classAvgStats = mapelAverages.get(n.mapel_id);
-           const classAvg = classAvgStats && classAvgStats.count > 0 ? (classAvgStats.total / classAvgStats.count) : 0;
-           return {
-             nama: n.mapel.nama.replace(/^\[.*?\]\s*/, ""),
-             nama_arab: n.mapel.nama_arab || translateArab(n.mapel.nama),
-             kkm: 75, // Default KKM
-             nilai: n.nilai,
-             rata_rata_kelas: Math.round(classAvg)
-           };
-        });
+    // Helper kategori mapel resmi
+    const getKategoriMapel = (namaStd: string, rawKat?: string): "syariah" | "bahasa" | "umum" => {
+      const low = namaStd.toLowerCase();
+      if (["akidah", "hadis", "fikih", "ushul fikih", "sirah", "tahsin", "tahfidz", "adab", "akhlak", "tauhid", "tafsir", "tajwid", "mahfudzot"].some(k => low.includes(k))) return "syariah";
+      if (["bahasa arab", "nahwu", "shorof", "kitabah", "muthola", "imla", "khot", "insya", "muhadatsah"].some(k => low.includes(k))) return "bahasa";
+      if (["matematika", "ipa", "ips", "bahasa indonesia", "bahasa inggris", "ppkn", "pkn", "tik", "informatika", "entrepreneurship"].some(k => low.includes(k))) return "umum";
+      if (rawKat === "syariah" || rawKat === "bahasa" || rawKat === "umum") return rawKat;
+      return "syariah";
+    };
+
+    // Susun daftar mapel per kategori untuk santri ini
+    const formatMapel = (kategoriTarget: string) => {
+      return classStandardMapels
+        .filter(m => getKategoriMapel(m.standardName, m.kategori) === kategoriTarget)
+        .map(m => {
+          const val = getStudentScore(santri_id, m.standardName);
+          if (val === null) return null;
+          return {
+            nama: m.standardName,
+            nama_arab: m.nama_arab || translateArab(m.standardName),
+            kkm: 75,
+            nilai: Math.round(val),
+            rata_rata_kelas: Math.round(mapelAverages.get(m.standardName) || 0)
+          };
+        })
+        .filter(Boolean)
+        .sort((a: any, b: any) => a.nama.localeCompare(b.nama));
     };
 
     const syariah = formatMapel("syariah");
@@ -245,7 +309,7 @@ export async function GET(req: NextRequest) {
       take: 20
     });
 
-    // Filter unik berdasarkan jenis_ujian + juz + surah (Ambil yang paling terbaru saja)
+    // Filter unik berdasarkan jenis_ujian + juz + surah
     const seenUjian = new Set();
     const ujian_tahfidz = [];
     for (const u of raw_ujian_tahfidz) {
@@ -254,7 +318,7 @@ export async function GET(req: NextRequest) {
         seenUjian.add(key);
         ujian_tahfidz.push(u);
       }
-      if (ujian_tahfidz.length >= 5) break; // maksimal 5 baris di rapor
+      if (ujian_tahfidz.length >= 5) break;
     }
 
     return NextResponse.json({
@@ -262,7 +326,7 @@ export async function GET(req: NextRequest) {
         nama: santri.nama_lengkap,
         nis: santri.nis,
         kelas: santri.kelas.nama,
-        semester,
+        semester: isGanjil ? "Ganjil" : "Genap",
         tahun_ajaran
       },
       nilai_akademik: {
@@ -272,7 +336,7 @@ export async function GET(req: NextRequest) {
       },
       kedisiplinan: {
         totalNilai: Math.round(studentTotalNilai),
-        rataRata: Math.round(rataRataTotal),
+        rataRata: Math.round(rataRataTotal * 10) / 10,
         ranking: studentRank,
         jumlahSantri
       },
@@ -282,8 +346,8 @@ export async function GET(req: NextRequest) {
       kepribadian
     });
 
-  } catch (error) {
-    console.error("Error cetak rapor:", error);
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+  } catch (error: any) {
+    console.error("Error generating cetak rapor:", error);
+    return NextResponse.json({ error: error.message || "Internal server error" }, { status: 500 });
   }
 }

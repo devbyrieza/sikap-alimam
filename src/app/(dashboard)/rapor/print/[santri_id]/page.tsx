@@ -8,7 +8,7 @@ export default function CetakRaporPage() {
   const params = useParams();
   const searchParams = useSearchParams();
   const santriId = params.santri_id as string;
-  const semester = searchParams.get("semester") || "1";
+  const semester = searchParams.get("semester") || "Ganjil";
   const tahun_ajaran = searchParams.get("tahun_ajaran") || "2026/2027";
   
   const [data, setData] = useState<any>(null);
