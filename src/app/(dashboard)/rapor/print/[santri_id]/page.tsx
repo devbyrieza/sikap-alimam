@@ -304,14 +304,19 @@ export default function CetakRaporPage() {
               <table style={{ width: "100%" }}>
                 <tbody>
                   <tr style={{ borderBottom: "none" }}>
-                    <td style={{ width: 85, padding: "3.5px 0", borderBottom: "none" }}>Nama</td>
-                    <td style={{ padding: "3.5px 6px", borderBottom: "none" }}>:</td>
-                    <td style={{ textTransform: "uppercase", padding: "3.5px 0", borderBottom: "none" }}>{santri?.nama}</td>
+                    <td style={{ width: 85, padding: "3px 0", borderBottom: "none" }}>Nama</td>
+                    <td style={{ padding: "3px 6px", borderBottom: "none" }}>:</td>
+                    <td style={{ textTransform: "uppercase", padding: "3px 0", borderBottom: "none" }}>{santri?.nama}</td>
                   </tr>
                   <tr style={{ borderBottom: "none" }}>
-                    <td style={{ width: 85, padding: "3.5px 0", borderBottom: "none" }}>Kelas</td>
-                    <td style={{ padding: "3.5px 6px", borderBottom: "none" }}>:</td>
-                    <td style={{ padding: "3.5px 0", borderBottom: "none" }}>{(santri?.kelas || "").replace(/\s*(MTs|MA|SMP|SMA|SD|TK)\b/gi, "")}</td>
+                    <td style={{ width: 85, padding: "3px 0", borderBottom: "none" }}>NIS</td>
+                    <td style={{ padding: "3px 6px", borderBottom: "none" }}>:</td>
+                    <td style={{ padding: "3px 0", borderBottom: "none", letterSpacing: "0.5px" }}>{santri?.nis || "-"}</td>
+                  </tr>
+                  <tr style={{ borderBottom: "none" }}>
+                    <td style={{ width: 85, padding: "3px 0", borderBottom: "none" }}>Kelas</td>
+                    <td style={{ padding: "3px 6px", borderBottom: "none" }}>:</td>
+                    <td style={{ padding: "3px 0", borderBottom: "none" }}>{(santri?.kelas || "").replace(/\s*(MTs|MA|SMP|SMA|SD|TK)\b/gi, "")}</td>
                   </tr>
                 </tbody>
               </table>
@@ -459,8 +464,8 @@ export default function CetakRaporPage() {
               <p style={{ margin: "2px 0 0 0", fontSize: "11.5px", color: "#555" }}>Laporan Kepribadian, Tahsin & Tahfidz, dan Pengesahan Rapor Santri</p>
             </div>
             <div style={{ textAlign: "right", fontSize: "12px", fontWeight: "bold" }}>
-              <p style={{ margin: 0 }}>Nama: <span style={{ textTransform: "uppercase" }}>{santri?.nama}</span> ({santri?.nis || "-"})</p>
-              <p style={{ margin: "2px 0 0 0", color: "#555" }}>Kelas: {(santri?.kelas || "").replace(/\s*(MTs|MA|SMP|SMA|SD|TK)\b/gi, "")} &nbsp;|&nbsp; Semester {santri?.semester?.includes("Ganjil") || santri?.semester === "1" ? "Ganjil" : santri?.semester} </p>
+              <p style={{ margin: 0 }}>Nama: <span style={{ textTransform: "uppercase" }}>{santri?.nama}</span></p>
+              <p style={{ margin: "2px 0 0 0", color: "#555" }}>NIS: {santri?.nis || "-"} &nbsp;|&nbsp; Kelas: {(santri?.kelas || "").replace(/\s*(MTs|MA|SMP|SMA|SD|TK)\b/gi, "")} &nbsp;|&nbsp; Semester {santri?.semester?.includes("Ganjil") || santri?.semester === "1" ? "Ganjil" : santri?.semester}</p>
             </div>
           </div>
 
