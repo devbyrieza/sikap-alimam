@@ -676,52 +676,69 @@ export default function CetakRaporPage() {
           <div 
             style={{ 
               display: "grid", 
-              gridTemplateColumns: "3fr 1fr", 
+              gridTemplateColumns: "1fr 145px", 
+              gap: "18px",
               marginTop: "20px", 
               pageBreakInside: "avoid", 
               fontFamily: "Arial, Helvetica, sans-serif" 
             }}
           >
-                {/* Sisi Kiri: 3 Kolom Tanda Tangan Berjarak Lega & Proporsional (Tinggi 165px - Ruang TTD Ekstra Lega) */}
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", textAlign: "center", fontSize: "13px" }}>
-                  {/* Kolom 1: Orang Tua */}
-                  <div style={{ display: "flex", flexDirection: "column", justifyContent: "space-between", height: "165px", padding: "0 8px" }}>
-                    <div>
-                      <p style={{ margin: 0, opacity: 0 }}>Mengetahui</p>
-                      <p style={{ margin: "3px 0 0 0" }}>Orang Tua / Wali</p>
-                    </div>
-                    <div style={{ display: "flex", justifyContent: "space-between", width: "100%", fontWeight: "bold", margin: 0, fontSize: "13px" }}><span>(</span><span>)</span></div>
-                  </div>
-
-                  {/* Kolom 2: Kepala Madrasah */}
-                  <div style={{ display: "flex", flexDirection: "column", justifyContent: "space-between", height: "165px" }}>
-                    <div>
-                      <p style={{ margin: 0 }}>Mengetahui</p>
-                      <p style={{ margin: "3px 0 0 0" }}>{headTitle}</p>
-                    </div>
-                    <p style={{ fontWeight: "bold", margin: 0 }}>({headName})</p>
-                  </div>
-
-                  {/* Kolom 3: Wali Kelas */}
-                  <div style={{ display: "flex", flexDirection: "column", justifyContent: "space-between", height: "165px" }}>
-                    <div>
-                      <p style={{ margin: 0 }}>Sukabumi, 11 Oktober 2026</p>
-                      <p style={{ margin: "3px 0 0 0" }}>Wali Kelas</p>
-                    </div>
-                    <p style={{ fontWeight: "bold", margin: 0 }}>({waliKelasName})</p>
-                  </div>
+            {/* Sisi Kiri: 3 Kolom Tanda Tangan Berjarak Ekstra Lega (Tinggi 195px - Ruang TTD Bertambah Lega & Proporsional) */}
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", textAlign: "center", fontSize: "13px", gap: "10px" }}>
+              {/* Kolom 1: Orang Tua */}
+              <div style={{ display: "flex", flexDirection: "column", justifyContent: "space-between", height: "195px", padding: "0 4px" }}>
+                <div>
+                  <p style={{ margin: 0, opacity: 0 }}>Mengetahui</p>
+                  <p style={{ margin: "3px 0 0 0" }}>Orang Tua / Wali</p>
                 </div>
-
-                {/* Sisi Kanan: Barcode / QR Code Besar Gagah (Resolusi Tinggi 135px, Seimbang Sempurna dengan Tanda Tangan) */}
-                <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center" }}>
-                  <img 
-                    src={`https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=https://sikap.pesantren-alimam.com/verify/${santriId}`}
-                    alt="QR Code Verifikasi"
-                    style={{ width: "135px", height: "135px", border: "1.5px solid #1a1a1a", padding: "4px", backgroundColor: "transparent" }}
-                  />
-                  <p style={{ fontSize: "9.5px", color: "#666", margin: "6px 0 0 0", textAlign: "center" }}>Scan Verifikasi Dokumen</p>
+                <div style={{ minHeight: "44px", display: "flex", alignItems: "flex-end", justifyContent: "center" }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", width: "100%", fontWeight: "bold", margin: 0, fontSize: "13px" }}>
+                    <span>(</span><span>)</span>
+                  </div>
                 </div>
               </div>
+
+              {/* Kolom 2: Kepala Madrasah */}
+              <div style={{ display: "flex", flexDirection: "column", justifyContent: "space-between", height: "195px", padding: "0 2px" }}>
+                <div>
+                  <p style={{ margin: 0 }}>Mengetahui</p>
+                  <p style={{ margin: "3px 0 0 0" }}>{headTitle}</p>
+                </div>
+                <div style={{ minHeight: "44px", display: "flex", alignItems: "flex-end", justifyContent: "center" }}>
+                  <p style={{ fontWeight: "bold", margin: 0, fontSize: "12.5px", lineHeight: "1.35" }}>
+                    ({headName})
+                  </p>
+                </div>
+              </div>
+
+              {/* Kolom 3: Wali Kelas */}
+              <div style={{ display: "flex", flexDirection: "column", justifyContent: "space-between", height: "195px", padding: "0 2px" }}>
+                <div>
+                  <p style={{ margin: 0 }}>Sukabumi, 11 Oktober 2026</p>
+                  <p style={{ margin: "3px 0 0 0" }}>Wali Kelas</p>
+                </div>
+                <div style={{ minHeight: "44px", display: "flex", alignItems: "flex-end", justifyContent: "center" }}>
+                  <p style={{ fontWeight: "bold", margin: 0, fontSize: "12.5px", lineHeight: "1.35" }}>
+                    ({waliKelasName})
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Sisi Kanan: Barcode / QR Code Besar Gagah (Seimbang Sempurna dan Sejajar dengan Seluruh Kolom Tanda Tangan) */}
+            <div style={{ display: "flex", flexDirection: "column", justifyContent: "space-between", alignItems: "center", height: "195px" }}>
+              <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", flex: 1 }}>
+                <img 
+                  src={`https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=https://sikap.pesantren-alimam.com/verify/${santriId}`}
+                  alt="QR Code Verifikasi"
+                  style={{ width: "135px", height: "135px", border: "1.5px solid #1a1a1a", padding: "4px", backgroundColor: "transparent" }}
+                />
+              </div>
+              <div style={{ minHeight: "44px", display: "flex", alignItems: "flex-end", justifyContent: "center" }}>
+                <p style={{ fontSize: "9.5px", color: "#666", margin: 0, textAlign: "center", lineHeight: "1.3" }}>Scan Verifikasi Dokumen</p>
+              </div>
+            </div>
+          </div>
 
           {/* Catatan Kaki Halaman 2 (Simetris dengan Halaman 1, 1 Baris Rapi & Elegan) */}
           <div style={{ marginTop: "20px", display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: "10.5px", color: "#666", fontStyle: "italic", gap: "16px" }}>
