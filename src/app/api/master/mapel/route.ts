@@ -32,8 +32,56 @@ export async function GET(req: NextRequest) {
       orderBy: {
         nama: "asc" } });
 
+    // Auto-heal MA mapels: Kelas 11 MA & 12 MA WAJIB memiliki "Ushul Fiqh", BUKAN "Fiqh"
+    const healedMapel = await Promise.all(
+      rawMapel.map(async (m) => {
+        const isMA = m.kelas && (
+          m.kelas.jenjang === "MA" || 
+          m.kelas.nama.toUpperCase().includes("MA") || 
+          m.kelas.nama.startsWith("11") || 
+          m.kelas.nama.startsWith("12")
+        );
+        if (isMA && (m.nama.toLowerCase() === "fiqh" || m.nama.toLowerCase() === "fiqih" || m.nama.toLowerCase() === "ushul fiqih")) {
+          // Check if Ushul Fiqh already exists for this class
+          const existsUshul = rawMapel.find(other => 
+            other.kelas_id === m.kelas_id && 
+            other.id !== m.id && 
+            other.nama.toLowerCase() === "ushul fiqh"
+          );
+          if (!existsUshul) {
+            try {
+              await prisma.mataPelajaran.update({
+                where: { id: m.id },
+                data: { nama: "Ushul Fiqh", nama_arab: "أصول الفقه", kategori: "syariah" }
+              });
+              m.nama = "Ushul Fiqh";
+              m.nama_arab = "أصول الفقه";
+              m.kategori = "syariah";
+            } catch (e) {
+              console.error("Auto-heal mapel rename error:", e);
+            }
+          }
+        }
+        return m;
+      })
+    );
+
+    // Filter out any redundant "Fiqh" in MA if Ushul Fiqh is already present
+    const cleanedMapel = healedMapel.filter(m => {
+      const isMA = m.kelas && (
+        m.kelas.jenjang === "MA" || 
+        m.kelas.nama.toUpperCase().includes("MA") || 
+        m.kelas.nama.startsWith("11") || 
+        m.kelas.nama.startsWith("12")
+      );
+      if (isMA && (m.nama.toLowerCase() === "fiqh" || m.nama.toLowerCase() === "fiqih")) {
+        return false;
+      }
+      return true;
+    });
+
     // Urutkan mapel berdasarkan urutan logis kelasnya
-    const sortedMapel = [...rawMapel].sort((a, b) => {
+    const sortedMapel = [...cleanedMapel].sort((a, b) => {
       if (!a.kelas || !b.kelas) return 0;
       if (a.kelas.id === b.kelas.id) {
         return a.nama.localeCompare(b.nama, "id");

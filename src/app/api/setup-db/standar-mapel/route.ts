@@ -15,7 +15,10 @@ export async function GET() {
       let newKategori = m.kategori || "umum";
 
       // 1. SYARI'AH
-      if (nama.includes("akidah") || nama.includes("aqidah")) { newNama = "Akidah"; newKategori = "syariah"; }
+      if (nama.includes("ushul")) { newNama = "Ushul Fiqh"; newKategori = "syariah"; }
+      else if (nama.includes("tauhid")) { newNama = "Tauhid"; newKategori = "syariah"; }
+      else if (nama.includes("adab")) { newNama = "Adab"; newKategori = "syariah"; }
+      else if (nama.includes("akidah") || nama.includes("aqidah")) { newNama = "Akidah"; newKategori = "syariah"; }
       else if (nama.includes("fiqh") || nama.includes("fiqih")) { newNama = "Fiqh"; newKategori = "syariah"; }
       else if (nama.includes("hadis") || nama.includes("hadits")) { newNama = "Hadits"; newKategori = "syariah"; }
       else if (nama.includes("tafsir")) { newNama = "Tafsir"; newKategori = "syariah"; }

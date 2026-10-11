@@ -100,24 +100,24 @@ export const MAPEL_PER_KELAS: Record<string, { kategori: string; items: string[]
   "11 MA": [
     {
       kategori: "Syariah & Diniyah",
-      items: ["Tafsir", "Hadis", "Ushul Fiqh", "Fiqh", "Akidah", "Tahsin Al-Quran", "Tahfidz Al-Quran"] },
+      items: ["Tafsir", "Hadis", "Ushul Fiqh", "Tauhid", "Akidah", "Adab", "Siroh", "Tahsin Al-Quran", "Tahfidz Al-Quran"] },
     {
       kategori: "Bahasa & Lughoh",
-      items: ["Bahasa Arab", "Nahwu", "Shorf", "Balaghah"] },
+      items: ["Bahasa Arab", "B. Arab", "Nahwu", "Shorf", "Balaghah"] },
     {
       kategori: "Umum & Keterampilan",
-      items: ["Bahasa Indonesia", "Bahasa Inggris", "Matematika", "Entrepreneurship"] },
+      items: ["Bahasa Indonesia", "B. Indonesia", "Bahasa Inggris", "B. Inggris", "Matematika", "MTK", "Entrepreneurship"] },
   ],
   "12 MA": [
     {
       kategori: "Syariah & Diniyah",
-      items: ["Tafsir", "Hadis", "Ushul Fiqh", "Fiqh", "Akidah", "Tahsin Al-Quran", "Tahfidz Al-Quran"] },
+      items: ["Tafsir", "Hadis", "Ushul Fiqh", "Tauhid", "Akidah", "Adab", "Siroh", "Tahsin Al-Quran", "Tahfidz Al-Quran"] },
     {
       kategori: "Bahasa & Lughoh",
-      items: ["Bahasa Arab", "Nahwu", "Shorf", "Balaghah"] },
+      items: ["Bahasa Arab", "B. Arab", "Nahwu", "Shorf", "Balaghah"] },
     {
       kategori: "Umum & Keterampilan",
-      items: ["Bahasa Indonesia", "Bahasa Inggris", "Matematika", "Entrepreneurship"] },
+      items: ["Bahasa Indonesia", "B. Indonesia", "Bahasa Inggris", "B. Inggris", "Matematika", "MTK", "Entrepreneurship"] },
   ] };
 
 const JENJANG_DEFINITIONS = [

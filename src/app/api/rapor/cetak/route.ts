@@ -105,18 +105,25 @@ export async function GET(req: NextRequest) {
         // Auto-translate dictionary fallback
     const translateArab = (nama: string) => {
       const dict: Record<string, string> = {
+        "Ushul Fiqh": "أصول الفقه",
+        "Ushul Fiqih": "أصول الفقه",
         "Akidah": "العقيدة",
+        "Tauhid": "التوحيد",
+        "Adab": "الأدب",
         "Fiqh": "الفقه",
         "Hadits": "الحديث",
+        "Hadis": "الحديث",
         "Siroh": "السيرة",
         "Tahsin": "التحسين",
+        "Tahfidz Al-Qur'an": "تحفيظ القرآن",
+        "Tahfidz": "التحفيظ",
         "Bahasa Arab": "اللغة العربية",
+        "B. Arab": "اللغة العربية",
         "Kitabah": "الكتابة",
         "Nahwu": "النحو",
         "Shorf": "الصرف",
         "Tafsir": "التفسير",
         "Tajwid": "التجويد",
-        "Ushul Fiqh": "أصول الفقه",
         "Mustholah Hadits": "مصطلح الحديث",
         "Khot": "الخط",
         "Imla": "الإملاء",
@@ -124,10 +131,13 @@ export async function GET(req: NextRequest) {
         "Mutholaah": "المطالعة",
         "Mahfudzot": "المحفوظات",
         "Matematika": "الرياضيات",
+        "MTK": "الرياضيات",
         "IPA": "العلوم",
         "IPS": "العلوم الاجتماعية",
         "Bahasa Indonesia": "اللغة الإندونيسية",
+        "B. Indonesia": "اللغة الإندونيسية",
         "Bahasa Inggris": "اللغة الإنجليزية",
+        "B. Inggris": "اللغة الإنجليزية",
         "PKn": "التربية الوطنية",
         "PJOK": "التربية البدنية",
         "Prakarya": "الحرف اليدوية",
@@ -143,7 +153,9 @@ export async function GET(req: NextRequest) {
         "Tadribat Alal Anmath": "تدريبات على الأنماط"
       };
       
-      for (const key in dict) {
+      // Sort keys by descending length so "Ushul Fiqh" matches before "Fiqh", etc.
+      const keys = Object.keys(dict).sort((a, b) => b.length - a.length);
+      for (const key of keys) {
         if (nama.toLowerCase().includes(key.toLowerCase())) {
           return dict[key];
         }

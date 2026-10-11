@@ -18,7 +18,7 @@ export async function GET() {
       
       // 2. Standardize names based on user rules
       if (newName === "Siroh Nabi") newName = "Siroh";
-      if (newName === "Ushul Fiqh") newName = "Fiqh";
+      if (newName === "Ushul Fiqih") newName = "Ushul Fiqh";
       
       // Standardize Tahsin variations
       if (newName.toLowerCase().includes("tahsin") || newName.toLowerCase().includes("tahfiz")) {
