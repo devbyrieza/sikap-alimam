@@ -500,14 +500,13 @@ export default function CetakRaporPage() {
             {/* Judul Arab & Terjemahan */}
             <div className="text-center" style={{ marginBottom: paperSize === "F4" ? "14px" : "10px" }}>
               {(() => {
-                const kls = (santri?.kelas || "").toUpperCase();
                 let marhalah = "للمرحلة المتوسطة"; // Default MTs
                 let indoMarhalah = "TINGKAT MADRASAH TSANAWIYAH (MTs)";
                 
-                if (kls.includes("MA")) {
+                if (isMA) {
                   marhalah = "للمرحلة الثانوية";
                   indoMarhalah = "TINGKAT MADRASAH ALIYAH (MA)";
-                } else if (kls.includes("IL") || kls.includes("I'DAD") || kls.includes("IDAD")) {
+                } else if (isIL) {
                   marhalah = "لبرنامج الإعداد اللغوي";
                   indoMarhalah = "PROGRAM I'DAD LUGHOWI (IL)";
                 }
@@ -733,17 +732,33 @@ export default function CetakRaporPage() {
               <img src="/logo-andalus.png" alt="Logo Al-Andalus" style={{ width: paperSize === "F4" ? "74px" : "66px", height: paperSize === "F4" ? "74px" : "66px", objectFit: "contain" }} />
             </div>
 
-            {/* Judul Resmi Halaman 2 (Tengah, Rapi, Sejajar dengan Halaman 1) */}
+            {/* Judul Resmi Halaman 2 (Tengah, Rapi, Sejajar Sempurna dengan Halaman 1: 2 Baris Arab + 2 Baris Latin) */}
             <div className="text-center" style={{ marginBottom: paperSize === "F4" ? "14px" : "10px" }}>
-              <h2 className="text-xl font-bold arabic-text" dir="rtl" style={{ fontFamily: "'Traditional Arabic', serif", fontSize: paperSize === "F4" ? "20px" : "18px", margin: paperSize === "F4" ? "0 0 6px 0" : "0 0 5px 0", color: "#000000" }}>
-                تقرير السلوك والبرنامج القرآني
-              </h2>
-              <h3 style={{ fontSize: paperSize === "F4" ? "13px" : "12px", fontWeight: "bold", margin: "0 0 3px 0", textTransform: "uppercase", letterSpacing: "0.5px", color: "#000000", fontFamily: "Arial, Helvetica, sans-serif" }}>
-                LAPORAN HASIL EVALUASI BELAJAR TENGAH SEMESTER (PTS)
-              </h3>
-              <h4 style={{ fontSize: paperSize === "F4" ? "11.5px" : "10.5px", fontWeight: "bold", color: "#444444", margin: 0, textTransform: "uppercase", letterSpacing: "0.3px", fontFamily: "Arial, Helvetica, sans-serif" }}>
-                RAPOR BAYANGAN • KEPRIBADIAN, TAHSIN & TAHFIDZ AL-QUR'AN
-              </h4>
+              {(() => {
+                let marhalah = "للمرحلة المتوسطة"; // Default MTs
+                if (isMA) {
+                  marhalah = "للمرحلة الثانوية";
+                } else if (isIL) {
+                  marhalah = "لبرنامج الإعداد اللغوي";
+                }
+
+                return (
+                  <>
+                    <h1 className="text-2xl font-bold arabic-text" dir="rtl" style={{ fontFamily: "'Traditional Arabic', serif", fontSize: paperSize === "F4" ? "23px" : "20px", margin: "0 0 3px 0" }}>
+                      تقرير السلوك والبرنامج القرآني
+                    </h1>
+                    <h2 className="text-lg font-bold arabic-text" dir="rtl" style={{ fontFamily: "'Traditional Arabic', serif", fontSize: paperSize === "F4" ? "17px" : "15px", margin: paperSize === "F4" ? "0 0 8px 0" : "0 0 6px 0" }}>
+                      {marhalah} بمعهد الإمام الإسلامي
+                    </h2>
+                    <h3 className="font-bold text-slate-800 tracking-wider uppercase" style={{ fontFamily: "Arial, Helvetica, sans-serif", fontSize: paperSize === "F4" ? "13px" : "12px", margin: "0 0 3px 0" }}>
+                      LAPORAN HASIL EVALUASI BELAJAR TENGAH SEMESTER (PTS)
+                    </h3>
+                    <h4 className="font-bold text-slate-600 tracking-wide uppercase" style={{ fontFamily: "Arial, Helvetica, sans-serif", fontSize: paperSize === "F4" ? "11.5px" : "10.5px", margin: 0 }}>
+                      RAPOR BAYANGAN • KEPRIBADIAN, TAHSIN & TAHFIDZ AL-QUR'AN
+                    </h4>
+                  </>
+                );
+              })()}
             </div>
 
             {/* Identitas Santri Halaman 2 (1 Baris Penuh Bersih & Tanpa Terpotong) */}
