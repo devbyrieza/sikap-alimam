@@ -735,6 +735,9 @@ export default function CetakRaporPage() {
 
             {/* Judul Resmi Halaman 2 (Tengah, Rapi, Sejajar dengan Halaman 1) */}
             <div className="text-center" style={{ marginBottom: paperSize === "F4" ? "12px" : "9px" }}>
+              <h2 className="text-xl font-bold arabic-text" dir="rtl" style={{ fontFamily: "'Traditional Arabic', serif", fontSize: paperSize === "F4" ? "20px" : "18px", margin: "0 0 3px 0", color: "#000000" }}>
+                تقرير السلوك والبرنامج القرآني
+              </h2>
               <h3 style={{ fontSize: paperSize === "F4" ? "13px" : "12px", fontWeight: "bold", margin: "0 0 3px 0", textTransform: "uppercase", letterSpacing: "0.5px", color: "#000000", fontFamily: "Arial, Helvetica, sans-serif" }}>
                 LAPORAN HASIL EVALUASI BELAJAR TENGAH SEMESTER (PTS)
               </h3>
