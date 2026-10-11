@@ -540,11 +540,11 @@ export default function CetakRaporPage() {
                   <strong style={{ fontSize: "13px" }}>{absen?.sakit || 0}</strong> <span style={{ color: "#444" }}>Jam Pelajaran</span>
                 </td>
               </tr>
-              {/* Baris 2: Kedisiplinan & Ijin */}
+              {/* Baris 2: Kedisiplinan & Izin */}
               <tr style={{ backgroundColor: "rgba(0, 0, 0, 0.02)" }}>
                 <td style={{ borderBottom: "1px solid #1a1a1a", borderRight: "1px solid #1a1a1a", padding: "6px 12px" }}>Kedisiplinan</td>
                 <td style={{ borderBottom: "1px solid #1a1a1a", borderRight: "2.5px solid #1a1a1a", padding: "6px 10px", textAlign: "center", fontWeight: "bold", fontSize: "13px" }}>{disiplinGrade}</td>
-                <td style={{ borderBottom: "1px solid #1a1a1a", borderRight: "1px solid #1a1a1a", padding: "6px 12px", textAlign: "center" }}>Ijin</td>
+                <td style={{ borderBottom: "1px solid #1a1a1a", borderRight: "1px solid #1a1a1a", padding: "6px 12px", textAlign: "center" }}>Izin</td>
                 <td style={{ borderBottom: "1px solid #1a1a1a", padding: "6px 12px", textAlign: "center", fontSize: "12.5px" }}>
                   <strong style={{ fontSize: "13px" }}>{absen?.izin || 0}</strong> <span style={{ color: "#444" }}>Jam Pelajaran</span>
                 </td>
