@@ -127,6 +127,27 @@ export default function CetakRaporPage() {
     );
   };
 
+  const klsUpper = (santri?.kelas || "").toUpperCase();
+  const isMTs = klsUpper.includes("MTS");
+  const isMA = klsUpper.includes("MA");
+  const isIL = klsUpper.includes("IL");
+
+  let headTitle = "Kepala Madrasah";
+  let headName = "Aziz Basuki, S.H.I., M.Pd.";
+  let waliKelasName = "...........................";
+
+  if (isMTs) {
+    headName = "Ade Supyana, S.Pd.I.";
+    waliKelasName = "Agus Cahyono";
+  } else if (isMA) {
+    headName = "Rethna Kartika Septianiar, S.Pd.";
+    waliKelasName = "Muhammad Thoriq Ibn Ziyad, Lc., M.Ag.";
+  } else if (isIL) {
+    headTitle = "Kepala Kurikulum";
+    headName = "Imron Abdillah, S.Pd.";
+    waliKelasName = "Imron Abdillah, S.Pd.";
+  }
+
   return (
     <div 
       id="rapor-print-container" 
@@ -321,16 +342,21 @@ export default function CetakRaporPage() {
               <table style={{ display: "inline-block", textAlign: "left" }}>
                 <tbody>
                   <tr style={{ borderBottom: "none" }}>
-                    <td style={{ padding: "3.5px 0", whiteSpace: "nowrap", borderBottom: "none" }}>Semester</td>
-                    <td style={{ padding: "3.5px 6px", borderBottom: "none" }}>:</td>
-                    <td style={{ padding: "3.5px 0", borderBottom: "none" }}>
+                    <td style={{ padding: "3px 0", whiteSpace: "nowrap", borderBottom: "none" }}>Semester</td>
+                    <td style={{ padding: "3px 6px", borderBottom: "none" }}>:</td>
+                    <td style={{ padding: "3px 0", borderBottom: "none" }}>
                       {santri?.semester?.includes("Ganjil") || santri?.semester === "1" ? "Ganjil" : santri?.semester?.includes("Genap") || santri?.semester === "2" ? "Genap" : santri?.semester}
                     </td>
                   </tr>
                   <tr style={{ borderBottom: "none" }}>
-                    <td style={{ padding: "3.5px 0", whiteSpace: "nowrap", borderBottom: "none" }}>Tahun Pelajaran</td>
-                    <td style={{ padding: "3.5px 6px", borderBottom: "none" }}>:</td>
-                    <td style={{ padding: "3.5px 0", borderBottom: "none" }}>{santri?.tahun_ajaran}</td>
+                    <td style={{ padding: "3px 0", whiteSpace: "nowrap", borderBottom: "none" }}>Tahun Pelajaran</td>
+                    <td style={{ padding: "3px 6px", borderBottom: "none" }}>:</td>
+                    <td style={{ padding: "3px 0", borderBottom: "none" }}>{santri?.tahun_ajaran}</td>
+                  </tr>
+                  <tr style={{ borderBottom: "none" }}>
+                    <td style={{ padding: "3px 0", whiteSpace: "nowrap", borderBottom: "none" }}>Wali Kelas</td>
+                    <td style={{ padding: "3px 6px", borderBottom: "none" }}>:</td>
+                    <td style={{ padding: "3px 0", borderBottom: "none" }}>{waliKelasName}</td>
                   </tr>
                 </tbody>
               </table>
@@ -615,38 +641,15 @@ export default function CetakRaporPage() {
           </div>
 
           {/* 4. AREA TANDA TANGAN (3 Kolom) + QR CODE BESAR (Kanan) - LEGA & BERWIBAWA */}
-          {(() => {
-            const klsUpper = (santri?.kelas || "").toUpperCase();
-            const isMTs = klsUpper.includes("MTS");
-            const isMA = klsUpper.includes("MA");
-            const isIL = klsUpper.includes("IL");
-
-            let headTitle = "Kepala Madrasah";
-            let headName = "Aziz Basuki, S.H.I., M.Pd.";
-            let waliKelasName = "...........................";
-
-            if (isMTs) {
-              headName = "Ade Supyana, S.Pd.I.";
-              waliKelasName = "Agus Cahyono";
-            } else if (isMA) {
-              headName = "Rethna Kartika Septianiar, S.Pd.";
-              waliKelasName = "Muhammad Thoriq Ibn Ziyad, Lc., M.Ag.";
-            } else if (isIL) {
-              headTitle = "Kepala Kurikulum";
-              headName = "Imron Abdillah, S.Pd.";
-              waliKelasName = "Imron Abdillah, S.Pd.";
-            }
-
-            return (
-              <div 
-                style={{ 
-                  display: "grid", 
-                  gridTemplateColumns: "3fr 1fr", 
-                  marginTop: "20px", 
-                  pageBreakInside: "avoid", 
-                  fontFamily: "Arial, Helvetica, sans-serif" 
-                }}
-              >
+          <div 
+            style={{ 
+              display: "grid", 
+              gridTemplateColumns: "3fr 1fr", 
+              marginTop: "20px", 
+              pageBreakInside: "avoid", 
+              fontFamily: "Arial, Helvetica, sans-serif" 
+            }}
+          >
                 {/* Sisi Kiri: 3 Kolom Tanda Tangan Berjarak Lega (Tinggi 125px) */}
                 <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", textAlign: "center", fontSize: "13px" }}>
                   {/* Kolom 1: Orang Tua */}
@@ -687,8 +690,6 @@ export default function CetakRaporPage() {
                   <p style={{ fontSize: "9px", color: "#666", margin: "6px 0 0 0", textAlign: "center" }}>Scan Verifikasi Dokumen</p>
                 </div>
               </div>
-            );
-          })()}
 
           {/* Catatan Kaki Halaman 2 (Simetris dengan Halaman 1) */}
           <div style={{ marginTop: "18px", display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: "11px", color: "#666", fontStyle: "italic" }}>
