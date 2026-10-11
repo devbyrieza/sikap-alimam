@@ -523,7 +523,7 @@ export default function CetakRaporPage() {
                       {marhalah} بمعهد الإمام الإسلامي
                     </h2>
                     <h3 className="font-bold text-slate-800 tracking-wider uppercase" style={{ fontFamily: "Arial, Helvetica, sans-serif", fontSize: paperSize === "F4" ? "13px" : "12px", margin: "0 0 3px 0" }}>
-                      LAPORAN HASIL EVALUASI BELAJAR TENGAH SEMESTER
+                      LAPORAN HASIL EVALUASI BELAJAR TENGAH SEMESTER (PTS)
                     </h3>
                     <h4 className="font-bold text-slate-600 tracking-wide uppercase" style={{ fontFamily: "Arial, Helvetica, sans-serif", fontSize: paperSize === "F4" ? "11.5px" : "10.5px", margin: 0 }}>
                       RAPOR BAYANGAN • {indoMarhalah}
@@ -758,7 +758,7 @@ export default function CetakRaporPage() {
                       {marhalah} بمعهد الإمام الإسلامي
                     </h2>
                     <h3 className="font-bold text-slate-800 tracking-wider uppercase" style={{ fontFamily: "Arial, Helvetica, sans-serif", fontSize: paperSize === "F4" ? "13px" : "12px", margin: "0 0 3px 0" }}>
-                      LAPORAN HASIL EVALUASI BELAJAR TENGAH SEMESTER
+                      LAPORAN HASIL EVALUASI BELAJAR TENGAH SEMESTER (PTS)
                     </h3>
                     <h4 className="font-bold text-slate-600 tracking-wide uppercase" style={{ fontFamily: "Arial, Helvetica, sans-serif", fontSize: paperSize === "F4" ? "11.5px" : "10.5px", margin: 0 }}>
                       RAPOR BAYANGAN • {indoMarhalah}
