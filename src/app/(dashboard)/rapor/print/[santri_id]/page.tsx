@@ -257,10 +257,10 @@ export default function CetakRaporPage() {
           }
           
           @media print {
-            /* Margin Keliling SAMA RATA (Atas, Bawah, Kiri, Kanan = 10mm - 12mm) */
+            /* Margin Keliling Presisi (Atas, Bawah: 8mm, Kiri, Kanan: 10mm) */
             @page { 
               size: ${paperSize === "F4" ? "215mm 330mm" : "A4"}; 
-              margin: 10mm 12mm 10mm 12mm; 
+              margin: 8mm 10mm 8mm 10mm; 
             }
             * {
               -webkit-print-color-adjust: exact !important;
@@ -271,7 +271,7 @@ export default function CetakRaporPage() {
               background-color: #ffffff !important; 
               color: black !important; 
               margin: 0 !important;
-              padding: 0 !important;
+              padding: 0 !important; 
             }
             .arabic-text { font-family: 'Traditional Arabic', serif !important; }
             
@@ -303,30 +303,24 @@ export default function CetakRaporPage() {
               margin: 0 !important;
               background: #ffffff !important;
               background-color: #ffffff !important;
-              display: flex !important;
-              flex-direction: column !important;
-              justify-content: space-between !important;
+              display: block !important;
               position: relative !important;
               overflow: visible !important;
               page-break-inside: avoid !important;
               break-inside: avoid !important;
-              /* Ketinggian fisik presisi lembar cetak agar footer selalu menempel di dasar */
-              min-height: ${paperSize === "F4" ? "308mm" : "275mm"} !important;
-              height: ${paperSize === "F4" ? "308mm" : "275mm"} !important;
+              min-height: 0 !important;
+              height: auto !important;
             }
 
             .rapor-content-wrapper {
-              height: 100% !important;
-              min-height: 100% !important;
-              display: flex !important;
-              flex-direction: column !important;
-              justify-content: space-between !important;
+              height: auto !important;
+              min-height: 0 !important;
+              display: block !important;
               box-sizing: border-box !important;
-              flex: 1 !important;
             }
 
             .rapor-footer {
-              margin-top: auto !important;
+              margin-top: 14px !important;
               padding-top: 6px !important;
               display: flex !important;
               justify-content: space-between !important;
@@ -335,8 +329,21 @@ export default function CetakRaporPage() {
               opacity: 1 !important;
               page-break-inside: avoid !important;
               break-inside: avoid !important;
+              page-break-before: avoid !important;
+              break-before: avoid !important;
               width: 100% !important;
               box-sizing: border-box !important;
+            }
+
+            .page-break {
+              page-break-before: always !important;
+              break-before: page !important;
+              height: 0 !important;
+              margin: 0 !important;
+              padding: 0 !important;
+              border: none !important;
+              line-height: 0 !important;
+              font-size: 0 !important;
             }
             
             .rapor-table {
@@ -473,7 +480,7 @@ export default function CetakRaporPage() {
       {/* HALAMAN 1: RAPOR AKADEMIK (KASYFUD DARAJAT)                               */}
       {/* ========================================================================= */}
       <div 
-        className={`rapor-page ${paperSize === "F4" ? "max-w-[215mm]" : "max-w-[210mm]"} mx-auto bg-white p-[12mm] shadow-xl print:shadow-none print:p-0 print:max-w-full relative`} 
+        className={`rapor-page ${paperSize === "F4" ? "max-w-[215mm]" : "max-w-[210mm]"} mx-auto bg-white p-[12mm] shadow-xl print:shadow-none print:p-0 print:max-w-full print:min-h-0 print:h-auto relative`} 
         style={{ 
           borderRadius: "24px", 
           minHeight: paperSize === "F4" ? "330mm" : "297mm", 
@@ -484,7 +491,7 @@ export default function CetakRaporPage() {
 
         {/* CONTENT WRAPPER HALAMAN 1 */}
         <div 
-          className="rapor-content-wrapper"
+          className="rapor-content-wrapper print:min-h-0 print:h-auto"
           style={{ 
             position: "relative", 
             zIndex: 1, 
@@ -679,7 +686,7 @@ export default function CetakRaporPage() {
           <div 
             className="rapor-footer"
             style={{ 
-              marginTop: "auto", 
+              marginTop: paperSize === "F4" ? "18px" : "14px", 
               paddingTop: "6px", 
               display: "flex", 
               justifyContent: "space-between", 
@@ -708,7 +715,7 @@ export default function CetakRaporPage() {
       {/* HALAMAN 2: KEPRIBADIAN, TAHSIN & TAHFIDZ, DAN PENGESAHAN DOKUMEN          */}
       {/* ========================================================================= */}
       <div 
-        className={`rapor-page ${paperSize === "F4" ? "max-w-[215mm]" : "max-w-[210mm]"} mx-auto bg-white p-[12mm] shadow-xl print:shadow-none print:p-0 print:max-w-full relative`} 
+        className={`rapor-page ${paperSize === "F4" ? "max-w-[215mm]" : "max-w-[210mm]"} mx-auto bg-white p-[12mm] shadow-xl print:shadow-none print:p-0 print:max-w-full print:min-h-0 print:h-auto relative`} 
         style={{ 
           borderRadius: "24px", 
           minHeight: paperSize === "F4" ? "330mm" : "297mm", 
@@ -719,7 +726,7 @@ export default function CetakRaporPage() {
 
         {/* CONTENT WRAPPER HALAMAN 2 */}
         <div 
-          className="rapor-content-wrapper"
+          className="rapor-content-wrapper print:min-h-0 print:h-auto"
           style={{ 
             position: "relative", 
             zIndex: 1, 
@@ -1015,7 +1022,7 @@ export default function CetakRaporPage() {
                 minWidth: 0
               }}>
                 {/* Kolom 1: Orang Tua */}
-                <div style={{ display: "flex", flexDirection: "column", justifyContent: "space-between", height: paperSize === "F4" ? "165px" : "145px", padding: "0 2px" }}>
+                <div style={{ display: "flex", flexDirection: "column", justifyContent: "space-between", height: paperSize === "F4" ? "150px" : "130px", padding: "0 2px" }}>
                   <div>
                     <p style={{ margin: 0 }}>Mengetahui</p>
                     <p style={{ margin: "3px 0 0 0" }}>Orang Tua / Wali</p>
@@ -1040,7 +1047,7 @@ export default function CetakRaporPage() {
                 </div>
 
                 {/* Kolom 2: Kepala Madrasah (Tepat di Tengah) */}
-                <div style={{ display: "flex", flexDirection: "column", justifyContent: "space-between", height: paperSize === "F4" ? "165px" : "145px", padding: "0 2px" }}>
+                <div style={{ display: "flex", flexDirection: "column", justifyContent: "space-between", height: paperSize === "F4" ? "150px" : "130px", padding: "0 2px" }}>
                   <div>
                     <p style={{ margin: 0 }}>Mengetahui</p>
                     <p style={{ margin: "3px 0 0 0" }}>{headTitle}</p>
@@ -1053,7 +1060,7 @@ export default function CetakRaporPage() {
                 </div>
 
                 {/* Kolom 3: Wali Kelas */}
-                <div style={{ display: "flex", flexDirection: "column", justifyContent: "space-between", height: paperSize === "F4" ? "165px" : "145px", padding: "0 2px" }}>
+                <div style={{ display: "flex", flexDirection: "column", justifyContent: "space-between", height: paperSize === "F4" ? "150px" : "130px", padding: "0 2px" }}>
                   <div>
                     <p style={{ margin: 0, fontSize: paperSize === "F4" ? "11px" : "10.5px" }}>Sukabumi, 11 Oktober 2026</p>
                     <p style={{ margin: "3px 0 0 0" }}>Wali Kelas</p>
@@ -1073,7 +1080,7 @@ export default function CetakRaporPage() {
                 justifyContent: "space-between", 
                 alignItems: "flex-end", 
                 width: paperSize === "F4" ? "88px" : "80px",
-                height: paperSize === "F4" ? "165px" : "145px",
+                height: paperSize === "F4" ? "150px" : "130px",
                 flexShrink: 0
               }}>
                 <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", justifyContent: "center", flex: 1, width: "100%" }}>
@@ -1104,7 +1111,7 @@ export default function CetakRaporPage() {
           <div 
             className="rapor-footer"
             style={{ 
-              marginTop: "auto", 
+              marginTop: paperSize === "F4" ? "18px" : "14px", 
               paddingTop: "6px", 
               display: "flex", 
               justifyContent: "space-between", 
