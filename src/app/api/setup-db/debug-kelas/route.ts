@@ -1,15 +1,14 @@
-import { NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
+import { NextRequest, NextResponse } from "next/server";
+import { GET as getCetakRapor } from "@/app/api/rapor/cetak/route";
 
 export const dynamic = 'force-dynamic';
 
 export async function GET() {
-  const kelas = await prisma.kelas.findMany({
-    include: {
-      santri: { select: { id: true } }
-    }
-  });
-  return NextResponse.json({ 
-    kelas: kelas.map(k => ({ id: k.id, nama: k.nama, jenjang: k.jenjang, is_active: k.is_active, santri_count: k.santri.length })) 
+  const req = new NextRequest("https://sikap.pesantren-alimam.com/api/rapor/cetak?santri_id=6f690e88-c53b-4442-a52f-b8a6dfd9125f&semester=Ganjil&tahun_ajaran=2026/2027");
+  const res = await getCetakRapor(req);
+  const data = await res.json();
+  return NextResponse.json({
+    santri: data.santri,
+    kedisiplinan: data.kedisiplinan
   });
 }
