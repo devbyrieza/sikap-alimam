@@ -452,9 +452,9 @@ export default function CetakRaporPage() {
           </table>
 
           {/* Catatan Kaki Halaman 1 */}
-          <div style={{ marginTop: "16px", display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: "11px", color: "#666", fontStyle: "italic" }}>
-            <p style={{ margin: 0 }}>* Nilai di atas merupakan Hasil Evaluasi Belajar Penilaian Tengah Semester (PTS) Murni.</p>
-            <p style={{ margin: 0, fontWeight: "bold" }}>Halaman 1 dari 2</p>
+          <div style={{ marginTop: "16px", display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: "10.5px", color: "#666", fontStyle: "italic", gap: "16px" }}>
+            <p style={{ margin: 0, flex: 1 }}>* Nilai di atas merupakan Hasil Evaluasi Belajar Penilaian Tengah Semester (PTS) Murni.</p>
+            <p style={{ margin: 0, fontWeight: "bold", whiteSpace: "nowrap", flexShrink: 0 }}>Halaman 1 dari 2</p>
           </div>
 
         </div>
@@ -707,10 +707,10 @@ export default function CetakRaporPage() {
                 </div>
               </div>
 
-          {/* Catatan Kaki Halaman 2 (Simetris dengan Halaman 1) */}
-          <div style={{ marginTop: "18px", display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: "11px", color: "#666", fontStyle: "italic" }}>
-            <p style={{ margin: 0 }}>* Dokumen rapor ini sah dan diterbitkan secara resmi oleh Pesantren Al-Imam Al-Islami (Managed by Al-Andalus International Islamic Boarding School).</p>
-            <p style={{ margin: 0, fontWeight: "bold" }}>Halaman 2 dari 2</p>
+          {/* Catatan Kaki Halaman 2 (Simetris dengan Halaman 1, 1 Baris Rapi & Elegan) */}
+          <div style={{ marginTop: "20px", display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: "10.5px", color: "#666", fontStyle: "italic", gap: "16px" }}>
+            <p style={{ margin: 0, flex: 1 }}>* Dokumen rapor ini sah dan diterbitkan secara resmi oleh Pesantren Al-Imam Al-Islami (Managed by Al-Andalus IIBS).</p>
+            <p style={{ margin: 0, fontWeight: "bold", whiteSpace: "nowrap", flexShrink: 0 }}>Halaman 2 dari 2</p>
           </div>
 
         </div>
