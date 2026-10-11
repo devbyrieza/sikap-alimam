@@ -4,37 +4,14 @@ import { prisma } from "@/lib/prisma";
 export const dynamic = 'force-dynamic';
 
 export async function GET() {
-  const jadwal = await prisma.jadwalPelajaran.findMany({
-    where: {
-      mapel: {
-        OR: [
-          { nama: { contains: "kitab", mode: "insensitive" } },
-          { nama: { contains: "khitob", mode: "insensitive" } }
-        ]
-      }
+  const teachers = await prisma.pegawai.findMany({
+    select: {
+      id: true,
+      nama_lengkap: true,
+      mata_pelajaran: true
     },
-    include: {
-      mapel: true,
-      kelas: true,
-      guru: { select: { id: true, nama_lengkap: true } }
-    }
+    orderBy: { nama_lengkap: "asc" }
   });
 
-  const jurnal = await prisma.jurnalMengajar.findMany({
-    where: {
-      mapel: {
-        OR: [
-          { nama: { contains: "kitab", mode: "insensitive" } },
-          { nama: { contains: "khitob", mode: "insensitive" } }
-        ]
-      }
-    },
-    include: {
-      mapel: true,
-      kelas: true,
-      guru: { select: { id: true, nama_lengkap: true } }
-    }
-  });
-
-  return NextResponse.json({ jadwal, jurnal });
+  return NextResponse.json({ teachers });
 }
