@@ -303,18 +303,23 @@ export default function CetakRaporPage() {
                 marhalah = "لبرنامج الإعداد اللغوي";
                 indoMarhalah = "PROGRAM I'DAD LUGHOWI (IL)";
               }
+
+              const isGanjil = santri?.semester?.includes("Ganjil") || santri?.semester === "1" || !santri?.semester?.includes("Genap");
+              const semesterArab = isGanjil ? "الأول" : "الثاني";
               
               return (
                 <>
                   <h1 className="text-2xl font-bold arabic-text mb-1" dir="rtl" style={{ fontFamily: "'Traditional Arabic', serif" }}>
-                    كشف الدرجات {marhalah}
+                    كشف درجات منتصف الفصل الدراسي {semesterArab}
                   </h1>
-                  <h2 className="text-lg font-bold arabic-text mb-2" dir="rtl" style={{ fontFamily: "'Traditional Arabic', serif" }}>بمعهد الإمام الإسلامي</h2>
-                  <h3 className="text-[13px] font-bold text-slate-800 tracking-wider mt-1 uppercase" style={{ fontFamily: "Arial, Helvetica, sans-serif" }}>
-                    Laporan Hasil Evaluasi Belajar (Rapor)
+                  <h2 className="text-lg font-bold arabic-text mb-2" dir="rtl" style={{ fontFamily: "'Traditional Arabic', serif" }}>
+                    {marhalah} بمعهد الإمام الإسلامي
+                  </h2>
+                  <h3 className="text-[13.5px] font-bold text-slate-800 tracking-wider mt-1 uppercase" style={{ fontFamily: "Arial, Helvetica, sans-serif" }}>
+                    LAPORAN HASIL EVALUASI BELAJAR TENGAH SEMESTER (PTS)
                   </h3>
                   <h4 className="text-[12px] font-bold text-slate-600 tracking-wide mt-0.5 uppercase" style={{ fontFamily: "Arial, Helvetica, sans-serif" }}>
-                    {indoMarhalah}
+                    RAPOR BAYANGAN • {indoMarhalah}
                   </h4>
                 </>
               );
@@ -351,7 +356,7 @@ export default function CetakRaporPage() {
                     <td style={{ padding: "3px 0", whiteSpace: "nowrap", borderBottom: "none" }}>Semester</td>
                     <td style={{ padding: "3px 6px", borderBottom: "none" }}>:</td>
                     <td style={{ padding: "3px 0", borderBottom: "none" }}>
-                      {santri?.semester?.includes("Ganjil") || santri?.semester === "1" ? "Ganjil" : santri?.semester?.includes("Genap") || santri?.semester === "2" ? "Genap" : santri?.semester}
+                      {santri?.semester?.includes("Ganjil") || santri?.semester === "1" ? "Ganjil" : santri?.semester?.includes("Genap") || santri?.semester === "2" ? "Genap" : santri?.semester} (Tengah Semester / PTS)
                     </td>
                   </tr>
                   <tr style={{ borderBottom: "none" }}>
@@ -486,11 +491,11 @@ export default function CetakRaporPage() {
             <div>
               <h2 style={{ fontSize: "17px", fontWeight: "900", margin: 0, letterSpacing: "0.5px", fontFamily: '"Times New Roman", Times, serif' }}>PESANTREN AL-IMAM AL-ISLAMI</h2>
               <p style={{ margin: "1px 0 2px 0", fontSize: "10.5px", fontWeight: "bold", color: "#666", fontStyle: "italic", fontFamily: '"Times New Roman", Times, serif' }}>Managed by Al-Andalus International Islamic Boarding School</p>
-              <p style={{ margin: "2px 0 0 0", fontSize: "11.5px", color: "#555" }}>Laporan Kepribadian serta Tahsin & Tahfidz Al-Qur'an</p>
+              <p style={{ margin: "2px 0 0 0", fontSize: "11.5px", color: "#555" }}>Laporan Tengah Semester (PTS) — Kepribadian, Tahsin & Tahfidz</p>
             </div>
             <div style={{ textAlign: "right", fontSize: "12px", fontWeight: "bold" }}>
               <p style={{ margin: 0 }}>Nama: <span style={{ textTransform: "uppercase" }}>{santri?.nama}</span></p>
-              <p style={{ margin: "2px 0 0 0", color: "#555" }}>NIS: {santri?.nis || "-"} &nbsp;|&nbsp; Kelas: {(santri?.kelas || "").replace(/\s*(MTs|MA|SMP|SMA|SD|TK)\b/gi, "")} &nbsp;|&nbsp; Semester {santri?.semester?.includes("Ganjil") || santri?.semester === "1" ? "Ganjil" : santri?.semester}</p>
+              <p style={{ margin: "2px 0 0 0", color: "#555" }}>NIS: {santri?.nis || "-"} &nbsp;|&nbsp; Kelas: {(santri?.kelas || "").replace(/\s*(MTs|MA|SMP|SMA|SD|TK)\b/gi, "")} &nbsp;|&nbsp; Semester {santri?.semester?.includes("Ganjil") || santri?.semester === "1" ? "Ganjil" : santri?.semester} (PTS)</p>
             </div>
           </div>
 
