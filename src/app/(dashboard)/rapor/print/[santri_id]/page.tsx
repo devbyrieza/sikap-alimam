@@ -298,34 +298,45 @@ export default function CetakRaporPage() {
               padding: 0 !important;
               max-width: 100% !important;
               width: 100% !important;
-              min-height: 0 !important;
-              height: auto !important;
               box-sizing: border-box !important;
               border-radius: 0 !important;
               margin: 0 !important;
               background: #ffffff !important;
               background-color: #ffffff !important;
-              display: block !important;
+              display: flex !important;
+              flex-direction: column !important;
+              justify-content: space-between !important;
               position: relative !important;
               overflow: visible !important;
               page-break-inside: avoid !important;
               break-inside: avoid !important;
+              /* Ketinggian fisik presisi lembar cetak agar footer selalu menempel di dasar */
+              min-height: ${paperSize === "F4" ? "308mm" : "275mm"} !important;
+              height: ${paperSize === "F4" ? "308mm" : "275mm"} !important;
             }
 
             .rapor-content-wrapper {
-              min-height: 0 !important;
-              height: auto !important;
-              display: block !important;
+              height: 100% !important;
+              min-height: 100% !important;
+              display: flex !important;
+              flex-direction: column !important;
+              justify-content: space-between !important;
+              box-sizing: border-box !important;
+              flex: 1 !important;
             }
 
             .rapor-footer {
-              margin-top: 14px !important;
+              margin-top: auto !important;
               padding-top: 6px !important;
               display: flex !important;
+              justify-content: space-between !important;
+              align-items: center !important;
               visibility: visible !important;
               opacity: 1 !important;
               page-break-inside: avoid !important;
               break-inside: avoid !important;
+              width: 100% !important;
+              box-sizing: border-box !important;
             }
             
             .rapor-table {
@@ -668,12 +679,12 @@ export default function CetakRaporPage() {
           <div 
             className="rapor-footer"
             style={{ 
-              marginTop: paperSize === "F4" ? "14px" : "10px", 
+              marginTop: "auto", 
               paddingTop: "6px", 
               display: "flex", 
               justifyContent: "space-between", 
               alignItems: "center", 
-              fontSize: "10.5px", 
+              fontSize: "9.5px", 
               color: "#111111", 
               fontStyle: "italic", 
               gap: "16px",
@@ -681,7 +692,7 @@ export default function CetakRaporPage() {
               breakInside: "avoid"
             }}
           >
-            <p style={{ margin: 0, flex: 1, color: "#111111" }}>* Nilai di atas merupakan Hasil Evaluasi Belajar Penilaian Tengah Semester (PTS) Murni.</p>
+            <p style={{ margin: 0, flex: 1, color: "#111111", whiteSpace: "nowrap" }}>* Nilai di atas merupakan Hasil Evaluasi Belajar Penilaian Tengah Semester (PTS) Murni.</p>
             <p style={{ margin: 0, fontWeight: "bold", whiteSpace: "nowrap", flexShrink: 0, color: "#111111" }}>Halaman 1 dari 2</p>
           </div>
 
@@ -992,15 +1003,15 @@ export default function CetakRaporPage() {
                 fontFamily: "Arial, Helvetica, sans-serif" 
               }}
             >
-              {/* Sisi Kiri: 3 Kolom Tanda Tangan Simetris Presisi & Proporsional */}
+              {/* Sisi Kiri: 3 Kolom Tanda Tangan Simetris Presisi & Proporsional (Anti-Nabrak) */}
               <div style={{ 
                 display: "grid", 
-                gridTemplateColumns: "1fr 1.15fr 1.35fr", 
+                gridTemplateColumns: "1fr 1.05fr 1.55fr", 
                 textAlign: "center", 
-                fontSize: paperSize === "F4" ? "12px" : "11px", 
-                gap: paperSize === "F4" ? "10px" : "6px",
+                fontSize: paperSize === "F4" ? "11.5px" : "10.5px", 
+                gap: paperSize === "F4" ? "8px" : "6px",
                 flex: 1,
-                marginRight: paperSize === "F4" ? "16px" : "12px",
+                marginRight: paperSize === "F4" ? "24px" : "18px",
                 minWidth: 0
               }}>
                 {/* Kolom 1: Orang Tua */}
@@ -1013,16 +1024,16 @@ export default function CetakRaporPage() {
                     <p style={{ 
                       fontWeight: "bold", 
                       margin: 0, 
-                      fontSize: paperSize === "F4" ? "11.5px" : "11px", 
+                      fontSize: paperSize === "F4" ? "11px" : "10.5px", 
                       whiteSpace: "nowrap",
                       display: "inline-flex",
                       alignItems: "center",
                       justifyContent: "space-between",
                       width: "100%",
-                      maxWidth: paperSize === "F4" ? "165px" : "145px"
+                      maxWidth: paperSize === "F4" ? "150px" : "135px"
                     }}>
                       <span>(</span>
-                      <span style={{ display: "inline-block", flex: 1, minWidth: paperSize === "F4" ? "135px" : "115px" }}>&nbsp;</span>
+                      <span style={{ display: "inline-block", flex: 1, minWidth: paperSize === "F4" ? "120px" : "105px" }}>&nbsp;</span>
                       <span>)</span>
                     </p>
                   </div>
@@ -1035,7 +1046,7 @@ export default function CetakRaporPage() {
                     <p style={{ margin: "3px 0 0 0" }}>{headTitle}</p>
                   </div>
                   <div style={{ minHeight: "32px", display: "flex", alignItems: "flex-end", justifyContent: "center" }}>
-                    <p style={{ fontWeight: "bold", margin: 0, fontSize: paperSize === "F4" ? "11px" : "10.5px", whiteSpace: "nowrap", letterSpacing: "-0.2px" }}>
+                    <p style={{ fontWeight: "bold", margin: 0, fontSize: paperSize === "F4" ? "10.5px" : "10px", whiteSpace: "nowrap", letterSpacing: "-0.2px" }}>
                       ({headName})
                     </p>
                   </div>
@@ -1044,11 +1055,11 @@ export default function CetakRaporPage() {
                 {/* Kolom 3: Wali Kelas */}
                 <div style={{ display: "flex", flexDirection: "column", justifyContent: "space-between", height: paperSize === "F4" ? "165px" : "145px", padding: "0 2px" }}>
                   <div>
-                    <p style={{ margin: 0 }}>Sukabumi, 11 Oktober 2026</p>
+                    <p style={{ margin: 0, fontSize: paperSize === "F4" ? "11px" : "10.5px" }}>Sukabumi, 11 Oktober 2026</p>
                     <p style={{ margin: "3px 0 0 0" }}>Wali Kelas</p>
                   </div>
                   <div style={{ minHeight: "32px", display: "flex", alignItems: "flex-end", justifyContent: "center" }}>
-                    <p style={{ fontWeight: "bold", margin: 0, fontSize: paperSize === "F4" ? "11px" : "10px", whiteSpace: "nowrap", letterSpacing: "-0.2px" }}>
+                    <p style={{ fontWeight: "bold", margin: 0, fontSize: paperSize === "F4" ? "10px" : "9.5px", whiteSpace: "nowrap", letterSpacing: "-0.25px" }}>
                       ({waliKelasName})
                     </p>
                   </div>
@@ -1061,26 +1072,27 @@ export default function CetakRaporPage() {
                 flexDirection: "column", 
                 justifyContent: "space-between", 
                 alignItems: "flex-end", 
+                width: paperSize === "F4" ? "88px" : "80px",
                 height: paperSize === "F4" ? "165px" : "145px",
                 flexShrink: 0
               }}>
-                <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", justifyContent: "center", flex: 1 }}>
+                <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", justifyContent: "center", flex: 1, width: "100%" }}>
                   <img 
                     src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https://sikap.pesantren-alimam.com/verify/${santriId}`}
                     alt="QR Code Verifikasi"
                     style={{ 
-                      width: paperSize === "F4" ? "105px" : "95px", 
-                      height: paperSize === "F4" ? "105px" : "95px", 
+                      width: paperSize === "F4" ? "84px" : "76px", 
+                      height: paperSize === "F4" ? "84px" : "76px", 
                       border: "1.5px solid #000000", 
-                      padding: "3px", 
+                      padding: "2px", 
                       backgroundColor: "white",
                       display: "block",
                       boxSizing: "border-box"
                     }}
                   />
                 </div>
-                <div style={{ minHeight: "32px", display: "flex", alignItems: "flex-end", justifyContent: "flex-end", width: "100%" }}>
-                  <p style={{ fontSize: "8.5px", color: "#666", margin: 0, textAlign: "right", lineHeight: "1.2", whiteSpace: "nowrap" }}>
+                <div style={{ minHeight: "32px", display: "flex", alignItems: "flex-end", justifyContent: "center", width: "100%" }}>
+                  <p style={{ fontSize: "7.5px", color: "#666", margin: 0, textAlign: "center", lineHeight: "1.2", whiteSpace: "nowrap" }}>
                     Scan Verifikasi Dokumen
                   </p>
                 </div>
@@ -1088,16 +1100,16 @@ export default function CetakRaporPage() {
             </div>
           </div>
 
-          {/* Catatan Kaki Halaman 2 (Simetris dengan Halaman 1, 1 Baris Rapi & Elegan) */}
+          {/* Catatan Kaki Halaman 2 (Simetris dengan Halaman 1, 1 Baris Rapi & Menempel di Dasar Kertas) */}
           <div 
             className="rapor-footer"
             style={{ 
-              marginTop: paperSize === "F4" ? "14px" : "10px", 
+              marginTop: "auto", 
               paddingTop: "6px", 
               display: "flex", 
               justifyContent: "space-between", 
               alignItems: "center", 
-              fontSize: "10.5px", 
+              fontSize: "9.5px", 
               color: "#111111", 
               fontStyle: "italic", 
               gap: "16px",
@@ -1105,7 +1117,7 @@ export default function CetakRaporPage() {
               breakInside: "avoid"
             }}
           >
-            <p style={{ margin: 0, flex: 1, color: "#111111" }}>* Dokumen rapor ini sah dan diterbitkan secara resmi oleh Pesantren Al-Imam Al-Islami (Managed by Al-Andalus IIBS).</p>
+            <p style={{ margin: 0, flex: 1, color: "#111111", whiteSpace: "nowrap" }}>* Dokumen rapor ini sah dan diterbitkan secara resmi oleh Pesantren Al-Imam Al-Islami (Managed by Al-Andalus IIBS).</p>
             <p style={{ margin: 0, fontWeight: "bold", whiteSpace: "nowrap", flexShrink: 0, color: "#111111" }}>Halaman 2 dari 2</p>
           </div>
 
