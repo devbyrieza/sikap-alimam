@@ -543,7 +543,7 @@ export default function CetakRaporPage() {
                       <td style={{ padding: "2.5px 0", whiteSpace: "nowrap", border: "none" }}>Semester</td>
                       <td style={{ padding: "2.5px 6px", border: "none" }}>:</td>
                       <td style={{ padding: "2.5px 0", border: "none" }}>
-                        {santri?.semester?.includes("Ganjil") || santri?.semester === "1" ? "Ganjil" : santri?.semester?.includes("Genap") || santri?.semester === "2" ? "Genap" : santri?.semester} (Tengah Semester / PTS)
+                        {santri?.semester?.includes("Ganjil") || santri?.semester === "1" ? "Ganjil" : santri?.semester?.includes("Genap") || santri?.semester === "2" ? "Genap" : santri?.semester} (PTS)
                       </td>
                     </tr>
                     <tr style={{ border: "none" }}>
@@ -709,7 +709,7 @@ export default function CetakRaporPage() {
               display: "flex", 
               justifyContent: "space-between", 
               alignItems: "center", 
-              fontSize: paperSize === "F4" ? "12.5px" : "11.5px", 
+              fontSize: paperSize === "F4" ? "12px" : "11px", 
               fontWeight: "bold", 
               marginBottom: paperSize === "F4" ? "16px" : "12px",
               paddingBottom: "6px",
@@ -721,6 +721,7 @@ export default function CetakRaporPage() {
               <div>NIS: <span>{santri?.nis || "-"}</span></div>
               <div>Kelas: <span>{(santri?.kelas || "").replace(/\s*(MTs|MA|SMP|SMA|SD|TK)\b/gi, "")}</span></div>
               <div>Semester: <span>{santri?.semester?.includes("Ganjil") || santri?.semester === "1" ? "Ganjil" : santri?.semester} (PTS)</span></div>
+              <div>Tahun Pelajaran: <span>{santri?.tahun_ajaran || "-"}</span></div>
             </div>
 
             {/* 1. KEPRIBADIAN SANTRI (KIRI) & KETIDAKHADIRAN (KANAN) - SATU TABEL SIMETRIS UTUH */}
