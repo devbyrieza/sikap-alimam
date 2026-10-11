@@ -32,12 +32,26 @@ export async function syncAsatidzMapel(pegawaiId: string, mapelString: string | 
           targetAssignments.push({ kelasNama, jenjang, mapelNama });
         }
       } else {
-        // Simple comma separated or flat list
+        // Simple comma separated or flat list: e.g. "[11 MA] Tahfidz, [12 MA] Tahfidz" or "7 MTs - Fiqih"
         const items = group.split(",").map((i) => i.trim()).filter(Boolean);
         for (const item of items) {
-          if (item.includes(" - ")) {
+          if (item.startsWith("[") && item.includes("]")) {
+            const closingIdx = item.indexOf("]");
+            const kelasNama = item.substring(1, closingIdx).trim();
+            const mapelNama = item.substring(closingIdx + 1).trim();
+            const jenjang = kelasNama.toUpperCase().includes("MA")
+              ? "MA"
+              : kelasNama.toUpperCase().includes("MTS")
+              ? "MTs"
+              : "IL";
+            targetAssignments.push({ kelasNama, jenjang, mapelNama });
+          } else if (item.includes(" - ")) {
             const [kelasNama, mapelNama] = item.split(" - ").map((x) => x.trim());
-            const jenjang = kelasNama.toUpperCase().includes("MTS") ? "MTs" : "Islamiyah";
+            const jenjang = kelasNama.toUpperCase().includes("MA")
+              ? "MA"
+              : kelasNama.toUpperCase().includes("MTS")
+              ? "MTs"
+              : "Islamiyah";
             targetAssignments.push({ kelasNama, jenjang, mapelNama });
           } else {
             // Default to 7 MTs if no class specified

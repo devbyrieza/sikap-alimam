@@ -142,6 +142,11 @@ export async function PUT(
       }
     }
 
+    if (mata_pelajaran !== undefined) {
+      const { syncAsatidzMapel } = await import("@/lib/syncAsatidzMapel");
+      await syncAsatidzMapel(id, mata_pelajaran);
+    }
+
     return NextResponse.json({ success: true, data: updated });
   } catch (error: any) {
     console.error("PUT Guru Error:", error);

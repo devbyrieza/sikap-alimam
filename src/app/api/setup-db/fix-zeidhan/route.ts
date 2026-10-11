@@ -104,6 +104,13 @@ export async function GET() {
         });
         logs.push(`- Dibuatkan akun User baru (${userEmail}) dengan role GURU,MUSYRIF`);
       }
+
+      // Sinkronkan mapel mengajar ke asatidz_mapel
+      if (p.mata_pelajaran) {
+        const { syncAsatidzMapel } = await import("@/lib/syncAsatidzMapel");
+        await syncAsatidzMapel(p.id, p.mata_pelajaran);
+        logs.push(`- Sinkronisasi asatidz_mapel berhasil untuk "${p.mata_pelajaran}"`);
+      }
     }
 
     return NextResponse.json({

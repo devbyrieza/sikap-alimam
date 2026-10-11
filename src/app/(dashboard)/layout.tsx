@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { getSession } from "@/lib/auth";
+import { getLiveSession } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import Sidebar from "@/components/Sidebar";
 import TeacherMapelSetupModal from "@/components/TeacherMapelSetupModal";
@@ -8,24 +8,10 @@ export default async function DashboardLayout({
   children }: {
   children: React.ReactNode;
 }) {
-  const session = await getSession();
+  const session = await getLiveSession();
   if (!session) redirect("/login");
 
-  let liveRole = session.role || "";
-  if (session.userId) {
-    try {
-      const liveUser = await prisma.user.findUnique({
-        where: { id: session.userId },
-        select: { role: true }
-      });
-      if (liveUser?.role) {
-        liveRole = liveUser.role;
-      }
-    } catch (e) {
-      console.error("DashboardLayout: Error fetching live user role:", e);
-    }
-  }
-
+  const liveRole = session.role || "";
   const userRoles = liveRole.toLowerCase().split(",").map(r => r.trim());
   const isWaliSantri = userRoles.includes("wali_santri") || userRoles.includes("orang_tua") || userRoles.includes("wali");
 

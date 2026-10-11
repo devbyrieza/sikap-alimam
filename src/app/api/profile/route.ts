@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { getSession } from "@/lib/auth";
+import { getSession, getLiveSession } from "@/lib/auth";
 import { syncAsatidzMapel } from "@/lib/syncAsatidzMapel";
 
 export async function GET() {
   try {
-    const session = await getSession();
+    const session = await getLiveSession();
     if (!session) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }

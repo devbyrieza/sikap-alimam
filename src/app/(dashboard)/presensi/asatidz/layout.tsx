@@ -1,9 +1,9 @@
 import { ReactNode } from "react";
-import { getSession } from "@/lib/auth";
+import { getLiveSession } from "@/lib/auth";
 import { redirect } from "next/navigation";
 
 export default async function PresensiAsatidzLayout({ children }: { children: ReactNode }) {
-  const session = await getSession();
+  const session = await getLiveSession();
   const userRoles = (session?.role || "").toLowerCase().split(",").map(r => r.trim());
 
   const allowedRoles = ["guru", "musyrif", "wali_kelas", "kepala_sekolah", "kadiv_kurikulum", "kadiv_pengasuhan", "admin_super", "mudir"];

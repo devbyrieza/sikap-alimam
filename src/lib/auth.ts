@@ -52,6 +52,39 @@ export async function getSession(): Promise<SessionPayload | null> {
   }
 }
 
+export async function getLiveSession(): Promise<SessionPayload | null> {
+  const session = await getSession();
+  if (!session) return null;
+
+  try {
+    const { prisma } = await import("@/lib/prisma");
+    let liveUser = null;
+    if (session.userId) {
+      liveUser = await prisma.user.findUnique({
+        where: { id: session.userId },
+        select: { role: true, nama: true }
+      });
+    } else if (session.email) {
+      liveUser = await prisma.user.findUnique({
+        where: { email: session.email },
+        select: { role: true, nama: true }
+      });
+    }
+
+    if (liveUser && liveUser.role) {
+      return {
+        ...session,
+        role: liveUser.role,
+        nama: liveUser.nama || session.nama
+      };
+    }
+  } catch (e) {
+    // Fallback gracefully to existing JWT session payload
+  }
+
+  return session;
+}
+
 export async function deleteSession() {
   const cookieStore = await cookies();
   cookieStore.delete("siakad_session");
