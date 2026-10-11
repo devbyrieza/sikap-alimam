@@ -91,11 +91,11 @@ export default function CetakRaporPage() {
     return (
       <>
         {/* Header Kategori Bilateral (50% Kiri Indonesia | 50% Kanan Arab) */}
-        <tr style={{ backgroundColor: "#e8e8e8" }}>
-          <td colSpan={5} className="border-divider-mid" style={{ border: "1px solid #000000", borderRight: "2.5px solid #000000", padding: headPad, fontWeight: "bold", fontSize: isF4 ? "13.5px" : "12.5px", fontFamily: "Arial, Helvetica, sans-serif" }}>
+        <tr style={{ backgroundColor: "#f1f5f9" }}>
+          <td colSpan={5} className="border-divider-mid" style={{ border: "1px solid #000000", borderRight: "2px solid #000000", padding: headPad, fontWeight: "bold", fontSize: isF4 ? "13.5px" : "12.5px", fontFamily: "Arial, Helvetica, sans-serif", color: "#000000" }}>
             {judul}
           </td>
-          <td colSpan={5} style={{ border: "1px solid #000000", padding: headPad, fontWeight: "bold", fontSize: isF4 ? "15.5px" : "14px", textAlign: "right", fontFamily: "'Traditional Arabic', serif" }} dir="rtl">
+          <td colSpan={5} style={{ border: "1px solid #000000", padding: headPad, fontWeight: "bold", fontSize: isF4 ? "15.5px" : "14px", textAlign: "right", fontFamily: "'Traditional Arabic', serif", color: "#000000" }} dir="rtl">
             {judulArab}
           </td>
         </tr>
@@ -186,19 +186,14 @@ export default function CetakRaporPage() {
           .arabic-text { font-family: 'Traditional Arabic', serif !important; }
           
           /* RESET MUTLAK TABEL RAPOR DOKUMEN RESMI (Sangat Rapi, Solid, Bebas Glitch) */
-          #rapor-print-container table,
           .rapor-table {
             border-collapse: collapse !important;
             border-spacing: 0 !important;
             width: 100% !important;
-            border: 1.5px solid #000000 !important;
+            border: 1px solid #000000 !important;
+            background-color: #ffffff !important;
           }
           
-          #rapor-print-container thead,
-          #rapor-print-container tbody,
-          #rapor-print-container tr,
-          #rapor-print-container th,
-          #rapor-print-container td,
           .rapor-table thead,
           .rapor-table tbody,
           .rapor-table tr,
@@ -216,8 +211,6 @@ export default function CetakRaporPage() {
             print-color-adjust: exact !important;
           }
           
-          #rapor-print-container thead th,
-          #rapor-print-container tbody td,
           .rapor-table th,
           .rapor-table td {
             border: 1px solid #000000 !important;
@@ -225,21 +218,40 @@ export default function CetakRaporPage() {
             vertical-align: middle !important;
           }
 
+          /* Header Rapor Elegan & Tajam (Hitam Pekat, Bukan Abu Pudar Dashboard) */
+          .rapor-table thead th {
+            color: #000000 !important;
+            font-weight: bold !important;
+            background-color: #f1f5f9 !important;
+          }
+
           /* Garis Pemisah Tengah Tegas (Bilateral Indonesia - Arab) */
-          .rapor-table .border-divider-mid,
-          #rapor-print-container .border-divider-mid {
-            border-right: 2.5px solid #000000 !important;
+          .rapor-table .border-divider-mid {
+            border-right: 2px solid #000000 !important;
           }
 
           /* Matikan total efek hover dari dashboard di tabel rapor */
-          #rapor-print-container tbody tr:hover td,
           .rapor-table tbody tr:hover td {
             background-color: transparent !important;
             box-shadow: none !important;
           }
-          #rapor-print-container tbody tr:hover td:first-child,
           .rapor-table tbody tr:hover td:first-child {
             box-shadow: none !important;
+          }
+
+          /* BIODATA SANTRI: WAJIB 100% BERSIH DARI GARIS KOTAK APAPUN (BORDERLESS) */
+          .biodata-table,
+          .biodata-table thead,
+          .biodata-table tbody,
+          .biodata-table tr,
+          .biodata-table th,
+          .biodata-table td {
+            border: none !important;
+            border-width: 0 !important;
+            border-style: none !important;
+            box-shadow: none !important;
+            background-color: transparent !important;
+            outline: none !important;
           }
           
           @media print {
@@ -298,21 +310,29 @@ export default function CetakRaporPage() {
               overflow: hidden !important;
             }
             
-            #rapor-print-container table,
             .rapor-table {
-              border: 1.5px solid #000000 !important;
+              border: 1px solid #000000 !important;
               border-collapse: collapse !important;
             }
-            #rapor-print-container th,
-            #rapor-print-container td,
             .rapor-table th,
             .rapor-table td {
               border: 1px solid #000000 !important;
               border-color: #000000 !important;
             }
-            #rapor-print-container .border-divider-mid,
+            .rapor-table thead th {
+              color: #000000 !important;
+              font-weight: bold !important;
+              background-color: #f1f5f9 !important;
+            }
             .rapor-table .border-divider-mid {
-              border-right: 2.5px solid #000000 !important;
+              border-right: 2px solid #000000 !important;
+            }
+            .biodata-table,
+            .biodata-table tr,
+            .biodata-table td {
+              border: none !important;
+              border-width: 0 !important;
+              background-color: transparent !important;
             }
             
             /* Pemisah Halaman Tegas untuk 2 Halaman */
@@ -493,48 +513,48 @@ export default function CetakRaporPage() {
               })()}
             </div>
 
-            {/* Biodata Santri */}
+            {/* Biodata Santri (100% Borderless, Bersih, Elegan) */}
             <div style={{ display: "flex", justifyContent: "space-between", fontSize: paperSize === "F4" ? "13px" : "12px", marginBottom: paperSize === "F4" ? "16px" : "12px", fontWeight: "bold", fontFamily: "Arial, Helvetica, sans-serif" }}>
               <div>
-                <table style={{ width: "100%" }}>
+                <table className="biodata-table" style={{ width: "100%", border: "none", borderCollapse: "separate" }}>
                   <tbody>
-                    <tr style={{ borderBottom: "none" }}>
-                      <td style={{ width: 85, padding: "2.5px 0", borderBottom: "none" }}>Nama</td>
-                      <td style={{ padding: "2.5px 6px", borderBottom: "none" }}>:</td>
-                      <td style={{ textTransform: "uppercase", padding: "2.5px 0", borderBottom: "none" }}>{santri?.nama}</td>
+                    <tr style={{ border: "none" }}>
+                      <td style={{ width: 85, padding: "2.5px 0", border: "none" }}>Nama</td>
+                      <td style={{ padding: "2.5px 6px", border: "none" }}>:</td>
+                      <td style={{ textTransform: "uppercase", padding: "2.5px 0", border: "none" }}>{santri?.nama}</td>
                     </tr>
-                    <tr style={{ borderBottom: "none" }}>
-                      <td style={{ width: 85, padding: "2.5px 0", borderBottom: "none" }}>NIS</td>
-                      <td style={{ padding: "2.5px 6px", borderBottom: "none" }}>:</td>
-                      <td style={{ padding: "2.5px 0", borderBottom: "none", letterSpacing: "0.5px" }}>{santri?.nis || "-"}</td>
+                    <tr style={{ border: "none" }}>
+                      <td style={{ width: 85, padding: "2.5px 0", border: "none" }}>NIS</td>
+                      <td style={{ padding: "2.5px 6px", border: "none" }}>:</td>
+                      <td style={{ padding: "2.5px 0", border: "none", letterSpacing: "0.5px" }}>{santri?.nis || "-"}</td>
                     </tr>
-                    <tr style={{ borderBottom: "none" }}>
-                      <td style={{ width: 85, padding: "2.5px 0", borderBottom: "none" }}>Kelas</td>
-                      <td style={{ padding: "2.5px 6px", borderBottom: "none" }}>:</td>
-                      <td style={{ padding: "2.5px 0", borderBottom: "none" }}>{(santri?.kelas || "").replace(/\s*(MTs|MA|SMP|SMA|SD|TK)\b/gi, "")}</td>
+                    <tr style={{ border: "none" }}>
+                      <td style={{ width: 85, padding: "2.5px 0", border: "none" }}>Kelas</td>
+                      <td style={{ padding: "2.5px 6px", border: "none" }}>:</td>
+                      <td style={{ padding: "2.5px 0", border: "none" }}>{(santri?.kelas || "").replace(/\s*(MTs|MA|SMP|SMA|SD|TK)\b/gi, "")}</td>
                     </tr>
                   </tbody>
                 </table>
               </div>
               <div style={{ textAlign: "right" }}>
-                <table style={{ display: "inline-block", textAlign: "left" }}>
+                <table className="biodata-table" style={{ display: "inline-block", textAlign: "left", border: "none", borderCollapse: "separate" }}>
                   <tbody>
-                    <tr style={{ borderBottom: "none" }}>
-                      <td style={{ padding: "2.5px 0", whiteSpace: "nowrap", borderBottom: "none" }}>Semester</td>
-                      <td style={{ padding: "2.5px 6px", borderBottom: "none" }}>:</td>
-                      <td style={{ padding: "2.5px 0", borderBottom: "none" }}>
+                    <tr style={{ border: "none" }}>
+                      <td style={{ padding: "2.5px 0", whiteSpace: "nowrap", border: "none" }}>Semester</td>
+                      <td style={{ padding: "2.5px 6px", border: "none" }}>:</td>
+                      <td style={{ padding: "2.5px 0", border: "none" }}>
                         {santri?.semester?.includes("Ganjil") || santri?.semester === "1" ? "Ganjil" : santri?.semester?.includes("Genap") || santri?.semester === "2" ? "Genap" : santri?.semester} (Tengah Semester / PTS)
                       </td>
                     </tr>
-                    <tr style={{ borderBottom: "none" }}>
-                      <td style={{ padding: "2.5px 0", whiteSpace: "nowrap", borderBottom: "none" }}>Tahun Pelajaran</td>
-                      <td style={{ padding: "2.5px 6px", borderBottom: "none" }}>:</td>
-                      <td style={{ padding: "2.5px 0", borderBottom: "none" }}>{santri?.tahun_ajaran}</td>
+                    <tr style={{ border: "none" }}>
+                      <td style={{ padding: "2.5px 0", whiteSpace: "nowrap", border: "none" }}>Tahun Pelajaran</td>
+                      <td style={{ padding: "2.5px 6px", border: "none" }}>:</td>
+                      <td style={{ padding: "2.5px 0", border: "none" }}>{santri?.tahun_ajaran}</td>
                     </tr>
-                    <tr style={{ borderBottom: "none" }}>
-                      <td style={{ padding: "2.5px 0", whiteSpace: "nowrap", borderBottom: "none" }}>Wali Kelas</td>
-                      <td style={{ padding: "2.5px 6px", borderBottom: "none" }}>:</td>
-                      <td style={{ padding: "2.5px 0", borderBottom: "none" }}>{waliKelasName}</td>
+                    <tr style={{ border: "none" }}>
+                      <td style={{ padding: "2.5px 0", whiteSpace: "nowrap", border: "none" }}>Wali Kelas</td>
+                      <td style={{ padding: "2.5px 6px", border: "none" }}>:</td>
+                      <td style={{ padding: "2.5px 0", border: "none" }}>{waliKelasName}</td>
                     </tr>
                   </tbody>
                 </table>
@@ -559,21 +579,21 @@ export default function CetakRaporPage() {
                 <col style={{ width: "4.5%" }} />   {/* 10. رقم */}
               </colgroup>
               <thead>
-                <tr style={{ backgroundColor: "#f0f0f0", fontWeight: "bold" }}>
+                <tr style={{ backgroundColor: "#f1f5f9", fontWeight: "bold" }}>
                   {/* Sisi Kiri: Bahasa Indonesia */}
-                  <th style={{ border: "1px solid #000000", padding: paperSize === "F4" ? "7px 2px" : "5.5px 2px", textAlign: "center", fontFamily: "Arial, Helvetica, sans-serif", fontSize: paperSize === "F4" ? "12px" : "11px" }}>No</th>
-                  <th style={{ border: "1px solid #000000", padding: paperSize === "F4" ? "7px 6px" : "5.5px 6px", textAlign: "center", fontFamily: "Arial, Helvetica, sans-serif", fontSize: paperSize === "F4" ? "12.5px" : "11.5px" }}>Mata Pelajaran</th>
-                  <th style={{ border: "1px solid #000000", padding: paperSize === "F4" ? "7px 2px" : "5.5px 2px", textAlign: "center", fontFamily: "Arial, Helvetica, sans-serif", fontSize: paperSize === "F4" ? "12px" : "11px" }}>KKM</th>
-                  <th style={{ border: "1px solid #000000", padding: paperSize === "F4" ? "7px 2px" : "5.5px 2px", textAlign: "center", fontFamily: "Arial, Helvetica, sans-serif", fontSize: paperSize === "F4" ? "12px" : "11px" }}>Nilai</th>
+                  <th style={{ border: "1px solid #000000", padding: paperSize === "F4" ? "7px 2px" : "5.5px 2px", textAlign: "center", fontFamily: "Arial, Helvetica, sans-serif", fontSize: paperSize === "F4" ? "12px" : "11px", color: "#000000" }}>No</th>
+                  <th style={{ border: "1px solid #000000", padding: paperSize === "F4" ? "7px 6px" : "5.5px 6px", textAlign: "center", fontFamily: "Arial, Helvetica, sans-serif", fontSize: paperSize === "F4" ? "12.5px" : "11.5px", color: "#000000" }}>Mata Pelajaran</th>
+                  <th style={{ border: "1px solid #000000", padding: paperSize === "F4" ? "7px 2px" : "5.5px 2px", textAlign: "center", fontFamily: "Arial, Helvetica, sans-serif", fontSize: paperSize === "F4" ? "12px" : "11px", color: "#000000" }}>KKM</th>
+                  <th style={{ border: "1px solid #000000", padding: paperSize === "F4" ? "7px 2px" : "5.5px 2px", textAlign: "center", fontFamily: "Arial, Helvetica, sans-serif", fontSize: paperSize === "F4" ? "12px" : "11px", color: "#000000" }}>Nilai</th>
                   {/* Kolom 5: Rata-Rata Kelas (Lega 10.5% & Tulisan Utuh Rapi) */}
-                  <th className="col-rata-rata border-divider-mid" style={{ border: "1px solid #000000", borderRight: "2.5px solid #000000", padding: paperSize === "F4" ? "6px 1px" : "5px 1px", textAlign: "center", fontFamily: "Arial, Helvetica, sans-serif", fontSize: "10.5px", lineHeight: "1.15", letterSpacing: "-0.2px" }}>Rata-Rata<br/>Kelas</th>
+                  <th className="col-rata-rata border-divider-mid" style={{ border: "1px solid #000000", borderRight: "2px solid #000000", padding: paperSize === "F4" ? "6px 1px" : "5px 1px", textAlign: "center", fontFamily: "Arial, Helvetica, sans-serif", fontSize: "10.5px", lineHeight: "1.15", letterSpacing: "-0.2px", color: "#000000" }}>Rata-Rata<br/>Kelas</th>
                   
                   {/* Sisi Kanan: Bahasa Arab (Mirror Persis 10.5%) */}
-                  <th className="col-rata-rata" style={{ border: "1px solid #000000", padding: paperSize === "F4" ? "6px 1px" : "5px 1px", textAlign: "center", fontFamily: "'Traditional Arabic', serif", fontSize: "13px", lineHeight: "1.1" }}>متوسط<br/>الفصل</th>
-                  <th style={{ border: "1px solid #000000", padding: paperSize === "F4" ? "7px 2px" : "5.5px 2px", textAlign: "center", fontFamily: "'Traditional Arabic', serif", fontSize: "13px" }}>النتيجة</th>
-                  <th style={{ border: "1px solid #000000", padding: paperSize === "F4" ? "7px 2px" : "5.5px 2px", textAlign: "center", fontFamily: "'Traditional Arabic', serif", fontSize: "13px", lineHeight: "1.1" }}>الدرجة<br/>الصغرى</th>
-                  <th style={{ border: "1px solid #000000", padding: paperSize === "F4" ? "7px 6px" : "5.5px 6px", textAlign: "center", fontFamily: "'Traditional Arabic', serif", fontSize: paperSize === "F4" ? "14px" : "13px" }}>المواد الدراسية</th>
-                  <th style={{ border: "1px solid #000000", padding: paperSize === "F4" ? "7px 2px" : "5.5px 2px", textAlign: "center", fontFamily: "'Traditional Arabic', serif", fontSize: "13px" }}>رقم</th>
+                  <th className="col-rata-rata" style={{ border: "1px solid #000000", padding: paperSize === "F4" ? "6px 1px" : "5px 1px", textAlign: "center", fontFamily: "'Traditional Arabic', serif", fontSize: "13px", lineHeight: "1.1", color: "#000000" }}>متوسط<br/>الفصل</th>
+                  <th style={{ border: "1px solid #000000", padding: paperSize === "F4" ? "7px 2px" : "5.5px 2px", textAlign: "center", fontFamily: "'Traditional Arabic', serif", fontSize: "13px", color: "#000000" }}>النتيجة</th>
+                  <th style={{ border: "1px solid #000000", padding: paperSize === "F4" ? "7px 2px" : "5.5px 2px", textAlign: "center", fontFamily: "'Traditional Arabic', serif", fontSize: "13px", lineHeight: "1.1", color: "#000000" }}>الدرجة<br/>الصغرى</th>
+                  <th style={{ border: "1px solid #000000", padding: paperSize === "F4" ? "7px 6px" : "5.5px 6px", textAlign: "center", fontFamily: "'Traditional Arabic', serif", fontSize: paperSize === "F4" ? "14px" : "13px", color: "#000000" }}>المواد الدراسية</th>
+                  <th style={{ border: "1px solid #000000", padding: paperSize === "F4" ? "7px 2px" : "5.5px 2px", textAlign: "center", fontFamily: "'Traditional Arabic', serif", fontSize: "13px", color: "#000000" }}>رقم</th>
                 </tr>
               </thead>
               <tbody>
@@ -582,16 +602,16 @@ export default function CetakRaporPage() {
                 {renderTabelKategori("C. Ilmu Pengetahuan Umum", "جـ . العلوم العامة", nilai_akademik?.umum || [], (nilai_akademik?.syariah?.length || 0) + (nilai_akademik?.bahasa?.length || 0) + 1)}
 
                 {/* Section D. Kedisiplinan header row */}
-                <tr style={{ backgroundColor: "#e8e8e8" }}>
-                  <td colSpan={5} className="border-divider-mid" style={{ border: "1px solid #000000", borderRight: "2.5px solid #000000", padding: paperSize === "F4" ? "7.5px 10px" : "6px 10px", fontWeight: "bold", fontSize: paperSize === "F4" ? "13.5px" : "12.5px", fontFamily: "Arial, Helvetica, sans-serif" }}>D. Kedisiplinan</td>
-                  <td colSpan={5} style={{ border: "1px solid #000000", padding: paperSize === "F4" ? "7.5px 10px" : "6px 10px", fontWeight: "bold", textAlign: "right", fontFamily: "'Traditional Arabic', serif", fontSize: paperSize === "F4" ? "15.5px" : "14px" }} dir="rtl">د. المواظبة</td>
+                <tr style={{ backgroundColor: "#f1f5f9" }}>
+                  <td colSpan={5} className="border-divider-mid" style={{ border: "1px solid #000000", borderRight: "2px solid #000000", padding: paperSize === "F4" ? "7.5px 10px" : "6px 10px", fontWeight: "bold", fontSize: paperSize === "F4" ? "13.5px" : "12.5px", fontFamily: "Arial, Helvetica, sans-serif", color: "#000000" }}>D. Kedisiplinan</td>
+                  <td colSpan={5} style={{ border: "1px solid #000000", padding: paperSize === "F4" ? "7.5px 10px" : "6px 10px", fontWeight: "bold", textAlign: "right", fontFamily: "'Traditional Arabic', serif", fontSize: paperSize === "F4" ? "15.5px" : "14px", color: "#000000" }} dir="rtl">د. المواظبة</td>
                 </tr>
                 
-                {/* Summary rows (dengan pembatas tengah tebal 2.5px) */}
+                {/* Summary rows (dengan pembatas tengah tebal 2px) */}
                 <tr style={{ backgroundColor: "white", fontFamily: "Arial, Helvetica, sans-serif" }}>
                   <td colSpan={3} style={{ border: "1px solid #000000", padding: paperSize === "F4" ? "7px 8px" : "5.5px 8px", fontWeight: "bold", fontSize: paperSize === "F4" ? "13px" : "12px" }}>Jumlah Nilai</td>
                   <td style={{ border: "1px solid #000000", padding: paperSize === "F4" ? "7px 4px" : "5.5px 4px", textAlign: "center", fontWeight: "bold", fontSize: paperSize === "F4" ? "13.5px" : "12.5px" }}>{kedisiplinan?.totalNilai}</td>
-                  <td className="border-divider-mid" style={{ border: "1px solid #000000", borderRight: "2.5px solid #000000", padding: paperSize === "F4" ? "7px 4px" : "5.5px 4px", backgroundColor: "transparent" }}></td>
+                  <td className="border-divider-mid" style={{ border: "1px solid #000000", borderRight: "2px solid #000000", padding: paperSize === "F4" ? "7px 4px" : "5.5px 4px", backgroundColor: "transparent" }}></td>
                   <td style={{ border: "1px solid #000000", padding: paperSize === "F4" ? "7px 4px" : "5.5px 4px", backgroundColor: "transparent" }}></td>
                   <td style={{ border: "1px solid #000000", padding: paperSize === "F4" ? "7px 4px" : "5.5px 4px", textAlign: "center", fontWeight: "bold", fontSize: paperSize === "F4" ? "14px" : "13px" }} dir="rtl">{toArabicNum(kedisiplinan?.totalNilai)}</td>
                   <td colSpan={3} style={{ border: "1px solid #000000", padding: paperSize === "F4" ? "7px 8px" : "5.5px 8px", textAlign: "right", fontWeight: "bold", fontFamily: "'Traditional Arabic', serif", fontSize: paperSize === "F4" ? "14.5px" : "13.5px" }} dir="rtl">مجموع الدرجات</td>
@@ -599,7 +619,7 @@ export default function CetakRaporPage() {
                 <tr style={{ backgroundColor: "#fafafa", fontFamily: "Arial, Helvetica, sans-serif" }}>
                   <td colSpan={3} style={{ border: "1px solid #000000", padding: paperSize === "F4" ? "7px 8px" : "5.5px 8px", fontWeight: "bold", fontSize: paperSize === "F4" ? "13px" : "12px" }}>Rata-Rata Santri</td>
                   <td style={{ border: "1px solid #000000", padding: paperSize === "F4" ? "7px 4px" : "5.5px 4px", textAlign: "center", fontWeight: "bold", fontSize: paperSize === "F4" ? "13.5px" : "12.5px" }}>{Math.round(Number(kedisiplinan?.rataRata || 0))}</td>
-                  <td className="border-divider-mid" style={{ border: "1px solid #000000", borderRight: "2.5px solid #000000", padding: paperSize === "F4" ? "7px 4px" : "5.5px 4px", backgroundColor: "transparent" }}></td>
+                  <td className="border-divider-mid" style={{ border: "1px solid #000000", borderRight: "2px solid #000000", padding: paperSize === "F4" ? "7px 4px" : "5.5px 4px", backgroundColor: "transparent" }}></td>
                   <td style={{ border: "1px solid #000000", padding: paperSize === "F4" ? "7px 4px" : "5.5px 4px", backgroundColor: "transparent" }}></td>
                   <td style={{ border: "1px solid #000000", padding: paperSize === "F4" ? "7px 4px" : "5.5px 4px", textAlign: "center", fontWeight: "bold", fontSize: paperSize === "F4" ? "14px" : "13px" }} dir="rtl">{toArabicNum(Math.round(Number(kedisiplinan?.rataRata || 0)))}</td>
                   <td colSpan={3} style={{ border: "1px solid #000000", padding: paperSize === "F4" ? "7px 8px" : "5.5px 8px", textAlign: "right", fontWeight: "bold", fontFamily: "'Traditional Arabic', serif", fontSize: paperSize === "F4" ? "14.5px" : "13.5px" }} dir="rtl">المعدل التراكمي</td>
@@ -607,7 +627,7 @@ export default function CetakRaporPage() {
                 <tr style={{ backgroundColor: "white", fontFamily: "Arial, Helvetica, sans-serif" }}>
                   <td colSpan={3} style={{ border: "1px solid #000000", padding: paperSize === "F4" ? "7px 8px" : "5.5px 8px", fontWeight: "bold", fontSize: paperSize === "F4" ? "13px" : "12px" }}>Ranking</td>
                   <td style={{ border: "1px solid #000000", padding: paperSize === "F4" ? "7px 4px" : "5.5px 4px", textAlign: "center", fontWeight: "bold", fontSize: paperSize === "F4" ? "13.5px" : "12.5px" }}>{kedisiplinan?.ranking}</td>
-                  <td className="border-divider-mid" style={{ border: "1px solid #000000", borderRight: "2.5px solid #000000", padding: paperSize === "F4" ? "7px 4px" : "5.5px 4px", backgroundColor: "transparent" }}></td>
+                  <td className="border-divider-mid" style={{ border: "1px solid #000000", borderRight: "2px solid #000000", padding: paperSize === "F4" ? "7px 4px" : "5.5px 4px", backgroundColor: "transparent" }}></td>
                   <td style={{ border: "1px solid #000000", padding: paperSize === "F4" ? "7px 4px" : "5.5px 4px", backgroundColor: "transparent" }}></td>
                   <td style={{ border: "1px solid #000000", padding: paperSize === "F4" ? "7px 4px" : "5.5px 4px", textAlign: "center", fontWeight: "bold", fontSize: paperSize === "F4" ? "14px" : "13px" }} dir="rtl">{toArabicNum(kedisiplinan?.ranking)}</td>
                   <td colSpan={3} style={{ border: "1px solid #000000", padding: paperSize === "F4" ? "7px 8px" : "5.5px 8px", textAlign: "right", fontWeight: "bold", fontFamily: "'Traditional Arabic', serif", fontSize: paperSize === "F4" ? "14.5px" : "13.5px" }} dir="rtl">الترتيب</td>
@@ -615,7 +635,7 @@ export default function CetakRaporPage() {
                 <tr style={{ backgroundColor: "#fafafa", fontFamily: "Arial, Helvetica, sans-serif" }}>
                   <td colSpan={3} style={{ border: "1px solid #000000", padding: paperSize === "F4" ? "7px 8px" : "5.5px 8px", fontWeight: "bold", fontSize: paperSize === "F4" ? "13px" : "12px" }}>Jumlah Santri</td>
                   <td style={{ border: "1px solid #000000", padding: paperSize === "F4" ? "7px 4px" : "5.5px 4px", textAlign: "center", fontWeight: "bold", fontSize: paperSize === "F4" ? "13.5px" : "12.5px" }}>{kedisiplinan?.jumlahSantri}</td>
-                  <td className="border-divider-mid" style={{ border: "1px solid #000000", borderRight: "2.5px solid #000000", padding: paperSize === "F4" ? "7px 4px" : "5.5px 4px", backgroundColor: "transparent" }}></td>
+                  <td className="border-divider-mid" style={{ border: "1px solid #000000", borderRight: "2px solid #000000", padding: paperSize === "F4" ? "7px 4px" : "5.5px 4px", backgroundColor: "transparent" }}></td>
                   <td style={{ border: "1px solid #000000", padding: paperSize === "F4" ? "7px 4px" : "5.5px 4px", backgroundColor: "transparent" }}></td>
                   <td style={{ border: "1px solid #000000", padding: paperSize === "F4" ? "7px 4px" : "5.5px 4px", textAlign: "center", fontWeight: "bold", fontSize: paperSize === "F4" ? "14px" : "13px" }} dir="rtl">{toArabicNum(kedisiplinan?.jumlahSantri)}</td>
                   <td colSpan={3} style={{ border: "1px solid #000000", padding: paperSize === "F4" ? "7px 8px" : "5.5px 8px", textAlign: "right", fontWeight: "bold", fontFamily: "'Traditional Arabic', serif", fontSize: paperSize === "F4" ? "14.5px" : "13.5px" }} dir="rtl">عدد الطلاب</td>
@@ -682,7 +702,7 @@ export default function CetakRaporPage() {
                 width: "100%", 
                 tableLayout: "fixed", 
                 borderCollapse: "collapse", 
-                border: "1.5px solid #000000", 
+                border: "1px solid #000000", 
                 marginBottom: paperSize === "F4" ? "20px" : "16px", 
                 pageBreakInside: "avoid", 
                 fontFamily: "Arial, Helvetica, sans-serif",
@@ -698,26 +718,26 @@ export default function CetakRaporPage() {
                 <col style={{ width: "28%" }} />  {/* Jumlah */}
               </colgroup>
               <thead>
-                <tr style={{ backgroundColor: "#f0f0f0" }}>
-                  <th colSpan={2} className="border-divider-mid" style={{ border: "1px solid #000000", borderRight: "2.5px solid #000000", padding: paperSize === "F4" ? "7.5px 10px" : "6px 10px", textAlign: "center", fontWeight: "bold", fontSize: paperSize === "F4" ? "13.5px" : "12.5px" }}>
+                <tr style={{ backgroundColor: "#f1f5f9" }}>
+                  <th colSpan={2} className="border-divider-mid" style={{ border: "1px solid #000000", borderRight: "2px solid #000000", padding: paperSize === "F4" ? "7.5px 10px" : "6px 10px", textAlign: "center", fontWeight: "bold", fontSize: paperSize === "F4" ? "13.5px" : "12.5px", color: "#000000" }}>
                     Kepribadian Santri
                   </th>
-                  <th colSpan={2} style={{ border: "1px solid #000000", padding: paperSize === "F4" ? "7.5px 10px" : "6px 10px", textAlign: "center", fontWeight: "bold", fontSize: paperSize === "F4" ? "13.5px" : "12.5px" }}>
+                  <th colSpan={2} style={{ border: "1px solid #000000", padding: paperSize === "F4" ? "7.5px 10px" : "6px 10px", textAlign: "center", fontWeight: "bold", fontSize: paperSize === "F4" ? "13.5px" : "12.5px", color: "#000000" }}>
                     Ketidakhadiran
                   </th>
                 </tr>
-                <tr style={{ backgroundColor: "#e8e8e8", fontSize: paperSize === "F4" ? "12.5px" : "11.5px" }}>
-                  <th style={{ border: "1px solid #000000", padding: paperSize === "F4" ? "5.5px 10px" : "4.5px 10px", textAlign: "center" }}>Aspek Penilaian</th>
-                  <th className="border-divider-mid" style={{ border: "1px solid #000000", borderRight: "2.5px solid #000000", padding: paperSize === "F4" ? "5.5px 10px" : "4.5px 10px", textAlign: "center" }}>Predikat</th>
-                  <th style={{ border: "1px solid #000000", padding: paperSize === "F4" ? "5.5px 10px" : "4.5px 10px", textAlign: "center" }}>Absensi</th>
-                  <th style={{ border: "1px solid #000000", padding: paperSize === "F4" ? "5.5px 10px" : "4.5px 10px", textAlign: "center" }}>Jumlah</th>
+                <tr style={{ backgroundColor: "#f8fafc", fontSize: paperSize === "F4" ? "12.5px" : "11.5px" }}>
+                  <th style={{ border: "1px solid #000000", padding: paperSize === "F4" ? "5.5px 10px" : "4.5px 10px", textAlign: "center", color: "#000000" }}>Aspek Penilaian</th>
+                  <th className="border-divider-mid" style={{ border: "1px solid #000000", borderRight: "2px solid #000000", padding: paperSize === "F4" ? "5.5px 10px" : "4.5px 10px", textAlign: "center", color: "#000000" }}>Predikat</th>
+                  <th style={{ border: "1px solid #000000", padding: paperSize === "F4" ? "5.5px 10px" : "4.5px 10px", textAlign: "center", color: "#000000" }}>Absensi</th>
+                  <th style={{ border: "1px solid #000000", padding: paperSize === "F4" ? "5.5px 10px" : "4.5px 10px", textAlign: "center", color: "#000000" }}>Jumlah</th>
                 </tr>
               </thead>
               <tbody>
                 {/* Baris 1: Perilaku & Sakit */}
                 <tr style={{ backgroundColor: "white" }}>
                   <td style={{ border: "1px solid #000000", padding: paperSize === "F4" ? "7px 12px" : "5.5px 10px" }}>Perilaku</td>
-                  <td className="border-divider-mid" style={{ border: "1px solid #000000", borderRight: "2.5px solid #000000", padding: paperSize === "F4" ? "7px 10px" : "5.5px 8px", textAlign: "center", fontWeight: "bold", fontSize: paperSize === "F4" ? "13.5px" : "12.5px" }}>{sikapGrade}</td>
+                  <td className="border-divider-mid" style={{ border: "1px solid #000000", borderRight: "2px solid #000000", padding: paperSize === "F4" ? "7px 10px" : "5.5px 8px", textAlign: "center", fontWeight: "bold", fontSize: paperSize === "F4" ? "13.5px" : "12.5px" }}>{sikapGrade}</td>
                   <td style={{ border: "1px solid #000000", padding: paperSize === "F4" ? "7px 12px" : "5.5px 10px", textAlign: "center" }}>Sakit</td>
                   <td style={{ border: "1px solid #000000", padding: paperSize === "F4" ? "7px 12px" : "5.5px 10px", textAlign: "center", fontSize: paperSize === "F4" ? "13px" : "12px" }}>
                     <strong style={{ fontSize: paperSize === "F4" ? "13.5px" : "12.5px" }}>{absen?.sakit || 0}</strong> <span style={{ color: "#444" }}>Jam Pelajaran</span>
@@ -726,7 +746,7 @@ export default function CetakRaporPage() {
                 {/* Baris 2: Kedisiplinan & Izin */}
                 <tr style={{ backgroundColor: "#fafafa" }}>
                   <td style={{ border: "1px solid #000000", padding: paperSize === "F4" ? "7px 12px" : "5.5px 10px" }}>Kedisiplinan</td>
-                  <td className="border-divider-mid" style={{ border: "1px solid #000000", borderRight: "2.5px solid #000000", padding: paperSize === "F4" ? "7px 10px" : "5.5px 8px", textAlign: "center", fontWeight: "bold", fontSize: paperSize === "F4" ? "13.5px" : "12.5px" }}>{disiplinGrade}</td>
+                  <td className="border-divider-mid" style={{ border: "1px solid #000000", borderRight: "2px solid #000000", padding: paperSize === "F4" ? "7px 10px" : "5.5px 8px", textAlign: "center", fontWeight: "bold", fontSize: paperSize === "F4" ? "13.5px" : "12.5px" }}>{disiplinGrade}</td>
                   <td style={{ border: "1px solid #000000", padding: paperSize === "F4" ? "7px 12px" : "5.5px 10px", textAlign: "center" }}>Izin</td>
                   <td style={{ border: "1px solid #000000", padding: paperSize === "F4" ? "7px 12px" : "5.5px 10px", textAlign: "center", fontSize: paperSize === "F4" ? "13px" : "12px" }}>
                     <strong style={{ fontSize: paperSize === "F4" ? "13.5px" : "12.5px" }}>{absen?.izin || 0}</strong> <span style={{ color: "#444" }}>Jam Pelajaran</span>
@@ -735,7 +755,7 @@ export default function CetakRaporPage() {
                 {/* Baris 3: Kerajinan & Alpha */}
                 <tr style={{ backgroundColor: "white" }}>
                   <td style={{ border: "1px solid #000000", padding: paperSize === "F4" ? "7px 12px" : "5.5px 10px" }}>Kerajinan</td>
-                  <td className="border-divider-mid" style={{ border: "1px solid #000000", borderRight: "2.5px solid #000000", padding: paperSize === "F4" ? "7px 10px" : "5.5px 8px", textAlign: "center", fontWeight: "bold", fontSize: paperSize === "F4" ? "13.5px" : "12.5px" }}>{sikapGrade}</td>
+                  <td className="border-divider-mid" style={{ border: "1px solid #000000", borderRight: "2px solid #000000", padding: paperSize === "F4" ? "7px 10px" : "5.5px 8px", textAlign: "center", fontWeight: "bold", fontSize: paperSize === "F4" ? "13.5px" : "12.5px" }}>{sikapGrade}</td>
                   <td style={{ border: "1px solid #000000", padding: paperSize === "F4" ? "7px 12px" : "5.5px 10px", textAlign: "center" }}>Alpha</td>
                   <td style={{ border: "1px solid #000000", padding: paperSize === "F4" ? "7px 12px" : "5.5px 10px", textAlign: "center", fontSize: paperSize === "F4" ? "13px" : "12px" }}>
                     <strong style={{ fontSize: paperSize === "F4" ? "13.5px" : "12.5px" }}>{absen?.alpha || 0}</strong> <span style={{ color: "#444" }}>Jam Pelajaran</span>
@@ -744,7 +764,7 @@ export default function CetakRaporPage() {
                 {/* Baris 4: Kebersihan & Total (Sempurna & Seimbang) */}
                 <tr style={{ backgroundColor: "#fafafa" }}>
                   <td style={{ border: "1px solid #000000", padding: paperSize === "F4" ? "7px 12px" : "5.5px 10px" }}>Kebersihan</td>
-                  <td className="border-divider-mid" style={{ border: "1px solid #000000", borderRight: "2.5px solid #000000", padding: paperSize === "F4" ? "7px 10px" : "5.5px 8px", textAlign: "center", fontWeight: "bold", fontSize: paperSize === "F4" ? "13.5px" : "12.5px" }}>{sikapGrade}</td>
+                  <td className="border-divider-mid" style={{ border: "1px solid #000000", borderRight: "2px solid #000000", padding: paperSize === "F4" ? "7px 10px" : "5.5px 8px", textAlign: "center", fontWeight: "bold", fontSize: paperSize === "F4" ? "13.5px" : "12.5px" }}>{sikapGrade}</td>
                   <td style={{ border: "1px solid #000000", padding: paperSize === "F4" ? "7px 12px" : "5.5px 10px", textAlign: "center", fontWeight: "bold" }}>Total</td>
                   <td style={{ border: "1px solid #000000", padding: paperSize === "F4" ? "7px 12px" : "5.5px 10px", textAlign: "center", fontSize: paperSize === "F4" ? "13px" : "12px" }}>
                     <strong style={{ fontSize: paperSize === "F4" ? "13.5px" : "12.5px" }}>{(absen?.sakit || 0) + (absen?.izin || 0) + (absen?.alpha || 0)}</strong> <span style={{ color: "#444" }}>Jam Pelajaran</span>
@@ -755,18 +775,18 @@ export default function CetakRaporPage() {
 
             {/* 2. LAPORAN TAHSIN & TAHFIDZ (UJIAN PRA TARGET RESMI) */}
             <div style={{ marginBottom: paperSize === "F4" ? "20px" : "16px", pageBreakInside: "avoid" }}>
-              <table className="rapor-table" style={{ width: "100%", borderCollapse: "collapse", border: "1.5px solid #000000", fontSize: paperSize === "F4" ? "13px" : "12px", fontFamily: "Arial, Helvetica, sans-serif" }}>
+              <table className="rapor-table" style={{ width: "100%", borderCollapse: "collapse", border: "1px solid #000000", fontSize: paperSize === "F4" ? "13px" : "12px", fontFamily: "Arial, Helvetica, sans-serif" }}>
                 <thead>
-                  <tr style={{ backgroundColor: "#f0f0f0" }}>
+                  <tr style={{ backgroundColor: "#f1f5f9" }}>
                     <th colSpan={4} style={{ border: "1px solid #000000", padding: paperSize === "F4" ? "7.5px 10px" : "6px 10px", textAlign: "left", color: "#000000", fontWeight: "bold", fontSize: paperSize === "F4" ? "13.5px" : "12.5px" }}>
                       LAPORAN TAHSIN & TAHFIDZ (PROGRAM AL-QUR'AN)
                     </th>
                   </tr>
-                  <tr style={{ backgroundColor: "#e8e8e8" }}>
-                    <th style={{ border: "1px solid #000000", padding: paperSize === "F4" ? "6.5px 10px" : "5.5px 10px", textAlign: "left" }}>Jenis / Materi Ujian</th>
-                    <th style={{ border: "1px solid #000000", padding: paperSize === "F4" ? "6.5px 10px" : "5.5px 10px", width: "15%", textAlign: "center" }}>Sikap</th>
-                    <th style={{ border: "1px solid #000000", padding: paperSize === "F4" ? "6.5px 10px" : "5.5px 10px", width: "15%", textAlign: "center" }}>Nilai Ujian</th>
-                    <th style={{ border: "1px solid #000000", padding: paperSize === "F4" ? "6.5px 10px" : "5.5px 10px", width: "20%", textAlign: "center" }}>Keterangan</th>
+                  <tr style={{ backgroundColor: "#f8fafc" }}>
+                    <th style={{ border: "1px solid #000000", padding: paperSize === "F4" ? "6.5px 10px" : "5.5px 10px", textAlign: "left", color: "#000000" }}>Jenis / Materi Ujian</th>
+                    <th style={{ border: "1px solid #000000", padding: paperSize === "F4" ? "6.5px 10px" : "5.5px 10px", width: "15%", textAlign: "center", color: "#000000" }}>Sikap</th>
+                    <th style={{ border: "1px solid #000000", padding: paperSize === "F4" ? "6.5px 10px" : "5.5px 10px", width: "15%", textAlign: "center", color: "#000000" }}>Nilai Ujian</th>
+                    <th style={{ border: "1px solid #000000", padding: paperSize === "F4" ? "6.5px 10px" : "5.5px 10px", width: "20%", textAlign: "center", color: "#000000" }}>Keterangan</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -807,9 +827,9 @@ export default function CetakRaporPage() {
 
             {/* 3. EVALUASI PENCAPAIAN AL-QUR'AN */}
             <div style={{ marginBottom: paperSize === "F4" ? "22px" : "16px", pageBreakInside: "avoid" }}>
-              <table className="rapor-table" style={{ width: "100%", borderCollapse: "collapse", border: "1.5px solid #000000", fontSize: paperSize === "F4" ? "13px" : "12px", fontFamily: "Arial, Helvetica, sans-serif" }}>
+              <table className="rapor-table" style={{ width: "100%", borderCollapse: "collapse", border: "1px solid #000000", fontSize: paperSize === "F4" ? "13px" : "12px", fontFamily: "Arial, Helvetica, sans-serif" }}>
                 <thead>
-                  <tr style={{ backgroundColor: "#f0f0f0" }}>
+                  <tr style={{ backgroundColor: "#f1f5f9" }}>
                     <th style={{ border: "1px solid #000000", padding: paperSize === "F4" ? "7px 10px" : "6px 10px", textAlign: "left", fontSize: paperSize === "F4" ? "13.5px" : "12.5px", color: "#000000" }}>EVALUASI PENCAPAIAN AL-QUR'AN</th>
                   </tr>
                 </thead>
@@ -858,9 +878,9 @@ export default function CetakRaporPage() {
                     <p style={{ margin: "3px 0 0 0" }}>Orang Tua / Wali</p>
                   </div>
                   <div style={{ minHeight: "36px", display: "flex", alignItems: "flex-end", justifyContent: "center" }}>
-                    <div style={{ display: "flex", justifyContent: "space-between", width: "100%", fontWeight: "bold", margin: 0, fontSize: "13px" }}>
-                      <span>(</span><span>)</span>
-                    </div>
+                    <p style={{ fontWeight: "bold", margin: 0, fontSize: "11.5px", whiteSpace: "nowrap" }}>
+                      ( .................................... )
+                    </p>
                   </div>
                 </div>
 
