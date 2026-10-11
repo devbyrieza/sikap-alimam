@@ -66,6 +66,8 @@ export async function PUT(
     const body = await req.json();
     const { nik, nama_lengkap, nama_panggilan, no_hp, email, mata_pelajaran, foto_url, ttd_url, roles, wali_kelas_id } = body;
 
+    const isGuru = Array.isArray(roles) && roles.some((r: string) => r.toUpperCase() === "GURU");
+
     const updated = await prisma.pegawai.update({
       where: { id },
       data: {
@@ -77,6 +79,7 @@ export async function PUT(
         mata_pelajaran: mata_pelajaran || null,
         foto_url: foto_url || null,
         ttd_url: ttd_url || null,
+        ...(isGuru && { kategori_pegawai: "ASATIDZ" })
       },
     });
 
@@ -89,9 +92,53 @@ export async function PUT(
     }
 
     if (roles && roles.length > 0) {
-      const user = await prisma.user.findFirst({ where: { pegawai: { id } } });
+      const roleString = Array.from(new Set(roles.map((r: string) => r.trim().toUpperCase()))).filter(Boolean).join(",");
+      
+      let user = updated.user_id 
+        ? await prisma.user.findUnique({ where: { id: updated.user_id } }) 
+        : null;
+        
+      if (!user) {
+        user = await prisma.user.findFirst({ where: { pegawai: { id } } });
+      }
+      if (!user && (email || updated.email)) {
+        user = await prisma.user.findFirst({ where: { email: { equals: email || updated.email, mode: "insensitive" } } });
+      }
+      if (!user) {
+        user = await prisma.user.findFirst({ where: { nama: { equals: nama_lengkap.trim(), mode: "insensitive" } } });
+      }
+
       if (user) {
-        await prisma.user.update({ where: { id: user.id }, data: { role: roles[0] || 'GURU' } });
+        await prisma.user.update({
+          where: { id: user.id },
+          data: { role: roleString }
+        });
+        if (!updated.user_id) {
+          await prisma.pegawai.update({
+            where: { id },
+            data: { user_id: user.id }
+          });
+        }
+      } else {
+        const bcrypt = require('bcryptjs');
+        const defaultPassword = "Paas2026!";
+        const passwordHash = await bcrypt.hash(defaultPassword, 10);
+        const fallbackEmail = email || updated.email || `${updated.nik || id}@pesantren-alimam.com`;
+        
+        user = await prisma.user.create({
+          data: {
+            email: fallbackEmail,
+            password: passwordHash,
+            plain_password: defaultPassword,
+            nama: nama_lengkap.trim(),
+            role: roleString,
+            is_active: true
+          }
+        });
+        await prisma.pegawai.update({
+          where: { id },
+          data: { user_id: user.id }
+        });
       }
     }
 

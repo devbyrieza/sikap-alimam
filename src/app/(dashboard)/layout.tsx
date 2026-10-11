@@ -11,7 +11,22 @@ export default async function DashboardLayout({
   const session = await getSession();
   if (!session) redirect("/login");
 
-  const userRoles = (session.role || "").toLowerCase().split(",").map(r => r.trim());
+  let liveRole = session.role || "";
+  if (session.userId) {
+    try {
+      const liveUser = await prisma.user.findUnique({
+        where: { id: session.userId },
+        select: { role: true }
+      });
+      if (liveUser?.role) {
+        liveRole = liveUser.role;
+      }
+    } catch (e) {
+      console.error("DashboardLayout: Error fetching live user role:", e);
+    }
+  }
+
+  const userRoles = liveRole.toLowerCase().split(",").map(r => r.trim());
   const isWaliSantri = userRoles.includes("wali_santri") || userRoles.includes("orang_tua") || userRoles.includes("wali");
 
   let pegawai = null;
@@ -68,7 +83,7 @@ export default async function DashboardLayout({
 
   return (
     <div className="app-layout">
-      <Sidebar user={{ nama: session.nama || "", role: session.role || "", email: session.email || "", originalRole: session.originalRole }} />
+      <Sidebar user={{ nama: session.nama || "", role: liveRole, email: session.email || "", originalRole: session.originalRole }} />
       <main className="app-content">
         {session.is_default_password && (
           <div style={{

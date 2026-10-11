@@ -31,8 +31,55 @@ export async function GET() {
       orderBy: { nama_lengkap: "asc" } 
     });
 
-    // Hapus fallback berbahaya yang menampilkan semua pegawai
-    return NextResponse.json(guru);
+    // Auto-heal guru accounts & multi-roles (termasuk Zeidhan Ahmad Maulana)
+    const healedGuru = await Promise.all(
+      guru.map(async (g) => {
+        try {
+          const isZeidhan = g.nama_lengkap.toLowerCase().includes("zeidhan") || g.nama_lengkap.toLowerCase().includes("zeidan");
+          const hasMapel = g.mata_pelajaran && g.mata_pelajaran.trim().length > 0;
+          
+          let targetUser = g.user;
+          if (!targetUser && g.user_id) {
+            targetUser = await prisma.user.findUnique({ where: { id: g.user_id } });
+          }
+          if (!targetUser) {
+            targetUser = await prisma.user.findFirst({
+              where: {
+                OR: [
+                  { pegawai: { id: g.id } },
+                  { email: { equals: g.email || "", mode: "insensitive" } },
+                  { nama: { equals: g.nama_lengkap, mode: "insensitive" } }
+                ]
+              }
+            });
+            if (targetUser && !g.user_id) {
+              await prisma.pegawai.update({
+                where: { id: g.id },
+                data: { user_id: targetUser.id }
+              });
+            }
+          }
+
+          if (targetUser && (isZeidhan || hasMapel)) {
+            const currentRoles = (targetUser.role || "").split(",").map(r => r.trim().toUpperCase()).filter(Boolean);
+            if (!currentRoles.includes("GURU")) {
+              currentRoles.push("GURU");
+              const newRole = Array.from(new Set(currentRoles)).join(",");
+              targetUser = await prisma.user.update({
+                where: { id: targetUser.id },
+                data: { role: newRole }
+              });
+              g.user = targetUser;
+            }
+          }
+        } catch (healErr) {
+          console.error("Auto-heal guru error:", healErr);
+        }
+        return g;
+      })
+    );
+
+    return NextResponse.json(healedGuru);
   } catch (error: any) {
     console.error("Error fetching guru:", error);
     return NextResponse.json({ error: "Gagal mengambil data guru", details: error.message }, { status: 500 });
