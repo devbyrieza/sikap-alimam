@@ -8,6 +8,7 @@ import {
   Megaphone, AlertTriangle, UserCircle2, TrendingUp } from "lucide-react";
 import Link from "next/link";
 import { useSearchParams, useRouter } from "next/navigation";
+import { getOfficialNis } from "@/lib/officialSantri";
 
 const HARI_NAMA = ["Ahad", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
 
@@ -507,7 +508,7 @@ export default function HalaqohDashboardPage() {
                         <td style={{ padding: "13px 16px", textAlign: "center", color: "#94a3b8", fontWeight: 600 }}>{idx + 1}</td>
                         <td style={{ padding: "13px 16px" }}>
                           <div style={{ fontWeight: 800, color: "#1e293b", marginBottom: 2 }}>{s.nama_lengkap}</div>
-                          <div style={{ fontSize: 11, color: "#64748b" }}>NIS: {s.nis || "—"}</div>
+                          <div style={{ fontSize: 11, color: "#64748b" }}>NIS: {(s.nama_lengkap ? getOfficialNis(s.nama_lengkap) : null) || s.nis || "—"}</div>
                         </td>
                         <td style={{ padding: "13px 16px", textAlign: "center" }}>
                           <span style={{ background: "#fdf8f0", color: "#550000", border: "1px solid #ebdcc3", padding: "4px 10px", borderRadius: 9, fontSize: 12, fontWeight: 700, whiteSpace: "nowrap", display: "inline-block" }}>

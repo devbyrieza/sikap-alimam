@@ -1,9 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { getSession } from '@/lib/auth';
+import { getOfficialNis, syncOfficialNisInDatabase } from '@/lib/officialSantri';
 
 // GET: list nilai by mapel_id + kelas_id + semester + tahun_ajaran
 export async function GET(req: NextRequest) {
+  // Trigger self-healing background sync jika database belum tersinkron
+  syncOfficialNisInDatabase(prisma).catch(() => {});
+
   const { searchParams } = new URL(req.url);
   let mapel_id = searchParams.get('mapel_id');
   const kelas_id = searchParams.get('kelas_id');
@@ -37,7 +41,15 @@ export async function GET(req: NextRequest) {
       mapel: { select: { id: true, nama: true } } },
     orderBy: { santri: { nama_lengkap: 'asc' } } });
 
-  return NextResponse.json({ nilai });
+  const formattedNilai = nilai.map((n) => ({
+    ...n,
+    santri: {
+      ...n.santri,
+      nis: getOfficialNis(n.santri.nama_lengkap) || n.santri.nis,
+    },
+  }));
+
+  return NextResponse.json({ nilai: formattedNilai });
 }
 
 // POST: bulk upsert nilai (High-Density)

@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 
 import ModuleTabs from "@/components/ModuleTabs";
+import { getOfficialNis } from "@/lib/officialSantri";
 
 interface Kelas {
   id: string;
@@ -844,7 +845,7 @@ export default function InputNilaiPage() {
 
                     <div className="border-b border-stone-100 pb-4 pr-16">
                       <div className="font-extrabold text-stone-900 text-lg leading-snug mb-1">{s.nama_lengkap}</div>
-                      <div className="text-xs text-stone-600 font-semibold bg-stone-50 inline-block px-2.5 py-1 rounded-md border border-stone-200">NIS: {s.nis || "—"}</div>
+                      <div className="text-xs text-stone-600 font-semibold bg-stone-50 inline-block px-2.5 py-1 rounded-md border border-stone-200">NIS: {(s.nama_lengkap ? getOfficialNis(s.nama_lengkap) : null) || s.nis || "—"}</div>
                     </div>
 
                     <div className="grid grid-cols-2 gap-x-4 gap-y-5">
@@ -949,7 +950,7 @@ export default function InputNilaiPage() {
                               {s.nama_lengkap}
                             </div>
                             <div style={{ fontSize: "12px", color: "#64748b", marginTop: "2px" }}>
-                              NIS: {s.nis || "—"}
+                              NIS: {(s.nama_lengkap ? getOfficialNis(s.nama_lengkap) : null) || s.nis || "—"}
                             </div>
                           </td>
                           <td style={{ padding: "12px 12px", textAlign: "center", borderBottom: "1px solid #f5ede1" }}>

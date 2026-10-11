@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback, useMemo } from "react";
 import { ArrowRight, FileText, Loader2, ArrowLeft, BookOpen, BarChart3 } from "lucide-react";
 import ModuleTabs from "@/components/ModuleTabs";
 import { getStandardMapelName } from "@/lib/mapel";
+import { getOfficialNis } from "@/lib/officialSantri";
 
 interface Kelas {
   id: string;
@@ -101,7 +102,8 @@ export default function RekapNilaiPage() {
   // Santri unik
   const santriMap = new Map<string, { id: string; nama_lengkap: string; nis?: string }>();
   nilaiData.forEach((n) => {
-    santriMap.set(n.santri.id, n.santri);
+    const officialNis = (n.santri.nama_lengkap ? getOfficialNis(n.santri.nama_lengkap) : null) || n.santri.nis;
+    santriMap.set(n.santri.id, { ...n.santri, nis: officialNis });
   });
   const santriList = Array.from(santriMap.values()).sort((a, b) =>
     a.nama_lengkap.localeCompare(b.nama_lengkap)
@@ -409,7 +411,7 @@ export default function RekapNilaiPage() {
                             <td className="sticky-col" style={{ position: "sticky", left: 40, zIndex: 10, background: bgRow, fontWeight: "800", borderRight: "1px solid #ebdcc3", borderBottom: "1px solid #f5ede1", padding: "14px 18px" }}>
                               <div className="truncate" style={{ color: "#1a1a1a" }}>{santri.nama_lengkap}</div>
                             </td>
-                            <td style={{ color: "#64748b", fontSize: "12px", borderBottom: "1px solid #f5ede1", padding: "14px 16px" }}>{santri.nis || "—"}</td>
+                            <td style={{ color: "#64748b", fontSize: "12px", borderBottom: "1px solid #f5ede1", padding: "14px 16px" }}>{(santri.nama_lengkap ? getOfficialNis(santri.nama_lengkap) : null) || santri.nis || "—"}</td>
                             {displayMapelList.map((m) => {
                               const avg = getAvg(santri.id, m);
                               const isBawah = avg !== null && avg < 75;

@@ -1,3 +1,4 @@
+import { getOfficialNis } from "@/lib/officialSantri";
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
@@ -415,7 +416,7 @@ export default function TahfidzPage() {
                             {s.nama_lengkap}
                           </div>
                           <div style={{ fontSize: 13, color: "#94a3b8", marginTop: 2 }}>
-                            NIS: {s.nis || "—"}
+                            NIS: {(s.nama_lengkap ? getOfficialNis(s.nama_lengkap) : null) || s.nis || "—"}
                           </div>
                         </td>
                         <td style={{ padding: "16px 20px" }}>

@@ -113,3 +113,124 @@ export function getOfficialNisn(namaLengkap: string): string | null {
   }
   return null;
 }
+
+let isSyncing = false;
+let isSynced = false;
+
+/**
+ * Self-healing automatic database sync:
+ * Memastikan NIS & NISN di database PostgreSQL selalu sinkron dengan data resmi Excel
+ */
+export async function syncOfficialNisInDatabase(prisma: any) {
+  if (isSynced || isSyncing) return;
+  isSyncing = true;
+  try {
+    // Cek apakah santri Abdul Aziz Ali sudah memiliki NIS resmi 2601070001
+    const testSantri = await prisma.santriAktif.findFirst({
+      where: { nama_lengkap: { contains: "Abdul Aziz Ali", mode: "insensitive" } }
+    });
+
+    if (testSantri && testSantri.nis === "2601070001") {
+      isSynced = true;
+      return;
+    }
+
+    console.log("[AUTO-SYNC] Mendeteksi NIS santri belum sinkron. Menjalankan sinkronisasi database...");
+
+    const allDbSantri = await prisma.santriAktif.findMany({
+      include: { kelas: true }
+    });
+
+    // 1. Ubah ke prefix sementara untuk mencegah bentrok unique constraint
+    for (const s of allDbSantri) {
+      await prisma.santriAktif.update({
+        where: { id: s.id },
+        data: {
+          nis: s.nis ? `TMP_${s.id.substring(0, 8)}_${s.nis}` : null,
+          nisn: s.nisn ? `TMP_${s.id.substring(0, 8)}_${s.nisn}` : null,
+        }
+      });
+    }
+
+    // 2. Terapkan NIS & NISN resmi
+    for (const official of OFFICIAL_SANTRI_LIST) {
+      const officialClean = official.nama.toLowerCase().replace(/[^a-z0-9]/g, '');
+      const matched = allDbSantri.find((dbS: any) => {
+        const dbClean = dbS.nama_lengkap.toLowerCase().replace(/[^a-z0-9]/g, '');
+        return dbClean === officialClean;
+      }) || allDbSantri.find((dbS: any) => {
+        const dbClean = dbS.nama_lengkap.toLowerCase().replace(/[^a-z0-9]/g, '');
+        return dbClean.includes(officialClean) || officialClean.includes(dbClean);
+      });
+
+      if (matched) {
+        await prisma.santriAktif.update({
+          where: { id: matched.id },
+          data: {
+            nis: official.nis,
+            nisn: official.nisn || null,
+            nama_lengkap: official.nama,
+            jenis_kelamin: official.jk
+          }
+        });
+      } else {
+        const kelasObj = await prisma.kelas.findFirst({
+          where: {
+            OR: [
+              { nama: official.kelas },
+              { nama: { contains: official.kelas, mode: 'insensitive' } }
+            ]
+          }
+        });
+
+        if (kelasObj) {
+          await prisma.santriAktif.create({
+            data: {
+              nis: official.nis,
+              nisn: official.nisn || null,
+              nama_lengkap: official.nama,
+              kelas_id: kelasObj.id,
+              jenis_kelamin: official.jk,
+              is_active: true
+            }
+          });
+        }
+      }
+    }
+
+    // 3. Kembalikan data sisa jika ada
+    const remainingNis = await prisma.santriAktif.findMany({
+      where: { nis: { startsWith: 'TMP_' } }
+    });
+    for (const rem of remainingNis) {
+      const orig = rem.nis?.replace(/^TMP_[^_]+_/, '') || null;
+      try {
+        await prisma.santriAktif.update({
+          where: { id: rem.id },
+          data: { nis: orig }
+        });
+      } catch (e) {}
+    }
+
+    const remainingNisn = await prisma.santriAktif.findMany({
+      where: { nisn: { startsWith: 'TMP_' } }
+    });
+    for (const rem of remainingNisn) {
+      const orig = rem.nisn?.replace(/^TMP_[^_]+_/, '') || null;
+      try {
+        await prisma.santriAktif.update({
+          where: { id: rem.id },
+          data: { nisn: orig }
+        });
+      } catch (e) {}
+    }
+
+    isSynced = true;
+    console.log("[AUTO-SYNC] Sinkronisasi database berhasil diselesaikan!");
+  } catch (error) {
+    console.error("[AUTO-SYNC] Error selama sinkronisasi:", error);
+  } finally {
+    isSyncing = false;
+  }
+}
+

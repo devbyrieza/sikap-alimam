@@ -1,3 +1,4 @@
+import { getOfficialNis } from "@/lib/officialSantri";
 "use client";
 
 import React, { useState, useEffect } from "react";
@@ -84,7 +85,7 @@ export default function WaliDashboard() {
                       <span className="px-2 py-0.5 rounded-md text-[10px] font-extrabold uppercase bg-emerald-50 text-emerald-700 border border-emerald-200/80">
                         Santri Aktif
                       </span>
-                      <span className="text-xs text-slate-400 font-mono font-medium">NIS: {anak.nis}</span>
+                      <span className="text-xs text-slate-400 font-mono font-medium">NIS: {(anak?.nama ? getOfficialNis(anak.nama) : null) || anak.nis}</span>
                       {anak.lunas ? (
                         <span className="px-2 py-0.5 rounded-md text-[10px] font-bold bg-emerald-100 text-emerald-800 flex items-center gap-1.5">
                           <CheckCircle2 className="w-3 h-3" /> SPP Lunas

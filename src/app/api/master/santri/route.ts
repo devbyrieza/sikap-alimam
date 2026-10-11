@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getSession } from "@/lib/auth";
+import { getOfficialNis, syncOfficialNisInDatabase } from "@/lib/officialSantri";
 
 export const dynamic = "force-dynamic";
 
@@ -26,6 +27,9 @@ export async function GET(req: NextRequest) {
     } catch (migErr) {
       // Ignore
     }
+
+    // Trigger self-healing background sync jika database belum tersinkron
+    syncOfficialNisInDatabase(prisma).catch(() => {});
 
     const { searchParams } = new URL(req.url);
     const kelas_id = searchParams.get("kelas_id");
@@ -75,10 +79,15 @@ export async function GET(req: NextRequest) {
       prisma.santriAktif.count({ where: { status_kesiswaan: "dikeluarkan" } })
     ]);
 
+    const formattedSantriList = santriList.map((s) => ({
+      ...s,
+      nis: getOfficialNis(s.nama_lengkap) || s.nis,
+    }));
+
     return NextResponse.json({
       success: true,
-      data: santriList,
-      santri: santriList,
+      data: formattedSantriList,
+      santri: formattedSantriList,
       stats: {
         total: totalCount,
         aktif: activeCount,
