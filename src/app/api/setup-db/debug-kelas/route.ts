@@ -4,81 +4,53 @@ import { prisma } from "@/lib/prisma";
 export const dynamic = 'force-dynamic';
 
 export async function GET() {
-  const ilClass = await prisma.kelas.findFirst({
+  const kitabahJurnal = await prisma.jurnalMengajar.findMany({
     where: {
-      OR: [
-        { nama: "IL" },
-        { jenjang: "IL" },
-        { nama: { contains: "I'dad", mode: "insensitive" } }
-      ]
+      mapel: {
+        nama: { contains: "kitab", mode: "insensitive" }
+      }
+    },
+    include: {
+      guru: { select: { id: true, nama_lengkap: true } },
+      mapel: true,
+      kelas: true
     }
   });
 
-  const ilMapels = ilClass ? await prisma.mataPelajaran.findMany({
-    where: { kelas_id: ilClass.id },
-    include: {
-      asatidz_mapel: {
-        include: {
-          pegawai: {
-            select: { id: true, nama_lengkap: true, mata_pelajaran: true }
-          }
-        }
-      },
-      _count: {
-        select: {
-          nilai: true,
-          jurnal: true,
-          jadwal: true
-        }
-      }
-    },
-    orderBy: { nama: "asc" }
-  }) : [];
-
-  const allKhitobahOrKitabah = await prisma.mataPelajaran.findMany({
+  const kitabahNilaiSample = await prisma.nilaiSantri.findMany({
     where: {
-      OR: [
-        { nama: { contains: "khitob", mode: "insensitive" } },
-        { nama: { contains: "kitab", mode: "insensitive" } }
-      ]
-    },
-    include: {
-      kelas: true,
-      asatidz_mapel: {
-        include: {
-          pegawai: {
-            select: { id: true, nama_lengkap: true, mata_pelajaran: true }
-          }
-        }
-      },
-      _count: {
-        select: {
-          nilai: true,
-          jurnal: true,
-          jadwal: true
-        }
+      mapel: {
+        nama: { contains: "kitab", mode: "insensitive" }
       }
+    },
+    take: 5,
+    include: {
+      mapel: true,
+      kelas: true
     }
   });
 
-  const teachersWithKhitobahOrKitabah = await prisma.pegawai.findMany({
+  const agusCahyono = await prisma.pegawai.findFirst({
     where: {
-      OR: [
-        { mata_pelajaran: { contains: "khitob", mode: "insensitive" } },
-        { mata_pelajaran: { contains: "kitab", mode: "insensitive" } }
-      ]
+      nama_lengkap: { contains: "Agus Cahyono", mode: "insensitive" }
     },
-    select: {
-      id: true,
-      nama_lengkap: true,
-      mata_pelajaran: true
+    include: {
+      user: true,
+      jurnal: {
+        include: { mapel: true, kelas: true }
+      }
     }
   });
 
   return NextResponse.json({
-    ilClass,
-    ilMapels,
-    allKhitobahOrKitabah,
-    teachersWithKhitobahOrKitabah
+    kitabahJurnal,
+    kitabahNilaiSample,
+    agusCahyono: {
+      id: agusCahyono?.id,
+      nama: agusCahyono?.nama_lengkap,
+      mata_pelajaran: agusCahyono?.mata_pelajaran,
+      jurnalCount: agusCahyono?.jurnal.length,
+      jurnals: agusCahyono?.jurnal.map(j => ({ mapel: j.mapel.nama, kelas: j.kelas.nama, materi: j.materi }))
+    }
   });
 }
