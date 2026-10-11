@@ -487,73 +487,82 @@ export default function CetakRaporPage() {
             </div>
           </div>
 
-          {/* 1. KEPRIBADIAN SANTRI (KIRI) & KETIDAKHADIRAN (KANAN) - LEGA & MEWAH */}
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", border: "2px solid #1a1a1a", marginBottom: "20px", pageBreakInside: "avoid", fontFamily: "Arial, Helvetica, sans-serif" }}>
-            {/* SISI KIRI (50%): Kepribadian Santri */}
-            <div style={{ borderRight: "2.5px solid #1a1a1a" }}>
-              <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "12.5px" }}>
-                <thead>
-                  <tr style={{ backgroundColor: "#f0f0f0" }}>
-                    <th colSpan={2} style={{ borderBottom: "1px solid #1a1a1a", padding: "8px 10px", textAlign: "center", fontWeight: "bold", fontSize: "13px" }}>
-                      Kepribadian Santri
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr style={{ backgroundColor: "transparent" }}>
-                    <td style={{ borderBottom: "1px solid #1a1a1a", borderRight: "1px solid #1a1a1a", padding: "7px 10px" }}>Perilaku</td>
-                    <td style={{ borderBottom: "1px solid #1a1a1a", padding: "7px 10px", textAlign: "center", fontWeight: "bold", width: "35%", fontSize: "13px" }}>{sikapGrade}</td>
-                  </tr>
-                  <tr style={{ backgroundColor: "rgba(0, 0, 0, 0.025)" }}>
-                    <td style={{ borderBottom: "1px solid #1a1a1a", borderRight: "1px solid #1a1a1a", padding: "7px 10px" }}>Kedisiplinan</td>
-                    <td style={{ borderBottom: "1px solid #1a1a1a", padding: "7px 10px", textAlign: "center", fontWeight: "bold", fontSize: "13px" }}>{disiplinGrade}</td>
-                  </tr>
-                  <tr style={{ backgroundColor: "transparent" }}>
-                    <td style={{ borderBottom: "1px solid #1a1a1a", borderRight: "1px solid #1a1a1a", padding: "7px 10px" }}>Kerajinan</td>
-                    <td style={{ borderBottom: "1px solid #1a1a1a", padding: "7px 10px", textAlign: "center", fontWeight: "bold", fontSize: "13px" }}>{sikapGrade}</td>
-                  </tr>
-                  <tr style={{ backgroundColor: "rgba(0, 0, 0, 0.025)" }}>
-                    <td style={{ borderRight: "1px solid #1a1a1a", padding: "7px 10px" }}>Kebersihan</td>
-                    <td style={{ padding: "7px 10px", textAlign: "center", fontWeight: "bold", fontSize: "13px" }}>{sikapGrade}</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-
-            {/* SISI KANAN (50%): Ketidakhadiran */}
-            <div>
-              <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "12.5px" }}>
-                <thead>
-                  <tr style={{ backgroundColor: "#f0f0f0" }}>
-                    <th colSpan={3} style={{ borderBottom: "1px solid #1a1a1a", padding: "8px 10px", textAlign: "center", fontWeight: "bold", fontSize: "13px" }}>
-                      Ketidakhadiran
-                    </th>
-                  </tr>
-                  <tr style={{ backgroundColor: "#e8e8e8", fontSize: "12px" }}>
-                    <th style={{ borderBottom: "1px solid #1a1a1a", borderRight: "1px solid #1a1a1a", padding: "4px 10px", textAlign: "center" }}>Absensi</th>
-                    <th colSpan={2} style={{ borderBottom: "1px solid #1a1a1a", padding: "4px 10px", textAlign: "center" }}>Jumlah</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr style={{ backgroundColor: "transparent" }}>
-                    <td style={{ borderBottom: "1px solid #1a1a1a", borderRight: "1px solid #1a1a1a", padding: "6px 10px", textAlign: "center", width: "40%" }}>Sakit</td>
-                    <td style={{ borderBottom: "1px solid #1a1a1a", borderRight: "1px solid #e2e8f0", padding: "6px 8px", textAlign: "center", fontWeight: "bold", width: "20%", fontSize: "13px" }}>{absen?.sakit || 0}</td>
-                    <td style={{ borderBottom: "1px solid #1a1a1a", padding: "6px 10px", fontSize: "12px", color: "#444" }}>Jam Pelajaran</td>
-                  </tr>
-                  <tr style={{ backgroundColor: "rgba(0, 0, 0, 0.025)" }}>
-                    <td style={{ borderBottom: "1px solid #1a1a1a", borderRight: "1px solid #1a1a1a", padding: "6px 10px", textAlign: "center" }}>Ijin</td>
-                    <td style={{ borderBottom: "1px solid #1a1a1a", borderRight: "1px solid #e2e8f0", padding: "6px 8px", textAlign: "center", fontWeight: "bold", fontSize: "13px" }}>{absen?.izin || 0}</td>
-                    <td style={{ borderBottom: "1px solid #1a1a1a", padding: "6px 10px", fontSize: "12px", color: "#444" }}>Jam Pelajaran</td>
-                  </tr>
-                  <tr style={{ backgroundColor: "transparent" }}>
-                    <td style={{ borderRight: "1px solid #1a1a1a", padding: "6px 10px", textAlign: "center" }}>Alpha</td>
-                    <td style={{ borderRight: "1px solid #e2e8f0", padding: "6px 8px", textAlign: "center", fontWeight: "bold", fontSize: "13px" }}>{absen?.alpha || 0}</td>
-                    <td style={{ padding: "6px 10px", fontSize: "12px", color: "#444" }}>Jam Pelajaran</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
+          {/* 1. KEPRIBADIAN SANTRI (KIRI) & KETIDAKHADIRAN (KANAN) - SATU TABEL SIMETRIS UTUH */}
+          <table 
+            style={{ 
+              width: "100%", 
+              tableLayout: "fixed", 
+              borderCollapse: "collapse", 
+              border: "2px solid #1a1a1a", 
+              marginBottom: "20px", 
+              pageBreakInside: "avoid", 
+              fontFamily: "Arial, Helvetica, sans-serif",
+              fontSize: "12.5px"
+            }}
+          >
+            <colgroup>
+              {/* Sisi Kiri (50%): Kepribadian Santri */}
+              <col style={{ width: "32%" }} />  {/* Aspek Penilaian */}
+              <col style={{ width: "18%" }} />  {/* Predikat */}
+              {/* Sisi Kanan (50%): Ketidakhadiran */}
+              <col style={{ width: "22%" }} />  {/* Absensi */}
+              <col style={{ width: "28%" }} />  {/* Jumlah */}
+            </colgroup>
+            <thead>
+              <tr style={{ backgroundColor: "#f0f0f0" }}>
+                <th colSpan={2} style={{ borderBottom: "1px solid #1a1a1a", borderRight: "2.5px solid #1a1a1a", padding: "7px 10px", textAlign: "center", fontWeight: "bold", fontSize: "13px" }}>
+                  Kepribadian Santri
+                </th>
+                <th colSpan={2} style={{ borderBottom: "1px solid #1a1a1a", padding: "7px 10px", textAlign: "center", fontWeight: "bold", fontSize: "13px" }}>
+                  Ketidakhadiran
+                </th>
+              </tr>
+              <tr style={{ backgroundColor: "#e8e8e8", fontSize: "12px" }}>
+                <th style={{ borderBottom: "1px solid #1a1a1a", borderRight: "1px solid #1a1a1a", padding: "5px 10px", textAlign: "center" }}>Aspek Penilaian</th>
+                <th style={{ borderBottom: "1px solid #1a1a1a", borderRight: "2.5px solid #1a1a1a", padding: "5px 10px", textAlign: "center" }}>Predikat</th>
+                <th style={{ borderBottom: "1px solid #1a1a1a", borderRight: "1px solid #1a1a1a", padding: "5px 10px", textAlign: "center" }}>Absensi</th>
+                <th style={{ borderBottom: "1px solid #1a1a1a", padding: "5px 10px", textAlign: "center" }}>Jumlah</th>
+              </tr>
+            </thead>
+            <tbody>
+              {/* Baris 1: Perilaku & Sakit */}
+              <tr style={{ backgroundColor: "transparent" }}>
+                <td style={{ borderBottom: "1px solid #1a1a1a", borderRight: "1px solid #1a1a1a", padding: "6px 12px" }}>Perilaku</td>
+                <td style={{ borderBottom: "1px solid #1a1a1a", borderRight: "2.5px solid #1a1a1a", padding: "6px 10px", textAlign: "center", fontWeight: "bold", fontSize: "13px" }}>{sikapGrade}</td>
+                <td style={{ borderBottom: "1px solid #1a1a1a", borderRight: "1px solid #1a1a1a", padding: "6px 12px", textAlign: "center" }}>Sakit</td>
+                <td style={{ borderBottom: "1px solid #1a1a1a", padding: "6px 12px", textAlign: "center", fontSize: "12.5px" }}>
+                  <strong style={{ fontSize: "13px" }}>{absen?.sakit || 0}</strong> <span style={{ color: "#444" }}>Jam Pelajaran</span>
+                </td>
+              </tr>
+              {/* Baris 2: Kedisiplinan & Ijin */}
+              <tr style={{ backgroundColor: "rgba(0, 0, 0, 0.02)" }}>
+                <td style={{ borderBottom: "1px solid #1a1a1a", borderRight: "1px solid #1a1a1a", padding: "6px 12px" }}>Kedisiplinan</td>
+                <td style={{ borderBottom: "1px solid #1a1a1a", borderRight: "2.5px solid #1a1a1a", padding: "6px 10px", textAlign: "center", fontWeight: "bold", fontSize: "13px" }}>{disiplinGrade}</td>
+                <td style={{ borderBottom: "1px solid #1a1a1a", borderRight: "1px solid #1a1a1a", padding: "6px 12px", textAlign: "center" }}>Ijin</td>
+                <td style={{ borderBottom: "1px solid #1a1a1a", padding: "6px 12px", textAlign: "center", fontSize: "12.5px" }}>
+                  <strong style={{ fontSize: "13px" }}>{absen?.izin || 0}</strong> <span style={{ color: "#444" }}>Jam Pelajaran</span>
+                </td>
+              </tr>
+              {/* Baris 3: Kerajinan & Alpha */}
+              <tr style={{ backgroundColor: "transparent" }}>
+                <td style={{ borderBottom: "1px solid #1a1a1a", borderRight: "1px solid #1a1a1a", padding: "6px 12px" }}>Kerajinan</td>
+                <td style={{ borderBottom: "1px solid #1a1a1a", borderRight: "2.5px solid #1a1a1a", padding: "6px 10px", textAlign: "center", fontWeight: "bold", fontSize: "13px" }}>{sikapGrade}</td>
+                <td style={{ borderBottom: "1px solid #1a1a1a", borderRight: "1px solid #1a1a1a", padding: "6px 12px", textAlign: "center" }}>Alpha</td>
+                <td style={{ borderBottom: "1px solid #1a1a1a", padding: "6px 12px", textAlign: "center", fontSize: "12.5px" }}>
+                  <strong style={{ fontSize: "13px" }}>{absen?.alpha || 0}</strong> <span style={{ color: "#444" }}>Jam Pelajaran</span>
+                </td>
+              </tr>
+              {/* Baris 4: Kebersihan & Total (Sempurna & Seimbang) */}
+              <tr style={{ backgroundColor: "rgba(0, 0, 0, 0.02)" }}>
+                <td style={{ borderRight: "1px solid #1a1a1a", padding: "6px 12px" }}>Kebersihan</td>
+                <td style={{ borderRight: "2.5px solid #1a1a1a", padding: "6px 10px", textAlign: "center", fontWeight: "bold", fontSize: "13px" }}>{sikapGrade}</td>
+                <td style={{ borderRight: "1px solid #1a1a1a", padding: "6px 12px", textAlign: "center", fontWeight: "bold" }}>Total</td>
+                <td style={{ padding: "6px 12px", textAlign: "center", fontSize: "12.5px" }}>
+                  <strong style={{ fontSize: "13px" }}>{(absen?.sakit || 0) + (absen?.izin || 0) + (absen?.alpha || 0)}</strong> <span style={{ color: "#444" }}>Jam Pelajaran</span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
 
           {/* 2. LAPORAN TAHSIN & TAHFIDZ (UJIAN PRA TARGET RESMI) */}
           <div style={{ marginBottom: "18px", pageBreakInside: "avoid" }}>
