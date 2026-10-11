@@ -32,7 +32,7 @@ export async function GET(req: NextRequest) {
       orderBy: {
         nama: "asc" } });
 
-    // Auto-heal MA mapels: Kelas 11 MA & 12 MA WAJIB memiliki "Ushul Fiqh", BUKAN "Fiqh"
+    // Auto-heal mapels across all classes to standard baku Indonesian & Kemenag terms
     const healedMapel = await Promise.all(
       rawMapel.map(async (m) => {
         const isMA = m.kelas && (
@@ -41,24 +41,47 @@ export async function GET(req: NextRequest) {
           m.kelas.nama.startsWith("11") || 
           m.kelas.nama.startsWith("12")
         );
-        if (isMA && (m.nama.toLowerCase() === "fiqh" || m.nama.toLowerCase() === "fiqih" || m.nama.toLowerCase() === "ushul fiqih")) {
-          // Check if Ushul Fiqh already exists for this class
-          const existsUshul = rawMapel.find(other => 
+
+        let targetName = m.nama;
+        const low = m.nama.toLowerCase().trim();
+
+        // 1. General & Languages
+        if (low === "b. indonesia" || low === "indonesia") targetName = "Bahasa Indonesia";
+        else if (low === "b. arab" || low === "arab") targetName = "Bahasa Arab";
+        else if (low === "b. inggris" || low === "inggris" || low === "english") targetName = "Bahasa Inggris";
+        else if (low === "mtk") targetName = "Matematika";
+        else if (low === "ipa") targetName = "IPA Terpadu";
+        else if (low === "ips") targetName = "IPS Terpadu";
+
+        // 2. Islamic Studies
+        else if (low === "aqidah") targetName = "Akidah";
+        else if (low === "hadits") targetName = "Hadis";
+        else if (low === "siroh" || low === "siroh nabi" || low === "sirah nabi") targetName = "Sirah";
+        else if (low === "akhlaq") targetName = "Akhlak";
+        else if (low.includes("tahsin")) targetName = "Tahsin Al-Qur'an";
+        else if (low.includes("tahfidz") || low.includes("tahfiz")) targetName = "Tahfidz Al-Qur'an";
+        else if (low.includes("tadribat")) targetName = "Tadribat 'alal Anmath";
+
+        // 3. Fikih & Ushul Fikih
+        else if (low === "fiqh" || low === "fiqih" || low === "fikih" || low === "ushul fiqh" || low === "ushul fiqih" || low === "ushul fikih") {
+          targetName = isMA ? "Ushul Fikih" : "Fikih";
+        }
+
+        if (targetName !== m.nama) {
+          const exists = rawMapel.find(other => 
             other.kelas_id === m.kelas_id && 
             other.id !== m.id && 
-            other.nama.toLowerCase() === "ushul fiqh"
+            other.nama.toLowerCase() === targetName.toLowerCase()
           );
-          if (!existsUshul) {
+          if (!exists) {
             try {
               await prisma.mataPelajaran.update({
                 where: { id: m.id },
-                data: { nama: "Ushul Fiqh", nama_arab: "أصول الفقه", kategori: "syariah" }
+                data: { nama: targetName }
               });
-              m.nama = "Ushul Fiqh";
-              m.nama_arab = "أصول الفقه";
-              m.kategori = "syariah";
+              m.nama = targetName;
             } catch (e) {
-              console.error("Auto-heal mapel rename error:", e);
+              console.error("Auto-heal rename error:", e);
             }
           }
         }
@@ -66,8 +89,8 @@ export async function GET(req: NextRequest) {
       })
     );
 
-    // Filter out any redundant "Fiqh" in MA if Ushul Fiqh is already present
-    const cleanedMapel = healedMapel.filter(m => {
+    // Filter out redundant non-MA/MA duplicates
+    const cleanedMapel = healedMapel.filter((m, idx, arr) => {
       const isMA = m.kelas && (
         m.kelas.jenjang === "MA" || 
         m.kelas.nama.toUpperCase().includes("MA") || 
@@ -77,7 +100,7 @@ export async function GET(req: NextRequest) {
       if (isMA && (m.nama.toLowerCase() === "fiqh" || m.nama.toLowerCase() === "fiqih")) {
         return false;
       }
-      return true;
+      return arr.findIndex(other => other.kelas_id === m.kelas_id && other.nama.toLowerCase() === m.nama.toLowerCase()) === idx;
     });
 
     // Urutkan mapel berdasarkan urutan logis kelasnya

@@ -59,8 +59,9 @@ export default function MasterGuruPage() {
     }
 
     let cleanMapelName = newMapelName.trim().replace(/^\[.*?\]\s*/, "");
-    if ((kelasObj?.jenjang === "MA" || kelasObj?.nama?.includes("MA")) && (cleanMapelName.toLowerCase() === "fiqh" || cleanMapelName.toLowerCase() === "fiqih")) {
-      cleanMapelName = "Ushul Fiqh";
+    const isMA = (kelasObj?.jenjang === "MA" || kelasObj?.nama?.includes("MA") || kelasObj?.nama?.startsWith("11") || kelasObj?.nama?.startsWith("12"));
+    if (isMA && ["fiqh", "fiqih", "fikih", "ushul fiqh", "ushul fiqih"].includes(cleanMapelName.toLowerCase())) {
+      cleanMapelName = "Ushul Fikih";
     }
     const newEntry = `[${kelasStr}] ${cleanMapelName}`;
     const currentList = form.mata_pelajaran ? form.mata_pelajaran.split(",").map(s => s.trim()).filter(s => s) : [];
@@ -372,7 +373,10 @@ export default function MasterGuruPage() {
 
                           const selectedClass = kelasList.find(k => k.id === newMapelClass);
                           const isMA = selectedClass && (selectedClass.jenjang === "MA" || selectedClass.nama.includes("MA") || selectedClass.nama.startsWith("11") || selectedClass.nama.startsWith("12"));
-                          const displayName = (isMA && (m.nama.toLowerCase() === "fiqh" || m.nama.toLowerCase() === "fiqih")) ? "Ushul Fiqh" : m.nama;
+                          let displayName = m.nama;
+                          if (isMA && ["fiqh", "fiqih", "fikih", "ushul fiqh", "ushul fiqih"].includes(m.nama.toLowerCase())) {
+                            displayName = "Ushul Fikih";
+                          }
                           return <option key={m.id} value={displayName}>{displayName}</option>;
                       })
                     }

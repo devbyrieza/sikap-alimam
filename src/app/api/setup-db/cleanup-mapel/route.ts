@@ -6,23 +6,52 @@ const prisma = new PrismaClient();
 export async function GET() {
   try {
     const results: string[] = [];
-    const allMapels = await prisma.mataPelajaran.findMany();
+    const allMapels = await prisma.mataPelajaran.findMany({
+      include: { kelas: true }
+    });
     
-    // First, let's clean up and standardize all names in memory
+    // Standardize all names in memory
     const updates = [];
     for (const m of allMapels) {
       let newName = m.nama;
+      const isMA = m.kelas && (
+        m.kelas.jenjang === "MA" || 
+        m.kelas.nama.toUpperCase().includes("MA") || 
+        m.kelas.nama.startsWith("11") || 
+        m.kelas.nama.startsWith("12")
+      );
       
       // 1. Remove bracketed prefixes like "[7 MTs] " or "[11 MA]"
       newName = newName.replace(/^\[.*?\]\s*/, '').trim();
       
-      // 2. Standardize names based on user rules
-      if (newName === "Siroh Nabi") newName = "Siroh";
-      if (newName === "Ushul Fiqih") newName = "Ushul Fiqh";
+      // 2. Standardize abbreviations to official full terms
+      if (newName === "B. Indonesia" || newName === "b.indonesia") newName = "Bahasa Indonesia";
+      if (newName === "B. Arab" || newName === "b.arab") newName = "Bahasa Arab";
+      if (newName === "B. Inggris" || newName === "b.inggris") newName = "Bahasa Inggris";
+      if (newName === "MTK" || newName === "mtk") newName = "Matematika";
       
-      // Standardize Tahsin variations
-      if (newName.toLowerCase().includes("tahsin") || newName.toLowerCase().includes("tahfiz")) {
+      // 3. Standardize Islamic terms to official KBBI/Kemenag terms
+      if (newName.toLowerCase() === "aqidah") newName = "Akidah";
+      if (newName.toLowerCase() === "hadits") newName = "Hadis";
+      if (newName.toLowerCase() === "siroh" || newName.toLowerCase() === "siroh nabi") newName = "Sirah";
+      if (newName.toLowerCase() === "akhlaq") newName = "Akhlak";
+
+      // 4. Fikih & Ushul Fikih
+      if (isMA) {
+        if (["fiqh", "fiqih", "fikih", "ushul fiqh", "ushul fiqih"].includes(newName.toLowerCase())) {
+          newName = "Ushul Fikih";
+        }
+      } else {
+        if (["fiqh", "fiqih"].includes(newName.toLowerCase())) {
+          newName = "Fikih";
+        }
+      }
+      
+      // 5. Standardize Tahsin & Tahfidz
+      if (newName.toLowerCase().includes("tahsin")) {
         newName = "Tahsin Al-Qur'an";
+      } else if (newName.toLowerCase().includes("tahfidz") || newName.toLowerCase().includes("tahfiz")) {
+        newName = "Tahfidz Al-Qur'an";
       }
 
       if (newName !== m.nama) {
@@ -30,24 +59,21 @@ export async function GET() {
       }
     }
 
-    results.push(`Ditemukan ${updates.length} mapel yang perlu dibersihkan/distandardisasi namanya.`);
+    results.push(`Ditemukan ${updates.length} mapel yang perlu dibersihkan/distandardisasi ke bahasa baku.`);
 
-    // Process the updates (with Merge Logic if duplicate occurs)
+    // Process updates with merge logic
     let renamed = 0;
     let merged = 0;
 
     for (const u of updates) {
-      // Check if the target correct name already exists in this same class
       const existingCorrect = await prisma.mataPelajaran.findFirst({
         where: { nama: u.newName, kelas_id: u.kelas_id, id: { not: u.id } }
       });
 
       if (!existingCorrect) {
-        // Safe to just rename
         await prisma.mataPelajaran.update({ where: { id: u.id }, data: { nama: u.newName } });
         renamed++;
       } else {
-        // Target already exists, we must MERGE this wrong mapel into the existing correct one
         const wrongId = u.id;
         const correctId = existingCorrect.id;
 

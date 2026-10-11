@@ -12,10 +12,10 @@ export const MAPEL_PER_KELAS: Record<string, { kategori: string; items: string[]
       items: [
         "Akidah",
         "Hadis",
-        "Fiqh",
-        "Siroh Nabi",
-        "Tahsin Al-Quran",
-        "Tahfidz Al-Quran",
+        "Fikih",
+        "Sirah",
+        "Tahsin Al-Qur'an",
+        "Tahfidz Al-Qur'an",
         "Adab & Akhlak",
         "Khitobah",
       ] },
@@ -39,7 +39,7 @@ export const MAPEL_PER_KELAS: Record<string, { kategori: string; items: string[]
   "8 MTs": [
     {
       kategori: "Syariah & Diniyah",
-      items: ["Akidah", "Hadis", "Fiqh", "Siroh Nabi", "Tahsin Al-Quran", "Tahfidz Al-Quran", "Adab & Akhlak", "Khitobah"] },
+      items: ["Akidah", "Hadis", "Fikih", "Sirah", "Tahsin Al-Qur'an", "Tahfidz Al-Qur'an", "Adab & Akhlak", "Khitobah"] },
     {
       kategori: "Bahasa & Lughoh",
       items: ["Bahasa Arab", "Kitabah", "Shorf", "Nahwu"] },
@@ -50,7 +50,7 @@ export const MAPEL_PER_KELAS: Record<string, { kategori: string; items: string[]
   "9 MTs": [
     {
       kategori: "Syariah & Diniyah",
-      items: ["Akidah", "Hadis", "Fiqh", "Siroh Nabi", "Tahsin Al-Quran", "Tahfidz Al-Quran", "Adab & Akhlak", "Khitobah"] },
+      items: ["Akidah", "Hadis", "Fikih", "Sirah", "Tahsin Al-Qur'an", "Tahfidz Al-Qur'an", "Adab & Akhlak", "Khitobah"] },
     {
       kategori: "Bahasa & Lughoh",
       items: ["Bahasa Arab", "Kitabah", "Shorf", "Nahwu"] },
@@ -66,17 +66,17 @@ export const MAPEL_PER_KELAS: Record<string, { kategori: string; items: string[]
         "Nahwu",
         "Shorf",
         "Kitabah",
-        "Tadribat Alal Anmath",
+        "Tadribat 'alal Anmath",
       ] },
     {
       kategori: "Syariah & Diniyah",
       items: [
         "Akidah",
         "Hadis",
-        "Fiqh",
-        "Siroh Nabi",
-        "Tahsin Al-Quran",
-        "Tahfidz Al-Quran",
+        "Fikih",
+        "Sirah",
+        "Tahsin Al-Qur'an",
+        "Tahfidz Al-Qur'an",
         "Adab & Akhlak",
         "Khitobah",
       ] },
@@ -89,35 +89,35 @@ export const MAPEL_PER_KELAS: Record<string, { kategori: string; items: string[]
   "10 MA": [
     {
       kategori: "Syariah & Diniyah",
-      items: ["Tafsir", "Hadis", "Ushul Fiqh", "Fiqh", "Akidah", "Tahsin Al-Quran", "Tahfidz Al-Quran"] },
+      items: ["Tafsir", "Hadis", "Ushul Fikih", "Akidah", "Tahsin Al-Qur'an", "Tahfidz Al-Qur'an"] },
     {
       kategori: "Bahasa & Lughoh",
       items: ["Bahasa Arab", "Nahwu", "Shorf", "Balaghah"] },
     {
       kategori: "Umum & Keterampilan",
-      items: ["Bahasa Indonesia", "Bahasa Inggris", "Matematika", "Sosiologi / IPA", "Entrepreneurship"] },
+      items: ["Bahasa Indonesia", "Bahasa Inggris", "Matematika", "IPA Terpadu", "Entrepreneurship"] },
   ],
   "11 MA": [
     {
       kategori: "Syariah & Diniyah",
-      items: ["Tafsir", "Hadis", "Ushul Fiqh", "Tauhid", "Akidah", "Adab", "Siroh", "Tahsin Al-Quran", "Tahfidz Al-Quran"] },
+      items: ["Tafsir", "Hadis", "Ushul Fikih", "Tauhid", "Akidah", "Adab", "Sirah", "Tahsin Al-Qur'an", "Tahfidz Al-Qur'an"] },
     {
       kategori: "Bahasa & Lughoh",
-      items: ["Bahasa Arab", "B. Arab", "Nahwu", "Shorf", "Balaghah"] },
+      items: ["Bahasa Arab", "Nahwu", "Shorf", "Balaghah"] },
     {
       kategori: "Umum & Keterampilan",
-      items: ["Bahasa Indonesia", "B. Indonesia", "Bahasa Inggris", "B. Inggris", "Matematika", "MTK", "Entrepreneurship"] },
+      items: ["Bahasa Indonesia", "Bahasa Inggris", "Matematika", "Entrepreneurship"] },
   ],
   "12 MA": [
     {
       kategori: "Syariah & Diniyah",
-      items: ["Tafsir", "Hadis", "Ushul Fiqh", "Tauhid", "Akidah", "Adab", "Siroh", "Tahsin Al-Quran", "Tahfidz Al-Quran"] },
+      items: ["Tafsir", "Hadis", "Ushul Fikih", "Tauhid", "Akidah", "Adab", "Sirah", "Tahsin Al-Qur'an", "Tahfidz Al-Qur'an"] },
     {
       kategori: "Bahasa & Lughoh",
-      items: ["Bahasa Arab", "B. Arab", "Nahwu", "Shorf", "Balaghah"] },
+      items: ["Bahasa Arab", "Nahwu", "Shorf", "Balaghah"] },
     {
       kategori: "Umum & Keterampilan",
-      items: ["Bahasa Indonesia", "B. Indonesia", "Bahasa Inggris", "B. Inggris", "Matematika", "MTK", "Entrepreneurship"] },
+      items: ["Bahasa Indonesia", "Bahasa Inggris", "Matematika", "Entrepreneurship"] },
   ] };
 
 const JENJANG_DEFINITIONS = [

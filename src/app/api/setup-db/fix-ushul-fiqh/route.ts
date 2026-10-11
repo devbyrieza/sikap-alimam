@@ -53,11 +53,11 @@ export async function GET() {
         }
       });
 
-      // Cari atau buat Ushul Fiqh
+      // Cari atau buat Ushul Fikih
       let ushulMapel = await prisma.mataPelajaran.findFirst({
         where: {
           kelas_id: k.id,
-          nama: { equals: "Ushul Fiqh", mode: "insensitive" }
+          nama: { equals: "Ushul Fikih", mode: "insensitive" }
         }
       });
 
@@ -66,13 +66,13 @@ export async function GET() {
           ushulMapel = await prisma.mataPelajaran.update({
             where: { id: f.id },
             data: {
-              nama: "Ushul Fiqh",
+              nama: "Ushul Fikih",
               nama_arab: "أصول الفقه",
               kategori: "syariah",
               is_active: true
             }
           });
-          logs.push(`✅ [${kelasTag}] Mapel "${f.nama}" berhasil diubah menjadi "Ushul Fiqh"`);
+          logs.push(`✅ [${kelasTag}] Mapel "${f.nama}" berhasil diubah menjadi "Ushul Fikih"`);
         } else if (ushulMapel.id !== f.id) {
           // Merge relasi dari f ke ushulMapel
           await prisma.asatidzmMapel.updateMany({ where: { mapel_id: f.id }, data: { mapel_id: ushulMapel.id } });
@@ -81,24 +81,24 @@ export async function GET() {
           await prisma.jadwalPelajaran.updateMany({ where: { mapel_id: f.id }, data: { mapel_id: ushulMapel.id } });
           await prisma.presensiSiswa.updateMany({ where: { mapel_id: f.id }, data: { mapel_id: ushulMapel.id } });
           await prisma.mataPelajaran.delete({ where: { id: f.id } });
-          logs.push(`🗑️ [${kelasTag}] Mapel duplikat "${f.nama}" dihapus & dimerge ke "Ushul Fiqh"`);
+          logs.push(`🗑️ [${kelasTag}] Mapel duplikat "${f.nama}" dihapus & dimerge ke "Ushul Fikih"`);
         }
       }
 
       if (!ushulMapel) {
         ushulMapel = await prisma.mataPelajaran.create({
           data: {
-            nama: "Ushul Fiqh",
+            nama: "Ushul Fikih",
             nama_arab: "أصول الفقه",
             kategori: "syariah",
             is_active: true,
             kelas_id: k.id
           }
         });
-        logs.push(`✨ [${kelasTag}] Mapel baru "Ushul Fiqh" berhasil dibuat`);
+        logs.push(`✨ [${kelasTag}] Mapel baru "Ushul Fikih" berhasil dibuat`);
       }
 
-      // Pastikan Ust. Muhammad Thoriq di-assign ke Ushul Fiqh di kelas ini
+      // Pastikan Ust. Muhammad Thoriq di-assign ke Ushul Fikih di kelas ini
       if (ustThoriq && ushulMapel) {
         await prisma.asatidzmMapel.upsert({
           where: {
@@ -115,7 +115,7 @@ export async function GET() {
             kelas_id: k.id
           }
         });
-        logs.push(`👨‍🏫 [${kelasTag}] Ust. Muhammad Thoriq di-assign ke "Ushul Fiqh"`);
+        logs.push(`👨‍🏫 [${kelasTag}] Ust. Muhammad Thoriq di-assign ke "Ushul Fikih"`);
       }
     }
 
@@ -127,7 +127,7 @@ export async function GET() {
       
       for (const k of maKelasList) {
         const kelasTag = k.jenjang === "MA" ? `${k.nama} MA` : k.nama;
-        const ushulTag = `[${kelasTag}] Ushul Fiqh`;
+        const ushulTag = `[${kelasTag}] Ushul Fikih`;
         if (!updatedTags.includes(ushulTag)) {
           updatedTags.push(ushulTag);
         }
@@ -142,7 +142,7 @@ export async function GET() {
 
     return NextResponse.json({
       success: true,
-      message: "Migrasi Ushul Fiqh Kelas MA Berhasil!",
+      message: "Migrasi Ushul Fikih Kelas MA Berhasil!",
       logs
     });
   } catch (error: any) {
