@@ -159,14 +159,22 @@ export default function CetakRaporPage() {
 
   if (isMA) {
     headName = "Rethna Kartika Septianiar, S.Pd.";
-    waliKelasName = "Muhammad Thoriq Ibn Ziyad, Lc., M.Ag.";
+    waliKelasName = santri?.wali_kelas || "Muhammad Thoriq Ibn Ziyad, Lc., M.Ag.";
   } else if (isMTs) {
     headName = "Ade Supyana, S.Pd.I.";
     waliKelasName = santri?.wali_kelas || "Agus Cahyono";
   } else if (isIL) {
     headTitle = "Kepala Kurikulum";
     headName = "Imron Abdillah, S.Pd.";
-    waliKelasName = santri?.wali_kelas || "Imron Abdillah, S.Pd.";
+    waliKelasName = "Imron Abdillah, S.Pd.";
+  }
+
+  // Standarisasi konsistensi gelar Ustadz Imron Abdillah di seluruh rapor (Biodata & Tanda Tangan)
+  if (waliKelasName.toLowerCase().includes("imron")) {
+    waliKelasName = "Imron Abdillah, S.Pd.";
+  }
+  if (headName.toLowerCase().includes("imron")) {
+    headName = "Imron Abdillah, S.Pd.";
   }
 
   return (

@@ -343,14 +343,24 @@ export async function GET(req: NextRequest) {
       ? "Imron Abdillah, S.Pd."
       : "Ade Supyana, S.Pd.I.";
 
+    let waliNama = santri.kelas.wali_kelas?.nama_lengkap || defaultWali;
+    if (waliNama && waliNama.toLowerCase().includes("imron")) {
+      waliNama = "Imron Abdillah, S.Pd.";
+    }
+
+    let headNama = defaultHead;
+    if (headNama && headNama.toLowerCase().includes("imron")) {
+      headNama = "Imron Abdillah, S.Pd.";
+    }
+
     return NextResponse.json({
       santri: {
         nama: santri.nama_lengkap,
         nis: getOfficialNis(santri.nama_lengkap) || santri.nis,
         kelas: santri.kelas.nama,
         jenjang: santri.kelas.jenjang,
-        wali_kelas: santri.kelas.wali_kelas?.nama_lengkap || defaultWali,
-        kepala_madrasah: defaultHead,
+        wali_kelas: waliNama,
+        kepala_madrasah: headNama,
         semester: isGanjil ? "Ganjil" : "Genap",
         tahun_ajaran
       },
