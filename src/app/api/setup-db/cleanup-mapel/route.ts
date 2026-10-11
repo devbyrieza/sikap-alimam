@@ -51,12 +51,16 @@ export async function GET() {
           // Hanya 1 mapel, cukup update namanya jika belum baku
           const single = groupList[0];
           if (single.nama !== standardName) {
-            await prisma.mataPelajaran.update({
-              where: { id: single.id },
-              data: { nama: standardName }
-            });
-            logs.push(`[${k.nama}] Renamed: "${single.nama}" -> "${standardName}"`);
-            totalRenamed++;
+            try {
+              await prisma.mataPelajaran.update({
+                where: { id: single.id },
+                data: { nama: standardName }
+              });
+              logs.push(`[${k.nama}] Renamed: "${single.nama}" -> "${standardName}"`);
+              totalRenamed++;
+            } catch (singleErr: any) {
+              logs.push(`[${k.nama}] Warning renaming single "${single.nama}": ${singleErr.message}`);
+            }
           }
         } else {
           // Lebih dari 1 mapel (DUPLIKAT DETECTED!)
@@ -77,20 +81,11 @@ export async function GET() {
           const canonical = sorted[0];
           const duplicates = sorted.slice(1);
 
-          // Update canonical mapel ke standard name jika belum
-          if (canonical.nama !== standardName) {
-            await prisma.mataPelajaran.update({
-              where: { id: canonical.id },
-              data: { nama: standardName }
-            });
-            totalRenamed++;
-          }
-
           logs.push(
             `[${k.nama}] Merging duplicates for "${standardName}". Canonical: "${canonical.nama}" (ID: ${canonical.id}, Nilai: ${canonical._count.nilai})`
           );
 
-          // Pindahkan seluruh data dari duplicates ke canonical
+          // Pindahkan seluruh data dari duplicates ke canonical TERLEBIH DAHULU
           for (const dup of duplicates) {
             logs.push(`  -> Merging and deleting duplicate: "${dup.nama}" (ID: ${dup.id}, Nilai: ${dup._count.nilai})`);
 
@@ -153,6 +148,20 @@ export async function GET() {
             });
 
             totalMerged++;
+          }
+
+          // SETELAH semua duplikat dihapus, sekarang aman untuk merename canonical ke standardName
+          if (canonical.nama !== standardName) {
+            try {
+              await prisma.mataPelajaran.update({
+                where: { id: canonical.id },
+                data: { nama: standardName }
+              });
+              logs.push(`  -> Renamed canonical [${canonical.id}]: "${canonical.nama}" -> "${standardName}"`);
+              totalRenamed++;
+            } catch (err: any) {
+              logs.push(`  -> Warning rename canonical: ${err.message}`);
+            }
           }
         }
       }
