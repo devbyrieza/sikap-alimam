@@ -682,37 +682,37 @@ export default function CetakRaporPage() {
           height: "100%"
         }}>
           <div>
-            {/* Mini-Kop Resmi Berlogo Al-Imam & Identitas Dokumen Halaman 2 */}
+            {/* Kop Surat Resmi Halaman 2 (Identik & Seragam Sempurna dengan Halaman 1) */}
+            <div style={{ display: "flex", alignItems: "center", borderBottom: "3px solid #000000", paddingBottom: paperSize === "F4" ? "14px" : "11px", marginBottom: paperSize === "F4" ? "16px" : "12px", fontFamily: '"Times New Roman", Times, serif' }}>
+              <img src="/logo.png" alt="Logo Al-Imam" style={{ width: paperSize === "F4" ? "80px" : "72px", height: paperSize === "F4" ? "80px" : "72px", objectFit: "contain" }} />
+              <div style={{ flex: 1, textAlign: "center", fontFamily: '"Times New Roman", Times, serif' }}>
+                <h1 style={{ fontSize: paperSize === "F4" ? "22px" : "20px", fontWeight: "900", margin: 0, letterSpacing: "1px", color: "#000000", fontFamily: '"Times New Roman", Times, serif' }}>PESANTREN AL-IMAM AL-ISLAMI</h1>
+                <p style={{ margin: "2px 0 4px 0", fontSize: paperSize === "F4" ? "12px" : "11px", fontWeight: "bold", color: "#666", fontStyle: "italic", fontFamily: '"Times New Roman", Times, serif' }}>Managed by Al-Andalus International Islamic Boarding School</p>
+                <p style={{ margin: "3px 0 0 0", fontSize: paperSize === "F4" ? "13px" : "12px", fontWeight: "bold", color: "#333", fontFamily: '"Times New Roman", Times, serif' }}>Kaderisasi Ummat Hanif, Kontributif, dan Adaptif</p>
+                <p style={{ margin: "2px 0 0 0", fontSize: paperSize === "F4" ? "8.5px" : "8px", color: "#555", whiteSpace: "nowrap", letterSpacing: "-0.1px", fontFamily: '"Times New Roman", Times, serif' }}>Jl. Pelabuhan II, Gg. Cirengkol, Kampung Pupunjul, Desa Cikembar, Kec. Cikembar, Kab. Sukabumi, Jawa Barat 43157 | Website: pesantren-alimam.com</p>
+              </div>
+              <img src="/logo-andalus.png" alt="Logo Al-Andalus" style={{ width: paperSize === "F4" ? "80px" : "72px", height: paperSize === "F4" ? "80px" : "72px", objectFit: "contain" }} />
+            </div>
+
+            {/* Sub-Header Judul Dokumen Halaman 2 & Identitas Santri */}
             <div style={{ 
               display: "flex", 
               justifyContent: "space-between", 
               alignItems: "center", 
-              borderBottom: "2px solid #000000", 
-              paddingBottom: paperSize === "F4" ? "10px" : "8px", 
-              marginBottom: paperSize === "F4" ? "18px" : "14px" 
+              marginBottom: paperSize === "F4" ? "16px" : "12px",
+              fontSize: paperSize === "F4" ? "12.5px" : "11.5px",
+              fontWeight: "bold",
+              fontFamily: "Arial, Helvetica, sans-serif"
             }}>
-              {/* Sisi Kiri: Logo Al-Imam + Nama Pesantren */}
-              <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-                <img 
-                  src="/logo.png" 
-                  alt="Logo Al-Imam" 
-                  style={{ 
-                    width: paperSize === "F4" ? "42px" : "38px", 
-                    height: paperSize === "F4" ? "42px" : "38px", 
-                    objectFit: "contain" 
-                  }} 
-                />
-                <div>
-                  <h2 style={{ fontSize: paperSize === "F4" ? "16.5px" : "15.5px", fontWeight: "900", margin: 0, letterSpacing: "0.5px", fontFamily: '"Times New Roman", Times, serif', color: "#000000" }}>PESANTREN AL-IMAM AL-ISLAMI</h2>
-                  <p style={{ margin: "1px 0 2px 0", fontSize: paperSize === "F4" ? "10.5px" : "9.5px", fontWeight: "bold", color: "#666", fontStyle: "italic", fontFamily: '"Times New Roman", Times, serif' }}>Managed by Al-Andalus International Islamic Boarding School</p>
-                  <p style={{ margin: "1px 0 0 0", fontSize: paperSize === "F4" ? "11px" : "10px", color: "#333", fontWeight: "bold" }}>Laporan Tengah Semester (PTS) — Kepribadian, Tahsin & Tahfidz</p>
-                </div>
+              <div>
+                <p style={{ margin: 0, textTransform: "uppercase", letterSpacing: "0.5px", color: "#111" }}>
+                  RAPOR EVALUASI BELAJAR (PTS) • KEPRIBADIAN, TAHSIN & TAHFIDZ
+                </p>
               </div>
-
-              {/* Sisi Kanan: Identitas Santri */}
-              <div style={{ textAlign: "right", fontSize: paperSize === "F4" ? "12px" : "11px", fontWeight: "bold", lineHeight: "1.35" }}>
-                <p style={{ margin: 0, color: "#000000" }}>Nama: <span style={{ textTransform: "uppercase" }}>{santri?.nama}</span></p>
-                <p style={{ margin: "2px 0 0 0", color: "#444" }}>NIS: {santri?.nis || "-"} &nbsp;|&nbsp; Kelas: {(santri?.kelas || "").replace(/\s*(MTs|MA|SMP|SMA|SD|TK)\b/gi, "")} &nbsp;|&nbsp; Semester {santri?.semester?.includes("Ganjil") || santri?.semester === "1" ? "Ganjil" : santri?.semester} (PTS)</p>
+              <div style={{ textAlign: "right", color: "#111" }}>
+                <p style={{ margin: 0 }}>
+                  Nama: <span style={{ textTransform: "uppercase" }}>{santri?.nama}</span> &nbsp;|&nbsp; NIS: {santri?.nis || "-"} &nbsp;|&nbsp; Kelas: {(santri?.kelas || "").replace(/\s*(MTs|MA|SMP|SMA|SD|TK)\b/gi, "")}
+                </p>
               </div>
             </div>
 
