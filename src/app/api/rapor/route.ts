@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { cekStatusSpp } from "@/lib/keuangan";
+import { getOfficialNis } from "@/lib/officialSantri";
 
 export async function GET(req: NextRequest) {
   const searchParams = req.nextUrl.searchParams;
@@ -155,7 +156,7 @@ export async function GET(req: NextRequest) {
       santri: {
         id: santri.id,
         nama: santri.nama_lengkap,
-        nis: santri.nis,
+        nis: getOfficialNis(santri.nama_lengkap) || santri.nis,
         kelas: santri.kelas.nama,
         jenjang: santri.kelas.jenjang,
         foto_url: santri.foto_url },

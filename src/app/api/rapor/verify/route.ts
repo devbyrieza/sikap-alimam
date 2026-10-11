@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { getOfficialNis } from "@/lib/officialSantri";
 
 export const dynamic = "force-dynamic";
 
@@ -53,7 +54,7 @@ export async function GET(req: NextRequest) {
         institusi: "Pesantren Al-Imam Al-Islami",
         santri: {
           nama: santri.nama_lengkap,
-          nis: santri.nis,
+          nis: getOfficialNis(santri.nama_lengkap) || santri.nis,
           kelas: santri.kelas?.nama || "—"
         },
         penandatangan: {

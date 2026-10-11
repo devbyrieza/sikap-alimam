@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { PrismaClient } from '@prisma/client';
+import { OFFICIAL_SANTRI_LIST } from '@/lib/officialSantri';
 const prisma = new PrismaClient();
 
 const MAPEL_7MTS = [
@@ -12,12 +13,8 @@ const MAPEL_IL = [
   "Nahwu", "Shorf", "Bahasa Arab", "Entrepreneurship", "Tahsin/Tahfiz Al Quran"
 ];
 
-const SANTRI_MTS = [
-  { nis: "2601070001", nama: "Atqanul Ummah Ahmad", jk: "L" },
-  { nis: "2601070002", nama: "Abdul Aziz Ali", jk: "L" },
-  { nis: "2601070003", nama: "Abdul Hakim", jk: "L" },
-  { nis: "2601070004", nama: "Ahmad Farros Al Barqy", jk: "L" },
-];
+const SANTRI_MTS = OFFICIAL_SANTRI_LIST.filter(s => s.kelas === "7 MTs");
+
 
 export async function GET() {
   try {

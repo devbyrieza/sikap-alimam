@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useSearchParams } from "next/navigation";
 import { Printer } from "lucide-react";
+import { getOfficialNis } from "@/lib/officialSantri";
 
 export default function CetakRaporPage() {
   const params = useParams();
@@ -45,6 +46,7 @@ export default function CetakRaporPage() {
   }
 
   const { santri, nilai_akademik, kedisiplinan, absen, ujian_tahfidz } = data;
+  const displayNis = (santri?.nama ? getOfficialNis(santri.nama) : null) || santri?.nis || "-";
 
   const toArabicNum = (num: number | string) => {
     if (num === null || num === undefined) return "-";
@@ -527,7 +529,7 @@ export default function CetakRaporPage() {
                     <tr style={{ border: "none" }}>
                       <td style={{ width: 85, padding: "2.5px 0", border: "none" }}>NIS</td>
                       <td style={{ padding: "2.5px 6px", border: "none" }}>:</td>
-                      <td style={{ padding: "2.5px 0", border: "none", letterSpacing: "0.5px" }}>{santri?.nis || "-"}</td>
+                      <td style={{ padding: "2.5px 0", border: "none", letterSpacing: "0.5px" }}>{displayNis}</td>
                     </tr>
                     <tr style={{ border: "none" }}>
                       <td style={{ width: 85, padding: "2.5px 0", border: "none" }}>Kelas</td>
@@ -719,7 +721,7 @@ export default function CetakRaporPage() {
               fontFamily: "Arial, Helvetica, sans-serif"
             }}>
               <div>Nama: <span style={{ textTransform: "uppercase" }}>{santri?.nama}</span></div>
-              <div>NIS: <span>{santri?.nis || "-"}</span></div>
+              <div>NIS: <span>{displayNis}</span></div>
               <div>Kelas: <span>{(santri?.kelas || "").replace(/\s*(MTs|MA|SMP|SMA|SD|TK)\b/gi, "")}</span></div>
               <div>Semester: <span>{santri?.semester?.includes("Ganjil") || santri?.semester === "1" ? "Ganjil" : santri?.semester} (PTS)</span></div>
               <div>Tahun Pelajaran: <span>{santri?.tahun_ajaran || "-"}</span></div>

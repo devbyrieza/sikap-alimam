@@ -34,6 +34,7 @@ import {
   ArrowRight } from "lucide-react";
 import Swal from "sweetalert2";
 import JurnalDetailModal from "@/components/JurnalDetailModal";
+import { getOfficialNis } from "@/lib/officialSantri";
 
 export default function RaporWaliPage() {
   const searchParams = useSearchParams();
@@ -289,7 +290,7 @@ export default function RaporWaliPage() {
                   <span className="px-2.5 py-0.5 rounded-full bg-white/20 text-white text-[11px] font-bold tracking-wide">
                     {santri.kelas} ({santri.jenjang || "MTs"})
                   </span>
-                  <span className="text-white/80 font-mono text-xs">NIS: {santri.nis}</span>
+                  <span className="text-white/80 font-mono text-xs">NIS: {(santri?.nama ? getOfficialNis(santri.nama) : null) || santri.nis}</span>
                   {data?.spp?.lunas ? (
                     <span className="px-2.5 py-0.5 rounded-full bg-emerald-500/30 text-emerald-200 border border-emerald-400/40 text-[11px] font-extrabold flex items-center gap-1">
                       <CheckCircle2 size={12} /> SPP {data.spp.namaBulan} Lunas
