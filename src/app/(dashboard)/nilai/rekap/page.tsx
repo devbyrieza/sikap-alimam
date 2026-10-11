@@ -390,7 +390,7 @@ export default function RekapNilaiPage() {
                         <th style={{ textAlign: "center", minWidth: 90, borderBottom: "1px solid #ebdcc3", padding: "14px 16px", color: "#1a1a1a", fontWeight: 800, cursor: "pointer" }} onClick={() => requestSort("total")}>Total Nilai {sortConfig?.key === "total" ? (sortConfig.direction === "asc" ? "↑" : "↓") : "↕"}</th>
                         <th style={{ textAlign: "center", minWidth: 90, borderBottom: "1px solid #ebdcc3", padding: "14px 16px", color: "#1a1a1a", fontWeight: 800, cursor: "pointer" }} onClick={() => requestSort("rata-rata")}>Rata-rata {sortConfig?.key === "rata-rata" ? (sortConfig.direction === "asc" ? "↑" : "↓") : "↕"}</th>
                         <th style={{ textAlign: "center", minWidth: 90, borderBottom: "1px solid #ebdcc3", padding: "14px 16px", color: "#1a1a1a", fontWeight: 800, cursor: "pointer" }} onClick={() => requestSort("peringkat")}>Peringkat {sortConfig?.key === "peringkat" ? (sortConfig.direction === "asc" ? "↑" : "↓") : "↕"}</th>
-                          <th style={{ textAlign: "center", minWidth: 90, borderBottom: "1px solid #ebdcc3", padding: "14px 16px", color: "#1a1a1a", fontWeight: 800 }}>Aksi</th>
+                        <th style={{ textAlign: "center", minWidth: 180, borderBottom: "1px solid #ebdcc3", padding: "14px 16px", color: "#1a1a1a", fontWeight: 800 }}>Aksi</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -436,9 +436,26 @@ export default function RekapNilaiPage() {
                                   #{rankMap.get(santri.id)?.rank || "-"}
                                 </div>
                               </td>
-                                <td style={{ textAlign: "center", borderBottom: "1px solid #f5ede1", padding: "14px 16px" }}>
-                                  <a href={`/rapor/print/${santri.id}?semester=${semester}&tahun_ajaran=${tahun_ajaran}`} target="_blank" style={{ display: "inline-block", padding: "6px 12px", background: "#550000", color: "white", borderRadius: "8px", fontSize: "13px", fontWeight: "bold", textDecoration: "none" }}>Cetak Rapor</a>
-                                </td>
+                              <td style={{ textAlign: "center", borderBottom: "1px solid #f5ede1", padding: "10px 12px" }}>
+                                <div style={{ display: "flex", gap: "6px", justifyContent: "center", alignItems: "center" }}>
+                                  <a 
+                                    href={`/rapor/print/${santri.id}?semester=${semester}&tahun_ajaran=${tahun_ajaran}&kertas=F4`} 
+                                    target="_blank" 
+                                    title="Cetak format kertas F4 / Folio (215 x 330 mm)" 
+                                    style={{ display: "inline-block", padding: "6px 11px", background: "#550000", color: "white", borderRadius: "8px", fontSize: "12px", fontWeight: "bold", textDecoration: "none", whiteSpace: "nowrap" }}
+                                  >
+                                    Cetak F4
+                                  </a>
+                                  <a 
+                                    href={`/rapor/print/${santri.id}?semester=${semester}&tahun_ajaran=${tahun_ajaran}&kertas=A4`} 
+                                    target="_blank" 
+                                    title="Cetak format kertas A4 (210 x 297 mm)" 
+                                    style={{ display: "inline-block", padding: "6px 11px", background: "#f8fafc", color: "#334155", border: "1px solid #cbd5e1", borderRadius: "8px", fontSize: "12px", fontWeight: "bold", textDecoration: "none", whiteSpace: "nowrap" }}
+                                  >
+                                    Cetak A4
+                                  </a>
+                                </div>
+                              </td>
                             </tr>
                         );
                       })

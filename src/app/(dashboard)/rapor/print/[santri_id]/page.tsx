@@ -10,6 +10,8 @@ export default function CetakRaporPage() {
   const santriId = params.santri_id as string;
   const semester = searchParams.get("semester") || "Ganjil";
   const tahun_ajaran = searchParams.get("tahun_ajaran") || "2026/2027";
+  const initialKertas = (searchParams.get("kertas") || "F4").toUpperCase() === "A4" ? "A4" : "F4";
+  const [paperSize, setPaperSize] = useState<"A4" | "F4">(initialKertas);
   
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -177,9 +179,9 @@ export default function CetakRaporPage() {
           .arabic-text { font-family: 'Traditional Arabic', serif !important; }
           
           @media print {
-            /* Margin A4 Keliling SAMA RATA (Atas, Bawah, Kiri, Kanan = 12mm) */
+            /* Margin Keliling SAMA RATA (Atas, Bawah, Kiri, Kanan = 12mm) */
             @page { 
-              size: A4; 
+              size: ${paperSize === "F4" ? "215mm 330mm" : "A4"}; 
               margin: 12mm 12mm 12mm 12mm; 
             }
             body { 
@@ -208,6 +210,7 @@ export default function CetakRaporPage() {
               box-shadow: none !important;
               padding: 0 !important;
               max-width: 100% !important;
+              width: 100% !important;
               min-height: auto !important;
               border-radius: 0 !important;
               margin-bottom: 0 !important;
@@ -246,40 +249,87 @@ export default function CetakRaporPage() {
         color: "white",
         padding: "16px 24px",
         borderRadius: "16px",
-        boxShadow: "0 10px 15px -3px rgba(85, 0, 0, 0.2)"
+        boxShadow: "0 10px 15px -3px rgba(85, 0, 0, 0.2)",
+        flexWrap: "wrap",
+        gap: "16px"
       }}>
         <div>
-          <h2 style={{ fontSize: "18px", fontWeight: "bold", margin: 0 }}>Cetak Rapor Santri (Format 2 Halaman Lega)</h2>
-          <p style={{ fontSize: "12px", opacity: 0.8, margin: "4px 0 0 0" }}>Format cetak bilateral resmi 2 halaman dengan tulisan besar, nyaman dibaca, dan margin simetris.</p>
+          <h2 style={{ fontSize: "18px", fontWeight: "bold", margin: 0 }}>Cetak Rapor Santri (2 Halaman)</h2>
+          <p style={{ fontSize: "12px", opacity: 0.85, margin: "4px 0 0 0" }}>Format resmi Pesantren Al-Imam. Pilih ukuran kertas yang tersedia:</p>
         </div>
-        <button 
-          onClick={() => window.print()}
-          style={{ 
-            padding: "10px 20px", 
-            borderRadius: "10px", 
-            backgroundColor: "#22c55e", 
-            color: "white", 
-            border: "none", 
-            cursor: "pointer", 
-            fontWeight: "bold", 
-            display: "flex", 
-            alignItems: "center", 
-            gap: "8px",
-            boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)"
-          }}
-        >
-          <Printer size={18} /> Cetak Sekarang (2 Halaman)
-        </button>
+
+        <div style={{ display: "flex", alignItems: "center", gap: "10px", flexWrap: "wrap" }}>
+          {/* Switcher Ukuran Kertas */}
+          <div style={{ display: "flex", background: "rgba(0,0,0,0.25)", borderRadius: "10px", padding: "4px", gap: "4px", border: "1px solid rgba(255,255,255,0.15)" }}>
+            <button
+              type="button"
+              onClick={() => setPaperSize("F4")}
+              style={{
+                padding: "8px 14px",
+                borderRadius: "8px",
+                border: "none",
+                cursor: "pointer",
+                fontWeight: "bold",
+                fontSize: "12.5px",
+                background: paperSize === "F4" ? "#ffffff" : "transparent",
+                color: paperSize === "F4" ? "#550000" : "#ffffff",
+                boxShadow: paperSize === "F4" ? "0 2px 4px rgba(0,0,0,0.2)" : "none",
+                transition: "all 0.15s ease"
+              }}
+            >
+              📄 Kertas F4 / Folio (215 × 330 mm)
+            </button>
+            <button
+              type="button"
+              onClick={() => setPaperSize("A4")}
+              style={{
+                padding: "8px 14px",
+                borderRadius: "8px",
+                border: "none",
+                cursor: "pointer",
+                fontWeight: "bold",
+                fontSize: "12.5px",
+                background: paperSize === "A4" ? "#ffffff" : "transparent",
+                color: paperSize === "A4" ? "#550000" : "#ffffff",
+                boxShadow: paperSize === "A4" ? "0 2px 4px rgba(0,0,0,0.2)" : "none",
+                transition: "all 0.15s ease"
+              }}
+            >
+              📄 Kertas A4 (210 × 297 mm)
+            </button>
+          </div>
+
+          <button 
+            type="button"
+            onClick={() => window.print()}
+            style={{ 
+              padding: "9px 20px", 
+              borderRadius: "10px", 
+              backgroundColor: "#22c55e", 
+              color: "white", 
+              border: "none", 
+              cursor: "pointer", 
+              fontWeight: "bold", 
+              fontSize: "13px",
+              display: "flex", 
+              alignItems: "center", 
+              gap: "8px",
+              boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.15)"
+            }}
+          >
+            <Printer size={18} /> Cetak Sekarang ({paperSize})
+          </button>
+        </div>
       </div>
 
       {/* ========================================================================= */}
       {/* HALAMAN 1: RAPOR AKADEMIK (KASYFUD DARAJAT)                               */}
       {/* ========================================================================= */}
       <div 
-        className="rapor-page max-w-[210mm] mx-auto bg-white p-[12mm] shadow-xl print:shadow-none print:p-0 print:max-w-full relative" 
+        className={`rapor-page ${paperSize === "F4" ? "max-w-[215mm]" : "max-w-[210mm]"} mx-auto bg-white p-[12mm] shadow-xl print:shadow-none print:p-0 print:max-w-full relative`} 
         style={{ 
           borderRadius: "24px", 
-          minHeight: "297mm", 
+          minHeight: paperSize === "F4" ? "330mm" : "297mm", 
           position: "relative", 
           fontFamily: "Arial, Helvetica, sans-serif" 
         }}
@@ -470,7 +520,7 @@ export default function CetakRaporPage() {
           {/* Catatan Kaki Halaman 1 */}
           <div style={{ marginTop: "16px", display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: "10.5px", color: "#666", fontStyle: "italic", gap: "16px" }}>
             <p style={{ margin: 0, flex: 1 }}>* Nilai di atas merupakan Hasil Evaluasi Belajar Penilaian Tengah Semester (PTS) Murni.</p>
-            <p style={{ margin: 0, fontWeight: "bold", whiteSpace: "nowrap", flexShrink: 0 }}>Halaman 1 dari 2</p>
+            <p style={{ margin: 0, fontWeight: "bold", whiteSpace: "nowrap", flexShrink: 0 }}>Halaman 1 dari 2 ({paperSize})</p>
           </div>
 
         </div>
@@ -485,10 +535,10 @@ export default function CetakRaporPage() {
       {/* HALAMAN 2: KEPRIBADIAN, TAHSIN & TAHFIDZ, DAN PENGESAHAN DOKUMEN          */}
       {/* ========================================================================= */}
       <div 
-        className="rapor-page max-w-[210mm] mx-auto bg-white p-[12mm] shadow-xl print:shadow-none print:p-0 print:max-w-full relative" 
+        className={`rapor-page ${paperSize === "F4" ? "max-w-[215mm]" : "max-w-[210mm]"} mx-auto bg-white p-[12mm] shadow-xl print:shadow-none print:p-0 print:max-w-full relative`} 
         style={{ 
           borderRadius: "24px", 
-          minHeight: "297mm", 
+          minHeight: paperSize === "F4" ? "330mm" : "297mm", 
           position: "relative", 
           fontFamily: "Arial, Helvetica, sans-serif" 
         }}
@@ -684,14 +734,14 @@ export default function CetakRaporPage() {
             }}
           >
             {/* Sisi Kiri: 3 Kolom Tanda Tangan Berjarak Ekstra Lega (Tinggi 195px - Ruang TTD Bertambah Lega & Proporsional) */}
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", textAlign: "center", fontSize: "13px", gap: "10px" }}>
+            <div style={{ display: "grid", gridTemplateColumns: "115px 1.05fr 1.15fr", textAlign: "center", fontSize: "13px", gap: "10px" }}>
               {/* Kolom 1: Orang Tua */}
               <div style={{ display: "flex", flexDirection: "column", justifyContent: "space-between", height: "195px", padding: "0 4px" }}>
                 <div>
                   <p style={{ margin: 0, opacity: 0 }}>Mengetahui</p>
                   <p style={{ margin: "3px 0 0 0" }}>Orang Tua / Wali</p>
                 </div>
-                <div style={{ minHeight: "44px", display: "flex", alignItems: "flex-end", justifyContent: "center" }}>
+                <div style={{ minHeight: "36px", display: "flex", alignItems: "flex-end", justifyContent: "center" }}>
                   <div style={{ display: "flex", justifyContent: "space-between", width: "100%", fontWeight: "bold", margin: 0, fontSize: "13px" }}>
                     <span>(</span><span>)</span>
                   </div>
@@ -704,8 +754,8 @@ export default function CetakRaporPage() {
                   <p style={{ margin: 0 }}>Mengetahui</p>
                   <p style={{ margin: "3px 0 0 0" }}>{headTitle}</p>
                 </div>
-                <div style={{ minHeight: "44px", display: "flex", alignItems: "flex-end", justifyContent: "center" }}>
-                  <p style={{ fontWeight: "bold", margin: 0, fontSize: "12.5px", lineHeight: "1.35" }}>
+                <div style={{ minHeight: "36px", display: "flex", alignItems: "flex-end", justifyContent: "center" }}>
+                  <p style={{ fontWeight: "bold", margin: 0, fontSize: "11.5px", whiteSpace: "nowrap", letterSpacing: "-0.2px" }}>
                     ({headName})
                   </p>
                 </div>
@@ -717,8 +767,8 @@ export default function CetakRaporPage() {
                   <p style={{ margin: 0 }}>Sukabumi, 11 Oktober 2026</p>
                   <p style={{ margin: "3px 0 0 0" }}>Wali Kelas</p>
                 </div>
-                <div style={{ minHeight: "44px", display: "flex", alignItems: "flex-end", justifyContent: "center" }}>
-                  <p style={{ fontWeight: "bold", margin: 0, fontSize: "12.5px", lineHeight: "1.35" }}>
+                <div style={{ minHeight: "36px", display: "flex", alignItems: "flex-end", justifyContent: "center" }}>
+                  <p style={{ fontWeight: "bold", margin: 0, fontSize: "11.5px", whiteSpace: "nowrap", letterSpacing: "-0.2px" }}>
                     ({waliKelasName})
                   </p>
                 </div>
@@ -734,7 +784,7 @@ export default function CetakRaporPage() {
                   style={{ width: "135px", height: "135px", border: "1.5px solid #1a1a1a", padding: "4px", backgroundColor: "transparent" }}
                 />
               </div>
-              <div style={{ minHeight: "44px", display: "flex", alignItems: "flex-end", justifyContent: "center" }}>
+              <div style={{ minHeight: "36px", display: "flex", alignItems: "flex-end", justifyContent: "center" }}>
                 <p style={{ fontSize: "9.5px", color: "#666", margin: 0, textAlign: "center", lineHeight: "1.3" }}>Scan Verifikasi Dokumen</p>
               </div>
             </div>
@@ -743,7 +793,7 @@ export default function CetakRaporPage() {
           {/* Catatan Kaki Halaman 2 (Simetris dengan Halaman 1, 1 Baris Rapi & Elegan) */}
           <div style={{ marginTop: "20px", display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: "10.5px", color: "#666", fontStyle: "italic", gap: "16px" }}>
             <p style={{ margin: 0, flex: 1 }}>* Dokumen rapor ini sah dan diterbitkan secara resmi oleh Pesantren Al-Imam Al-Islami (Managed by Al-Andalus IIBS).</p>
-            <p style={{ margin: 0, fontWeight: "bold", whiteSpace: "nowrap", flexShrink: 0 }}>Halaman 2 dari 2</p>
+            <p style={{ margin: 0, fontWeight: "bold", whiteSpace: "nowrap", flexShrink: 0 }}>Halaman 2 dari 2 ({paperSize})</p>
           </div>
 
         </div>
