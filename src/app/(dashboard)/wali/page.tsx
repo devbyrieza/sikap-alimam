@@ -1,8 +1,8 @@
-import { getOfficialNis } from "@/lib/officialSantri";
 "use client";
 
 import React, { useState, useEffect } from "react";
 import { User, ChevronRight, GraduationCap, Printer, CalendarCheck, BookOpen, Sparkles, Phone, ShieldCheck, CheckCircle2, Lock } from "lucide-react";
+import { getOfficialNis } from "@/lib/officialSantri";
 
 interface Anak {
   id: string;

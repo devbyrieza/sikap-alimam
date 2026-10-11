@@ -1,8 +1,8 @@
-import { getOfficialNis } from "@/lib/officialSantri";
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
 import Swal from "sweetalert2";
+import { getOfficialNis } from "@/lib/officialSantri";
 import {
   ClipboardCheck,
   Loader2,
