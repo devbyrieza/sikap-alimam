@@ -73,7 +73,7 @@ export default function PantauNilaiPage() {
     setSantriId(""); // Reset pilihan santri jika kelas diganti
     
     // Tapi user minta bisa filter mapel juga:
-    fetch(`/api/master/mapel?kelas_id=${kelasId}`)
+    fetch(`/api/master/mapel?kelas_id=${kelasId}&all=true`)
       .then(r => r.json())
       .then(d => {
         setMapelList(d.mapel || []);

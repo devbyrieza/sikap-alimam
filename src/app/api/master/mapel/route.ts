@@ -16,9 +16,20 @@ export async function GET(req: NextRequest) {
 
     const session = await getSession();
     const role = (session?.role || "").toLowerCase();
-    const isAdmin = role.includes("admin_super");
+    const isPrivileged = [
+      "admin_super",
+      "super_admin",
+      "mudir",
+      "kepala_sekolah",
+      "kadiv_kurikulum",
+      "kepala_kurikulum",
+      "wali_kelas",
+      "admin_rapor"
+    ].some((r) => role.includes(r));
 
-    if (session?.asatidz_id && !isAdmin) {
+    const showAll = searchParams.get("all") === "true";
+
+    if (session?.asatidz_id && !isPrivileged && !showAll) {
       whereClause.asatidz_mapel = {
         some: {
           pegawai_id: session.asatidz_id

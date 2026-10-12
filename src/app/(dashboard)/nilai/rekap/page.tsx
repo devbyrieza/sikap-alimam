@@ -101,7 +101,7 @@ export default function RekapNilaiPage() {
       setMapelList([]);
       return;
     }
-    fetch(`/api/master/mapel?kelas_id=${kelas_id}`)
+    fetch(`/api/master/mapel?kelas_id=${kelas_id}&all=true`)
       .then((r) => r.json())
       .then((d) => setMapelList(d.mapel || []))
       .catch(() => {});
@@ -137,8 +137,17 @@ export default function RekapNilaiPage() {
         seen.set(standardName, { ...m, nama: standardName });
       }
     }
+    // Self-healing: jika ada mapel dari data nilai yang belum ada di master mapel, sertakan juga agar seluruh mata pelajaran kelas tampil
+    for (const n of nilaiData) {
+      if (n.mapel?.nama) {
+        const standardName = getStandardMapelName(n.mapel.nama);
+        if (!seen.has(standardName)) {
+          seen.set(standardName, { id: n.mapel.id, nama: standardName });
+        }
+      }
+    }
     return Array.from(seen.values());
-  }, [mapelList]);
+  }, [mapelList, nilaiData]);
 
   // Kalkulasi data tabel
   // Santri unik
