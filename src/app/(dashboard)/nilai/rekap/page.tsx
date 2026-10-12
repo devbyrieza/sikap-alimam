@@ -202,36 +202,120 @@ export default function RekapNilaiPage() {
     return null;
   };
 
+  // Nilai murni (presisi desimal tanpa pembulatan) untuk keperluan tie-breaker
+  const getRawAvg = (santri_id: string, mapelOrId: MapelItem | string): number | null => {
+    let standardTarget = "";
+    let mId = "";
+    if (typeof mapelOrId === "string") {
+      mId = mapelOrId;
+      const found = displayMapelList.find((m) => m.id === mapelOrId) || mapelList.find((m) => m.id === mapelOrId);
+      if (found) standardTarget = getStandardMapelName(found.nama);
+    } else {
+      mId = mapelOrId.id;
+      standardTarget = getStandardMapelName(mapelOrId.nama);
+    }
+    const vals = nilaiData.filter(
+      (n) => n.santri.id === santri_id && (
+        n.mapel.id === mId ||
+        (standardTarget ? getStandardMapelName(n.mapel.nama) === standardTarget : false)
+      )
+    );
+    if (vals.length === 0) return null;
 
-  // --- RANKING LOGIC ---
+    const getVal = (jenis: string) => {
+      const entry = vals.find(v => v.jenis === jenis);
+      return entry ? Number(entry.nilai) : 0;
+    };
+
+    const hasPeriode = (suffix: string, ujianKey: string) => {
+      return vals.some(v => v.jenis === `harian${suffix}` || v.jenis === `kompetensi${suffix}` || v.jenis === `sikap${suffix}` || v.jenis === ujianKey);
+    };
+
+    if (hasPeriode("_pas", "pas")) {
+      return getVal("pas");
+    } else if (hasPeriode("_pts", "pts")) {
+      return getVal("pts");
+    }
+
+    if (vals.some(v => v.jenis === "ujian")) {
+      return getVal("ujian");
+    }
+
+    return Number(vals[0].nilai);
+  };
+
+  const isSyariahOrBahasaMapel = (namaMapel: string): boolean => {
+    const low = namaMapel.toLowerCase();
+    const umumKeywords = ["matematika", "mtk", "ipa", "ips", "indonesia", "inggris", "pjok", "penjas", "seni", "pkn", "informatika", "prakarya", "kewirausahaan", "entrepreneurship"];
+    return !umumKeywords.some(u => low.includes(u));
+  };
+
+  // --- RANKING LOGIC (DENGAN MULTI-TIER TIE BREAKER) ---
   const rankMap = new Map<string, { total: number; average: number; rank: number }>();
   if (santriList.length > 0 && displayMapelList.length > 0) {
     const santriTotals = santriList.map(santri => {
        let total = 0;
+       let totalRaw = 0;
        let count = 0;
+       let diniyahTotal = 0;
+
        displayMapelList.forEach(m => {
           const val = getAvg(santri.id, m);
+          const rawVal = getRawAvg(santri.id, m);
           if (val !== null) {
             total += val;
             count++;
           }
+          if (rawVal !== null) {
+            totalRaw += rawVal;
+            if (isSyariahOrBahasaMapel(m.nama)) {
+              diniyahTotal += rawVal;
+            }
+          }
        });
+
        const average = count > 0 ? Math.round(total / count) : 0;
-       return { id: santri.id, total: Math.round(total), average };
+       const averageRaw = count > 0 ? (totalRaw / count) : 0;
+
+       return {
+         id: santri.id,
+         nama: santri.nama_lengkap,
+         total: Math.round(total),
+         totalRaw,
+         average,
+         averageRaw,
+         diniyahTotal
+       };
     });
     
-    // Sort descending by total
-    const rankedSantri = [...santriTotals].sort((a, b) => b.total - a.total);
-    let prevTotal = -1;
-    let prevRank = 1;
-    rankedSantri.forEach((s, index) => {
-      if (prevTotal === s.total) {
-         rankMap.set(s.id, { total: s.total, average: s.average, rank: prevRank });
-      } else {
-         rankMap.set(s.id, { total: s.total, average: s.average, rank: index + 1 });
-         prevRank = index + 1;
-         prevTotal = s.total;
+    // Sort descending dengan aturan tie-breaker:
+    // 1. Rata-rata nilai (presisi desimal murni)
+    // 2. Total jumlah nilai murni (sebelum pembulatan)
+    // 3. Total nilai bulat
+    // 4. Keunggulan total nilai mata pelajaran Syari'ah / Diniyah & Bahasa Arab
+    // 5. Alfabetis nama santri (sehingga ranking tidak ada yang kembar)
+    const rankedSantri = [...santriTotals].sort((a, b) => {
+      if (Math.abs(b.averageRaw - a.averageRaw) > 0.0001) {
+        return b.averageRaw - a.averageRaw;
       }
+      if (Math.abs(b.totalRaw - a.totalRaw) > 0.0001) {
+        return b.totalRaw - a.totalRaw;
+      }
+      if (b.total !== a.total) {
+        return b.total - a.total;
+      }
+      if (Math.abs(b.diniyahTotal - a.diniyahTotal) > 0.0001) {
+        return b.diniyahTotal - a.diniyahTotal;
+      }
+      return a.nama.localeCompare(b.nama);
+    });
+
+    rankedSantri.forEach((s, index) => {
+      rankMap.set(s.id, {
+        total: s.total,
+        average: s.average,
+        rank: index + 1
+      });
     });
   }
   // ---------------------

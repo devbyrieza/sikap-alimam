@@ -99,6 +99,46 @@ export async function GET(req: NextRequest) {
       return Math.round(Number(vals[0].nilai));
     };
 
+    // Helper: Hitung Nilai Murni (tanpa pembulatan) untuk penentuan ranking tie-breaker
+    const getRawStudentScore = (sId: string, targetStandardName: string): number | null => {
+      const vals = allNilaiRaw.filter(
+        n => n.santri_id === sId && getStandardMapelName(n.mapel.nama, isMA) === targetStandardName
+      );
+      if (vals.length === 0) return null;
+
+      const getVal = (jenis: string) => {
+        const entry = vals.find(v => v.jenis === jenis);
+        return entry ? Number(entry.nilai) : 0;
+      };
+
+      const hasPeriode = (suffix: string, ujianKey: string) => {
+        return vals.some(
+          v => v.jenis === `harian${suffix}` || 
+               v.jenis === `kompetensi${suffix}` || 
+               v.jenis === `sikap${suffix}` || 
+               v.jenis === ujianKey
+        );
+      };
+
+      if (hasPeriode("_pas", "pas")) {
+        return getVal("pas");
+      } else if (hasPeriode("_pts", "pts")) {
+        return getVal("pts");
+      }
+
+      if (vals.some(v => v.jenis === "ujian")) {
+        return getVal("ujian");
+      }
+
+      return Number(vals[0].nilai);
+    };
+
+    const isSyariahOrBahasa = (name: string): boolean => {
+      const low = name.toLowerCase();
+      const umumKeywords = ["matematika", "mtk", "ipa", "ips", "indonesia", "inggris", "pjok", "penjas", "seni", "pkn", "informatika", "prakarya", "kewirausahaan", "entrepreneurship"];
+      return !umumKeywords.some(u => low.includes(u));
+    };
+
     // Ambil daftar mapel standar yang ada di kelas ini
     const mapelStandardMap = new Map<string, { standardName: string; rawNama: string; nama_arab?: string | null; kategori: string }>();
     allNilaiRaw.forEach(n => {
@@ -114,35 +154,67 @@ export async function GET(req: NextRequest) {
     });
     const classStandardMapels = Array.from(mapelStandardMap.values());
 
-    // 4. Hitung Total dan Ranking untuk Setiap Santri di Kelas
+    // 4. Hitung Total dan Ranking untuk Setiap Santri di Kelas (dengan Multi-tier Tie Breaker)
     const santriTotals = temanSekelas.map(s => {
       let total = 0;
+      let totalRaw = 0;
       let count = 0;
+      let diniyahTotal = 0;
+
       classStandardMapels.forEach(m => {
         const val = getStudentScore(s.id, m.standardName);
+        const rawVal = getRawStudentScore(s.id, m.standardName);
         if (val !== null) {
           total += val;
           count++;
         }
+        if (rawVal !== null) {
+          totalRaw += rawVal;
+          if (isSyariahOrBahasa(m.standardName)) {
+            diniyahTotal += rawVal;
+          }
+        }
       });
+
       const average = count > 0 ? Math.round(total / count) : 0;
-      return { id: s.id, total: Math.round(total), average };
+      const averageRaw = count > 0 ? (totalRaw / count) : 0;
+
+      return {
+        id: s.id,
+        nama: s.nama_lengkap,
+        total: Math.round(total),
+        totalRaw,
+        average,
+        averageRaw,
+        diniyahTotal
+      };
     });
 
-    // Sort descending by total
-    const sortedTotals = [...santriTotals].sort((a, b) => b.total - a.total);
-    let prevTotal = -1;
-    let prevRank = 1;
-    const rankMap = new Map<string, number>();
-
-    sortedTotals.forEach((st, index) => {
-      if (prevTotal === st.total) {
-        rankMap.set(st.id, prevRank);
-      } else {
-        rankMap.set(st.id, index + 1);
-        prevRank = index + 1;
-        prevTotal = st.total;
+    // Sort descending dengan aturan tie-breaker:
+    // 1. Rata-rata nilai (presisi desimal murni)
+    // 2. Total jumlah nilai murni (sebelum pembulatan)
+    // 3. Total nilai bulat
+    // 4. Keunggulan total nilai mata pelajaran Syari'ah / Diniyah & Bahasa Arab
+    // 5. Alfabetis nama santri (sehingga ranking tidak ada yang kembar)
+    const sortedTotals = [...santriTotals].sort((a, b) => {
+      if (Math.abs(b.averageRaw - a.averageRaw) > 0.0001) {
+        return b.averageRaw - a.averageRaw;
       }
+      if (Math.abs(b.totalRaw - a.totalRaw) > 0.0001) {
+        return b.totalRaw - a.totalRaw;
+      }
+      if (b.total !== a.total) {
+        return b.total - a.total;
+      }
+      if (Math.abs(b.diniyahTotal - a.diniyahTotal) > 0.0001) {
+        return b.diniyahTotal - a.diniyahTotal;
+      }
+      return a.nama.localeCompare(b.nama);
+    });
+
+    const rankMap = new Map<string, number>();
+    sortedTotals.forEach((st, index) => {
+      rankMap.set(st.id, index + 1);
     });
 
     const currentSantriData = santriTotals.find(s => s.id === santri_id);
