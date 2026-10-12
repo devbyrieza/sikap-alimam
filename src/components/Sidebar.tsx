@@ -71,7 +71,7 @@ const NAV: NavItem[] = [
     href: "/akademik/pantau-nilai",
     label: "Pantau Nilai",
     icon: <BarChart3 size={18} />,
-    roles: ["kadiv_kurikulum", "KADIV_KURIKULUM", "kepala_sekolah", "KEPALA_SEKOLAH", "admin_super", "ADMIN_SUPER", "mudir", "MUDIR"] },
+    roles: ["wali_kelas", "WALI_KELAS", "kadiv_kurikulum", "KADIV_KURIKULUM", "kepala_sekolah", "KEPALA_SEKOLAH", "admin_super", "ADMIN_SUPER", "mudir", "MUDIR"] },
   {
     href: "/wali-kelas",
     label: "Hub Wali Kelas",
@@ -97,10 +97,7 @@ const NAV: NavItem[] = [
     label: "Pantau Ujian Tahfidz",
     icon: <Award size={18} />,
     roles: [
-      "pengampu", "PENGAMPU",
-      "musyrif", "MUSYRIF",
-      "kadiv_pengasuhan", "KADIV_PENGASUHAN",
-      "kadiv_asrama", "KADIV_ASRAMA",
+      "wali_kelas", "WALI_KELAS",
       "kadiv_kurikulum", "KADIV_KURIKULUM",
       "admin_super", "ADMIN_SUPER",
       "mudir", "MUDIR",
@@ -159,7 +156,7 @@ export default function Sidebar({ user }: SidebarProps) {
   const visibleNav = NAV.filter(
     (item) => {
       if (!item.roles) return true;
-      if (item.href === "/nilai/rekap") {
+      if (item.href === "/nilai/rekap" || item.href === "/akademik/pantau-nilai" || item.href === "/halaqoh/monitoring") {
         const isSuper = userRoles.some(r => ["admin_super", "mudir", "kepala_sekolah", "admin_rapor"].includes(r));
         const isKurikulum = userRoles.some(r => ["kadiv_kurikulum", "kepala_kurikulum"].includes(r)) || userName.includes("imron");
         const isWali = userRoles.includes("wali_kelas") || isWaliByName;

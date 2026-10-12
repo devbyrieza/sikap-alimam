@@ -1,8 +1,9 @@
 "use client";
 
 import React, { useState, useEffect, useCallback } from "react";
-import { ArrowLeft, Printer, CalendarDays, Users, Award, FileText, Filter } from "lucide-react";
+import { ArrowLeft, Printer, CalendarDays, Users, Award, FileText, Filter, Loader2, ShieldAlert } from "lucide-react";
 import Link from "next/link";
+import { getLaporanNilaiAccess, LaporanNilaiAccess } from "@/lib/permissions";
 
 interface Santri {
   id: string;
@@ -16,6 +17,9 @@ interface Santri {
 }
 
 export default function LaporanHalaqohPage() {
+  const [authLoading, setAuthLoading] = useState(true);
+  const [accessInfo, setAccessInfo] = useState<LaporanNilaiAccess | null>(null);
+
   const [allSantri, setAllSantri] = useState<Santri[]>([]);
   const [selectedSantriId, setSelectedSantriId] = useState("");
   const [periode, setPeriode] = useState("pekanan");
@@ -31,7 +35,12 @@ export default function LaporanHalaqohPage() {
   const [showDigitalSignature, setShowDigitalSignature] = useState(true);
 
   useEffect(() => {
-    fetch("/api/tahfidz/mutabaah").then(r => r.json()).then(d => {
+    Promise.all([
+      fetch("/api/profile").then(r => r.json()),
+      fetch("/api/tahfidz/mutabaah").then(r => r.json())
+    ]).then(([pData, d]) => {
+      const access = getLaporanNilaiAccess(pData);
+      setAccessInfo(access);
       const dataSantri = Array.isArray(d) ? d : [];
       setAllSantri(dataSantri);
       if (dataSantri.length > 0) {
@@ -40,11 +49,12 @@ export default function LaporanHalaqohPage() {
           setPengampuNama(dataSantri[0].kelompok_halaqoh.musyrif);
         }
       }
-    });
+    }).catch(() => {})
+      .finally(() => setAuthLoading(false));
   }, []);
 
   const generateReport = useCallback(async () => {
-    if (!selectedSantriId) return;
+    if (!accessInfo?.canAccess || !selectedSantriId) return;
     setLoading(true);
     try {
       const params = new URLSearchParams({
@@ -59,7 +69,7 @@ export default function LaporanHalaqohPage() {
     } finally {
       setLoading(false);
     }
-  }, [selectedSantriId, bulan, tahun, pekanKe, periode]);
+  }, [accessInfo?.canAccess, selectedSantriId, bulan, tahun, pekanKe, periode]);
 
   useEffect(() => { generateReport(); }, [generateReport]);
 
@@ -80,6 +90,89 @@ export default function LaporanHalaqohPage() {
   const labelStyle: React.CSSProperties = {
     display: "block", fontSize: 11, fontWeight: 800, color: "#64748b",
     textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 6 };
+
+  if (authLoading) {
+    return (
+      <div className="page-container" style={{ display: "flex", justifyContent: "center", alignItems: "center", minHeight: "60vh" }}>
+        <div style={{ textAlign: "center", color: "#550000" }}>
+          <Loader2 className="animate-spin" size={38} style={{ margin: "0 auto 12px auto" }} />
+          <p style={{ fontWeight: 800, fontSize: "14px", color: "#550000" }}>Memverifikasi hak akses cetak rapor tahfidz...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!accessInfo?.canAccess) {
+    return (
+      <div className="page-container" style={{ maxWidth: 680, margin: "40px auto", padding: "0 20px" }}>
+        <div style={{
+          background: "white",
+          borderRadius: "24px",
+          padding: "clamp(24px, 5vw, 40px)",
+          textAlign: "center",
+          boxShadow: "0 10px 30px rgba(85,0,0,0.06)",
+          border: "1px solid #ebdcc3"
+        }}>
+          <div style={{
+            width: 72,
+            height: 72,
+            borderRadius: "24px",
+            background: "#fff1f2",
+            color: "#be123c",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            margin: "0 auto 20px auto",
+            boxShadow: "0 4px 14px rgba(190, 18, 60, 0.15)"
+          }}>
+            <ShieldAlert size={36} />
+          </div>
+          <h2 style={{ fontSize: "22px", fontWeight: 800, color: "#550000", margin: "0 0 12px 0" }}>
+            Akses Terbatas: Cetak Rapor Tahfidz
+          </h2>
+          <p style={{ fontSize: "14px", color: "#64748b", lineHeight: 1.6, margin: "0 0 20px 0" }}>
+            Mohon maaf, halaman <strong>Cetak Rapor &amp; Laporan Nilai Tahfidz</strong> hanya dapat diakses secara resmi oleh:
+          </p>
+          <div style={{
+            background: "#fdf8f0",
+            borderRadius: "16px",
+            padding: "16px 20px",
+            border: "1px solid #ddc192",
+            textAlign: "left",
+            fontSize: "13px",
+            color: "#451a03",
+            marginBottom: "28px"
+          }}>
+            <ul style={{ margin: 0, paddingLeft: "18px", display: "flex", flexDirection: "column", gap: "6px" }}>
+              <li><strong>Admin Super / Mudir / Pimpinan Pesantren</strong></li>
+              <li><strong>Kepala Kurikulum:</strong> Ustadz Imron Abdillah, S.Pd.</li>
+              <li><strong>Wali Kelas MTs:</strong> Ustadz Agus Cahyono (Kelas 7, 8, 9 MTs)</li>
+              <li><strong>Wali Kelas IL:</strong> Ustadz Imron Abdillah, S.Pd. (Kelas I&apos;dad Lughowi)</li>
+              <li><strong>Wali Kelas MA:</strong> Ustadz Muhammad Thoriq Ibn Ziyad, Lc., M.Ag. (Kelas 10, 11, 12 MA)</li>
+            </ul>
+          </div>
+          <Link
+            href="/halaqoh"
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: "8px",
+              background: "linear-gradient(135deg, #550000 0%, #7a0000 100%)",
+              color: "white",
+              padding: "12px 28px",
+              borderRadius: "14px",
+              fontWeight: 800,
+              fontSize: "14px",
+              textDecoration: "none",
+              boxShadow: "0 6px 16px rgba(85,0,0,0.25)"
+            }}
+          >
+            <ArrowLeft size={16} /> Kembali ke Halaman Halaqoh
+          </Link>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="page-container">

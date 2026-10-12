@@ -9,6 +9,7 @@ import {
 import Link from "next/link";
 import { useSearchParams, useRouter } from "next/navigation";
 import { getOfficialNis } from "@/lib/officialSantri";
+import { getLaporanNilaiAccess } from "@/lib/permissions";
 
 const HARI_NAMA = ["Ahad", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
 
@@ -94,6 +95,7 @@ export default function HalaqohDashboardPage() {
   const [pegawaiName, setPegawaiName] = useState<string>("");
   const [pegawaiId, setPegawaiId] = useState<string>("");
   const [scopeFilter, setScopeFilter] = useState<"mine" | "all">("mine");
+  const [canAccessLaporan, setCanAccessLaporan] = useState(false);
 
   // Mutabaah tab state
   const [santriList, setSantriList] = useState<SantriMutabaah[]>([]);
@@ -135,6 +137,8 @@ export default function HalaqohDashboardPage() {
       setPegawaiId(p?.id || "");
       const r = (u?.role || "").toLowerCase();
       setScopeFilter(r.includes("admin") || r.includes("mudir") || r.includes("kadiv") || r.includes("wali") ? "all" : "mine");
+      const access = getLaporanNilaiAccess(pData);
+      setCanAccessLaporan(access.canAccess);
     }).finally(() => setLoading(false));
   }, []);
 
@@ -369,10 +373,12 @@ export default function HalaqohDashboardPage() {
                 ...(isPengampu() ? [{ href: "/halaqoh/kelompok", icon: <Users size={18} />, label: isPimpinan() ? "Semua Kelompok" : "Kelompok Saya", sub: isPimpinan() ? "Manajemen semua kelompok" : "Atur santri bimbingan", bg: "#fdf8f0", color: "#550000" }] : []),
                 ...(((profile?.role || "").toLowerCase().includes("admin") || (profile?.role || "").toLowerCase().includes("mudir") || (profile?.role || "").toLowerCase().includes("kadiv_pengasuhan")) ? [{ href: "/halaqoh/distribusi", icon: <BookOpen size={18} />, label: "Distribusi Halaqoh", sub: "Plot via Excel", bg: "#fef2f2", color: "#b91c1c" }] : []),
                 { href: "/halaqoh/badal", icon: <Users size={18} />, label: "Setor Badal", sub: "Gantikan ustaz lain", bg: "#fdf8f0", color: "#d97706" },
-                { href: "/halaqoh/monitoring", icon: <Award size={18} />, label: "Pantau Ujian Tahfidz", sub: "Checklist 5 ujian santri", bg: "#f0fdf4", color: "#166534" },
+                ...(canAccessLaporan ? [
+                  { href: "/halaqoh/monitoring", icon: <Award size={18} />, label: "Pantau Ujian Tahfidz", sub: "Checklist 5 ujian santri", bg: "#f0fdf4", color: "#166534" },
+                  { href: "/halaqoh/laporan", icon: <FileText size={18} />, label: "Cetak Rapor", sub: "Rapor Pekanan & Bulanan", bg: "#ecfdf5", color: "#059669" },
+                  { href: "/halaqoh/rekap", icon: <CalendarDays size={18} />, label: "Jurnal Harian", sub: "Tabel riwayat setoran", bg: "#eff6ff", color: "#0284c7" },
+                ] : []),
                 { href: "/halaqoh/ujian", icon: <Award size={18} />, label: "Ujian Tahfidz", sub: "Pekanan & Bulanan", bg: "#fffbeb", color: "#d97706" },
-                { href: "/halaqoh/laporan", icon: <FileText size={18} />, label: "Cetak Rapor", sub: "Rapor Pekanan & Bulanan", bg: "#ecfdf5", color: "#059669" },
-                { href: "/halaqoh/rekap", icon: <CalendarDays size={18} />, label: "Jurnal Harian", sub: "Tabel riwayat setoran", bg: "#eff6ff", color: "#0284c7" },
               ].map(item => (
                 <Link
                   key={item.href}

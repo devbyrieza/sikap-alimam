@@ -23,9 +23,12 @@ import {
   FileSpreadsheet,
   Printer,
   Sparkles,
-  HelpCircle
+  HelpCircle,
+  ShieldAlert,
+  Loader2
 } from "lucide-react";
 import Link from "next/link";
+import { getLaporanNilaiAccess, LaporanNilaiAccess } from "@/lib/permissions";
 
 interface ExamDetail {
   count: number;
@@ -96,6 +99,9 @@ export default function MonitoringUjianPage() {
     };
   } | null>(null);
 
+  const [authLoading, setAuthLoading] = useState(true);
+  const [accessInfo, setAccessInfo] = useState<LaporanNilaiAccess | null>(null);
+
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<"matriks" | "musyrif">("matriks");
 
@@ -105,7 +111,19 @@ export default function MonitoringUjianPage() {
   const [filterMusyrif, setFilterMusyrif] = useState("all");
   const [filterStatusPraTarget, setFilterStatusPraTarget] = useState<"all" | "done" | "pending">("all");
 
+  useEffect(() => {
+    fetch("/api/profile")
+      .then(r => r.json())
+      .then(pData => {
+        const access = getLaporanNilaiAccess(pData);
+        setAccessInfo(access);
+      })
+      .catch(() => {})
+      .finally(() => setAuthLoading(false));
+  }, []);
+
   const fetchData = useCallback(async () => {
+    if (!accessInfo?.canAccess) return;
     setLoading(true);
     try {
       const res = await fetch("/api/halaqoh/monitoring");
@@ -118,11 +136,13 @@ export default function MonitoringUjianPage() {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [accessInfo?.canAccess]);
 
   useEffect(() => {
-    fetchData();
-  }, [fetchData]);
+    if (accessInfo?.canAccess) {
+      fetchData();
+    }
+  }, [accessInfo?.canAccess, fetchData]);
 
   // Filtered Santri List
   const filteredSantri = useMemo(() => {
@@ -163,6 +183,89 @@ export default function MonitoringUjianPage() {
     const cleanPhone = m.musyrif_phone.replace(/[^0-9]/g, "").replace(/^0/, "62");
     window.open(`https://wa.me/${cleanPhone}?text=${message}`, "_blank");
   };
+
+  if (authLoading) {
+    return (
+      <div className="page-container" style={{ display: "flex", justifyContent: "center", alignItems: "center", minHeight: "60vh" }}>
+        <div style={{ textAlign: "center", color: "#550000" }}>
+          <Loader2 className="animate-spin" size={38} style={{ margin: "0 auto 12px auto" }} />
+          <p style={{ fontWeight: 800, fontSize: "14px", color: "#550000" }}>Memverifikasi hak akses pantau ujian tahfidz...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!accessInfo?.canAccess) {
+    return (
+      <div className="page-container" style={{ maxWidth: 680, margin: "40px auto", padding: "0 20px" }}>
+        <div style={{
+          background: "white",
+          borderRadius: "24px",
+          padding: "clamp(24px, 5vw, 40px)",
+          textAlign: "center",
+          boxShadow: "0 10px 30px rgba(85,0,0,0.06)",
+          border: "1px solid #ebdcc3"
+        }}>
+          <div style={{
+            width: 72,
+            height: 72,
+            borderRadius: "24px",
+            background: "#fff1f2",
+            color: "#be123c",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            margin: "0 auto 20px auto",
+            boxShadow: "0 4px 14px rgba(190, 18, 60, 0.15)"
+          }}>
+            <ShieldAlert size={36} />
+          </div>
+          <h2 style={{ fontSize: "22px", fontWeight: 800, color: "#550000", margin: "0 0 12px 0" }}>
+            Akses Terbatas: Pantau Ujian Tahfidz
+          </h2>
+          <p style={{ fontSize: "14px", color: "#64748b", lineHeight: 1.6, margin: "0 0 20px 0" }}>
+            Mohon maaf, halaman <strong>Pantau Ujian &amp; Rekapitulasi Tahfidz</strong> hanya dapat diakses secara resmi oleh:
+          </p>
+          <div style={{
+            background: "#fdf8f0",
+            borderRadius: "16px",
+            padding: "16px 20px",
+            border: "1px solid #ddc192",
+            textAlign: "left",
+            fontSize: "13px",
+            color: "#451a03",
+            marginBottom: "28px"
+          }}>
+            <ul style={{ margin: 0, paddingLeft: "18px", display: "flex", flexDirection: "column", gap: "6px" }}>
+              <li><strong>Admin Super / Mudir / Pimpinan Pesantren</strong></li>
+              <li><strong>Kepala Kurikulum:</strong> Ustadz Imron Abdillah, S.Pd.</li>
+              <li><strong>Wali Kelas MTs:</strong> Ustadz Agus Cahyono (Kelas 7, 8, 9 MTs)</li>
+              <li><strong>Wali Kelas IL:</strong> Ustadz Imron Abdillah, S.Pd. (Kelas I&apos;dad Lughowi)</li>
+              <li><strong>Wali Kelas MA:</strong> Ustadz Muhammad Thoriq Ibn Ziyad, Lc., M.Ag. (Kelas 10, 11, 12 MA)</li>
+            </ul>
+          </div>
+          <Link
+            href="/halaqoh"
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: "8px",
+              background: "linear-gradient(135deg, #550000 0%, #7a0000 100%)",
+              color: "white",
+              padding: "12px 28px",
+              borderRadius: "14px",
+              fontWeight: 800,
+              fontSize: "14px",
+              textDecoration: "none",
+              boxShadow: "0 6px 16px rgba(85,0,0,0.25)"
+            }}
+          >
+            <ArrowLeft size={16} /> Kembali ke Halaman Halaqoh
+          </Link>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="page-container" style={{ paddingBottom: 60 }}>

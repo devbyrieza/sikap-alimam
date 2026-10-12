@@ -2,7 +2,8 @@
 
 import React, { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
-import { Search, Filter, Download, BookOpen, Users, TrendingUp, Trophy, Inbox, Settings } from "lucide-react";
+import { Search, Filter, Download, BookOpen, Users, TrendingUp, Trophy, Inbox, Settings, ShieldAlert, Loader2, ArrowLeft } from "lucide-react";
+import { getLaporanNilaiAccess, LaporanNilaiAccess } from "@/lib/permissions";
 
 interface NilaiRow {
   id: string;
@@ -24,6 +25,9 @@ const nilaiTone = (n: number) =>
     : "bg-rose-100 text-rose-700";
 
 export default function FilterNilaiPage() {
+  const [authLoading, setAuthLoading] = useState(true);
+  const [accessInfo, setAccessInfo] = useState<LaporanNilaiAccess | null>(null);
+
   const [kelas, setKelas] = useState("");
   const [mapel, setMapel] = useState("");
   const [santri, setSantri] = useState("");
@@ -34,14 +38,26 @@ export default function FilterNilaiPage() {
   const [loading, setLoading] = useState(false);
   const [searched, setSearched] = useState(false);
 
+  const [isLocked, setIsLocked] = useState(false);
+  const [loadingLock, setLoadingLock] = useState(false);
+
   useEffect(() => {
-    fetch("/api/master")
-      .then((res) => res.json())
-      .then((resData) => {
+    Promise.all([
+      fetch("/api/profile").then((res) => res.json()),
+      fetch("/api/master").then((res) => res.json()),
+      fetch("/api/setting-nilai").then((res) => res.json())
+    ])
+      .then(([profileData, resData, settingData]) => {
+        const access = getLaporanNilaiAccess(profileData);
+        setAccessInfo(access);
         if (resData.kelas) setKelasList(resData.kelas);
         if (resData.mapel) setMapelByKelas(resData.mapel);
+        if (settingData && typeof settingData.is_locked === "boolean") {
+          setIsLocked(settingData.is_locked);
+        }
       })
-      .catch(console.error);
+      .catch(console.error)
+      .finally(() => setAuthLoading(false));
   }, []);
 
   // Filter mapel list strictly based on selected kelas
@@ -116,19 +132,88 @@ export default function FilterNilaiPage() {
     }
   };
 
-  const [isLocked, setIsLocked] = useState(false);
-  const [loadingLock, setLoadingLock] = useState(false);
+  if (authLoading) {
+    return (
+      <div className="page-container" style={{ display: "flex", justifyContent: "center", alignItems: "center", minHeight: "60vh" }}>
+        <div style={{ textAlign: "center", color: "#550000" }}>
+          <Loader2 className="animate-spin" size={38} style={{ margin: "0 auto 12px auto" }} />
+          <p style={{ fontWeight: 800, fontSize: "14px", color: "#550000" }}>Memverifikasi hak akses data nilai akademik...</p>
+        </div>
+      </div>
+    );
+  }
 
-  useEffect(() => {
-    fetch("/api/setting-nilai")
-      .then((res) => res.json())
-      .then((data) => {
-        if (data && typeof data.is_locked === "boolean") {
-          setIsLocked(data.is_locked);
-        }
-      })
-      .catch(console.error);
-  }, []);
+  if (!accessInfo?.canAccess) {
+    return (
+      <div className="page-container" style={{ maxWidth: 680, margin: "40px auto", padding: "0 20px" }}>
+        <div style={{
+          background: "white",
+          borderRadius: "24px",
+          padding: "clamp(24px, 5vw, 40px)",
+          textAlign: "center",
+          boxShadow: "0 10px 30px rgba(85,0,0,0.06)",
+          border: "1px solid #ebdcc3"
+        }}>
+          <div style={{
+            width: 72,
+            height: 72,
+            borderRadius: "24px",
+            background: "#fff1f2",
+            color: "#be123c",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            margin: "0 auto 20px auto",
+            boxShadow: "0 4px 14px rgba(190, 18, 60, 0.15)"
+          }}>
+            <ShieldAlert size={36} />
+          </div>
+          <h2 style={{ fontSize: "22px", fontWeight: 800, color: "#550000", margin: "0 0 12px 0" }}>
+            Akses Terbatas: Data Nilai Akademik
+          </h2>
+          <p style={{ fontSize: "14px", color: "#64748b", lineHeight: 1.6, margin: "0 0 20px 0" }}>
+            Mohon maaf, halaman <strong>Pusat Data Nilai Akademik</strong> hanya dapat diakses secara resmi oleh:
+          </p>
+          <div style={{
+            background: "#fdf8f0",
+            borderRadius: "16px",
+            padding: "16px 20px",
+            border: "1px solid #ddc192",
+            textAlign: "left",
+            fontSize: "13px",
+            color: "#451a03",
+            marginBottom: "28px"
+          }}>
+            <ul style={{ margin: 0, paddingLeft: "18px", display: "flex", flexDirection: "column", gap: "6px" }}>
+              <li><strong>Admin Super / Mudir / Pimpinan Pesantren</strong></li>
+              <li><strong>Kepala Kurikulum:</strong> Ustadz Imron Abdillah, S.Pd.</li>
+              <li><strong>Wali Kelas MTs:</strong> Ustadz Agus Cahyono (Kelas 7, 8, 9 MTs)</li>
+              <li><strong>Wali Kelas IL:</strong> Ustadz Imron Abdillah, S.Pd. (Kelas I&apos;dad Lughowi)</li>
+              <li><strong>Wali Kelas MA:</strong> Ustadz Muhammad Thoriq Ibn Ziyad, Lc., M.Ag. (Kelas 10, 11, 12 MA)</li>
+            </ul>
+          </div>
+          <Link
+            href="/nilai"
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: "8px",
+              background: "linear-gradient(135deg, #550000 0%, #7a0000 100%)",
+              color: "white",
+              padding: "12px 28px",
+              borderRadius: "14px",
+              fontWeight: 800,
+              fontSize: "14px",
+              textDecoration: "none",
+              boxShadow: "0 6px 16px rgba(85,0,0,0.25)"
+            }}
+          >
+            <ArrowLeft size={16} /> Kembali ke Halaman Input Nilai
+          </Link>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="mx-auto flex w-full max-w-6xl flex-col gap-6 px-4 py-6 sm:px-7">
