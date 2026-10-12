@@ -19,6 +19,7 @@ import {
 
 import ModuleTabs from "@/components/ModuleTabs";
 import { getOfficialNis } from "@/lib/officialSantri";
+import { getLaporanNilaiAccess } from "@/lib/permissions";
 
 interface Kelas {
   id: string;
@@ -72,6 +73,7 @@ export default function InputNilaiPage() {
   const [asatidId, setAsatidId] = useState("");
   const [asatidMapelStr, setAsatidMapelStr] = useState("");
   const [isAdminSuper, setIsAdminSuper] = useState(false);
+  const [canAccessLaporan, setCanAccessLaporan] = useState(false);
 
   const [santriList, setSantriList] = useState<Santri[]>([]);
   
@@ -96,6 +98,11 @@ export default function InputNilaiPage() {
         }
         const pegawaiObj = profileRes?.pegawai;
         const userObj = profileRes?.user;
+
+        // Validasi hak akses Laporan Nilai (Admin Super, Kepala Kurikulum, Wali Kelas)
+        const access = getLaporanNilaiAccess({ user: userObj, pegawai: pegawaiObj });
+        setCanAccessLaporan(access.canAccess);
+
         if (pegawaiObj?.id) {
           setAsatidId(pegawaiObj.id);
         }
@@ -564,12 +571,14 @@ export default function InputNilaiPage() {
         )}
       </div>
 
-      <ModuleTabs
-        tabs={[
-          { label: "Input Nilai", href: "/nilai", exact: true, icon: <BookOpen size={16} /> },
-          { label: "Laporan Nilai", href: "/nilai/rekap", exact: true, icon: <BarChart3 size={16} /> },
-        ]}
-      />
+      {canAccessLaporan && (
+        <ModuleTabs
+          tabs={[
+            { label: "Input Nilai", href: "/nilai", exact: true, icon: <BookOpen size={16} /> },
+            { label: "Laporan Nilai", href: "/nilai/rekap", exact: true, icon: <BarChart3 size={16} /> },
+          ]}
+        />
+      )}
 
       {/* ── STEP 1: Pilih Parameter ─────────────────────────────────── */}
       {step === 1 && (

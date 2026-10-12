@@ -1,14 +1,18 @@
 "use client";
 
 import { useState, useEffect, useCallback, useMemo } from "react";
-import { ArrowRight, FileText, Loader2, ArrowLeft, BookOpen, BarChart3 } from "lucide-react";
+import Link from "next/link";
+import { ArrowRight, FileText, Loader2, ArrowLeft, BookOpen, BarChart3, ShieldAlert, Lock, UserCheck } from "lucide-react";
 import ModuleTabs from "@/components/ModuleTabs";
 import { getStandardMapelName } from "@/lib/mapel";
 import { getOfficialNis } from "@/lib/officialSantri";
+import { getLaporanNilaiAccess, LaporanNilaiAccess } from "@/lib/permissions";
+import { getJenjangFromKelas } from "@/lib/kelas";
 
 interface Kelas {
   id: string;
   nama: string;
+  jenjang?: string | null;
 }
 
 interface MapelItem {
@@ -35,6 +39,9 @@ export default function RekapNilaiPage() {
   const [semester, setSemester] = useState("Ganjil");
   const [tahun_ajaran, setTahunAjaran] = useState("2026/2027");
 
+  const [authLoading, setAuthLoading] = useState(true);
+  const [accessInfo, setAccessInfo] = useState<LaporanNilaiAccess | null>(null);
+
   const [kelasList, setKelasList] = useState<Kelas[]>([]);
   const [mapelList, setMapelList] = useState<MapelItem[]>([]);
   const [nilaiData, setNilaiData] = useState<NilaiEntry[]>([]);
@@ -44,14 +51,49 @@ export default function RekapNilaiPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [sortConfig, setSortConfig] = useState<{ key: string, direction: "asc" | "desc" } | null>(null);
 
-  // Fetch kelas
+  // Fetch profil & kelas (dengan filter hak akses)
   useEffect(() => {
-    fetch("/api/master/kelas")
-      .then((r) => r.json())
-      .then((d) => setKelasList(d.kelas || []))
+    Promise.all([
+      fetch("/api/profile").then((r) => r.json()),
+      fetch("/api/master/kelas").then((r) => r.json()),
+    ])
+      .then(([profileRes, kelasRes]) => {
+        const access = getLaporanNilaiAccess({
+          user: profileRes?.user,
+          pegawai: profileRes?.pegawai,
+        });
+        setAccessInfo(access);
+        setKelasList(kelasRes?.kelas || []);
+      })
       .catch(() => {})
-      .finally(() => setLoadingKelas(false));
+      .finally(() => {
+        setAuthLoading(false);
+        setLoadingKelas(false);
+      });
   }, []);
+
+  // Filter kelas berdasarkan jenjang yang diizinkan untuk pengguna ini
+  const filteredKelasList = useMemo(() => {
+    if (!accessInfo || accessInfo.allowedJenjang === "ALL") {
+      return kelasList;
+    }
+    return kelasList.filter((k) => {
+      const j = getJenjangFromKelas(k.nama, k.jenjang);
+      return accessInfo.allowedJenjang.includes(j);
+    });
+  }, [kelasList, accessInfo]);
+
+  // Otomatis pilih kelas pertama yang tersedia
+  useEffect(() => {
+    if (filteredKelasList.length > 0) {
+      const exists = filteredKelasList.some((k) => k.id === kelas_id);
+      if (!exists) {
+        setKelasId(filteredKelasList[0].id);
+      }
+    } else {
+      setKelasId("");
+    }
+  }, [filteredKelasList, kelas_id]);
 
   // Fetch mapel saat kelas berubah
   useEffect(() => {
@@ -65,9 +107,9 @@ export default function RekapNilaiPage() {
       .catch(() => {});
   }, [kelas_id]);
 
-  // Fetch nilai rekap
+  // Fetch nilai rekap (hanya jika pengguna memiliki hak akses)
   const fetchRekap = useCallback(async () => {
-    if (!kelas_id || !semester || !tahun_ajaran) return;
+    if (!accessInfo?.canAccess || !kelas_id || !semester || !tahun_ajaran) return;
     setLoadingData(true);
     try {
       const res = await fetch(
@@ -80,7 +122,7 @@ export default function RekapNilaiPage() {
     } finally {
       setLoadingData(false);
     }
-  }, [kelas_id, semester, tahun_ajaran]);
+  }, [accessInfo?.canAccess, kelas_id, semester, tahun_ajaran]);
 
   useEffect(() => {
     fetchRekap();
@@ -241,6 +283,89 @@ export default function RekapNilaiPage() {
     return sortableItems;
   }, [santriList, rankMap, sortConfig, searchQuery]);
 
+  if (authLoading) {
+    return (
+      <div className="page-container" style={{ display: "flex", justifyContent: "center", alignItems: "center", minHeight: "60vh" }}>
+        <div style={{ textAlign: "center", color: "#550000" }}>
+          <Loader2 className="animate-spin" size={38} style={{ margin: "0 auto 12px auto" }} />
+          <p style={{ fontWeight: 800, fontSize: "14px", color: "#550000" }}>Memverifikasi hak akses rapor & rekap nilai...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!accessInfo?.canAccess) {
+    return (
+      <div className="page-container" style={{ maxWidth: 680, margin: "40px auto", padding: "0 20px" }}>
+        <div style={{
+          background: "white",
+          borderRadius: "24px",
+          padding: "clamp(24px, 5vw, 40px)",
+          textAlign: "center",
+          boxShadow: "0 10px 30px rgba(85,0,0,0.06)",
+          border: "1px solid #ebdcc3"
+        }}>
+          <div style={{
+            width: 72,
+            height: 72,
+            borderRadius: "24px",
+            background: "#fff1f2",
+            color: "#be123c",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            margin: "0 auto 20px auto",
+            boxShadow: "0 4px 14px rgba(190, 18, 60, 0.15)"
+          }}>
+            <ShieldAlert size={36} />
+          </div>
+          <h2 style={{ fontSize: "22px", fontWeight: 800, color: "#550000", margin: "0 0 12px 0" }}>
+            Akses Terbatas: Laporan Nilai Santri
+          </h2>
+          <p style={{ fontSize: "14px", color: "#64748b", lineHeight: 1.6, margin: "0 0 20px 0" }}>
+            Mohon maaf, halaman <strong>Laporan & Rekapitulasi Nilai</strong> hanya dapat diakses secara resmi oleh:
+          </p>
+          <div style={{
+            background: "#fdf8f0",
+            borderRadius: "16px",
+            padding: "16px 20px",
+            border: "1px solid #ddc192",
+            textAlign: "left",
+            fontSize: "13px",
+            color: "#451a03",
+            marginBottom: "28px"
+          }}>
+            <ul style={{ margin: 0, paddingLeft: "18px", display: "flex", flexDirection: "column", gap: "6px" }}>
+              <li><strong>Admin Super / Mudir / Pimpinan Pesantren</strong></li>
+              <li><strong>Kepala Kurikulum:</strong> Ustadz Imron Abdillah, S.Pd.</li>
+              <li><strong>Wali Kelas MTs:</strong> Ustadz Agus Cahyono (Kelas 7, 8, 9 MTs)</li>
+              <li><strong>Wali Kelas IL:</strong> Ustadz Imron Abdillah, S.Pd. (Kelas I&apos;dad Lughowi)</li>
+              <li><strong>Wali Kelas MA:</strong> Ustadz Muhammad Thoriq Ibn Ziyad, Lc., M.Ag. (Kelas 10, 11, 12 MA)</li>
+            </ul>
+          </div>
+          <Link
+            href="/nilai"
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: "8px",
+              background: "linear-gradient(135deg, #550000 0%, #7a0000 100%)",
+              color: "white",
+              padding: "12px 28px",
+              borderRadius: "14px",
+              fontWeight: 800,
+              fontSize: "14px",
+              textDecoration: "none",
+              boxShadow: "0 6px 16px rgba(85,0,0,0.25)"
+            }}
+          >
+            <ArrowLeft size={16} /> Kembali ke Halaman Input Nilai
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="page-container">
       <style>{`
@@ -292,7 +417,27 @@ export default function RekapNilaiPage() {
           boxShadow: "0 2px 12px rgba(85,0,0,0.03)",
           border: "1px solid #ebdcc3" }}
       >
-        <div style={{ fontSize: "15px", fontWeight: "800", color: "#550000" }}>Filter Rekap Nilai</div>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 10 }}>
+          <div style={{ fontSize: "15px", fontWeight: "800", color: "#550000" }}>Filter Rekap Nilai</div>
+          {accessInfo && (
+            <div style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 6,
+              background: "#fdf8f0",
+              color: "#550000",
+              padding: "4px 12px",
+              borderRadius: 20,
+              border: "1px solid #ddc192",
+              fontSize: "12px",
+              fontWeight: 700
+            }}>
+              <UserCheck size={14} color="#550000" />
+              <span>Hak Akses: {accessInfo.userTitle}</span>
+            </div>
+          )}
+        </div>
+
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 w-full items-end">
           <div className="flex flex-col gap-1.5 min-w-0 w-full">
             <label style={{ fontSize: "13px", fontWeight: "700", color: "#550000" }}>Kelas</label>
@@ -304,7 +449,7 @@ export default function RekapNilaiPage() {
               disabled={loadingKelas}
             >
               <option value="">— Pilih Kelas —</option>
-              {kelasList.map((k) => (
+              {filteredKelasList.map((k) => (
                 <option key={k.id} value={k.id}>
                   {k.nama}
                 </option>

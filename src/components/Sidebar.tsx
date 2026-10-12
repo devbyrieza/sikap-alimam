@@ -21,6 +21,7 @@ import {
   BookHeart,
   Award
 } from "lucide-react";
+import { FileSpreadsheet } from "lucide-react";
 import { useState } from "react";
 
 interface NavItem {
@@ -61,6 +62,11 @@ const NAV: NavItem[] = [
     label: "Input Nilai",
     icon: <BarChart3 size={18} />,
     roles: ["guru", "GURU", "wali_kelas", "WALI_KELAS", "kadiv_kurikulum", "KADIV_KURIKULUM", "kepala_sekolah", "KEPALA_SEKOLAH", "admin_super", "ADMIN_SUPER", "mudir", "MUDIR"] },
+  {
+    href: "/nilai/rekap",
+    label: "Laporan Nilai",
+    icon: <FileSpreadsheet size={18} />,
+    roles: ["wali_kelas", "WALI_KELAS", "kadiv_kurikulum", "KADIV_KURIKULUM", "kepala_sekolah", "KEPALA_SEKOLAH", "admin_super", "ADMIN_SUPER", "mudir", "MUDIR"] },
   {
     href: "/akademik/pantau-nilai",
     label: "Pantau Nilai",
@@ -142,13 +148,25 @@ export default function Sidebar({ user }: SidebarProps) {
   const isActive = (href: string) => {
     if (pathname === href) return true;
     if (href === "/dashboard") return false;
+    if (href === "/nilai" && pathname.startsWith("/nilai/rekap")) return false;
     
     return pathname.startsWith(href);
   };
 
   const userRoles = (user?.role || "").toLowerCase().split(",").map(r => r.trim());
+  const userName = (user?.nama || "").toLowerCase();
+  const isWaliByName = ["agus cahyono", "imron", "thoriq"].some(n => userName.includes(n));
   const visibleNav = NAV.filter(
-    (item) => !item.roles || item.roles.some((r) => userRoles.includes(r.toLowerCase()))
+    (item) => {
+      if (!item.roles) return true;
+      if (item.href === "/nilai/rekap") {
+        const isSuper = userRoles.some(r => ["admin_super", "mudir", "kepala_sekolah", "admin_rapor"].includes(r));
+        const isKurikulum = userRoles.some(r => ["kadiv_kurikulum", "kepala_kurikulum"].includes(r)) || userName.includes("imron");
+        const isWali = userRoles.includes("wali_kelas") || isWaliByName;
+        return isSuper || isKurikulum || isWali;
+      }
+      return item.roles.some((r) => userRoles.includes(r.toLowerCase())) || (item.roles.includes("wali_kelas") && isWaliByName);
+    }
   );
 
   async function handleLogout() {
