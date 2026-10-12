@@ -2,18 +2,33 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { cekStatusSpp } from "@/lib/keuangan";
 import { getOfficialNis } from "@/lib/officialSantri";
+import { getSession } from "@/lib/auth";
 
 export async function GET(req: NextRequest) {
   const searchParams = req.nextUrl.searchParams;
   let santri_id = searchParams.get("santri_id");
 
   try {
-    // If no santri_id provided, default to the first active santri in db
+    const session = await getSession();
+
+    // Jika santri_id tidak dioper, cari santri milik Wali Santri yang sedang login
+    if (!santri_id && session?.userId) {
+      const orangTua = await prisma.orangTuaSantri.findFirst({
+        where: { user_id: session.userId },
+        select: { santri_id: true }
+      });
+      if (orangTua?.santri_id) {
+        santri_id = orangTua.santri_id;
+      }
+    }
+
+    // If no santri_id provided or found, default to the first active santri in db
     if (!santri_id) {
       const defaultSantri = await prisma.santriAktif.findFirst({
         where: { is_active: true },
         include: { kelas: true },
-        orderBy: { nama_lengkap: "asc" } });
+        orderBy: { nama_lengkap: "asc" }
+      });
       if (!defaultSantri) {
         return NextResponse.json({ error: "No active santri found" }, { status: 404 });
       }

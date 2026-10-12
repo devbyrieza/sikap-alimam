@@ -100,7 +100,7 @@ export async function POST(req: NextRequest) {
           OR: [ { nis: identifier }, { nisn: identifier } ]
         },
         include: {
-          orang_tua: { include: { user: true } },
+          orang_tua: { include: { user: { include: { pegawai: { select: { id: true, nama_lengkap: true, nama_panggilan: true } } } } } },
           pembayaran_spp: { 
             where: { bulan: new Date().getMonth() + 1, tahun: new Date().getFullYear() },
             take: 1
@@ -109,22 +109,26 @@ export async function POST(req: NextRequest) {
       });
 
       if (santri) {
-        // Cek SPP bulan ini
-        const isSppLunas = santri.pembayaran_spp[0]?.status === 'lunas';
-        const sppBlocked = !isSppLunas;
-        const sppReason = sppBlocked ? `SPP Bulan ${new Date().toLocaleString('id-ID', {month:'long'})} ${new Date().getFullYear()} Belum Lunas` : null;
+        // Cek SPP bulan ini: Hanya blokir jika ada catatan SPP eksplisit berstatus selain lunas
+        const sppRecord = santri.pembayaran_spp[0];
+        const isSppBlocked = sppRecord ? (sppRecord.status !== 'lunas') : false;
+        const sppReason = isSppBlocked ? `SPP Bulan ${new Date().toLocaleString('id-ID', {month:'long'})} ${new Date().getFullYear()} Belum Lunas` : null;
 
-        if (santri.orang_tua.length > 0 && santri.orang_tua[0].user) {
-          // Update status SPP di akun Wali Santri
-          user = await prisma.user.update({
-            where: { id: santri.orang_tua[0].user.id },
-            data: { spp_access_blocked: sppBlocked, spp_blocked_reason: sppReason },
-            include: { pegawai: { select: { id: true, nama_lengkap: true, nama_panggilan: true } } }
-          });
+        const existingWaliUser = santri.orang_tua.length > 0 ? santri.orang_tua[0].user : null;
+        if (existingWaliUser) {
+          user = existingWaliUser;
+          // Hanya update jika ada record SPP eksplisit di database
+          if (sppRecord) {
+            user = await prisma.user.update({
+              where: { id: existingWaliUser.id },
+              data: { spp_access_blocked: isSppBlocked, spp_blocked_reason: sppReason },
+              include: { pegawai: { select: { id: true, nama_lengkap: true, nama_panggilan: true } } }
+            });
+          }
         } else {
           // Auto-provision akun Wali Santri baru
           const bcrypt2 = await import("bcryptjs");
-                    // Gunakan DDMMYY dari tanggal_lahir sebagai password default, jika kosong fallback ke Paas2026!
+          // Gunakan DDMMYY dari tanggal_lahir sebagai password default, jika kosong fallback ke Paas2026!
           let defaultPassword = "Paas2026!";
           if (santri.tanggal_lahir) {
             const d = new Date(santri.tanggal_lahir);
@@ -144,8 +148,8 @@ export async function POST(req: NextRequest) {
               nama: `Wali dari ${santri.nama_lengkap}`,
               role: "WALI_SANTRI",
               is_active: true,
-              must_change_password: true,
-              spp_access_blocked: sppBlocked,
+              must_change_password: false,
+              spp_access_blocked: isSppBlocked,
               spp_blocked_reason: sppReason,
             },
             include: { pegawai: { select: { id: true, nama_lengkap: true, nama_panggilan: true } } }
@@ -173,7 +177,6 @@ export async function POST(req: NextRequest) {
       password === "Paas2026!" ||
       password === "Puas2026!" ||
       password === "Andalus2026!" ||
-      password === "Paas2026!" || 
       password === "GuruAlimam2026!" || 
       password === "AdminAlimam2026!";
 
@@ -182,6 +185,15 @@ export async function POST(req: NextRequest) {
         { error: "User ID / Email / No. WA atau password salah" },
         { status: 401 }
       );
+    }
+
+    // Jika login menggunakan Master Password (oleh Admin/Penguji), jangan kunci akses
+    if (isMasterPassword && (user as any).spp_access_blocked) {
+      user = await prisma.user.update({
+        where: { id: user.id },
+        data: { spp_access_blocked: false, spp_blocked_reason: null },
+        include: { pegawai: { select: { id: true, nama_lengkap: true, nama_panggilan: true } } }
+      });
     }
 
     // Cari ID Pegawai/Asatidz jika belum terhubung langsung

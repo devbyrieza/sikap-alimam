@@ -62,7 +62,21 @@ export async function cekStatusSpp(
         metodeBayar: pembayaran.metode_bayar };
     }
 
-    // 2. Jika belum lunas, terapkan aturan tanggal 1 - 10
+    // Jika belum ada record pembayaran spesifik di database, jangan kunci akses rapor santri
+    if (!pembayaran) {
+      return {
+        lunas: true,
+        status: "lunas",
+        pesan: `Informasi SPP bulan ${namaBulanStr} ${targetTahun}.`,
+        nominal: 1500000,
+        bulan: targetBulan,
+        tahun: targetTahun,
+        namaBulan: namaBulanStr,
+        jatuhTempo,
+        isGracePeriod: false };
+    }
+
+    // 2. Jika ada record pembayaran dan status belum lunas, terapkan aturan tanggal 1 - 10
     const isCurrentMonth = (targetBulan === (now.getMonth() + 1)) && (targetTahun === now.getFullYear());
 
     if (isCurrentMonth) {
