@@ -248,22 +248,23 @@ export async function GET(req: NextRequest) {
       const low = namaStd.toLowerCase();
       if (["akidah", "hadis", "fikih", "ushul fikih", "sirah", "tahsin", "tahfidz", "adab", "akhlak", "tauhid", "tafsir", "tajwid", "mahfudzot"].some(k => low.includes(k))) return "syariah";
       if (["bahasa arab", "nahwu", "shorof", "kitabah", "muthola", "imla", "khot", "insya", "muhadatsah"].some(k => low.includes(k))) return "bahasa";
-      if (["matematika", "ipa", "ips", "bahasa indonesia", "bahasa inggris", "ppkn", "pkn", "tik", "informatika", "entrepreneurship"].some(k => low.includes(k))) return "umum";
+      if (["matematika", "ipa", "ips", "bahasa indonesia", "bahasa inggris", "ppkn", "pkn", "tik", "informatika", "entrepreneurship", "sejarah", "geografi", "ekonomi", "sosiologi", "biologi", "fisika", "kimia", "pjok", "prakarya"].some(k => low.includes(k))) return "umum";
       if (rawKat === "syariah" || rawKat === "bahasa" || rawKat === "umum") return rawKat;
       return "syariah";
     };
 
-    // Susun daftar mapel per kategori untuk santri ini
+    // Susun daftar mapel per kategori untuk santri ini (KKM: Diniyah & Bahasa = 85, Umum = 80)
     const formatMapel = (kategoriTarget: string) => {
       return classStandardMapels
         .filter(m => getKategoriMapel(m.standardName, m.kategori) === kategoriTarget)
         .map(m => {
           const val = getStudentScore(santri_id, m.standardName);
           if (val === null) return null;
+          const kkmValue = kategoriTarget === "umum" ? 80 : 85;
           return {
             nama: m.standardName,
             nama_arab: m.nama_arab || translateArab(m.standardName),
-            kkm: 75,
+            kkm: kkmValue,
             nilai: Math.round(val),
             rata_rata_kelas: Math.round(mapelAverages.get(m.standardName) || 0)
           };

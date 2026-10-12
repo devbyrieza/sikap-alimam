@@ -104,6 +104,8 @@ export default function CetakRaporPage() {
         {/* Isi Mapel Simetris Sempurna */}
         {mapelList.map((m, index) => {
           const isEven = index % 2 === 0;
+          // KKM: Diniyah (Syariah) & Bahasa = 85, Umum = 80
+          const kkmVal = m.kkm && m.kkm !== 75 ? m.kkm : (judul.includes("Umum") ? 80 : 85);
           return (
             <tr 
               key={index} 
@@ -114,7 +116,7 @@ export default function CetakRaporPage() {
               {/* Kolom 2 (Mata Pelajaran): width 21% (Times New Roman) */}
               <td style={{ border: "1px solid #000000", padding: namePad, fontSize: fontSize, fontFamily: '"Times New Roman", Times, serif', fontWeight: "bold", whiteSpace: "normal", lineHeight: "1.2" }}>{m.nama}</td>
               {/* Kolom 3 (KKM): width 7% */}
-              <td style={{ border: "1px solid #000000", padding: cellPad, textAlign: "center", fontSize: fontSize, fontFamily: "Arial, Helvetica, sans-serif" }}>{m.kkm}</td>
+              <td style={{ border: "1px solid #000000", padding: cellPad, textAlign: "center", fontSize: fontSize, fontFamily: "Arial, Helvetica, sans-serif" }}>{kkmVal}</td>
               {/* Kolom 4 (Nilai): width 7% */}
               <td style={{ border: "1px solid #000000", padding: cellPad, textAlign: "center", fontSize: fontSize, fontFamily: "Arial, Helvetica, sans-serif", fontWeight: "bold" }}>{m.nilai}</td>
               {/* Kolom 5 (Rata-Rata): width 10.5% dengan Garis Tengah Tebal 2.5px */}
@@ -125,7 +127,7 @@ export default function CetakRaporPage() {
               {/* Kolom 7 (النتيجة): width 7% (Mirror Kolom 4) */}
               <td style={{ border: "1px solid #000000", padding: cellPad, textAlign: "center", fontSize: fontSize, fontFamily: "Arial, Helvetica, sans-serif", fontWeight: "bold" }} dir="rtl">{toArabicNum(m.nilai)}</td>
               {/* Kolom 8 (الدرجة الصغرى): width 7% (Mirror Kolom 3) */}
-              <td style={{ border: "1px solid #000000", padding: cellPad, textAlign: "center", fontSize: fontSize, fontFamily: "Arial, Helvetica, sans-serif" }} dir="rtl">{toArabicNum(m.kkm)}</td>
+              <td style={{ border: "1px solid #000000", padding: cellPad, textAlign: "center", fontSize: fontSize, fontFamily: "Arial, Helvetica, sans-serif" }} dir="rtl">{toArabicNum(kkmVal)}</td>
               {/* Kolom 9 (المواد الدراسية): width 21% (Mirror Kolom 2 - Traditional Arabic) */}
               <td style={{ border: "1px solid #000000", padding: namePad, textAlign: "right", fontSize: isF4 ? "15px" : "13.5px", fontFamily: "'Traditional Arabic', serif", fontWeight: "bold", whiteSpace: "normal", lineHeight: "1.2" }} dir="rtl">{m.nama_arab}</td>
               {/* Kolom 10 (رقم): width 4.5% (Mirror Kolom 1) */}
