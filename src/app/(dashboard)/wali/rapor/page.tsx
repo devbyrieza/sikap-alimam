@@ -379,8 +379,8 @@ export default function RaporWaliPage() {
               </div>
               <div className="h-10 w-px bg-white/20" />
               <div className="text-center">
-                <p className="text-[11px] text-white/75 font-medium uppercase">Shubuh Jamaah</p>
-                <p className="text-xl sm:text-2xl font-black text-white">{ringkasan.persentaseShubuh}%</p>
+                <p className="text-[11px] text-white/75 font-medium uppercase">Nilai Rata-Rata</p>
+                <p className="text-xl sm:text-2xl font-black text-white">{ringkasan.rataRata || computedAvg || "-"}</p>
               </div>
             </div>
           </div>
@@ -551,7 +551,7 @@ export default function RaporWaliPage() {
                   }`}
                 >
                   <HeartHandshake size={16} />
-                  <span>5. Tahfidz & Ibadah</span>
+                  <span>5. Halaqoh & Tahfidz Al-Qur&apos;an</span>
                 </button>
               </div>
             </div>
@@ -562,60 +562,50 @@ export default function RaporWaliPage() {
         {/* TAB 1: RINGKASAN RAPOR */}
         {activeTab === "ringkasan" && (
           <div className="space-y-6">
-            {/* 5 Stats Grid */}
-            <div className="grid grid-cols-2 md:grid-cols-5 gap-3.5 sm:gap-4">
+            {/* 4 Stats Grid Berdasarkan Data Riil Pesantren */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               {/* Peringkat Kelas */}
-              <div className="bg-gradient-to-br from-amber-50 via-orange-50/50 to-white rounded-2xl p-4 sm:p-5 border border-amber-200 shadow-md col-span-2 md:col-span-1">
+              <div className="bg-gradient-to-br from-amber-50 via-orange-50/40 to-white rounded-2xl p-5 border border-amber-200 shadow-md">
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-xs font-bold text-amber-800 uppercase tracking-wide">Peringkat</span>
+                  <span className="text-xs font-bold text-amber-800 uppercase tracking-wide">Peringkat Kelas</span>
                   <div className="p-1.5 sm:p-2 bg-amber-500 rounded-xl text-white shadow-sm"><Trophy size={16} /></div>
                 </div>
                 <p className="text-2xl sm:text-3xl font-black text-amber-950">
                   #{ringkasan.ranking || "-"}
                 </p>
                 <p className="text-[11px] text-amber-700 mt-1 font-semibold">
-                  dari {ringkasan.jumlahSantri || "-"} Santri (Rata-rata: {ringkasan.rataRata || "-"})
+                  dari {ringkasan.jumlahSantri || "-"} Santri (PTS)
                 </p>
               </div>
 
-              {/* Kehadiran */}
-              <div className="bg-gradient-to-br from-emerald-50 to-white rounded-2xl p-4 sm:p-5 border border-emerald-100 shadow-md">
+              {/* Rata-Rata Nilai */}
+              <div className="bg-gradient-to-br from-rose-50 to-white rounded-2xl p-5 border border-rose-100 shadow-md">
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-xs font-bold text-emerald-700 uppercase tracking-wide">Kehadiran</span>
-                  <div className="p-1.5 sm:p-2 bg-emerald-500 rounded-xl text-white"><Activity size={16} /></div>
+                  <span className="text-xs font-bold text-rose-700 uppercase tracking-wide">Rata-Rata PTS</span>
+                  <div className="p-1.5 sm:p-2 bg-rose-500 rounded-xl text-white shadow-sm"><GraduationCap size={16} /></div>
+                </div>
+                <p className="text-2xl sm:text-3xl font-black text-rose-900">{ringkasan.rataRata || computedAvg || "-"}</p>
+                <p className="text-[11px] text-rose-600 mt-1">Akumulasi {akademikGrouped.length || 13} mata pelajaran</p>
+              </div>
+
+              {/* Kehadiran KBM */}
+              <div className="bg-gradient-to-br from-emerald-50 to-white rounded-2xl p-5 border border-emerald-100 shadow-md">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-xs font-bold text-emerald-700 uppercase tracking-wide">Kehadiran KBM</span>
+                  <div className="p-1.5 sm:p-2 bg-emerald-500 rounded-xl text-white shadow-sm"><Activity size={16} /></div>
                 </div>
                 <p className="text-2xl sm:text-3xl font-black text-emerald-900">{ringkasan.persentaseKehadiran}%</p>
-                <p className="text-[11px] text-emerald-600 mt-1">Tingkat kedisiplinan</p>
+                <p className="text-[11px] text-emerald-600 mt-1">{ringkasan.totalHadir || 0} hari hadir KBM di kelas</p>
               </div>
 
-              {/* Tahfidz */}
-              <div className="bg-gradient-to-br from-blue-50 to-white rounded-2xl p-4 sm:p-5 border border-blue-100 shadow-md">
+              {/* Halaqoh Tahfidz */}
+              <div className="bg-gradient-to-br from-blue-50 to-white rounded-2xl p-5 border border-blue-100 shadow-md">
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-xs font-bold text-blue-700 uppercase tracking-wide">Tahfidz</span>
-                  <div className="p-1.5 sm:p-2 bg-blue-500 rounded-xl text-white"><BookOpen size={16} /></div>
+                  <span className="text-xs font-bold text-blue-700 uppercase tracking-wide">Halaqoh Tahfidz</span>
+                  <div className="p-1.5 sm:p-2 bg-blue-500 rounded-xl text-white shadow-sm"><BookOpen size={16} /></div>
                 </div>
                 <p className="text-2xl sm:text-3xl font-black text-blue-900">Aktif</p>
-                <p className="text-[11px] text-blue-600 mt-1">Status hafalan lancar</p>
-              </div>
-
-              {/* Shalat */}
-              <div className="bg-gradient-to-br from-amber-50 to-white rounded-2xl p-4 sm:p-5 border border-amber-100 shadow-md">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-xs font-bold text-amber-700 uppercase tracking-wide">Shalat</span>
-                  <div className="p-1.5 sm:p-2 bg-amber-500 rounded-xl text-white"><Clock size={16} /></div>
-                </div>
-                <p className="text-2xl sm:text-3xl font-black text-amber-900">{ringkasan.persentaseShubuh}%</p>
-                <p className="text-[11px] text-amber-600 mt-1">Shubuh berjamaah</p>
-              </div>
-
-              {/* Sikap */}
-              <div className="bg-gradient-to-br from-purple-50 to-white rounded-2xl p-4 sm:p-5 border border-purple-100 shadow-md">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-xs font-bold text-purple-700 uppercase tracking-wide">Sikap</span>
-                  <div className="p-1.5 sm:p-2 bg-purple-500 rounded-xl text-white"><HeartHandshake size={16} /></div>
-                </div>
-                <p className="text-2xl sm:text-3xl font-black text-purple-900">Mumtaz</p>
-                <p className="text-[11px] text-purple-600 mt-1">Penilaian adab (A)</p>
+                <p className="text-[11px] text-blue-600 mt-1">Halaqoh Subuh &amp; Maghrib</p>
               </div>
             </div>
 
@@ -1084,134 +1074,103 @@ export default function RaporWaliPage() {
           </div>
         )}
 
-        {/* TAB 5: TAHFIDZ & IBADAH */}
+        {/* TAB 5: HALAQOH & TAHFIDZ AL-QUR'AN */}
         {activeTab === "tahfidz" && (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <div className="flex flex-col gap-6">
-              {/* Ujian Tahfidz Card */}
-              <div className="bg-white/90 backdrop-blur rounded-3xl p-6 border border-slate-100 shadow-xl shadow-primary/10 space-y-4">
-                <div className="flex items-center gap-3 mb-2">
-                  <div className="p-2.5 bg-blue-50 text-blue-700 rounded-xl">
-                    <Trophy size={20} />
-                  </div>
-                  <div>
-                    <h3 className="font-bold text-slate-800 text-base">Hasil Ujian Tahfidz</h3>
-                    <p className="text-xs text-slate-500">Ujian Pra-Target, Target, dan Itqon</p>
-                  </div>
-                </div>
-
-                {(!detail.ujianTahfidz || detail.ujianTahfidz.length === 0) ? (
-                  <p className="text-center text-slate-400 py-8 text-sm">Belum ada nilai ujian tahfidz.</p>
-                ) : (
-                  <div className="space-y-3">
-                    {detail.ujianTahfidz?.map((u: any) => (
-                      <div key={u.id} className="p-4 rounded-2xl bg-slate-50/80 border border-slate-100 flex flex-col gap-3 shadow-sm">
-                        <div className="flex items-start justify-between">
-                          <div>
-                            <span className="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded bg-blue-100 text-blue-800">
-                              {u.jenis_ujian.replace(/_/g, " ")}
-                            </span>
-                            <h4 className="font-bold text-slate-800 text-sm mt-1">
-                              {u.juz ? `Juz ${u.juz}` : u.surah_nama} {u.surah_selesai_nama && u.surah_selesai_nama !== u.surah_nama ? `- ${u.surah_selesai_nama}` : ""}
-                            </h4>
-                            <p className="text-[11px] text-slate-500 mt-0.5">{formatTanggal(u.tanggal)}</p>
-                          </div>
-                          <div className="text-right">
-                            <span className={`px-3 py-1 rounded-xl bg-white border border-slate-200 text-sm font-black shadow-sm ${u.is_lulus ? 'text-emerald-600' : 'text-rose-600'}`}>
-                              {u.nilai_akhir}
-                            </span>
-                            <p className="text-[10px] font-bold mt-1 text-slate-400 uppercase">{u.is_lulus ? 'LULUS' : 'MENGULANG'}</p>
-                          </div>
-                        </div>
-                        <div className="grid grid-cols-3 gap-2 pt-3 border-t border-slate-200/60">
-                          <div className="text-center bg-white rounded-lg p-1.5 border border-slate-100 shadow-sm">
-                            <p className="text-[9px] text-slate-500 uppercase font-bold">Kelancaran</p>
-                            <p className="font-bold text-slate-700 text-xs">{u.nilai_kelancaran || "-"}</p>
-                          </div>
-                          <div className="text-center bg-white rounded-lg p-1.5 border border-slate-100 shadow-sm">
-                            <p className="text-[9px] text-slate-500 uppercase font-bold">Fashohah</p>
-                            <p className="font-bold text-slate-700 text-xs">{u.nilai_bacaan || "-"}</p>
-                          </div>
-                          <div className="text-center bg-white rounded-lg p-1.5 border border-slate-100 shadow-sm">
-                            <p className="text-[9px] text-slate-500 uppercase font-bold">Adab</p>
-                            <p className="font-bold text-slate-700 text-xs">{u.nilai_sikap || "-"}</p>
-                          </div>
-                        </div>
-                        {u.catatan && (
-                          <div className="bg-amber-50/50 p-2 rounded-lg border border-amber-100/50 mt-1">
-                            <p className="text-[10px] italic text-amber-700">&quot;{u.catatan}&quot;</p>
-                          </div>
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-
-              {/* Tahfidz Card */}
-              <div className="bg-white/90 backdrop-blur rounded-3xl p-6 border border-slate-100 shadow-xl shadow-primary/10 space-y-4">
-                <div className="flex items-center gap-3 mb-2">
-                  <div className="p-2.5 bg-emerald-50 text-emerald-700 rounded-xl">
-                    <BookOpen size={20} />
-                  </div>
-                  <div>
-                    <h3 className="font-bold text-slate-800 text-base">Capaian Mutabaah Tahfidz</h3>
-                    <p className="text-xs text-slate-500">Ziyadah (hafalan baru) & Murojaah harian</p>
-                  </div>
-                </div>
-
-                {detail.tahfidz?.length === 0 ? (
-                  <p className="text-center text-slate-400 py-8 text-sm">Belum ada riwayat setoran tahfidz tercatat.</p>
-                ) : (
-                  <div className="space-y-3">
-                    {detail.tahfidz?.map((t: any) => (
-                      <div key={t.id} className="p-4 rounded-2xl bg-slate-50/80 border border-slate-100 flex items-center justify-between gap-4 shadow-sm">
-                        <div>
-                          <span className="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded bg-emerald-100 text-emerald-800">
-                            {t.jenis}
-                          </span>
-                          <h4 className="font-bold text-slate-800 text-sm mt-1">{t.surat} {t.ayat ? `(Ayat ${t.ayat})` : ""}</h4>
-                          <p className="text-[11px] text-slate-500 mt-0.5">{formatTanggal(t.tanggal)}</p>
-                        </div>
-                        <span className="px-3 py-1 rounded-xl bg-white border border-slate-200 text-xs font-bold text-emerald-700 shadow-sm">
-                          {t.keterangan || "Lancar"}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            </div>
-
-            {/* Ibadah Card */}
+            {/* 1. Hasil Ujian Tahfidz Card */}
             <div className="bg-white/90 backdrop-blur rounded-3xl p-6 border border-slate-100 shadow-xl shadow-primary/10 space-y-4">
               <div className="flex items-center gap-3 mb-2">
-                <div className="p-2.5 bg-amber-50 text-amber-700 rounded-xl">
-                  <Clock size={20} />
+                <div className="p-2.5 bg-blue-50 text-blue-700 rounded-xl">
+                  <Trophy size={20} />
                 </div>
                 <div>
-                  <h3 className="font-bold text-slate-800 text-base">Mutabaah Shalat & Adab</h3>
-                  <p className="text-xs text-slate-500">Kedisiplinan shalat wajib berjamaah di masjid</p>
+                  <h3 className="font-bold text-slate-800 text-base">Hasil Ujian Tahfidz Al-Qur&apos;an</h3>
+                  <p className="text-xs text-slate-500">Evaluasi Pra-Target, Target, dan Itqon Santri</p>
                 </div>
               </div>
 
-              {detail.ibadah?.length === 0 ? (
-                <p className="text-center text-slate-400 py-8 text-sm">Belum ada data evaluasi ibadah tercatat.</p>
+              {(!detail.ujianTahfidz || detail.ujianTahfidz.length === 0) ? (
+                <div className="text-center text-slate-400 py-12">
+                  <BookOpen size={36} className="mx-auto mb-2 opacity-30" />
+                  <p className="text-sm font-medium">Belum ada riwayat ujian tahfidz pada periode ini.</p>
+                </div>
               ) : (
                 <div className="space-y-3">
-                  {detail.ibadah?.map((i: any) => (
-                    <div key={i.id} className="p-4 rounded-2xl bg-slate-50/80 border border-slate-100 flex items-center justify-between gap-4 shadow-sm">
-                      <div>
-                        <h4 className="font-bold text-slate-800 text-sm">{formatTanggal(i.tanggal)}</h4>
-                        <p className="text-xs text-slate-500 mt-0.5">
-                          Shubuh: <strong className="text-emerald-700">{i.shubuh}</strong> • Dzuhur: {i.dzuhur || "Berjamaah"}
-                        </p>
+                  {detail.ujianTahfidz?.map((u: any) => (
+                    <div key={u.id} className="p-4 rounded-2xl bg-slate-50/80 border border-slate-100 flex flex-col gap-3 shadow-sm">
+                      <div className="flex items-start justify-between">
+                        <div>
+                          <span className="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded bg-blue-100 text-blue-800">
+                            {u.jenis_ujian.replace(/_/g, " ")}
+                          </span>
+                          <h4 className="font-bold text-slate-800 text-sm mt-1">
+                            {u.juz ? `Juz ${u.juz}` : u.surah_nama} {u.surah_selesai_nama && u.surah_selesai_nama !== u.surah_nama ? `- ${u.surah_selesai_nama}` : ""}
+                          </h4>
+                          <p className="text-[11px] text-slate-500 mt-0.5">{formatTanggal(u.tanggal)}</p>
+                        </div>
+                        <div className="text-right">
+                          <span className={`px-3 py-1 rounded-xl bg-white border border-slate-200 text-sm font-black shadow-sm ${u.is_lulus ? 'text-emerald-600' : 'text-rose-600'}`}>
+                            {u.nilai_akhir}
+                          </span>
+                          <p className="text-[10px] font-bold mt-1 text-slate-400 uppercase">{u.is_lulus ? 'LULUS' : 'MENGULANG'}</p>
+                        </div>
                       </div>
-                      {i.tahajjud && (
-                        <span className="px-2.5 py-1 rounded-lg bg-teal-50 text-teal-800 text-xs font-bold border border-teal-200">
-                          Tahajjud ✓
-                        </span>
+                      <div className="grid grid-cols-3 gap-2 pt-3 border-t border-slate-200/60">
+                        <div className="text-center bg-white rounded-lg p-1.5 border border-slate-100 shadow-sm">
+                          <p className="text-[9px] text-slate-500 uppercase font-bold">Kelancaran</p>
+                          <p className="font-bold text-slate-700 text-xs">{u.nilai_kelancaran || "-"}</p>
+                        </div>
+                        <div className="text-center bg-white rounded-lg p-1.5 border border-slate-100 shadow-sm">
+                          <p className="text-[9px] text-slate-500 uppercase font-bold">Fashohah</p>
+                          <p className="font-bold text-slate-700 text-xs">{u.nilai_bacaan || "-"}</p>
+                        </div>
+                        <div className="text-center bg-white rounded-lg p-1.5 border border-slate-100 shadow-sm">
+                          <p className="text-[9px] text-slate-500 uppercase font-bold">Adab</p>
+                          <p className="font-bold text-slate-700 text-xs">{u.nilai_sikap || "-"}</p>
+                        </div>
+                      </div>
+                      {u.catatan && (
+                        <div className="bg-amber-50/50 p-2 rounded-lg border border-amber-100/50 mt-1">
+                          <p className="text-[10px] italic text-amber-700">&quot;{u.catatan}&quot;</p>
+                        </div>
                       )}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* 2. Capaian Mutabaah Tahfidz Harian Card */}
+            <div className="bg-white/90 backdrop-blur rounded-3xl p-6 border border-slate-100 shadow-xl shadow-primary/10 space-y-4">
+              <div className="flex items-center gap-3 mb-2">
+                <div className="p-2.5 bg-emerald-50 text-emerald-700 rounded-xl">
+                  <BookOpen size={20} />
+                </div>
+                <div>
+                  <h3 className="font-bold text-slate-800 text-base">Capaian Setoran Halaqoh Harian</h3>
+                  <p className="text-xs text-slate-500">Ziyadah (hafalan baru) &amp; Murojaah ba&apos;da Subuh &amp; Maghrib</p>
+                </div>
+              </div>
+
+              {(!detail.tahfidz || detail.tahfidz.length === 0) ? (
+                <div className="text-center text-slate-400 py-12">
+                  <BookOpen size={36} className="mx-auto mb-2 opacity-30" />
+                  <p className="text-sm font-medium">Belum ada riwayat setoran tahfidz tercatat.</p>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {detail.tahfidz?.map((t: any) => (
+                    <div key={t.id} className="p-4 rounded-2xl bg-slate-50/80 border border-slate-100 flex items-center justify-between gap-4 shadow-sm">
+                      <div>
+                        <span className="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded bg-emerald-100 text-emerald-800">
+                          {t.jenis}
+                        </span>
+                        <h4 className="font-bold text-slate-800 text-sm mt-1">{t.surat} {t.ayat ? `(Ayat ${t.ayat})` : ""}</h4>
+                        <p className="text-[11px] text-slate-500 mt-0.5">{formatTanggal(t.tanggal)}</p>
+                      </div>
+                      <span className="px-3 py-1 rounded-xl bg-white border border-slate-200 text-xs font-bold text-emerald-700 shadow-sm">
+                        {t.keterangan || "Lancar"}
+                      </span>
                     </div>
                   ))}
                 </div>
