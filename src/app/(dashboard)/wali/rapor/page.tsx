@@ -108,6 +108,23 @@ export default function RaporWaliPage() {
       year: "numeric" });
   };
 
+  const isSyariahOrBahasa = (name: string): boolean => {
+    const low = name.toLowerCase();
+    const umumKeywords = ["matematika", "mtk", "ipa", "ips", "indonesia", "inggris", "pjok", "penjas", "seni", "pkn", "informatika", "prakarya", "kewirausahaan", "entrepreneurship"];
+    return !umumKeywords.some(u => low.includes(u));
+  };
+
+  const getKategoriMapel = (nama: string): "syariah" | "bahasa" | "umum" => {
+    const low = nama.toLowerCase();
+    if (["akidah", "hadis", "fikih", "ushul fikih", "sirah", "tahsin", "tahfidz", "adab", "akhlak", "tauhid", "tafsir", "tajwid", "mahfudzot"].some(k => low.includes(k))) return "syariah";
+    if (["bahasa arab", "nahwu", "shorof", "kitabah", "muthola", "imla", "khot", "insya", "muhadatsah"].some(k => low.includes(k))) return "bahasa";
+    return "umum";
+  };
+
+  const getKkm = (nama: string): number => {
+    return isSyariahOrBahasa(nama) ? 85 : 80;
+  };
+
   // Group Academic Scores by Mapel
   const akademikGrouped = useMemo(() => {
     if (!data?.detail?.akademik) return [];
@@ -145,7 +162,8 @@ export default function RaporWaliPage() {
       }
     });
 
-    return Array.from(map.values()).map((item) => {
+    const categoryOrder: Record<string, number> = { syariah: 1, bahasa: 2, umum: 3 };
+    const items = Array.from(map.values()).map((item) => {
       let naNum = null;
       // MURNI PTS MODE
       if (item.hasUjian) {
@@ -160,12 +178,33 @@ export default function RaporWaliPage() {
         else predikat = "D (Perlu Bimbingan)";
       }
 
+      const kat = getKategoriMapel(item.mapel_nama);
       return {
         ...item,
+        kategori: kat,
+        kkm: getKkm(item.mapel_nama),
         nilaiAkhir: naNum !== null ? naNum.toFixed(1) : null,
+        nilaiAkhirNum: naNum !== null ? naNum : null,
         predikat };
     });
+
+    return items.sort((a, b) => {
+      const orderA = categoryOrder[a.kategori] || 99;
+      const orderB = categoryOrder[b.kategori] || 99;
+      if (orderA !== orderB) return orderA - orderB;
+      return a.mapel_nama.localeCompare(b.mapel_nama, "id");
+    });
   }, [data]);
+
+  const computedTotal = useMemo(() => {
+    return akademikGrouped.reduce((acc, curr) => acc + (curr.nilaiAkhirNum !== null ? Math.round(curr.nilaiAkhirNum) : 0), 0);
+  }, [akademikGrouped]);
+
+  const computedAvg = useMemo(() => {
+    const valid = akademikGrouped.filter(a => a.nilaiAkhirNum !== null);
+    if (valid.length === 0) return 0;
+    return Math.round(computedTotal / valid.length);
+  }, [akademikGrouped, computedTotal]);
 
   // Filtered Nilai
   const filteredAkademik = useMemo(() => {
@@ -309,13 +348,26 @@ export default function RaporWaliPage() {
                   {santri.nama}
                 </h1>
                 <p className="text-white/80 text-xs sm:text-sm font-medium mt-0.5">
-                  Pesantren Al-Imam Al-Islami • Tahun Ajaran 2024/2025
+                  Pesantren Al-Imam Al-Islami • Tahun Ajaran {santri?.tahun_ajaran || "2026/2027"}
                 </p>
               </div>
             </div>
 
             {/* Quick Pill Status */}
-            <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-4 sm:p-5 flex items-center gap-6 self-stretch sm:self-auto justify-around">
+            <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-4 sm:p-5 flex items-center gap-4 sm:gap-6 self-stretch sm:self-auto justify-around flex-wrap">
+              {ringkasan.ranking ? (
+                <>
+                  <div className="text-center">
+                    <p className="text-[11px] text-amber-200 font-bold uppercase flex items-center justify-center gap-1">
+                      <Trophy size={11} className="text-amber-300" /> Peringkat
+                    </p>
+                    <p className="text-xl sm:text-2xl font-black text-amber-300">
+                      #{ringkasan.ranking} <span className="text-xs font-medium text-white/70">/ {ringkasan.jumlahSantri}</span>
+                    </p>
+                  </div>
+                  <div className="h-10 w-px bg-white/20 hidden sm:block" />
+                </>
+              ) : null}
               <div className="text-center">
                 <p className="text-[11px] text-white/75 font-medium uppercase">Kehadiran</p>
                 <p className="text-xl sm:text-2xl font-black text-white">{ringkasan.persentaseKehadiran}%</p>
@@ -510,42 +562,59 @@ export default function RaporWaliPage() {
         {/* TAB 1: RINGKASAN RAPOR */}
         {activeTab === "ringkasan" && (
           <div className="space-y-6">
-            {/* 4 Stats Grid */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              {/* Kehadiran */}
-              <div className="bg-gradient-to-br from-emerald-50 to-white rounded-2xl p-5 border border-emerald-100 shadow-md">
-                <div className="flex items-center justify-between mb-3">
-                  <span className="text-xs font-bold text-emerald-700 uppercase tracking-wide">Kehadiran</span>
-                  <div className="p-2 bg-emerald-500 rounded-xl text-white"><Activity size={16} /></div>
+            {/* 5 Stats Grid */}
+            <div className="grid grid-cols-2 md:grid-cols-5 gap-3.5 sm:gap-4">
+              {/* Peringkat Kelas */}
+              <div className="bg-gradient-to-br from-amber-50 via-orange-50/50 to-white rounded-2xl p-4 sm:p-5 border border-amber-200 shadow-md col-span-2 md:col-span-1">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-xs font-bold text-amber-800 uppercase tracking-wide">Peringkat</span>
+                  <div className="p-1.5 sm:p-2 bg-amber-500 rounded-xl text-white shadow-sm"><Trophy size={16} /></div>
                 </div>
-                <p className="text-3xl font-black text-emerald-900">{ringkasan.persentaseKehadiran}%</p>
+                <p className="text-2xl sm:text-3xl font-black text-amber-950">
+                  #{ringkasan.ranking || "-"}
+                </p>
+                <p className="text-[11px] text-amber-700 mt-1 font-semibold">
+                  dari {ringkasan.jumlahSantri || "-"} Santri (Rata-rata: {ringkasan.rataRata || "-"})
+                </p>
+              </div>
+
+              {/* Kehadiran */}
+              <div className="bg-gradient-to-br from-emerald-50 to-white rounded-2xl p-4 sm:p-5 border border-emerald-100 shadow-md">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-xs font-bold text-emerald-700 uppercase tracking-wide">Kehadiran</span>
+                  <div className="p-1.5 sm:p-2 bg-emerald-500 rounded-xl text-white"><Activity size={16} /></div>
+                </div>
+                <p className="text-2xl sm:text-3xl font-black text-emerald-900">{ringkasan.persentaseKehadiran}%</p>
                 <p className="text-[11px] text-emerald-600 mt-1">Tingkat kedisiplinan</p>
               </div>
+
               {/* Tahfidz */}
-              <div className="bg-gradient-to-br from-blue-50 to-white rounded-2xl p-5 border border-blue-100 shadow-md">
-                <div className="flex items-center justify-between mb-3">
+              <div className="bg-gradient-to-br from-blue-50 to-white rounded-2xl p-4 sm:p-5 border border-blue-100 shadow-md">
+                <div className="flex items-center justify-between mb-2">
                   <span className="text-xs font-bold text-blue-700 uppercase tracking-wide">Tahfidz</span>
-                  <div className="p-2 bg-blue-500 rounded-xl text-white"><BookOpen size={16} /></div>
+                  <div className="p-1.5 sm:p-2 bg-blue-500 rounded-xl text-white"><BookOpen size={16} /></div>
                 </div>
-                <p className="text-3xl font-black text-blue-900">Aktif</p>
+                <p className="text-2xl sm:text-3xl font-black text-blue-900">Aktif</p>
                 <p className="text-[11px] text-blue-600 mt-1">Status hafalan lancar</p>
               </div>
+
               {/* Shalat */}
-              <div className="bg-gradient-to-br from-amber-50 to-white rounded-2xl p-5 border border-amber-100 shadow-md">
-                <div className="flex items-center justify-between mb-3">
+              <div className="bg-gradient-to-br from-amber-50 to-white rounded-2xl p-4 sm:p-5 border border-amber-100 shadow-md">
+                <div className="flex items-center justify-between mb-2">
                   <span className="text-xs font-bold text-amber-700 uppercase tracking-wide">Shalat</span>
-                  <div className="p-2 bg-amber-500 rounded-xl text-white"><Clock size={16} /></div>
+                  <div className="p-1.5 sm:p-2 bg-amber-500 rounded-xl text-white"><Clock size={16} /></div>
                 </div>
-                <p className="text-3xl font-black text-amber-900">{ringkasan.persentaseShubuh}%</p>
+                <p className="text-2xl sm:text-3xl font-black text-amber-900">{ringkasan.persentaseShubuh}%</p>
                 <p className="text-[11px] text-amber-600 mt-1">Shubuh berjamaah</p>
               </div>
+
               {/* Sikap */}
-              <div className="bg-gradient-to-br from-purple-50 to-white rounded-2xl p-5 border border-purple-100 shadow-md">
-                <div className="flex items-center justify-between mb-3">
+              <div className="bg-gradient-to-br from-purple-50 to-white rounded-2xl p-4 sm:p-5 border border-purple-100 shadow-md">
+                <div className="flex items-center justify-between mb-2">
                   <span className="text-xs font-bold text-purple-700 uppercase tracking-wide">Sikap</span>
-                  <div className="p-2 bg-purple-500 rounded-xl text-white"><HeartHandshake size={16} /></div>
+                  <div className="p-1.5 sm:p-2 bg-purple-500 rounded-xl text-white"><HeartHandshake size={16} /></div>
                 </div>
-                <p className="text-3xl font-black text-purple-900">Mumtaz</p>
+                <p className="text-2xl sm:text-3xl font-black text-purple-900">Mumtaz</p>
                 <p className="text-[11px] text-purple-600 mt-1">Penilaian adab (A)</p>
               </div>
             </div>
@@ -592,39 +661,88 @@ export default function RaporWaliPage() {
                         </td>
                       </tr>
                     ) : (
-                      akademikGrouped.map((item, idx) => {
-                        let badgeClass = "bg-slate-100 text-slate-800 font-bold";
-                        if (item.nilaiAkhir) {
-                          const na = Number(item.nilaiAkhir);
-                          if (na >= 90) badgeClass = "bg-emerald-100 text-emerald-800 font-black";
-                          else if (na >= 85) badgeClass = "bg-blue-100 text-blue-800 font-black";
-                          else if (na >= 80) badgeClass = "bg-amber-100 text-amber-800 font-bold";
-                          else badgeClass = "bg-red-100 text-red-800 font-bold";
-                        }
-                        return (
-                          <tr key={item.mapel_id} className="border-b border-slate-50 hover:bg-slate-50/60 transition-colors text-sm shadow-sm">
-                            <td className="py-3 px-4 text-center text-slate-400 font-semibold">{idx + 1}</td>
-                            <td className="py-3 px-4 font-bold text-slate-800">
-                              {item.mapel_nama}
-                            </td>
-                            <td className="py-3 px-4 text-center text-slate-500 font-bold">{item.mapel_kategori !== "umum" ? 85 : 80}</td>
-                            <td className="py-3 px-4 text-center">
-                              {item.nilaiAkhir ? (
-                                <span className={`px-2.5 py-1 rounded-lg ${badgeClass}`}>
-                                  {item.nilaiAkhir}
-                                </span>
-                              ) : (
-                                <span className="text-slate-300">-</span>
+                      (() => {
+                        let currentCat = "";
+                        const catLabels: Record<string, string> = {
+                          syariah: "A. Ilmu Syari'ah",
+                          bahasa: "B. Ilmu Bahasa",
+                          umum: "C. Ilmu Pengetahuan Umum"
+                        };
+                        return akademikGrouped.map((item, idx) => {
+                          const showCatHeader = item.kategori !== currentCat;
+                          if (showCatHeader) {
+                            currentCat = item.kategori;
+                          }
+
+                          let badgeClass = "bg-slate-100 text-slate-800 font-bold";
+                          if (item.nilaiAkhir) {
+                            const na = Number(item.nilaiAkhir);
+                            if (na >= 90) badgeClass = "bg-emerald-100 text-emerald-800 font-black";
+                            else if (na >= 85) badgeClass = "bg-blue-100 text-blue-800 font-black";
+                            else if (na >= 80) badgeClass = "bg-amber-100 text-amber-800 font-bold";
+                            else badgeClass = "bg-red-100 text-red-800 font-bold";
+                          }
+
+                          return (
+                            <React.Fragment key={item.mapel_id}>
+                              {showCatHeader && (
+                                <tr className="bg-slate-100/90 font-bold border-t border-b border-slate-200">
+                                  <td colSpan={5} className="py-2.5 px-4 text-xs tracking-wide uppercase text-slate-800 font-extrabold bg-slate-100">
+                                    {catLabels[item.kategori] || item.kategori}
+                                  </td>
+                                </tr>
                               )}
-                            </td>
-                            <td className="py-3 px-4 text-center text-xs font-bold text-slate-700">
-                              {item.predikat}
-                            </td>
-                          </tr>
-                        );
-                      })
+                              <tr className="border-b border-slate-50 hover:bg-slate-50/60 transition-colors text-sm shadow-sm">
+                                <td className="py-3 px-4 text-center text-slate-400 font-semibold">{idx + 1}</td>
+                                <td className="py-3 px-4 font-bold text-slate-800">
+                                  {item.mapel_nama}
+                                </td>
+                                <td className="py-3 px-4 text-center text-slate-500 font-bold">{item.kkm}</td>
+                                <td className="py-3 px-4 text-center">
+                                  {item.nilaiAkhir ? (
+                                    <span className={`px-2.5 py-1 rounded-lg ${badgeClass}`}>
+                                      {Math.round(Number(item.nilaiAkhir))}
+                                    </span>
+                                  ) : (
+                                    <span className="text-slate-300">-</span>
+                                  )}
+                                </td>
+                                <td className="py-3 px-4 text-center text-xs font-bold text-slate-700">
+                                  {item.predikat}
+                                </td>
+                              </tr>
+                            </React.Fragment>
+                          );
+                        });
+                      })()
                     )}
                   </tbody>
+                  <tfoot className="bg-slate-50 font-bold border-t-2 border-slate-200">
+                    <tr className="border-b border-slate-200/60">
+                      <td colSpan={3} className="py-3 px-4 text-slate-700 font-bold text-sm">Jumlah Nilai</td>
+                      <td className="py-3 px-4 text-center text-primary font-black text-base">{ringkasan.totalNilai || computedTotal}</td>
+                      <td className="py-3 px-4 text-center text-slate-400 text-xs">-</td>
+                    </tr>
+                    <tr className="border-b border-slate-200/60">
+                      <td colSpan={3} className="py-3 px-4 text-slate-700 font-bold text-sm">Nilai Rata-rata</td>
+                      <td className="py-3 px-4 text-center text-primary font-black text-base">{ringkasan.rataRata || computedAvg}</td>
+                      <td className="py-3 px-4 text-center text-slate-400 text-xs">-</td>
+                    </tr>
+                    {ringkasan.ranking ? (
+                      <tr className="bg-gradient-to-r from-amber-50 to-orange-50/70 border-t-2 border-amber-300">
+                        <td colSpan={3} className="py-3.5 px-4 text-amber-950 font-extrabold text-sm flex items-center gap-2">
+                          <Trophy size={18} className="text-amber-600 shrink-0" />
+                          <span>Peringkat Kelas (Ranking)</span>
+                        </td>
+                        <td className="py-3.5 px-4 text-center text-amber-900 font-black text-lg">
+                          #{ringkasan.ranking}
+                        </td>
+                        <td className="py-3.5 px-4 text-center text-amber-800 text-xs font-bold">
+                          dari {ringkasan.jumlahSantri || 19} Santri
+                        </td>
+                      </tr>
+                    ) : null}
+                  </tfoot>
                 </table>
               </div>
             </div>
@@ -707,7 +825,7 @@ export default function RaporWaliPage() {
                     </div>
 
                     <div className="flex items-center justify-between text-xs text-slate-500 pt-1">
-                      <span>Target KKM: <b>{item.mapel_kategori !== "umum" ? 85 : 80}.0</b></span>
+                      <span>Target KKM: <b>{item.kkm || getKkm(item.mapel_nama)}.0</b></span>
                       <span className="inline-flex items-center gap-1 font-bold text-emerald-600">
                         <CheckCircle2 size={13} /> Tuntas Kurikulum
                       </span>

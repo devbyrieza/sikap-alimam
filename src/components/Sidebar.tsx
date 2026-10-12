@@ -333,29 +333,31 @@ export default function Sidebar({ user }: SidebarProps) {
           </div>
         </div>
           
-          <button
-            type="button"
-            onClick={() => {
-              setMobileOpen(false);
-              window.dispatchEvent(new CustomEvent("open-teacher-mapel-modal"));
-            }}
-            className="btn btn-ghost btn-sm"
-            style={{
-              width: "100%",
-              justifyContent: "center",
-              color: "#380000",
-              background: "#ffffff",
-              borderColor: "#ebdcc3",
-              padding: "7px 0",
-              fontSize: "11px",
-              fontWeight: 700,
-              cursor: "pointer",
-              transition: "all 0.2s ease"
-            }}
-          >
-            <BookOpen size={13} style={{ marginRight: 4 }} />
-            Atur Profil &amp; Mapel
-          </button>
+          {user?.role?.toLowerCase() !== "wali_santri" && (
+            <button
+              type="button"
+              onClick={() => {
+                setMobileOpen(false);
+                window.dispatchEvent(new CustomEvent("open-teacher-mapel-modal"));
+              }}
+              className="btn btn-ghost btn-sm"
+              style={{
+                width: "100%",
+                justifyContent: "center",
+                color: "#380000",
+                background: "#ffffff",
+                borderColor: "#ebdcc3",
+                padding: "7px 0",
+                fontSize: "11px",
+                fontWeight: 700,
+                cursor: "pointer",
+                transition: "all 0.2s ease"
+              }}
+            >
+              <BookOpen size={13} style={{ marginRight: 4 }} />
+              Atur Profil &amp; Mapel
+            </button>
+          )}
           
           <div style={{ display: "flex", gap: "6px", width: "100%" }}>
             <Link

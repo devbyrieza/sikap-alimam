@@ -1,15 +1,29 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { cekStatusSpp } from "@/lib/keuangan";
+import { getSession } from "@/lib/auth";
 
 export async function GET() {
   try {
-    // Cari santri aktif di database
+    const session = await getSession();
+    let whereClause: any = { is_active: true };
+
+    if (session?.userId) {
+      const orangTuaRecords = await prisma.orangTuaSantri.findMany({
+        where: { user_id: session.userId },
+        select: { santri_id: true }
+      });
+      if (orangTuaRecords.length > 0) {
+        whereClause.id = { in: orangTuaRecords.map(r => r.santri_id) };
+      }
+    }
+
+    // Cari santri aktif milik wali santri
     const santriList = await prisma.santriAktif.findMany({
-      where: { is_active: true },
+      where: whereClause,
       include: { kelas: true },
-      orderBy: { nama_lengkap: "asc" },
-      take: 10 });
+      orderBy: { nama_lengkap: "asc" }
+    });
 
     const data = await Promise.all(
       santriList.map(async (s) => {
