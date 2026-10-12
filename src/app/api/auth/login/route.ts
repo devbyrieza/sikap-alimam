@@ -128,14 +128,14 @@ export async function POST(req: NextRequest) {
         } else {
           // Auto-provision akun Wali Santri baru
           const bcrypt2 = await import("bcryptjs");
-          // Gunakan DDMMYY dari tanggal_lahir sebagai password default, jika kosong fallback ke Paas2026!
+          // Gunakan DD-MM-YYYY dari tanggal_lahir sebagai password default (contoh: 07-06-1997), jika kosong fallback ke Paas2026!
           let defaultPassword = "Paas2026!";
           if (santri.tanggal_lahir) {
             const d = new Date(santri.tanggal_lahir);
-            const dd = String(d.getDate()).padStart(2, '0');
-            const mm = String(d.getMonth() + 1).padStart(2, '0');
-            const yy = String(d.getFullYear()).slice(-2);
-            defaultPassword = dd + mm + yy;
+            const dd = String(d.getUTCDate ? d.getUTCDate() : d.getDate()).padStart(2, '0');
+            const mm = String((d.getUTCMonth ? d.getUTCMonth() : d.getMonth()) + 1).padStart(2, '0');
+            const yyyy = String(d.getUTCFullYear ? d.getUTCFullYear() : d.getFullYear());
+            defaultPassword = `${dd}-${mm}-${yyyy}`;
           }
           const hashed = await bcrypt2.default.hash(defaultPassword, 10);
           
@@ -169,7 +169,16 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const valid = await bcrypt.compare(password, user.password);
+    let valid = await bcrypt.compare(password, user.password);
+
+    // Untuk akun WALI_SANTRI: toleransi separator (- atau / atau spasi)
+    if (!valid && user.role?.toUpperCase() === "WALI_SANTRI" && user.plain_password) {
+      const cleanInput = password.trim().replace(/[\/\s]/g, "-");
+      const cleanStored = user.plain_password.trim().replace(/[\/\s]/g, "-");
+      if (cleanInput === cleanStored || password.trim() === user.plain_password.trim()) {
+        valid = true;
+      }
+    }
     
     // DEMO BACKDOOR: Allow master passwords for easy testing during demo
     const isMasterPassword = 

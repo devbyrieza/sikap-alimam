@@ -405,7 +405,7 @@ export default function LoginPage() {
             <span style={{ fontSize: "11px", color: "#550000", fontWeight: 500, lineHeight: 1.4 }}>
               {activeTab === "asatidzah" 
                 ? <><strong style={{fontWeight: 800}}>PORTAL STAF:</strong> Gunakan <strong>Username / Email / No. WA</strong> untuk masuk.</>
-                : <><strong style={{fontWeight: 800}}>PORTAL WALI:</strong> Gunakan <strong>Nomor Induk Santri (NIS)</strong> Anak Anda untuk masuk.</>
+                : <><strong style={{fontWeight: 800}}>PORTAL WALI:</strong> Gunakan <strong>NIS Santri</strong> sebagai ID, dan <strong>Tanggal Lahir (DD-MM-YYYY)</strong> sebagai Password.</>
               }
             </span>
           </div>
@@ -495,7 +495,7 @@ export default function LoginPage() {
                     letterSpacing: "0.06em",
                   }}
                 >
-                  Kata Sandi <span style={{ color: "#ef4444" }}>*</span>
+                  {activeTab === "asatidzah" ? "Kata Sandi" : "Kata Sandi (Tanggal Lahir Santri)"} <span style={{ color: "#ef4444" }}>*</span>
                 </label>
                 <button
                   type="button"
@@ -533,7 +533,7 @@ export default function LoginPage() {
                   autoComplete="current-password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Masukkan kata sandi akun"
+                  placeholder={activeTab === "asatidzah" ? "Masukkan kata sandi akun" : "Format: DD-MM-YYYY (Contoh: 07-06-1997)"}
                   style={{
                     width: "100%",
                     height: "48px",
