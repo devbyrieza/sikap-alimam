@@ -5,14 +5,6 @@ import bcrypt from "bcryptjs";
 
 export async function POST(req: NextRequest) {
   try {
-    // Self-healing: pastikan kolom phone & must_change_password ada di tabel users
-    try {
-      await prisma.$executeRawUnsafe(`
-        ALTER TABLE users ADD COLUMN IF NOT EXISTS phone VARCHAR(20) UNIQUE;
-        ALTER TABLE users ADD COLUMN IF NOT EXISTS must_change_password BOOLEAN NOT NULL DEFAULT false;
-      `);
-    } catch (_) { /* ignore */ }
-
     const { email, password, selectedRole } = await req.json();
 
     if (!email || !password) {
