@@ -205,9 +205,9 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    // Cari ID Pegawai/Asatidz jika belum terhubung langsung
+    // Cari ID Pegawai/Asatidz jika belum terhubung langsung (hanya untuk staf/guru, bukan wali santri)
     let asatidzId = user.pegawai?.id;
-    if (!asatidzId) {
+    if (!asatidzId && user.role?.toUpperCase() !== "WALI_SANTRI") {
       const linkedPegawai = await prisma.pegawai.findFirst({
         where: {
           OR: [
@@ -221,10 +221,12 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    // Format nama dengan sapaan Ust. jika belum ada
+    // Format nama dengan sapaan Ust. jika asatidz/staf
     let formattedNama = user.nama.trim();
-    if (!/^Ust\.\s/i.test(formattedNama) && !/^Ustadz\s/i.test(formattedNama) && !/^Ustadzah\s/i.test(formattedNama)) {
-      formattedNama = "Ust. " + formattedNama;
+    if (user.role?.toUpperCase() !== "WALI_SANTRI") {
+      if (!/^Ust\.\s/i.test(formattedNama) && !/^Ustadz\s/i.test(formattedNama) && !/^Ustadzah\s/i.test(formattedNama)) {
+        formattedNama = "Ust. " + formattedNama;
+      }
     }
 
     const isDefaultPassword = 
@@ -252,10 +254,10 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ success: true, role: user.role, nama: formattedNama, is_default_password: isDefaultPassword });
 
-  } catch (err) {
+  } catch (err: any) {
     console.error("Login error:", err);
     return NextResponse.json(
-      { error: "Terjadi kesalahan server" },
+      { error: "Terjadi kesalahan server", details: err?.message || String(err) },
       { status: 500 }
     );
   }
