@@ -352,40 +352,6 @@ export default function RaporWaliPage() {
                 </p>
               </div>
             </div>
-
-            {/* Quick Pill Status - 100% Seragam dengan 4 Kartu di Bawah */}
-            <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-4 sm:p-5 flex items-center gap-4 sm:gap-6 self-stretch sm:self-auto justify-around flex-wrap">
-              {ringkasan.ranking ? (
-                <>
-                  <div className="text-center">
-                    <p className="text-[11px] text-amber-200 font-bold uppercase flex items-center justify-center gap-1">
-                      <Trophy size={11} className="text-amber-300" /> Peringkat
-                    </p>
-                    <p className="text-xl sm:text-2xl font-black text-amber-300">
-                      #{ringkasan.ranking} <span className="text-xs font-medium text-white/70">/ {ringkasan.jumlahSantri}</span>
-                    </p>
-                  </div>
-                  <div className="h-10 w-px bg-white/20 hidden sm:block" />
-                </>
-              ) : null}
-
-              <div className="text-center">
-                <p className="text-[11px] text-white/75 font-medium uppercase">Rata-Rata PTS</p>
-                <p className="text-xl sm:text-2xl font-black text-white">{ringkasan.rataRata || computedAvg || "-"}</p>
-              </div>
-              <div className="h-10 w-px bg-white/20" />
-
-              <div className="text-center">
-                <p className="text-[11px] text-white/75 font-medium uppercase">Kehadiran KBM</p>
-                <p className="text-xl sm:text-2xl font-black text-white">{ringkasan.persentaseKehadiran}%</p>
-              </div>
-              <div className="h-10 w-px bg-white/20" />
-
-              <div className="text-center">
-                <p className="text-[11px] text-white/75 font-medium uppercase">Halaqoh Tahfidz</p>
-                <p className="text-xl sm:text-2xl font-black text-white">Aktif</p>
-              </div>
-            </div>
           </div>
         </div>
 
