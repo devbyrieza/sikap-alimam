@@ -47,9 +47,6 @@ export default function RaporWaliPage() {
   // Navigation Tabs
   const [activeTab, setActiveTab] = useState<"ringkasan" | "nilai" | "presensi" | "jurnal" | "tahfidz">("ringkasan");
 
-  // Mode Tampilan Tab 1 Rapor: ringkas vs cetak
-  const [viewModeRapor, setViewModeRapor] = useState<"ringkas" | "cetak">("ringkas");
-
   // Filters for Nilai Tab
   const [filterMapelNilai, setFilterMapelNilai] = useState<string>("");
 
@@ -476,8 +473,8 @@ export default function RaporWaliPage() {
                       : "text-slate-500 hover:bg-slate-100"
                   }`}
                 >
-                  <Activity size={16} />
-                  <span>1. Ringkasan Rapor</span>
+                  <FileText size={16} />
+                  <span>1. Lembar Rapor Resmi</span>
                 </button>
 
                 <button
@@ -533,218 +530,57 @@ export default function RaporWaliPage() {
         )}
 
         {/* TAB CONTENT */}
-        {/* TAB 1: RINGKASAN RAPOR */}
+        {/* TAB 1: LEMBAR RAPOR RESMI (KASYFUD DARAJAT) */}
         {activeTab === "ringkasan" && (
-          <div className="space-y-6">
-            {/* Quick Academic Table / Document Viewer */}
-            <div className="card p-0 overflow-hidden shadow-xl shadow-primary/10 border border-slate-100 rounded-3xl bg-white/90 backdrop-blur">
-              <div className="p-5 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="space-y-5">
+            {/* Header & Quick Actions Bar */}
+            <div className="card p-5 sm:p-6 shadow-xl shadow-primary/10 border border-slate-100 rounded-3xl bg-white/90 backdrop-blur flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div className="flex items-center gap-3.5">
+                <div className="w-11 h-11 rounded-2xl bg-primary/10 text-primary flex items-center justify-center font-bold shadow-sm shrink-0">
+                  <FileText size={22} />
+                </div>
                 <div>
-                  <h3 className="font-bold text-slate-800 text-base">Hasil Evaluasi Belajar (PTS)</h3>
-                  <p className="text-xs text-slate-500 mt-0.5">Pilih tampilan ringkasan tabel atau lembar rapor cetak resmi (Kasyfud Darajat)</p>
-                </div>
-
-                <div className="flex items-center gap-2 flex-wrap">
-                  {/* Switcher Tampilan: Ringkas vs Cetak */}
-                  <div className="inline-flex p-1 rounded-2xl bg-slate-100/90 border border-slate-200 text-xs font-bold shadow-inner">
-                    <button
-                      type="button"
-                      onClick={() => setViewModeRapor("ringkas")}
-                      className={`px-3.5 py-1.5 rounded-xl transition-all flex items-center gap-1.5 ${
-                        viewModeRapor === "ringkas"
-                          ? "bg-white text-primary shadow-sm"
-                          : "text-slate-500 hover:text-slate-900"
-                      }`}
-                    >
-                      <LayoutList size={14} />
-                      <span>Mode Ringkas</span>
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setViewModeRapor("cetak")}
-                      className={`px-3.5 py-1.5 rounded-xl transition-all flex items-center gap-1.5 ${
-                        viewModeRapor === "cetak"
-                          ? "bg-primary text-white shadow-md shadow-primary/30"
-                          : "text-slate-500 hover:text-slate-900"
-                      }`}
-                    >
-                      <FileText size={14} />
-                      <span>Lembar Rapor Asli (Cetak)</span>
-                    </button>
-                  </div>
-
-                  <button
-                    onClick={() => setActiveTab("nilai")}
-                    className="text-xs font-bold text-primary hover:underline inline-flex items-center gap-1 ml-auto sm:ml-0"
-                  >
-                    <span>Filter Mapel</span>
-                    <ChevronRight size={14} />
-                  </button>
+                  <h3 className="font-extrabold text-slate-800 text-base sm:text-lg">
+                    Lembar Rapor Resmi Santri (Kasyfud Darajat)
+                  </h3>
+                  <p className="text-xs text-slate-500 mt-0.5">
+                    Format resmi 2 halaman Pesantren Al-Imam Al-Islami (Bilateral Arab - Indonesia, Tanda Tangan &amp; Barcode QR)
+                  </p>
                 </div>
               </div>
 
-              {viewModeRapor === "cetak" ? (
-                <div className="p-4 sm:p-6 bg-slate-100/70 rounded-b-3xl space-y-4">
-                  <div className="flex items-center justify-between flex-wrap gap-3 bg-white/90 backdrop-blur p-4 rounded-2xl border border-slate-200 shadow-sm">
-                    <div className="flex items-center gap-2.5">
-                      <div className="w-8 h-8 rounded-xl bg-primary/10 text-primary flex items-center justify-center font-bold">
-                        <FileText size={16} />
-                      </div>
-                      <div>
-                        <h4 className="text-xs sm:text-sm font-bold text-slate-800">
-                          Dokumen Resmi Rapor Santri (Kasyfud Darajat)
-                        </h4>
-                        <p className="text-[11px] text-slate-500">
-                          Format resmi 2 halaman Pesantren Al-Imam Al-Islami (Bilateral Arab - Indonesia, Tanda Tangan &amp; Barcode QR)
-                        </p>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <a
-                        href={`/rapor/print/${santri.id}`}
-                        target="_blank"
-                        className="btn btn-outline btn-sm inline-flex items-center gap-1.5 text-xs font-bold rounded-xl"
-                      >
-                        <ExternalLink size={13} />
-                        <span>Buka Layar Penuh</span>
-                      </a>
-                      <a
-                        href={`/rapor/print/${santri.id}`}
-                        target="_blank"
-                        className="btn btn-primary btn-sm inline-flex items-center gap-1.5 text-xs font-bold rounded-xl"
-                      >
-                        <Printer size={13} />
-                        <span>Cetak / Download PDF</span>
-                      </a>
-                    </div>
-                  </div>
-
-                  {/* Embed Iframe Pratinjau Dokumen Rapor */}
-                  <div className="w-full bg-slate-200/60 rounded-2xl shadow-inner border border-slate-300 overflow-hidden" style={{ minHeight: "850px", height: "80vh" }}>
-                    <iframe
-                      src={`/rapor/print/${santri.id}?embed=true`}
-                      title="Lembar Rapor Resmi Pesantren Al-Imam"
-                      className="w-full h-full border-none"
-                    />
-                  </div>
-                </div>
-              ) : (
-                <>
-                  <div className="mx-5 mb-4 mt-5 p-4 rounded-2xl bg-blue-50 border border-blue-200 flex gap-3 items-center shadow-sm">
-                    <AlertCircle className="text-blue-600 shrink-0" size={18} />
-                    <p className="text-xs text-blue-800">
-                      <strong>Rapor Bayangan PTS Semester 1</strong> — Nilai yang ditampilkan adalah Nilai Ujian PTS Murni sesuai arahan kurikulum pesantren.
-                    </p>
-                  </div>
-
-                  <div className="overflow-x-auto pb-4">
-                <table className="w-full text-left border-collapse" style={{ minWidth: 600 }}>
-                  <thead>
-                    <tr className="bg-slate-50 text-slate-500 text-xs font-bold uppercase border-b border-slate-100">
-                      <th className="py-3.5 px-4 w-12 text-center">No</th>
-                      <th className="py-3.5 px-4">Mata Pelajaran</th>
-                      <th className="py-3.5 px-4 text-center">KKM</th>
-                      <th className="py-3.5 px-4 text-center">Nilai Akhir (PTS)</th>
-                      <th className="py-3.5 px-4 text-center">Predikat</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {akademikGrouped.length === 0 ? (
-                      <tr>
-                        <td colSpan={5} className="text-center py-10 text-slate-400 text-sm">
-                          Belum ada data nilai akademik yang diinput oleh guru pengampu.
-                        </td>
-                      </tr>
-                    ) : (
-                      (() => {
-                        let currentCat = "";
-                        const catLabels: Record<string, string> = {
-                          syariah: "A. Ilmu Syari'ah",
-                          bahasa: "B. Ilmu Bahasa",
-                          umum: "C. Ilmu Pengetahuan Umum"
-                        };
-                        return akademikGrouped.map((item, idx) => {
-                          const showCatHeader = item.kategori !== currentCat;
-                          if (showCatHeader) {
-                            currentCat = item.kategori;
-                          }
-
-                          let badgeClass = "bg-slate-100 text-slate-800 font-bold";
-                          if (item.nilaiAkhir) {
-                            const na = Number(item.nilaiAkhir);
-                            if (na >= 90) badgeClass = "bg-emerald-100 text-emerald-800 font-black";
-                            else if (na >= 85) badgeClass = "bg-blue-100 text-blue-800 font-black";
-                            else if (na >= 80) badgeClass = "bg-amber-100 text-amber-800 font-bold";
-                            else badgeClass = "bg-red-100 text-red-800 font-bold";
-                          }
-
-                          return (
-                            <React.Fragment key={item.mapel_id}>
-                              {showCatHeader && (
-                                <tr className="bg-slate-100/90 font-bold border-t border-b border-slate-200">
-                                  <td colSpan={5} className="py-2.5 px-4 text-xs tracking-wide uppercase text-slate-800 font-extrabold bg-slate-100">
-                                    {catLabels[item.kategori] || item.kategori}
-                                  </td>
-                                </tr>
-                              )}
-                              <tr className="border-b border-slate-50 hover:bg-slate-50/60 transition-colors text-sm shadow-sm">
-                                <td className="py-3 px-4 text-center text-slate-400 font-semibold">{idx + 1}</td>
-                                <td className="py-3 px-4 font-bold text-slate-800">
-                                  {item.mapel_nama}
-                                </td>
-                                <td className="py-3 px-4 text-center text-slate-500 font-bold">{item.kkm}</td>
-                                <td className="py-3 px-4 text-center">
-                                  {item.nilaiAkhir ? (
-                                    <span className={`px-2.5 py-1 rounded-lg ${badgeClass}`}>
-                                      {Math.round(Number(item.nilaiAkhir))}
-                                    </span>
-                                  ) : (
-                                    <span className="text-slate-300">-</span>
-                                  )}
-                                </td>
-                                <td className="py-3 px-4 text-center text-xs font-bold text-slate-700">
-                                  {item.predikat}
-                                </td>
-                              </tr>
-                            </React.Fragment>
-                          );
-                        });
-                      })()
-                    )}
-                  </tbody>
-                  <tfoot className="bg-slate-50 font-bold border-t-2 border-slate-200">
-                    <tr className="border-b border-slate-200/60">
-                      <td colSpan={3} className="py-3 px-4 text-slate-700 font-bold text-sm">Jumlah Nilai</td>
-                      <td className="py-3 px-4 text-center text-primary font-black text-base">{ringkasan.totalNilai || computedTotal}</td>
-                      <td className="py-3 px-4 text-center text-slate-400 text-xs">-</td>
-                    </tr>
-                    <tr className="border-b border-slate-200/60">
-                      <td colSpan={3} className="py-3 px-4 text-slate-700 font-bold text-sm">Nilai Rata-rata</td>
-                      <td className="py-3 px-4 text-center text-primary font-black text-base">{ringkasan.rataRata || computedAvg}</td>
-                      <td className="py-3 px-4 text-center text-slate-400 text-xs">-</td>
-                    </tr>
-                    {ringkasan.ranking ? (
-                      <tr className="bg-gradient-to-r from-amber-50 to-orange-50/70 border-t-2 border-amber-300">
-                        <td colSpan={3} className="py-3.5 px-4 text-amber-950 font-extrabold text-sm flex items-center gap-2">
-                          <Trophy size={18} className="text-amber-600 shrink-0" />
-                          <span>Peringkat Kelas (Ranking)</span>
-                        </td>
-                        <td className="py-3.5 px-4 text-center text-amber-900 font-black text-lg">
-                          #{ringkasan.ranking}
-                        </td>
-                        <td className="py-3.5 px-4 text-center text-amber-800 text-xs font-bold">
-                          dari {ringkasan.jumlahSantri || 19} Santri
-                        </td>
-                      </tr>
-                    ) : null}
-                  </tfoot>
-                </table>
+              <div className="flex items-center gap-2.5 flex-wrap">
+                <a
+                  href={`/rapor/print/${santri.id}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="btn btn-outline btn-sm inline-flex items-center gap-1.5 text-xs font-bold rounded-xl px-4 py-2"
+                >
+                  <ExternalLink size={14} />
+                  <span>Buka Layar Penuh</span>
+                </a>
+                <a
+                  href={`/rapor/print/${santri.id}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="btn btn-primary btn-sm inline-flex items-center gap-1.5 text-xs font-bold rounded-xl px-4 py-2 shadow-md shadow-primary/30"
+                >
+                  <Printer size={14} />
+                  <span>Cetak / Download PDF</span>
+                </a>
               </div>
-            </>
-          )}
-        </div>
-      </div>
-    )}
+            </div>
+
+            {/* Embed Iframe Pratinjau Dokumen Rapor */}
+            <div className="w-full bg-slate-200/60 rounded-3xl shadow-inner border border-slate-300 overflow-hidden" style={{ minHeight: "850px", height: "85vh" }}>
+              <iframe
+                src={`/rapor/print/${santri.id}?embed=true`}
+                title="Lembar Rapor Resmi Pesantren Al-Imam"
+                className="w-full h-full border-none"
+              />
+            </div>
+          </div>
+        )}
 
         {/* TAB 2: DETAIL NILAI & FILTER PER MAPEL */}
         {activeTab === "nilai" && (
