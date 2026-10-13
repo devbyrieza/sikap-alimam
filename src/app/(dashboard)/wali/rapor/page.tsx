@@ -336,9 +336,9 @@ export default function RaporWaliPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-rose-50/30 to-slate-100 pb-20">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-rose-50/30 to-slate-100 pb-20 print:p-0 print:m-0 print:bg-white print:min-h-0">
       {/* Top Bar Navigation */}
-      <div className="bg-white/90 backdrop-blur border-b border-slate-200/80 sticky top-0 z-30 shadow-sm">
+      <div className="bg-white/90 backdrop-blur border-b border-slate-200/80 sticky top-0 z-30 shadow-sm no-print print:hidden">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
           <a
             href="/wali"
@@ -368,9 +368,9 @@ export default function RaporWaliPage() {
         </div>
       </div>
 
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 pt-8 space-y-8">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 pt-8 space-y-8 print:p-0 print:m-0 print:max-w-none print:space-y-0">
         {/* Profile Card Banner */}
-        <div className="bg-gradient-to-r from-primary via-[#7e141a] to-[#4a080d] text-white rounded-3xl p-8 sm:p-10 shadow-2xl shadow-primary/30 relative overflow-hidden">
+        <div className="bg-gradient-to-r from-primary via-[#7e141a] to-[#4a080d] text-white rounded-3xl p-8 sm:p-10 shadow-2xl shadow-primary/30 relative overflow-hidden no-print print:hidden">
           <div className="absolute top-0 right-0 p-8 opacity-10 pointer-events-none">
             <GraduationCap size={180} />
           </div>
@@ -497,7 +497,7 @@ export default function RaporWaliPage() {
           <>
             {/* Grace Period Notification Banner (Tgl 1-10) */}
             {data?.spp?.isGracePeriod && (
-              <div className="bg-amber-50/90 backdrop-blur border border-amber-200/90 rounded-2xl p-4 flex items-center justify-between gap-4 text-xs shadow-md">
+              <div className="bg-amber-50/90 backdrop-blur border border-amber-200/90 rounded-2xl p-4 flex items-center justify-between gap-4 text-xs shadow-md no-print print:hidden">
                 <div className="flex items-center gap-3">
                   <div className="p-2 rounded-xl bg-amber-500 text-white shrink-0">
                     <Clock size={16} />
@@ -518,7 +518,7 @@ export default function RaporWaliPage() {
             )}
 
             {/* Tab Navigation Menu */}
-            <div className="bg-white/80 backdrop-blur rounded-2xl border border-slate-200/60 p-1.5 shadow-sm">
+            <div className="bg-white/80 backdrop-blur rounded-2xl border border-slate-200/60 p-1.5 shadow-sm no-print print:hidden">
               <div className="flex gap-1 overflow-x-auto">
                 <button
                   onClick={() => setActiveTab("ringkasan")}
@@ -589,7 +589,7 @@ export default function RaporWaliPage() {
         {activeTab === "ringkasan" && (
           <div className="space-y-6">
             {/* Header & Main Print Action Bar */}
-            <div className="card p-5 sm:p-6 shadow-xl shadow-primary/10 border border-slate-100 rounded-3xl bg-white/95 backdrop-blur flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div className="card p-5 sm:p-6 shadow-xl shadow-primary/10 border border-slate-100 rounded-3xl bg-white/95 backdrop-blur flex flex-col sm:flex-row sm:items-center justify-between gap-4 no-print print:hidden">
               <div className="flex items-center gap-3.5">
                 <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-primary to-rose-900 text-white flex items-center justify-center font-bold shadow-md shadow-primary/20 shrink-0">
                   <FileText size={24} />
@@ -619,18 +619,18 @@ export default function RaporWaliPage() {
 
             {/* LEMBAR RAPOR RESMI PESANTREN (100% IDENTIK DENGAN PRINT A4) */}
             {cetakData ? (
-              <div className="w-full flex justify-center overflow-x-auto custom-scrollbar pb-4">
+              <div className="w-full flex justify-center overflow-x-auto custom-scrollbar pb-4 print:overflow-visible print:p-0 print:m-0 print:block">
                 <RaporOfficialSheet data={cetakData} showPrintToolbar={false} />
               </div>
             ) : (
-              <div className="card p-12 text-center bg-white rounded-3xl shadow-sm border border-slate-100">
+              <div className="card p-12 text-center bg-white rounded-3xl shadow-sm border border-slate-100 no-print print:hidden">
                 <Loader2 className="animate-spin text-primary mx-auto mb-3" size={32} />
                 <p className="text-sm font-bold text-slate-600">Memuat Dokumen Resmi Rapor (A4)...</p>
               </div>
             )}
 
             {/* TOMBOL AKSI CETAK DI DASAR RAPOR */}
-            <div className="flex justify-center pt-2 pb-6">
+            <div className="flex justify-center pt-2 pb-6 no-print print:hidden">
               <a
                 href={`/rapor/print/${santri?.id || cetakData?.santri?.id}`}
                 target="_blank"

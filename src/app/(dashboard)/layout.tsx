@@ -72,7 +72,7 @@ export default async function DashboardLayout({
       <Sidebar user={{ nama: session.nama || "", role: liveRole, email: session.email || "", originalRole: session.originalRole }} />
       <main className="app-content">
         {session.is_default_password && (
-          <div style={{
+          <div className="no-print print:hidden" style={{
             background: "linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%)",
             borderBottom: "1px solid #fed7aa",
             padding: "12px 24px",

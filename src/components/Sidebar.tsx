@@ -417,7 +417,7 @@ export default function Sidebar({ user }: SidebarProps) {
           alignItems: "center",
           justifyContent: "space-between",
           boxShadow: "0 2px 12px rgba(85,0,0,0.25)" }}
-        className="mobile-header"
+        className="mobile-header no-print print:hidden"
       >
         <span
           style={{ color: "white", fontWeight: 800, fontSize: 16 }}
@@ -439,7 +439,7 @@ export default function Sidebar({ user }: SidebarProps) {
       </div>
 
       {/* Desktop sidebar */}
-      <aside className="app-sidebar overscroll-contain"
+      <aside className="app-sidebar overscroll-contain no-print print:hidden"
         onWheel={(e) => {
         const scrollMenu = e.currentTarget.querySelector('.sidebar-scroll-menu') || e.currentTarget;
         if (scrollMenu) {
@@ -454,6 +454,7 @@ export default function Sidebar({ user }: SidebarProps) {
       {mobileOpen && (
         <>
           <div
+            className="no-print print:hidden"
             onClick={() => setMobileOpen(false)}
             style={{
               position: "fixed",
@@ -463,7 +464,7 @@ export default function Sidebar({ user }: SidebarProps) {
               WebkitBackdropFilter: "blur(6px)",
               zIndex: 1000 }}
           />
-          <aside className="app-sidebar"
+          <aside className="app-sidebar no-print print:hidden"
             style={{
               position: "fixed",
               top: 0,
@@ -491,8 +492,24 @@ export default function Sidebar({ user }: SidebarProps) {
       )}
 
       <style>{`
-        @media (max-width: 768px) {
+        @media screen and (max-width: 768px) {
           .mobile-header { display: flex !important; }
+        }
+        @media print {
+          .mobile-header,
+          .app-sidebar,
+          nav,
+          header,
+          aside {
+            display: none !important;
+            visibility: hidden !important;
+            opacity: 0 !important;
+            height: 0 !important;
+            width: 0 !important;
+            position: absolute !important;
+            top: -9999px !important;
+            left: -9999px !important;
+          }
         }
       `}</style>
     </>

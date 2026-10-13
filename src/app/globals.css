@@ -1185,3 +1185,68 @@ input[type="checkbox"], input[type="radio"], input[type="submit"], input[type="b
 :disabled {
   cursor: not-allowed !important;
 }
+
+/* ======================================================================
+   PRINT STYLES - STANDAR INTERNASIONAL RAPOR RESMI A4
+   Memastikan tidak ada navbar, header mobile, sidebar, atau elemen UI
+   dashboard yang bocor ke halaman cetak PDF di seluruh halaman.
+   ====================================================================== */
+@media print {
+  .no-print,
+  .print\:hidden,
+  .mobile-header,
+  .app-sidebar,
+  .sidebar-nav,
+  .sidebar-scroll-menu,
+  nav,
+  header,
+  aside,
+  footer,
+  [role="navigation"],
+  [role="banner"],
+  button:not(.allow-print),
+  .btn:not(.allow-print) {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    height: 0 !important;
+    width: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+    position: absolute !important;
+    top: -9999px !important;
+    left: -9999px !important;
+  }
+
+  html, body {
+    margin: 0 !important;
+    padding: 0 !important;
+    background: #ffffff !important;
+    background-color: #ffffff !important;
+    color: #000000 !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  .app-layout {
+    display: block !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    background: transparent !important;
+  }
+
+  .app-content {
+    display: block !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    max-width: 100% !important;
+    width: 100% !important;
+    background: transparent !important;
+  }
+
+  @page {
+    size: A4 portrait;
+    margin: 6mm 10mm 6mm 10mm;
+  }
+}

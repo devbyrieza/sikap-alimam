@@ -152,7 +152,7 @@ export default function RaporOfficialSheet({ data, showPrintToolbar = false }: R
 
   return (
     <div id="rapor-print-container" className="rapor-root-print-wrapper" style={{ width: "100%", maxWidth: "100%", margin: "0 auto", boxSizing: "border-box" }}>
-      <style jsx global>{`
+      <style>{`
         /* Reset and Print Styling Presisi Standar Internasional A4 */
         * {
           box-sizing: border-box;
@@ -228,7 +228,18 @@ export default function RaporOfficialSheet({ data, showPrintToolbar = false }: R
             padding: 0 !important; 
           }
           .arabic-text { font-family: 'Traditional Arabic', serif !important; }
-          .no-print, .mobile-header, .app-sidebar, .sidebar-nav { display: none !important; }
+          .no-print, .mobile-header, .app-sidebar, .sidebar-nav, .sidebar-scroll-menu, nav, header, aside, .btn, button {
+            display: none !important;
+            visibility: hidden !important;
+            height: 0 !important;
+            width: 0 !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            border: none !important;
+            position: absolute !important;
+            top: -9999px !important;
+            left: -9999px !important;
+          }
           .app-layout { padding: 0 !important; margin: 0 !important; display: block !important; background: #ffffff !important; }
           .app-content { margin: 0 !important; padding: 0 !important; width: 100% !important; max-width: 100% !important; background: #ffffff !important; }
           
@@ -282,7 +293,7 @@ export default function RaporOfficialSheet({ data, showPrintToolbar = false }: R
       {/* TOOLBAR JIKA DIMINTA */}
       {showPrintToolbar && (
         <div 
-          className="no-print flex items-center justify-between p-4 mb-6 rounded-2xl shadow-lg border"
+          className="no-print print:hidden flex items-center justify-between p-4 mb-6 rounded-2xl shadow-lg border"
           style={{ 
             backgroundColor: "#550000", 
             color: "white", 
@@ -302,6 +313,7 @@ export default function RaporOfficialSheet({ data, showPrintToolbar = false }: R
           <button 
             type="button"
             onClick={() => window.print()}
+            className="no-print print:hidden"
             style={{ 
               padding: "10px 24px", 
               borderRadius: "10px", 
