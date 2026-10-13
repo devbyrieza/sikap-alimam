@@ -1282,7 +1282,7 @@ input[type="checkbox"], input[type="radio"], input[type="submit"], input[type="b
   }
 
   .rapor-table .border-divider-mid {
-    border-right: 2.5px solid #000000 !important;
+    border-right: 2px solid #000000 !important;
   }
 
   @page {
