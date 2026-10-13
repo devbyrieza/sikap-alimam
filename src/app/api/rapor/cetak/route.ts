@@ -2,23 +2,48 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getStandardMapelName } from "@/lib/mapel";
 import { getOfficialNis } from "@/lib/officialSantri";
+import { getSession } from "@/lib/auth";
 
 export const dynamic = 'force-dynamic';
 
 export async function GET(req: NextRequest) {
   const searchParams = req.nextUrl.searchParams;
-  const santri_id = searchParams.get("santri_id");
+  let santri_id = searchParams.get("santri_id");
   const rawSemester = searchParams.get("semester") || "Ganjil";
   const tahun_ajaran = searchParams.get("tahun_ajaran") || "2026/2027";
 
-  if (!santri_id) {
-    return NextResponse.json({ error: "santri_id is required" }, { status: 400 });
-  }
-
   try {
+    const session = await getSession();
+
+    // Jika santri_id tidak dioper, cari santri milik Wali Santri yang sedang login
+    if (!santri_id && session?.userId) {
+      const orangTua = await prisma.orangTuaSantri.findFirst({
+        where: { user_id: session.userId },
+        select: { santri_id: true }
+      });
+      if (orangTua?.santri_id) {
+        santri_id = orangTua.santri_id;
+      }
+    }
+
+    // Default ke santri pertama jika belum ada santri_id
+    if (!santri_id) {
+      const defaultSantri = await prisma.santriAktif.findFirst({
+        where: { is_active: true },
+        include: { kelas: true },
+        orderBy: { nama_lengkap: "asc" }
+      });
+      if (!defaultSantri) {
+        return NextResponse.json({ error: "No active santri found" }, { status: 404 });
+      }
+      santri_id = defaultSantri.id;
+    }
+
+    const targetSantriId = santri_id as string;
+
     // 1. Get Santri & Kelas
     const santri = await prisma.santriAktif.findUnique({
-      where: { id: santri_id },
+      where: { id: targetSantriId },
       include: {
         kelas: {
           include: { wali_kelas: true }
@@ -330,7 +355,7 @@ export async function GET(req: NextRequest) {
       return classStandardMapels
         .filter(m => getKategoriMapel(m.standardName, m.kategori) === kategoriTarget)
         .map(m => {
-          const val = getStudentScore(santri_id, m.standardName);
+          const val = getStudentScore(targetSantriId, m.standardName);
           if (val === null) return null;
           const kkmValue = kategoriTarget === "umum" ? 80 : 85;
           return {
