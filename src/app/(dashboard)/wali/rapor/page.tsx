@@ -536,53 +536,6 @@ export default function RaporWaliPage() {
         {/* TAB 1: RINGKASAN RAPOR */}
         {activeTab === "ringkasan" && (
           <div className="space-y-6">
-            {/* 4 Stats Grid Berdasarkan Data Riil Pesantren */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              {/* Peringkat Kelas */}
-              <div className="bg-gradient-to-br from-amber-50 via-orange-50/40 to-white rounded-2xl p-5 border border-amber-200 shadow-md">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-xs font-bold text-amber-800 uppercase tracking-wide">Peringkat Kelas</span>
-                  <div className="p-1.5 sm:p-2 bg-amber-500 rounded-xl text-white shadow-sm"><Trophy size={16} /></div>
-                </div>
-                <p className="text-2xl sm:text-3xl font-black text-amber-950">
-                  #{ringkasan.ranking || "-"}
-                </p>
-                <p className="text-[11px] text-amber-700 mt-1 font-semibold">
-                  dari {ringkasan.jumlahSantri || "-"} Santri (PTS)
-                </p>
-              </div>
-
-              {/* Rata-Rata Nilai */}
-              <div className="bg-gradient-to-br from-rose-50 to-white rounded-2xl p-5 border border-rose-100 shadow-md">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-xs font-bold text-rose-700 uppercase tracking-wide">Rata-Rata PTS</span>
-                  <div className="p-1.5 sm:p-2 bg-rose-500 rounded-xl text-white shadow-sm"><GraduationCap size={16} /></div>
-                </div>
-                <p className="text-2xl sm:text-3xl font-black text-rose-900">{ringkasan.rataRata || computedAvg || "-"}</p>
-                <p className="text-[11px] text-rose-600 mt-1">Akumulasi {akademikGrouped.length || 13} mata pelajaran</p>
-              </div>
-
-              {/* Kehadiran KBM */}
-              <div className="bg-gradient-to-br from-emerald-50 to-white rounded-2xl p-5 border border-emerald-100 shadow-md">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-xs font-bold text-emerald-700 uppercase tracking-wide">Kehadiran KBM</span>
-                  <div className="p-1.5 sm:p-2 bg-emerald-500 rounded-xl text-white shadow-sm"><Activity size={16} /></div>
-                </div>
-                <p className="text-2xl sm:text-3xl font-black text-emerald-900">{ringkasan.persentaseKehadiran}%</p>
-                <p className="text-[11px] text-emerald-600 mt-1">{ringkasan.totalHadir || 0} hari hadir KBM di kelas</p>
-              </div>
-
-              {/* Halaqoh Tahfidz */}
-              <div className="bg-gradient-to-br from-blue-50 to-white rounded-2xl p-5 border border-blue-100 shadow-md">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-xs font-bold text-blue-700 uppercase tracking-wide">Halaqoh Tahfidz</span>
-                  <div className="p-1.5 sm:p-2 bg-blue-500 rounded-xl text-white shadow-sm"><BookOpen size={16} /></div>
-                </div>
-                <p className="text-2xl sm:text-3xl font-black text-blue-900">Aktif</p>
-                <p className="text-[11px] text-blue-600 mt-1">Halaqoh Subuh &amp; Maghrib</p>
-              </div>
-            </div>
-
             {/* Quick Academic Table / Document Viewer */}
             <div className="card p-0 overflow-hidden shadow-xl shadow-primary/10 border border-slate-100 rounded-3xl bg-white/90 backdrop-blur">
               <div className="p-5 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -937,8 +890,7 @@ export default function RaporWaliPage() {
                     value={filterMapelPresensi}
                     onChange={(e) => setFilterMapelPresensi(e.target.value)}
                   >
-                    <option value="">Semua Mapel & Asrama</option>
-                    <option value="Harian / Asrama">Harian / Asrama</option>
+                    <option value="">Semua Mata Pelajaran</option>
                     {(data.detail?.mapelList || []).map((m: any) => (
                       <option key={m.id || m.nama} value={m.nama}>{m.nama}</option>
                     ))}
@@ -1004,7 +956,7 @@ export default function RaporWaliPage() {
                             </td>
                             <td className="py-3 px-4">
                               <span className="font-semibold text-slate-700 text-xs">
-                                {p.mapel_nama || "Harian / Asrama"}
+                                {p.mapel_nama || "-"}
                               </span>
                             </td>
                             <td className="py-3 px-4 text-center">

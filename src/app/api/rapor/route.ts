@@ -236,12 +236,17 @@ export async function GET(req: NextRequest) {
     const rataRataTotal = currentSantriData?.average || 0;
     const studentRank = rankMap.get(santri_id) || 1;
 
-    // 5. Presensi & Breakdown
-    const presensi = await prisma.presensiSiswa.findMany({
-      where: { santri_id },
+    // 5. Presensi & Breakdown (Hanya Presensi KBM Pelajaran Resmi di Kelas)
+    const presensiRaw = await prisma.presensiSiswa.findMany({
+      where: { 
+        santri_id,
+        mapel_id: { not: null }
+      },
       include: { mapel: { select: { nama: true } } },
       orderBy: { tanggal: "desc" }
     });
+
+    const presensi = presensiRaw.filter((p) => p.mapel?.nama != null);
     
     const getDateString = (d: Date) => d.toISOString().split("T")[0];
     const datesHadir = new Set<string>();
