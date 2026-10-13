@@ -942,7 +942,7 @@ export default function RaporOfficialSheet({ data, showPrintToolbar = false }: R
                 minWidth: 0
               }}>
                 {/* Kolom 1: Orang Tua */}
-                <div style={{ display: "flex", flexDirection: "column", justifyContent: "space-between", height: "125px", padding: "0 2px" }}>
+                <div style={{ display: "flex", flexDirection: "column", justifyContent: "space-between", height: "145px", padding: "0 2px" }}>
                   <div>
                     <p style={{ margin: 0 }}>Mengetahui</p>
                     <p style={{ margin: "2px 0 0 0" }}>Orang Tua / Wali</p>
@@ -967,7 +967,7 @@ export default function RaporOfficialSheet({ data, showPrintToolbar = false }: R
                 </div>
 
                 {/* Kolom 2: Kepala Madrasah */}
-                <div style={{ display: "flex", flexDirection: "column", justifyContent: "space-between", height: "125px", padding: "0 2px" }}>
+                <div style={{ display: "flex", flexDirection: "column", justifyContent: "space-between", height: "145px", padding: "0 2px" }}>
                   <div>
                     <p style={{ margin: 0 }}>Mengetahui</p>
                     <p style={{ margin: "2px 0 0 0" }}>{headTitle}</p>
@@ -980,7 +980,7 @@ export default function RaporOfficialSheet({ data, showPrintToolbar = false }: R
                 </div>
 
                 {/* Kolom 3: Wali Kelas */}
-                <div style={{ display: "flex", flexDirection: "column", justifyContent: "space-between", height: "125px", padding: "0 2px" }}>
+                <div style={{ display: "flex", flexDirection: "column", justifyContent: "space-between", height: "145px", padding: "0 2px" }}>
                   <div>
                     <p style={{ margin: 0 }}>Sukabumi, 11 Oktober 2026</p>
                     <p style={{ margin: "2px 0 0 0" }}>Wali Kelas</p>
@@ -1053,4 +1053,5 @@ export default function RaporOfficialSheet({ data, showPrintToolbar = false }: R
     </div>
   );
 }
+
 
