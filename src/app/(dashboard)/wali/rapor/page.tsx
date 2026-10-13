@@ -31,7 +31,9 @@ import {
   PhoneCall,
   ShieldCheck,
   AlertTriangle,
-  ArrowRight } from "lucide-react";
+  ArrowRight,
+  LayoutList,
+  ExternalLink } from "lucide-react";
 import Swal from "sweetalert2";
 import JurnalDetailModal from "@/components/JurnalDetailModal";
 import { getOfficialNis } from "@/lib/officialSantri";
@@ -44,6 +46,9 @@ export default function RaporWaliPage() {
   
   // Navigation Tabs
   const [activeTab, setActiveTab] = useState<"ringkasan" | "nilai" | "presensi" | "jurnal" | "tahfidz">("ringkasan");
+
+  // Mode Tampilan Tab 1 Rapor: ringkas vs cetak
+  const [viewModeRapor, setViewModeRapor] = useState<"ringkas" | "cetak">("ringkas");
 
   // Filters for Nilai Tab
   const [filterMapelNilai, setFilterMapelNilai] = useState<string>("");
@@ -578,30 +583,108 @@ export default function RaporWaliPage() {
               </div>
             </div>
 
-            {/* Quick Academic Table */}
+            {/* Quick Academic Table / Document Viewer */}
             <div className="card p-0 overflow-hidden shadow-xl shadow-primary/10 border border-slate-100 rounded-3xl bg-white/90 backdrop-blur">
-              <div className="p-5 border-b border-slate-100 flex items-center justify-between">
+              <div className="p-5 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
-                  <h3 className="font-bold text-slate-800 text-base">Rekapitulasi Nilai Akhir Mata Pelajaran</h3>
-                  <p className="text-xs text-slate-500 mt-0.5">Ringkasan akumulasi seluruh mata pelajaran yang ditempuh ananda</p>
+                  <h3 className="font-bold text-slate-800 text-base">Hasil Evaluasi Belajar (PTS)</h3>
+                  <p className="text-xs text-slate-500 mt-0.5">Pilih tampilan ringkasan tabel atau lembar rapor cetak resmi (Kasyfud Darajat)</p>
                 </div>
-                <button
-                  onClick={() => setActiveTab("nilai")}
-                  className="text-xs font-bold text-primary hover:underline inline-flex items-center gap-1"
-                >
-                  <span>Filter & Rincian Lengkap</span>
-                  <ChevronRight size={14} />
-                </button>
+
+                <div className="flex items-center gap-2 flex-wrap">
+                  {/* Switcher Tampilan: Ringkas vs Cetak */}
+                  <div className="inline-flex p-1 rounded-2xl bg-slate-100/90 border border-slate-200 text-xs font-bold shadow-inner">
+                    <button
+                      type="button"
+                      onClick={() => setViewModeRapor("ringkas")}
+                      className={`px-3.5 py-1.5 rounded-xl transition-all flex items-center gap-1.5 ${
+                        viewModeRapor === "ringkas"
+                          ? "bg-white text-primary shadow-sm"
+                          : "text-slate-500 hover:text-slate-900"
+                      }`}
+                    >
+                      <LayoutList size={14} />
+                      <span>Mode Ringkas</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setViewModeRapor("cetak")}
+                      className={`px-3.5 py-1.5 rounded-xl transition-all flex items-center gap-1.5 ${
+                        viewModeRapor === "cetak"
+                          ? "bg-primary text-white shadow-md shadow-primary/30"
+                          : "text-slate-500 hover:text-slate-900"
+                      }`}
+                    >
+                      <FileText size={14} />
+                      <span>Lembar Rapor Asli (Cetak)</span>
+                    </button>
+                  </div>
+
+                  <button
+                    onClick={() => setActiveTab("nilai")}
+                    className="text-xs font-bold text-primary hover:underline inline-flex items-center gap-1 ml-auto sm:ml-0"
+                  >
+                    <span>Filter Mapel</span>
+                    <ChevronRight size={14} />
+                  </button>
+                </div>
               </div>
 
-              <div className="mx-5 mb-4 mt-5 p-4 rounded-2xl bg-blue-50 border border-blue-200 flex gap-3 items-center shadow-sm">
-                <AlertCircle className="text-blue-600 shrink-0" size={18} />
-                <p className="text-xs text-blue-800">
-                  <strong>Rapor Bayangan PTS Semester 1</strong> — Nilai yang ditampilkan adalah Nilai Ujian PTS Murni sesuai arahan kurikulum pesantren.
-                </p>
-              </div>
+              {viewModeRapor === "cetak" ? (
+                <div className="p-4 sm:p-6 bg-slate-100/70 rounded-b-3xl space-y-4">
+                  <div className="flex items-center justify-between flex-wrap gap-3 bg-white/90 backdrop-blur p-4 rounded-2xl border border-slate-200 shadow-sm">
+                    <div className="flex items-center gap-2.5">
+                      <div className="w-8 h-8 rounded-xl bg-primary/10 text-primary flex items-center justify-center font-bold">
+                        <FileText size={16} />
+                      </div>
+                      <div>
+                        <h4 className="text-xs sm:text-sm font-bold text-slate-800">
+                          Dokumen Resmi Rapor Santri (Kasyfud Darajat)
+                        </h4>
+                        <p className="text-[11px] text-slate-500">
+                          Format resmi 2 halaman Pesantren Al-Imam Al-Islami (Bilateral Arab - Indonesia, Tanda Tangan &amp; Barcode QR)
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <a
+                        href={`/rapor/print/${santri.id}`}
+                        target="_blank"
+                        className="btn btn-outline btn-sm inline-flex items-center gap-1.5 text-xs font-bold rounded-xl"
+                      >
+                        <ExternalLink size={13} />
+                        <span>Buka Layar Penuh</span>
+                      </a>
+                      <a
+                        href={`/rapor/print/${santri.id}`}
+                        target="_blank"
+                        className="btn btn-primary btn-sm inline-flex items-center gap-1.5 text-xs font-bold rounded-xl"
+                      >
+                        <Printer size={13} />
+                        <span>Cetak / Download PDF</span>
+                      </a>
+                    </div>
+                  </div>
 
-              <div className="overflow-x-auto pb-4">
+                  {/* Embed Iframe Pratinjau Dokumen Rapor */}
+                  <div className="w-full bg-slate-200/60 rounded-2xl shadow-inner border border-slate-300 overflow-hidden" style={{ minHeight: "850px", height: "80vh" }}>
+                    <iframe
+                      src={`/rapor/print/${santri.id}?embed=true`}
+                      title="Lembar Rapor Resmi Pesantren Al-Imam"
+                      className="w-full h-full border-none"
+                    />
+                  </div>
+                </div>
+              ) : (
+                <>
+                  <div className="mx-5 mb-4 mt-5 p-4 rounded-2xl bg-blue-50 border border-blue-200 flex gap-3 items-center shadow-sm">
+                    <AlertCircle className="text-blue-600 shrink-0" size={18} />
+                    <p className="text-xs text-blue-800">
+                      <strong>Rapor Bayangan PTS Semester 1</strong> — Nilai yang ditampilkan adalah Nilai Ujian PTS Murni sesuai arahan kurikulum pesantren.
+                    </p>
+                  </div>
+
+                  <div className="overflow-x-auto pb-4">
                 <table className="w-full text-left border-collapse" style={{ minWidth: 600 }}>
                   <thead>
                     <tr className="bg-slate-50 text-slate-500 text-xs font-bold uppercase border-b border-slate-100">
@@ -704,9 +787,11 @@ export default function RaporWaliPage() {
                   </tfoot>
                 </table>
               </div>
-            </div>
-          </div>
-        )}
+            </>
+          )}
+        </div>
+      </div>
+    )}
 
         {/* TAB 2: DETAIL NILAI & FILTER PER MAPEL */}
         {activeTab === "nilai" && (

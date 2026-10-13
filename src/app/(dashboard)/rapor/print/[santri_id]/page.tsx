@@ -13,6 +13,7 @@ export default function CetakRaporPage() {
   const tahun_ajaran = searchParams.get("tahun_ajaran") || "2026/2027";
   const initialKertas = (searchParams.get("kertas") || "F4").toUpperCase() === "A4" ? "A4" : "F4";
   const [paperSize, setPaperSize] = useState<"A4" | "F4">(initialKertas);
+  const isEmbed = searchParams.get("embed") === "true";
   
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -183,7 +184,7 @@ export default function CetakRaporPage() {
     <div 
       id="rapor-print-container" 
       style={{ 
-        padding: "24px 28px", 
+        padding: isEmbed ? "12px 14px" : "24px 28px", 
         maxWidth: 1200, 
         margin: "0 auto", 
         display: "flex", 
@@ -196,6 +197,25 @@ export default function CetakRaporPage() {
     >
       <style dangerouslySetInnerHTML={{__html: `
           .arabic-text { font-family: 'Traditional Arabic', serif !important; }
+
+          /* Sembunyikan sidebar & chrome dashboard pada tampilan cetak agar penuh dan bersih */
+          body:has(#rapor-print-container) .app-sidebar,
+          body:has(#rapor-print-container) .sidebar-nav,
+          body:has(#rapor-print-container) .mobile-header,
+          body:has(#rapor-print-container) .app-content > div:has(a[href="/profile"]) {
+            display: none !important;
+          }
+          body:has(#rapor-print-container) .app-layout {
+            display: block !important;
+            margin: 0 !important;
+            padding: 0 !important;
+          }
+          body:has(#rapor-print-container) .app-content {
+            margin: 0 !important;
+            padding: 0 !important;
+            width: 100% !important;
+            max-width: 100% !important;
+          }
           
           /* RESET MUTLAK TABEL RAPOR DOKUMEN RESMI (Sangat Rapi, Solid, Bebas Glitch) */
           .rapor-table {
@@ -411,15 +431,17 @@ export default function CetakRaporPage() {
         justifyContent: "space-between",
         background: "linear-gradient(135deg, #550000 0%, #7a0000 100%)",
         color: "white",
-        padding: "16px 24px",
+        padding: isEmbed ? "12px 18px" : "16px 24px",
         borderRadius: "16px",
         boxShadow: "0 10px 15px -3px rgba(85, 0, 0, 0.2)",
         flexWrap: "wrap",
-        gap: "16px"
+        gap: "12px"
       }}>
         <div>
-          <h2 style={{ fontSize: "18px", fontWeight: "bold", margin: 0 }}>Cetak Rapor Santri (2 Halaman)</h2>
-          <p style={{ fontSize: "12px", opacity: 0.85, margin: "4px 0 0 0" }}>Format resmi Pesantren Al-Imam. Pilih ukuran kertas yang tersedia:</p>
+          <h2 style={{ fontSize: isEmbed ? "15.5px" : "18px", fontWeight: "bold", margin: 0 }}>
+            {isEmbed ? "Lembar Rapor Santri (2 Halaman)" : "Cetak Rapor Santri (2 Halaman)"}
+          </h2>
+          <p style={{ fontSize: "11px", opacity: 0.85, margin: "2px 0 0 0" }}>Format resmi Pesantren Al-Imam. Pilih ukuran kertas yang tersedia:</p>
         </div>
 
         <div style={{ display: "flex", alignItems: "center", gap: "10px", flexWrap: "wrap" }}>
@@ -429,12 +451,12 @@ export default function CetakRaporPage() {
               type="button"
               onClick={() => setPaperSize("F4")}
               style={{
-                padding: "8px 14px",
+                padding: isEmbed ? "6px 11px" : "8px 14px",
                 borderRadius: "8px",
                 border: "none",
                 cursor: "pointer",
                 fontWeight: "bold",
-                fontSize: "12.5px",
+                fontSize: "12px",
                 background: paperSize === "F4" ? "#ffffff" : "transparent",
                 color: paperSize === "F4" ? "#550000" : "#ffffff",
                 boxShadow: paperSize === "F4" ? "0 2px 4px rgba(0,0,0,0.2)" : "none",
@@ -447,12 +469,12 @@ export default function CetakRaporPage() {
               type="button"
               onClick={() => setPaperSize("A4")}
               style={{
-                padding: "8px 14px",
+                padding: isEmbed ? "6px 11px" : "8px 14px",
                 borderRadius: "8px",
                 border: "none",
                 cursor: "pointer",
                 fontWeight: "bold",
-                fontSize: "12.5px",
+                fontSize: "12px",
                 background: paperSize === "A4" ? "#ffffff" : "transparent",
                 color: paperSize === "A4" ? "#550000" : "#ffffff",
                 boxShadow: paperSize === "A4" ? "0 2px 4px rgba(0,0,0,0.2)" : "none",
@@ -467,21 +489,21 @@ export default function CetakRaporPage() {
             type="button"
             onClick={() => window.print()}
             style={{ 
-              padding: "9px 20px", 
+              padding: isEmbed ? "7px 16px" : "9px 20px", 
               borderRadius: "10px", 
               backgroundColor: "#22c55e", 
               color: "white", 
               border: "none", 
               cursor: "pointer", 
               fontWeight: "bold", 
-              fontSize: "13px",
+              fontSize: "12.5px",
               display: "flex", 
               alignItems: "center", 
-              gap: "8px",
+              gap: "7px",
               boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.15)"
             }}
           >
-            <Printer size={18} /> Cetak Sekarang ({paperSize})
+            <Printer size={16} /> Cetak Sekarang ({paperSize})
           </button>
         </div>
       </div>
