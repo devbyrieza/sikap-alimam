@@ -106,50 +106,76 @@ export async function POST(req: NextRequest) {
         const isSppBlocked = sppRecord ? (sppRecord.status !== 'lunas') : false;
         const sppReason = isSppBlocked ? `SPP Bulan ${new Date().toLocaleString('id-ID', {month:'long'})} ${new Date().getFullYear()} Belum Lunas` : null;
 
-        const existingWaliUser = santri.orang_tua.length > 0 ? santri.orang_tua[0].user : null;
-        if (existingWaliUser) {
-          user = existingWaliUser;
-          // Hanya update jika ada record SPP eksplisit di database
+        // Cari user khusus yang username-nya adalah NIS santri ini
+        let dedicatedWaliUser = await prisma.user.findFirst({
+          where: { username: santri.nis },
+          include: { pegawai: { select: { id: true, nama_lengkap: true, nama_panggilan: true } } }
+        });
+
+        if (dedicatedWaliUser) {
+          user = dedicatedWaliUser;
+          // Pastikan relasi orang_tua terhubung ke dedicatedWaliUser ini
+          const isLinked = santri.orang_tua.some(ot => ot.user_id === dedicatedWaliUser.id);
+          if (!isLinked) {
+            await prisma.orangTuaSantri.deleteMany({ where: { santri_id: santri.id } });
+            await prisma.orangTuaSantri.create({ data: { user_id: dedicatedWaliUser.id, santri_id: santri.id } });
+          }
           if (sppRecord) {
             user = await prisma.user.update({
-              where: { id: existingWaliUser.id },
+              where: { id: dedicatedWaliUser.id },
               data: { spp_access_blocked: isSppBlocked, spp_blocked_reason: sppReason },
               include: { pegawai: { select: { id: true, nama_lengkap: true, nama_panggilan: true } } }
             });
           }
         } else {
-          // Auto-provision akun Wali Santri baru
-          const bcrypt2 = await import("bcryptjs");
-          // Gunakan DD-MM-YYYY dari tanggal_lahir sebagai password default (contoh: 07-06-1997), jika kosong fallback ke Paas2026!
-          let defaultPassword = "Paas2026!";
-          if (santri.tanggal_lahir) {
-            const d = new Date(santri.tanggal_lahir);
-            const dd = String(d.getUTCDate ? d.getUTCDate() : d.getDate()).padStart(2, '0');
-            const mm = String((d.getUTCMonth ? d.getUTCMonth() : d.getMonth()) + 1).padStart(2, '0');
-            const yyyy = String(d.getUTCFullYear ? d.getUTCFullYear() : d.getFullYear());
-            defaultPassword = `${dd}-${mm}-${yyyy}`;
-          }
-          const hashed = await bcrypt2.default.hash(defaultPassword, 10);
-          
-          user = await prisma.user.create({
-            data: {
-              username: santri.nis || identifier,
-              email: `wali_${santri.nis || identifier}@pesantren-alimam.com`,
-              password: hashed,
-              plain_password: defaultPassword,
-              nama: `Wali dari ${santri.nama_lengkap}`,
-              role: "WALI_SANTRI",
-              is_active: true,
-              must_change_password: false,
-              spp_access_blocked: isSppBlocked,
-              spp_blocked_reason: sppReason,
-            },
-            include: { pegawai: { select: { id: true, nama_lengkap: true, nama_panggilan: true } } }
-          });
+          // Cari user dari orang_tua jika ada dan username-nya sesuai NIS
+          const existingWaliUser = santri.orang_tua.length > 0 && santri.orang_tua[0].user?.username === santri.nis 
+            ? santri.orang_tua[0].user 
+            : null;
 
-          await prisma.orangTuaSantri.create({
-            data: { user_id: user.id, santri_id: santri.id }
-          });
+          if (existingWaliUser) {
+            user = existingWaliUser;
+            if (sppRecord) {
+              user = await prisma.user.update({
+                where: { id: existingWaliUser.id },
+                data: { spp_access_blocked: isSppBlocked, spp_blocked_reason: sppReason },
+                include: { pegawai: { select: { id: true, nama_lengkap: true, nama_panggilan: true } } }
+              });
+            }
+          } else {
+            // Auto-provision akun Wali Santri baru khusus santri ini
+            const bcrypt2 = await import("bcryptjs");
+            let defaultPassword = "Paas2026!";
+            if (santri.tanggal_lahir) {
+              const d = new Date(santri.tanggal_lahir);
+              const dd = String(d.getUTCDate ? d.getUTCDate() : d.getDate()).padStart(2, '0');
+              const mm = String((d.getUTCMonth ? d.getUTCMonth() : d.getMonth()) + 1).padStart(2, '0');
+              const yyyy = String(d.getUTCFullYear ? d.getUTCFullYear() : d.getFullYear());
+              defaultPassword = `${dd}-${mm}-${yyyy}`;
+            }
+            const hashed = await bcrypt2.default.hash(defaultPassword, 10);
+            
+            user = await prisma.user.create({
+              data: {
+                username: santri.nis || identifier,
+                email: `wali_${santri.nis || identifier}@pesantren-alimam.com`,
+                password: hashed,
+                plain_password: defaultPassword,
+                nama: `Wali dari ${santri.nama_lengkap}`,
+                role: "WALI_SANTRI",
+                is_active: true,
+                must_change_password: false,
+                spp_access_blocked: isSppBlocked,
+                spp_blocked_reason: sppReason,
+              },
+              include: { pegawai: { select: { id: true, nama_lengkap: true, nama_panggilan: true } } }
+            });
+
+            await prisma.orangTuaSantri.deleteMany({ where: { santri_id: santri.id } });
+            await prisma.orangTuaSantri.create({
+              data: { user_id: user.id, santri_id: santri.id }
+            });
+          }
         }
       }
     }
@@ -163,18 +189,58 @@ export async function POST(req: NextRequest) {
 
     let valid = await bcrypt.compare(password, user.password);
 
-    // Untuk akun WALI_SANTRI: toleransi separator (- atau / atau spasi atau tanpa separator)
-    if (!valid && user.role?.toUpperCase() === "WALI_SANTRI" && user.plain_password) {
-      const cleanInput = password.trim().replace(/[\/\s]/g, "-");
-      const cleanStored = user.plain_password.trim().replace(/[\/\s]/g, "-");
-      const digitsInput = password.trim().replace(/\D/g, "");
-      const digitsStored = user.plain_password.trim().replace(/\D/g, "");
-      if (
-        cleanInput === cleanStored || 
-        password.trim() === user.plain_password.trim() ||
-        (digitsInput.length >= 8 && digitsInput === digitsStored)
-      ) {
-        valid = true;
+    if (!valid && user.role?.toUpperCase() === "WALI_SANTRI") {
+      // 1. Cek plain_password jika ada
+      if (user.plain_password) {
+        const cleanInput = password.trim().replace(/[\/\s]/g, "-");
+        const cleanStored = user.plain_password.trim().replace(/[\/\s]/g, "-");
+        const digitsInput = password.trim().replace(/\D/g, "");
+        const digitsStored = user.plain_password.trim().replace(/\D/g, "");
+        if (
+          cleanInput === cleanStored || 
+          password.trim() === user.plain_password.trim() ||
+          (digitsInput.length >= 8 && digitsInput === digitsStored)
+        ) {
+          valid = true;
+        }
+      }
+
+      // 2. Cek langsung dengan tanggal lahir santri terkait
+      if (!valid) {
+        const linkedSantri = await prisma.santriAktif.findFirst({
+          where: {
+            OR: [
+              { nis: user.username },
+              { orang_tua: { some: { user_id: user.id } } }
+            ]
+          }
+        });
+
+        if (linkedSantri && linkedSantri.tanggal_lahir) {
+          const d = new Date(linkedSantri.tanggal_lahir);
+          const pad = (n: number) => String(n).padStart(2, '0');
+          const possibleDates = [
+            `${pad(d.getUTCDate())}-${pad(d.getUTCMonth() + 1)}-${d.getUTCFullYear()}`,
+            `${pad(d.getDate())}-${pad(d.getMonth() + 1)}-${d.getFullYear()}`
+          ];
+          const cleanInput = password.trim().replace(/[\/\s]/g, "-");
+          const digitsInput = password.trim().replace(/\D/g, "");
+
+          for (const pd of possibleDates) {
+            const cleanPd = pd.replace(/[\/\s]/g, "-");
+            const digitsPd = pd.replace(/\D/g, "");
+            if (cleanInput === cleanPd || (digitsInput.length >= 8 && digitsInput === digitsPd)) {
+              valid = true;
+              const bcrypt2 = await import("bcryptjs");
+              const hashed = await bcrypt2.default.hash(pd, 10);
+              await prisma.user.update({
+                where: { id: user.id },
+                data: { password: hashed, plain_password: pd }
+              });
+              break;
+            }
+          }
+        }
       }
     }
     

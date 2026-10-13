@@ -333,91 +333,70 @@ export async function GET(req: NextRequest) {
       // 3. Hash password (format: DD-MM-YYYY)
       const hashedPassword = await bcrypt.hash(item.password, 10);
 
-      // 4. Update atau Buat Akun Wali Santri
-      let waliUser = santri.orang_tua[0]?.user;
+      // 4. Pastikan Akun User Wali Santri Unik per NIS
+      const username = item.nis;
+      const email = `wali_${item.nis}@pesantren-alimam.com`;
+
+      let waliUser = await prisma.user.findFirst({
+        where: {
+          OR: [
+            { username: username },
+            { email: email }
+          ]
+        }
+      });
 
       if (waliUser) {
-        // Update user yang sudah ada
-        await prisma.user.update({
+        waliUser = await prisma.user.update({
           where: { id: waliUser.id },
           data: {
+            username: username,
+            email: email,
             password: hashedPassword,
             plain_password: item.password,
+            nama: `Wali dari ${santri.nama_lengkap}`,
+            role: "WALI_SANTRI",
             is_active: true,
             must_change_password: false,
             spp_access_blocked: false,
             spp_blocked_reason: null
           }
         });
-        results.push({
-          nis: item.nis,
-          nama: santri.nama_lengkap,
-          password: item.password,
-          status: "wali_user_updated"
-        });
       } else {
-        // Buat user baru untuk wali santri
-        const username = item.nis;
-        const email = `wali_${item.nis}@pesantren-alimam.com`;
-
-        // Cek apakah username/email sudah digunakan
-        let existingUser = await prisma.user.findFirst({
-          where: {
-            OR: [
-              { username: username },
-              { email: email }
-            ]
+        waliUser = await prisma.user.create({
+          data: {
+            username: username,
+            email: email,
+            password: hashedPassword,
+            plain_password: item.password,
+            nama: `Wali dari ${santri.nama_lengkap}`,
+            role: "WALI_SANTRI",
+            is_active: true,
+            must_change_password: false,
+            spp_access_blocked: false,
+            spp_blocked_reason: null
           }
         });
-
-        if (existingUser) {
-          await prisma.user.update({
-            where: { id: existingUser.id },
-            data: {
-              password: hashedPassword,
-              plain_password: item.password,
-              role: "WALI_SANTRI",
-              is_active: true,
-              must_change_password: false,
-              spp_access_blocked: false,
-              spp_blocked_reason: null
-            }
-          });
-          waliUser = existingUser;
-        } else {
-          waliUser = await prisma.user.create({
-            data: {
-              username: username,
-              email: email,
-              password: hashedPassword,
-              plain_password: item.password,
-              nama: `Wali dari ${santri.nama_lengkap}`,
-              role: "WALI_SANTRI",
-              is_active: true,
-              must_change_password: false,
-              spp_access_blocked: false,
-              spp_blocked_reason: null
-            }
-          });
-        }
-
-        // Tautkan orang tua ke santri jika belum ada
-        if (santri.orang_tua.length === 0) {
-          await prisma.orangTuaSantri.create({
-            data: {
-              user_id: waliUser.id,
-              santri_id: santri.id
-            }
-          });
-        }
-
-        results.push({
-          nis: item.nis,
-          nama: santri.nama_lengkap,
-          password: item.password,
-          status: "wali_user_created_and_linked"
-        });
       }
+
+      // 5. Bersihkan dan tautkan OrangTuaSantri secara tepat (1:1 ke santri ini)
+      await prisma.orangTuaSantri.deleteMany({
+        where: { santri_id: santri.id }
+      });
+
+      await prisma.orangTuaSantri.create({
+        data: {
+          user_id: waliUser.id,
+          santri_id: santri.id
+        }
+      });
+
+      results.push({
+        nis: item.nis,
+        nama: santri.nama_lengkap,
+        password: item.password,
+        status: "wali_user_synced_clean"
+      });
     }
 
     return NextResponse.json({
