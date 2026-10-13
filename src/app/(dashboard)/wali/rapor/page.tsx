@@ -47,8 +47,7 @@ export default function RaporWaliPage() {
   const [cetakData, setCetakData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   
-  // Navigation Tabs
-  const [activeTab, setActiveTab] = useState<"ringkasan" | "nilai" | "presensi" | "jurnal" | "tahfidz">("ringkasan");
+  const [activeTab, setActiveTab] = useState<"ringkasan" | "nilai" | "presensi" | "jurnal" | "tahfidz" | "spp">("ringkasan");
 
   // Filters for Nilai Tab
   const [filterMapelNilai, setFilterMapelNilai] = useState<string>("");
@@ -63,6 +62,10 @@ export default function RaporWaliPage() {
 
   // Modal Jurnal Detail
   const [selectedJurnal, setSelectedJurnal] = useState<any>(null);
+
+  // SPP History State
+  const [sppHistory, setSppHistory] = useState<any>(null);
+  const [loadingSpp, setLoadingSpp] = useState(false);
 
   useEffect(() => {
     // Fetch from real API (if no santriId, API defaults to first active santri)
@@ -85,6 +88,16 @@ export default function RaporWaliPage() {
         setLoading(false);
       });
   }, [santriId]);
+
+  // Fetch SPP History when tab is opened
+  useEffect(() => {
+    if (activeTab !== "spp" || !santriId || sppHistory) return;
+    setLoadingSpp(true);
+    fetch(`/api/wali/spp-history?santri_id=${santriId}`)
+      .then(r => r.json())
+      .then(d => { setSppHistory(d); setLoadingSpp(false); })
+      .catch(() => setLoadingSpp(false));
+  }, [activeTab, santriId, sppHistory]);
 
   const handleKirimWA = async () => {
     if (!data?.santri) return;
@@ -578,6 +591,18 @@ export default function RaporWaliPage() {
                 >
                   <HeartHandshake size={16} />
                   <span>5. Halaqoh & Tahfidz Al-Qur&apos;an</span>
+                </button>
+
+                <button
+                  onClick={() => setActiveTab("spp")}
+                  className={`px-4 py-2.5 rounded-xl transition-all flex items-center gap-2 whitespace-nowrap text-sm font-bold ${
+                    activeTab === "spp"
+                      ? "bg-primary text-white shadow-md shadow-primary/30"
+                      : "text-slate-500 hover:bg-slate-100"
+                  }`}
+                >
+                  <CreditCard size={16} />
+                  <span>6. SPP &amp; Wali Kelas</span>
                 </button>
               </div>
             </div>
@@ -1097,6 +1122,219 @@ export default function RaporWaliPage() {
                 </div>
               )}
             </div>
+          </div>
+        )}
+
+        {/* TAB 6: SPP & WALI KELAS */}
+        {activeTab === "spp" && (
+          <div className="space-y-6">
+            {loadingSpp ? (
+              <div className="card p-12 text-center bg-white/90 backdrop-blur rounded-3xl shadow-xl shadow-primary/10 border border-slate-100">
+                <Loader2 className="w-10 h-10 animate-spin text-primary mx-auto mb-3" />
+                <p className="text-slate-600 font-semibold text-sm">Memuat informasi SPP dan Wali Kelas...</p>
+              </div>
+            ) : (
+              <>
+                {/* 1. KARTU WALI KELAS */}
+                <div className="bg-gradient-to-br from-primary via-[#7a0000] to-rose-950 text-white rounded-3xl p-6 sm:p-8 shadow-xl shadow-primary/20 relative overflow-hidden">
+                  <div className="absolute -right-8 -top-8 w-48 h-48 bg-white/5 rounded-full border border-white/10 pointer-events-none" />
+                  <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+                    <div className="flex items-center gap-4 sm:gap-5">
+                      <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-white/15 border-2 border-white/20 backdrop-blur flex items-center justify-center text-2xl font-black text-white shrink-0 shadow-lg">
+                        {sppHistory?.wali_kelas?.nama ? (
+                          sppHistory.wali_kelas.nama.slice(0, 2).toUpperCase()
+                        ) : (
+                          <User size={32} />
+                        )}
+                      </div>
+                      <div>
+                        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/15 border border-white/20 text-xs font-semibold text-rose-100 mb-1.5">
+                          <ShieldCheck size={13} />
+                          <span>Wali Kelas Ananda</span>
+                        </div>
+                        <h3 className="text-lg sm:text-xl font-black text-white leading-tight">
+                          {sppHistory?.wali_kelas?.nama || "Ustadz Pembina Kelas"}
+                        </h3>
+                        <p className="text-xs sm:text-sm text-rose-100/90 mt-1">
+                          Kelas {data?.santri?.kelas || sppHistory?.santri?.kelas || "-"} &bull; {data?.santri?.jenjang || sppHistory?.santri?.jenjang || "Pesantren Al-Imam"}
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* WhatsApp Action Button */}
+                    <div className="flex flex-col sm:flex-row gap-3">
+                      {sppHistory?.wali_kelas?.no_hp ? (
+                        <a
+                          href={`https://wa.me/${sppHistory.wali_kelas.no_hp.replace(/[^0-9]/g, "").replace(/^0/, "62")}?text=${encodeURIComponent(
+                            `Assalamu'alaikum Warahmatullahi Wabarakatuh Ustadz ${sppHistory.wali_kelas.nama_panggilan || sppHistory.wali_kelas.nama}, saya orang tua dari ${data?.santri?.nama || sppHistory?.santri?.nama} (Kelas ${data?.santri?.kelas || sppHistory?.santri?.kelas}). Mohon izin bersilaturahmi dan berkonsultasi mengenai perkembangan ananda.`
+                          )}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center justify-center gap-2.5 px-5 py-3 rounded-2xl bg-emerald-500 hover:bg-emerald-600 text-white font-bold text-sm shadow-lg shadow-emerald-950/20 transition-all hover:scale-[1.02] active:scale-[0.98]"
+                        >
+                          <PhoneCall size={18} />
+                          <span>Hubungi via WhatsApp</span>
+                        </a>
+                      ) : (
+                        <div className="inline-flex items-center gap-2 px-4 py-3 rounded-2xl bg-white/10 text-white/80 text-xs font-medium">
+                          <AlertCircle size={15} />
+                          <span>Nomor kontak dapat dikoordinasikan via Kesantrian</span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                {/* 2. STATS RINGKASAN SPP */}
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                  <div className="bg-gradient-to-br from-emerald-50 to-white rounded-2xl p-5 border border-emerald-100 shadow-md">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-xs font-bold text-emerald-700 uppercase tracking-wide">Bulan Terbayar</span>
+                      <div className="p-2 bg-emerald-500 rounded-xl text-white">
+                        <CheckCircle2 size={16} />
+                      </div>
+                    </div>
+                    <p className="text-3xl font-black text-emerald-900">
+                      {sppHistory?.spp_summary?.total_lunas || 0}
+                      <span className="text-base font-semibold text-emerald-600 ml-1.5">Bulan</span>
+                    </p>
+                    <p className="text-[11px] text-emerald-600 mt-1">Status kewajiban lunas</p>
+                  </div>
+
+                  <div className="bg-gradient-to-br from-rose-50 to-white rounded-2xl p-5 border border-rose-100 shadow-md">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-xs font-bold text-rose-700 uppercase tracking-wide">Tunggakan / Belum Lunas</span>
+                      <div className="p-2 bg-rose-500 rounded-xl text-white">
+                        <AlertTriangle size={16} />
+                      </div>
+                    </div>
+                    <p className="text-3xl font-black text-rose-900">
+                      {sppHistory?.spp_summary?.total_belum_lunas || 0}
+                      <span className="text-base font-semibold text-rose-600 ml-1.5">Bulan</span>
+                    </p>
+                    <p className="text-[11px] text-rose-600 mt-1">Perlu penyelesaian administrasi</p>
+                  </div>
+
+                  <div className="bg-gradient-to-br from-blue-50 to-white rounded-2xl p-5 border border-blue-100 shadow-md">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-xs font-bold text-blue-700 uppercase tracking-wide">Total Terbayar (12 Bulan)</span>
+                      <div className="p-2 bg-blue-500 rounded-xl text-white">
+                        <CreditCard size={16} />
+                      </div>
+                    </div>
+                    <p className="text-2xl font-black text-blue-900">
+                      Rp {(sppHistory?.spp_summary?.total_nominal_lunas || 0).toLocaleString("id-ID")}
+                    </p>
+                    <p className="text-[11px] text-blue-600 mt-1">Akumulasi riwayat tercatat</p>
+                  </div>
+                </div>
+
+                {/* 3. RIWAYAT PEMBAYARAN SPP 12 BULAN TERAKHIR */}
+                <div className="bg-white/90 backdrop-blur rounded-3xl p-6 sm:p-7 border border-slate-100 shadow-xl shadow-primary/10 space-y-5">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-2 border-b border-slate-100">
+                    <div className="flex items-center gap-3">
+                      <div className="p-2.5 bg-primary/10 text-primary rounded-xl">
+                        <Calendar size={20} />
+                      </div>
+                      <div>
+                        <h3 className="font-bold text-slate-800 text-base sm:text-lg">Riwayat SPP 12 Bulan Terakhir</h3>
+                        <p className="text-xs text-slate-500">Transparansi pencatatan SPP bulanan santri di Safina Keuangan</p>
+                      </div>
+                    </div>
+                    <span className="text-xs font-semibold px-3 py-1.5 rounded-full bg-slate-100 text-slate-600 self-start sm:self-auto">
+                      Tahun Ajaran 2026/2027
+                    </span>
+                  </div>
+
+                  {(!sppHistory?.spp_history || sppHistory.spp_history.length === 0) ? (
+                    <div className="text-center text-slate-400 py-12">
+                      <CreditCard size={36} className="mx-auto mb-2 opacity-30" />
+                      <p className="text-sm font-medium">Belum ada riwayat SPP yang dapat ditampilkan.</p>
+                    </div>
+                  ) : (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5">
+                      {sppHistory.spp_history.map((item: any, idx: number) => {
+                        const isLunas = item.status === "lunas";
+                        const isBelum = item.status === "belum_lunas";
+                        const isMendatang = item.status === "mendatang";
+
+                        return (
+                          <div
+                            key={idx}
+                            className={`p-4 rounded-2xl border transition-all ${
+                              item.is_bulan_ini
+                                ? "bg-amber-50/70 border-amber-300 ring-2 ring-amber-400/30 shadow-md"
+                                : isLunas
+                                ? "bg-slate-50/70 border-slate-200/80 hover:bg-white"
+                                : isBelum
+                                ? "bg-rose-50/40 border-rose-200 hover:bg-rose-50/70"
+                                : "bg-slate-50/30 border-slate-100 opacity-75"
+                            }`}
+                          >
+                            <div className="flex items-start justify-between gap-2 mb-2">
+                              <div>
+                                <div className="flex items-center gap-2">
+                                  <h4 className="font-extrabold text-slate-800 text-sm">{item.label}</h4>
+                                  {item.is_bulan_ini && (
+                                    <span className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full bg-amber-500 text-white">
+                                      Bulan Ini
+                                    </span>
+                                  )}
+                                </div>
+                                <p className="text-xs font-semibold text-slate-600 mt-0.5">
+                                  Rp {(item.nominal || 0).toLocaleString("id-ID")}
+                                </p>
+                              </div>
+
+                              {isLunas ? (
+                                <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl bg-emerald-100 text-emerald-800 text-[11px] font-bold shrink-0">
+                                  <CheckCircle2 size={13} />
+                                  <span>Lunas</span>
+                                </span>
+                              ) : isBelum ? (
+                                <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl bg-rose-100 text-rose-800 text-[11px] font-bold shrink-0">
+                                  <XCircle size={13} />
+                                  <span>Belum Lunas</span>
+                                </span>
+                              ) : (
+                                <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl bg-slate-100 text-slate-600 text-[11px] font-semibold shrink-0">
+                                  <Clock size={13} />
+                                  <span>Mendatang</span>
+                                </span>
+                              )}
+                            </div>
+
+                            <div className="text-[11px] text-slate-500 pt-2 border-t border-slate-200/60 flex items-center justify-between">
+                              <span>Tanggal Bayar:</span>
+                              <span className="font-medium text-slate-700">
+                                {item.tanggal_bayar ? formatTanggal(item.tanggal_bayar) : isMendatang ? "Belum Jatuh Tempo" : "-"}
+                              </span>
+                            </div>
+                            {item.metode_bayar && (
+                              <div className="text-[10px] text-slate-400 mt-1 flex items-center justify-between">
+                                <span>Metode:</span>
+                                <span className="font-semibold text-slate-600 capitalize">{item.metode_bayar}</span>
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
+
+                  {/* Catatan / Panduan Pembayaran */}
+                  <div className="p-4 rounded-2xl bg-amber-50/80 border border-amber-200/80 flex items-start gap-3 mt-4">
+                    <AlertCircle className="text-amber-700 shrink-0 mt-0.5" size={18} />
+                    <div className="text-xs text-amber-900 leading-relaxed">
+                      <p className="font-bold">Informasi Pembayaran &amp; Rekonsiliasi SPP</p>
+                      <p className="mt-0.5 text-amber-800">
+                        Pembayaran SPP dilakukan melalui rekening resmi Pesantren Islam Al-Imam. Jika telah melakukan transfer namun status belum terbarui, silakan konfirmasi bukti transfer ke Bagian Keuangan melalui nomor WhatsApp layanan atau wali kelas ananda.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </>
+            )}
           </div>
         )}
       </div>

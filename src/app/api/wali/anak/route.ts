@@ -3,6 +3,8 @@ import { prisma } from "@/lib/prisma";
 import { cekStatusSpp } from "@/lib/keuangan";
 import { getSession } from "@/lib/auth";
 
+export const dynamic = "force-dynamic";
+
 export async function GET() {
   try {
     const session = await getSession();
@@ -21,7 +23,20 @@ export async function GET() {
     // Cari santri aktif milik wali santri
     const santriList = await prisma.santriAktif.findMany({
       where: whereClause,
-      include: { kelas: true },
+      include: {
+        kelas: {
+          include: {
+            wali_kelas: {
+              select: {
+                id: true,
+                nama_lengkap: true,
+                nama_panggilan: true,
+                no_hp: true,
+              }
+            }
+          }
+        }
+      },
       orderBy: { nama_lengkap: "asc" }
     });
 
@@ -34,9 +49,15 @@ export async function GET() {
           nis: s.nis,
           kelas: s.kelas?.nama || "Kelas 7 MTs",
           jenjang: s.kelas?.jenjang || "MTs",
+          wali_kelas: s.kelas?.wali_kelas ? {
+            nama: s.kelas.wali_kelas.nama_lengkap,
+            nama_panggilan: s.kelas.wali_kelas.nama_panggilan,
+            no_hp: s.kelas.wali_kelas.no_hp,
+          } : null,
           foto_url: s.foto_url,
           spp: sppInfo,
-          lunas: sppInfo.lunas };
+          lunas: sppInfo.lunas
+        };
       })
     );
 
