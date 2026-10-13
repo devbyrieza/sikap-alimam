@@ -707,7 +707,12 @@ export default function RaporWaliPage() {
                         <p className="text-2xl font-black text-primary leading-none mt-0.5">
                           {item.nilaiAkhir || "-"}
                         </p>
-                        <span className="text-[11px] font-bold text-emerald-700">{item.predikat}</span>
+                        <span className={`text-[11px] font-bold ${
+                          item.nilaiAkhir && parseFloat(item.nilaiAkhir) >= 90 ? "text-emerald-700" :
+                          item.nilaiAkhir && parseFloat(item.nilaiAkhir) >= 80 ? "text-blue-700" :
+                          item.nilaiAkhir && parseFloat(item.nilaiAkhir) >= 70 ? "text-amber-700" :
+                          "text-red-600"
+                        }`}>{item.predikat}</span>
                       </div>
                     </div>
 
@@ -721,9 +726,21 @@ export default function RaporWaliPage() {
 
                     <div className="flex items-center justify-between text-xs text-slate-500 pt-1">
                       <span>Target KKM: <b>{item.kkm || getKkm(item.mapel_nama)}.0</b></span>
-                      <span className="inline-flex items-center gap-1 font-bold text-emerald-600">
-                        <CheckCircle2 size={13} /> Tuntas Kurikulum
-                      </span>
+                      {(() => {
+                        const nilai = item.nilaiAkhir ? parseFloat(item.nilaiAkhir) : null;
+                        const kkm = item.kkm || getKkm(item.mapel_nama);
+                        if (nilai === null) return <span className="inline-flex items-center gap-1 font-bold text-slate-400">— Belum Ada Nilai</span>;
+                        if (nilai >= kkm) return (
+                          <span className="inline-flex items-center gap-1 font-bold text-emerald-600">
+                            <CheckCircle2 size={13} /> {nilai === kkm ? "Pas KKM" : "Di Atas KKM"}
+                          </span>
+                        );
+                        return (
+                          <span className="inline-flex items-center gap-1 font-bold text-red-500">
+                            <XCircle size={13} /> Di Bawah KKM
+                          </span>
+                        );
+                      })()}
                     </div>
                   </div>
                 ))
