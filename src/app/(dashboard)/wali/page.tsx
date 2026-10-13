@@ -98,7 +98,7 @@ export default function WaliDashboard() {
                     </div>
                     <h2 className="text-xl sm:text-2xl font-bold text-slate-800 mt-1 leading-snug">{anak.nama}</h2>
                     <p className="text-xs sm:text-sm text-slate-500 font-medium">
-                      Kelas: <strong className="text-slate-700">{anak.kelas}</strong> ({anak.jenjang})
+                      Kelas: <strong className="text-slate-700">{anak.kelas}</strong>
                     </p>
                   </div>
                 </div>

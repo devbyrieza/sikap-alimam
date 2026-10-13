@@ -327,7 +327,7 @@ export default function RaporWaliPage() {
               <div>
                 <div className="flex items-center gap-2 mb-1 flex-wrap">
                   <span className="px-2.5 py-0.5 rounded-full bg-white/20 text-white text-[11px] font-bold tracking-wide">
-                    {santri.kelas} ({santri.jenjang || "MTs"})
+                    {santri.kelas}
                   </span>
                   <span className="text-white/80 font-mono text-xs">NIS: {(santri?.nama ? getOfficialNis(santri.nama) : null) || santri.nis}</span>
                   {data?.spp?.lunas ? (
@@ -348,12 +348,12 @@ export default function RaporWaliPage() {
                   {santri.nama}
                 </h1>
                 <p className="text-white/80 text-xs sm:text-sm font-medium mt-0.5">
-                  Pesantren Al-Imam Al-Islami • Tahun Ajaran {santri?.tahun_ajaran || "2026/2027"}
+                  Pesantren Al-Imam Al-Islami • Managed by Al-Andalus IIBS • Tahun Ajaran {santri?.tahun_ajaran || "2026/2027"}
                 </p>
               </div>
             </div>
 
-            {/* Quick Pill Status */}
+            {/* Quick Pill Status - 100% Seragam dengan 4 Kartu di Bawah */}
             <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-4 sm:p-5 flex items-center gap-4 sm:gap-6 self-stretch sm:self-auto justify-around flex-wrap">
               {ringkasan.ranking ? (
                 <>
@@ -368,19 +368,22 @@ export default function RaporWaliPage() {
                   <div className="h-10 w-px bg-white/20 hidden sm:block" />
                 </>
               ) : null}
+
               <div className="text-center">
-                <p className="text-[11px] text-white/75 font-medium uppercase">Kehadiran</p>
+                <p className="text-[11px] text-white/75 font-medium uppercase">Rata-Rata PTS</p>
+                <p className="text-xl sm:text-2xl font-black text-white">{ringkasan.rataRata || computedAvg || "-"}</p>
+              </div>
+              <div className="h-10 w-px bg-white/20" />
+
+              <div className="text-center">
+                <p className="text-[11px] text-white/75 font-medium uppercase">Kehadiran KBM</p>
                 <p className="text-xl sm:text-2xl font-black text-white">{ringkasan.persentaseKehadiran}%</p>
               </div>
               <div className="h-10 w-px bg-white/20" />
+
               <div className="text-center">
-                <p className="text-[11px] text-white/75 font-medium uppercase">Total Mapel</p>
-                <p className="text-xl sm:text-2xl font-black text-white">{akademikGrouped.length || detail.mapelList?.length || 12}</p>
-              </div>
-              <div className="h-10 w-px bg-white/20" />
-              <div className="text-center">
-                <p className="text-[11px] text-white/75 font-medium uppercase">Nilai Rata-Rata</p>
-                <p className="text-xl sm:text-2xl font-black text-white">{ringkasan.rataRata || computedAvg || "-"}</p>
+                <p className="text-[11px] text-white/75 font-medium uppercase">Halaqoh Tahfidz</p>
+                <p className="text-xl sm:text-2xl font-black text-white">Aktif</p>
               </div>
             </div>
           </div>
