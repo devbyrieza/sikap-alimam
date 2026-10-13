@@ -370,8 +370,8 @@ textarea.form-control { resize: vertical; min-height: 80px; }
   border-radius: var(--radius);
   border: 1px solid var(--border);
 }
-table { width: 100%; border-collapse: collapse; background: white; }
-thead th {
+table:not(.rapor-table) { width: 100%; border-collapse: collapse; background: white; }
+table:not(.rapor-table) thead th {
   padding: 8px 12px;
   text-align: left;
   font-size: 11px;
@@ -386,7 +386,7 @@ thead th {
   top: 0;
   z-index: 10;
 }
-tbody td {
+table:not(.rapor-table) tbody td {
   padding: 10px 12px;
   font-size: 13px;
   color: var(--text-main);
@@ -394,9 +394,9 @@ tbody td {
   vertical-align: middle;
   transition: background 0.15s ease;
 }
-tbody tr:last-child td { border-bottom: none; }
-tbody tr:hover td { background: #fdf8f0; }
-tbody tr:hover td:first-child {
+table:not(.rapor-table) tbody tr:last-child td { border-bottom: none; }
+table:not(.rapor-table) tbody tr:hover td { background: #fdf8f0; }
+table:not(.rapor-table) tbody tr:hover td:first-child {
   box-shadow: inset 3px 0 0 var(--secondary-dark);
 }
 
@@ -891,23 +891,23 @@ html, body {
 
 /* -- 11. TABLE REFINEMENTS - BLU density with breathing room --------- */
 @layer components {
-  table {
+  table:not(.rapor-table) {
     border-collapse: separate;
     border-spacing: 0;
   }
 
   /* Smooth row hover for data-dense tables */
-  tbody tr {
+  table:not(.rapor-table) tbody tr {
     transition: background-color 0.15s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
-  tbody tr:hover > td {
+  table:not(.rapor-table) tbody tr:hover > td {
     background-color: rgba(248, 250, 252, 0.9);
   }
 
   /* Rounded first/last cell corners for separated table sections */
-  thead th:first-child { border-radius: 12px 0 0 0; }
-  thead th:last-child  { border-radius: 0 12px 0 0; }
+  table:not(.rapor-table) thead th:first-child { border-radius: 12px 0 0 0; }
+  table:not(.rapor-table) thead th:last-child  { border-radius: 0 12px 0 0; }
 }
 
 /* -- 12. MODAL & BOTTOM SHEET - BLU slide-up rounded panels ---------- */
@@ -1243,6 +1243,46 @@ input[type="checkbox"], input[type="radio"], input[type="submit"], input[type="b
     max-width: 100% !important;
     width: 100% !important;
     background: transparent !important;
+  }
+
+  .rapor-table,
+  .rapor-table table {
+    width: 100% !important;
+    max-width: 100% !important;
+    table-layout: fixed !important;
+    border-collapse: collapse !important;
+    border-spacing: 0 !important;
+    border: 1px solid #000000 !important;
+    border-radius: 0 !important;
+    overflow: visible !important;
+    box-sizing: border-box !important;
+  }
+
+  .rapor-table th,
+  .rapor-table td,
+  .rapor-table thead th,
+  .rapor-table tbody td {
+    position: static !important;
+    top: auto !important;
+    z-index: auto !important;
+    border: 1px solid #000000 !important;
+    border-color: #000000 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+  }
+
+  .rapor-table thead th {
+    background-color: #f1f5f9 !important;
+    color: #000000 !important;
+    border-bottom: 1px solid #000000 !important;
+  }
+
+  .rapor-table tbody tr:last-child td {
+    border-bottom: 1px solid #000000 !important;
+  }
+
+  .rapor-table .border-divider-mid {
+    border-right: 2px solid #000000 !important;
   }
 
   @page {

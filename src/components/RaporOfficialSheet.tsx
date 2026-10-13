@@ -166,26 +166,58 @@ export default function RaporOfficialSheet({ data, showPrintToolbar = false }: R
         }
 
         .rapor-table {
-          width: 100%;
-          table-layout: fixed;
+          width: 100% !important;
+          max-width: 100% !important;
+          table-layout: fixed !important;
           border-collapse: collapse !important;
+          border-spacing: 0 !important;
           border: 1px solid #000000 !important;
-          border-spacing: 0;
+          border-radius: 0 !important;
           font-family: Arial, Helvetica, sans-serif;
           margin-bottom: 0px;
+          box-sizing: border-box !important;
         }
         
+        .rapor-table,
+        .rapor-table thead,
+        .rapor-table tbody,
+        .rapor-table tr,
+        .rapor-table th,
+        .rapor-table td {
+          border-radius: 0 !important;
+          box-sizing: border-box !important;
+        }
+
         .rapor-table th,
         .rapor-table td {
           border: 1px solid #000000 !important;
           border-color: #000000 !important;
           vertical-align: middle !important;
+          position: static !important;
+          top: auto !important;
+          z-index: auto !important;
+          border-radius: 0 !important;
+          box-shadow: none !important;
         }
 
-        .rapor-table thead th {
+        .rapor-table thead th,
+        .rapor-table thead th:first-child,
+        .rapor-table thead th:last-child {
+          position: static !important;
+          top: auto !important;
+          z-index: auto !important;
           color: #000000 !important;
           font-weight: bold !important;
           background-color: #f1f5f9 !important;
+          border: 1px solid #000000 !important;
+          border-color: #000000 !important;
+          border-radius: 0 !important;
+          box-shadow: none !important;
+          white-space: normal !important;
+        }
+
+        .rapor-table tbody tr:last-child td {
+          border-bottom: 1px solid #000000 !important;
         }
 
         .rapor-table .border-divider-mid {
@@ -249,6 +281,46 @@ export default function RaporOfficialSheet({ data, showPrintToolbar = false }: R
             background: #ffffff !important; 
             display: block !important; 
             width: 100% !important;
+          }
+
+          .rapor-table,
+          .rapor-table table {
+            width: 100% !important;
+            max-width: 100% !important;
+            table-layout: fixed !important;
+            border-collapse: collapse !important;
+            border-spacing: 0 !important;
+            border: 1px solid #000000 !important;
+            border-radius: 0 !important;
+            overflow: visible !important;
+            box-sizing: border-box !important;
+          }
+
+          .rapor-table th,
+          .rapor-table td,
+          .rapor-table thead th,
+          .rapor-table tbody td {
+            position: static !important;
+            top: auto !important;
+            z-index: auto !important;
+            border: 1px solid #000000 !important;
+            border-color: #000000 !important;
+            border-radius: 0 !important;
+            box-shadow: none !important;
+          }
+
+          .rapor-table thead th {
+            background-color: #f1f5f9 !important;
+            color: #000000 !important;
+            border-bottom: 1px solid #000000 !important;
+          }
+
+          .rapor-table tbody tr:last-child td {
+            border-bottom: 1px solid #000000 !important;
+          }
+
+          .rapor-table .border-divider-mid {
+            border-right: 2px solid #000000 !important;
           }
 
           .rapor-page {
@@ -455,8 +527,8 @@ export default function RaporOfficialSheet({ data, showPrintToolbar = false }: R
             </div>
 
             {/* TABEL UTAMA AKADEMIK (10 Kolom Bilateral Simetris) */}
-            <div className="overflow-x-auto custom-scrollbar">
-              <table className="rapor-table" style={{ width: "100%", minWidth: "620px", tableLayout: "fixed", borderCollapse: "collapse", border: "1.5px solid #000000", fontSize: "11px" }}>
+            <div style={{ width: "100%", overflow: "visible" }}>
+              <table className="rapor-table" style={{ width: "100%", tableLayout: "fixed", borderCollapse: "collapse", border: "1px solid #000000", fontSize: "11px" }}>
                 <colgroup>
                   {/* Sisi Kiri (50%) */}
                   <col style={{ width: "4.5%" }} />   {/* 1. No */}
@@ -682,16 +754,15 @@ export default function RaporOfficialSheet({ data, showPrintToolbar = false }: R
             </div>
 
             {/* 1. KEPRIBADIAN SANTRI & KETIDAKHADIRAN */}
-            <div className="overflow-x-auto custom-scrollbar">
+            <div style={{ width: "100%", overflow: "visible", marginBottom: "6px" }}>
               <table 
                 className="rapor-table" 
                 style={{ 
                   width: "100%", 
-                  minWidth: "620px",
                   tableLayout: "fixed", 
                   borderCollapse: "collapse", 
                   border: "1px solid #000000", 
-                  marginBottom: "6px", 
+                  marginBottom: "0px", 
                   fontFamily: "Arial, Helvetica, sans-serif",
                   fontSize: "11px"
                 }}
@@ -756,8 +827,14 @@ export default function RaporOfficialSheet({ data, showPrintToolbar = false }: R
             </div>
 
             {/* 2. LAPORAN TAHSIN & TAHFIDZ */}
-            <div style={{ marginBottom: "6px" }} className="overflow-x-auto custom-scrollbar">
-              <table className="rapor-table" style={{ width: "100%", minWidth: "620px", borderCollapse: "collapse", border: "1px solid #000000", fontSize: "11px", fontFamily: "Arial, Helvetica, sans-serif" }}>
+            <div style={{ width: "100%", overflow: "visible", marginBottom: "6px" }}>
+              <table className="rapor-table" style={{ width: "100%", tableLayout: "fixed", borderCollapse: "collapse", border: "1px solid #000000", fontSize: "11px", fontFamily: "Arial, Helvetica, sans-serif" }}>
+                <colgroup>
+                  <col style={{ width: "50%" }} />
+                  <col style={{ width: "16%" }} />
+                  <col style={{ width: "16%" }} />
+                  <col style={{ width: "18%" }} />
+                </colgroup>
                 <thead>
                   <tr style={{ backgroundColor: "#f1f5f9" }}>
                     <th colSpan={4} style={{ border: "1px solid #000000", padding: "3.5px 6px", textAlign: "left", color: "#000000", fontWeight: "bold", fontSize: "11.5px" }}>
@@ -766,9 +843,9 @@ export default function RaporOfficialSheet({ data, showPrintToolbar = false }: R
                   </tr>
                   <tr style={{ backgroundColor: "#f8fafc" }}>
                     <th style={{ border: "1px solid #000000", padding: "3px 6px", textAlign: "left", color: "#000000" }}>Jenis / Materi Ujian</th>
-                    <th style={{ border: "1px solid #000000", padding: "3px 6px", width: "15%", textAlign: "center", color: "#000000" }}>Sikap</th>
-                    <th style={{ border: "1px solid #000000", padding: "3px 6px", width: "15%", textAlign: "center", color: "#000000" }}>Nilai Ujian</th>
-                    <th style={{ border: "1px solid #000000", padding: "3px 6px", width: "20%", textAlign: "center", color: "#000000" }}>Keterangan</th>
+                    <th style={{ border: "1px solid #000000", padding: "3px 6px", textAlign: "center", color: "#000000" }}>Sikap</th>
+                    <th style={{ border: "1px solid #000000", padding: "3px 6px", textAlign: "center", color: "#000000" }}>Nilai Ujian</th>
+                    <th style={{ border: "1px solid #000000", padding: "3px 6px", textAlign: "center", color: "#000000" }}>Keterangan</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -808,8 +885,8 @@ export default function RaporOfficialSheet({ data, showPrintToolbar = false }: R
             </div>
 
             {/* 3. EVALUASI PENCAPAIAN AL-QUR'AN */}
-            <div style={{ marginBottom: "6px" }} className="overflow-x-auto custom-scrollbar">
-              <table className="rapor-table" style={{ width: "100%", minWidth: "620px", borderCollapse: "collapse", border: "1px solid #000000", fontSize: "11px", fontFamily: "Arial, Helvetica, sans-serif" }}>
+            <div style={{ width: "100%", overflow: "visible", marginBottom: "6px" }}>
+              <table className="rapor-table" style={{ width: "100%", tableLayout: "fixed", borderCollapse: "collapse", border: "1px solid #000000", fontSize: "11px", fontFamily: "Arial, Helvetica, sans-serif" }}>
                 <thead>
                   <tr style={{ backgroundColor: "#f1f5f9" }}>
                     <th style={{ border: "1px solid #000000", padding: "3.5px 8px", textAlign: "left", fontSize: "11.5px", color: "#000000" }}>EVALUASI PENCAPAIAN AL-QUR'AN</th>
