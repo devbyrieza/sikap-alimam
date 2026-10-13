@@ -11,8 +11,7 @@ export default function CetakRaporPage() {
   const santriId = params.santri_id as string;
   const semester = searchParams.get("semester") || "Ganjil";
   const tahun_ajaran = searchParams.get("tahun_ajaran") || "2026/2027";
-  const initialKertas = (searchParams.get("kertas") || "F4").toUpperCase() === "A4" ? "A4" : "F4";
-  const [paperSize, setPaperSize] = useState<"A4" | "F4">(initialKertas);
+  const paperSize = "A4" as string;
   const isEmbed = searchParams.get("embed") === "true";
   
   const [data, setData] = useState<any>(null);
@@ -289,7 +288,7 @@ export default function CetakRaporPage() {
           @media print {
             /* Margin Keliling Presisi (Atas, Bawah: 6mm, Kiri, Kanan: 10mm) */
             @page { 
-              size: ${paperSize === "F4" ? "215mm 330mm" : "A4"}; 
+              size: A4 portrait; 
               margin: 6mm 10mm 6mm 10mm; 
             }
             * {
@@ -431,79 +430,41 @@ export default function CetakRaporPage() {
         justifyContent: "space-between",
         background: "linear-gradient(135deg, #550000 0%, #7a0000 100%)",
         color: "white",
-        padding: isEmbed ? "12px 18px" : "16px 24px",
+        padding: "16px 24px",
         borderRadius: "16px",
         boxShadow: "0 10px 15px -3px rgba(85, 0, 0, 0.2)",
         flexWrap: "wrap",
         gap: "12px"
       }}>
         <div>
-          <h2 style={{ fontSize: isEmbed ? "15.5px" : "18px", fontWeight: "bold", margin: 0 }}>
-            {isEmbed ? "Lembar Rapor Santri (2 Halaman)" : "Cetak Rapor Santri (2 Halaman)"}
+          <h2 style={{ fontSize: "17.5px", fontWeight: "bold", margin: 0 }}>
+            Lembar Rapor Santri (Kasyfud Darajat)
           </h2>
-          <p style={{ fontSize: "11px", opacity: 0.85, margin: "2px 0 0 0" }}>Format resmi Pesantren Al-Imam. Pilih ukuran kertas yang tersedia:</p>
+          <p style={{ fontSize: "11.5px", opacity: 0.9, margin: "3px 0 0 0" }}>
+            Format Resmi 2 Halaman • Standar Internasional Kertas A4 (210 × 297 mm)
+          </p>
         </div>
 
-        <div style={{ display: "flex", alignItems: "center", gap: "10px", flexWrap: "wrap" }}>
-          {/* Switcher Ukuran Kertas */}
-          <div style={{ display: "flex", background: "rgba(0,0,0,0.25)", borderRadius: "10px", padding: "4px", gap: "4px", border: "1px solid rgba(255,255,255,0.15)" }}>
-            <button
-              type="button"
-              onClick={() => setPaperSize("F4")}
-              style={{
-                padding: isEmbed ? "6px 11px" : "8px 14px",
-                borderRadius: "8px",
-                border: "none",
-                cursor: "pointer",
-                fontWeight: "bold",
-                fontSize: "12px",
-                background: paperSize === "F4" ? "#ffffff" : "transparent",
-                color: paperSize === "F4" ? "#550000" : "#ffffff",
-                boxShadow: paperSize === "F4" ? "0 2px 4px rgba(0,0,0,0.2)" : "none",
-                transition: "all 0.15s ease"
-              }}
-            >
-              📄 Kertas F4 / Folio (215 × 330 mm)
-            </button>
-            <button
-              type="button"
-              onClick={() => setPaperSize("A4")}
-              style={{
-                padding: isEmbed ? "6px 11px" : "8px 14px",
-                borderRadius: "8px",
-                border: "none",
-                cursor: "pointer",
-                fontWeight: "bold",
-                fontSize: "12px",
-                background: paperSize === "A4" ? "#ffffff" : "transparent",
-                color: paperSize === "A4" ? "#550000" : "#ffffff",
-                boxShadow: paperSize === "A4" ? "0 2px 4px rgba(0,0,0,0.2)" : "none",
-                transition: "all 0.15s ease"
-              }}
-            >
-              📄 Kertas A4 (210 × 297 mm)
-            </button>
-          </div>
-
+        <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
           <button 
             type="button"
             onClick={() => window.print()}
             style={{ 
-              padding: isEmbed ? "7px 16px" : "9px 20px", 
+              padding: "10px 24px", 
               borderRadius: "10px", 
               backgroundColor: "#22c55e", 
               color: "white", 
               border: "none", 
               cursor: "pointer", 
               fontWeight: "bold", 
-              fontSize: "12.5px",
+              fontSize: "13px",
               display: "flex", 
               alignItems: "center", 
-              gap: "7px",
+              gap: "8px",
               boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.15)"
             }}
           >
-            <Printer size={16} /> Cetak Sekarang ({paperSize})
+            <Printer size={16} /> Cetak / Download PDF (A4)
           </button>
         </div>
       </div>

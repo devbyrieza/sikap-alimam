@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { ArrowLeft, BookOpen, Search, Loader2, User, Filter, AlertCircle, BarChart3, LineChart, ShieldAlert } from "lucide-react";
+import { ArrowLeft, BookOpen, Search, Loader2, User, Filter, AlertCircle, BarChart3, LineChart, ShieldAlert, Printer } from "lucide-react";
 import Link from "next/link";
 import Swal from "sweetalert2";
 import { getLaporanNilaiAccess, LaporanNilaiAccess } from "@/lib/permissions";
@@ -357,6 +357,14 @@ export default function PantauNilaiPage() {
                        <h2 className="text-xl font-black text-slate-800">{santriList.find(s => s.id === santriId)?.nama_lengkap}</h2>
                        <p className="text-sm text-slate-500 font-medium">Rekapitulasi Seluruh Mata Pelajaran</p>
                      </div>
+                     <a
+                       href={`/rapor/print/${santriId}?semester=${semester}&tahun_ajaran=${tahunAjaran}`}
+                       target="_blank"
+                       className="ml-auto inline-flex items-center justify-center gap-2 px-4 py-2 bg-primary text-white font-bold text-xs rounded-xl shadow-md shadow-primary/20 hover:bg-primary/90 transition-all"
+                       title="Cetak Rapor Resmi A4 (210 x 297 mm)"
+                     >
+                       <Printer size={14} /> Cetak Rapor Resmi (A4)
+                     </a>
                    </div>
 
                    {mapelList.length === 0 ? (

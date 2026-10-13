@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback, useMemo } from "react";
 import Link from "next/link";
-import { ArrowRight, FileText, Loader2, ArrowLeft, BookOpen, BarChart3, ShieldAlert, Lock, UserCheck } from "lucide-react";
+import { ArrowRight, FileText, Loader2, ArrowLeft, BookOpen, BarChart3, ShieldAlert, Lock, UserCheck, Printer } from "lucide-react";
 import ModuleTabs from "@/components/ModuleTabs";
 import { getStandardMapelName } from "@/lib/mapel";
 import { getOfficialNis } from "@/lib/officialSantri";
@@ -677,22 +677,27 @@ export default function RekapNilaiPage() {
                                 </div>
                               </td>
                               <td style={{ textAlign: "center", borderBottom: "1px solid #f5ede1", padding: "10px 12px" }}>
-                                <div style={{ display: "flex", gap: "6px", justifyContent: "center", alignItems: "center" }}>
+                                <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
                                   <a 
-                                    href={`/rapor/print/${santri.id}?semester=${semester}&tahun_ajaran=${tahun_ajaran}&kertas=F4`} 
+                                    href={`/rapor/print/${santri.id}?semester=${semester}&tahun_ajaran=${tahun_ajaran}`} 
                                     target="_blank" 
-                                    title="Cetak format kertas F4 / Folio (215 x 330 mm)" 
-                                    style={{ display: "inline-block", padding: "6px 11px", background: "#550000", color: "white", borderRadius: "8px", fontSize: "12px", fontWeight: "bold", textDecoration: "none", whiteSpace: "nowrap" }}
+                                    title="Cetak Rapor Resmi Format Standar Internasional A4 (210 x 297 mm)" 
+                                    style={{ 
+                                      display: "inline-flex", 
+                                      alignItems: "center", 
+                                      gap: "6px", 
+                                      padding: "6px 14px", 
+                                      background: "#550000", 
+                                      color: "white", 
+                                      borderRadius: "8px", 
+                                      fontSize: "12px", 
+                                      fontWeight: "bold", 
+                                      textDecoration: "none", 
+                                      whiteSpace: "nowrap",
+                                      boxShadow: "0 2px 4px rgba(85, 0, 0, 0.2)" 
+                                    }}
                                   >
-                                    Cetak F4
-                                  </a>
-                                  <a 
-                                    href={`/rapor/print/${santri.id}?semester=${semester}&tahun_ajaran=${tahun_ajaran}&kertas=A4`} 
-                                    target="_blank" 
-                                    title="Cetak format kertas A4 (210 x 297 mm)" 
-                                    style={{ display: "inline-block", padding: "6px 11px", background: "#f8fafc", color: "#334155", border: "1px solid #cbd5e1", borderRadius: "8px", fontSize: "12px", fontWeight: "bold", textDecoration: "none", whiteSpace: "nowrap" }}
-                                  >
-                                    Cetak A4
+                                    <Printer size={13} /> Cetak Rapor (A4)
                                   </a>
                                 </div>
                               </td>

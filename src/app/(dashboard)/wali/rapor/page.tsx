@@ -279,6 +279,51 @@ export default function RaporWaliPage() {
   }
 
   const { santri, ringkasan, detail } = data;
+  const klsUpper = (santri?.kelas || "").toUpperCase();
+  const jenjangUpper = (santri?.jenjang || "").toUpperCase();
+  const isMTs = klsUpper.includes("MTS") || jenjangUpper === "MTS" || klsUpper.startsWith("7") || klsUpper.startsWith("8") || klsUpper.startsWith("9");
+  const isMA = jenjangUpper === "MA" || ["10", "11", "12"].some(k => klsUpper === k || klsUpper.startsWith(k + " ") || klsUpper.startsWith(k));
+  const isIL = klsUpper.includes("IL") || klsUpper.includes("I'DAD") || jenjangUpper.includes("I'DAD") || jenjangUpper.includes("IL");
+
+  let headTitle = "Kepala Madrasah";
+  let headName = "Aziz Basuki, S.H.I., M.Pd.";
+  let waliKelasName = "Agus Cahyono";
+
+  if (isMA) {
+    headName = "Rethna Kartika Septianiar, S.Pd.";
+    waliKelasName = "Muhammad Thoriq Ibn Ziyad, Lc., M.Ag.";
+  } else if (isMTs) {
+    headName = "Ade Supyana, S.Pd.I.";
+    waliKelasName = "Agus Cahyono";
+  } else if (isIL) {
+    headTitle = "Kepala Kurikulum";
+    headName = "Imron Abdillah, S.Pd.";
+    waliKelasName = "Imron Abdillah, S.Pd.";
+  }
+
+  const getArabicMapelName = (nama: string): string => {
+    const low = nama.toLowerCase();
+    if (low.includes("akidah") || low.includes("tauhid")) return "العقيدة";
+    if (low.includes("fikih") || low.includes("fiqh")) return "الفقه";
+    if (low.includes("hadis") || low.includes("hadits")) return "الحديث";
+    if (low.includes("sirah") || low.includes("siroh")) return "السيرة النبوية";
+    if (low.includes("tahsin")) return "تحسين القرآن";
+    if (low.includes("tahfidz")) return "حفظ القرآن";
+    if (low.includes("bahasa arab")) return "اللغة العربية";
+    if (low.includes("kitabah") || low.includes("khot") || low.includes("imla")) return "الكتابة";
+    if (low.includes("shorof") || low.includes("shorf")) return "الصرف";
+    if (low.includes("nahwu")) return "النحو";
+    if (low.includes("indonesia")) return "اللغة الإندونيسية";
+    if (low.includes("inggris")) return "اللغة الإنجليزية";
+    if (low.includes("matematika") || low.includes("mtk")) return "الرياضيات";
+    if (low.includes("ipa")) return "العلوم الطبيعية";
+    if (low.includes("ips")) return "العلوم الاجتماعية";
+    if (low.includes("kewirausahaan") || low.includes("entrepreneurship")) return "ريادة الأعمال";
+    if (low.includes("tik") || low.includes("informatika")) return "تكنولوجيا المعلومات";
+    if (low.includes("penjas") || low.includes("pjok")) return "التربية البدنية";
+    if (low.includes("pkn") || low.includes("ppkn")) return "التربية الوطنية";
+    return nama;
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-rose-50/30 to-slate-100 pb-20">
@@ -532,19 +577,19 @@ export default function RaporWaliPage() {
         {/* TAB CONTENT */}
         {/* TAB 1: LEMBAR RAPOR RESMI (KASYFUD DARAJAT) */}
         {activeTab === "ringkasan" && (
-          <div className="space-y-5">
-            {/* Header & Quick Actions Bar */}
-            <div className="card p-5 sm:p-6 shadow-xl shadow-primary/10 border border-slate-100 rounded-3xl bg-white/90 backdrop-blur flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="space-y-6">
+            {/* Header & Main Print Action Bar */}
+            <div className="card p-5 sm:p-6 shadow-xl shadow-primary/10 border border-slate-100 rounded-3xl bg-white/95 backdrop-blur flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div className="flex items-center gap-3.5">
-                <div className="w-11 h-11 rounded-2xl bg-primary/10 text-primary flex items-center justify-center font-bold shadow-sm shrink-0">
-                  <FileText size={22} />
+                <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-primary to-rose-900 text-white flex items-center justify-center font-bold shadow-md shadow-primary/20 shrink-0">
+                  <FileText size={24} />
                 </div>
                 <div>
                   <h3 className="font-extrabold text-slate-800 text-base sm:text-lg">
-                    Lembar Rapor Resmi Santri (Kasyfud Darajat)
+                    Rapor Hasil Belajar Santri (Kasyfud Darajat)
                   </h3>
                   <p className="text-xs text-slate-500 mt-0.5">
-                    Format resmi 2 halaman Pesantren Al-Imam Al-Islami (Bilateral Arab - Indonesia, Tanda Tangan &amp; Barcode QR)
+                    Penilaian Tengah Semester (PTS) • T.A. 2026/2027 • Standar Internasional Kertas A4
                   </p>
                 </div>
               </div>
@@ -554,30 +599,307 @@ export default function RaporWaliPage() {
                   href={`/rapor/print/${santri.id}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="btn btn-outline btn-sm inline-flex items-center gap-1.5 text-xs font-bold rounded-xl px-4 py-2"
+                  className="btn btn-primary inline-flex items-center gap-2 text-xs sm:text-sm font-bold rounded-2xl px-5 py-2.5 shadow-lg shadow-primary/25 hover:scale-[1.02] transition-all"
                 >
-                  <ExternalLink size={14} />
-                  <span>Buka Layar Penuh</span>
-                </a>
-                <a
-                  href={`/rapor/print/${santri.id}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="btn btn-primary btn-sm inline-flex items-center gap-1.5 text-xs font-bold rounded-xl px-4 py-2 shadow-md shadow-primary/30"
-                >
-                  <Printer size={14} />
-                  <span>Cetak / Download PDF</span>
+                  <Printer size={16} />
+                  <span>Cetak / Unduh PDF Resmi (A4)</span>
                 </a>
               </div>
             </div>
 
-            {/* Embed Iframe Pratinjau Dokumen Rapor */}
-            <div className="w-full bg-slate-200/60 rounded-3xl shadow-inner border border-slate-300 overflow-hidden" style={{ minHeight: "850px", height: "85vh" }}>
-              <iframe
-                src={`/rapor/print/${santri.id}?embed=true`}
-                title="Lembar Rapor Resmi Pesantren Al-Imam"
-                className="w-full h-full border-none"
-              />
+            {/* LEMBAR RAPOR RESMI PESANTREN (NATIVE WEB VIEW) */}
+            <div className="card p-6 sm:p-10 shadow-2xl shadow-primary/10 border border-slate-200/80 rounded-3xl bg-white space-y-6">
+              {/* KOP RESMI PESANTREN */}
+              <div className="flex items-center justify-between gap-4 pb-5 border-b-4 border-double border-slate-800">
+                <div className="w-16 h-16 sm:w-20 sm:h-20 shrink-0 flex items-center justify-center">
+                  <img src="/logo.png" alt="Logo Al-Imam" className="w-full h-full object-contain" />
+                </div>
+                <div className="text-center flex-1 px-2">
+                  <h2 className="text-base sm:text-xl font-black text-slate-900 uppercase tracking-wide">
+                    PESANTREN AL-IMAM AL-ISLAMI
+                  </h2>
+                  <p className="text-xs sm:text-sm font-bold text-primary mt-0.5">
+                    Managed by Al-Andalus International Islamic Boarding School
+                  </p>
+                  <p className="text-[11px] sm:text-xs text-slate-600 italic mt-0.5">
+                    Meniti Sunnah Menggapai Ridho Illahi
+                  </p>
+                  <p className="text-[10px] sm:text-[11px] text-slate-500 mt-1">
+                    Kp. Cisuren RT. 001 / RW. 003, Desa Guha, Kec. Simpenan, Kab. Sukabumi, Jawa Barat
+                  </p>
+                </div>
+                <div className="w-16 h-16 sm:w-20 sm:h-20 shrink-0 flex items-center justify-center">
+                  <img src="/logo-andalus.png" alt="Logo Al-Andalus" className="w-full h-full object-contain" />
+                </div>
+              </div>
+
+              {/* JUDUL DOKUMEN RAPOR */}
+              <div className="text-center py-1">
+                <h3 className="text-sm sm:text-base font-black text-slate-900 uppercase tracking-wider underline underline-offset-4">
+                  RAPOR HASIL BELAJAR SANTRI (KASYFUD DARAJAT)
+                </h3>
+                <p className="text-xs font-semibold text-slate-600 mt-1">
+                  Penilaian Tengah Semester (PTS) • Semester {santri.semester || "Ganjil"} • Tahun Ajaran {santri.tahun_ajaran || "2026/2027"}
+                </p>
+              </div>
+
+              {/* BIODATA SANTRI */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-2 text-xs sm:text-sm bg-slate-50/80 p-4 sm:p-5 rounded-2xl border border-slate-200/70 font-medium">
+                <div className="flex justify-between border-b border-slate-200/60 pb-1.5">
+                  <span className="text-slate-500">Nama Santri</span>
+                  <span className="font-bold text-slate-900">{santri.nama}</span>
+                </div>
+                <div className="flex justify-between border-b border-slate-200/60 pb-1.5">
+                  <span className="text-slate-500">Nomor Induk (NIS)</span>
+                  <span className="font-bold text-slate-900">{santri.nis}</span>
+                </div>
+                <div className="flex justify-between border-b border-slate-200/60 pb-1.5 sm:border-b-0 sm:pb-0 pt-1.5">
+                  <span className="text-slate-500">Kelas / Jenjang</span>
+                  <span className="font-bold text-slate-900">{santri.kelas}</span>
+                </div>
+                <div className="flex justify-between pt-1.5">
+                  <span className="text-slate-500">Wali Kelas</span>
+                  <span className="font-bold text-slate-900">{waliKelasName}</span>
+                </div>
+              </div>
+
+              {/* BANNER PTS MURNI */}
+              <div className="p-3.5 sm:p-4 rounded-2xl bg-blue-50 border border-blue-200 flex gap-3 items-center shadow-sm">
+                <AlertCircle className="text-blue-600 shrink-0" size={18} />
+                <p className="text-xs text-blue-800">
+                  <strong>Rapor Bayangan PTS Semester 1</strong> — Nilai yang tercantum adalah Nilai Ujian PTS Murni sesuai ketetapan kurikulum Pesantren Al-Imam Al-Islami.
+                </p>
+              </div>
+
+              {/* TABEL NILAI RESMI BILINGUAL (ARAB - LATIN) */}
+              <div className="overflow-x-auto rounded-2xl border border-slate-300 shadow-sm">
+                <table className="w-full text-left border-collapse" style={{ minWidth: 640 }}>
+                  <thead>
+                    <tr className="bg-slate-100 text-slate-700 text-xs font-black uppercase border-b-2 border-slate-300">
+                      <th className="py-3 px-3 text-center w-12 border-r border-slate-300">No</th>
+                      <th className="py-3 px-4 border-r border-slate-300">Mata Pelajaran</th>
+                      <th className="py-3 px-3 text-center w-20 border-r border-slate-300">KKM</th>
+                      <th className="py-3 px-4 text-center w-32 border-r border-slate-300">Nilai Akhir (PTS)</th>
+                      <th className="py-3 px-4 text-center w-36 border-r border-slate-300">Predikat</th>
+                      <th className="py-3 px-4 text-right arabic-text text-sm" dir="rtl">المواد الدراسية</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {akademikGrouped.length === 0 ? (
+                      <tr>
+                        <td colSpan={6} className="text-center py-10 text-slate-400 text-sm">
+                          Belum ada data nilai akademik yang diinput oleh guru pengampu.
+                        </td>
+                      </tr>
+                    ) : (
+                      (() => {
+                        let currentCat = "";
+                        const catLabels: Record<string, { id: string; ar: string }> = {
+                          syariah: { id: "A. Ilmu Syari'ah", ar: "أ. العلوم الشرعية" },
+                          bahasa: { id: "B. Ilmu Bahasa", ar: "ب. علوم اللغة العربية" },
+                          umum: { id: "C. Ilmu Pengetahuan Umum", ar: "ج. العلوم العامة" }
+                        };
+                        return akademikGrouped.map((item, idx) => {
+                          const showCatHeader = item.kategori !== currentCat;
+                          if (showCatHeader) {
+                            currentCat = item.kategori;
+                          }
+
+                          let badgeClass = "bg-slate-100 text-slate-800 font-bold";
+                          if (item.nilaiAkhir) {
+                            const na = Number(item.nilaiAkhir);
+                            if (na >= 90) badgeClass = "bg-emerald-100 text-emerald-800 font-black";
+                            else if (na >= 85) badgeClass = "bg-blue-100 text-blue-800 font-black";
+                            else if (na >= 80) badgeClass = "bg-amber-100 text-amber-800 font-bold";
+                            else badgeClass = "bg-red-100 text-red-800 font-bold";
+                          }
+
+                          return (
+                            <React.Fragment key={item.mapel_id}>
+                              {showCatHeader && (
+                                <tr className="bg-slate-100/90 font-bold border-t border-b border-slate-200">
+                                  <td colSpan={5} className="py-2.5 px-4 text-xs tracking-wide uppercase text-slate-800 font-extrabold bg-slate-100 border-r border-slate-200">
+                                    {catLabels[item.kategori]?.id || item.kategori}
+                                  </td>
+                                  <td className="py-2.5 px-4 text-xs font-bold text-slate-800 bg-slate-100 text-right arabic-text" dir="rtl">
+                                    {catLabels[item.kategori]?.ar || ""}
+                                  </td>
+                                </tr>
+                              )}
+                              <tr className="border-b border-slate-100 hover:bg-slate-50/60 transition-colors text-sm">
+                                <td className="py-3 px-3 text-center text-slate-400 font-semibold border-r border-slate-100">{idx + 1}</td>
+                                <td className="py-3 px-4 font-bold text-slate-800 border-r border-slate-100">
+                                  {item.mapel_nama}
+                                </td>
+                                <td className="py-3 px-3 text-center text-slate-500 font-bold border-r border-slate-100">{item.kkm}</td>
+                                <td className="py-3 px-4 text-center border-r border-slate-100">
+                                  {item.nilaiAkhir ? (
+                                    <span className={`px-2.5 py-1 rounded-lg ${badgeClass}`}>
+                                      {Math.round(Number(item.nilaiAkhir))}
+                                    </span>
+                                  ) : (
+                                    <span className="text-slate-300">-</span>
+                                  )}
+                                </td>
+                                <td className="py-3 px-4 text-center text-xs font-bold text-slate-700 border-r border-slate-100">
+                                  {item.predikat}
+                                </td>
+                                <td className="py-3 px-4 text-right text-slate-700 arabic-text text-sm font-semibold" dir="rtl">
+                                  {getArabicMapelName(item.mapel_nama)}
+                                </td>
+                              </tr>
+                            </React.Fragment>
+                          );
+                        });
+                      })()
+                    )}
+                  </tbody>
+                  <tfoot className="bg-slate-50 font-bold border-t-2 border-slate-300">
+                    <tr className="border-b border-slate-200/70">
+                      <td colSpan={3} className="py-3 px-4 text-slate-700 font-bold text-sm">Jumlah Nilai</td>
+                      <td className="py-3 px-4 text-center text-primary font-black text-base">{ringkasan.totalNilai || computedTotal}</td>
+                      <td className="py-3 px-4 text-center text-slate-400 text-xs">-</td>
+                      <td className="py-3 px-4 text-right text-slate-600 arabic-text text-xs" dir="rtl">مجموع الدرجات</td>
+                    </tr>
+                    <tr className="border-b border-slate-200/70">
+                      <td colSpan={3} className="py-3 px-4 text-slate-700 font-bold text-sm">Nilai Rata-rata</td>
+                      <td className="py-3 px-4 text-center text-primary font-black text-base">{ringkasan.rataRata || computedAvg}</td>
+                      <td className="py-3 px-4 text-center text-slate-400 text-xs">-</td>
+                      <td className="py-3 px-4 text-right text-slate-600 arabic-text text-xs" dir="rtl">المعدل العام</td>
+                    </tr>
+                    {ringkasan.ranking ? (
+                      <tr className="bg-gradient-to-r from-amber-50 via-orange-50/50 to-amber-50 border-t-2 border-amber-300">
+                        <td colSpan={3} className="py-3.5 px-4 text-amber-950 font-extrabold text-sm flex items-center gap-2">
+                          <Trophy size={18} className="text-amber-600 shrink-0" />
+                          <span>Peringkat Kelas (Ranking)</span>
+                        </td>
+                        <td className="py-3.5 px-4 text-center text-amber-900 font-black text-lg">
+                          #{ringkasan.ranking}
+                        </td>
+                        <td className="py-3.5 px-4 text-center text-amber-800 text-xs font-bold">
+                          dari {ringkasan.jumlahSantri || 19} Santri
+                        </td>
+                        <td className="py-3.5 px-4 text-right text-amber-900 arabic-text text-xs font-bold" dir="rtl">
+                          الرتبة في الفصل
+                        </td>
+                      </tr>
+                    ) : null}
+                  </tfoot>
+                </table>
+              </div>
+
+              {/* 2 KOTAK: KEPRIBADIAN SANTRI & KETIDAKHADIRAN */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs sm:text-sm">
+                {/* Kotak Kiri: Kepribadian Santri */}
+                <div className="rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
+                  <div className="bg-slate-100 px-4 py-2.5 font-bold text-slate-800 border-b border-slate-200 flex justify-between items-center">
+                    <span>Kepribadian Santri</span>
+                    <span className="arabic-text text-xs" dir="rtl">السلوك الشخصي</span>
+                  </div>
+                  <div className="divide-y divide-slate-100 bg-white">
+                    <div className="px-4 py-2.5 flex justify-between items-center">
+                      <span className="text-slate-600">Perilaku / Akhlak</span>
+                      <span className="font-bold text-primary px-2.5 py-0.5 rounded-lg bg-primary/10">A (Sangat Baik)</span>
+                    </div>
+                    <div className="px-4 py-2.5 flex justify-between items-center">
+                      <span className="text-slate-600">Kedisiplinan</span>
+                      <span className="font-bold text-primary px-2.5 py-0.5 rounded-lg bg-primary/10">A (Sangat Baik)</span>
+                    </div>
+                    <div className="px-4 py-2.5 flex justify-between items-center">
+                      <span className="text-slate-600">Kerajinan</span>
+                      <span className="font-bold text-primary px-2.5 py-0.5 rounded-lg bg-primary/10">A (Sangat Baik)</span>
+                    </div>
+                    <div className="px-4 py-2.5 flex justify-between items-center">
+                      <span className="text-slate-600">Kebersihan &amp; Kerapian</span>
+                      <span className="font-bold text-primary px-2.5 py-0.5 rounded-lg bg-primary/10">A (Sangat Baik)</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Kotak Kanan: Ketidakhadiran */}
+                <div className="rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
+                  <div className="bg-slate-100 px-4 py-2.5 font-bold text-slate-800 border-b border-slate-200 flex justify-between items-center">
+                    <span>Ketidakhadiran</span>
+                    <span className="arabic-text text-xs" dir="rtl">الغياب</span>
+                  </div>
+                  <div className="divide-y divide-slate-100 bg-white">
+                    <div className="px-4 py-2.5 flex justify-between items-center">
+                      <span className="text-slate-600">Sakit</span>
+                      <span className="font-bold text-slate-800">{ringkasan.totalSakit || 0} Jam Pelajaran</span>
+                    </div>
+                    <div className="px-4 py-2.5 flex justify-between items-center">
+                      <span className="text-slate-600">Izin</span>
+                      <span className="font-bold text-slate-800">{ringkasan.totalIzin || 0} Jam Pelajaran</span>
+                    </div>
+                    <div className="px-4 py-2.5 flex justify-between items-center">
+                      <span className="text-slate-600">Tanpa Keterangan (Alpha)</span>
+                      <span className="font-bold text-slate-800">{ringkasan.totalAlpha || 0} Jam Pelajaran</span>
+                    </div>
+                    <div className="px-4 py-2.5 flex justify-between items-center bg-emerald-50/50">
+                      <span className="text-emerald-800 font-bold">Tingkat Kehadiran KBM</span>
+                      <span className="font-black text-emerald-800">{ringkasan.persentaseKehadiran || 100}%</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* TANDA TANGAN & QR CODE VERIFIKASI */}
+              <div className="pt-6 border-t-2 border-slate-200">
+                <div className="grid grid-cols-1 sm:grid-cols-4 gap-6 items-end text-center">
+                  {/* Orang Tua / Wali */}
+                  <div className="flex flex-col justify-between h-32 text-xs">
+                    <div>
+                      <p className="text-slate-500 m-0">Mengetahui,</p>
+                      <p className="font-bold text-slate-800 m-0">Orang Tua / Wali</p>
+                    </div>
+                    <p className="font-bold text-slate-800 m-0">( ........................... )</p>
+                  </div>
+
+                  {/* Kepala Madrasah / Kurikulum */}
+                  <div className="flex flex-col justify-between h-32 text-xs">
+                    <div>
+                      <p className="text-slate-500 m-0">Mengetahui,</p>
+                      <p className="font-bold text-slate-800 m-0">{headTitle}</p>
+                    </div>
+                    <p className="font-bold text-slate-900 m-0 underline underline-offset-2">({headName})</p>
+                  </div>
+
+                  {/* Wali Kelas */}
+                  <div className="flex flex-col justify-between h-32 text-xs">
+                    <div>
+                      <p className="text-slate-500 m-0">Sukabumi, 11 Oktober 2026</p>
+                      <p className="font-bold text-slate-800 m-0">Wali Kelas</p>
+                    </div>
+                    <p className="font-bold text-slate-900 m-0 underline underline-offset-2">({waliKelasName})</p>
+                  </div>
+
+                  {/* Barcode QR Verifikasi */}
+                  <div className="flex flex-col items-center justify-end h-32">
+                    <img 
+                      src={`https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=https://sikap.pesantren-alimam.com/verify/${santri.id}`}
+                      alt="QR Code Verifikasi"
+                      className="w-20 h-20 border border-slate-200 rounded-xl p-1 bg-white shadow-sm"
+                    />
+                    <p className="text-[9px] text-slate-400 mt-1 font-semibold">Scan Verifikasi Dokumen</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* TOMBOL AKSI CETAK DI DASAR RAPOR */}
+              <div className="pt-6 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-4">
+                <p className="text-xs text-slate-500 italic text-center sm:text-left">
+                  * Dokumen ini sah dan diterbitkan secara resmi oleh Pesantren Al-Imam Al-Islami (Managed by Al-Andalus IIBS).
+                </p>
+                <a
+                  href={`/rapor/print/${santri.id}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="btn btn-primary inline-flex items-center gap-2 text-xs sm:text-sm font-bold rounded-2xl px-6 py-3 shadow-xl shadow-primary/25 hover:scale-[1.02] transition-all"
+                >
+                  <Printer size={16} />
+                  <span>Cetak / Unduh PDF Resmi (A4)</span>
+                </a>
+              </div>
             </div>
           </div>
         )}
