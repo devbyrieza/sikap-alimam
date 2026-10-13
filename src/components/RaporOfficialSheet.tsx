@@ -777,7 +777,7 @@ export default function RaporOfficialSheet({ data, showPrintToolbar = false }: R
                 </colgroup>
                 <thead>
                   <tr style={{ backgroundColor: "#f1f5f9" }}>
-                    <th colSpan={2} className="border-divider-mid" style={{ border: "1px solid #94a3b8", borderRight: "2px solid #000000", padding: "5px 8px", textAlign: "center", fontWeight: "bold", fontSize: "12px", color: "#000000" }}>
+                    <th colSpan={2} style={{ border: "1px solid #94a3b8", padding: "5px 8px", textAlign: "center", fontWeight: "bold", fontSize: "12px", color: "#000000" }}>
                       Kepribadian Santri
                     </th>
                     <th colSpan={2} style={{ border: "1px solid #94a3b8", padding: "5px 8px", textAlign: "center", fontWeight: "bold", fontSize: "12px", color: "#000000" }}>
@@ -786,7 +786,7 @@ export default function RaporOfficialSheet({ data, showPrintToolbar = false }: R
                   </tr>
                   <tr style={{ backgroundColor: "#f8fafc", fontSize: "11px" }}>
                     <th style={{ border: "1px solid #94a3b8", padding: "4.5px 8px", textAlign: "center", color: "#000000" }}>Aspek Penilaian</th>
-                    <th className="border-divider-mid" style={{ border: "1px solid #94a3b8", borderRight: "2px solid #000000", padding: "4.5px 8px", textAlign: "center", color: "#000000" }}>Predikat</th>
+                    <th style={{ border: "1px solid #94a3b8", padding: "4.5px 8px", textAlign: "center", color: "#000000" }}>Predikat</th>
                     <th style={{ border: "1px solid #94a3b8", padding: "4.5px 8px", textAlign: "center", color: "#000000" }}>Absensi</th>
                     <th style={{ border: "1px solid #94a3b8", padding: "4.5px 8px", textAlign: "center", color: "#000000" }}>Jumlah</th>
                   </tr>
@@ -794,7 +794,7 @@ export default function RaporOfficialSheet({ data, showPrintToolbar = false }: R
                 <tbody>
                   <tr style={{ backgroundColor: "white" }}>
                     <td style={{ border: "1px solid #94a3b8", padding: "4.5px 8px" }}>Perilaku</td>
-                    <td className="border-divider-mid" style={{ border: "1px solid #94a3b8", borderRight: "2px solid #000000", padding: "4.5px 8px", textAlign: "center", fontWeight: "bold", fontSize: "12px" }}>{sikapGrade}</td>
+                    <td style={{ border: "1px solid #94a3b8", padding: "4.5px 8px", textAlign: "center", fontWeight: "bold", fontSize: "12px" }}>{sikapGrade}</td>
                     <td style={{ border: "1px solid #94a3b8", padding: "4.5px 8px", textAlign: "center" }}>Sakit</td>
                     <td style={{ border: "1px solid #94a3b8", padding: "4.5px 8px", textAlign: "center", fontSize: "11.5px" }}>
                       <strong style={{ fontSize: "12px" }}>{absen?.sakit || 0}</strong> <span style={{ color: "#444" }}>Jam Pelajaran</span>
@@ -802,7 +802,7 @@ export default function RaporOfficialSheet({ data, showPrintToolbar = false }: R
                   </tr>
                   <tr style={{ backgroundColor: "#fafafa" }}>
                     <td style={{ border: "1px solid #94a3b8", padding: "4.5px 8px" }}>Kedisiplinan</td>
-                    <td className="border-divider-mid" style={{ border: "1px solid #94a3b8", borderRight: "2px solid #000000", padding: "4.5px 8px", textAlign: "center", fontWeight: "bold", fontSize: "12px" }}>{disiplinGrade}</td>
+                    <td style={{ border: "1px solid #94a3b8", padding: "4.5px 8px", textAlign: "center", fontWeight: "bold", fontSize: "12px" }}>{disiplinGrade}</td>
                     <td style={{ border: "1px solid #94a3b8", padding: "4.5px 8px", textAlign: "center" }}>Izin</td>
                     <td style={{ border: "1px solid #94a3b8", padding: "4.5px 8px", textAlign: "center", fontSize: "11.5px" }}>
                       <strong style={{ fontSize: "12px" }}>{absen?.izin || 0}</strong> <span style={{ color: "#444" }}>Jam Pelajaran</span>
@@ -810,7 +810,7 @@ export default function RaporOfficialSheet({ data, showPrintToolbar = false }: R
                   </tr>
                   <tr style={{ backgroundColor: "white" }}>
                     <td style={{ border: "1px solid #94a3b8", padding: "4.5px 8px" }}>Kerajinan</td>
-                    <td className="border-divider-mid" style={{ border: "1px solid #94a3b8", borderRight: "2px solid #000000", padding: "4.5px 8px", textAlign: "center", fontWeight: "bold", fontSize: "12px" }}>{sikapGrade}</td>
+                    <td style={{ border: "1px solid #94a3b8", padding: "4.5px 8px", textAlign: "center", fontWeight: "bold", fontSize: "12px" }}>{sikapGrade}</td>
                     <td style={{ border: "1px solid #94a3b8", padding: "4.5px 8px", textAlign: "center" }}>Alpha</td>
                     <td style={{ border: "1px solid #94a3b8", padding: "4.5px 8px", textAlign: "center", fontSize: "11.5px" }}>
                       <strong style={{ fontSize: "12px" }}>{absen?.alpha || 0}</strong> <span style={{ color: "#444" }}>Jam Pelajaran</span>
@@ -818,7 +818,7 @@ export default function RaporOfficialSheet({ data, showPrintToolbar = false }: R
                   </tr>
                   <tr style={{ backgroundColor: "#fafafa" }}>
                     <td style={{ border: "1px solid #94a3b8", padding: "4.5px 8px" }}>Kebersihan</td>
-                    <td className="border-divider-mid" style={{ border: "1px solid #94a3b8", borderRight: "2px solid #000000", padding: "4.5px 8px", textAlign: "center", fontWeight: "bold", fontSize: "12px" }}>{sikapGrade}</td>
+                    <td style={{ border: "1px solid #94a3b8", padding: "4.5px 8px", textAlign: "center", fontWeight: "bold", fontSize: "12px" }}>{sikapGrade}</td>
                     <td style={{ border: "1px solid #94a3b8", padding: "4.5px 8px", textAlign: "center", fontWeight: "bold" }}>Total</td>
                     <td style={{ border: "1px solid #94a3b8", padding: "4.5px 8px", textAlign: "center", fontSize: "11.5px" }}>
                       <strong style={{ fontSize: "12px" }}>{(absen?.sakit || 0) + (absen?.izin || 0) + (absen?.alpha || 0)}</strong> <span style={{ color: "#444" }}>Jam Pelajaran</span>
