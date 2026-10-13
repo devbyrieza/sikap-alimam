@@ -599,7 +599,7 @@ export default function RaporWaliPage() {
                     Rapor Hasil Belajar Santri (Kasyfud Darajat)
                   </h3>
                   <p className="text-xs text-slate-500 mt-0.5">
-                    Penilaian Tengah Semester (PTS) • T.A. 2026/2027 • Standar Internasional Kertas A4
+                    Penilaian Tengah Semester (PTS) • T.A. 2026/2027
                   </p>
                 </div>
               </div>
@@ -612,7 +612,7 @@ export default function RaporWaliPage() {
                   className="btn btn-primary inline-flex items-center gap-2 text-xs sm:text-sm font-bold rounded-2xl px-5 py-2.5 shadow-lg shadow-primary/25 hover:scale-[1.02] transition-all"
                 >
                   <Printer size={16} />
-                  <span>Cetak / Unduh PDF Resmi (A4)</span>
+                  <span>Cetak / Unduh PDF Resmi</span>
                 </a>
               </div>
             </div>
@@ -638,7 +638,7 @@ export default function RaporWaliPage() {
                 className="btn btn-primary inline-flex items-center gap-2 text-sm font-bold rounded-2xl px-8 py-3.5 shadow-xl shadow-primary/30 hover:scale-[1.02] transition-all"
               >
                 <Printer size={18} />
-                <span>Cetak / Unduh PDF Resmi (A4)</span>
+                <span>Cetak / Unduh PDF Resmi</span>
               </a>
             </div>
           </div>
