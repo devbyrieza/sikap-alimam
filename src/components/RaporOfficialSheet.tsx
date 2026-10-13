@@ -809,7 +809,7 @@ export default function RaporOfficialSheet({ data, showPrintToolbar = false }: R
                     </td>
                   </tr>
                   <tr style={{ backgroundColor: "white" }}>
-                    <td style={{ border: "1px solid #94a3b8", padding: "4.5px 8px" }}>Kerajinan</td>
+                    <td style={{ border: "1px solid #94a3b8", padding: "4.5px 8px" }}>Kebersihan</td>
                     <td style={{ border: "1px solid #94a3b8", padding: "4.5px 8px", textAlign: "center", fontWeight: "bold", fontSize: "12px" }}>{sikapGrade}</td>
                     <td style={{ border: "1px solid #94a3b8", padding: "4.5px 8px", textAlign: "center" }}>Alpha</td>
                     <td style={{ border: "1px solid #94a3b8", padding: "4.5px 8px", textAlign: "center", fontSize: "11.5px" }}>
@@ -817,12 +817,16 @@ export default function RaporOfficialSheet({ data, showPrintToolbar = false }: R
                     </td>
                   </tr>
                   <tr style={{ backgroundColor: "#fafafa" }}>
-                    <td style={{ border: "1px solid #94a3b8", padding: "4.5px 8px" }}>Kebersihan</td>
+                    <td style={{ border: "1px solid #94a3b8", padding: "4.5px 8px" }}>Kerapian</td>
                     <td style={{ border: "1px solid #94a3b8", padding: "4.5px 8px", textAlign: "center", fontWeight: "bold", fontSize: "12px" }}>{sikapGrade}</td>
-                    <td style={{ border: "1px solid #94a3b8", padding: "4.5px 8px", textAlign: "center", fontWeight: "bold" }}>Total</td>
-                    <td style={{ border: "1px solid #94a3b8", padding: "4.5px 8px", textAlign: "center", fontSize: "11.5px" }}>
+                    <td rowSpan={2} style={{ border: "1px solid #94a3b8", padding: "4.5px 8px", textAlign: "center", fontWeight: "bold", verticalAlign: "middle", backgroundColor: "#f8fafc" }}>Total</td>
+                    <td rowSpan={2} style={{ border: "1px solid #94a3b8", padding: "4.5px 8px", textAlign: "center", fontSize: "11.5px", verticalAlign: "middle", backgroundColor: "#f8fafc" }}>
                       <strong style={{ fontSize: "12px" }}>{(absen?.sakit || 0) + (absen?.izin || 0) + (absen?.alpha || 0)}</strong> <span style={{ color: "#444" }}>Jam Pelajaran</span>
                     </td>
+                  </tr>
+                  <tr style={{ backgroundColor: "white" }}>
+                    <td style={{ border: "1px solid #94a3b8", padding: "4.5px 8px" }}>Kerja Sama</td>
+                    <td style={{ border: "1px solid #94a3b8", padding: "4.5px 8px", textAlign: "center", fontWeight: "bold", fontSize: "12px" }}>{sikapGrade}</td>
                   </tr>
                 </tbody>
               </table>
