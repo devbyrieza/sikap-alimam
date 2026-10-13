@@ -996,6 +996,7 @@ export default function RaporOfficialSheet({ data, showPrintToolbar = false }: R
               {/* Sisi Kanan: QR Code Resmi */}
               <div style={{ 
                 width: "90px", 
+                height: "145px",
                 flexShrink: 0, 
                 display: "flex", 
                 flexDirection: "column", 
@@ -1004,20 +1005,20 @@ export default function RaporOfficialSheet({ data, showPrintToolbar = false }: R
                 textAlign: "center"
               }}>
                 <div style={{ 
-                  padding: "4px", 
+                  padding: "5px", 
                   backgroundColor: "white", 
                   border: "1px solid #94a3b8", 
                   display: "inline-block" 
                 }}>
                   <img 
-                    src={`https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://sikap.pesantren-alimam.com/verify/${santri?.id || "santri"}`}
+                    src={`https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=https://sikap.pesantren-alimam.com/verify/${santri?.id || "santri"}`}
                     alt="QR Verifikasi Dokumen"
-                    style={{ width: "70px", height: "70px", display: "block" }}
+                    style={{ width: "78px", height: "78px", display: "block" }}
                   />
                 </div>
                 <p style={{ 
-                  margin: "3px 0 0 0", 
-                  fontSize: "6.5px", 
+                  margin: "4px 0 0 0", 
+                  fontSize: "7px", 
                   fontWeight: "bold", 
                   letterSpacing: "0.2px", 
                   color: "#000000",
