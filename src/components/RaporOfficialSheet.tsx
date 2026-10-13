@@ -58,10 +58,10 @@ export default function RaporOfficialSheet({ data, showPrintToolbar = false }: R
 
   const renderTabelKategori = (judul: string, judulArab: string, mapelList: any[], startIndex: number = 1) => {
     if (!mapelList || mapelList.length === 0) return null;
-    const cellPad = "4.8px 4px";
-    const namePad = "4.8px 6px";
+    const cellPad = "5px 4.5px";
+    const namePad = "5px 6px";
     const headPad = "5.5px 6px";
-    const fontSize = "11.5px";
+    const fontSize = "11.8px";
 
     return (
       <React.Fragment key={judul}>
@@ -246,7 +246,7 @@ export default function RaporOfficialSheet({ data, showPrintToolbar = false }: R
         @media print {
           @page { 
             size: A4 portrait; 
-            margin: 6mm 10mm 6mm 10mm; 
+            margin: 11mm 6mm 2mm 13mm; 
           }
           * {
             -webkit-print-color-adjust: exact !important;
@@ -340,8 +340,8 @@ export default function RaporOfficialSheet({ data, showPrintToolbar = false }: R
             overflow: visible !important;
             page-break-inside: avoid !important;
             break-inside: avoid !important;
-            min-height: 270mm !important;
-            height: 270mm !important;
+            min-height: 275mm !important;
+            height: 275mm !important;
           }
 
           .rapor-page:not(:last-child) {
@@ -351,7 +351,7 @@ export default function RaporOfficialSheet({ data, showPrintToolbar = false }: R
 
           .rapor-content-wrapper {
             height: 100% !important;
-            min-height: 270mm !important;
+            min-height: 275mm !important;
             display: flex !important;
             flex-direction: column !important;
             justify-content: space-between !important;

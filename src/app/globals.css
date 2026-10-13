@@ -1287,6 +1287,6 @@ input[type="checkbox"], input[type="radio"], input[type="submit"], input[type="b
 
   @page {
     size: A4 portrait;
-    margin: 6mm 10mm 6mm 10mm;
+    margin: 11mm 6mm 2mm 13mm;
   }
 }
