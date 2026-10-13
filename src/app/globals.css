@@ -1252,7 +1252,7 @@ input[type="checkbox"], input[type="radio"], input[type="submit"], input[type="b
     table-layout: fixed !important;
     border-collapse: collapse !important;
     border-spacing: 0 !important;
-    border: 1px solid #000000 !important;
+    border: 1px solid #94a3b8 !important;
     border-radius: 0 !important;
     overflow: visible !important;
     box-sizing: border-box !important;
@@ -1265,8 +1265,8 @@ input[type="checkbox"], input[type="radio"], input[type="submit"], input[type="b
     position: static !important;
     top: auto !important;
     z-index: auto !important;
-    border: 1px solid #000000 !important;
-    border-color: #000000 !important;
+    border: 1px solid #94a3b8 !important;
+    border-color: #94a3b8 !important;
     border-radius: 0 !important;
     box-shadow: none !important;
   }
@@ -1274,15 +1274,15 @@ input[type="checkbox"], input[type="radio"], input[type="submit"], input[type="b
   .rapor-table thead th {
     background-color: #f1f5f9 !important;
     color: #000000 !important;
-    border-bottom: 1px solid #000000 !important;
+    border-bottom: 1px solid #94a3b8 !important;
   }
 
   .rapor-table tbody tr:last-child td {
-    border-bottom: 1px solid #000000 !important;
+    border-bottom: 1px solid #94a3b8 !important;
   }
 
   .rapor-table .border-divider-mid {
-    border-right: 2px solid #000000 !important;
+    border-right: 2.5px solid #000000 !important;
   }
 
   @page {

@@ -58,19 +58,19 @@ export default function RaporOfficialSheet({ data, showPrintToolbar = false }: R
 
   const renderTabelKategori = (judul: string, judulArab: string, mapelList: any[], startIndex: number = 1) => {
     if (!mapelList || mapelList.length === 0) return null;
-    const cellPad = "2.6px 3.5px";
-    const namePad = "2.6px 5px";
-    const headPad = "3px 6px";
-    const fontSize = "11px";
+    const cellPad = "4.8px 4px";
+    const namePad = "4.8px 6px";
+    const headPad = "5.5px 6px";
+    const fontSize = "11.5px";
 
     return (
       <React.Fragment key={judul}>
         {/* Header Kategori Bilateral (50% Kiri Indonesia | 50% Kanan Arab) */}
         <tr style={{ backgroundColor: "#f1f5f9" }}>
-          <td colSpan={5} className="border-divider-mid" style={{ border: "1px solid #000000", borderRight: "2px solid #000000", padding: headPad, fontWeight: "bold", fontSize: "11.5px", fontFamily: "Arial, Helvetica, sans-serif", color: "#000000" }}>
+          <td colSpan={5} className="border-divider-mid" style={{ border: "1px solid #94a3b8", borderRight: "2.5px solid #000000", padding: headPad, fontWeight: "bold", fontSize: "12px", fontFamily: "Arial, Helvetica, sans-serif", color: "#000000" }}>
             {judul}
           </td>
-          <td colSpan={5} style={{ border: "1px solid #000000", padding: headPad, fontWeight: "bold", fontSize: "13.5px", textAlign: "right", fontFamily: "'Traditional Arabic', serif", color: "#000000" }} dir="rtl">
+          <td colSpan={5} style={{ border: "1px solid #94a3b8", padding: headPad, fontWeight: "bold", fontSize: "14px", textAlign: "right", fontFamily: "'Traditional Arabic', serif", color: "#000000" }} dir="rtl">
             {judulArab}
           </td>
         </tr>
@@ -85,26 +85,26 @@ export default function RaporOfficialSheet({ data, showPrintToolbar = false }: R
               style={{ backgroundColor: isEven ? "white" : "#fafafa" }}
             >
               {/* Kolom 1 (No): width 4.5% */}
-              <td style={{ border: "1px solid #000000", padding: cellPad, textAlign: "center", fontSize: fontSize, fontFamily: "Arial, Helvetica, sans-serif" }}>{startIndex + index}</td>
-              {/* Kolom 2 (Mata Pelajaran): width 21% (Times New Roman) */}
-              <td style={{ border: "1px solid #000000", padding: namePad, fontSize: fontSize, fontFamily: '"Times New Roman", Times, serif', fontWeight: "bold", whiteSpace: "normal", lineHeight: "1.2" }}>{m.nama}</td>
+              <td style={{ border: "1px solid #94a3b8", padding: cellPad, textAlign: "center", fontSize: fontSize, fontFamily: "Arial, Helvetica, sans-serif" }}>{startIndex + index}</td>
+              {/* Kolom 2 (Mata Pelajaran): width 21% */}
+              <td style={{ border: "1px solid #94a3b8", padding: namePad, fontSize: fontSize, fontFamily: "Arial, Helvetica, sans-serif", fontWeight: "bold", whiteSpace: "normal", lineHeight: "1.2" }}>{m.nama}</td>
               {/* Kolom 3 (KKM): width 7% */}
-              <td style={{ border: "1px solid #000000", padding: cellPad, textAlign: "center", fontSize: fontSize, fontFamily: "Arial, Helvetica, sans-serif" }}>{kkmVal}</td>
+              <td style={{ border: "1px solid #94a3b8", padding: cellPad, textAlign: "center", fontSize: fontSize, fontFamily: "Arial, Helvetica, sans-serif" }}>{kkmVal}</td>
               {/* Kolom 4 (Nilai): width 7% */}
-              <td style={{ border: "1px solid #000000", padding: cellPad, textAlign: "center", fontSize: fontSize, fontFamily: "Arial, Helvetica, sans-serif", fontWeight: "bold" }}>{m.nilai}</td>
+              <td style={{ border: "1px solid #94a3b8", padding: cellPad, textAlign: "center", fontSize: fontSize, fontFamily: "Arial, Helvetica, sans-serif", fontWeight: "bold" }}>{m.nilai}</td>
               {/* Kolom 5 (Rata-Rata): width 10.5% dengan Garis Tengah Tebal 2.5px */}
-              <td className="border-divider-mid" style={{ border: "1px solid #000000", borderRight: "2.5px solid #000000", padding: cellPad, textAlign: "center", fontSize: fontSize, fontFamily: "Arial, Helvetica, sans-serif" }}>{m.rata_rata_kelas}</td>
+              <td className="border-divider-mid" style={{ border: "1px solid #94a3b8", borderRight: "2.5px solid #000000", padding: cellPad, textAlign: "center", fontSize: fontSize, fontFamily: "Arial, Helvetica, sans-serif" }}>{m.rata_rata_kelas}</td>
               
               {/* Kolom 6 (المعدل التراكمي): width 10.5% (Mirror Kolom 5) */}
-              <td style={{ border: "1px solid #000000", padding: cellPad, textAlign: "center", fontSize: fontSize, fontFamily: "Arial, Helvetica, sans-serif" }} dir="rtl">{toArabicNum(m.rata_rata_kelas)}</td>
+              <td style={{ border: "1px solid #94a3b8", padding: cellPad, textAlign: "center", fontSize: fontSize, fontFamily: "Arial, Helvetica, sans-serif" }} dir="rtl">{toArabicNum(m.rata_rata_kelas)}</td>
               {/* Kolom 7 (النتيجة): width 7% (Mirror Kolom 4) */}
-              <td style={{ border: "1px solid #000000", padding: cellPad, textAlign: "center", fontSize: fontSize, fontFamily: "Arial, Helvetica, sans-serif", fontWeight: "bold" }} dir="rtl">{toArabicNum(m.nilai)}</td>
+              <td style={{ border: "1px solid #94a3b8", padding: cellPad, textAlign: "center", fontSize: fontSize, fontFamily: "Arial, Helvetica, sans-serif", fontWeight: "bold" }} dir="rtl">{toArabicNum(m.nilai)}</td>
               {/* Kolom 8 (الدرجة الصغرى): width 7% (Mirror Kolom 3) */}
-              <td style={{ border: "1px solid #000000", padding: cellPad, textAlign: "center", fontSize: fontSize, fontFamily: "Arial, Helvetica, sans-serif" }} dir="rtl">{toArabicNum(kkmVal)}</td>
+              <td style={{ border: "1px solid #94a3b8", padding: cellPad, textAlign: "center", fontSize: fontSize, fontFamily: "Arial, Helvetica, sans-serif" }} dir="rtl">{toArabicNum(kkmVal)}</td>
               {/* Kolom 9 (المواد الدراسية): width 21% (Mirror Kolom 2 - Traditional Arabic) */}
-              <td style={{ border: "1px solid #000000", padding: namePad, textAlign: "right", fontSize: "13.5px", fontFamily: "'Traditional Arabic', serif", fontWeight: "bold", whiteSpace: "normal", lineHeight: "1.2" }} dir="rtl">{m.nama_arab}</td>
+              <td style={{ border: "1px solid #94a3b8", padding: namePad, textAlign: "right", fontSize: "14px", fontFamily: "'Traditional Arabic', serif", fontWeight: "bold", whiteSpace: "normal", lineHeight: "1.2" }} dir="rtl">{m.nama_arab}</td>
               {/* Kolom 10 (رقم): width 4.5% (Mirror Kolom 1) */}
-              <td style={{ border: "1px solid #000000", padding: cellPad, textAlign: "center", fontSize: fontSize, fontFamily: "Arial, Helvetica, sans-serif" }} dir="rtl">{toArabicNum(startIndex + index)}</td>
+              <td style={{ border: "1px solid #94a3b8", padding: cellPad, textAlign: "center", fontSize: fontSize, fontFamily: "Arial, Helvetica, sans-serif" }} dir="rtl">{toArabicNum(startIndex + index)}</td>
             </tr>
           );
         })}
@@ -171,7 +171,7 @@ export default function RaporOfficialSheet({ data, showPrintToolbar = false }: R
           table-layout: fixed !important;
           border-collapse: collapse !important;
           border-spacing: 0 !important;
-          border: 1px solid #000000 !important;
+          border: 1px solid #94a3b8 !important;
           border-radius: 0 !important;
           font-family: Arial, Helvetica, sans-serif;
           margin-bottom: 0px;
@@ -190,8 +190,8 @@ export default function RaporOfficialSheet({ data, showPrintToolbar = false }: R
 
         .rapor-table th,
         .rapor-table td {
-          border: 1px solid #000000 !important;
-          border-color: #000000 !important;
+          border: 1px solid #94a3b8 !important;
+          border-color: #94a3b8 !important;
           vertical-align: middle !important;
           position: static !important;
           top: auto !important;
@@ -209,19 +209,19 @@ export default function RaporOfficialSheet({ data, showPrintToolbar = false }: R
           color: #000000 !important;
           font-weight: bold !important;
           background-color: #f1f5f9 !important;
-          border: 1px solid #000000 !important;
-          border-color: #000000 !important;
+          border: 1px solid #94a3b8 !important;
+          border-color: #94a3b8 !important;
           border-radius: 0 !important;
           box-shadow: none !important;
           white-space: normal !important;
         }
 
         .rapor-table tbody tr:last-child td {
-          border-bottom: 1px solid #000000 !important;
+          border-bottom: 1px solid #94a3b8 !important;
         }
 
         .rapor-table .border-divider-mid {
-          border-right: 2px solid #000000 !important;
+          border-right: 2.5px solid #000000 !important;
         }
 
         .rapor-table tbody tr:hover td {
@@ -290,7 +290,7 @@ export default function RaporOfficialSheet({ data, showPrintToolbar = false }: R
             table-layout: fixed !important;
             border-collapse: collapse !important;
             border-spacing: 0 !important;
-            border: 1px solid #000000 !important;
+            border: 1px solid #94a3b8 !important;
             border-radius: 0 !important;
             overflow: visible !important;
             box-sizing: border-box !important;
@@ -303,8 +303,8 @@ export default function RaporOfficialSheet({ data, showPrintToolbar = false }: R
             position: static !important;
             top: auto !important;
             z-index: auto !important;
-            border: 1px solid #000000 !important;
-            border-color: #000000 !important;
+            border: 1px solid #94a3b8 !important;
+            border-color: #94a3b8 !important;
             border-radius: 0 !important;
             box-shadow: none !important;
           }
@@ -312,15 +312,15 @@ export default function RaporOfficialSheet({ data, showPrintToolbar = false }: R
           .rapor-table thead th {
             background-color: #f1f5f9 !important;
             color: #000000 !important;
-            border-bottom: 1px solid #000000 !important;
+            border-bottom: 1px solid #94a3b8 !important;
           }
 
           .rapor-table tbody tr:last-child td {
-            border-bottom: 1px solid #000000 !important;
+            border-bottom: 1px solid #94a3b8 !important;
           }
 
           .rapor-table .border-divider-mid {
-            border-right: 2px solid #000000 !important;
+            border-right: 2.5px solid #000000 !important;
           }
 
           .rapor-page {
@@ -333,31 +333,33 @@ export default function RaporOfficialSheet({ data, showPrintToolbar = false }: R
             border-radius: 0 !important;
             margin: 0 !important;
             background: #ffffff !important;
-            display: block !important;
+            display: flex !important;
+            flex-direction: column !important;
+            justify-content: space-between !important;
             position: relative !important;
             overflow: visible !important;
             page-break-inside: avoid !important;
             break-inside: avoid !important;
-            min-height: 0 !important;
-            height: auto !important;
+            min-height: 270mm !important;
+            height: 270mm !important;
+          }
+
+          .rapor-page:not(:last-child) {
+            page-break-after: always !important;
+            break-after: page !important;
           }
 
           .rapor-content-wrapper {
-            height: auto !important;
-            min-height: 0 !important;
-            display: block !important;
+            height: 100% !important;
+            min-height: 270mm !important;
+            display: flex !important;
+            flex-direction: column !important;
+            justify-content: space-between !important;
             box-sizing: border-box !important;
           }
 
           .page-break {
-            page-break-before: always !important;
-            break-before: page !important;
-            height: 0 !important;
-            margin: 0 !important;
-            padding: 0 !important;
-            border: none !important;
-            line-height: 0 !important;
-            font-size: 0 !important;
+            display: none !important;
           }
         }
       `}</style>
@@ -410,7 +412,7 @@ export default function RaporOfficialSheet({ data, showPrintToolbar = false }: R
       {/* HALAMAN 1: RAPOR AKADEMIK (KASYFUD DARAJAT)                               */}
       {/* ========================================================================= */}
       <div 
-        className="rapor-page max-w-[210mm] mx-auto bg-white p-[10mm] sm:p-[12mm] shadow-2xl rounded-3xl border border-slate-200/80 print:shadow-none print:border-none print:p-0 print:max-w-full print:min-h-0 print:h-auto relative" 
+        className="rapor-page max-w-[210mm] mx-auto bg-white p-[10mm] sm:p-[12mm] shadow-2xl rounded-3xl border border-slate-200/80 print:shadow-none print:border-none print:p-0 print:max-w-full relative" 
         style={{ 
           minHeight: "297mm", 
           position: "relative", 
@@ -418,14 +420,14 @@ export default function RaporOfficialSheet({ data, showPrintToolbar = false }: R
         }}
       >
         <div 
-          className="rapor-content-wrapper print:min-h-0 print:h-auto"
+          className="rapor-content-wrapper"
           style={{ 
             position: "relative", 
             zIndex: 1, 
             display: "flex", 
             flexDirection: "column", 
             justifyContent: "space-between", 
-            minHeight: "240mm",
+            minHeight: "265mm",
             height: "100%"
           }}
         >
@@ -528,7 +530,7 @@ export default function RaporOfficialSheet({ data, showPrintToolbar = false }: R
 
             {/* TABEL UTAMA AKADEMIK (10 Kolom Bilateral Simetris) */}
             <div style={{ width: "100%", overflow: "visible" }}>
-              <table className="rapor-table" style={{ width: "100%", tableLayout: "fixed", borderCollapse: "collapse", border: "1px solid #000000", fontSize: "11px" }}>
+              <table className="rapor-table" style={{ width: "100%", tableLayout: "fixed", borderCollapse: "collapse", border: "1px solid #94a3b8", fontSize: "11.5px" }}>
                 <colgroup>
                   {/* Sisi Kiri (50%) */}
                   <col style={{ width: "4.5%" }} />   {/* 1. No */}
@@ -546,17 +548,17 @@ export default function RaporOfficialSheet({ data, showPrintToolbar = false }: R
                 </colgroup>
                 <thead>
                   <tr style={{ backgroundColor: "#f1f5f9", fontWeight: "bold" }}>
-                    <th style={{ border: "1px solid #000000", padding: "3px 2px", textAlign: "center", fontFamily: "Arial, Helvetica, sans-serif", fontSize: "10.5px", color: "#000000" }}>No</th>
-                    <th style={{ border: "1px solid #000000", padding: "3px 6px", textAlign: "center", fontFamily: "Arial, Helvetica, sans-serif", fontSize: "10.5px", color: "#000000" }}>Mata Pelajaran</th>
-                    <th style={{ border: "1px solid #000000", padding: "3px 2px", textAlign: "center", fontFamily: "Arial, Helvetica, sans-serif", fontSize: "10.5px", color: "#000000" }}>KKM</th>
-                    <th style={{ border: "1px solid #000000", padding: "3px 2px", textAlign: "center", fontFamily: "Arial, Helvetica, sans-serif", fontSize: "10.5px", color: "#000000" }}>Nilai</th>
-                    <th className="border-divider-mid" style={{ border: "1px solid #000000", borderRight: "2px solid #000000", padding: "3px 1px", textAlign: "center", fontFamily: "Arial, Helvetica, sans-serif", fontSize: "10px", lineHeight: "1.15", letterSpacing: "-0.2px", color: "#000000" }}>Rata-Rata<br/>Kelas</th>
+                    <th style={{ border: "1px solid #94a3b8", padding: "5px 2px", textAlign: "center", fontFamily: "Arial, Helvetica, sans-serif", fontSize: "11px", color: "#000000" }}>No</th>
+                    <th style={{ border: "1px solid #94a3b8", padding: "5px 6px", textAlign: "center", fontFamily: "Arial, Helvetica, sans-serif", fontSize: "11px", color: "#000000" }}>Mata Pelajaran</th>
+                    <th style={{ border: "1px solid #94a3b8", padding: "5px 2px", textAlign: "center", fontFamily: "Arial, Helvetica, sans-serif", fontSize: "11px", color: "#000000" }}>KKM</th>
+                    <th style={{ border: "1px solid #94a3b8", padding: "5px 2px", textAlign: "center", fontFamily: "Arial, Helvetica, sans-serif", fontSize: "11px", color: "#000000" }}>Nilai</th>
+                    <th className="border-divider-mid" style={{ border: "1px solid #94a3b8", borderRight: "2.5px solid #000000", padding: "5px 1px", textAlign: "center", fontFamily: "Arial, Helvetica, sans-serif", fontSize: "10.5px", lineHeight: "1.15", letterSpacing: "-0.2px", color: "#000000" }}>Rata-Rata<br/>Kelas</th>
                     
-                    <th style={{ border: "1px solid #000000", padding: "3px 1px", textAlign: "center", fontFamily: "'Traditional Arabic', serif", fontSize: "12.5px", lineHeight: "1.1", color: "#000000" }}>متوسط<br/>الفصل</th>
-                    <th style={{ border: "1px solid #000000", padding: "3px 2px", textAlign: "center", fontFamily: "'Traditional Arabic', serif", fontSize: "12.5px", color: "#000000" }}>النتيجة</th>
-                    <th style={{ border: "1px solid #000000", padding: "3px 2px", textAlign: "center", fontFamily: "'Traditional Arabic', serif", fontSize: "12.5px", lineHeight: "1.1", color: "#000000" }}>الدرجة<br/>الصغرى</th>
-                    <th style={{ border: "1px solid #000000", padding: "3px 6px", textAlign: "center", fontFamily: "'Traditional Arabic', serif", fontSize: "12px", color: "#000000" }}>المواد الدراسية</th>
-                    <th style={{ border: "1px solid #000000", padding: "3px 2px", textAlign: "center", fontFamily: "'Traditional Arabic', serif", fontSize: "12.5px", color: "#000000" }}>رقم</th>
+                    <th style={{ border: "1px solid #94a3b8", padding: "5px 1px", textAlign: "center", fontFamily: "'Traditional Arabic', serif", fontSize: "13.5px", lineHeight: "1.1", color: "#000000" }}>متوسط<br/>الفصل</th>
+                    <th style={{ border: "1px solid #94a3b8", padding: "5px 2px", textAlign: "center", fontFamily: "'Traditional Arabic', serif", fontSize: "13.5px", color: "#000000" }}>النتيجة</th>
+                    <th style={{ border: "1px solid #94a3b8", padding: "5px 2px", textAlign: "center", fontFamily: "'Traditional Arabic', serif", fontSize: "13.5px", lineHeight: "1.1", color: "#000000" }}>الدرجة<br/>الصغرى</th>
+                    <th style={{ border: "1px solid #94a3b8", padding: "5px 6px", textAlign: "center", fontFamily: "'Traditional Arabic', serif", fontSize: "13px", color: "#000000" }}>المواد الدراسية</th>
+                    <th style={{ border: "1px solid #94a3b8", padding: "5px 2px", textAlign: "center", fontFamily: "'Traditional Arabic', serif", fontSize: "13.5px", color: "#000000" }}>رقم</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -566,42 +568,42 @@ export default function RaporOfficialSheet({ data, showPrintToolbar = false }: R
 
                   {/* Section D. Kedisiplinan */}
                   <tr style={{ backgroundColor: "#f1f5f9" }}>
-                    <td colSpan={5} className="border-divider-mid" style={{ border: "1px solid #000000", borderRight: "2px solid #000000", padding: "3px 6px", fontWeight: "bold", fontSize: "11.5px", fontFamily: "Arial, Helvetica, sans-serif", color: "#000000" }}>D. Kedisiplinan</td>
-                    <td colSpan={5} style={{ border: "1px solid #000000", padding: "3px 6px", fontWeight: "bold", textAlign: "right", fontFamily: "'Traditional Arabic', serif", fontSize: "13px", color: "#000000" }} dir="rtl">د. المواظبة</td>
+                    <td colSpan={5} className="border-divider-mid" style={{ border: "1px solid #94a3b8", borderRight: "2.5px solid #000000", padding: "5px 6px", fontWeight: "bold", fontSize: "12px", fontFamily: "Arial, Helvetica, sans-serif", color: "#000000" }}>D. Kedisiplinan</td>
+                    <td colSpan={5} style={{ border: "1px solid #94a3b8", padding: "5px 6px", fontWeight: "bold", textAlign: "right", fontFamily: "'Traditional Arabic', serif", fontSize: "14px", color: "#000000" }} dir="rtl">د. المواظبة</td>
                   </tr>
                   
                   {/* Summary rows */}
                   <tr style={{ backgroundColor: "white", fontFamily: "Arial, Helvetica, sans-serif" }}>
-                    <td colSpan={3} style={{ border: "1px solid #000000", padding: "2.6px 5px", fontWeight: "bold", fontSize: "11px" }}>Jumlah Nilai</td>
-                    <td style={{ border: "1px solid #000000", padding: "2.6px 3px", textAlign: "center", fontWeight: "bold", fontSize: "11.5px" }}>{kedisiplinan?.totalNilai}</td>
-                    <td className="border-divider-mid" style={{ border: "1px solid #000000", borderRight: "2px solid #000000", padding: "2.6px 3px", backgroundColor: "transparent" }}></td>
-                    <td style={{ border: "1px solid #000000", padding: "2.6px 3px", backgroundColor: "transparent" }}></td>
-                    <td style={{ border: "1px solid #000000", padding: "2.6px 3px", textAlign: "center", fontWeight: "bold", fontSize: "12px" }} dir="rtl">{toArabicNum(kedisiplinan?.totalNilai)}</td>
-                    <td colSpan={3} style={{ border: "1px solid #000000", padding: "2.6px 5px", textAlign: "right", fontWeight: "bold", fontFamily: "'Traditional Arabic', serif", fontSize: "12.5px" }} dir="rtl">مجموع الدرجات</td>
+                    <td colSpan={3} style={{ border: "1px solid #94a3b8", padding: "4.5px 6px", fontWeight: "bold", fontSize: "11.5px" }}>Jumlah Nilai</td>
+                    <td style={{ border: "1px solid #94a3b8", padding: "4.5px 3px", textAlign: "center", fontWeight: "bold", fontSize: "12px" }}>{kedisiplinan?.totalNilai}</td>
+                    <td className="border-divider-mid" style={{ border: "1px solid #94a3b8", borderRight: "2.5px solid #000000", padding: "4.5px 3px", backgroundColor: "transparent" }}></td>
+                    <td style={{ border: "1px solid #94a3b8", padding: "4.5px 3px", backgroundColor: "transparent" }}></td>
+                    <td style={{ border: "1px solid #94a3b8", padding: "4.5px 3px", textAlign: "center", fontWeight: "bold", fontSize: "13px" }} dir="rtl">{toArabicNum(kedisiplinan?.totalNilai)}</td>
+                    <td colSpan={3} style={{ border: "1px solid #94a3b8", padding: "4.5px 6px", textAlign: "right", fontWeight: "bold", fontFamily: "'Traditional Arabic', serif", fontSize: "13.5px" }} dir="rtl">مجموع الدرجات</td>
                   </tr>
                   <tr style={{ backgroundColor: "#fafafa", fontFamily: "Arial, Helvetica, sans-serif" }}>
-                    <td colSpan={3} style={{ border: "1px solid #000000", padding: "2.6px 5px", fontWeight: "bold", fontSize: "11px" }}>Rata-Rata Santri</td>
-                    <td style={{ border: "1px solid #000000", padding: "2.6px 3px", textAlign: "center", fontWeight: "bold", fontSize: "11.5px" }}>{kedisiplinan?.rataRata}</td>
-                    <td className="border-divider-mid" style={{ border: "1px solid #000000", borderRight: "2px solid #000000", padding: "2.6px 3px", backgroundColor: "transparent" }}></td>
-                    <td style={{ border: "1px solid #000000", padding: "2.6px 3px", backgroundColor: "transparent" }}></td>
-                    <td style={{ border: "1px solid #000000", padding: "2.6px 3px", textAlign: "center", fontWeight: "bold", fontSize: "12px" }} dir="rtl">{toArabicNum(kedisiplinan?.rataRata)}</td>
-                    <td colSpan={3} style={{ border: "1px solid #000000", padding: "2.6px 5px", textAlign: "right", fontWeight: "bold", fontFamily: "'Traditional Arabic', serif", fontSize: "12.5px" }} dir="rtl">المعدل التراكمي</td>
+                    <td colSpan={3} style={{ border: "1px solid #94a3b8", padding: "4.5px 6px", fontWeight: "bold", fontSize: "11.5px" }}>Rata-Rata Santri</td>
+                    <td style={{ border: "1px solid #94a3b8", padding: "4.5px 3px", textAlign: "center", fontWeight: "bold", fontSize: "12px" }}>{kedisiplinan?.rataRata}</td>
+                    <td className="border-divider-mid" style={{ border: "1px solid #94a3b8", borderRight: "2.5px solid #000000", padding: "4.5px 3px", backgroundColor: "transparent" }}></td>
+                    <td style={{ border: "1px solid #94a3b8", padding: "4.5px 3px", backgroundColor: "transparent" }}></td>
+                    <td style={{ border: "1px solid #94a3b8", padding: "4.5px 3px", textAlign: "center", fontWeight: "bold", fontSize: "13px" }} dir="rtl">{toArabicNum(kedisiplinan?.rataRata)}</td>
+                    <td colSpan={3} style={{ border: "1px solid #94a3b8", padding: "4.5px 6px", textAlign: "right", fontWeight: "bold", fontFamily: "'Traditional Arabic', serif", fontSize: "13.5px" }} dir="rtl">المعدل التراكمي</td>
                   </tr>
                   <tr style={{ backgroundColor: "white", fontFamily: "Arial, Helvetica, sans-serif" }}>
-                    <td colSpan={3} style={{ border: "1px solid #000000", padding: "2.6px 5px", fontWeight: "bold", fontSize: "11px" }}>Ranking</td>
-                    <td style={{ border: "1px solid #000000", padding: "2.6px 3px", textAlign: "center", fontWeight: "bold", fontSize: "11.5px" }}>{kedisiplinan?.ranking}</td>
-                    <td className="border-divider-mid" style={{ border: "1px solid #000000", borderRight: "2px solid #000000", padding: "2.6px 3px", backgroundColor: "transparent" }}></td>
-                    <td style={{ border: "1px solid #000000", padding: "2.6px 3px", backgroundColor: "transparent" }}></td>
-                    <td style={{ border: "1px solid #000000", padding: "2.6px 3px", textAlign: "center", fontWeight: "bold", fontSize: "12px" }} dir="rtl">{toArabicNum(kedisiplinan?.ranking)}</td>
-                    <td colSpan={3} style={{ border: "1px solid #000000", padding: "2.6px 5px", textAlign: "right", fontWeight: "bold", fontFamily: "'Traditional Arabic', serif", fontSize: "12.5px" }} dir="rtl">الترتيب</td>
+                    <td colSpan={3} style={{ border: "1px solid #94a3b8", padding: "4.5px 6px", fontWeight: "bold", fontSize: "11.5px" }}>Ranking</td>
+                    <td style={{ border: "1px solid #94a3b8", padding: "4.5px 3px", textAlign: "center", fontWeight: "bold", fontSize: "12px" }}>{kedisiplinan?.ranking}</td>
+                    <td className="border-divider-mid" style={{ border: "1px solid #94a3b8", borderRight: "2.5px solid #000000", padding: "4.5px 3px", backgroundColor: "transparent" }}></td>
+                    <td style={{ border: "1px solid #94a3b8", padding: "4.5px 3px", backgroundColor: "transparent" }}></td>
+                    <td style={{ border: "1px solid #94a3b8", padding: "4.5px 3px", textAlign: "center", fontWeight: "bold", fontSize: "13px" }} dir="rtl">{toArabicNum(kedisiplinan?.ranking)}</td>
+                    <td colSpan={3} style={{ border: "1px solid #94a3b8", padding: "4.5px 6px", textAlign: "right", fontWeight: "bold", fontFamily: "'Traditional Arabic', serif", fontSize: "13.5px" }} dir="rtl">الترتيب</td>
                   </tr>
                   <tr style={{ backgroundColor: "#fafafa", fontFamily: "Arial, Helvetica, sans-serif" }}>
-                    <td colSpan={3} style={{ border: "1px solid #000000", padding: "2.6px 5px", fontWeight: "bold", fontSize: "11px" }}>Jumlah Santri</td>
-                    <td style={{ border: "1px solid #000000", padding: "2.6px 3px", textAlign: "center", fontWeight: "bold", fontSize: "11.5px" }}>{kedisiplinan?.jumlahSantri}</td>
-                    <td className="border-divider-mid" style={{ border: "1px solid #000000", borderRight: "2px solid #000000", padding: "2.6px 3px", backgroundColor: "transparent" }}></td>
-                    <td style={{ border: "1px solid #000000", padding: "2.6px 3px", backgroundColor: "transparent" }}></td>
-                    <td style={{ border: "1px solid #000000", padding: "2.6px 3px", textAlign: "center", fontWeight: "bold", fontSize: "12px" }} dir="rtl">{toArabicNum(kedisiplinan?.jumlahSantri)}</td>
-                    <td colSpan={3} style={{ border: "1px solid #000000", padding: "2.6px 5px", textAlign: "right", fontWeight: "bold", fontFamily: "'Traditional Arabic', serif", fontSize: "12.5px" }} dir="rtl">عدد الطلاب</td>
+                    <td colSpan={3} style={{ border: "1px solid #94a3b8", padding: "4.5px 6px", fontWeight: "bold", fontSize: "11.5px" }}>Jumlah Santri</td>
+                    <td style={{ border: "1px solid #94a3b8", padding: "4.5px 3px", textAlign: "center", fontWeight: "bold", fontSize: "12px" }}>{kedisiplinan?.jumlahSantri}</td>
+                    <td className="border-divider-mid" style={{ border: "1px solid #94a3b8", borderRight: "2.5px solid #000000", padding: "4.5px 3px", backgroundColor: "transparent" }}></td>
+                    <td style={{ border: "1px solid #94a3b8", padding: "4.5px 3px", backgroundColor: "transparent" }}></td>
+                    <td style={{ border: "1px solid #94a3b8", padding: "4.5px 3px", textAlign: "center", fontWeight: "bold", fontSize: "13px" }} dir="rtl">{toArabicNum(kedisiplinan?.jumlahSantri)}</td>
+                    <td colSpan={3} style={{ border: "1px solid #94a3b8", padding: "4.5px 6px", textAlign: "right", fontWeight: "bold", fontFamily: "'Traditional Arabic', serif", fontSize: "13.5px" }} dir="rtl">عدد الطلاب</td>
                   </tr>
                 </tbody>
               </table>
@@ -637,7 +639,7 @@ export default function RaporOfficialSheet({ data, showPrintToolbar = false }: R
       {/* HALAMAN 2: KEPRIBADIAN, TAHSIN & TAHFIDZ, DAN PENGESAHAN DOKUMEN          */}
       {/* ========================================================================= */}
       <div 
-        className="rapor-page max-w-[210mm] mx-auto bg-white p-[10mm] sm:p-[12mm] shadow-2xl rounded-3xl border border-slate-200/80 print:shadow-none print:border-none print:p-0 print:max-w-full print:min-h-0 print:h-auto relative" 
+        className="rapor-page max-w-[210mm] mx-auto bg-white p-[10mm] sm:p-[12mm] shadow-2xl rounded-3xl border border-slate-200/80 print:shadow-none print:border-none print:p-0 print:max-w-full relative" 
         style={{ 
           minHeight: "297mm", 
           position: "relative", 
@@ -645,14 +647,14 @@ export default function RaporOfficialSheet({ data, showPrintToolbar = false }: R
         }}
       >
         <div 
-          className="rapor-content-wrapper print:min-h-0 print:h-auto"
+          className="rapor-content-wrapper"
           style={{ 
             position: "relative", 
             zIndex: 1, 
             display: "flex", 
             flexDirection: "column", 
             justifyContent: "space-between", 
-            minHeight: "240mm",
+            minHeight: "265mm",
             height: "100%"
           }}
         >
@@ -754,17 +756,17 @@ export default function RaporOfficialSheet({ data, showPrintToolbar = false }: R
             </div>
 
             {/* 1. KEPRIBADIAN SANTRI & KETIDAKHADIRAN */}
-            <div style={{ width: "100%", overflow: "visible", marginBottom: "6px" }}>
+            <div style={{ width: "100%", overflow: "visible", marginBottom: "8px" }}>
               <table 
                 className="rapor-table" 
                 style={{ 
                   width: "100%", 
                   tableLayout: "fixed", 
                   borderCollapse: "collapse", 
-                  border: "1px solid #000000", 
+                  border: "1px solid #94a3b8", 
                   marginBottom: "0px", 
                   fontFamily: "Arial, Helvetica, sans-serif",
-                  fontSize: "11px"
+                  fontSize: "11.5px"
                 }}
               >
                 <colgroup>
@@ -775,51 +777,51 @@ export default function RaporOfficialSheet({ data, showPrintToolbar = false }: R
                 </colgroup>
                 <thead>
                   <tr style={{ backgroundColor: "#f1f5f9" }}>
-                    <th colSpan={2} className="border-divider-mid" style={{ border: "1px solid #000000", borderRight: "2px solid #000000", padding: "3.5px 6px", textAlign: "center", fontWeight: "bold", fontSize: "11.5px", color: "#000000" }}>
+                    <th colSpan={2} className="border-divider-mid" style={{ border: "1px solid #94a3b8", borderRight: "2.5px solid #000000", padding: "5px 8px", textAlign: "center", fontWeight: "bold", fontSize: "12px", color: "#000000" }}>
                       Kepribadian Santri
                     </th>
-                    <th colSpan={2} style={{ border: "1px solid #000000", padding: "3.5px 6px", textAlign: "center", fontWeight: "bold", fontSize: "11.5px", color: "#000000" }}>
+                    <th colSpan={2} style={{ border: "1px solid #94a3b8", padding: "5px 8px", textAlign: "center", fontWeight: "bold", fontSize: "12px", color: "#000000" }}>
                       Ketidakhadiran
                     </th>
                   </tr>
-                  <tr style={{ backgroundColor: "#f8fafc", fontSize: "10.5px" }}>
-                    <th style={{ border: "1px solid #000000", padding: "3px 6px", textAlign: "center", color: "#000000" }}>Aspek Penilaian</th>
-                    <th className="border-divider-mid" style={{ border: "1px solid #000000", borderRight: "2px solid #000000", padding: "3px 6px", textAlign: "center", color: "#000000" }}>Predikat</th>
-                    <th style={{ border: "1px solid #000000", padding: "3px 6px", textAlign: "center", color: "#000000" }}>Absensi</th>
-                    <th style={{ border: "1px solid #000000", padding: "3px 6px", textAlign: "center", color: "#000000" }}>Jumlah</th>
+                  <tr style={{ backgroundColor: "#f8fafc", fontSize: "11px" }}>
+                    <th style={{ border: "1px solid #94a3b8", padding: "4.5px 8px", textAlign: "center", color: "#000000" }}>Aspek Penilaian</th>
+                    <th className="border-divider-mid" style={{ border: "1px solid #94a3b8", borderRight: "2.5px solid #000000", padding: "4.5px 8px", textAlign: "center", color: "#000000" }}>Predikat</th>
+                    <th style={{ border: "1px solid #94a3b8", padding: "4.5px 8px", textAlign: "center", color: "#000000" }}>Absensi</th>
+                    <th style={{ border: "1px solid #94a3b8", padding: "4.5px 8px", textAlign: "center", color: "#000000" }}>Jumlah</th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr style={{ backgroundColor: "white" }}>
-                    <td style={{ border: "1px solid #000000", padding: "3px 6px" }}>Perilaku</td>
-                    <td className="border-divider-mid" style={{ border: "1px solid #000000", borderRight: "2px solid #000000", padding: "3px 6px", textAlign: "center", fontWeight: "bold", fontSize: "11.5px" }}>{sikapGrade}</td>
-                    <td style={{ border: "1px solid #000000", padding: "3px 6px", textAlign: "center" }}>Sakit</td>
-                    <td style={{ border: "1px solid #000000", padding: "3px 6px", textAlign: "center", fontSize: "11px" }}>
-                      <strong style={{ fontSize: "11.5px" }}>{absen?.sakit || 0}</strong> <span style={{ color: "#444" }}>Jam Pelajaran</span>
+                    <td style={{ border: "1px solid #94a3b8", padding: "4.5px 8px" }}>Perilaku</td>
+                    <td className="border-divider-mid" style={{ border: "1px solid #94a3b8", borderRight: "2.5px solid #000000", padding: "4.5px 8px", textAlign: "center", fontWeight: "bold", fontSize: "12px" }}>{sikapGrade}</td>
+                    <td style={{ border: "1px solid #94a3b8", padding: "4.5px 8px", textAlign: "center" }}>Sakit</td>
+                    <td style={{ border: "1px solid #94a3b8", padding: "4.5px 8px", textAlign: "center", fontSize: "11.5px" }}>
+                      <strong style={{ fontSize: "12px" }}>{absen?.sakit || 0}</strong> <span style={{ color: "#444" }}>Jam Pelajaran</span>
                     </td>
                   </tr>
                   <tr style={{ backgroundColor: "#fafafa" }}>
-                    <td style={{ border: "1px solid #000000", padding: "3px 6px" }}>Kedisiplinan</td>
-                    <td className="border-divider-mid" style={{ border: "1px solid #000000", borderRight: "2px solid #000000", padding: "3px 6px", textAlign: "center", fontWeight: "bold", fontSize: "11.5px" }}>{disiplinGrade}</td>
-                    <td style={{ border: "1px solid #000000", padding: "3px 6px", textAlign: "center" }}>Izin</td>
-                    <td style={{ border: "1px solid #000000", padding: "3px 6px", textAlign: "center", fontSize: "11px" }}>
-                      <strong style={{ fontSize: "11.5px" }}>{absen?.izin || 0}</strong> <span style={{ color: "#444" }}>Jam Pelajaran</span>
+                    <td style={{ border: "1px solid #94a3b8", padding: "4.5px 8px" }}>Kedisiplinan</td>
+                    <td className="border-divider-mid" style={{ border: "1px solid #94a3b8", borderRight: "2.5px solid #000000", padding: "4.5px 8px", textAlign: "center", fontWeight: "bold", fontSize: "12px" }}>{disiplinGrade}</td>
+                    <td style={{ border: "1px solid #94a3b8", padding: "4.5px 8px", textAlign: "center" }}>Izin</td>
+                    <td style={{ border: "1px solid #94a3b8", padding: "4.5px 8px", textAlign: "center", fontSize: "11.5px" }}>
+                      <strong style={{ fontSize: "12px" }}>{absen?.izin || 0}</strong> <span style={{ color: "#444" }}>Jam Pelajaran</span>
                     </td>
                   </tr>
                   <tr style={{ backgroundColor: "white" }}>
-                    <td style={{ border: "1px solid #000000", padding: "3px 6px" }}>Kerajinan</td>
-                    <td className="border-divider-mid" style={{ border: "1px solid #000000", borderRight: "2px solid #000000", padding: "3px 6px", textAlign: "center", fontWeight: "bold", fontSize: "11.5px" }}>{sikapGrade}</td>
-                    <td style={{ border: "1px solid #000000", padding: "3px 6px", textAlign: "center" }}>Alpha</td>
-                    <td style={{ border: "1px solid #000000", padding: "3px 6px", textAlign: "center", fontSize: "11px" }}>
-                      <strong style={{ fontSize: "11.5px" }}>{absen?.alpha || 0}</strong> <span style={{ color: "#444" }}>Jam Pelajaran</span>
+                    <td style={{ border: "1px solid #94a3b8", padding: "4.5px 8px" }}>Kerajinan</td>
+                    <td className="border-divider-mid" style={{ border: "1px solid #94a3b8", borderRight: "2.5px solid #000000", padding: "4.5px 8px", textAlign: "center", fontWeight: "bold", fontSize: "12px" }}>{sikapGrade}</td>
+                    <td style={{ border: "1px solid #94a3b8", padding: "4.5px 8px", textAlign: "center" }}>Alpha</td>
+                    <td style={{ border: "1px solid #94a3b8", padding: "4.5px 8px", textAlign: "center", fontSize: "11.5px" }}>
+                      <strong style={{ fontSize: "12px" }}>{absen?.alpha || 0}</strong> <span style={{ color: "#444" }}>Jam Pelajaran</span>
                     </td>
                   </tr>
                   <tr style={{ backgroundColor: "#fafafa" }}>
-                    <td style={{ border: "1px solid #000000", padding: "3px 6px" }}>Kebersihan</td>
-                    <td className="border-divider-mid" style={{ border: "1px solid #000000", borderRight: "2px solid #000000", padding: "3px 6px", textAlign: "center", fontWeight: "bold", fontSize: "11.5px" }}>{sikapGrade}</td>
-                    <td style={{ border: "1px solid #000000", padding: "3px 6px", textAlign: "center", fontWeight: "bold" }}>Total</td>
-                    <td style={{ border: "1px solid #000000", padding: "3px 6px", textAlign: "center", fontSize: "11px" }}>
-                      <strong style={{ fontSize: "11.5px" }}>{(absen?.sakit || 0) + (absen?.izin || 0) + (absen?.alpha || 0)}</strong> <span style={{ color: "#444" }}>Jam Pelajaran</span>
+                    <td style={{ border: "1px solid #94a3b8", padding: "4.5px 8px" }}>Kebersihan</td>
+                    <td className="border-divider-mid" style={{ border: "1px solid #94a3b8", borderRight: "2.5px solid #000000", padding: "4.5px 8px", textAlign: "center", fontWeight: "bold", fontSize: "12px" }}>{sikapGrade}</td>
+                    <td style={{ border: "1px solid #94a3b8", padding: "4.5px 8px", textAlign: "center", fontWeight: "bold" }}>Total</td>
+                    <td style={{ border: "1px solid #94a3b8", padding: "4.5px 8px", textAlign: "center", fontSize: "11.5px" }}>
+                      <strong style={{ fontSize: "12px" }}>{(absen?.sakit || 0) + (absen?.izin || 0) + (absen?.alpha || 0)}</strong> <span style={{ color: "#444" }}>Jam Pelajaran</span>
                     </td>
                   </tr>
                 </tbody>
@@ -827,8 +829,8 @@ export default function RaporOfficialSheet({ data, showPrintToolbar = false }: R
             </div>
 
             {/* 2. LAPORAN TAHSIN & TAHFIDZ */}
-            <div style={{ width: "100%", overflow: "visible", marginBottom: "6px" }}>
-              <table className="rapor-table" style={{ width: "100%", tableLayout: "fixed", borderCollapse: "collapse", border: "1px solid #000000", fontSize: "11px", fontFamily: "Arial, Helvetica, sans-serif" }}>
+            <div style={{ width: "100%", overflow: "visible", marginBottom: "8px" }}>
+              <table className="rapor-table" style={{ width: "100%", tableLayout: "fixed", borderCollapse: "collapse", border: "1px solid #94a3b8", fontSize: "11.5px", fontFamily: "Arial, Helvetica, sans-serif" }}>
                 <colgroup>
                   <col style={{ width: "50%" }} />
                   <col style={{ width: "16%" }} />
@@ -837,15 +839,15 @@ export default function RaporOfficialSheet({ data, showPrintToolbar = false }: R
                 </colgroup>
                 <thead>
                   <tr style={{ backgroundColor: "#f1f5f9" }}>
-                    <th colSpan={4} style={{ border: "1px solid #000000", padding: "3.5px 6px", textAlign: "left", color: "#000000", fontWeight: "bold", fontSize: "11.5px" }}>
+                    <th colSpan={4} style={{ border: "1px solid #94a3b8", padding: "5px 8px", textAlign: "left", color: "#000000", fontWeight: "bold", fontSize: "12px" }}>
                       LAPORAN TAHSIN & TAHFIDZ (PROGRAM AL-QUR'AN)
                     </th>
                   </tr>
                   <tr style={{ backgroundColor: "#f8fafc" }}>
-                    <th style={{ border: "1px solid #000000", padding: "3px 6px", textAlign: "left", color: "#000000" }}>Jenis / Materi Ujian</th>
-                    <th style={{ border: "1px solid #000000", padding: "3px 6px", textAlign: "center", color: "#000000" }}>Sikap</th>
-                    <th style={{ border: "1px solid #000000", padding: "3px 6px", textAlign: "center", color: "#000000" }}>Nilai Ujian</th>
-                    <th style={{ border: "1px solid #000000", padding: "3px 6px", textAlign: "center", color: "#000000" }}>Keterangan</th>
+                    <th style={{ border: "1px solid #94a3b8", padding: "4.5px 8px", textAlign: "left", color: "#000000" }}>Jenis / Materi Ujian</th>
+                    <th style={{ border: "1px solid #94a3b8", padding: "4.5px 8px", textAlign: "center", color: "#000000" }}>Sikap</th>
+                    <th style={{ border: "1px solid #94a3b8", padding: "4.5px 8px", textAlign: "center", color: "#000000" }}>Nilai Ujian</th>
+                    <th style={{ border: "1px solid #94a3b8", padding: "4.5px 8px", textAlign: "center", color: "#000000" }}>Keterangan</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -860,24 +862,24 @@ export default function RaporOfficialSheet({ data, showPrintToolbar = false }: R
                     
                     return (
                       <tr key={i} style={{ backgroundColor: i % 2 === 0 ? "white" : "#fafafa" }}>
-                        <td style={{ border: "1px solid #000000", padding: "4px 8px", fontWeight: "bold" }}>
+                        <td style={{ border: "1px solid #94a3b8", padding: "5px 8px", fontWeight: "bold" }}>
                           {u.jenis_ujian ? u.jenis_ujian.replace(/_/g, " ").toUpperCase() : "UJIAN PRA TARGET"}
                           {u.juz ? ` (Juz ${u.juz})` : u.surah_nama ? ` (Surah ${u.surah_nama})` : ""}
                         </td>
-                        <td style={{ border: "1px solid #000000", padding: "4px 8px", textAlign: "center" }}>
+                        <td style={{ border: "1px solid #94a3b8", padding: "5px 8px", textAlign: "center" }}>
                           {sikapStr}
                         </td>
-                        <td style={{ border: "1px solid #000000", padding: "4px 8px", textAlign: "center", fontWeight: "bold", fontSize: "12px" }}>
+                        <td style={{ border: "1px solid #94a3b8", padding: "5px 8px", textAlign: "center", fontWeight: "bold", fontSize: "12px" }}>
                           {nilaiAkhir}
                         </td>
-                        <td style={{ border: "1px solid #000000", padding: "4px 8px", textAlign: "center", color: u.is_lulus ? "#047857" : "#be123c", fontWeight: "bold" }}>
+                        <td style={{ border: "1px solid #94a3b8", padding: "5px 8px", textAlign: "center", color: u.is_lulus ? "#047857" : "#be123c", fontWeight: "bold" }}>
                           {u.is_lulus ? "LULUS" : "MENGULANG"}
                         </td>
                       </tr>
                     );
                   }) : (
                     <tr style={{ backgroundColor: "white" }}>
-                      <td colSpan={4} style={{ border: "1px solid #000000", padding: "6px 8px", textAlign: "center" }}>Belum ada data riwayat ujian pra-target</td>
+                      <td colSpan={4} style={{ border: "1px solid #94a3b8", padding: "6px 8px", textAlign: "center" }}>Belum ada data riwayat ujian pra-target</td>
                     </tr>
                   )}
                 </tbody>
@@ -885,16 +887,16 @@ export default function RaporOfficialSheet({ data, showPrintToolbar = false }: R
             </div>
 
             {/* 3. EVALUASI PENCAPAIAN AL-QUR'AN */}
-            <div style={{ width: "100%", overflow: "visible", marginBottom: "6px" }}>
-              <table className="rapor-table" style={{ width: "100%", tableLayout: "fixed", borderCollapse: "collapse", border: "1px solid #000000", fontSize: "11px", fontFamily: "Arial, Helvetica, sans-serif" }}>
+            <div style={{ width: "100%", overflow: "visible", marginBottom: "8px" }}>
+              <table className="rapor-table" style={{ width: "100%", tableLayout: "fixed", borderCollapse: "collapse", border: "1px solid #94a3b8", fontSize: "11px", fontFamily: "Arial, Helvetica, sans-serif" }}>
                 <thead>
                   <tr style={{ backgroundColor: "#f1f5f9" }}>
-                    <th style={{ border: "1px solid #000000", padding: "3.5px 8px", textAlign: "left", fontSize: "11.5px", color: "#000000" }}>EVALUASI PENCAPAIAN AL-QUR'AN</th>
+                    <th style={{ border: "1px solid #94a3b8", padding: "5px 8px", textAlign: "left", fontSize: "12px", color: "#000000" }}>EVALUASI PENCAPAIAN AL-QUR'AN</th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr style={{ backgroundColor: "white" }}>
-                    <td style={{ border: "1px solid #000000", padding: "4.5px 8px", verticalAlign: "top", color: "#333", fontStyle: "italic", lineHeight: "1.4", textAlign: "justify" }}>
+                    <td style={{ border: "1px solid #94a3b8", padding: "6px 10px", verticalAlign: "top", color: "#333", fontStyle: "italic", lineHeight: "1.5", textAlign: "justify", fontSize: "11.5px" }}>
                       {(() => {
                         if (praTargetUjian.length === 0) {
                           return "Belum ada riwayat ujian tahsin/tahfidz pada periode ini. Tingkatkan semangat tilawah dan muraja'ah bersama Musyrif di halaqoh.";
@@ -925,7 +927,7 @@ export default function RaporOfficialSheet({ data, showPrintToolbar = false }: R
                 alignItems: "stretch",
                 width: "100%",
                 boxSizing: "border-box",
-                marginTop: "6px", 
+                marginTop: "10px", 
                 fontFamily: "Arial, Helvetica, sans-serif" 
               }}
             >
@@ -933,14 +935,14 @@ export default function RaporOfficialSheet({ data, showPrintToolbar = false }: R
                 display: "grid", 
                 gridTemplateColumns: "1fr 1.05fr 1.55fr", 
                 textAlign: "center", 
-                fontSize: "10px", 
+                fontSize: "10.5px", 
                 gap: "6px",
                 flex: 1,
                 marginRight: "16px",
                 minWidth: 0
               }}>
                 {/* Kolom 1: Orang Tua */}
-                <div style={{ display: "flex", flexDirection: "column", justifyContent: "space-between", height: "115px", padding: "0 2px" }}>
+                <div style={{ display: "flex", flexDirection: "column", justifyContent: "space-between", height: "125px", padding: "0 2px" }}>
                   <div>
                     <p style={{ margin: 0 }}>Mengetahui</p>
                     <p style={{ margin: "2px 0 0 0" }}>Orang Tua / Wali</p>
@@ -965,26 +967,26 @@ export default function RaporOfficialSheet({ data, showPrintToolbar = false }: R
                 </div>
 
                 {/* Kolom 2: Kepala Madrasah */}
-                <div style={{ display: "flex", flexDirection: "column", justifyContent: "space-between", height: "115px", padding: "0 2px" }}>
+                <div style={{ display: "flex", flexDirection: "column", justifyContent: "space-between", height: "125px", padding: "0 2px" }}>
                   <div>
                     <p style={{ margin: 0 }}>Mengetahui</p>
                     <p style={{ margin: "2px 0 0 0" }}>{headTitle}</p>
                   </div>
                   <div style={{ minHeight: "28px", display: "flex", alignItems: "flex-end", justifyContent: "center" }}>
-                    <p style={{ fontWeight: "bold", margin: 0, fontSize: "9.5px", whiteSpace: "nowrap", letterSpacing: "-0.2px" }}>
+                    <p style={{ fontWeight: "bold", margin: 0, fontSize: "10px", whiteSpace: "nowrap", letterSpacing: "-0.2px" }}>
                       ({headName})
                     </p>
                   </div>
                 </div>
 
                 {/* Kolom 3: Wali Kelas */}
-                <div style={{ display: "flex", flexDirection: "column", justifyContent: "space-between", height: "115px", padding: "0 2px" }}>
+                <div style={{ display: "flex", flexDirection: "column", justifyContent: "space-between", height: "125px", padding: "0 2px" }}>
                   <div>
                     <p style={{ margin: 0 }}>Sukabumi, 11 Oktober 2026</p>
                     <p style={{ margin: "2px 0 0 0" }}>Wali Kelas</p>
                   </div>
                   <div style={{ minHeight: "28px", display: "flex", alignItems: "flex-end", justifyContent: "center" }}>
-                    <p style={{ fontWeight: "bold", margin: 0, fontSize: "9.5px", whiteSpace: "nowrap", letterSpacing: "-0.2px" }}>
+                    <p style={{ fontWeight: "bold", margin: 0, fontSize: "10px", whiteSpace: "nowrap", letterSpacing: "-0.2px" }}>
                       ({waliKelasName})
                     </p>
                   </div>
@@ -1004,13 +1006,13 @@ export default function RaporOfficialSheet({ data, showPrintToolbar = false }: R
                 <div style={{ 
                   padding: "4px", 
                   backgroundColor: "white", 
-                  border: "1px solid #000000", 
+                  border: "1px solid #94a3b8", 
                   display: "inline-block" 
                 }}>
                   <img 
                     src={`https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://sikap.pesantren-alimam.com/verify/${santri?.id || "santri"}`}
                     alt="QR Verifikasi Dokumen"
-                    style={{ width: "66px", height: "66px", display: "block" }}
+                    style={{ width: "70px", height: "70px", display: "block" }}
                   />
                 </div>
                 <p style={{ 
