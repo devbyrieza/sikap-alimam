@@ -163,11 +163,17 @@ export async function POST(req: NextRequest) {
 
     let valid = await bcrypt.compare(password, user.password);
 
-    // Untuk akun WALI_SANTRI: toleransi separator (- atau / atau spasi)
+    // Untuk akun WALI_SANTRI: toleransi separator (- atau / atau spasi atau tanpa separator)
     if (!valid && user.role?.toUpperCase() === "WALI_SANTRI" && user.plain_password) {
       const cleanInput = password.trim().replace(/[\/\s]/g, "-");
       const cleanStored = user.plain_password.trim().replace(/[\/\s]/g, "-");
-      if (cleanInput === cleanStored || password.trim() === user.plain_password.trim()) {
+      const digitsInput = password.trim().replace(/\D/g, "");
+      const digitsStored = user.plain_password.trim().replace(/\D/g, "");
+      if (
+        cleanInput === cleanStored || 
+        password.trim() === user.plain_password.trim() ||
+        (digitsInput.length >= 8 && digitsInput === digitsStored)
+      ) {
         valid = true;
       }
     }
