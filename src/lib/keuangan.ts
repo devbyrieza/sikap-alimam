@@ -12,6 +12,9 @@ export interface StatusSPP {
   isGracePeriod: boolean; // true jika tgl 1-10 dan belum bayar
   tanggalBayar?: string | null;
   metodeBayar?: string | null;
+  tunggakanCount?: number;
+  tunggakanBulan?: string[];
+  totalTunggakanNominal?: number;
 }
 
 export const NAMA_BULAN = [
@@ -20,11 +23,12 @@ export const NAMA_BULAN = [
 ];
 
 /**
- * Aturan Bisnis Pembayaran SPP Pesantren Al-Imam:
- * 1. Masa pembayaran SPP bulanan adalah tanggal 1 s/d 10 setiap bulannya.
- * 2. Jika tanggal 1 - 10 belum bayar: Akun tetap BISA dibuka (Masa Tenggang), namun diberikan info pengingat jatuh tempo.
- * 3. Jika MELEWATI tanggal 10 dan BELUM lunas: Akun Wali Santri TERKUNCI otomatis, sampai Admin Keuangan memverifikasi pembayaran.
- * 4. Jika SUDAH lunas: Seluruh isi akun terbuka penuh (Rapor, Nilai Mapel, Presensi, Jurnal Guru, Tahfidz).
+ * Aturan Bisnis Pembayaran SPP Pesantren Al-Imam (TA 2026/2027):
+ * 1. Tahun Ajaran dimulai bulan Juli 2026 sampai Juni 2027.
+ * 2. Nominal standar: Rp 1.000.000/bulan (santri beasiswa/subsidi Rp 500.000/bulan).
+ * 3. Masa pembayaran SPP bulanan adalah tanggal 1 s/d 10 setiap bulannya.
+ * 4. Jika tanggal 1 - 10 belum bayar: Akun berada di masa tenggang.
+ * 5. Menghitung tunggakan dari Juli 2026 hingga bulan berjalan.
  */
 export async function cekStatusSpp(
   santriId: string,
@@ -39,7 +43,39 @@ export async function cekStatusSpp(
   const jatuhTempo = `10 ${namaBulanStr} ${targetTahun}`;
 
   try {
-    // 1. Cek record pembayaran di database
+    // 1. Dapatkan nominal SPP resmi santri dari record yang ada
+    const sampleRecord = await prisma.pembayaranSPP.findFirst({
+      where: { santri_id: santriId },
+      orderBy: { created_at: "desc" }
+    });
+    const defaultNominal = sampleRecord?.nominal || 1000000;
+
+    // 2. Hitung riwayat bulan-bulan TA 2026/2027 yang belum lunas (mulai Juli 2026 s/d targetBulan)
+    const currentMonthNum = now.getMonth() + 1;
+    const currentYearNum = now.getFullYear();
+    const tunggakanBulanList: string[] = [];
+
+    // Evaluasi bulan 7 (Juli) sampai bulan berjalan tahun 2026
+    const maxBulanEvaluasi = (targetTahun === 2026) ? Math.min(targetBulan, currentMonthNum) : currentMonthNum;
+    for (let m = 7; m <= maxBulanEvaluasi; m++) {
+      const rec = await prisma.pembayaranSPP.findUnique({
+        where: {
+          santri_id_bulan_tahun: {
+            santri_id: santriId,
+            bulan: m,
+            tahun: 2026
+          }
+        }
+      });
+      if (!rec || rec.status !== "lunas") {
+        tunggakanBulanList.push(NAMA_BULAN[m - 1]);
+      }
+    }
+
+    const tunggakanCount = tunggakanBulanList.length;
+    const totalTunggakanNominal = tunggakanCount * defaultNominal;
+
+    // 3. Cek record pembayaran bulan target secara spesifik
     const pembayaran = await prisma.pembayaranSPP.findUnique({
       where: {
         santri_id_bulan_tahun: {
@@ -47,7 +83,8 @@ export async function cekStatusSpp(
           bulan: targetBulan,
           tahun: targetTahun } } });
 
-    if (pembayaran && pembayaran.status === "lunas") {
+    // Jika target bulan ini lunas dan tidak ada tunggakan lampau
+    if (pembayaran?.status === "lunas" && tunggakanCount === 0) {
       return {
         lunas: true,
         status: "lunas",
@@ -59,87 +96,62 @@ export async function cekStatusSpp(
         jatuhTempo,
         isGracePeriod: false,
         tanggalBayar: pembayaran.tanggal_bayar ? pembayaran.tanggal_bayar.toISOString().split("T")[0] : null,
-        metodeBayar: pembayaran.metode_bayar };
+        metodeBayar: pembayaran.metode_bayar,
+        tunggakanCount: 0,
+        tunggakanBulan: [],
+        totalTunggakanNominal: 0
+      };
     }
 
-    // Jika belum ada record pembayaran spesifik di database, jangan kunci akses rapor santri
-    if (!pembayaran) {
-      return {
-        lunas: true,
-        status: "lunas",
-        pesan: `Informasi SPP bulan ${namaBulanStr} ${targetTahun}.`,
-        nominal: 1500000,
-        bulan: targetBulan,
-        tahun: targetTahun,
-        namaBulan: namaBulanStr,
-        jatuhTempo,
-        isGracePeriod: false };
-    }
-
-    // 2. Jika ada record pembayaran dan status belum lunas, terapkan aturan tanggal 1 - 10
-    const isCurrentMonth = (targetBulan === (now.getMonth() + 1)) && (targetTahun === now.getFullYear());
-
-    if (isCurrentMonth) {
-      if (todayDate <= 10) {
-        // Masih dalam periode tgl 1 - 10 (Masa Tenggang) -> Akses masih dibuka
-        return {
-          lunas: true,
-          status: "tenggang",
-          pesan: `Masa pembayaran SPP bulan ${namaBulanStr} adalah tanggal 1 s/d 10 ${namaBulanStr}. Akses akun tetap terbuka hingga batas akhir pembayaran.`,
-          nominal: pembayaran?.nominal || 1500000,
-          bulan: targetBulan,
-          tahun: targetTahun,
-          namaBulan: namaBulanStr,
-          jatuhTempo,
-          isGracePeriod: true };
-      } else {
-        // Lewat tanggal 10 dan belum lunas -> Terkunci
-        return {
-          lunas: false,
-          status: "terkunci",
-          pesan: `Batas akhir pembayaran SPP bulan ${namaBulanStr} (${jatuhTempo}) telah terlewati. Akses akun terkunci sementara hingga pembayaran dikonfirmasi oleh Admin Keuangan.`,
-          nominal: pembayaran?.nominal || 1500000,
-          bulan: targetBulan,
-          tahun: targetTahun,
-          namaBulan: namaBulanStr,
-          jatuhTempo,
-          isGracePeriod: false };
-      }
-    } else if (targetTahun < now.getFullYear() || (targetTahun === now.getFullYear() && targetBulan < (now.getMonth() + 1))) {
-      // Bulan lampau dan belum lunas -> Terkunci
+    // Jika ada tunggakan (baik bulan berjalan atau bulan sebelumnya)
+    if (tunggakanCount > 0) {
+      const isLewatJatuhTempo = todayDate > 10 || (targetTahun === currentYearNum && targetBulan < currentMonthNum);
       return {
         lunas: false,
-        status: "terkunci",
-        pesan: `Terdapat tunggakan SPP bulan ${namaBulanStr} ${targetTahun}. Akses akun terkunci sementara hingga pembayaran diselesaikan.`,
-        nominal: pembayaran?.nominal || 1500000,
+        status: isLewatJatuhTempo ? "terkunci" : "tenggang",
+        pesan: `Terdapat kewajiban SPP yang belum terselesaikan sebanyak ${tunggakanCount} bulan (${tunggakanBulanList.join(", ")}).`,
+        nominal: pembayaran?.nominal || defaultNominal,
         bulan: targetBulan,
         tahun: targetTahun,
         namaBulan: namaBulanStr,
         jatuhTempo,
-        isGracePeriod: false };
-    } else {
-      // Bulan mendatang
-      return {
-        lunas: true,
-        status: "tenggang",
-        pesan: `Tagihan SPP bulan ${namaBulanStr} ${targetTahun}.`,
-        nominal: pembayaran?.nominal || 1500000,
-        bulan: targetBulan,
-        tahun: targetTahun,
-        namaBulan: namaBulanStr,
-        jatuhTempo,
-        isGracePeriod: true };
+        isGracePeriod: !isLewatJatuhTempo,
+        tunggakanCount,
+        tunggakanBulan: tunggakanBulanList,
+        totalTunggakanNominal
+      };
     }
+
+    // Fallback jika sudah lunas
+    return {
+      lunas: true,
+      status: "lunas",
+      pesan: `Alhamdulillah, SPP bulan ${namaBulanStr} ${targetTahun} lunas.`,
+      nominal: defaultNominal,
+      bulan: targetBulan,
+      tahun: targetTahun,
+      namaBulan: namaBulanStr,
+      jatuhTempo,
+      isGracePeriod: false,
+      tunggakanCount: 0,
+      tunggakanBulan: [],
+      totalTunggakanNominal: 0
+    };
   } catch (error) {
     console.error("Error cekStatusSpp:", error);
     return {
       lunas: true,
       status: "tenggang",
       pesan: "Status administrasi sedang diverifikasi.",
+      nominal: 1000000,
       bulan: targetBulan,
       tahun: targetTahun,
       namaBulan: namaBulanStr,
       jatuhTempo,
-      isGracePeriod: false };
+      isGracePeriod: false,
+      tunggakanCount: 0,
+      tunggakanBulan: [],
+      totalTunggakanNominal: 0
+    };
   }
 }

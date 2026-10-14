@@ -18,7 +18,8 @@ import {
   MessageCircle,
   FileText,
   Clock,
-  ArrowRight
+  ArrowRight,
+  AlertCircle
 } from "lucide-react";
 import { getOfficialNis } from "@/lib/officialSantri";
 
@@ -37,6 +38,7 @@ interface Anak {
   wali_kelas?: WaliKelas | null;
   foto_url?: string;
   lunas: boolean;
+  spp?: any;
 }
 
 export default function WaliDashboard() {
@@ -143,8 +145,8 @@ export default function WaliDashboard() {
                           </span>
                         ) : (
                           <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-rose-100 text-rose-800 flex items-center gap-1">
-                            <Lock size={12} />
-                            <span>Tagihan SPP</span>
+                            <AlertCircle size={12} />
+                            <span>Tagihan SPP ({anak.spp?.tunggakanCount || 1} Bulan)</span>
                           </span>
                         )}
                       </div>
