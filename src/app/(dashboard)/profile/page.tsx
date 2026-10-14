@@ -144,14 +144,22 @@ export default function ProfilePage() {
                       {p?.nama_lengkap || (profile?.user?.nama ? profile.user.nama.replace(/^Wali dari\s+/i, "") : "Civitas")}
                     </h3>
                     <p style={{ fontSize: "12px", color: "#64748b", fontWeight: 500, margin: "0 0 6px 0" }}>
-                      {p?.jabatan || "Pengajar"} · {p?.unit_kerja || "Pesantren Al-Imam"}
+                      {p
+                        ? `${p?.jabatan || "Pengajar"} · ${p?.unit_kerja || "Pesantren Al-Imam"}`
+                        : "Portal Resmi Wali Santri · Pesantren Al-Imam"}
                     </p>
                     <div style={{ display: "flex", flexWrap: "wrap", gap: "4px" }}>
-                      {(p?.kategori_pegawai || "GURU").split(",").map((k: string, i: number) => (
-                        <span key={i} style={{ padding: "2px 8px", background: "#fffbeb", color: "#78350f", border: "1px solid #fde68a", borderRadius: "6px", fontSize: "10px", fontWeight: "bold", textTransform: "uppercase" }}>
-                          {k.trim()}
+                      {p ? (
+                        (p?.kategori_pegawai || "GURU").split(",").map((k: string, i: number) => (
+                          <span key={i} style={{ padding: "2px 8px", background: "#fffbeb", color: "#78350f", border: "1px solid #fde68a", borderRadius: "6px", fontSize: "10px", fontWeight: "bold", textTransform: "uppercase" }}>
+                            {k.trim()}
+                          </span>
+                        ))
+                      ) : (
+                        <span style={{ padding: "2px 8px", background: "#f0fdf4", color: "#166534", border: "1px solid #bbf7d0", borderRadius: "6px", fontSize: "10px", fontWeight: "bold", textTransform: "uppercase" }}>
+                          Wali Santri
                         </span>
-                      ))}
+                      )}
                     </div>
                   </div>
                 </div>

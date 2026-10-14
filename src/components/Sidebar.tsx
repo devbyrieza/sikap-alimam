@@ -188,7 +188,7 @@ export default function Sidebar({ user }: SidebarProps) {
       KADIV_KEDISIPLINAN: "Kadiv Kedisiplinan",
       KADIV_KURIKULUM: "Kadiv Kurikulum",
       ADMIN_KEUANGAN: "Admin Keuangan",
-      WALI_SANTRI: "Wali Santri" };
+      WALI_SANTRI: "Portal Wali Santri" };
     
     return roleStr
       .toUpperCase()
