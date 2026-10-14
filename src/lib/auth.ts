@@ -72,10 +72,14 @@ export async function getLiveSession(): Promise<SessionPayload | null> {
     }
 
     if (liveUser && liveUser.role) {
+      const cleanNama = liveUser.role.toUpperCase().includes("WALI")
+        ? (liveUser.nama || "").replace(/^Wali dari\s+/i, "")
+        : (liveUser.nama || session.nama);
+
       return {
         ...session,
         role: liveUser.role,
-        nama: liveUser.nama || session.nama
+        nama: cleanNama || session.nama
       };
     }
   } catch (e) {

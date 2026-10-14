@@ -120,10 +120,14 @@ export async function POST(req: NextRequest) {
             await prisma.orangTuaSantri.deleteMany({ where: { santri_id: santri.id } });
             await prisma.orangTuaSantri.create({ data: { user_id: dedicatedWaliUser.id, santri_id: santri.id } });
           }
-          if (sppRecord) {
+          if (dedicatedWaliUser.nama !== santri.nama_lengkap || sppRecord) {
             user = await prisma.user.update({
               where: { id: dedicatedWaliUser.id },
-              data: { spp_access_blocked: isSppBlocked, spp_blocked_reason: sppReason },
+              data: {
+                nama: santri.nama_lengkap,
+                spp_access_blocked: isSppBlocked,
+                spp_blocked_reason: sppReason
+              },
               include: { pegawai: { select: { id: true, nama_lengkap: true, nama_panggilan: true } } }
             });
           }
@@ -135,13 +139,15 @@ export async function POST(req: NextRequest) {
 
           if (existingWaliUser) {
             user = existingWaliUser;
-            if (sppRecord) {
-              user = await prisma.user.update({
-                where: { id: existingWaliUser.id },
-                data: { spp_access_blocked: isSppBlocked, spp_blocked_reason: sppReason },
-                include: { pegawai: { select: { id: true, nama_lengkap: true, nama_panggilan: true } } }
-              });
-            }
+            user = await prisma.user.update({
+              where: { id: existingWaliUser.id },
+              data: {
+                nama: santri.nama_lengkap,
+                spp_access_blocked: isSppBlocked,
+                spp_blocked_reason: sppReason
+              },
+              include: { pegawai: { select: { id: true, nama_lengkap: true, nama_panggilan: true } } }
+            });
           } else {
             // Auto-provision akun Wali Santri baru khusus santri ini
             const bcrypt2 = await import("bcryptjs");
@@ -161,7 +167,7 @@ export async function POST(req: NextRequest) {
                 email: `wali_${santri.nis || identifier}@pesantren-alimam.com`,
                 password: hashed,
                 plain_password: defaultPassword,
-                nama: `Wali dari ${santri.nama_lengkap}`,
+                nama: santri.nama_lengkap,
                 role: "WALI_SANTRI",
                 is_active: true,
                 must_change_password: false,

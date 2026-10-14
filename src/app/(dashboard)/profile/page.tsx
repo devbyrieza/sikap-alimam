@@ -141,7 +141,7 @@ export default function ProfilePage() {
                   </div>
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <h3 style={{ fontWeight: "bold", fontSize: "16px", color: "#1e293b", margin: "0 0 4px 0", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
-                      {p?.nama_lengkap || profile?.user?.nama || "Civitas"}
+                      {p?.nama_lengkap || (profile?.user?.nama ? profile.user.nama.replace(/^Wali dari\s+/i, "") : "Civitas")}
                     </h3>
                     <p style={{ fontSize: "12px", color: "#64748b", fontWeight: 500, margin: "0 0 6px 0" }}>
                       {p?.jabatan || "Pengajar"} · {p?.unit_kerja || "Pesantren Al-Imam"}

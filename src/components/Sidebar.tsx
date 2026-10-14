@@ -304,7 +304,9 @@ export default function Sidebar({ user }: SidebarProps) {
                 fontWeight: 800,
                 color: "#550000" }}
             >
-              {((user?.nama) || "U").charAt(0).toUpperCase()}
+              {(((user?.role || "").toUpperCase().includes("WALI")
+                ? (user?.nama || "").replace(/^Wali dari\s+/i, "")
+                : (user?.nama || "U")) || "U").charAt(0).toUpperCase()}
             </div>
           )}
           <div style={{ flex: 1, minWidth: 0 }}>
@@ -317,7 +319,9 @@ export default function Sidebar({ user }: SidebarProps) {
                 textOverflow: "ellipsis",
                 whiteSpace: "nowrap" }}
             >
-              {user?.nama || "User"}
+              {(user?.role || "").toUpperCase().includes("WALI")
+                ? (user?.nama || "User").replace(/^Wali dari\s+/i, "")
+                : (user?.nama || "User")}
             </p>
             <p
               style={{
