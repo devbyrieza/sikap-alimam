@@ -22,8 +22,11 @@ import {
   ChevronRight,
   Edit,
   Save,
-  X
+  X,
+  Eye,
+  MessageSquare
 } from "lucide-react";
+import Swal from "sweetalert2";
 
 interface SantriSPPItem {
   id: string;
@@ -38,7 +41,7 @@ interface SantriSPPItem {
     bulan: number;
     tahun: number;
     nominal: number;
-    status: "lunas" | "belum_lunas";
+    status: "lunas" | "belum_lunas" | "menunggu_verifikasi";
     lock_status: "LUNAS" | "TENGGANG" | "TERKUNCI";
     tanggal_bayar: string | null;
     metode_bayar: string;
@@ -53,6 +56,7 @@ interface SummaryData {
   total_terkunci: number;
   total_terkumpul: number;
   total_tunggakan: number;
+  total_pending_verifikasi?: number;
   persentase: number;
 }
 
@@ -75,6 +79,10 @@ export default function KeuanganSPPPage() {
   const [summary, setSummary] = useState<SummaryData | null>(null);
   const [kelasList, setKelasList] = useState<{ id: string; nama: string }[]>([]);
 
+  const [pendingList, setPendingList] = useState<any[]>([]);
+  const [selectedProofUrl, setSelectedProofUrl] = useState<string | null>(null);
+  const [verifyingId, setVerifyingId] = useState<string | null>(null);
+
   // Modal Edit Detail
   const [editModalSantri, setEditModalSantri] = useState<SantriSPPItem | null>(null);
   const [editNominal, setEditNominal] = useState<number>(1500000);
@@ -94,11 +102,52 @@ export default function KeuanganSPPPage() {
       if (json.success) {
         setSantriList(json.data);
         setSummary(json.summary);
+        if (json.pending_verifications) {
+          setPendingList(json.pending_verifications);
+        }
       }
     } catch (err) {
       console.error("Gagal memuat data SPP:", err);
     } finally {
       setLoading(false);
+    }
+  }
+
+  // Verifikasi Konfirmasi Pembayaran dari Wali Santri (1-Click Approval)
+  async function handleVerifyPending(item: any) {
+    setVerifyingId(item.id);
+    try {
+      const res = await fetch("/api/keuangan/spp", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          santri_id: item.santri_id,
+          bulan: item.bulan,
+          tahun: item.tahun,
+          status: "lunas",
+          nominal: item.nominal,
+          tanggal_bayar: new Date().toISOString().split("T")[0],
+          metode_bayar: item.metode_bayar || "transfer",
+          catatan: item.catatan ? `${item.catatan} (Diverifikasi Keuangan)` : "Diverifikasi Keuangan via antrean konfirmasi"
+        })
+      });
+      const data = await res.json();
+      if (res.ok) {
+        Swal.fire({
+          icon: "success",
+          title: "Pembayaran Diverifikasi & Lunas!",
+          text: `SPP ananda ${item.santri?.nama_lengkap} bulan ${NAMA_BULAN[item.bulan - 1]} ${item.tahun} resmi dicatat LUNAS. Akses portal wali telah dibuka penuh.`,
+          timer: 3000,
+          showConfirmButton: false
+        });
+        fetchData();
+      } else {
+        Swal.fire("Gagal", data.error || "Gagal memverifikasi", "error");
+      }
+    } catch (e: any) {
+      Swal.fire("Error", e.message, "error");
+    } finally {
+      setVerifyingId(null);
     }
   }
 
@@ -289,6 +338,122 @@ export default function KeuanganSPPPage() {
         </div>
       </div>
 
+      {/* Antrean Konfirmasi Pembayaran Menunggu Verifikasi */}
+      {pendingList.length > 0 && (
+        <div style={{ background: "linear-gradient(135deg, #fffbeb 0%, #fef3c7 50%, #fff7ed 100%)", border: "2px solid #fcd34d", borderRadius: "24px", padding: "24px", boxShadow: "0 10px 25px -5px rgba(245, 158, 11, 0.15)", display: "flex", flexDirection: "column", gap: "16px" }}>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "12px", borderBottom: "1px solid #fde68a", paddingBottom: "14px" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+              <div style={{ padding: "10px", borderRadius: "14px", background: "#f59e0b", color: "white", boxShadow: "0 4px 6px -1px rgba(245, 158, 11, 0.3)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                <Clock className="animate-spin" style={{ width: "20px", height: "20px" }} />
+              </div>
+              <div>
+                <div style={{ display: "flex", alignItems: "center", gap: "8px", flexWrap: "wrap" }}>
+                  <h3 style={{ fontSize: "16px", fontWeight: 900, color: "#78350f", margin: 0 }}>
+                    {pendingList.length} Konfirmasi Pembayaran Menunggu Verifikasi
+                  </h3>
+                  <span style={{ padding: "2px 8px", borderRadius: "999px", background: "#fef08a", color: "#854d0e", fontWeight: 900, fontSize: "10px", textTransform: "uppercase", letterSpacing: "0.05em", border: "1px solid #fde047" }}>
+                    Perlu Tindakan
+                  </span>
+                </div>
+                <p style={{ fontSize: "12px", color: "#92400e", margin: "4px 0 0 0", lineHeight: "1.4" }}>
+                  Wali santri telah mengirim bukti transfer / melunasi SPP via portal. Verifikasi penerimaan dana lalu klik tombol <strong>[Setujui &amp; Lunas]</strong> untuk membuka akses portal secara permanen.
+                </p>
+              </div>
+            </div>
+            <button
+              onClick={fetchData}
+              style={{ padding: "8px 14px", borderRadius: "12px", background: "#fef3c7", border: "1px solid #fcd34d", color: "#92400e", fontSize: "12px", fontWeight: "bold", cursor: "pointer", display: "inline-flex", alignItems: "center", gap: "6px" }}
+              className="hover:bg-amber-200 transition-colors"
+            >
+              <RefreshCw className={loading ? "animate-spin" : ""} style={{ width: "13px", height: "13px" }} />
+              <span>Segarkan Antrean</span>
+            </button>
+          </div>
+
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: "16px" }}>
+            {pendingList.map((item) => {
+              let proofUrl: string | null = null;
+              let noteText = item.catatan || "";
+              if (noteText.includes("[BUKTI_TRANSFER:")) {
+                const match = noteText.match(/\[BUKTI_TRANSFER:(.*?)\]/);
+                if (match && match[1]) {
+                  proofUrl = match[1];
+                  noteText = noteText.replace(/\[BUKTI_TRANSFER:.*?\]/, "").trim();
+                }
+              }
+
+              return (
+                <div
+                  key={item.id}
+                  style={{ background: "white", borderRadius: "20px", padding: "16px", border: "1px solid #fde68a", boxShadow: "0 4px 6px -1px rgba(0,0,0,0.05)", display: "flex", flexDirection: "column", justifyContent: "space-between", gap: "12px" }}
+                >
+                  <div>
+                    <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: "8px", marginBottom: "8px" }}>
+                      <div>
+                        <h4 style={{ fontSize: "14px", fontWeight: 900, color: "#1e293b", margin: 0 }}>
+                          {item.santri?.nama_lengkap}
+                        </h4>
+                        <div style={{ fontSize: "11px", color: "#64748b", marginTop: "2px" }}>
+                          NIS: {item.santri?.nis || "-"} &bull; <strong style={{ color: "#334155" }}>{item.santri?.kelas?.nama || "Kelas"}</strong>
+                        </div>
+                      </div>
+                      <span style={{ padding: "4px 8px", borderRadius: "8px", background: "#fef3c7", color: "#92400e", fontSize: "11px", fontWeight: "bold", textTransform: "uppercase", whiteSpace: "nowrap" }}>
+                        {NAMA_BULAN[item.bulan - 1]} {item.tahun}
+                      </span>
+                    </div>
+
+                    <div style={{ background: "#fefce8", borderRadius: "12px", padding: "10px 12px", border: "1px solid #fef08a", fontSize: "12px", display: "flex", flexDirection: "column", gap: "4px" }}>
+                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                        <span style={{ color: "#713f12" }}>Nominal:</span>
+                        <strong style={{ color: "#78350f", fontSize: "13px", fontWeight: 900 }}>
+                          {formatRupiah(item.nominal)}
+                        </strong>
+                      </div>
+                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: "11px" }}>
+                        <span style={{ color: "#713f12" }}>Metode:</span>
+                        <span style={{ fontWeight: "bold", color: "#854d0e", textTransform: "capitalize" }}>{item.metode_bayar || "transfer"}</span>
+                      </div>
+                      {noteText && (
+                        <div style={{ fontSize: "11px", color: "#854d0e", fontStyle: "italic", borderTop: "1px solid #fef08a", paddingTop: "4px", marginTop: "2px" }}>
+                          &ldquo;{noteText}&rdquo;
+                        </div>
+                      )}
+                    </div>
+
+                    {proofUrl && (
+                      <button
+                        onClick={() => setSelectedProofUrl(proofUrl)}
+                        style={{ marginTop: "8px", width: "100%", padding: "6px 12px", borderRadius: "10px", background: "#f8fafc", border: "1px solid #e2e8f0", color: "#334155", fontSize: "11px", fontWeight: "bold", cursor: "pointer", display: "inline-flex", alignItems: "center", justifyContent: "center", gap: "6px" }}
+                        className="hover:bg-slate-100"
+                      >
+                        <Eye style={{ width: "13px", height: "13px" }} />
+                        <span>Lihat Bukti Transfer</span>
+                      </button>
+                    )}
+                  </div>
+
+                  <div style={{ borderTop: "1px solid #f1f5f9", paddingTop: "10px", display: "flex", alignItems: "center", gap: "8px" }}>
+                    <button
+                      onClick={() => handleVerifyPending(item)}
+                      disabled={verifyingId === item.id}
+                      style={{ flex: 1, padding: "8px 12px", borderRadius: "12px", background: "#059669", color: "white", fontWeight: "bold", fontSize: "12px", border: "none", cursor: "pointer", display: "inline-flex", alignItems: "center", justifyContent: "center", gap: "6px", boxShadow: "0 2px 4px rgba(5, 150, 105, 0.2)" }}
+                      className="hover:bg-emerald-700 transition-colors"
+                    >
+                      {verifyingId === item.id ? (
+                        <RefreshCw className="animate-spin" style={{ width: "13px", height: "13px" }} />
+                      ) : (
+                        <CheckCircle2 style={{ width: "14px", height: "14px" }} />
+                      )}
+                      <span>Setujui (Lunas)</span>
+                    </button>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
       {/* Date 1-10 Rule Alert Card */}
       <div style={{ background: "linear-gradient(to right, #fffbeb, #fef3c7)", border: "1px solid #fde68a", borderRadius: "24px", padding: "20px", display: "flex", alignItems: "center", justifyContent: "space-between", gap: "16px", flexWrap: "wrap", boxShadow: "0 1px 2px 0 rgba(0, 0, 0, 0.05)" }}>
         <div style={{ display: "flex", alignItems: "flex-start", gap: "14px" }}>
@@ -464,7 +629,8 @@ export default function KeuanganSPPPage() {
               ) : (
                 santriList.map((item, idx) => {
                   const isLunas = item.spp.status === "lunas";
-                  const isTerkunci = item.spp.lock_status === "TERKUNCI";
+                  const isMenunggu = (item.spp.status as any) === "menunggu_verifikasi";
+                  const isTerkunci = item.spp.lock_status === "TERKUNCI" && !isMenunggu;
                   const isTenggang = item.spp.lock_status === "TENGGANG";
 
                   return (
@@ -489,6 +655,10 @@ export default function KeuanganSPPPage() {
                           <span style={{ display: "inline-flex", alignItems: "center", gap: "6px", padding: "4px 10px", borderRadius: "999px", background: "#d1fae5", color: "#065f46", fontWeight: 900, fontSize: "11px" }}>
                             <CheckCircle2 style={{ width: "14px", height: "14px", color: "#059669" }} /> LUNAS
                           </span>
+                        ) : isMenunggu ? (
+                          <span style={{ display: "inline-flex", alignItems: "center", gap: "6px", padding: "4px 10px", borderRadius: "999px", background: "#fef3c7", color: "#92400e", fontWeight: 900, fontSize: "11px", border: "1px solid #fde68a" }}>
+                            <Clock style={{ width: "14px", height: "14px", color: "#d97706" }} className="animate-spin" /> VERIFIKASI WALI
+                          </span>
                         ) : (
                           <span style={{ display: "inline-flex", alignItems: "center", gap: "6px", padding: "4px 10px", borderRadius: "999px", background: "#fef3c7", color: "#92400e", fontWeight: 900, fontSize: "11px" }}>
                             <Clock style={{ width: "14px", height: "14px", color: "#d97706" }} /> BELUM BAYAR
@@ -499,6 +669,10 @@ export default function KeuanganSPPPage() {
                         {isLunas ? (
                           <span style={{ display: "inline-flex", alignItems: "center", gap: "4px", padding: "4px 10px", borderRadius: "8px", background: "#ecfdf5", color: "#047857", fontWeight: "bold", fontSize: "11px", border: "1px solid rgba(16, 185, 129, 0.2)" }}>
                             <Unlock style={{ width: "12px", height: "12px", color: "#059669" }} /> Terbuka Penuh
+                          </span>
+                        ) : isMenunggu ? (
+                          <span style={{ display: "inline-flex", alignItems: "center", gap: "4px", padding: "4px 10px", borderRadius: "8px", background: "#eff6ff", color: "#1d4ed8", fontWeight: "bold", fontSize: "11px", border: "1px solid rgba(59, 130, 246, 0.3)" }}>
+                            <Unlock style={{ width: "12px", height: "12px", color: "#2563eb" }} /> Terbuka (Verifikasi)
                           </span>
                         ) : isTenggang ? (
                           <span style={{ display: "inline-flex", alignItems: "center", gap: "4px", padding: "4px 10px", borderRadius: "8px", background: "#eff6ff", color: "#1d4ed8", fontWeight: "bold", fontSize: "11px", border: "1px solid rgba(59, 130, 246, 0.2)" }} title="Akses dibuka hingga tgl 10">
@@ -535,18 +709,22 @@ export default function KeuanganSPPPage() {
                               gap: "4px",
                               cursor: "pointer",
                               border: isLunas ? "1px solid #fecdd3" : "none",
-                              background: isLunas ? "#fff1f2" : "#10b981",
+                              background: isLunas ? "#fff1f2" : isMenunggu ? "#059669" : "#10b981",
                               color: isLunas ? "#be123c" : "white",
                               boxShadow: isLunas ? "none" : "0 4px 6px -1px rgba(16, 185, 129, 0.2)",
                               transition: "all 0.2s"
                             }}
-                            className={isLunas ? "hover:bg-rose-100" : "hover:bg-emerald-600"}
+                            className={isLunas ? "hover:bg-rose-100" : isMenunggu ? "hover:bg-emerald-700" : "hover:bg-emerald-600"}
                           >
                             {updatingId === item.id ? (
                               <RefreshCw className="animate-spin" style={{ width: "14px", height: "14px" }} />
                             ) : isLunas ? (
                               <>
                                 <XCircle style={{ width: "14px", height: "14px" }} /> Batal Lunas
+                              </>
+                            ) : isMenunggu ? (
+                              <>
+                                <CheckCircle2 style={{ width: "14px", height: "14px" }} /> Setujui Lunas
                               </>
                             ) : (
                               <>
@@ -666,6 +844,44 @@ export default function KeuanganSPPPage() {
                 Simpan Perubahan
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal Zoom Bukti Transfer */}
+      {selectedProofUrl && (
+        <div 
+          style={{ position: "fixed", inset: 0, zIndex: 60, display: "flex", alignItems: "center", justifyContent: "center", padding: "16px", background: "rgba(0,0,0,0.75)", backdropFilter: "blur(4px)" }}
+          onClick={() => setSelectedProofUrl(null)}
+        >
+          <div 
+            style={{ background: "white", borderRadius: "24px", maxWidth: "480px", width: "100%", padding: "20px", display: "flex", flexDirection: "column", gap: "12px", boxShadow: "0 25px 50px -12px rgba(0,0,0,0.5)" }}
+            onClick={(e) => e.stopPropagation()}
+            className="animate-in fade-in zoom-in-95"
+          >
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", borderBottom: "1px solid #f1f5f9", paddingBottom: "10px" }}>
+              <div>
+                <h4 style={{ margin: 0, fontWeight: 900, fontSize: "15px", color: "#1e293b" }}>Bukti Transfer Pembayaran SPP</h4>
+                <p style={{ margin: "2px 0 0 0", fontSize: "11px", color: "#64748b" }}>Pratinjau struk / tangkapan layar pembayaran</p>
+              </div>
+              <button 
+                onClick={() => setSelectedProofUrl(null)}
+                style={{ background: "transparent", border: "none", color: "#94a3b8", cursor: "pointer", padding: "4px" }}
+                className="hover:text-slate-600"
+              >
+                <X style={{ width: "18px", height: "18px" }} />
+              </button>
+            </div>
+            <div style={{ maxHeight: "65vh", overflow: "auto", borderRadius: "16px", background: "#f8fafc", border: "1px solid #e2e8f0", display: "flex", alignItems: "center", justifyContent: "center", padding: "8px" }}>
+              <img src={selectedProofUrl} alt="Bukti Transfer" style={{ maxWidth: "100%", maxHeight: "60vh", objectFit: "contain", borderRadius: "8px" }} />
+            </div>
+            <button
+              onClick={() => setSelectedProofUrl(null)}
+              style={{ width: "100%", padding: "10px", borderRadius: "12px", background: "#f1f5f9", border: "none", color: "#334155", fontWeight: "bold", fontSize: "12px", cursor: "pointer" }}
+              className="hover:bg-slate-200 transition-colors"
+            >
+              Tutup Pratinjau
+            </button>
           </div>
         </div>
       )}

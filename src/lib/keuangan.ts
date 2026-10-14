@@ -2,7 +2,7 @@ import { prisma } from "@/lib/prisma";
 
 export interface StatusSPP {
   lunas: boolean;
-  status: "lunas" | "tenggang" | "terkunci";
+  status: "lunas" | "tenggang" | "terkunci" | "menunggu_verifikasi";
   pesan: string;
   nominal?: number;
   bulan: number;
@@ -15,6 +15,9 @@ export interface StatusSPP {
   tunggakanCount?: number;
   tunggakanBulan?: string[];
   totalTunggakanNominal?: number;
+  hasPendingVerifikasi?: boolean;
+  pendingVerifikasiCount?: number;
+  pendingBulan?: string[];
 }
 
 export const NAMA_BULAN = [
@@ -29,6 +32,7 @@ export const NAMA_BULAN = [
  * 3. Masa pembayaran SPP bulanan adalah tanggal 1 s/d 10 setiap bulannya.
  * 4. Jika tanggal 1 - 10 belum bayar: Akun berada di masa tenggang.
  * 5. Menghitung tunggakan dari Juli 2026 hingga bulan berjalan.
+ * 6. Jika terdapat bukti konfirmasi pembayaran yang diunggah wali, status beralih ke "menunggu_verifikasi" (akses dibuka secara santun).
  */
 export async function cekStatusSpp(
   santriId: string,
@@ -54,6 +58,7 @@ export async function cekStatusSpp(
     const currentMonthNum = now.getMonth() + 1;
     const currentYearNum = now.getFullYear();
     const tunggakanBulanList: string[] = [];
+    const pendingBulanList: string[] = [];
 
     // Evaluasi bulan 7 (Juli) sampai bulan berjalan tahun 2026
     const maxBulanEvaluasi = (targetTahun === 2026) ? Math.min(targetBulan, currentMonthNum) : currentMonthNum;
@@ -67,13 +72,17 @@ export async function cekStatusSpp(
           }
         }
       });
-      if (!rec || rec.status !== "lunas") {
+      if (rec?.status === "menunggu_verifikasi") {
+        pendingBulanList.push(NAMA_BULAN[m - 1]);
+      } else if (!rec || rec.status !== "lunas") {
         tunggakanBulanList.push(NAMA_BULAN[m - 1]);
       }
     }
 
     const tunggakanCount = tunggakanBulanList.length;
     const totalTunggakanNominal = tunggakanCount * defaultNominal;
+    const pendingCount = pendingBulanList.length;
+    const hasPendingVerifikasi = pendingCount > 0;
 
     // 3. Cek record pembayaran bulan target secara spesifik
     const pembayaran = await prisma.pembayaranSPP.findUnique({
@@ -81,7 +90,31 @@ export async function cekStatusSpp(
         santri_id_bulan_tahun: {
           santri_id: santriId,
           bulan: targetBulan,
-          tahun: targetTahun } } });
+          tahun: targetTahun
+        }
+      }
+    });
+
+    // Jika seluruh tunggakan sudah diajukan konfirmasi pembayaran (menunggu verifikasi)
+    if (tunggakanCount === 0 && hasPendingVerifikasi) {
+      return {
+        lunas: true, // Akses dibuka secara anggun
+        status: "menunggu_verifikasi",
+        pesan: `Konfirmasi pembayaran bulan ${pendingBulanList.join(", ")} sedang diverifikasi oleh Tim Keuangan. Akses portal santri dibuka.`,
+        nominal: pembayaran?.nominal || defaultNominal,
+        bulan: targetBulan,
+        tahun: targetTahun,
+        namaBulan: namaBulanStr,
+        jatuhTempo,
+        isGracePeriod: false,
+        hasPendingVerifikasi: true,
+        pendingVerifikasiCount: pendingCount,
+        pendingBulan: pendingBulanList,
+        tunggakanCount: 0,
+        tunggakanBulan: [],
+        totalTunggakanNominal: 0
+      };
+    }
 
     // Jika target bulan ini lunas dan tidak ada tunggakan lampau
     if (pembayaran?.status === "lunas" && tunggakanCount === 0) {
@@ -99,7 +132,10 @@ export async function cekStatusSpp(
         metodeBayar: pembayaran.metode_bayar,
         tunggakanCount: 0,
         tunggakanBulan: [],
-        totalTunggakanNominal: 0
+        totalTunggakanNominal: 0,
+        hasPendingVerifikasi: false,
+        pendingVerifikasiCount: 0,
+        pendingBulan: []
       };
     }
 
@@ -109,7 +145,9 @@ export async function cekStatusSpp(
       return {
         lunas: false,
         status: isLewatJatuhTempo ? "terkunci" : "tenggang",
-        pesan: `Terdapat kewajiban SPP yang belum terselesaikan sebanyak ${tunggakanCount} bulan (${tunggakanBulanList.join(", ")}).`,
+        pesan: hasPendingVerifikasi
+          ? `Terdapat ${tunggakanCount} bulan belum lunas (${tunggakanBulanList.join(", ")}) dan ${pendingCount} bulan (${pendingBulanList.join(", ")}) sedang diverifikasi Tim Keuangan.`
+          : `Terdapat kewajiban SPP yang belum terselesaikan sebanyak ${tunggakanCount} bulan (${tunggakanBulanList.join(", ")}).`,
         nominal: pembayaran?.nominal || defaultNominal,
         bulan: targetBulan,
         tahun: targetTahun,
@@ -118,7 +156,10 @@ export async function cekStatusSpp(
         isGracePeriod: !isLewatJatuhTempo,
         tunggakanCount,
         tunggakanBulan: tunggakanBulanList,
-        totalTunggakanNominal
+        totalTunggakanNominal,
+        hasPendingVerifikasi,
+        pendingVerifikasiCount: pendingCount,
+        pendingBulan: pendingBulanList
       };
     }
 
@@ -135,7 +176,10 @@ export async function cekStatusSpp(
       isGracePeriod: false,
       tunggakanCount: 0,
       tunggakanBulan: [],
-      totalTunggakanNominal: 0
+      totalTunggakanNominal: 0,
+      hasPendingVerifikasi: false,
+      pendingVerifikasiCount: 0,
+      pendingBulan: []
     };
   } catch (error) {
     console.error("Error cekStatusSpp:", error);

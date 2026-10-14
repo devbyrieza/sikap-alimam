@@ -90,9 +90,11 @@ export async function GET(req: NextRequest) {
       // Bulan lampau atau bulan berjalan di tahun 2026
       const isPastOrCurrent = (b.tahun < currentYear) || (b.tahun === currentYear && b.bulan <= currentMonth);
 
-      let status: "lunas" | "belum_lunas" | "mendatang" = "mendatang";
+      let status: "lunas" | "menunggu_verifikasi" | "belum_lunas" | "mendatang" = "mendatang";
       if (record?.status === "lunas") {
         status = "lunas";
+      } else if (record?.status === "menunggu_verifikasi") {
+        status = "menunggu_verifikasi";
       } else if (isPastOrCurrent) {
         status = "belum_lunas";
       }
@@ -161,6 +163,7 @@ export async function GET(req: NextRequest) {
       spp_history: sppHistory,
       spp_summary: {
         total_lunas: totalLunasCount,
+        total_menunggu_verifikasi: sppHistory.filter(s => s.status === "menunggu_verifikasi").length,
         total_belum_lunas: totalBelumLunasCount,
         total_nominal_lunas: totalNominalLunas,
         total_nominal_tunggakan: totalNominalTunggakan,

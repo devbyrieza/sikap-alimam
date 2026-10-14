@@ -96,6 +96,22 @@ export async function GET(req: NextRequest) {
     const totalTerkumpul = data.reduce((acc, curr) => curr.spp.status === "lunas" ? acc + curr.spp.nominal : acc, 0);
     const totalTunggakan = data.reduce((acc, curr) => curr.spp.status !== "lunas" ? acc + curr.spp.nominal : acc, 0);
 
+    // Ambil daftar konfirmasi yang sedang menunggu verifikasi
+    const pendingVerifications = await prisma.pembayaranSPP.findMany({
+      where: { status: "menunggu_verifikasi" },
+      include: {
+        santri: {
+          select: {
+            id: true,
+            nama_lengkap: true,
+            nis: true,
+            kelas: { select: { nama: true } }
+          }
+        }
+      },
+      orderBy: { updated_at: "desc" }
+    });
+
     return NextResponse.json({
       success: true,
       bulan,
@@ -110,7 +126,9 @@ export async function GET(req: NextRequest) {
         total_terkunci: totalTerkunci,
         total_terkumpul: totalTerkumpul,
         total_tunggakan: totalTunggakan,
+        total_pending_verifikasi: pendingVerifications.length,
         persentase: totalSantri > 0 ? Math.round((totalLunas / totalSantri) * 100) : 0 },
+      pending_verifications: pendingVerifications,
       data: filteredData });
   } catch (error: any) {
     console.error("Error in GET /api/keuangan/spp:", error);

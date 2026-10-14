@@ -38,6 +38,7 @@ import {
 import Swal from "sweetalert2";
 import JurnalDetailModal from "@/components/JurnalDetailModal";
 import RaporOfficialSheet from "@/components/RaporOfficialSheet";
+import ModalKonfirmasiSPP from "@/components/ModalKonfirmasiSPP";
 import { getOfficialNis } from "@/lib/officialSantri";
 
 export default function RaporWaliPage() {
@@ -63,9 +64,10 @@ export default function RaporWaliPage() {
   // Modal Jurnal Detail
   const [selectedJurnal, setSelectedJurnal] = useState<any>(null);
 
-  // SPP History State
+  // SPP History & Konfirmasi State
   const [sppHistory, setSppHistory] = useState<any>(null);
   const [loadingSpp, setLoadingSpp] = useState(false);
+  const [isKonfirmasiOpen, setIsKonfirmasiOpen] = useState(false);
 
   useEffect(() => {
     // Fetch from real API (if no santriId, API defaults to first active santri)
@@ -89,15 +91,36 @@ export default function RaporWaliPage() {
       });
   }, [santriId]);
 
-  // Fetch SPP History when tab is opened
-  useEffect(() => {
-    if (activeTab !== "spp" || !santriId || sppHistory) return;
+  const targetSantriId = santriId || data?.santri?.id || "";
+
+  // Helper untuk refresh data SPP & Rapor setelah konfirmasi
+  const refreshSppData = () => {
+    if (!targetSantriId) return;
     setLoadingSpp(true);
-    fetch(`/api/wali/spp-history?santri_id=${santriId}`)
+    Promise.all([
+      fetch(`/api/wali/spp-history?santri_id=${targetSantriId}`).then(r => r.json()),
+      fetch(`/api/rapor?santri_id=${targetSantriId}`).then(r => r.json())
+    ])
+      .then(([sppRes, raporRes]) => {
+        setSppHistory(sppRes);
+        setData(raporRes);
+        setLoadingSpp(false);
+      })
+      .catch((err) => {
+        console.error("Error refreshing SPP data:", err);
+        setLoadingSpp(false);
+      });
+  };
+
+  // Eagerly fetch SPP History saat targetSantriId siap agar modal konfirmasi selalu siap
+  useEffect(() => {
+    if (!targetSantriId || sppHistory) return;
+    setLoadingSpp(true);
+    fetch(`/api/wali/spp-history?santri_id=${targetSantriId}`)
       .then(r => r.json())
       .then(d => { setSppHistory(d); setLoadingSpp(false); })
       .catch(() => setLoadingSpp(false));
-  }, [activeTab, santriId, sppHistory]);
+  }, [targetSantriId, sppHistory]);
 
   const handleKirimWA = async () => {
     if (!data?.santri) return;
@@ -400,7 +423,11 @@ export default function RaporWaliPage() {
                     {santri.kelas}
                   </span>
                   <span className="text-white/80 font-mono text-xs">NIS: {(santri?.nama ? getOfficialNis(santri.nama) : null) || santri.nis}</span>
-                  {data?.spp?.lunas ? (
+                  {data?.spp?.status === "menunggu_verifikasi" ? (
+                    <span className="px-2.5 py-0.5 rounded-full bg-amber-500/30 text-amber-200 border border-amber-400/40 text-[11px] font-extrabold flex items-center gap-1">
+                      <Clock size={12} className="animate-spin text-amber-300" /> SPP Sedang Diverifikasi Keuangan
+                    </span>
+                  ) : data?.spp?.lunas ? (
                     <span className="px-2.5 py-0.5 rounded-full bg-emerald-500/30 text-emerald-200 border border-emerald-400/40 text-[11px] font-extrabold flex items-center gap-1">
                       <CheckCircle2 size={12} /> SPP {data.spp.namaBulan} Lunas
                     </span>
@@ -421,8 +448,47 @@ export default function RaporWaliPage() {
           </div>
         </div>
 
-        {/* Banner Peringatan Tunggakan SPP (Jika Ada Tunggakan) */}
-        {data?.spp?.lunas === false && (
+        {/* Banner Status Konfirmasi Menunggu Verifikasi */}
+        {data?.spp?.status === "menunggu_verifikasi" && (
+          <div className="bg-gradient-to-r from-amber-50 via-amber-100/60 to-amber-50 border border-amber-200/90 rounded-3xl p-5 shadow-lg shadow-amber-950/5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 text-xs no-print print:hidden">
+            <div className="flex items-start sm:items-center gap-3.5">
+              <div className="p-3 rounded-2xl bg-amber-500 text-white shrink-0 shadow-md shadow-amber-950/20">
+                <Clock size={22} className="animate-spin" />
+              </div>
+              <div>
+                <div className="flex items-center gap-2 mb-0.5 flex-wrap">
+                  <span className="px-2 py-0.5 rounded-full bg-amber-200 text-amber-900 font-extrabold text-[10px] uppercase tracking-wider">
+                    Sedang Diverifikasi
+                  </span>
+                  <span className="font-extrabold text-amber-950 text-sm sm:text-base">
+                    Konfirmasi Pembayaran Sedang Diproses Keuangan
+                  </span>
+                </div>
+                <p className="text-amber-900/90 mt-0.5 leading-relaxed text-xs">
+                  Alhamdulillah, bukti pembayaran SPP ananda telah diterima dan sedang dalam antrean verifikasi Admin Keuangan. Seluruh akses lembar rapor dan mutabaah ananda tetap dibuka secara penuh.
+                </p>
+              </div>
+            </div>
+            <div className="flex items-center gap-2 self-stretch sm:self-auto shrink-0">
+              <button
+                onClick={() => setIsKonfirmasiOpen(true)}
+                className="px-4 py-2.5 bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs rounded-xl shadow-md transition-all flex items-center justify-center gap-1.5 flex-1 sm:flex-initial"
+              >
+                <CreditCard size={14} />
+                <span>Upload Bukti Tambahan</span>
+              </button>
+              <button
+                onClick={() => setActiveTab("spp")}
+                className="px-4 py-2.5 bg-white hover:bg-slate-50 text-amber-900 border border-amber-300 font-bold text-xs rounded-xl shadow-sm transition-all flex items-center justify-center gap-1.5 flex-1 sm:flex-initial"
+              >
+                <span>Lihat Tab SPP &rarr;</span>
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Banner Peringatan Tunggakan SPP (Jika Belum Lunas dan Belum Diajukan) */}
+        {data?.spp?.lunas === false && data?.spp?.status !== "menunggu_verifikasi" && (
           <div className="bg-gradient-to-r from-rose-50 to-rose-100/70 border border-rose-200/90 rounded-3xl p-5 shadow-lg shadow-rose-950/5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 text-xs no-print print:hidden">
             <div className="flex items-start sm:items-center gap-3.5">
               <div className="p-3 rounded-2xl bg-rose-600 text-white shrink-0 shadow-md shadow-rose-950/20">
@@ -438,16 +504,25 @@ export default function RaporWaliPage() {
                   </span>
                 </div>
                 <p className="text-rose-800/90 mt-0.5 leading-relaxed text-xs">
-                  Batas akhir pembayaran SPP adalah tanggal <strong>10 setiap bulannya</strong>. Mohon segera melakukan pelunasan administrasi ananda atau konfirmasi ke Admin Keuangan melalui <strong>Tab 6 (SPP &amp; Wali Kelas)</strong>.
+                  Batas akhir pembayaran SPP adalah tanggal <strong>10 setiap bulannya</strong>. Jika baru saja melakukan transfer, silakan konfirmasi bukti transfer agar sistem langsung mencatat status verifikasi ananda.
                 </p>
               </div>
             </div>
-            <button
-              onClick={() => setActiveTab("spp")}
-              className="px-5 py-2.5 bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs rounded-xl shadow-md shadow-rose-950/20 transition-all hover:scale-[1.02] active:scale-[0.98] whitespace-nowrap self-stretch sm:self-auto text-center shrink-0"
-            >
-              Cek Rincian Tagihan &rarr;
-            </button>
+            <div className="flex items-center gap-2 self-stretch sm:self-auto shrink-0 flex-wrap sm:flex-nowrap">
+              <button
+                onClick={() => setIsKonfirmasiOpen(true)}
+                className="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl shadow-md transition-all hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-1.5 flex-1 sm:flex-initial"
+              >
+                <CreditCard size={14} />
+                <span>Konfirmasi Bayar (Upload/WA)</span>
+              </button>
+              <button
+                onClick={() => setActiveTab("spp")}
+                className="px-4 py-2.5 bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs rounded-xl shadow-md shadow-rose-950/20 transition-all hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-1.5 flex-1 sm:flex-initial"
+              >
+                <span>Cek Rincian &rarr;</span>
+              </button>
+            </div>
           </div>
         )}
 
@@ -1186,9 +1261,18 @@ export default function RaporWaliPage() {
                         <p className="text-xs text-slate-500">Transparansi pencatatan SPP bulanan santri di Safina Keuangan</p>
                       </div>
                     </div>
-                    <span className="text-xs font-semibold px-3 py-1.5 rounded-full bg-slate-100 text-slate-600 self-start sm:self-auto">
-                      Tahun Ajaran 2026/2027
-                    </span>
+                    <div className="flex items-center gap-2 self-start sm:self-auto flex-wrap">
+                      <button
+                        onClick={() => setIsKonfirmasiOpen(true)}
+                        className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-primary hover:bg-[#7a0000] text-white font-bold text-xs shadow-md shadow-primary/20 transition-all hover:scale-[1.02] active:scale-[0.98]"
+                      >
+                        <CreditCard size={14} />
+                        <span>Konfirmasi Pembayaran (WA/Upload)</span>
+                      </button>
+                      <span className="text-xs font-semibold px-3 py-1.5 rounded-full bg-slate-100 text-slate-600">
+                        Tahun Ajaran 2026/2027
+                      </span>
+                    </div>
                   </div>
 
                   {(!sppHistory?.spp_history || sppHistory.spp_history.length === 0) ? (
@@ -1200,6 +1284,7 @@ export default function RaporWaliPage() {
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5">
                       {sppHistory.spp_history.map((item: any, idx: number) => {
                         const isLunas = item.status === "lunas";
+                        const isMenunggu = item.status === "menunggu_verifikasi";
                         const isBelum = item.status === "belum_lunas";
                         const isMendatang = item.status === "mendatang";
 
@@ -1209,6 +1294,8 @@ export default function RaporWaliPage() {
                             className={`p-4 rounded-2xl border transition-all ${
                               item.is_bulan_ini
                                 ? "bg-amber-50/70 border-amber-300 ring-2 ring-amber-400/30 shadow-md"
+                                : isMenunggu
+                                ? "bg-amber-50/50 border-amber-300 hover:bg-amber-100/50 shadow-sm"
                                 : isLunas
                                 ? "bg-slate-50/70 border-slate-200/80 hover:bg-white"
                                 : isBelum
@@ -1236,6 +1323,11 @@ export default function RaporWaliPage() {
                                   <CheckCircle2 size={13} />
                                   <span>Lunas</span>
                                 </span>
+                              ) : isMenunggu ? (
+                                <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl bg-amber-100 text-amber-900 border border-amber-300 text-[11px] font-bold shrink-0">
+                                  <Clock size={13} className="text-amber-600 animate-spin" />
+                                  <span>Sedang Diverifikasi</span>
+                                </span>
                               ) : isBelum ? (
                                 <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl bg-rose-100 text-rose-800 text-[11px] font-bold shrink-0">
                                   <XCircle size={13} />
@@ -1252,7 +1344,7 @@ export default function RaporWaliPage() {
                             <div className="text-[11px] text-slate-500 pt-2 border-t border-slate-200/60 flex items-center justify-between">
                               <span>Tanggal Bayar:</span>
                               <span className="font-medium text-slate-700">
-                                {item.tanggal_bayar ? formatTanggal(item.tanggal_bayar) : isMendatang ? "Belum Jatuh Tempo" : "-"}
+                                {item.tanggal_bayar ? formatTanggal(item.tanggal_bayar) : isMendatang ? "Belum Jatuh Tempo" : isMenunggu ? "Menunggu Admin" : "-"}
                               </span>
                             </div>
                             {item.metode_bayar && (
@@ -1273,7 +1365,7 @@ export default function RaporWaliPage() {
                     <div className="text-xs text-amber-900 leading-relaxed">
                       <p className="font-bold">Informasi Pembayaran &amp; Rekonsiliasi SPP</p>
                       <p className="mt-0.5 text-amber-800">
-                        Pembayaran SPP dilakukan melalui rekening resmi Pesantren Islam Al-Imam. Jika telah melakukan transfer namun status belum terbarui, silakan konfirmasi bukti transfer ke Bagian Keuangan melalui nomor WhatsApp layanan atau wali kelas ananda.
+                        Pembayaran SPP dilakukan melalui rekening resmi Pesantren Islam Al-Imam. Jika telah melakukan transfer namun status belum terbarui, silakan klik tombol <strong>Konfirmasi Pembayaran (WA/Upload)</strong> di atas atau hubungi Admin Keuangan via WhatsApp.
                       </p>
                     </div>
                   </div>
@@ -1283,6 +1375,18 @@ export default function RaporWaliPage() {
           </div>
         )}
       </div>
+
+      {/* Modal Konfirmasi SPP Mandiri */}
+      <ModalKonfirmasiSPP
+        isOpen={isKonfirmasiOpen}
+        onClose={() => setIsKonfirmasiOpen(false)}
+        santriId={targetSantriId}
+        santriNama={santri?.nama || ""}
+        santriNis={(santri?.nama ? getOfficialNis(santri.nama) : null) || santri?.nis || ""}
+        santriKelas={santri?.kelas || ""}
+        sppHistoryList={sppHistory?.spp_history || []}
+        onSuccess={refreshSppData}
+      />
 
       {/* Ultra-Premium Jurnal Detail Modal */}
       <JurnalDetailModal

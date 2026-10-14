@@ -138,7 +138,12 @@ export default function WaliDashboard() {
                         <span className="text-xs text-slate-500 font-mono font-bold bg-slate-100 px-2.5 py-0.5 rounded-full">
                           NIS: {nisResmi}
                         </span>
-                        {anak.lunas ? (
+                        {anak.spp?.status === "menunggu_verifikasi" ? (
+                          <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-900 border border-amber-300 flex items-center gap-1">
+                            <Clock size={12} className="text-amber-600 animate-spin" />
+                            <span>SPP Sedang Diverifikasi</span>
+                          </span>
+                        ) : anak.lunas ? (
                           <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800 flex items-center gap-1">
                             <CheckCircle2 size={12} />
                             <span>SPP Lunas</span>
@@ -188,11 +193,11 @@ export default function WaliDashboard() {
                       className="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-2xl bg-primary hover:bg-[#7a0000] text-white font-bold text-sm shadow-lg shadow-primary/25 transition-all hover:scale-[1.02] active:scale-[0.98]"
                     >
                       <FileText size={16} />
-                      <span>{anak.lunas ? "Buka Rapor & Rekap" : "Lihat Status SPP & Rapor"}</span>
+                      <span>{anak.spp?.status === "menunggu_verifikasi" ? "Buka Rapor (Verifikasi SPP)" : anak.lunas ? "Buka Rapor & Rekap" : "Lihat Status SPP & Rapor"}</span>
                       <ChevronRight size={16} />
                     </a>
 
-                    {anak.lunas && (
+                    {(anak.lunas || anak.spp?.status === "menunggu_verifikasi") && (
                       <a
                         href={`/rapor/print/${anak.id}`}
                         target="_blank"
