@@ -1281,8 +1281,26 @@ input[type="checkbox"], input[type="radio"], input[type="submit"], input[type="b
     border-bottom: 1px solid #94a3b8 !important;
   }
 
-  .rapor-table .border-divider-mid {
+  .rapor-table .border-divider-mid,
+  .rapor-table th.border-divider-mid,
+  .rapor-table td.border-divider-mid,
+  .rapor-table thead th.border-divider-mid,
+  .rapor-table thead th:first-child.border-divider-mid,
+  .rapor-table tbody td.border-divider-mid {
     border-right: 2px solid #000000 !important;
+    border-right-color: #000000 !important;
+    border-right-width: 2px !important;
+    border-right-style: solid !important;
+  }
+
+  .rapor-table .border-divider-mid + th,
+  .rapor-table .border-divider-mid + td,
+  .rapor-table thead th.border-divider-mid + th,
+  .rapor-table tbody td.border-divider-mid + td {
+    border-left: 2px solid #000000 !important;
+    border-left-color: #000000 !important;
+    border-left-width: 2px !important;
+    border-left-style: solid !important;
   }
 
   @page {
