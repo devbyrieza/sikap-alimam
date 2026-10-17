@@ -630,19 +630,19 @@ export default function RaporOfficialSheet({ data, showPrintToolbar = false }: R
                 display: "grid", 
                 gridTemplateColumns: "1fr 1.05fr 1.55fr", 
                 textAlign: "center", 
-                fontSize: "10px", 
+                fontSize: "10.5px", 
                 gap: "6px",
                 flex: 1,
-                marginRight: "14px",
+                marginRight: "16px",
                 minWidth: 0
               }}>
                 {/* Kolom 1: Orang Tua */}
-                <div style={{ display: "flex", flexDirection: "column", justifyContent: "space-between", height: "120px", padding: "0 2px" }}>
+                <div style={{ display: "flex", flexDirection: "column", justifyContent: "space-between", height: "140px", padding: "0 2px" }}>
                   <div>
-                    <p style={{ margin: 0 }}>Mengetahui,</p>
-                    <p style={{ margin: "2px 0 0 0" }}>Orang Tua / Wali</p>
+                    <p style={{ margin: 0, fontWeight: "500" }}>Mengetahui,</p>
+                    <p style={{ margin: "2px 0 0 0", fontWeight: "bold" }}>Orang Tua / Wali</p>
                   </div>
-                  <div style={{ minHeight: "26px", display: "flex", alignItems: "flex-end", justifyContent: "center" }}>
+                  <div style={{ minHeight: "28px", display: "flex", alignItems: "flex-end", justifyContent: "center" }}>
                     <p style={{ 
                       fontWeight: "bold", 
                       margin: 0, 
@@ -655,19 +655,19 @@ export default function RaporOfficialSheet({ data, showPrintToolbar = false }: R
                       maxWidth: "130px"
                     }}>
                       <span>(</span>
-                      <span style={{ display: "inline-block", flex: 1, minWidth: "90px" }}>&nbsp;</span>
+                      <span style={{ display: "inline-block", flex: 1, minWidth: "100px" }}>&nbsp;</span>
                       <span>)</span>
                     </p>
                   </div>
                 </div>
 
                 {/* Kolom 2: Kepala Madrasah */}
-                <div style={{ display: "flex", flexDirection: "column", justifyContent: "space-between", height: "120px", padding: "0 2px" }}>
+                <div style={{ display: "flex", flexDirection: "column", justifyContent: "space-between", height: "140px", padding: "0 2px" }}>
                   <div>
-                    <p style={{ margin: 0 }}>Mengetahui,</p>
-                    <p style={{ margin: "2px 0 0 0" }}>{headTitle}</p>
+                    <p style={{ margin: 0, fontWeight: "500" }}>Mengetahui,</p>
+                    <p style={{ margin: "2px 0 0 0", fontWeight: "bold" }}>{headTitle}</p>
                   </div>
-                  <div style={{ minHeight: "26px", display: "flex", alignItems: "flex-end", justifyContent: "center" }}>
+                  <div style={{ minHeight: "28px", display: "flex", alignItems: "flex-end", justifyContent: "center" }}>
                     <p style={{ fontWeight: "bold", margin: 0, fontSize: "10px", whiteSpace: "nowrap", letterSpacing: "-0.2px" }}>
                       ({headName})
                     </p>
@@ -675,12 +675,12 @@ export default function RaporOfficialSheet({ data, showPrintToolbar = false }: R
                 </div>
 
                 {/* Kolom 3: Wali Kelas */}
-                <div style={{ display: "flex", flexDirection: "column", justifyContent: "space-between", height: "120px", padding: "0 2px" }}>
+                <div style={{ display: "flex", flexDirection: "column", justifyContent: "space-between", height: "140px", padding: "0 2px" }}>
                   <div>
-                    <p style={{ margin: 0 }}>Sukabumi, 11 Oktober 2026</p>
-                    <p style={{ margin: "2px 0 0 0" }}>Wali Kelas</p>
+                    <p style={{ margin: 0, fontWeight: "500" }}>Sukabumi, 11 Oktober 2026</p>
+                    <p style={{ margin: "2px 0 0 0", fontWeight: "bold" }}>Wali Kelas</p>
                   </div>
-                  <div style={{ minHeight: "26px", display: "flex", alignItems: "flex-end", justifyContent: "center" }}>
+                  <div style={{ minHeight: "28px", display: "flex", alignItems: "flex-end", justifyContent: "center" }}>
                     <p style={{ fontWeight: "bold", margin: 0, fontSize: "10px", whiteSpace: "nowrap", letterSpacing: "-0.2px" }}>
                       ({waliKelasName})
                     </p>
@@ -690,8 +690,8 @@ export default function RaporOfficialSheet({ data, showPrintToolbar = false }: R
 
               {/* Sisi Kanan: QR Code Resmi Akademik */}
               <div style={{ 
-                width: "82px", 
-                height: "120px",
+                width: "90px", 
+                height: "140px",
                 flexShrink: 0, 
                 display: "flex", 
                 flexDirection: "column", 
@@ -700,7 +700,7 @@ export default function RaporOfficialSheet({ data, showPrintToolbar = false }: R
                 textAlign: "center"
               }}>
                 <div style={{ 
-                  padding: "4px", 
+                  padding: "5px", 
                   backgroundColor: "white", 
                   border: "1px solid #94a3b8", 
                   display: "inline-block" 
@@ -708,12 +708,12 @@ export default function RaporOfficialSheet({ data, showPrintToolbar = false }: R
                   <img 
                     src={`https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=https://sikap.pesantren-alimam.com/verify/${santri?.id || "santri"}?doc=akademik`}
                     alt="QR Verifikasi Dokumen"
-                    style={{ width: "68px", height: "68px", display: "block" }}
+                    style={{ width: "78px", height: "78px", display: "block" }}
                   />
                 </div>
                 <p style={{ 
-                  margin: "3px 0 0 0", 
-                  fontSize: "6.5px", 
+                  margin: "4px 0 0 0", 
+                  fontSize: "7px", 
                   fontWeight: "bold", 
                   letterSpacing: "0.2px", 
                   color: "#000000",
@@ -1061,9 +1061,9 @@ export default function RaporOfficialSheet({ data, showPrintToolbar = false }: R
                 minWidth: 0
               }}>
                 {/* Kolom 1: Orang Tua */}
-                <div style={{ display: "flex", flexDirection: "column", justifyContent: "space-between", height: "145px", padding: "0 2px" }}>
+                <div style={{ display: "flex", flexDirection: "column", justifyContent: "space-between", height: "140px", padding: "0 2px" }}>
                   <div>
-                    <p style={{ margin: 0 }}>Mengetahui</p>
+                    <p style={{ margin: 0 }}>Mengetahui,</p>
                     <p style={{ margin: "2px 0 0 0" }}>Orang Tua / Wali</p>
                   </div>
                   <div style={{ minHeight: "28px", display: "flex", alignItems: "flex-end", justifyContent: "center" }}>
@@ -1086,7 +1086,7 @@ export default function RaporOfficialSheet({ data, showPrintToolbar = false }: R
                 </div>
 
                 {/* Kolom 2: Kepala Kepengasuhan */}
-                <div style={{ display: "flex", flexDirection: "column", justifyContent: "space-between", height: "145px", padding: "0 2px" }}>
+                <div style={{ display: "flex", flexDirection: "column", justifyContent: "space-between", height: "140px", padding: "0 2px" }}>
                   <div>
                     <p style={{ margin: 0 }}>Mengetahui,</p>
                     <p style={{ margin: "2px 0 0 0" }}>Kepala Kepengasuhan</p>
@@ -1099,7 +1099,7 @@ export default function RaporOfficialSheet({ data, showPrintToolbar = false }: R
                 </div>
 
                 {/* Kolom 3: Pengasuh & Pengampu Halaqoh */}
-                <div style={{ display: "flex", flexDirection: "column", justifyContent: "space-between", height: "145px", padding: "0 2px" }}>
+                <div style={{ display: "flex", flexDirection: "column", justifyContent: "space-between", height: "140px", padding: "0 2px" }}>
                   <div>
                     <p style={{ margin: 0 }}>Sukabumi, 11 Oktober 2026</p>
                     <p style={{ margin: "2px 0 0 0" }}>Pengasuh &amp; Pengampu Halaqoh</p>
@@ -1115,7 +1115,7 @@ export default function RaporOfficialSheet({ data, showPrintToolbar = false }: R
               {/* Sisi Kanan: QR Code Resmi Kepengasuhan */}
               <div style={{ 
                 width: "90px", 
-                height: "145px",
+                height: "140px",
                 flexShrink: 0, 
                 display: "flex", 
                 flexDirection: "column", 
