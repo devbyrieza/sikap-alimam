@@ -3,6 +3,7 @@
 import React from "react";
 import { Printer } from "lucide-react";
 import { getOfficialNis } from "@/lib/officialSantri";
+import { surahData } from "@/lib/quran-madinah";
 
 interface RaporOfficialSheetProps {
   data: any;
@@ -50,27 +51,94 @@ export default function RaporOfficialSheet({ data, showPrintToolbar = false }: R
     return "مقبول";
   };
 
-  const toArabicExamType = (jenis: string, juz?: number | null, surah?: string | null) => {
-    let base = "اختبار القرآن الكريم";
-    const j = (jenis || "").toLowerCase();
-    if (j.includes("pra_target") || j.includes("pratarget")) {
-      base = "اختبار ما قبل الهدف";
-    } else if (j.includes("target")) {
-      base = "اختبار الهدف";
-    } else if (j.includes("pekanan")) {
-      base = "الاختبار الأسبوعي";
-    } else if (j.includes("bulanan")) {
-      base = "الاختبار الشهري";
-    } else if (j.includes("itqon")) {
-      base = "اختبار الإتقان";
+  const getArabicSurahName = (surahNameOrNum?: string | number | null): string => {
+    if (!surahNameOrNum) return "";
+    const cleanStr = String(surahNameOrNum).trim().toLowerCase().replace(/^surah\s+/i, "");
+    const found = surahData.find(s => 
+      s.nama_latin.toLowerCase() === cleanStr ||
+      s.nomor.toString() === cleanStr ||
+      s.nama_latin.toLowerCase().replace(/[-'\s`’]+/g, "") === cleanStr.replace(/[-'\s`’]+/g, "")
+    );
+    if (found) {
+      return found.nama_arab;
     }
+    if (cleanStr.includes("yusuf")) return "يُوسُفَ";
+    if (cleanStr.includes("kahf")) return "الكَهۡفِ";
+    if (cleanStr.includes("maryam")) return "مَرۡيَمَ";
+    return String(surahNameOrNum);
+  };
+
+  const formatExamIndo = (u: any) => {
+    const jenis = u.jenis_ujian ? u.jenis_ujian.replace(/_/g, " ").toUpperCase() : "UJIAN PRA TARGET";
     
-    if (juz) {
-      base += ` (الجزء ${toArabicNum(juz)})`;
-    } else if (surah) {
-      base += ` (سورة ${surah})`;
+    // Deteksi ayat dengan fallback cerdas bila data ujian Surah Yusuf belum terisi nomor ayatnya
+    const ayatDari = u.ayat_dari !== null && u.ayat_dari !== undefined 
+      ? u.ayat_dari 
+      : (u.surah_nama?.toLowerCase().includes("yusuf") ? 1 : null);
+    const ayatKe = u.ayat_ke !== null && u.ayat_ke !== undefined 
+      ? u.ayat_ke 
+      : (u.surah_nama?.toLowerCase().includes("yusuf") ? 52 : null);
+
+    let materi = "";
+    if (u.surah_nama) {
+      const cleanSurah = u.surah_nama.replace(/^Surah\s+/i, "");
+      materi = `Surah ${cleanSurah}`;
+      if (ayatDari && ayatKe) {
+        materi += `: Ayat ${ayatDari} - ${ayatKe}`;
+      } else if (ayatDari) {
+        materi += `: Ayat ${ayatDari}`;
+      } else if (ayatKe) {
+        materi += `: Ayat 1 - ${ayatKe}`;
+      }
+    } else if (u.juz) {
+      materi = `Juz ${u.juz}`;
+      if (ayatDari && ayatKe) {
+        materi += ` (Ayat ${ayatDari} - ${ayatKe})`;
+      }
     }
-    return base;
+    return { jenis, materi };
+  };
+
+  const formatExamArab = (u: any) => {
+    let jenisArab = "اختبار القرآن الكريم";
+    const j = (u.jenis_ujian || "").toLowerCase();
+    if (j.includes("pra_target") || j.includes("pratarget")) {
+      jenisArab = "اختبار ما قبل الهدف";
+    } else if (j.includes("target")) {
+      jenisArab = "اختبار الهدف";
+    } else if (j.includes("pekanan")) {
+      jenisArab = "الاختبار الأسبوعي";
+    } else if (j.includes("bulanan")) {
+      jenisArab = "الاختبار الشهري";
+    } else if (j.includes("itqon")) {
+      jenisArab = "اختبار الإتقان";
+    }
+
+    const ayatDari = u.ayat_dari !== null && u.ayat_dari !== undefined 
+      ? u.ayat_dari 
+      : (u.surah_nama?.toLowerCase().includes("yusuf") ? 1 : null);
+    const ayatKe = u.ayat_ke !== null && u.ayat_ke !== undefined 
+      ? u.ayat_ke 
+      : (u.surah_nama?.toLowerCase().includes("yusuf") ? 52 : null);
+
+    let materiArab = "";
+    if (u.surah_nama) {
+      const arabSurah = getArabicSurahName(u.surah_nama);
+      materiArab = `سورة ${arabSurah}`;
+      if (ayatDari && ayatKe) {
+        materiArab += `: الآيات ${toArabicNum(ayatDari)} - ${toArabicNum(ayatKe)}`;
+      } else if (ayatDari) {
+        materiArab += `: الآية ${toArabicNum(ayatDari)}`;
+      } else if (ayatKe) {
+        materiArab += `: الآيات ١ - ${toArabicNum(ayatKe)}`;
+      }
+    } else if (u.juz) {
+      materiArab = `الجزء ${toArabicNum(u.juz)}`;
+      if (ayatDari && ayatKe) {
+        materiArab += ` (الآيات ${toArabicNum(ayatDari)} - ${toArabicNum(ayatKe)})`;
+      }
+    }
+    return { jenisArab, materiArab };
   };
 
   // Nilai Sikap dari Ujian Pra-Target untuk Kepribadian Santri
@@ -1174,13 +1242,13 @@ export default function RaporOfficialSheet({ data, showPrintToolbar = false }: R
               <table className="rapor-table" style={{ width: "100%", tableLayout: "fixed", borderCollapse: "collapse", border: "1px solid #94a3b8", fontSize: "11px", fontFamily: "Arial, Helvetica, sans-serif" }}>
                 <colgroup>
                   {/* Sisi Kiri (50% Indonesia) */}
-                  <col style={{ width: "26%" }} />
-                  <col style={{ width: "12%" }} />
-                  <col style={{ width: "12%" }} />
+                  <col style={{ width: "28%" }} />
+                  <col style={{ width: "11%" }} />
+                  <col style={{ width: "11%" }} />
                   {/* Sisi Kanan (50% Arab Mirror) */}
-                  <col style={{ width: "12%" }} />
-                  <col style={{ width: "12%" }} />
-                  <col style={{ width: "26%" }} />
+                  <col style={{ width: "11%" }} />
+                  <col style={{ width: "11%" }} />
+                  <col style={{ width: "28%" }} />
                 </colgroup>
                 <thead>
                   <tr style={{ backgroundColor: "#f1f5f9" }}>
@@ -1210,48 +1278,63 @@ export default function RaporOfficialSheet({ data, showPrintToolbar = false }: R
                     else sikapStr = "Kurang";
                     
                     const nilaiAkhir = u.nilai_akhir ? Math.round(u.nilai_akhir) : Math.round(((u.nilai_bacaan || 0) + (u.nilai_kelancaran || u.nilai_sikap || 0)) / 2);
-                    
+                    const indoInfo = formatExamIndo(u);
+                    const arabInfo = formatExamArab(u);
+
                     return (
                       <tr key={i} style={{ backgroundColor: i % 2 === 0 ? "white" : "#fafafa" }}>
-                        <td style={{ border: "1px solid #94a3b8", padding: "3.5px 8px", fontWeight: "bold" }}>
-                          {u.jenis_ujian ? u.jenis_ujian.replace(/_/g, " ").toUpperCase() : "UJIAN PRA TARGET"}
-                          {u.juz ? ` (Juz ${u.juz})` : u.surah_nama ? ` (Surah ${u.surah_nama})` : ""}
+                        <td style={{ border: "1px solid #94a3b8", padding: "4px 8px", verticalAlign: "middle" }}>
+                          <div style={{ fontWeight: "bold", fontSize: "11px", color: "#000000", lineHeight: "1.25" }}>
+                            {indoInfo.jenis}
+                          </div>
+                          {indoInfo.materi && (
+                            <div style={{ fontSize: "10px", color: "#1e293b", marginTop: "2px", fontWeight: "600", lineHeight: "1.2" }}>
+                              ({indoInfo.materi})
+                            </div>
+                          )}
                         </td>
-                        <td style={{ border: "1px solid #94a3b8", padding: "3.5px 4px", textAlign: "center" }}>
+                        <td style={{ border: "1px solid #94a3b8", padding: "3.5px 4px", textAlign: "center", verticalAlign: "middle", fontSize: "10.5px" }}>
                           {sikapStr}
                         </td>
-                        <td className="border-divider-mid" style={{ border: "1px solid #94a3b8", borderRight: "2px solid #000000", padding: "3.5px 4px", textAlign: "center", fontWeight: "bold", fontSize: "11px" }}>
+                        <td className="border-divider-mid" style={{ border: "1px solid #94a3b8", borderRight: "2px solid #000000", padding: "3.5px 4px", textAlign: "center", verticalAlign: "middle", fontWeight: "bold", fontSize: "11px" }}>
                           <span>{nilaiAkhir}</span>
                           <span style={{ fontSize: "9px", marginLeft: "3px", color: u.is_lulus ? "#047857" : "#be123c", fontWeight: "bold" }}>
                             ({u.is_lulus ? "Lulus" : "Mengulang"})
                           </span>
                         </td>
 
-                        <td style={{ border: "1px solid #94a3b8", borderLeft: "2px solid #000000", padding: "3.5px 4px", textAlign: "center", fontWeight: "bold", fontSize: "12px", fontFamily: "'Traditional Arabic', serif" }} dir="rtl">
+                        <td style={{ border: "1px solid #94a3b8", borderLeft: "2px solid #000000", padding: "3.5px 4px", textAlign: "center", verticalAlign: "middle", fontWeight: "bold", fontSize: "12px", fontFamily: "'Traditional Arabic', serif" }} dir="rtl">
                           <span>{toArabicNum(nilaiAkhir)}</span>
                           <span style={{ fontSize: "11px", marginRight: "3px", color: u.is_lulus ? "#047857" : "#be123c", fontWeight: "bold" }}>
                             ({u.is_lulus ? "ناجح" : "راسب"})
                           </span>
                         </td>
-                        <td style={{ border: "1px solid #94a3b8", padding: "3.5px 4px", textAlign: "center", fontFamily: "'Traditional Arabic', serif", fontSize: "12px" }} dir="rtl">
+                        <td style={{ border: "1px solid #94a3b8", padding: "3.5px 4px", textAlign: "center", verticalAlign: "middle", fontFamily: "'Traditional Arabic', serif", fontSize: "12px" }} dir="rtl">
                           {toArabicSikap(sikapStr)}
                         </td>
-                        <td style={{ border: "1px solid #94a3b8", padding: "3.5px 8px", textAlign: "right", fontFamily: "'Traditional Arabic', serif", fontSize: "12.5px", fontWeight: "bold" }} dir="rtl">
-                          {toArabicExamType(u.jenis_ujian, u.juz, u.surah_nama)}
+                        <td style={{ border: "1px solid #94a3b8", padding: "4px 8px", textAlign: "right", verticalAlign: "middle" }} dir="rtl">
+                          <div style={{ fontWeight: "bold", fontSize: "13px", color: "#000000", fontFamily: "'Traditional Arabic', serif", lineHeight: "1.25" }}>
+                            {arabInfo.jenisArab}
+                          </div>
+                          {arabInfo.materiArab && (
+                            <div style={{ fontSize: "12px", color: "#1e293b", marginTop: "1px", fontFamily: "'Traditional Arabic', serif", lineHeight: "1.2" }}>
+                              ({arabInfo.materiArab})
+                            </div>
+                          )}
                         </td>
                       </tr>
                     );
                   }) : (
                     <tr style={{ backgroundColor: "white" }}>
-                      <td colSpan={3} className="border-divider-mid" style={{ border: "1px solid #94a3b8", borderRight: "2px solid #000000", padding: "4.5px 8px", textAlign: "center", color: "#666" }}>Belum ada data riwayat ujian pra-target</td>
-                      <td colSpan={3} style={{ border: "1px solid #94a3b8", borderLeft: "2px solid #000000", padding: "4.5px 8px", textAlign: "center", color: "#666", fontFamily: "'Traditional Arabic', serif" }} dir="rtl">لا توجد بيانات سابقة لاختبار ما قبل الهدف</td>
+                      <td colSpan={3} className="border-divider-mid" style={{ border: "1px solid #94a3b8", borderRight: "2px solid #000000", padding: "4.5px 8px", textAlign: "center", color: "#666" }}>Belum ada data riwayat ujian tahsin</td>
+                      <td colSpan={3} style={{ border: "1px solid #94a3b8", borderLeft: "2px solid #000000", padding: "4.5px 8px", textAlign: "center", color: "#666", fontFamily: "'Traditional Arabic', serif" }} dir="rtl">لا توجد بيانات سابقة لاختبار التحسين</td>
                     </tr>
                   )}
                 </tbody>
               </table>
             </div>
 
-            {/* 4. EVALUASI PENCAPAIAN AL-QUR'AN (Bilateral Simetris Sempurna) */}
+            {/* 4. EVALUASI PENCAPAIAN TAHSIN (Bilateral Simetris Sempurna) */}
             <div style={{ width: "100%", overflow: "visible", marginBottom: "7px" }}>
               <table className="rapor-table" style={{ width: "100%", tableLayout: "fixed", borderCollapse: "collapse", border: "1px solid #94a3b8", fontSize: "10.5px", fontFamily: "Arial, Helvetica, sans-serif" }}>
                 <colgroup>
@@ -1261,10 +1344,10 @@ export default function RaporOfficialSheet({ data, showPrintToolbar = false }: R
                 <thead>
                   <tr style={{ backgroundColor: "#f1f5f9" }}>
                     <th className="border-divider-mid" style={{ border: "1px solid #94a3b8", borderRight: "2px solid #000000", padding: "4px 8px", textAlign: "left", fontSize: "11px", color: "#000000" }}>
-                      D. Catatan Evaluasi Pembelajaran Al-Qur'an
+                      D. Catatan Evaluasi
                     </th>
                     <th style={{ border: "1px solid #94a3b8", borderLeft: "2px solid #000000", padding: "4px 8px", textAlign: "right", fontSize: "13px", color: "#000000", fontFamily: "'Traditional Arabic', serif" }} dir="rtl">
-                      د. التوجيهات والتقويم في تعلم القرآن الكريم
+                      د. التوجيهات والتقويم
                     </th>
                   </tr>
                 </thead>
@@ -1273,36 +1356,36 @@ export default function RaporOfficialSheet({ data, showPrintToolbar = false }: R
                     <td className="border-divider-mid" style={{ border: "1px solid #94a3b8", borderRight: "2px solid #000000", padding: "5px 8px", verticalAlign: "top", color: "#333", fontStyle: "italic", lineHeight: "1.35", textAlign: "justify", fontSize: "10px" }}>
                       {(() => {
                         if (praTargetUjian.length === 0) {
-                          return "Belum ada riwayat ujian tahsin/tahfidz pada periode ini. Tingkatkan semangat tilawah dan muraja'ah bersama Musyrif di halaqoh.";
+                          return "Belum ada riwayat ujian tahsin pada periode ini. Tingkatkan keaktifan talaqqi, ketepatan makharijul huruf, serta latihan tilawah Al-Qur'an bersama Musyrif di halaqoh.";
                         }
                         
                         const passed = praTargetUjian.filter((u: any) => u.is_lulus).length;
                         const total = praTargetUjian.length;
                         
                         if (passed === total) {
-                          return "Alhamdulillah, pencapaian pembelajaran Al-Qur'an santri pada periode ini menunjukkan hasil yang memuaskan. Terus tingkatkan kualitas Tahsin (Makharijul Huruf & Tajwid) serta rutinkan tilawah harian sebagai pondasi kokoh sebelum memperbanyak Ziyadah (Hafalan Baru).";
+                          return "Alhamdulillah, capaian pembelajaran Tahsin Al-Qur'an ananda pada periode ini menunjukkan hasil yang sangat memuaskan dan tuntas. Terus tingkatkan dan mantapkan ketepatan Makharijul Huruf, kaidah hukum Tajwid, serta kelancaran tilawah secara tartil dan istiqomah di halaqoh.";
                         } else if (passed > 0) {
-                          return "Pencapaian Al-Qur'an sudah cukup baik, namun perlu lebih memperbanyak porsi muraja'ah dan tahsin untuk menyelesaikan target ujian yang belum tuntas.";
+                          return "Capaian pembelajaran Tahsin ananda sudah cukup baik dan menunjukkan kesungguhan belajar. Perbanyak latihan pengucapan makhraj huruf dan hukum tajwid tertentu bersama Musyrif agar kualitas bacaan Al-Qur'an semakin fasih dan lancar.";
                         } else {
-                          return "Perlu memberikan perhatian ekstra pada program Al-Qur'an. Perbanyak waktu tilawah dan muraja'ah bersama rekan halaqoh agar bisa mencapai target ujian.";
+                          return "Ananda memerlukan perhatian dan bimbingan lebih intensif dalam program Tahsin. Diharapkan ananda lebih aktif melatih pelafalan makharijul huruf dasar dan kaidah tajwid bersama Musyrif halaqoh agar dapat menuntaskan materi dengan optimal.";
                         }
                       })()}
                     </td>
                     <td style={{ border: "1px solid #94a3b8", borderLeft: "2px solid #000000", padding: "5px 8px", verticalAlign: "top", color: "#333", lineHeight: "1.35", textAlign: "justify", fontSize: "12px", fontFamily: "'Traditional Arabic', serif" }} dir="rtl">
                       {(() => {
                         if (praTargetUjian.length === 0) {
-                          return "لا توجد بيانات اختبار للتحسين أو التحفيظ في هذه الفترة. يرجى زيادة الحرص على التلاوة والمراجعة مع مشرف الحلقة.";
+                          return "لا توجد بيانات سابقة لاختبار التحسين في هذه الفترة. يرجى الحرص على التلقي المباشر وضبط مخارج الحروف وملازمة التلاوة مع مشرف الحلقة.";
                         }
                         
                         const passed = praTargetUjian.filter((u: any) => u.is_lulus).length;
                         const total = praTargetUjian.length;
                         
                         if (passed === total) {
-                          return "الحمد لله، أظهرت نتائج تعلم القرآن الكريم للطالب في هذه الفترة نتائج طيبة ومرضية. نوصي بالاستمرار في تحسين جودة التحسين (مخارج الحروف والتجويد) والمواظبة على التلاوة اليومية كأساس متين قبل زيادة الحفظ الجديد.";
+                          return "الحمد لله، أظهرت نتائج تعلم تحسين تلاوة القرآن الكريم للطالب في هذه الفترة تميزاً وإتقاناً طيباً. نوصي بالاستمرار في تعزيز مخارج الحروف، وضبط أحكام التجويد، والمواظبة على القراءة المرتلة بإتقان في الحلقة.";
                         } else if (passed > 0) {
-                          return "مستوى إنجاز القرآن الكريم جيد، لكن يرجى تكثيف المراجعة والتحسين لإتمام ما تبقى من أهداف الاختبار المقررة.";
+                          return "مستوى إتقان التحسين لدى الطالب جيد ويظهر حرصاً طيباً في التعلم. يُرجى مضاعفة التدريب على مخارج الحروف وأحكام التجويد مع مشرف الحلقة لترسيخ فصاحة القراءة وطلاقتها.";
                         } else {
-                          return "يحتاج الطالب إلى اهتمام إضافي ببرنامج القرآن الكريم. يرجى مضاعفة وقت التلاوة والمراجعة مع الإخوة في الحلقة لتحقيق الأهداف المنشودة.";
+                          return "يحتاج الطالب إلى مزيد من العناية والتوجيه المكثف في برنامج التحسين. نوصي بالتركيز على ضبط مخارج الحروف الأساسية وقواعد التجويد ومضاعفة التدريب مع مشرف الحلقة لتحقيق التقدم المنشود.";
                         }
                       })()}
                     </td>
