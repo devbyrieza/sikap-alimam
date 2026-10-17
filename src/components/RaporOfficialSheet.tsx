@@ -861,7 +861,7 @@ export default function RaporOfficialSheet({ data, showPrintToolbar = false }: R
                       <td style={{ padding: "1.5px 0", border: "none" }}>{santri?.tahun_ajaran || "-"}</td>
                     </tr>
                     <tr style={{ border: "none" }}>
-                      <td style={{ padding: "1.5px 0", whiteSpace: "nowrap", border: "none" }}>Pengasuh &amp; Pengampu</td>
+                      <td style={{ padding: "1.5px 0", whiteSpace: "nowrap", border: "none" }}>Pengampu Halaqoh</td>
                       <td style={{ padding: "1.5px 6px", border: "none" }}>:</td>
                       <td style={{ padding: "1.5px 0", border: "none" }}>{pengampuHalaqohNama}</td>
                     </tr>
@@ -1098,11 +1098,11 @@ export default function RaporOfficialSheet({ data, showPrintToolbar = false }: R
                   </div>
                 </div>
 
-                {/* Kolom 3: Pengasuh & Pengampu Halaqoh */}
+                {/* Kolom 3: Pengampu Halaqoh */}
                 <div style={{ display: "flex", flexDirection: "column", justifyContent: "space-between", height: "140px", padding: "0 2px" }}>
                   <div>
                     <p style={{ margin: 0 }}>Sukabumi, 11 Oktober 2026</p>
-                    <p style={{ margin: "2px 0 0 0" }}>Pengasuh &amp; Pengampu Halaqoh</p>
+                    <p style={{ margin: "2px 0 0 0" }}>Pengampu Halaqoh</p>
                   </div>
                   <div style={{ minHeight: "28px", display: "flex", alignItems: "flex-end", justifyContent: "center" }}>
                     <p style={{ fontWeight: "bold", margin: 0, fontSize: "10px", whiteSpace: "nowrap", letterSpacing: "-0.2px" }}>
