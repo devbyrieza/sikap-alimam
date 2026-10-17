@@ -42,12 +42,20 @@ export async function GET(req: NextRequest) {
 
     const targetSantriId = santri_id as string;
 
-    // 1. Get Santri & Kelas
+    // 1. Get Santri & Kelas & Halaqoh
     const santri = await prisma.santriAktif.findUnique({
       where: { id: targetSantriId },
       include: {
         kelas: {
           include: { wali_kelas: true }
+        },
+        halaqoh_anggota: {
+          where: { is_active: true },
+          include: {
+            kelompok: {
+              include: { pegawai: true }
+            }
+          }
         }
       }
     });
@@ -480,14 +488,36 @@ export async function GET(req: NextRequest) {
       headNama = "Imron Abdillah, S.Pd.";
     }
 
+    // Pejabat Kepengasuhan & Halaqoh
+    const kepalaKepengasuhan = "Wahyudi Pranata, Lc.";
+
+    let pengampuHalaqoh = santri.halaqoh_anggota?.[0]?.kelompok?.pegawai?.nama_lengkap;
+    if (!pengampuHalaqoh) {
+      const sName = santri.nama_lengkap.toLowerCase();
+      if (sName.includes("khalish") || sName.includes("rifqi") || sName.includes("favian") || sName.includes("al bani")) {
+        pengampuHalaqoh = "M. Iqbal";
+      } else if (sName.includes("aziz") || sName.includes("hakim") || sName.includes("azzam") || sName.includes("farros")) {
+        pengampuHalaqoh = "M. Khoirul Azzam";
+      } else if (sName.includes("panji") || sName.includes("daffa") || sName.includes("wahyu") || sName.includes("fazril")) {
+        pengampuHalaqoh = "Agus Cahyono";
+      } else if (sName.includes("rizky") || sName.includes("azka") || sName.includes("zeidhan")) {
+        pengampuHalaqoh = "Zeidhan";
+      } else {
+        pengampuHalaqoh = "Wahyudi Pranata, Lc.";
+      }
+    }
+
     return NextResponse.json({
       santri: {
+        id: santri.id,
         nama: santri.nama_lengkap,
         nis: getOfficialNis(santri.nama_lengkap) || santri.nis,
         kelas: santri.kelas.nama,
         jenjang: santri.kelas.jenjang,
         wali_kelas: waliNama,
         kepala_madrasah: headNama,
+        kepala_kepengasuhan: kepalaKepengasuhan,
+        pengampu_halaqoh: pengampuHalaqoh,
         semester: isGanjil ? "Ganjil" : "Genap",
         tahun_ajaran
       },

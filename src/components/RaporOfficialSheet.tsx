@@ -58,10 +58,10 @@ export default function RaporOfficialSheet({ data, showPrintToolbar = false }: R
 
   const renderTabelKategori = (judul: string, judulArab: string, mapelList: any[], startIndex: number = 1) => {
     if (!mapelList || mapelList.length === 0) return null;
-    const cellPad = "5px 4.5px";
-    const namePad = "5px 6px";
-    const headPad = "5.5px 6px";
-    const fontSize = "11.8px";
+    const cellPad = "3.8px 4px";
+    const namePad = "3.8px 5px";
+    const headPad = "4.2px 5px";
+    const fontSize = "11px";
 
     return (
       <React.Fragment key={judul}>
@@ -149,6 +149,11 @@ export default function RaporOfficialSheet({ data, showPrintToolbar = false }: R
         : isMA 
           ? "Muhammad Thoriq Ibn Ziyad, Lc., M.Ag." 
           : "Wali Kelas";
+
+  const kepalaPengasuhanNama = santri?.kepala_kepengasuhan || "Wahyudi Pranata, Lc.";
+  const pengampuHalaqohNama = santri?.pengampu_halaqoh || (
+    isMTs ? "M. Iqbal" : "Wahyudi Pranata, Lc."
+  );
 
   return (
     <div id="rapor-print-container" className="rapor-root-print-wrapper" style={{ width: "100%", maxWidth: "100%", margin: "0 auto", boxSizing: "border-box" }}>
@@ -608,6 +613,116 @@ export default function RaporOfficialSheet({ data, showPrintToolbar = false }: R
                 </tbody>
               </table>
             </div>
+
+            {/* AREA TANDA TANGAN AKADEMIK (3 Kolom) + QR CODE */}
+            <div 
+              style={{ 
+                display: "flex", 
+                justifyContent: "space-between", 
+                alignItems: "stretch",
+                width: "100%",
+                boxSizing: "border-box",
+                marginTop: "10px", 
+                fontFamily: "Arial, Helvetica, sans-serif" 
+              }}
+            >
+              <div style={{ 
+                display: "grid", 
+                gridTemplateColumns: "1fr 1.05fr 1.55fr", 
+                textAlign: "center", 
+                fontSize: "10px", 
+                gap: "6px",
+                flex: 1,
+                marginRight: "14px",
+                minWidth: 0
+              }}>
+                {/* Kolom 1: Orang Tua */}
+                <div style={{ display: "flex", flexDirection: "column", justifyContent: "space-between", height: "120px", padding: "0 2px" }}>
+                  <div>
+                    <p style={{ margin: 0 }}>Mengetahui,</p>
+                    <p style={{ margin: "2px 0 0 0" }}>Orang Tua / Wali</p>
+                  </div>
+                  <div style={{ minHeight: "26px", display: "flex", alignItems: "flex-end", justifyContent: "center" }}>
+                    <p style={{ 
+                      fontWeight: "bold", 
+                      margin: 0, 
+                      fontSize: "10px", 
+                      whiteSpace: "nowrap",
+                      display: "inline-flex",
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                      width: "100%",
+                      maxWidth: "130px"
+                    }}>
+                      <span>(</span>
+                      <span style={{ display: "inline-block", flex: 1, minWidth: "90px" }}>&nbsp;</span>
+                      <span>)</span>
+                    </p>
+                  </div>
+                </div>
+
+                {/* Kolom 2: Kepala Madrasah */}
+                <div style={{ display: "flex", flexDirection: "column", justifyContent: "space-between", height: "120px", padding: "0 2px" }}>
+                  <div>
+                    <p style={{ margin: 0 }}>Mengetahui,</p>
+                    <p style={{ margin: "2px 0 0 0" }}>{headTitle}</p>
+                  </div>
+                  <div style={{ minHeight: "26px", display: "flex", alignItems: "flex-end", justifyContent: "center" }}>
+                    <p style={{ fontWeight: "bold", margin: 0, fontSize: "10px", whiteSpace: "nowrap", letterSpacing: "-0.2px" }}>
+                      ({headName})
+                    </p>
+                  </div>
+                </div>
+
+                {/* Kolom 3: Wali Kelas */}
+                <div style={{ display: "flex", flexDirection: "column", justifyContent: "space-between", height: "120px", padding: "0 2px" }}>
+                  <div>
+                    <p style={{ margin: 0 }}>Sukabumi, 11 Oktober 2026</p>
+                    <p style={{ margin: "2px 0 0 0" }}>Wali Kelas</p>
+                  </div>
+                  <div style={{ minHeight: "26px", display: "flex", alignItems: "flex-end", justifyContent: "center" }}>
+                    <p style={{ fontWeight: "bold", margin: 0, fontSize: "10px", whiteSpace: "nowrap", letterSpacing: "-0.2px" }}>
+                      ({waliKelasName})
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Sisi Kanan: QR Code Resmi Akademik */}
+              <div style={{ 
+                width: "82px", 
+                height: "120px",
+                flexShrink: 0, 
+                display: "flex", 
+                flexDirection: "column", 
+                alignItems: "center", 
+                justifyContent: "flex-end",
+                textAlign: "center"
+              }}>
+                <div style={{ 
+                  padding: "4px", 
+                  backgroundColor: "white", 
+                  border: "1px solid #94a3b8", 
+                  display: "inline-block" 
+                }}>
+                  <img 
+                    src={`https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=https://sikap.pesantren-alimam.com/verify/${santri?.id || "santri"}?doc=akademik`}
+                    alt="QR Verifikasi Dokumen"
+                    style={{ width: "68px", height: "68px", display: "block" }}
+                  />
+                </div>
+                <p style={{ 
+                  margin: "3px 0 0 0", 
+                  fontSize: "6.5px", 
+                  fontWeight: "bold", 
+                  letterSpacing: "0.2px", 
+                  color: "#000000",
+                  whiteSpace: "nowrap"
+                }}>
+                  Scan Verifikasi Dokumen
+                </p>
+              </div>
+            </div>
           </div>
 
           {/* Catatan Kaki Halaman 1 */}
@@ -627,7 +742,7 @@ export default function RaporOfficialSheet({ data, showPrintToolbar = false }: R
             }}
           >
             <p style={{ margin: 0, flex: 1, color: "#111111", whiteSpace: "nowrap" }}>* Nilai di atas merupakan Hasil Evaluasi Belajar Penilaian Tengah Semester (PTS) Murni.</p>
-            <p style={{ margin: 0, fontWeight: "bold", whiteSpace: "nowrap", flexShrink: 0, color: "#111111" }}>Halaman 1 dari 2</p>
+            <p style={{ margin: 0, fontWeight: "bold", whiteSpace: "nowrap", flexShrink: 0, color: "#111111" }}>Bagian 1: Rapor Akademik (Halaman 1 dari 2)</p>
           </div>
         </div>
       </div>
@@ -691,13 +806,13 @@ export default function RaporOfficialSheet({ data, showPrintToolbar = false }: R
                 return (
                   <>
                     <h1 className="text-2xl font-bold arabic-text" dir="rtl" style={{ fontFamily: "'Traditional Arabic', serif", fontSize: "18px", margin: "0 0 2px 0" }}>
-                      كشف درجات وتقويم منتصف الفصل الدراسي {semesterArab}
+                      كشف تقويم رعاية الطلاب والقرآن الكريم منتصف الفصل {semesterArab}
                     </h1>
                     <h2 className="text-lg font-bold arabic-text" dir="rtl" style={{ fontFamily: "'Traditional Arabic', serif", fontSize: "13.5px", margin: "0 0 4px 0" }}>
                       {marhalah} بمعهد الإمام الإسلامي
                     </h2>
                     <h3 className="font-bold text-slate-800 tracking-wider uppercase" style={{ fontFamily: "Arial, Helvetica, sans-serif", fontSize: "10.5px", margin: "0 0 2px 0" }}>
-                      LAPORAN HASIL EVALUASI BELAJAR TENGAH SEMESTER (PTS)
+                      LAPORAN HASIL EVALUASI KEPENGASUHAN &amp; AL-QUR'AN (PTS)
                     </h3>
                     <h4 className="font-bold text-slate-600 tracking-wide uppercase" style={{ fontFamily: "Arial, Helvetica, sans-serif", fontSize: "9.5px", margin: 0 }}>
                       RAPOR BAYANGAN • {indoMarhalah}
@@ -746,9 +861,9 @@ export default function RaporOfficialSheet({ data, showPrintToolbar = false }: R
                       <td style={{ padding: "1.5px 0", border: "none" }}>{santri?.tahun_ajaran || "-"}</td>
                     </tr>
                     <tr style={{ border: "none" }}>
-                      <td style={{ padding: "1.5px 0", whiteSpace: "nowrap", border: "none" }}>Wali Kelas</td>
+                      <td style={{ padding: "1.5px 0", whiteSpace: "nowrap", border: "none" }}>Pengasuh &amp; Pengampu</td>
                       <td style={{ padding: "1.5px 6px", border: "none" }}>:</td>
-                      <td style={{ padding: "1.5px 0", border: "none" }}>{waliKelasName}</td>
+                      <td style={{ padding: "1.5px 0", border: "none" }}>{pengampuHalaqohNama}</td>
                     </tr>
                   </tbody>
                 </table>
@@ -970,34 +1085,34 @@ export default function RaporOfficialSheet({ data, showPrintToolbar = false }: R
                   </div>
                 </div>
 
-                {/* Kolom 2: Kepala Madrasah */}
+                {/* Kolom 2: Kepala Kepengasuhan */}
                 <div style={{ display: "flex", flexDirection: "column", justifyContent: "space-between", height: "145px", padding: "0 2px" }}>
                   <div>
-                    <p style={{ margin: 0 }}>Mengetahui</p>
-                    <p style={{ margin: "2px 0 0 0" }}>{headTitle}</p>
+                    <p style={{ margin: 0 }}>Mengetahui,</p>
+                    <p style={{ margin: "2px 0 0 0" }}>Kepala Kepengasuhan</p>
                   </div>
                   <div style={{ minHeight: "28px", display: "flex", alignItems: "flex-end", justifyContent: "center" }}>
                     <p style={{ fontWeight: "bold", margin: 0, fontSize: "10px", whiteSpace: "nowrap", letterSpacing: "-0.2px" }}>
-                      ({headName})
+                      ({kepalaPengasuhanNama})
                     </p>
                   </div>
                 </div>
 
-                {/* Kolom 3: Wali Kelas */}
+                {/* Kolom 3: Pengasuh & Pengampu Halaqoh */}
                 <div style={{ display: "flex", flexDirection: "column", justifyContent: "space-between", height: "145px", padding: "0 2px" }}>
                   <div>
                     <p style={{ margin: 0 }}>Sukabumi, 11 Oktober 2026</p>
-                    <p style={{ margin: "2px 0 0 0" }}>Wali Kelas</p>
+                    <p style={{ margin: "2px 0 0 0" }}>Pengasuh &amp; Pengampu Halaqoh</p>
                   </div>
                   <div style={{ minHeight: "28px", display: "flex", alignItems: "flex-end", justifyContent: "center" }}>
                     <p style={{ fontWeight: "bold", margin: 0, fontSize: "10px", whiteSpace: "nowrap", letterSpacing: "-0.2px" }}>
-                      ({waliKelasName})
+                      ({pengampuHalaqohNama})
                     </p>
                   </div>
                 </div>
               </div>
 
-              {/* Sisi Kanan: QR Code Resmi */}
+              {/* Sisi Kanan: QR Code Resmi Kepengasuhan */}
               <div style={{ 
                 width: "90px", 
                 height: "145px",
@@ -1015,8 +1130,8 @@ export default function RaporOfficialSheet({ data, showPrintToolbar = false }: R
                   display: "inline-block" 
                 }}>
                   <img 
-                    src={`https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=https://sikap.pesantren-alimam.com/verify/${santri?.id || "santri"}`}
-                    alt="QR Verifikasi Dokumen"
+                    src={`https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=https://sikap.pesantren-alimam.com/verify/${santri?.id || "santri"}?doc=pengasuhan`}
+                    alt="QR Verifikasi Kepengasuhan"
                     style={{ width: "78px", height: "78px", display: "block" }}
                   />
                 </div>
@@ -1051,7 +1166,7 @@ export default function RaporOfficialSheet({ data, showPrintToolbar = false }: R
             }}
           >
             <p style={{ margin: 0, flex: 1, color: "#111111", whiteSpace: "nowrap" }}>* Dokumen ini sah dan diterbitkan secara resmi oleh Pesantren Al-Imam Al-Islami (Managed by Al-Andalus IIBS).</p>
-            <p style={{ margin: 0, fontWeight: "bold", whiteSpace: "nowrap", flexShrink: 0, color: "#111111" }}>Halaman 2 dari 2</p>
+            <p style={{ margin: 0, fontWeight: "bold", whiteSpace: "nowrap", flexShrink: 0, color: "#111111" }}>Bagian 2: Rapor Kepengasuhan (Halaman 2 dari 2)</p>
           </div>
         </div>
       </div>
