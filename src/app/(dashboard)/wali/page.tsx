@@ -245,9 +245,12 @@ export default function WaliDashboard() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-rose-50/20 to-slate-100 pb-12 sm:pb-16">
       {/* ── Banner ── */}
-      <header className="relative overflow-hidden rounded-b-[2rem] bg-gradient-to-br from-primary via-[#7a0000] to-[#450000] px-5 pb-24 pt-10 text-white shadow-2xl shadow-primary/30 sm:rounded-b-[2.5rem] sm:pb-28 sm:pt-14">
+      <header
+        className="relative overflow-hidden rounded-b-[2rem] px-5 pb-24 pt-10 text-white shadow-2xl shadow-[#550000]/30 sm:rounded-b-[2.5rem] sm:pb-28 sm:pt-14"
+        style={{ background: "linear-gradient(135deg, #550000 0%, #7a0000 50%, #450000 100%)" }}
+      >
         <div className="pointer-events-none absolute right-0 top-0 p-6 opacity-10 sm:p-8" aria-hidden="true">
-          <GraduationCap className="h-32 w-32 sm:h-44 sm:w-44" />
+          <GraduationCap className="h-32 w-32 sm:h-44 sm:w-44 text-white" />
         </div>
         <div
           className="pointer-events-none absolute -bottom-12 -left-12 h-64 w-64 rounded-full border border-white/10 bg-white/5"
@@ -283,7 +286,7 @@ export default function WaliDashboard() {
               <button
                 type="button"
                 onClick={() => load()}
-                className={`inline-flex min-h-[44px] items-center gap-2 rounded-2xl bg-primary px-5 py-2.5 text-sm font-bold text-white shadow-lg shadow-primary/25 transition-colors hover:bg-[#7a0000] ${focusRing}`}
+                className={`inline-flex min-h-[44px] items-center gap-2 rounded-2xl bg-[#550000] px-5 py-2.5 text-sm font-bold text-white shadow-lg shadow-[#550000]/25 transition-colors hover:bg-[#7a0000] active:scale-[0.98] ${focusRing}`}
               >
                 <RefreshCw size={16} aria-hidden="true" />
                 <span>Coba lagi</span>
@@ -320,7 +323,8 @@ export default function WaliDashboard() {
                   {/* Kiri: avatar + identitas */}
                   <div className="flex min-w-0 items-start gap-4 sm:gap-5">
                     <div
-                      className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-primary to-[#7a0000] text-2xl font-black text-white shadow-lg shadow-primary/20 ring-4 ring-rose-50 sm:h-20 sm:w-20 sm:text-3xl"
+                      className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl text-2xl font-black text-white shadow-lg shadow-[#550000]/20 ring-4 ring-rose-50 sm:h-20 sm:w-20 sm:text-3xl"
+                      style={{ background: "linear-gradient(135deg, #550000 0%, #7a0000 100%)" }}
                       aria-hidden="true"
                     >
                       {(anak?.nama || "A").charAt(0).toUpperCase()}
@@ -374,7 +378,7 @@ export default function WaliDashboard() {
                       className={`inline-flex min-h-[48px] items-center justify-center gap-2 rounded-2xl px-5 py-3 text-sm font-bold text-white shadow-lg transition-all motion-safe:hover:scale-[1.02] active:scale-[0.98] ${focusRing} ${
                         locked
                           ? "bg-rose-600 shadow-rose-950/20 hover:bg-rose-700"
-                          : "bg-primary shadow-primary/25 hover:bg-[#7a0000]"
+                          : "bg-[#550000] shadow-[#550000]/25 hover:bg-[#7a0000]"
                       }`}
                     >
                       {locked ? (
@@ -439,7 +443,7 @@ export default function WaliDashboard() {
                     >
                       <Icon
                         size={15}
-                        className={`shrink-0 ${accent ? "" : "text-primary"}`}
+                        className={`shrink-0 ${accent ? "" : "text-[#550000]"}`}
                         aria-hidden="true"
                       />
                       <span>{label}</span>
@@ -454,7 +458,7 @@ export default function WaliDashboard() {
         {/* ── Informasi ── */}
         <section aria-label="Informasi portal" className="grid grid-cols-1 gap-4 md:grid-cols-2">
           <div className="flex items-start gap-4 rounded-3xl border border-slate-100 bg-white/90 p-5 shadow-md backdrop-blur sm:p-6">
-            <div className="shrink-0 rounded-2xl bg-primary/10 p-3 text-primary">
+            <div className="shrink-0 rounded-2xl bg-rose-50 border border-rose-100 p-3 text-[#550000]">
               <BookOpen size={22} aria-hidden="true" />
             </div>
             <div>

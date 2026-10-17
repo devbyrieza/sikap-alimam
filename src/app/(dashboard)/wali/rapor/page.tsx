@@ -87,7 +87,7 @@ const focusRing =
   "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2";
 
 const btnBase = `inline-flex min-h-[44px] items-center justify-center gap-2 rounded-2xl px-5 py-2.5 text-sm font-bold transition-all motion-safe:hover:scale-[1.02] active:scale-[0.98] ${focusRing}`;
-const btnPrimary = `${btnBase} bg-primary text-white shadow-lg shadow-primary/25 hover:bg-[#7a0000]`;
+const btnPrimary = `${btnBase} bg-[#550000] text-white shadow-lg shadow-[#550000]/25 hover:bg-[#7a0000] active:scale-[0.98]`;
 
 const surface = "rounded-3xl border border-slate-100 bg-white/90 shadow-xl shadow-primary/10 backdrop-blur";
 
@@ -348,9 +348,9 @@ function FilterCard({
   children: React.ReactNode;
 }) {
   return (
-    <div className={`flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-slate-100 bg-white/90 p-5 shadow-md backdrop-blur`}>
+    <div className={`flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-slate-200/80 bg-white/90 p-4 sm:p-5 shadow-sm backdrop-blur`}>
       <div className="flex min-w-0 items-center gap-3">
-        <IconBadge tone="bg-primary/10 text-primary">
+        <IconBadge tone="bg-rose-50 text-rose-800 border border-rose-100">
           <Icon size={18} aria-hidden="true" />
         </IconBadge>
         <div className="min-w-0">
@@ -371,7 +371,7 @@ function TopBar({ santriId, locked, onKirimWA }: { santriId: string; locked: boo
       <div className="mx-auto flex h-14 max-w-6xl items-center justify-between gap-3 px-4 sm:h-16 sm:px-6">
         <a
           href="/wali"
-          className={`inline-flex min-h-[40px] items-center gap-2 rounded-xl bg-slate-100 px-3 py-2 text-xs font-bold text-slate-700 transition-colors hover:bg-slate-200/70 hover:text-primary sm:text-sm ${focusRing}`}
+          className={`inline-flex min-h-[40px] items-center gap-2 rounded-xl bg-slate-100 px-3 py-2 text-xs font-bold text-slate-700 transition-colors hover:bg-slate-200/70 hover:text-[#550000] sm:text-sm ${focusRing}`}
         >
           <ArrowLeft size={16} aria-hidden="true" />
           <span className="sm:hidden">Kembali</span>
@@ -393,7 +393,7 @@ function TopBar({ santriId, locked, onKirimWA }: { santriId: string; locked: boo
             <button
               type="button"
               onClick={onKirimWA}
-              className={`inline-flex min-h-[40px] items-center gap-1.5 rounded-xl bg-primary px-3.5 text-xs font-bold text-white shadow-md shadow-primary/25 transition-colors hover:bg-[#7a0000] ${focusRing}`}
+              className={`inline-flex min-h-[40px] items-center gap-1.5 rounded-xl bg-[#550000] px-3.5 text-xs font-bold text-white shadow-md shadow-[#550000]/25 transition-colors hover:bg-[#7a0000] active:scale-[0.98] ${focusRing}`}
             >
               <Send size={14} aria-hidden="true" />
               <span>Kirim ke WA</span>
@@ -406,12 +406,12 @@ function TopBar({ santriId, locked, onKirimWA }: { santriId: string; locked: boo
 }
 
 function BannerSppPill({ spp, locked }: { spp: any; locked: boolean }) {
-  const base = "inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[11px] font-extrabold leading-tight";
+  const base = "inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[11px] font-black leading-tight shadow-sm";
   const months = spp?.tunggakanCount || 1;
 
   if (locked) {
     return (
-      <span className={`${base} border-rose-400 bg-rose-600 text-white shadow-md`}>
+      <span className={`${base} border border-rose-300 bg-rose-600 text-white`}>
         <Lock size={12} className="shrink-0" aria-hidden="true" />
         <span>Akses Terkunci: Tagihan SPP {months} Bulan</span>
       </span>
@@ -419,22 +419,22 @@ function BannerSppPill({ spp, locked }: { spp: any; locked: boolean }) {
   }
   if (spp?.status === "menunggu_verifikasi") {
     return (
-      <span className={`${base} border-amber-400/40 bg-amber-500/30 text-amber-200`}>
-        <Clock size={12} className="shrink-0 text-amber-300 motion-safe:animate-pulse" aria-hidden="true" />
-        <span>SPP Sedang Diverifikasi Keuangan</span>
+      <span className={`${base} border border-amber-300 bg-amber-500 text-white`}>
+        <Clock size={12} className="shrink-0 motion-safe:animate-pulse" aria-hidden="true" />
+        <span>SPP Menunggu Verifikasi</span>
       </span>
     );
   }
   if (spp?.lunas) {
     return (
-      <span className={`${base} border-emerald-400/40 bg-emerald-500/30 text-emerald-200`}>
+      <span className={`${base} border border-emerald-300 bg-emerald-600 text-white`}>
         <CheckCircle2 size={12} className="shrink-0" aria-hidden="true" />
-        <span>SPP {spp.namaBulan} Lunas</span>
+        <span>SPP {spp.namaBulan || "Bulan Ini"} Lunas</span>
       </span>
     );
   }
   return (
-    <span className={`${base} border-rose-400/50 bg-rose-500/40 text-rose-200`}>
+    <span className={`${base} border border-rose-300 bg-rose-500 text-white`}>
       <AlertCircle size={12} className="shrink-0" aria-hidden="true" />
       <span>Tagihan SPP: {months} Bulan</span>
     </span>
@@ -444,34 +444,38 @@ function BannerSppPill({ spp, locked }: { spp: any; locked: boolean }) {
 function ProfileBanner({ santri, nis, spp, locked }: { santri: any; nis: string; spp: any; locked: boolean }) {
   return (
     <header
-      className={`relative overflow-hidden rounded-3xl bg-gradient-to-r from-primary via-[#7e141a] to-[#4a080d] p-6 text-white shadow-2xl shadow-primary/30 sm:p-10 ${NO_PRINT}`}
+      className={`relative overflow-hidden rounded-3xl p-5 text-white shadow-2xl shadow-[#550000]/30 sm:p-8 ${NO_PRINT}`}
+      style={{ background: "linear-gradient(135deg, #550000 0%, #7a0000 50%, #3a0000 100%)" }}
     >
       <div className="pointer-events-none absolute right-0 top-0 p-6 opacity-10 sm:p-8" aria-hidden="true">
-        <GraduationCap className="h-32 w-32 sm:h-44 sm:w-44" />
+        <GraduationCap className="h-32 w-32 sm:h-44 sm:w-44 text-white" />
       </div>
       <div
         className="pointer-events-none absolute -right-10 -top-10 h-64 w-64 rounded-full border border-white/10 bg-white/5"
         aria-hidden="true"
       />
 
-      <div className="relative z-10 flex items-center gap-4 sm:gap-6">
+      <div className="relative z-10 flex flex-col sm:flex-row items-center sm:items-start gap-4 sm:gap-6 text-center sm:text-left">
         <div
-          className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl border border-white/30 bg-white/20 text-2xl font-black text-white shadow-inner ring-4 ring-white/20 backdrop-blur-md sm:h-20 sm:w-20 sm:text-3xl"
+          className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl border border-white/40 text-2xl font-black text-white shadow-inner ring-4 ring-white/20 sm:h-20 sm:w-20 sm:text-3xl"
+          style={{ background: "rgba(255, 255, 255, 0.18)" }}
           aria-hidden="true"
         >
           {(santri?.nama || "S").charAt(0).toUpperCase()}
         </div>
 
-        <div className="min-w-0">
-          <div className="mb-2 flex flex-wrap items-center gap-2">
-            <span className="rounded-full bg-white/20 px-2.5 py-1 text-[11px] font-bold leading-tight tracking-wide">
-              {santri.kelas}
+        <div className="min-w-0 flex-1">
+          <div className="mb-2 flex flex-wrap items-center justify-center sm:justify-start gap-2">
+            <span className="rounded-full bg-white/20 px-2.5 py-1 text-[11px] font-bold leading-tight tracking-wide text-white border border-white/30">
+              Kelas {santri.kelas}
             </span>
-            <span className="font-mono text-xs text-white/80">NIS: {nis}</span>
+            <span className="font-mono text-xs text-white font-bold bg-black/25 px-2.5 py-0.5 rounded-full border border-white/20">
+              NIS: {nis}
+            </span>
             <BannerSppPill spp={spp} locked={locked} />
           </div>
           <h1 className="break-words text-2xl font-extrabold leading-tight text-white sm:text-3xl">{santri.nama}</h1>
-          <p className="mt-1 text-xs font-medium text-white/80 sm:text-sm">
+          <p className="mt-1 text-xs font-medium text-rose-100/90 sm:text-sm">
             {SCHOOL_LINE} • Tahun Ajaran {santri?.tahun_ajaran || TAHUN_AJARAN}
           </p>
         </div>
@@ -588,13 +592,14 @@ function TabNav({ active, onChange }: { active: TabId; onChange: (id: TabId) => 
 
   return (
     <div
-      className={`sticky top-14 z-20 rounded-2xl border border-slate-200/60 bg-white/90 p-1.5 shadow-sm backdrop-blur sm:top-16 ${NO_PRINT}`}
+      className={`sticky top-14 z-20 w-full max-w-full overflow-hidden rounded-2xl border border-slate-200/80 bg-white/95 p-1.5 shadow-md backdrop-blur sm:top-16 ${NO_PRINT}`}
     >
       <div
         role="tablist"
         aria-label="Bagian laporan ananda"
         onKeyDown={onKeyDown}
-        className="flex snap-x gap-1 overflow-x-auto"
+        className="flex flex-row flex-nowrap items-center gap-1.5 overflow-x-auto custom-scrollbar w-full py-0.5 px-0.5 overscroll-x-contain"
+        style={{ WebkitOverflowScrolling: "touch" }}
       >
         {TABS.map(({ id, label, icon: Icon }) => {
           const selected = active === id;
@@ -608,13 +613,13 @@ function TabNav({ active, onChange }: { active: TabId; onChange: (id: TabId) => 
               aria-controls={`panel-${id}`}
               tabIndex={selected ? 0 : -1}
               onClick={() => onChange(id)}
-              className={`flex min-h-[44px] shrink-0 snap-start items-center gap-2 whitespace-nowrap rounded-xl px-4 py-2.5 text-sm font-bold transition-all ${focusRing} ${
+              className={`flex shrink-0 items-center gap-2 whitespace-nowrap rounded-xl px-3.5 py-2.5 text-xs sm:text-sm font-bold min-h-[44px] transition-all ${focusRing} ${
                 selected
-                  ? "bg-primary text-white shadow-md shadow-primary/30"
-                  : "text-slate-500 hover:bg-slate-100"
+                  ? "bg-[#550000] text-white shadow-md shadow-[#550000]/30"
+                  : "bg-slate-100/90 text-slate-600 hover:bg-slate-200 hover:text-slate-900"
               }`}
             >
-              <Icon size={16} aria-hidden="true" />
+              <Icon size={16} aria-hidden="true" className={selected ? "text-rose-200" : "text-slate-400"} />
               <span>{label}</span>
             </button>
           );
@@ -808,12 +813,17 @@ function LockedPanel({
 
 function TabRapor({ printId, cetakData, cetakError }: { printId: string; cetakData: any; cetakError: boolean }) {
   const printHref = `/rapor/print/${printId}`;
+  const [mobileFit, setMobileFit] = useState(false);
+
   return (
     <>
       <div className={`flex flex-col justify-between gap-4 rounded-3xl border border-slate-100 bg-white/95 p-5 shadow-xl shadow-primary/10 backdrop-blur sm:flex-row sm:items-center sm:p-6 ${NO_PRINT}`}>
         <div className="flex items-center gap-3.5">
-          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-primary to-rose-900 text-white shadow-md shadow-primary/20">
-            <FileText size={24} aria-hidden="true" />
+          <div
+            className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl text-white shadow-md shadow-rose-950/20"
+            style={{ background: "linear-gradient(135deg, #550000 0%, #881337 100%)" }}
+          >
+            <FileText size={22} className="text-white" aria-hidden="true" />
           </div>
           <div>
             <h2 className="text-base font-extrabold text-slate-800 sm:text-lg">Rapor Hasil Belajar Santri (Kasyfud Darajat)</h2>
@@ -829,16 +839,59 @@ function TabRapor({ printId, cetakData, cetakError }: { printId: string; cetakDa
 
       {cetakData ? (
         <>
-          <p className={`flex items-center gap-1.5 rounded-xl border border-amber-200/80 bg-amber-50/90 px-3 py-2 text-[12px] font-medium text-amber-900 shadow-sm md:hidden ${NO_PRINT}`}>
-            <ArrowRight className="h-4 w-4 shrink-0 text-amber-500" aria-hidden="true" />
-            Geser ke kanan untuk melihat seluruh lembar rapor, atau gunakan tombol Cetak / Unduh PDF.
-          </p>
-          {/* Wadah scroll: w-max + mx-auto agar bagian kiri lembar tidak terpotong saat lebih lebar dari layar */}
-          <div className="custom-scrollbar overflow-x-auto pb-4 print:block print:overflow-visible print:p-0">
-            <div className="mx-auto w-max">
-              <RaporOfficialSheet data={cetakData} showPrintToolbar={false} />
+          {/* Kontrol responsif mobile: Pas Layar vs Ukuran Asli */}
+          <div className={`flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 rounded-2xl border border-amber-200/90 bg-amber-50/90 p-3.5 text-xs font-medium text-amber-950 shadow-sm md:hidden ${NO_PRINT}`}>
+            <div className="flex items-center gap-2">
+              <ArrowRight className="h-4 w-4 shrink-0 text-amber-600" aria-hidden="true" />
+              <span>Mode Tampilan Mobile:</span>
+            </div>
+            <div className="flex w-full sm:w-auto items-center gap-1.5 rounded-xl border border-amber-300/80 bg-white/90 p-1">
+              <button
+                type="button"
+                onClick={() => setMobileFit(true)}
+                className={`flex-1 sm:flex-initial rounded-lg px-3 py-1.5 text-xs font-bold transition-all ${
+                  mobileFit
+                    ? "bg-[#550000] text-white shadow-sm"
+                    : "text-slate-600 hover:bg-slate-100"
+                }`}
+              >
+                📱 Pas Layar HP
+              </button>
+              <button
+                type="button"
+                onClick={() => setMobileFit(false)}
+                className={`flex-1 sm:flex-initial rounded-lg px-3 py-1.5 text-xs font-bold transition-all ${
+                  !mobileFit
+                    ? "bg-[#550000] text-white shadow-sm"
+                    : "text-slate-600 hover:bg-slate-100"
+                }`}
+              >
+                🔍 Geser Ukuran Penuh
+              </button>
             </div>
           </div>
+
+          {/* Wadah sheet A4: jika mobileFit aktif, diperkecil proporsional pas di mobile screen */}
+          {mobileFit ? (
+            <div className="w-full overflow-hidden rounded-2xl border border-slate-200 bg-slate-100/60 p-1 md:hidden">
+              <div
+                className="origin-top-left"
+                style={{
+                  transform: "scale(0.48)",
+                  width: "210mm",
+                  marginBottom: "-145mm",
+                }}
+              >
+                <RaporOfficialSheet data={cetakData} showPrintToolbar={false} />
+              </div>
+            </div>
+          ) : (
+            <div className="custom-scrollbar overflow-x-auto pb-4 print:block print:overflow-visible print:p-0">
+              <div className="mx-auto w-max">
+                <RaporOfficialSheet data={cetakData} showPrintToolbar={false} />
+              </div>
+            </div>
+          )}
         </>
       ) : cetakError ? (
         <div role="alert" className={`rounded-3xl border border-slate-100 bg-white p-10 text-center shadow-sm ${NO_PRINT}`}>
@@ -848,7 +901,7 @@ function TabRapor({ printId, cetakData, cetakError }: { printId: string; cetakDa
         </div>
       ) : (
         <div role="status" className={`rounded-3xl border border-slate-100 bg-white p-12 text-center shadow-sm ${NO_PRINT}`}>
-          <Loader2 className="mx-auto mb-3 text-primary motion-safe:animate-spin" size={32} aria-hidden="true" />
+          <Loader2 className="mx-auto mb-3 text-[#550000] motion-safe:animate-spin" size={32} aria-hidden="true" />
           <p className="text-sm font-bold text-slate-600">Memuat Dokumen Resmi Rapor (A4)...</p>
         </div>
       )}
@@ -899,7 +952,7 @@ function TabNilai({
         </div>
       </FilterCard>
 
-      <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
+      <div className="grid grid-cols-1 gap-4 sm:gap-5 md:grid-cols-2">
         {items.length === 0 ? (
           <div className={`col-span-full p-12 text-center text-slate-400 ${surface}`}>
             <BookOpen size={40} className="mx-auto mb-3 opacity-30" aria-hidden="true" />
@@ -909,28 +962,35 @@ function TabNilai({
         ) : (
           items.map((item) => {
             const n = item.nilaiAkhirNum;
+            const kat = (item.mapel_kategori || "").toLowerCase();
+            const badgeCls = kat.includes("syariah") || kat.includes("diniyah")
+              ? "bg-emerald-50 text-emerald-800 border-emerald-200"
+              : kat.includes("bahasa") || kat.includes("arab")
+              ? "bg-blue-50 text-blue-800 border-blue-200"
+              : "bg-purple-50 text-purple-800 border-purple-200";
+
             return (
               <article
                 key={item.mapel_id}
-                className="space-y-4 rounded-2xl border border-slate-100 bg-white/90 p-5 shadow-md backdrop-blur transition-shadow hover:shadow-lg sm:p-6"
+                className="space-y-4 rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm transition-all hover:shadow-md sm:p-6"
               >
                 <div className="flex items-start justify-between gap-4">
                   <div className="min-w-0">
-                    <span className="rounded-full border border-primary/20 bg-primary/10 px-2.5 py-0.5 text-[10px] font-extrabold uppercase text-primary">
+                    <span className={`inline-block rounded-full border px-2.5 py-0.5 text-[10px] font-extrabold uppercase ${badgeCls}`}>
                       {item.mapel_kategori || "Pelajaran Pokok"}
                     </span>
                     <h3 className="mt-1.5 break-words text-lg font-bold text-slate-800">{item.mapel_nama}</h3>
                   </div>
                   <div className="shrink-0 text-right">
                     <span className="text-[10px] font-bold uppercase text-slate-400">Nilai Akhir</span>
-                    <p className="mt-0.5 text-2xl font-black leading-none text-primary">{item.nilaiAkhir || "-"}</p>
+                    <p className="mt-0.5 text-2xl font-black leading-none text-slate-900">{item.nilaiAkhir || "-"}</p>
                     <span className={`text-[11px] font-bold ${predikatColor(n)}`}>{item.predikat}</span>
                   </div>
                 </div>
 
-                <div className="rounded-xl border border-primary/15 bg-primary/5 p-2.5 text-center">
-                  <span className="block text-[10px] font-bold text-primary">Nilai PTS Murni</span>
-                  <span className="mt-0.5 block text-base font-black text-primary">{item.ujian ?? "-"}</span>
+                <div className="rounded-xl border border-rose-100 bg-rose-50/60 p-2.5 text-center">
+                  <span className="block text-[10px] font-bold uppercase tracking-wider text-rose-800">Nilai PTS Murni</span>
+                  <span className="mt-0.5 block text-xl font-black text-[#550000]">{item.ujian ?? "-"}</span>
                 </div>
 
                 <div className="flex items-center justify-between border-t border-slate-100 pt-3 text-xs text-slate-500">
@@ -942,7 +1002,7 @@ function TabNilai({
                       <CheckCircle2 size={13} aria-hidden="true" /> {n === item.kkm ? "Pas KKM" : "Di Atas KKM"}
                     </span>
                   ) : (
-                    <span className="inline-flex items-center gap-1 font-bold text-red-500">
+                    <span className="inline-flex items-center gap-1 font-bold text-rose-600">
                       <XCircle size={13} aria-hidden="true" /> Di Bawah KKM
                     </span>
                   )}
@@ -1023,7 +1083,7 @@ function TabPresensi({
               type="button"
               aria-pressed={filterStatus === ""}
               onClick={() => onFilterStatus("")}
-              className={chip(filterStatus === "", "bg-primary text-white shadow-md shadow-primary/30")}
+              className={chip(filterStatus === "", "bg-[#550000] text-white shadow-md shadow-[#550000]/30")}
             >
               Semua Status ({totalRows})
             </button>
@@ -1168,7 +1228,7 @@ function TabJurnal({
               ) : (
                 rows.map((j) => (
                   <tr key={j.id} className="group border-b border-slate-50 text-sm transition-colors hover:bg-slate-50/60">
-                    <td className="sticky left-0 z-[5] bg-white px-4 py-3.5 font-bold text-primary shadow-[3px_0_6px_-2px_rgba(0,0,0,0.05)] group-hover:bg-slate-50">
+                    <td className="sticky left-0 z-[5] bg-white px-4 py-3.5 font-bold text-[#550000] shadow-[3px_0_6px_-2px_rgba(0,0,0,0.05)] group-hover:bg-slate-50">
                       {formatTanggal(j.tanggal)}
                     </td>
                     <td className="px-4 py-3.5 font-bold text-slate-800">{j.asatidz}</td>
@@ -1185,7 +1245,7 @@ function TabJurnal({
                         onClick={() => onDetail(j)}
                         className={`inline-flex min-h-[36px] items-center gap-1 rounded-xl border border-slate-200 bg-slate-100 px-3 py-1 text-xs font-bold text-slate-800 shadow-sm transition-colors hover:bg-slate-200 ${focusRing}`}
                       >
-                        <Eye size={13} className="text-primary" aria-hidden="true" />
+                        <Eye size={13} className="text-[#550000]" aria-hidden="true" />
                         <span>Lihat Detail</span>
                       </button>
                     </td>
@@ -1231,7 +1291,7 @@ function TabTahfidz({ ujian, setoran }: { ujian: any[]; setoran: any[] }) {
                       <h4 className="mt-1.5 flex flex-wrap items-center gap-2 text-sm font-bold text-slate-800 sm:text-base">
                         <span>{u.juz ? `Juz ${u.juz}` : surahNama}</span>
                         {ayatText && (
-                          <span className="rounded-md border border-rose-100 bg-rose-50 px-2 py-0.5 text-xs font-bold text-primary">
+                          <span className="rounded-md border border-rose-100 bg-rose-50 px-2 py-0.5 text-xs font-bold text-rose-950">
                             ({ayatText})
                           </span>
                         )}
@@ -1473,7 +1533,7 @@ function TabSpp({
       <div className={`space-y-5 p-5 sm:p-7 ${surface}`}>
         <div className="flex flex-col justify-between gap-3 border-b border-slate-100 pb-3 sm:flex-row sm:items-center">
           <div className="flex items-center gap-3">
-            <IconBadge tone="bg-primary/10 text-primary">
+            <IconBadge tone="bg-blue-50 text-blue-800 border border-blue-100">
               <Calendar size={20} aria-hidden="true" />
             </IconBadge>
             <div>
@@ -1485,7 +1545,7 @@ function TabSpp({
             <button
               type="button"
               onClick={onKonfirmasi}
-              className={`inline-flex min-h-[44px] items-center gap-1.5 rounded-xl bg-primary px-3.5 py-1.5 text-xs font-bold text-white shadow-md shadow-primary/20 transition-all hover:bg-[#7a0000] motion-safe:hover:scale-[1.02] active:scale-[0.98] ${focusRing}`}
+              className={`inline-flex min-h-[44px] items-center gap-1.5 rounded-xl bg-[#550000] px-3.5 py-1.5 text-xs font-bold text-white shadow-md shadow-[#550000]/20 transition-all hover:bg-[#7a0000] motion-safe:hover:scale-[1.02] active:scale-[0.98] ${focusRing}`}
             >
               <CreditCard size={14} aria-hidden="true" />
               <span>Konfirmasi Pembayaran (WA/Upload)</span>
@@ -1745,7 +1805,7 @@ export default function RaporWaliPage() {
     return (
       <CenterCard>
         <div role="status">
-          <div className="mx-auto mb-4 h-12 w-12 rounded-full border-b-2 border-primary motion-safe:animate-spin" aria-hidden="true" />
+          <div className="mx-auto mb-4 h-12 w-12 rounded-full border-b-2 border-[#550000] motion-safe:animate-spin" aria-hidden="true" />
           <h3 className="text-lg font-bold text-slate-800">Memuat Rapor &amp; Rekap Santri</h3>
           <p className="mt-1 text-xs text-slate-500">Mengambil data nilai, presensi, dan jurnal guru...</p>
         </div>
