@@ -35,6 +35,7 @@ import JurnalDetailModal from "@/components/JurnalDetailModal";
 import RaporOfficialSheet from "@/components/RaporOfficialSheet";
 import ModalKonfirmasiSPP from "@/components/ModalKonfirmasiSPP";
 import { getOfficialNis } from "@/lib/officialSantri";
+import { calculateHalaman } from "@/lib/quran-madinah";
 
 /* ═══════════════════════════ Konfigurasi ═══════════════════════════ */
 
@@ -269,7 +270,8 @@ function normalizeUjianTahfidz(u: any) {
   }
 
   const isYusuf = Boolean(u.surah_nama?.toLowerCase().includes("yusuf"));
-  if (isYusuf && (!ayatDari || !ayatKe || (ayatDari === 11 && ayatKe === 13) || (rawDari === 13 && rawKe === 11))) {
+  const isAnomalousRange = !ayatDari || !ayatKe || (ayatDari === 11 && ayatKe === 13) || (rawDari === 13 && rawKe === 11);
+  if (isYusuf && isAnomalousRange) {
     ayatDari = 1;
     ayatKe = 52;
   }
@@ -277,7 +279,21 @@ function normalizeUjianTahfidz(u: any) {
   const surahBase: string = u.surah_nama || "Yusuf";
   const surahNama = surahBase.toLowerCase().startsWith("surah") ? surahBase : `Surah ${surahBase}`;
   const ayatText = ayatDari && ayatKe ? `Ayat ${ayatDari} - ${ayatKe}` : isYusuf ? "Ayat 1 - 52" : "";
-  const halText = u.jumlah_halaman ? `${u.jumlah_halaman} Halaman` : isYusuf ? "5 Halaman" : null;
+
+  // Halaman: jika Yusuf ayat 1-52 (atau jika data lama di DB tercatat 0.1 halaman sisa uji coba 2-3 ayat)
+  let rawHal = u.jumlah_halaman !== null && u.jumlah_halaman !== undefined ? Number(u.jumlah_halaman) : null;
+  let halValue = rawHal;
+
+  if (isYusuf && (isAnomalousRange || (ayatDari === 1 && ayatKe === 52) || (rawHal !== null && rawHal < 2))) {
+    halValue = 6.6; // Surah Yusuf ayat 1 - 52 (Juz 12) = 6.6 halaman standar mushaf Madinah
+  } else if ((!halValue || halValue < 0.5) && ayatDari && ayatKe) {
+    const sNomor = Number(u.surah_nomor) || (isYusuf ? 12 : 0);
+    if (sNomor > 0) {
+      halValue = calculateHalaman(sNomor, ayatDari, ayatKe);
+    }
+  }
+
+  const halText = halValue ? `${halValue} Halaman` : null;
 
   return { surahNama, ayatText, halText };
 }

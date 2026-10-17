@@ -41,7 +41,7 @@ export async function GET() {
           data: {
             ayat_dari: newDari,
             ayat_ke: newKe,
-            jumlah_halaman: 5.0
+            jumlah_halaman: 6.6
           }
         });
         fixed.push({ id: u.id, before: `${u.ayat_dari}-${u.ayat_ke}`, after: `${newDari}-${newKe}` });
