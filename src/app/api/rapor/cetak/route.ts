@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { getStandardMapelName } from "@/lib/mapel";
 import { getOfficialNis } from "@/lib/officialSantri";
 import { getSession } from "@/lib/auth";
+import { cekStatusSpp } from "@/lib/keuangan";
 
 export const dynamic = 'force-dynamic';
 
@@ -53,6 +54,34 @@ export async function GET(req: NextRequest) {
 
     if (!santri) {
       return NextResponse.json({ error: "Santri not found" }, { status: 404 });
+    }
+
+    // Periksa status administrasi SPP
+    const userRole = (session?.role || "WALI_SANTRI").toUpperCase();
+    const isStaff = userRole !== "WALI_SANTRI" && (
+      userRole.includes("ADMIN") || 
+      userRole.includes("GURU") || 
+      userRole.includes("MUDIR") || 
+      userRole.includes("KEPALA") || 
+      userRole.includes("KADIV") || 
+      userRole.includes("MUSYRIF")
+    );
+
+    const sppInfo = await cekStatusSpp(targetSantriId);
+    const isAccessLocked = !sppInfo.lunas && sppInfo.status !== "menunggu_verifikasi" && !sppInfo.isUnlockedManual;
+
+    if (isAccessLocked && !isStaff) {
+      return NextResponse.json({
+        error: "SPP_TERKUNCI",
+        message: "Akses cetak rapor santri dikunci karena terdapat kewajiban administrasi SPP yang belum diselesaikan.",
+        spp: sppInfo,
+        santri: {
+          id: santri.id,
+          nama: santri.nama_lengkap,
+          nis: getOfficialNis(santri.nama_lengkap) || santri.nis,
+          kelas: santri.kelas?.nama || "-"
+        }
+      }, { status: 403 });
     }
 
     const kelas_id = santri.kelas_id;

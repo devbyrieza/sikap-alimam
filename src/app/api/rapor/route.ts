@@ -375,6 +375,18 @@ export async function GET(req: NextRequest) {
     const persentaseShubuh = ibadah.length > 0 ? Math.round((shubuhJamaah / ibadah.length) * 100) : 100;
     const sppInfo = await cekStatusSpp(santri.id);
 
+    const userRole = (session?.role || "WALI_SANTRI").toUpperCase();
+    const isStaff = userRole !== "WALI_SANTRI" && (
+      userRole.includes("ADMIN") || 
+      userRole.includes("GURU") || 
+      userRole.includes("MUDIR") || 
+      userRole.includes("KEPALA") || 
+      userRole.includes("KADIV") || 
+      userRole.includes("MUSYRIF")
+    );
+
+    const isAccessLocked = !sppInfo.lunas && sppInfo.status !== "menunggu_verifikasi" && !sppInfo.isUnlockedManual;
+
     return NextResponse.json({
       santri: {
         id: santri.id,
@@ -386,8 +398,21 @@ export async function GET(req: NextRequest) {
         semester: isGanjil ? "Ganjil" : "Genap",
         tahun_ajaran
       },
+      is_locked: isAccessLocked && !isStaff,
       spp: sppInfo,
-      ringkasan: {
+      ringkasan: (isAccessLocked && !isStaff) ? {
+        persentaseKehadiran: 0,
+        totalHari: 0,
+        totalHadir: 0,
+        totalSakit: 0,
+        totalIzin: 0,
+        totalAlpha: 0,
+        persentaseShubuh: 0,
+        ranking: 0,
+        totalNilai: 0,
+        rataRata: 0,
+        jumlahSantri
+      } : {
         persentaseKehadiran,
         totalHari,
         totalHadir,
@@ -400,7 +425,15 @@ export async function GET(req: NextRequest) {
         rataRata: Math.round(rataRataTotal),
         jumlahSantri
       },
-      detail: {
+      detail: (isAccessLocked && !isStaff) ? {
+        presensi: [],
+        jurnal: [],
+        akademik: [],
+        mapelList: [],
+        tahfidz: [],
+        ujianTahfidz: [],
+        ibadah: []
+      } : {
         presensi: presensi.map((p) => ({
           id: p.id,
           tanggal: p.tanggal.toISOString().split("T")[0],

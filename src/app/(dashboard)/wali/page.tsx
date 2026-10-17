@@ -118,6 +118,8 @@ export default function WaliDashboard() {
               ? anak.wali_kelas.no_hp.replace(/[^0-9]/g, "").replace(/^0/, "62")
               : "";
 
+            const isLocked = !anak.lunas && anak.spp?.status !== "menunggu_verifikasi" && !anak.spp?.isUnlockedManual;
+
             return (
               <div
                 key={anak.id}
@@ -138,7 +140,12 @@ export default function WaliDashboard() {
                         <span className="text-xs text-slate-500 font-mono font-bold bg-slate-100 px-2.5 py-0.5 rounded-full">
                           NIS: {nisResmi}
                         </span>
-                        {anak.spp?.status === "menunggu_verifikasi" ? (
+                        {isLocked ? (
+                          <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black bg-rose-100 text-rose-800 border border-rose-300 flex items-center gap-1 shadow-sm">
+                            <Lock size={12} className="text-rose-600" />
+                            <span>Akses Terkunci: Tagihan SPP ({anak.spp?.tunggakanCount || 1} Bulan)</span>
+                          </span>
+                        ) : anak.spp?.status === "menunggu_verifikasi" ? (
                           <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-900 border border-amber-300 flex items-center gap-1">
                             <Clock size={12} className="text-amber-600 animate-spin" />
                             <span>SPP Sedang Diverifikasi</span>
@@ -190,14 +197,18 @@ export default function WaliDashboard() {
                   <div className="flex flex-col sm:flex-row md:flex-col lg:flex-row gap-2.5 w-full md:w-auto shrink-0">
                     <a
                       href={`/wali/rapor?santri_id=${anak.id}`}
-                      className="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-2xl bg-primary hover:bg-[#7a0000] text-white font-bold text-sm shadow-lg shadow-primary/25 transition-all hover:scale-[1.02] active:scale-[0.98]"
+                      className={`inline-flex items-center justify-center gap-2 px-5 py-3 rounded-2xl font-bold text-sm shadow-lg transition-all hover:scale-[1.02] active:scale-[0.98] ${
+                        isLocked
+                          ? "bg-rose-600 hover:bg-rose-700 text-white shadow-rose-950/20"
+                          : "bg-primary hover:bg-[#7a0000] text-white shadow-primary/25"
+                      }`}
                     >
-                      <FileText size={16} />
-                      <span>{anak.spp?.status === "menunggu_verifikasi" ? "Buka Rapor (Verifikasi SPP)" : anak.lunas ? "Buka Rapor & Rekap" : "Lihat Status SPP & Rapor"}</span>
+                      {isLocked ? <Lock size={16} /> : <FileText size={16} />}
+                      <span>{isLocked ? "Akses Terkunci (Selesaikan SPP)" : anak.spp?.status === "menunggu_verifikasi" ? "Buka Rapor (Verifikasi SPP)" : "Buka Rapor & Rekap"}</span>
                       <ChevronRight size={16} />
                     </a>
 
-                    {(anak.lunas || anak.spp?.status === "menunggu_verifikasi") && (
+                    {!isLocked && (
                       <a
                         href={`/rapor/print/${anak.id}`}
                         target="_blank"
@@ -210,6 +221,29 @@ export default function WaliDashboard() {
                     )}
                   </div>
                 </div>
+
+                {/* Notice Box Jika Terkunci */}
+                {isLocked && (
+                  <div className="mx-6 sm:mx-8 mb-4 p-4 bg-gradient-to-r from-rose-50 to-rose-100/60 border border-rose-200 rounded-2xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs">
+                    <div className="flex items-start sm:items-center gap-2.5 text-rose-900">
+                      <AlertCircle size={16} className="text-rose-600 shrink-0 mt-0.5 sm:mt-0" />
+                      <span>
+                        Akses laporan dinonaktifkan sementara karena ada tagihan SPP. <strong>Sudah membayar tapi akun masih terkunci?</strong> Silakan hubungi Finance di WhatsApp <strong>085111403331</strong> dengan bukti transfer.
+                      </span>
+                    </div>
+                    <a
+                      href={`https://wa.me/6285111403331?text=${encodeURIComponent(
+                        `Assalamu'alaikum Admin Keuangan Pesantren Al-Imam, saya wali dari ananda ${anak.nama} (NIS: ${nisResmi}, Kelas: ${anak.kelas}). Saya telah melakukan pembayaran SPP dan melampirkan bukti transfer terlampir. Mohon dibukakan akses portal SIKAP ananda. Jazaakumullah khayran.`
+                      )}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl shrink-0 flex items-center gap-1.5 shadow-sm transition-all hover:scale-[1.02]"
+                    >
+                      <MessageCircle size={14} />
+                      <span>WA Finance (085111403331)</span>
+                    </a>
+                  </div>
+                )}
 
                 {/* Quick Summary Strip */}
                 <div className="bg-slate-50/90 px-6 sm:px-8 py-3.5 border-t border-slate-100 flex items-center justify-between gap-4 text-xs font-semibold text-slate-600 flex-wrap">

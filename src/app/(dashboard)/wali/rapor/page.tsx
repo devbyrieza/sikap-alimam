@@ -92,6 +92,7 @@ export default function RaporWaliPage() {
   }, [santriId]);
 
   const targetSantriId = santriId || data?.santri?.id || "";
+  const isAccessLocked = data?.spp?.lunas === false && data?.spp?.status !== "menunggu_verifikasi" && !data?.spp?.isUnlockedManual;
 
   // Helper untuk refresh data SPP & Rapor setelah konfirmasi
   const refreshSppData = () => {
@@ -384,23 +385,25 @@ export default function RaporWaliPage() {
             <span>Kembali ke Pilihan Anak</span>
           </a>
 
-          <div className="flex items-center gap-2">
-            <a
-              href={`/rapor/print/${santri.id}`}
-              target="_blank"
-              className="btn btn-outline btn-sm hidden sm:inline-flex items-center gap-1.5"
-              style={{ fontSize: 12, borderRadius: 10 }}
-            >
-              <Printer size={14} /> Cetak PDF
-            </a>
-            <button
-              onClick={handleKirimWA}
-              className="btn btn-primary btn-sm inline-flex items-center gap-1.5"
-              style={{ fontSize: 12, borderRadius: 10, padding: "8px 14px" }}
-            >
-              <Send size={14} /> Kirim ke WA
-            </button>
-          </div>
+          {!isAccessLocked && (
+            <div className="flex items-center gap-2">
+              <a
+                href={`/rapor/print/${santri.id}`}
+                target="_blank"
+                className="btn btn-outline btn-sm hidden sm:inline-flex items-center gap-1.5"
+                style={{ fontSize: 12, borderRadius: 10 }}
+              >
+                <Printer size={14} /> Cetak PDF
+              </a>
+              <button
+                onClick={handleKirimWA}
+                className="btn btn-primary btn-sm inline-flex items-center gap-1.5"
+                style={{ fontSize: 12, borderRadius: 10, padding: "8px 14px" }}
+              >
+                <Send size={14} /> Kirim ke WA
+              </button>
+            </div>
+          )}
         </div>
       </div>
 
@@ -423,7 +426,11 @@ export default function RaporWaliPage() {
                     {santri.kelas}
                   </span>
                   <span className="text-white/80 font-mono text-xs">NIS: {(santri?.nama ? getOfficialNis(santri.nama) : null) || santri.nis}</span>
-                  {data?.spp?.status === "menunggu_verifikasi" ? (
+                  {isAccessLocked ? (
+                    <span className="px-3 py-1 rounded-full bg-rose-600 text-white border border-rose-400 text-[11px] font-black flex items-center gap-1.5 shadow-md">
+                      <Lock size={12} /> Akses Terkunci: Tagihan SPP {data?.spp?.tunggakanCount || 1} Bulan
+                    </span>
+                  ) : data?.spp?.status === "menunggu_verifikasi" ? (
                     <span className="px-2.5 py-0.5 rounded-full bg-amber-500/30 text-amber-200 border border-amber-400/40 text-[11px] font-extrabold flex items-center gap-1">
                       <Clock size={12} className="animate-spin text-amber-300" /> SPP Sedang Diverifikasi Keuangan
                     </span>
@@ -487,147 +494,280 @@ export default function RaporWaliPage() {
           </div>
         )}
 
-        {/* Banner Peringatan Tunggakan SPP (Jika Belum Lunas dan Belum Diajukan) */}
-        {data?.spp?.lunas === false && data?.spp?.status !== "menunggu_verifikasi" && (
-          <div className="bg-gradient-to-r from-rose-50 to-rose-100/70 border border-rose-200/90 rounded-3xl p-5 shadow-lg shadow-rose-950/5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 text-xs no-print print:hidden">
-            <div className="flex items-start sm:items-center gap-3.5">
-              <div className="p-3 rounded-2xl bg-rose-600 text-white shrink-0 shadow-md shadow-rose-950/20">
-                <AlertTriangle size={22} />
+        {/* TAMPILAN TERKUNCI KETAT (Jika Belum Lunas SPP & Belum Verifikasi) */}
+        {isAccessLocked && activeTab !== "spp" ? (
+          <div className="space-y-6 no-print print:hidden">
+            {/* Main Locked Card */}
+            <div className="bg-white/95 backdrop-blur rounded-3xl p-8 sm:p-12 shadow-2xl shadow-rose-950/10 border-2 border-rose-200 relative overflow-hidden text-center">
+              <div className="absolute top-0 right-0 w-96 h-96 bg-rose-50 rounded-full blur-3xl -z-10 pointer-events-none" />
+              <div className="absolute bottom-0 left-0 w-80 h-80 bg-amber-50/60 rounded-full blur-3xl -z-10 pointer-events-none" />
+
+              {/* Lock Icon with Glowing Pulse */}
+              <div className="relative inline-block mb-6">
+                <div className="w-24 h-24 rounded-3xl bg-gradient-to-br from-rose-600 via-rose-700 to-rose-900 text-white flex items-center justify-center shadow-2xl shadow-rose-600/40 mx-auto">
+                  <Lock size={44} className="stroke-[2.2]" />
+                </div>
+                <div className="absolute -top-1 -right-1 p-2 bg-amber-400 text-amber-950 rounded-full shadow-md animate-bounce">
+                  <AlertTriangle size={16} />
+                </div>
               </div>
-              <div>
-                <div className="flex items-center gap-2 mb-0.5 flex-wrap">
-                  <span className="px-2 py-0.5 rounded-full bg-rose-200 text-rose-900 font-extrabold text-[10px] uppercase tracking-wider">
-                    Peringatan Pembayaran
+
+              <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-rose-100 text-rose-800 text-xs font-black uppercase tracking-wider mb-4 border border-rose-200 shadow-sm">
+                <span>Akses Portal Santri Dinonaktifkan Sementara</span>
+              </div>
+
+              <h2 className="text-2xl sm:text-3xl font-black text-slate-800 tracking-tight max-w-2xl mx-auto leading-tight">
+                Kewajiban Administrasi SPP Ananda Belum Diselesaikan
+              </h2>
+
+              <p className="text-xs sm:text-sm text-slate-600 max-w-2xl mx-auto leading-relaxed mt-3">
+                Afwan Bapak/Ibu Wali Santri dari ananda <strong className="text-slate-900">{santri.nama}</strong> ({santri.kelas}), seluruh akses laporan hasil belajar (Lembar Rapor PTS Murni, Nilai Akademik, Rekap Presensi, Jurnal Pengajar, dan Mutabaah Tahfidz Al-Qur&apos;an) saat ini dinonaktifkan sementara hingga kewajiban administrasi SPP diselesaikan.
+              </p>
+
+              {/* Rincian Tagihan Card */}
+              <div className="max-w-xl mx-auto mt-8 p-6 rounded-2xl bg-gradient-to-br from-slate-50 to-rose-50/40 border border-rose-100 shadow-inner grid grid-cols-1 sm:grid-cols-3 gap-4 text-center">
+                <div className="p-3 bg-white rounded-xl border border-slate-100 shadow-sm">
+                  <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider block">Bulan Menunggak</span>
+                  <span className="text-xl font-black text-rose-600 mt-1 block">
+                    {data?.spp?.tunggakanCount || 1} Bulan
                   </span>
-                  <span className="font-extrabold text-rose-950 text-sm sm:text-base">
-                    Tunggakan SPP: {data?.spp?.tunggakanCount || 1} Bulan
+                  <span className="text-[10px] text-slate-400">TA 2026/2027</span>
+                </div>
+
+                <div className="p-3 bg-white rounded-xl border border-slate-100 shadow-sm sm:col-span-2">
+                  <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider block">Total Tagihan SPP</span>
+                  <span className="text-xl font-black text-slate-800 mt-1 block">
+                    {new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", maximumFractionDigits: 0 }).format(data?.spp?.totalTunggakanNominal || 1000000)}
+                  </span>
+                  <span className="text-[10px] text-rose-600 font-semibold truncate block">
+                    {data?.spp?.tunggakanBulan?.length > 0 ? `(${data.spp.tunggakanBulan.join(", ")})` : "SPP Belum Lunas"}
                   </span>
                 </div>
-                <p className="text-rose-800/90 mt-0.5 leading-relaxed text-xs">
-                  Batas akhir pembayaran SPP adalah tanggal <strong>10 setiap bulannya</strong>. Jika baru saja melakukan transfer, silakan konfirmasi bukti transfer agar sistem langsung mencatat status verifikasi ananda.
-                </p>
               </div>
-            </div>
-            <div className="flex items-center gap-2 self-stretch sm:self-auto shrink-0 flex-wrap sm:flex-nowrap">
-              <button
-                onClick={() => setIsKonfirmasiOpen(true)}
-                className="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl shadow-md transition-all hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-1.5 flex-1 sm:flex-initial"
-              >
-                <CreditCard size={14} />
-                <span>Konfirmasi Bayar (Upload/WA)</span>
-              </button>
-              <button
-                onClick={() => setActiveTab("spp")}
-                className="px-4 py-2.5 bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs rounded-xl shadow-md shadow-rose-950/20 transition-all hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-1.5 flex-1 sm:flex-initial"
-              >
-                <span>Cek Rincian &rarr;</span>
-              </button>
-            </div>
-          </div>
-        )}
 
-        {/* Grace Period Notification Banner (Tgl 1-10 jika lunas tapi masa bayar) */}
-        {data?.spp?.isGracePeriod && data?.spp?.lunas && (
-          <div className="bg-amber-50/90 backdrop-blur border border-amber-200/90 rounded-2xl p-4 flex items-center justify-between gap-4 text-xs shadow-md no-print print:hidden">
-            <div className="flex items-center gap-3">
-              <div className="p-2 rounded-xl bg-amber-500 text-white shrink-0">
-                <Clock size={16} />
+              {/* Rekening Pembayaran Resmi */}
+              <div className="max-w-xl mx-auto mt-6 p-6 rounded-2xl bg-slate-900 text-white shadow-xl text-left relative overflow-hidden">
+                <div className="absolute top-0 right-0 p-6 opacity-10 pointer-events-none">
+                  <CreditCard size={120} />
+                </div>
+                <div className="relative z-10">
+                  <div className="flex items-center justify-between gap-2 mb-3">
+                    <span className="text-[11px] font-black uppercase tracking-wider text-rose-300">
+                      Rekening Resmi Pembayaran SPP
+                    </span>
+                    <span className="px-2 py-0.5 rounded-full bg-white/10 text-[10px] font-mono text-white/80">
+                      BSI • Bank Syariah Indonesia
+                    </span>
+                  </div>
+
+                  <div className="flex items-baseline justify-between gap-4 flex-wrap">
+                    <div>
+                      <div className="text-2xl sm:text-3xl font-black font-mono tracking-wider text-white">
+                        7244445556
+                      </div>
+                      <div className="text-xs text-slate-300 mt-1">
+                        Atas Nama: <strong className="text-white">Pesantren Islam Al-Imam</strong>
+                      </div>
+                    </div>
+
+                    <button
+                      onClick={() => {
+                        navigator.clipboard.writeText("7244445556");
+                        Swal.fire({
+                          icon: "success",
+                          title: "Nomor Rekening Disalin!",
+                          text: "BSI 7244445556 a.n. Pesantren Islam Al-Imam",
+                          timer: 2000,
+                          showConfirmButton: false
+                        });
+                      }}
+                      className="px-4 py-2 rounded-xl bg-white/20 hover:bg-white/30 text-white text-xs font-bold transition-all shadow-sm"
+                    >
+                      Salin Nomor Rekening
+                    </button>
+                  </div>
+                </div>
               </div>
-              <div>
-                <h4 className="font-bold text-amber-950">Masa Pembayaran SPP Bulan {data.spp.namaBulan}</h4>
-                <p className="text-amber-800/90 mt-0.5">
-                  Batas akhir pembayaran SPP adalah tanggal <strong>10 {data.spp.namaBulan}</strong>. Seluruh akses laporan santri tetap terbuka selama periode ini.
-                </p>
+
+              {/* CRUCIAL NOTICE & DIRECT FINANCE WHATSAPP (085111403331) */}
+              <div className="max-w-xl mx-auto mt-8 p-6 sm:p-7 bg-gradient-to-r from-emerald-50 via-teal-50/80 to-emerald-50 border-2 border-emerald-400/90 rounded-3xl text-left shadow-lg shadow-emerald-950/5">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+                  <div className="p-3.5 bg-emerald-600 text-white rounded-2xl shrink-0 shadow-md">
+                    <PhoneCall size={28} />
+                  </div>
+                  <div className="flex-1">
+                    <div className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-emerald-200 text-emerald-950 text-[11px] font-black mb-1.5">
+                      <span>Sudah Membayar Tapi Akun Masih Terkunci?</span>
+                    </div>
+                    <h4 className="text-base sm:text-lg font-black text-emerald-950 leading-snug">
+                      Hubungi Finance (085111403331) dengan Bukti Transfer
+                    </h4>
+                    <p className="text-xs sm:text-sm text-emerald-900/90 leading-relaxed mt-1">
+                      Jika Bapak/Ibu Wali Santri <strong>sudah melakukan transfer/pelunasan SPP</strong> namun akun masih terkunci, silakan langsung mengirimkan foto/bukti transfer ke nomor WhatsApp <strong>Finance (085111403331)</strong> agar Tim Keuangan dapat segera memverifikasi dan membukakan akses portal SIKAP ananda.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="mt-5 pt-4 border-t border-emerald-200/80 flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+                  <a
+                    href={`https://wa.me/6285111403331?text=${encodeURIComponent(
+                      `Assalamu'alaikum Admin Keuangan Pesantren Al-Imam, saya wali dari ananda:\n• Nama: ${santri.nama}\n• NIS: ${(santri?.nama ? getOfficialNis(santri.nama) : null) || santri.nis}\n• Kelas: ${santri.kelas}\n\nSaya telah mentransfer pembayaran SPP sebesar ${new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", maximumFractionDigits: 0 }).format(data?.spp?.totalTunggakanNominal || 1000000)} dan melampirkan bukti transfer terlampir. Mohon bantuannya untuk membukakan akses portal SIKAP ananda. Jazaakumullah khayran.`
+                    )}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex-1 inline-flex items-center justify-center gap-2 px-5 py-3.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs sm:text-sm shadow-md transition-all hover:scale-[1.02] active:scale-[0.98]"
+                  >
+                    <Send size={16} />
+                    <span>Kirim Bukti ke WA Finance (085111403331)</span>
+                  </a>
+
+                  <button
+                    onClick={() => setIsKonfirmasiOpen(true)}
+                    className="inline-flex items-center justify-center gap-2 px-5 py-3.5 rounded-xl bg-white hover:bg-slate-50 text-emerald-900 border border-emerald-300 font-bold text-xs sm:text-sm shadow-sm transition-all"
+                  >
+                    <CreditCard size={16} />
+                    <span>Upload Bukti di Web</span>
+                  </button>
+                </div>
               </div>
-            </div>
-            <div className="hidden sm:block text-right shrink-0">
-              <span className="px-3 py-1 rounded-lg bg-amber-200/70 text-amber-900 font-bold">
-                Masa Tenggang
-              </span>
-            </div>
-          </div>
-        )}
 
-            {/* Tab Navigation Menu */}
-            <div className="bg-white/80 backdrop-blur rounded-2xl border border-slate-200/60 p-1.5 shadow-sm no-print print:hidden">
-              <div className="flex gap-1 overflow-x-auto">
-                <button
-                  onClick={() => setActiveTab("ringkasan")}
-                  className={`px-4 py-2.5 rounded-xl transition-all flex items-center gap-2 whitespace-nowrap text-sm font-bold ${
-                    activeTab === "ringkasan"
-                      ? "bg-primary text-white shadow-md shadow-primary/30"
-                      : "text-slate-500 hover:bg-slate-100"
-                  }`}
-                >
-                  <FileText size={16} />
-                  <span>1. Lembar Rapor Resmi</span>
-                </button>
-
-                <button
-                  onClick={() => setActiveTab("nilai")}
-                  className={`px-4 py-2.5 rounded-xl transition-all flex items-center gap-2 whitespace-nowrap text-sm font-bold ${
-                    activeTab === "nilai"
-                      ? "bg-primary text-white shadow-md shadow-primary/30"
-                      : "text-slate-500 hover:bg-slate-100"
-                  }`}
-                >
-                  <BookOpen size={16} />
-                  <span>2. Nilai & Filter Mapel</span>
-                </button>
-
-                <button
-                  onClick={() => setActiveTab("presensi")}
-                  className={`px-4 py-2.5 rounded-xl transition-all flex items-center gap-2 whitespace-nowrap text-sm font-bold ${
-                    activeTab === "presensi"
-                      ? "bg-primary text-white shadow-md shadow-primary/30"
-                      : "text-slate-500 hover:bg-slate-100"
-                  }`}
-                >
-                  <Calendar size={16} />
-                  <span>3. Rekap Presensi Absen</span>
-                </button>
-
-                <button
-                  onClick={() => setActiveTab("jurnal")}
-                  className={`px-4 py-2.5 rounded-xl transition-all flex items-center gap-2 whitespace-nowrap text-sm font-bold ${
-                    activeTab === "jurnal"
-                      ? "bg-primary text-white shadow-md shadow-primary/30"
-                      : "text-slate-500 hover:bg-slate-100"
-                  }`}
-                >
-                  <FileText size={16} />
-                  <span>4. Jurnal Mengajar Guru</span>
-                </button>
-
-                <button
-                  onClick={() => setActiveTab("tahfidz")}
-                  className={`px-4 py-2.5 rounded-xl transition-all flex items-center gap-2 whitespace-nowrap text-sm font-bold ${
-                    activeTab === "tahfidz"
-                      ? "bg-primary text-white shadow-md shadow-primary/30"
-                      : "text-slate-500 hover:bg-slate-100"
-                  }`}
-                >
-                  <HeartHandshake size={16} />
-                  <span>5. Halaqoh & Tahfidz Al-Qur&apos;an</span>
-                </button>
-
+              {/* Button to View SPP Ledger */}
+              <div className="mt-8 pt-6 border-t border-slate-200/80 flex flex-col sm:flex-row items-center justify-center gap-3">
                 <button
                   onClick={() => setActiveTab("spp")}
-                  className={`px-4 py-2.5 rounded-xl transition-all flex items-center gap-2 whitespace-nowrap text-sm font-bold ${
-                    activeTab === "spp"
-                      ? "bg-primary text-white shadow-md shadow-primary/30"
-                      : "text-slate-500 hover:bg-slate-100"
-                  }`}
+                  className="inline-flex items-center gap-2 text-xs font-bold text-slate-700 hover:text-primary transition-colors bg-slate-100 hover:bg-slate-200 px-5 py-3 rounded-xl shadow-sm"
                 >
-                  <CreditCard size={16} />
-                  <span>6. SPP &amp; Wali Kelas</span>
+                  <CreditCard size={15} />
+                  <span>Lihat Rincian Riwayat SPP Santri (12 Bulan) &rarr;</span>
                 </button>
               </div>
             </div>
+          </div>
+        ) : (
+          <>
+            {/* Grace Period Notification Banner (Tgl 1-10 jika lunas tapi masa bayar) */}
+            {data?.spp?.isGracePeriod && data?.spp?.lunas && (
+              <div className="bg-amber-50/90 backdrop-blur border border-amber-200/90 rounded-2xl p-4 flex items-center justify-between gap-4 text-xs shadow-md no-print print:hidden">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 rounded-xl bg-amber-500 text-white shrink-0">
+                    <Clock size={16} />
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-amber-950">Masa Pembayaran SPP Bulan {data.spp.namaBulan}</h4>
+                    <p className="text-amber-800/90 mt-0.5">
+                      Batas akhir pembayaran SPP adalah tanggal <strong>10 {data.spp.namaBulan}</strong>. Seluruh akses laporan santri tetap terbuka selama periode ini.
+                    </p>
+                  </div>
+                </div>
+                <div className="hidden sm:block text-right shrink-0">
+                  <span className="px-3 py-1 rounded-lg bg-amber-200/70 text-amber-900 font-bold">
+                    Masa Tenggang
+                  </span>
+                </div>
+              </div>
+            )}
+
+            {/* Back Button jika sedang di Tab SPP dalam kondisi locked */}
+            {isAccessLocked && activeTab === "spp" && (
+              <div className="bg-rose-50 border border-rose-200 rounded-2xl p-4 flex items-center justify-between gap-4 no-print print:hidden">
+                <div className="flex items-center gap-2.5 text-xs text-rose-900 font-bold">
+                  <Lock size={16} className="text-rose-600 shrink-0" />
+                  <span>Halaman ini hanya menampilkan rincian tagihan SPP. Lembar Rapor dan Mutabaah tetap terkunci.</span>
+                </div>
+                <button
+                  onClick={() => setActiveTab("ringkasan")}
+                  className="px-3.5 py-2 bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs rounded-xl shadow-sm transition-all shrink-0 flex items-center gap-1.5"
+                >
+                  <ArrowLeft size={13} />
+                  <span>Kembali ke Halaman Kunci</span>
+                </button>
+              </div>
+            )}
+
+            {/* Tab Navigation Menu (Hanya Tampil Jika Terbuka Penuh atau Tidak Terkunci) */}
+            {!isAccessLocked && (
+              <div className="bg-white/80 backdrop-blur rounded-2xl border border-slate-200/60 p-1.5 shadow-sm no-print print:hidden">
+                <div className="flex gap-1 overflow-x-auto">
+                  <button
+                    onClick={() => setActiveTab("ringkasan")}
+                    className={`px-4 py-2.5 rounded-xl transition-all flex items-center gap-2 whitespace-nowrap text-sm font-bold ${
+                      activeTab === "ringkasan"
+                        ? "bg-primary text-white shadow-md shadow-primary/30"
+                        : "text-slate-500 hover:bg-slate-100"
+                    }`}
+                  >
+                    <FileText size={16} />
+                    <span>1. Lembar Rapor Resmi</span>
+                  </button>
+
+                  <button
+                    onClick={() => setActiveTab("nilai")}
+                    className={`px-4 py-2.5 rounded-xl transition-all flex items-center gap-2 whitespace-nowrap text-sm font-bold ${
+                      activeTab === "nilai"
+                        ? "bg-primary text-white shadow-md shadow-primary/30"
+                        : "text-slate-500 hover:bg-slate-100"
+                    }`}
+                  >
+                    <BookOpen size={16} />
+                    <span>2. Nilai & Filter Mapel</span>
+                  </button>
+
+                  <button
+                    onClick={() => setActiveTab("presensi")}
+                    className={`px-4 py-2.5 rounded-xl transition-all flex items-center gap-2 whitespace-nowrap text-sm font-bold ${
+                      activeTab === "presensi"
+                        ? "bg-primary text-white shadow-md shadow-primary/30"
+                        : "text-slate-500 hover:bg-slate-100"
+                    }`}
+                  >
+                    <Calendar size={16} />
+                    <span>3. Rekap Presensi Absen</span>
+                  </button>
+
+                  <button
+                    onClick={() => setActiveTab("jurnal")}
+                    className={`px-4 py-2.5 rounded-xl transition-all flex items-center gap-2 whitespace-nowrap text-sm font-bold ${
+                      activeTab === "jurnal"
+                        ? "bg-primary text-white shadow-md shadow-primary/30"
+                        : "text-slate-500 hover:bg-slate-100"
+                    }`}
+                  >
+                    <FileText size={16} />
+                    <span>4. Jurnal Mengajar Guru</span>
+                  </button>
+
+                  <button
+                    onClick={() => setActiveTab("tahfidz")}
+                    className={`px-4 py-2.5 rounded-xl transition-all flex items-center gap-2 whitespace-nowrap text-sm font-bold ${
+                      activeTab === "tahfidz"
+                        ? "bg-primary text-white shadow-md shadow-primary/30"
+                        : "text-slate-500 hover:bg-slate-100"
+                    }`}
+                  >
+                    <HeartHandshake size={16} />
+                    <span>5. Halaqoh & Tahfidz Al-Qur&apos;an</span>
+                  </button>
+
+                  <button
+                    onClick={() => setActiveTab("spp")}
+                    className={`px-4 py-2.5 rounded-xl transition-all flex items-center gap-2 whitespace-nowrap text-sm font-bold ${
+                      activeTab === "spp"
+                        ? "bg-primary text-white shadow-md shadow-primary/30"
+                        : "text-slate-500 hover:bg-slate-100"
+                    }`}
+                  >
+                    <CreditCard size={16} />
+                    <span>6. SPP &amp; Wali Kelas</span>
+                  </button>
+                </div>
+              </div>
+            )}
+          </>
+        )}
 
         {/* TAB CONTENT */}
         {/* TAB 1: LEMBAR RAPOR RESMI (KASYFUD DARAJAT) */}
-        {activeTab === "ringkasan" && (
+        {!isAccessLocked && activeTab === "ringkasan" && (
           <div className="space-y-6">
             {/* Header & Main Print Action Bar */}
             <div className="card p-5 sm:p-6 shadow-xl shadow-primary/10 border border-slate-100 rounded-3xl bg-white/95 backdrop-blur flex flex-col sm:flex-row sm:items-center justify-between gap-4 no-print print:hidden">
@@ -686,7 +826,7 @@ export default function RaporWaliPage() {
         )}
 
         {/* TAB 2: DETAIL NILAI & FILTER PER MAPEL */}
-        {activeTab === "nilai" && (
+        {!isAccessLocked && activeTab === "nilai" && (
           <div className="space-y-6">
             {/* Filter Bar specifically for Mapel */}
             <div className="card p-5 bg-white/90 backdrop-blur rounded-2xl border border-slate-100 shadow-md flex flex-wrap items-center justify-between gap-4">
@@ -791,7 +931,7 @@ export default function RaporWaliPage() {
         )}
 
         {/* TAB 3: REKAP PRESENSI LENGKAP */}
-        {activeTab === "presensi" && (
+        {!isAccessLocked && activeTab === "presensi" && (
           <div className="space-y-6">
             {/* 4 Cards: Hadir, Sakit, Izin, Alpha */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
@@ -935,7 +1075,7 @@ export default function RaporWaliPage() {
         )}
 
         {/* TAB 4: JURNAL MENGAJAR GURU DI KELAS ANANDA */}
-        {activeTab === "jurnal" && (
+        {!isAccessLocked && activeTab === "jurnal" && (
           <div className="space-y-6">
             {/* Filter Jurnal */}
             <div className="card p-5 bg-white/90 backdrop-blur rounded-2xl border border-slate-100 shadow-md flex flex-wrap items-center justify-between gap-4">
@@ -1037,7 +1177,7 @@ export default function RaporWaliPage() {
         )}
 
         {/* TAB 5: HALAQOH & TAHFIDZ AL-QUR'AN */}
-        {activeTab === "tahfidz" && (
+        {!isAccessLocked && activeTab === "tahfidz" && (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* 1. Hasil Ujian Tahfidz Card */}
             <div className="bg-white/90 backdrop-blur rounded-3xl p-6 border border-slate-100 shadow-xl shadow-primary/10 space-y-4">

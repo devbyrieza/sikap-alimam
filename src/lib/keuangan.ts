@@ -18,6 +18,8 @@ export interface StatusSPP {
   hasPendingVerifikasi?: boolean;
   pendingVerifikasiCount?: number;
   pendingBulan?: string[];
+  isUnlockedManual?: boolean;
+  isLockedManual?: boolean;
 }
 
 export const NAMA_BULAN = [
@@ -94,6 +96,75 @@ export async function cekStatusSpp(
         }
       }
     });
+
+    // 4. Periksa manual override (Buka/Kunci Akses Portal oleh Admin Keuangan)
+    const santriRec = await prisma.santriAktif.findUnique({
+      where: { id: santriId },
+      select: { id: true, nis: true, nama_lengkap: true }
+    });
+
+    const waliUser = await prisma.user.findFirst({
+      where: {
+        OR: [
+          { orang_tua: { some: { santri_id: santriId } } },
+          ...(santriRec?.nis ? [{ username: santriRec.nis }] : [])
+        ]
+      },
+      select: { spp_access_blocked: true, spp_blocked_reason: true }
+    });
+
+    const isUnlockedManual = !!(waliUser?.spp_blocked_reason && waliUser.spp_blocked_reason.includes("UNLOCKED_MANUAL"));
+    const isLockedManual = !!(waliUser?.spp_access_blocked === true || (waliUser?.spp_blocked_reason && waliUser.spp_blocked_reason.includes("LOCKED_MANUAL")));
+
+    // Jika dikunci manual oleh Admin Keuangan
+    if (isLockedManual) {
+      return {
+        lunas: false,
+        status: "terkunci",
+        isLockedManual: true,
+        isUnlockedManual: false,
+        pesan: waliUser?.spp_blocked_reason && !waliUser.spp_blocked_reason.includes("LOCKED_MANUAL") 
+          ? waliUser.spp_blocked_reason 
+          : "Akses portal santri dinonaktifkan secara manual oleh Admin Keuangan.",
+        nominal: pembayaran?.nominal || defaultNominal,
+        bulan: targetBulan,
+        tahun: targetTahun,
+        namaBulan: namaBulanStr,
+        jatuhTempo,
+        isGracePeriod: false,
+        tunggakanCount,
+        tunggakanBulan: tunggakanBulanList,
+        totalTunggakanNominal,
+        hasPendingVerifikasi,
+        pendingVerifikasiCount: pendingCount,
+        pendingBulan: pendingBulanList
+      };
+    }
+
+    // Jika dibuka manual (Dispensasi) oleh Admin Keuangan
+    if (isUnlockedManual) {
+      return {
+        lunas: true,
+        status: "lunas",
+        isUnlockedManual: true,
+        isLockedManual: false,
+        pesan: "Akses portal dibuka secara manual oleh Admin Keuangan (Dispensasi Aktif).",
+        nominal: pembayaran?.nominal || defaultNominal,
+        bulan: targetBulan,
+        tahun: targetTahun,
+        namaBulan: namaBulanStr,
+        jatuhTempo,
+        isGracePeriod: false,
+        tanggalBayar: pembayaran?.tanggal_bayar ? pembayaran.tanggal_bayar.toISOString().split("T")[0] : null,
+        metodeBayar: pembayaran?.metode_bayar || "dispensasi",
+        tunggakanCount,
+        tunggakanBulan: tunggakanBulanList,
+        totalTunggakanNominal,
+        hasPendingVerifikasi,
+        pendingVerifikasiCount: pendingCount,
+        pendingBulan: pendingBulanList
+      };
+    }
 
     // Jika seluruh tunggakan sudah diajukan konfirmasi pembayaran (menunggu verifikasi)
     if (tunggakanCount === 0 && hasPendingVerifikasi) {
