@@ -444,20 +444,34 @@ export async function GET(req: NextRequest) {
     let sakitAkademikJp = 0;
     let izinAkademikJp = 0;
     let alphaAkademikJp = 0;
+    let sakitAkademikKali = 0;
+    let izinAkademikKali = 0;
+    let alphaAkademikKali = 0;
 
     presensiKbm.forEach(p => {
       const jp = parseJamPelajaranCount(p.jam_ke);
       const st = (p.status || "").toLowerCase().trim();
-      if (st === "sakit") sakitAkademikJp += jp;
-      else if (st === "izin") izinAkademikJp += jp;
-      else if (st === "alpha" || st === "alfa") alphaAkademikJp += jp;
+      if (st === "sakit") {
+        sakitAkademikJp += jp;
+        sakitAkademikKali++;
+      } else if (st === "izin") {
+        izinAkademikJp += jp;
+        izinAkademikKali++;
+      } else if (st === "alpha" || st === "alfa") {
+        alphaAkademikJp += jp;
+        alphaAkademikKali++;
+      }
     });
 
     const absen_akademik = {
       sakit: sakitAkademikJp,
       izin: izinAkademikJp,
       alpha: alphaAkademikJp,
-      total: sakitAkademikJp + izinAkademikJp + alphaAkademikJp
+      total: sakitAkademikJp + izinAkademikJp + alphaAkademikJp,
+      sakit_kali: sakitAkademikKali,
+      izin_kali: izinAkademikKali,
+      alpha_kali: alphaAkademikKali,
+      total_kali: sakitAkademikKali + izinAkademikKali + alphaAkademikKali
     };
 
     // B. DATA KETIDAKHADIRAN KEPENGASUHAN (Halaqoh Al-Qur'an - Satuan: Pertemuan / Sesi)
