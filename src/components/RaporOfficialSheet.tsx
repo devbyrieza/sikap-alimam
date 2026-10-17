@@ -685,10 +685,10 @@ export default function RaporOfficialSheet({ data, showPrintToolbar = false }: R
                     <td colSpan={3} style={{ border: "1px solid #94a3b8", padding: "4px 6px", textAlign: "right", fontWeight: "bold", fontFamily: "'Traditional Arabic', serif", fontSize: "13.5px" }} dir="rtl">عدد الطلاب</td>
                   </tr>
 
-                  {/* Section D. Kedisiplinan & Ketidakhadiran KBM */}
+                  {/* Section D. Ketidakhadiran Kelas */}
                   <tr style={{ backgroundColor: "#f1f5f9" }}>
-                    <td colSpan={5} className="border-divider-mid" style={{ border: "1px solid #94a3b8", borderRight: "2px solid #000000", padding: "4.5px 6px", fontWeight: "bold", fontSize: "11.5px", fontFamily: "Arial, Helvetica, sans-serif", color: "#000000" }}>D. Kedisiplinan &amp; Ketidakhadiran KBM</td>
-                    <td colSpan={5} style={{ border: "1px solid #94a3b8", borderLeft: "2px solid #000000", padding: "4.5px 6px", fontWeight: "bold", textAlign: "right", fontFamily: "'Traditional Arabic', serif", fontSize: "13.5px", color: "#000000" }} dir="rtl">د. المواظبة والغياب الدراسي</td>
+                    <td colSpan={5} className="border-divider-mid" style={{ border: "1px solid #94a3b8", borderRight: "2px solid #000000", padding: "4.5px 6px", fontWeight: "bold", fontSize: "11.5px", fontFamily: "Arial, Helvetica, sans-serif", color: "#000000" }}>D. Ketidakhadiran Kelas</td>
+                    <td colSpan={5} style={{ border: "1px solid #94a3b8", borderLeft: "2px solid #000000", padding: "4.5px 6px", fontWeight: "bold", textAlign: "right", fontFamily: "'Traditional Arabic', serif", fontSize: "13.5px", color: "#000000" }} dir="rtl">د. الغياب الدراسي</td>
                   </tr>
 
                   {/* Baris Presensi KBM Akademik: Sakit, Izin, Alpha, & Total Ketidakhadiran */}
@@ -1058,10 +1058,10 @@ export default function RaporOfficialSheet({ data, showPrintToolbar = false }: R
                   {/* Section B. Ketidakhadiran Halaqoh */}
                   <tr style={{ backgroundColor: "#f1f5f9" }}>
                     <th colSpan={2} className="border-divider-mid" style={{ border: "1px solid #94a3b8", borderRight: "2px solid #000000", padding: "4px 8px", textAlign: "left", fontWeight: "bold", fontSize: "11.5px", color: "#000000", fontFamily: "Arial, Helvetica, sans-serif" }}>
-                      B. Ketidakhadiran Halaqoh Al-Qur'an
+                      B. Ketidakhadiran Halaqoh
                     </th>
                     <th colSpan={2} style={{ border: "1px solid #94a3b8", borderLeft: "2px solid #000000", padding: "4px 8px", textAlign: "right", fontWeight: "bold", fontSize: "13.5px", color: "#000000", fontFamily: "'Traditional Arabic', serif" }} dir="rtl">
-                      ب. الغياب في حلقات القرآن الكريم
+                      ب. غياب الحلقات
                     </th>
                   </tr>
                   <tr style={{ backgroundColor: "#f8fafc", fontSize: "10.5px" }}>
