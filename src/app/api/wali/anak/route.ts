@@ -8,21 +8,29 @@ export const dynamic = "force-dynamic";
 export async function GET() {
   try {
     const session = await getSession();
-    let whereClause: any = { is_active: true };
 
-    if (session?.userId) {
-      const orangTuaRecords = await prisma.orangTuaSantri.findMany({
-        where: { user_id: session.userId },
-        select: { santri_id: true }
-      });
-      if (orangTuaRecords.length > 0) {
-        whereClause.id = { in: orangTuaRecords.map(r => r.santri_id) };
-      }
+    // Hanya pengguna yang sudah login yang boleh melihat data santri.
+    if (!session?.userId) {
+      return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 });
     }
 
-    // Cari santri aktif milik wali santri
+    // Ambil hanya santri yang terhubung ke akun wali ini.
+    const orangTuaRecords = await prisma.orangTuaSantri.findMany({
+      where: { user_id: session.userId },
+      select: { santri_id: true },
+    });
+
+    // Akun yang belum ditautkan ke santri mana pun mendapat daftar kosong,
+    // bukan seluruh santri aktif.
+    if (orangTuaRecords.length === 0) {
+      return NextResponse.json({ success: true, data: [] });
+    }
+
     const santriList = await prisma.santriAktif.findMany({
-      where: whereClause,
+      where: {
+        is_active: true,
+        id: { in: orangTuaRecords.map((r) => r.santri_id) },
+      },
       include: {
         kelas: {
           include: {
@@ -32,12 +40,12 @@ export async function GET() {
                 nama_lengkap: true,
                 nama_panggilan: true,
                 no_hp: true,
-              }
-            }
-          }
-        }
+              },
+            },
+          },
+        },
       },
-      orderBy: { nama_lengkap: "asc" }
+      orderBy: { nama_lengkap: "asc" },
     });
 
     const data = await Promise.all(
@@ -47,23 +55,26 @@ export async function GET() {
           id: s.id,
           nama: s.nama_lengkap,
           nis: s.nis,
-          kelas: s.kelas?.nama || "Kelas 7 MTs",
-          jenjang: s.kelas?.jenjang || "MTs",
-          wali_kelas: s.kelas?.wali_kelas ? {
-            nama: s.kelas.wali_kelas.nama_lengkap,
-            nama_panggilan: s.kelas.wali_kelas.nama_panggilan,
-            no_hp: s.kelas.wali_kelas.no_hp,
-          } : null,
+          kelas: s.kelas?.nama || "-",
+          jenjang: s.kelas?.jenjang || "-",
+          wali_kelas: s.kelas?.wali_kelas
+            ? {
+                nama: s.kelas.wali_kelas.nama_lengkap,
+                nama_panggilan: s.kelas.wali_kelas.nama_panggilan,
+                no_hp: s.kelas.wali_kelas.no_hp,
+              }
+            : null,
           foto_url: s.foto_url,
           spp: sppInfo,
-          lunas: sppInfo.lunas
+          lunas: sppInfo.lunas,
         };
-      })
+      }),
     );
 
     return NextResponse.json({ success: true, data });
-  } catch (error: any) {
+  } catch (error) {
     console.error("Error fetching wali anak:", error);
-    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+    // Jangan bocorkan pesan error internal ke klien.
+    return NextResponse.json({ success: false, error: "Gagal memuat data ananda" }, { status: 500 });
   }
 }

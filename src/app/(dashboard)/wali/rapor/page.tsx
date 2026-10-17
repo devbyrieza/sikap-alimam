@@ -1,1592 +1,1881 @@
 "use client";
 
-import React, { useEffect, useState, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import {
-  Send,
-  FileText,
-  Activity,
-  BookOpen,
-  Clock,
-  HeartHandshake,
+  AlertCircle,
+  AlertTriangle,
   ArrowLeft,
-  Printer,
+  ArrowRight,
+  BookOpen,
   Calendar,
   CheckCircle2,
-  AlertCircle,
-  XCircle,
-  HelpCircle,
-  GraduationCap,
-  ChevronRight,
-  Filter,
-  Eye,
-  X,
-  Target,
-  User,
-  MessageSquare,
-  Trophy,
-  Sparkles,
-  Lock,
+  Clock,
   CreditCard,
+  Eye,
+  FileText,
+  Filter,
+  GraduationCap,
+  HeartHandshake,
+  HelpCircle,
+  Loader2,
+  Lock,
   PhoneCall,
+  Printer,
+  RefreshCw,
+  Send,
   ShieldCheck,
-  AlertTriangle,
-  ArrowRight,
-  LayoutList,
-  ExternalLink,
-  Loader2 } from "lucide-react";
+  Trophy,
+  User,
+  XCircle,
+} from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 import Swal from "sweetalert2";
 import JurnalDetailModal from "@/components/JurnalDetailModal";
 import RaporOfficialSheet from "@/components/RaporOfficialSheet";
 import ModalKonfirmasiSPP from "@/components/ModalKonfirmasiSPP";
 import { getOfficialNis } from "@/lib/officialSantri";
 
+/* ═══════════════════════════ Konfigurasi ═══════════════════════════ */
+
+const TAHUN_AJARAN = "2026/2027";
+const SEMESTER = "Ganjil";
+const SCHOOL_LINE = "Pesantren Al-Imam Al-Islami • Managed by Al-Andalus IIBS";
+
+// Kontak & rekening: satu sumber (sebelumnya tertulis berulang di banyak tempat)
+const FINANCE_PHONE_DISPLAY = "085111403331";
+const FINANCE_WA = "6285111403331";
+const REKENING = {
+  bank: "BSI",
+  bankLengkap: "BSI • Bank Syariah Indonesia",
+  nomor: "4222224441",
+  atasNama: "PP Al Andalus Al Imam",
+};
+
+/* ═══════════════════════════ Tipe ═══════════════════════════ */
+
+type TabId = "ringkasan" | "nilai" | "presensi" | "jurnal" | "tahfidz" | "spp";
+type Kategori = "syariah" | "bahasa" | "umum";
+
+const TABS: { id: TabId; label: string; icon: LucideIcon }[] = [
+  { id: "ringkasan", label: "1. Lembar Rapor Resmi", icon: FileText },
+  { id: "nilai", label: "2. Nilai & Filter Mapel", icon: BookOpen },
+  { id: "presensi", label: "3. Rekap Presensi Absen", icon: Calendar },
+  { id: "jurnal", label: "4. Jurnal Mengajar Guru", icon: FileText },
+  { id: "tahfidz", label: "5. Halaqoh & Tahfidz Al-Qur'an", icon: HeartHandshake },
+  { id: "spp", label: "6. SPP & Wali Kelas", icon: CreditCard },
+];
+
+interface NilaiItem {
+  mapel_id: string;
+  mapel_nama: string;
+  mapel_kategori?: string;
+  ujian: number | null;
+  kategori: Kategori;
+  kkm: number;
+  nilaiAkhir: string | null;
+  nilaiAkhirNum: number | null;
+  predikat: string;
+}
+
+/* ═══════════════════════════ Gaya bersama ═══════════════════════════ */
+
+const NO_PRINT = "no-print print:hidden";
+
+const focusRing =
+  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2";
+
+const btnBase = `inline-flex min-h-[44px] items-center justify-center gap-2 rounded-2xl px-5 py-2.5 text-sm font-bold transition-all motion-safe:hover:scale-[1.02] active:scale-[0.98] ${focusRing}`;
+const btnPrimary = `${btnBase} bg-primary text-white shadow-lg shadow-primary/25 hover:bg-[#7a0000]`;
+
+const surface = "rounded-3xl border border-slate-100 bg-white/90 shadow-xl shadow-primary/10 backdrop-blur";
+
+type Tone = "emerald" | "amber" | "blue" | "rose";
+const TONE: Record<Tone, { card: string; label: string; icon: string; value: string; caption: string }> = {
+  emerald: {
+    card: "border-emerald-200/80 bg-emerald-50/80",
+    label: "text-emerald-800",
+    icon: "text-emerald-600",
+    value: "text-emerald-900",
+    caption: "text-emerald-700",
+  },
+  amber: {
+    card: "border-amber-200/80 bg-amber-50/80",
+    label: "text-amber-800",
+    icon: "text-amber-600",
+    value: "text-amber-900",
+    caption: "text-amber-700",
+  },
+  blue: {
+    card: "border-blue-200/80 bg-blue-50/80",
+    label: "text-blue-800",
+    icon: "text-blue-600",
+    value: "text-blue-900",
+    caption: "text-blue-700",
+  },
+  rose: {
+    card: "border-rose-200/80 bg-rose-50/80",
+    label: "text-rose-800",
+    icon: "text-rose-600",
+    value: "text-rose-900",
+    caption: "text-rose-700",
+  },
+};
+
+const PRESENSI_CARDS: { key: string; label: string; caption: string; icon: LucideIcon; tone: Tone }[] = [
+  { key: "totalHadir", label: "Hadir", caption: "Hari Mengikuti KBM", icon: CheckCircle2, tone: "emerald" },
+  { key: "totalSakit", label: "Sakit", caption: "Beristirahat / Dalam Perawatan", icon: AlertCircle, tone: "amber" },
+  { key: "totalIzin", label: "Izin", caption: "Izin Resmi Pesantren", icon: HelpCircle, tone: "blue" },
+  { key: "totalAlpha", label: "Alpha", caption: "Tanpa Keterangan", icon: XCircle, tone: "rose" },
+];
+
+const PRESENSI_STATUS: Record<string, { text: string; cls: string }> = {
+  hadir: { text: "Hadir", cls: "bg-emerald-50 text-emerald-700 border-emerald-200" },
+  sakit: { text: "Sakit", cls: "bg-amber-50 text-amber-700 border-amber-200" },
+  izin: { text: "Izin", cls: "bg-blue-50 text-blue-700 border-blue-200" },
+  alpha: { text: "Alpha", cls: "bg-rose-50 text-rose-700 border-rose-200" },
+};
+
+/* ═══════════════════════════ Helper ═══════════════════════════ */
+
+function formatTanggal(iso: unknown): string {
+  if (!iso) return "-";
+  let d: Date;
+  if (iso instanceof Date) {
+    d = iso;
+  } else if (typeof iso === "string") {
+    const clean = iso.includes("T") ? iso.split("T")[0] : iso;
+    d = new Date(`${clean}T00:00:00`);
+    if (isNaN(d.getTime())) d = new Date(iso);
+  } else {
+    d = new Date(iso as number);
+  }
+  if (isNaN(d.getTime())) return "-";
+  return d.toLocaleDateString("id-ID", {
+    weekday: "short",
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+  });
+}
+
+function formatRupiah(n: unknown): string {
+  return `Rp ${Number(n || 0).toLocaleString("id-ID")}`;
+}
+
+/** Ubah nomor HP lokal (08…, +62…, 8…) ke format wa.me (62…). */
+function toWaNumber(raw?: string): string {
+  const digits = (raw ?? "").replace(/\D/g, "");
+  if (!digits) return "";
+  if (digits.startsWith("62")) return digits;
+  if (digits.startsWith("0")) return `62${digits.slice(1)}`;
+  if (digits.startsWith("8")) return `62${digits}`;
+  return digits;
+}
+
+function isSyariahOrBahasa(name: string): boolean {
+  const low = name.toLowerCase();
+  const umum = [
+    "matematika", "mtk", "ipa", "ips", "indonesia", "inggris", "pjok", "penjas",
+    "seni", "pkn", "informatika", "prakarya", "kewirausahaan", "entrepreneurship",
+  ];
+  return !umum.some((u) => low.includes(u));
+}
+
+function getKategoriMapel(nama: string): Kategori {
+  const low = nama.toLowerCase();
+  const syariah = ["akidah", "hadis", "fikih", "ushul fikih", "sirah", "tahsin", "tahfidz", "adab", "akhlak", "tauhid", "tafsir", "tajwid", "mahfudzot"];
+  const bahasa = ["bahasa arab", "nahwu", "shorof", "kitabah", "muthola", "imla", "khot", "insya", "muhadatsah"];
+  if (syariah.some((k) => low.includes(k))) return "syariah";
+  if (bahasa.some((k) => low.includes(k))) return "bahasa";
+  return "umum";
+}
+
+const getKkm = (nama: string): number => (isSyariahOrBahasa(nama) ? 85 : 80);
+
+/** Urutan pengecekan dipertahankan: "ujian_harian" tetap dianggap harian, bukan ujian. */
+function classifyJenis(jenis: string): "harian" | "kompetensi" | "sikap" | "ujian" | null {
+  if (jenis.includes("harian") || jenis === "tugas" || jenis === "uh") return "harian";
+  if (jenis.includes("kompetensi") || jenis === "komp") return "kompetensi";
+  if (jenis.includes("sikap") || jenis === "adab") return "sikap";
+  if (jenis === "pas" || jenis === "pts" || jenis.includes("ujian") || jenis.includes("sas") || jenis.includes("sat")) {
+    return "ujian";
+  }
+  return null;
+}
+
+function getPredikat(n: number | null): string {
+  if (n === null) return "-";
+  if (n >= 90) return "A (Istimewa)";
+  if (n >= 80) return "B (Sangat Baik)";
+  if (n >= 70) return "C (Cukup)";
+  return "D (Perlu Bimbingan)";
+}
+
+function predikatColor(n: number | null): string {
+  if (n === null) return "text-slate-400";
+  if (n >= 90) return "text-emerald-700";
+  if (n >= 80) return "text-blue-700";
+  if (n >= 70) return "text-amber-700";
+  return "text-red-600";
+}
+
+/** Mode "PTS Murni": nilai akhir = nilai ujian. Satu baris per mata pelajaran. */
+function groupAkademik(rows: any[]): NilaiItem[] {
+  const map = new Map<string, { base: any; ujian: number | null }>();
+
+  rows.forEach((n) => {
+    if (!map.has(n.mapel_id)) map.set(n.mapel_id, { base: n, ujian: null });
+    const entry = map.get(n.mapel_id)!;
+    if (classifyJenis(String(n.jenis ?? "")) === "ujian") {
+      entry.ujian = Number(n.nilai) || 0;
+    }
+  });
+
+  const order: Record<Kategori, number> = { syariah: 1, bahasa: 2, umum: 3 };
+
+  return Array.from(map.values())
+    .map(({ base, ujian }): NilaiItem => ({
+      mapel_id: base.mapel_id,
+      mapel_nama: base.mapel_nama,
+      mapel_kategori: base.mapel_kategori,
+      ujian,
+      kategori: getKategoriMapel(base.mapel_nama),
+      kkm: getKkm(base.mapel_nama),
+      nilaiAkhir: ujian !== null ? ujian.toFixed(1) : null,
+      nilaiAkhirNum: ujian,
+      predikat: getPredikat(ujian),
+    }))
+    .sort((a, b) => {
+      if (order[a.kategori] !== order[b.kategori]) return order[a.kategori] - order[b.kategori];
+      return a.mapel_nama.localeCompare(b.mapel_nama, "id");
+    });
+}
+
+/**
+ * LEGACY — dibawa apa adanya dari kode sebelumnya.
+ * Untuk Surah Yusuf, bila rentang ayat kosong atau tertukar (11–13), ditampilkan "Ayat 1 - 52",
+ * dan "5 Halaman" bila jumlah halaman kosong. Ini menambal data, bukan data aslinya.
+ * Sebaiknya diperbaiki di database, lalu blok ini dihapus.
+ */
+function normalizeUjianTahfidz(u: any) {
+  const rawDari = u.ayat_dari !== null && u.ayat_dari !== undefined ? Number(u.ayat_dari) : null;
+  const rawKe = u.ayat_ke !== null && u.ayat_ke !== undefined ? Number(u.ayat_ke) : null;
+
+  let ayatDari = rawDari;
+  let ayatKe = rawKe;
+  if (ayatDari !== null && ayatKe !== null && ayatDari > ayatKe) {
+    [ayatDari, ayatKe] = [ayatKe, ayatDari];
+  }
+
+  const isYusuf = Boolean(u.surah_nama?.toLowerCase().includes("yusuf"));
+  if (isYusuf && (!ayatDari || !ayatKe || (ayatDari === 11 && ayatKe === 13) || (rawDari === 13 && rawKe === 11))) {
+    ayatDari = 1;
+    ayatKe = 52;
+  }
+
+  const surahBase: string = u.surah_nama || "Yusuf";
+  const surahNama = surahBase.toLowerCase().startsWith("surah") ? surahBase : `Surah ${surahBase}`;
+  const ayatText = ayatDari && ayatKe ? `Ayat ${ayatDari} - ${ayatKe}` : isYusuf ? "Ayat 1 - 52" : "";
+  const halText = u.jumlah_halaman ? `${u.jumlah_halaman} Halaman` : isYusuf ? "5 Halaman" : null;
+
+  return { surahNama, ayatText, halText };
+}
+
+/* ═══════════════════════════ Komponen kecil ═══════════════════════════ */
+
+function CenterCard({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="flex min-h-screen items-center justify-center bg-slate-50 p-6">
+      <div className="w-full max-w-md rounded-3xl border border-slate-100 bg-white p-8 text-center shadow-sm sm:p-10">
+        {children}
+      </div>
+    </div>
+  );
+}
+
+function IconBadge({ children, tone }: { children: React.ReactNode; tone: string }) {
+  return <div className={`shrink-0 rounded-xl p-2.5 ${tone}`}>{children}</div>;
+}
+
+function EmptyState({ icon: Icon, children }: { icon: LucideIcon; children: React.ReactNode }) {
+  return (
+    <div className="py-12 text-center text-slate-400">
+      <Icon size={36} className="mx-auto mb-2 opacity-30" aria-hidden="true" />
+      <p className="text-sm font-medium">{children}</p>
+    </div>
+  );
+}
+
+function Panel({ id, tabbed, children }: { id: TabId; tabbed: boolean; children: React.ReactNode }) {
+  return (
+    <section
+      id={`panel-${id}`}
+      role={tabbed ? "tabpanel" : undefined}
+      aria-labelledby={tabbed ? `tab-${id}` : undefined}
+      className="space-y-6"
+    >
+      {children}
+    </section>
+  );
+}
+
+function FilterCard({
+  icon: Icon,
+  title,
+  desc,
+  children,
+}: {
+  icon: LucideIcon;
+  title: string;
+  desc: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div className={`flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-slate-100 bg-white/90 p-5 shadow-md backdrop-blur`}>
+      <div className="flex min-w-0 items-center gap-3">
+        <IconBadge tone="bg-primary/10 text-primary">
+          <Icon size={18} aria-hidden="true" />
+        </IconBadge>
+        <div className="min-w-0">
+          <h3 className="text-sm font-bold text-slate-800">{title}</h3>
+          <p className="text-xs text-slate-500">{desc}</p>
+        </div>
+      </div>
+      {children}
+    </div>
+  );
+}
+
+/* ═══════════════════════════ Bagian halaman ═══════════════════════════ */
+
+function TopBar({ santriId, locked, onKirimWA }: { santriId: string; locked: boolean; onKirimWA: () => void }) {
+  return (
+    <div className={`sticky top-0 z-30 border-b border-slate-200/80 bg-white/90 shadow-sm backdrop-blur ${NO_PRINT}`}>
+      <div className="mx-auto flex h-14 max-w-6xl items-center justify-between gap-3 px-4 sm:h-16 sm:px-6">
+        <a
+          href="/wali"
+          className={`inline-flex min-h-[40px] items-center gap-2 rounded-xl bg-slate-100 px-3 py-2 text-xs font-bold text-slate-700 transition-colors hover:bg-slate-200/70 hover:text-primary sm:text-sm ${focusRing}`}
+        >
+          <ArrowLeft size={16} aria-hidden="true" />
+          <span className="sm:hidden">Kembali</span>
+          <span className="hidden sm:inline">Kembali ke Pilihan Anak</span>
+        </a>
+
+        {!locked && (
+          <div className="flex items-center gap-2">
+            <a
+              href={`/rapor/print/${santriId}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={`hidden min-h-[40px] items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3.5 text-xs font-bold text-slate-700 shadow-sm transition-colors hover:bg-slate-50 sm:inline-flex ${focusRing}`}
+            >
+              <Printer size={14} aria-hidden="true" />
+              <span>Cetak PDF</span>
+              <span className="sr-only">(buka di tab baru)</span>
+            </a>
+            <button
+              type="button"
+              onClick={onKirimWA}
+              className={`inline-flex min-h-[40px] items-center gap-1.5 rounded-xl bg-primary px-3.5 text-xs font-bold text-white shadow-md shadow-primary/25 transition-colors hover:bg-[#7a0000] ${focusRing}`}
+            >
+              <Send size={14} aria-hidden="true" />
+              <span>Kirim ke WA</span>
+            </button>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function BannerSppPill({ spp, locked }: { spp: any; locked: boolean }) {
+  const base = "inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[11px] font-extrabold leading-tight";
+  const months = spp?.tunggakanCount || 1;
+
+  if (locked) {
+    return (
+      <span className={`${base} border-rose-400 bg-rose-600 text-white shadow-md`}>
+        <Lock size={12} className="shrink-0" aria-hidden="true" />
+        <span>Akses Terkunci: Tagihan SPP {months} Bulan</span>
+      </span>
+    );
+  }
+  if (spp?.status === "menunggu_verifikasi") {
+    return (
+      <span className={`${base} border-amber-400/40 bg-amber-500/30 text-amber-200`}>
+        <Clock size={12} className="shrink-0 text-amber-300 motion-safe:animate-pulse" aria-hidden="true" />
+        <span>SPP Sedang Diverifikasi Keuangan</span>
+      </span>
+    );
+  }
+  if (spp?.lunas) {
+    return (
+      <span className={`${base} border-emerald-400/40 bg-emerald-500/30 text-emerald-200`}>
+        <CheckCircle2 size={12} className="shrink-0" aria-hidden="true" />
+        <span>SPP {spp.namaBulan} Lunas</span>
+      </span>
+    );
+  }
+  return (
+    <span className={`${base} border-rose-400/50 bg-rose-500/40 text-rose-200`}>
+      <AlertCircle size={12} className="shrink-0" aria-hidden="true" />
+      <span>Tagihan SPP: {months} Bulan</span>
+    </span>
+  );
+}
+
+function ProfileBanner({ santri, nis, spp, locked }: { santri: any; nis: string; spp: any; locked: boolean }) {
+  return (
+    <header
+      className={`relative overflow-hidden rounded-3xl bg-gradient-to-r from-primary via-[#7e141a] to-[#4a080d] p-6 text-white shadow-2xl shadow-primary/30 sm:p-10 ${NO_PRINT}`}
+    >
+      <div className="pointer-events-none absolute right-0 top-0 p-6 opacity-10 sm:p-8" aria-hidden="true">
+        <GraduationCap className="h-32 w-32 sm:h-44 sm:w-44" />
+      </div>
+      <div
+        className="pointer-events-none absolute -right-10 -top-10 h-64 w-64 rounded-full border border-white/10 bg-white/5"
+        aria-hidden="true"
+      />
+
+      <div className="relative z-10 flex items-center gap-4 sm:gap-6">
+        <div
+          className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl border border-white/30 bg-white/20 text-2xl font-black text-white shadow-inner ring-4 ring-white/20 backdrop-blur-md sm:h-20 sm:w-20 sm:text-3xl"
+          aria-hidden="true"
+        >
+          {(santri?.nama || "S").charAt(0).toUpperCase()}
+        </div>
+
+        <div className="min-w-0">
+          <div className="mb-2 flex flex-wrap items-center gap-2">
+            <span className="rounded-full bg-white/20 px-2.5 py-1 text-[11px] font-bold leading-tight tracking-wide">
+              {santri.kelas}
+            </span>
+            <span className="font-mono text-xs text-white/80">NIS: {nis}</span>
+            <BannerSppPill spp={spp} locked={locked} />
+          </div>
+          <h1 className="break-words text-2xl font-extrabold leading-tight text-white sm:text-3xl">{santri.nama}</h1>
+          <p className="mt-1 text-xs font-medium text-white/80 sm:text-sm">
+            {SCHOOL_LINE} • Tahun Ajaran {santri?.tahun_ajaran || TAHUN_AJARAN}
+          </p>
+        </div>
+      </div>
+    </header>
+  );
+}
+
+function VerifyingBanner({ onUploadLagi, onLihatSpp }: { onUploadLagi: () => void; onLihatSpp: () => void }) {
+  return (
+    <div
+      role="status"
+      className={`flex flex-col items-start justify-between gap-4 rounded-3xl border border-amber-200/90 bg-gradient-to-r from-amber-50 via-amber-100/60 to-amber-50 p-5 text-xs shadow-lg shadow-amber-950/5 sm:flex-row sm:items-center ${NO_PRINT}`}
+    >
+      <div className="flex items-start gap-3.5 sm:items-center">
+        <div className="shrink-0 rounded-2xl bg-amber-500 p-3 text-white shadow-md shadow-amber-950/20">
+          <Clock size={22} className="motion-safe:animate-pulse" aria-hidden="true" />
+        </div>
+        <div>
+          <div className="mb-0.5 flex flex-wrap items-center gap-2">
+            <span className="rounded-full bg-amber-200 px-2 py-0.5 text-[10px] font-extrabold uppercase tracking-wider text-amber-900">
+              Sedang Diverifikasi
+            </span>
+            <span className="text-sm font-extrabold text-amber-950 sm:text-base">
+              Konfirmasi Pembayaran Sedang Diproses Keuangan
+            </span>
+          </div>
+          <p className="mt-0.5 text-xs leading-relaxed text-amber-900/90">
+            Alhamdulillah, bukti pembayaran SPP ananda telah diterima dan sedang dalam antrean verifikasi Admin
+            Keuangan. Seluruh akses lembar rapor dan mutabaah ananda tetap dibuka secara penuh.
+          </p>
+        </div>
+      </div>
+      <div className="flex w-full shrink-0 items-center gap-2 sm:w-auto">
+        <button
+          type="button"
+          onClick={onUploadLagi}
+          className={`inline-flex min-h-[44px] flex-1 items-center justify-center gap-1.5 rounded-xl bg-amber-600 px-4 py-2.5 text-xs font-bold text-white shadow-md transition-colors hover:bg-amber-700 sm:flex-initial ${focusRing}`}
+        >
+          <CreditCard size={14} aria-hidden="true" />
+          <span>Upload Bukti Tambahan</span>
+        </button>
+        <button
+          type="button"
+          onClick={onLihatSpp}
+          className={`inline-flex min-h-[44px] flex-1 items-center justify-center gap-1.5 rounded-xl border border-amber-300 bg-white px-4 py-2.5 text-xs font-bold text-amber-900 shadow-sm transition-colors hover:bg-slate-50 sm:flex-initial ${focusRing}`}
+        >
+          <span>Lihat Tab SPP &rarr;</span>
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function GraceBanner({ namaBulan }: { namaBulan: string }) {
+  return (
+    <div
+      role="status"
+      className={`flex items-center justify-between gap-4 rounded-2xl border border-amber-200/90 bg-amber-50/90 p-4 text-xs shadow-md backdrop-blur ${NO_PRINT}`}
+    >
+      <div className="flex items-center gap-3">
+        <div className="shrink-0 rounded-xl bg-amber-500 p-2 text-white">
+          <Clock size={16} aria-hidden="true" />
+        </div>
+        <div>
+          <h4 className="font-bold text-amber-950">Masa Pembayaran SPP Bulan {namaBulan}</h4>
+          <p className="mt-0.5 text-amber-800/90">
+            Batas akhir pembayaran SPP adalah tanggal <strong>10 {namaBulan}</strong>. Seluruh akses laporan santri
+            tetap terbuka selama periode ini.
+          </p>
+        </div>
+      </div>
+      <span className="hidden shrink-0 rounded-lg bg-amber-200/70 px-3 py-1 font-bold text-amber-900 sm:block">
+        Masa Tenggang
+      </span>
+    </div>
+  );
+}
+
+function LockedBackBar({ onBack }: { onBack: () => void }) {
+  return (
+    <div
+      className={`flex flex-col items-start justify-between gap-3 rounded-2xl border border-rose-200 bg-rose-50 p-4 sm:flex-row sm:items-center ${NO_PRINT}`}
+    >
+      <div className="flex items-center gap-2.5 text-xs font-bold text-rose-900">
+        <Lock size={16} className="shrink-0 text-rose-600" aria-hidden="true" />
+        <span>Halaman ini hanya menampilkan rincian tagihan SPP. Lembar Rapor dan Mutabaah tetap terkunci.</span>
+      </div>
+      <button
+        type="button"
+        onClick={onBack}
+        className={`inline-flex min-h-[44px] shrink-0 items-center gap-1.5 rounded-xl bg-rose-600 px-3.5 py-2 text-xs font-bold text-white shadow-sm transition-colors hover:bg-rose-700 ${focusRing}`}
+      >
+        <ArrowLeft size={13} aria-hidden="true" />
+        <span>Kembali ke Halaman Kunci</span>
+      </button>
+    </div>
+  );
+}
+
+function TabNav({ active, onChange }: { active: TabId; onChange: (id: TabId) => void }) {
+  const onKeyDown = (e: React.KeyboardEvent) => {
+    const i = TABS.findIndex((t) => t.id === active);
+    let next = i;
+    if (e.key === "ArrowRight") next = (i + 1) % TABS.length;
+    else if (e.key === "ArrowLeft") next = (i - 1 + TABS.length) % TABS.length;
+    else if (e.key === "Home") next = 0;
+    else if (e.key === "End") next = TABS.length - 1;
+    else return;
+    e.preventDefault();
+    onChange(TABS[next].id);
+    document.getElementById(`tab-${TABS[next].id}`)?.focus();
+  };
+
+  return (
+    <div
+      className={`sticky top-14 z-20 rounded-2xl border border-slate-200/60 bg-white/90 p-1.5 shadow-sm backdrop-blur sm:top-16 ${NO_PRINT}`}
+    >
+      <div
+        role="tablist"
+        aria-label="Bagian laporan ananda"
+        onKeyDown={onKeyDown}
+        className="flex snap-x gap-1 overflow-x-auto"
+      >
+        {TABS.map(({ id, label, icon: Icon }) => {
+          const selected = active === id;
+          return (
+            <button
+              key={id}
+              type="button"
+              role="tab"
+              id={`tab-${id}`}
+              aria-selected={selected}
+              aria-controls={`panel-${id}`}
+              tabIndex={selected ? 0 : -1}
+              onClick={() => onChange(id)}
+              className={`flex min-h-[44px] shrink-0 snap-start items-center gap-2 whitespace-nowrap rounded-xl px-4 py-2.5 text-sm font-bold transition-all ${focusRing} ${
+                selected
+                  ? "bg-primary text-white shadow-md shadow-primary/30"
+                  : "text-slate-500 hover:bg-slate-100"
+              }`}
+            >
+              <Icon size={16} aria-hidden="true" />
+              <span>{label}</span>
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+/* ═══════════════════════════ Tampilan terkunci ═══════════════════════════ */
+
+function LockedPanel({
+  santri,
+  nis,
+  spp,
+  onOpenSpp,
+  onKonfirmasi,
+}: {
+  santri: any;
+  nis: string;
+  spp: any;
+  onOpenSpp: () => void;
+  onKonfirmasi: () => void;
+}) {
+  const months = spp?.tunggakanCount || 1;
+  const nominal = Number(spp?.totalTunggakanNominal) || 0;
+  const bulanList: string[] = Array.isArray(spp?.tunggakanBulan) ? spp.tunggakanBulan : [];
+
+  const salinRekening = async () => {
+    const info = `${REKENING.bank} ${REKENING.nomor} a.n. ${REKENING.atasNama}`;
+    try {
+      await navigator.clipboard.writeText(REKENING.nomor);
+      Swal.fire({
+        icon: "success",
+        title: "Nomor Rekening Disalin!",
+        text: info,
+        timer: 2000,
+        showConfirmButton: false,
+      });
+    } catch {
+      Swal.fire({ icon: "info", title: "Salin nomor secara manual", text: info });
+    }
+  };
+
+  const waText =
+    `Assalamu'alaikum Admin Keuangan Pesantren Al-Imam, saya wali dari ananda:\n` +
+    `• Nama: ${santri.nama}\n• NIS: ${nis}\n• Kelas: ${santri.kelas}\n\n` +
+    `Saya telah mentransfer pembayaran SPP${nominal ? ` sebesar ${formatRupiah(nominal)}` : ""} dan melampirkan bukti transfer terlampir. ` +
+    `Mohon bantuannya untuk membukakan akses portal SIKAP ananda. Jazaakumullah khayran.`;
+
+  return (
+    <div className={`space-y-6 ${NO_PRINT}`}>
+      <div className="relative overflow-hidden rounded-3xl border-2 border-rose-200 bg-white/95 p-6 text-center shadow-2xl shadow-rose-950/10 backdrop-blur sm:p-12">
+        <div className="pointer-events-none absolute right-0 top-0 -z-10 h-96 w-96 rounded-full bg-rose-50 blur-3xl" aria-hidden="true" />
+        <div className="pointer-events-none absolute bottom-0 left-0 -z-10 h-80 w-80 rounded-full bg-amber-50/60 blur-3xl" aria-hidden="true" />
+
+        <div className="relative mb-6 inline-block">
+          <div className="mx-auto flex h-24 w-24 items-center justify-center rounded-3xl bg-gradient-to-br from-rose-600 via-rose-700 to-rose-900 text-white shadow-2xl shadow-rose-600/40">
+            <Lock size={44} className="stroke-[2.2]" aria-hidden="true" />
+          </div>
+          <div className="absolute -right-1 -top-1 rounded-full bg-amber-400 p-2 text-amber-950 shadow-md motion-safe:animate-bounce">
+            <AlertTriangle size={16} aria-hidden="true" />
+          </div>
+        </div>
+
+        <div className="mb-4 inline-flex max-w-full items-center gap-2 rounded-full border border-rose-200 bg-rose-100 px-4 py-1.5 text-xs font-black uppercase tracking-wider text-rose-800 shadow-sm">
+          <span>Akses Portal Santri Dinonaktifkan Sementara</span>
+        </div>
+
+        <h2 className="mx-auto max-w-2xl text-2xl font-black leading-tight tracking-tight text-slate-800 sm:text-3xl">
+          Kewajiban Administrasi SPP Ananda Belum Diselesaikan
+        </h2>
+
+        <p className="mx-auto mt-3 max-w-2xl text-xs leading-relaxed text-slate-600 sm:text-sm">
+          Afwan Bapak/Ibu Wali Santri dari ananda <strong className="text-slate-900">{santri.nama}</strong> ({santri.kelas}),
+          seluruh akses laporan hasil belajar (Lembar Rapor PTS Murni, Nilai Akademik, Rekap Presensi, Jurnal Pengajar,
+          dan Mutabaah Tahfidz Al-Qur&apos;an) saat ini dinonaktifkan sementara hingga kewajiban administrasi SPP
+          diselesaikan.
+        </p>
+
+        {/* Rincian tagihan */}
+        <div className="mx-auto mt-8 grid max-w-xl grid-cols-1 gap-4 rounded-2xl border border-rose-100 bg-gradient-to-br from-slate-50 to-rose-50/40 p-5 text-center shadow-inner sm:grid-cols-3 sm:p-6">
+          <div className="rounded-xl border border-slate-100 bg-white p-3 shadow-sm">
+            <span className="block text-[11px] font-bold uppercase tracking-wider text-slate-500">Bulan Menunggak</span>
+            <span className="mt-1 block text-xl font-black text-rose-600">{months} Bulan</span>
+            <span className="text-[10px] text-slate-400">TA {TAHUN_AJARAN}</span>
+          </div>
+          <div className="rounded-xl border border-slate-100 bg-white p-3 shadow-sm sm:col-span-2">
+            <span className="block text-[11px] font-bold uppercase tracking-wider text-slate-500">Total Tagihan SPP</span>
+            <span className="mt-1 block text-xl font-black text-slate-800">
+              {nominal ? formatRupiah(nominal) : "Lihat rincian SPP"}
+            </span>
+            <span className="block text-[10px] font-semibold text-rose-600">
+              {bulanList.length > 0 ? `(${bulanList.join(", ")})` : "SPP Belum Lunas"}
+            </span>
+          </div>
+        </div>
+
+        {/* Rekening */}
+        <div className="relative mx-auto mt-6 max-w-xl overflow-hidden rounded-2xl bg-slate-900 p-5 text-left text-white shadow-xl sm:p-6">
+          <div className="pointer-events-none absolute right-0 top-0 p-6 opacity-10" aria-hidden="true">
+            <CreditCard size={120} />
+          </div>
+          <div className="relative z-10">
+            <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+              <span className="text-[11px] font-black uppercase tracking-wider text-rose-300">
+                Rekening Resmi Pembayaran SPP
+              </span>
+              <span className="rounded-full bg-white/10 px-2 py-0.5 font-mono text-[10px] text-white/80">
+                {REKENING.bankLengkap}
+              </span>
+            </div>
+            <div className="flex flex-wrap items-end justify-between gap-4">
+              <div>
+                <div className="font-mono text-2xl font-black tracking-wider text-white sm:text-3xl">{REKENING.nomor}</div>
+                <div className="mt-1 text-xs text-slate-300">
+                  Atas Nama: <strong className="text-white">{REKENING.atasNama}</strong>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={salinRekening}
+                className={`min-h-[44px] rounded-xl bg-white/20 px-4 py-2 text-xs font-bold text-white shadow-sm transition-colors hover:bg-white/30 ${focusRing}`}
+              >
+                Salin Nomor Rekening
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Hubungi Finance */}
+        <div className="mx-auto mt-8 max-w-xl rounded-3xl border-2 border-emerald-400/90 bg-gradient-to-r from-emerald-50 via-teal-50/80 to-emerald-50 p-5 text-left shadow-lg shadow-emerald-950/5 sm:p-7">
+          <div className="flex flex-col items-start gap-4 sm:flex-row sm:items-center">
+            <div className="shrink-0 rounded-2xl bg-emerald-600 p-3.5 text-white shadow-md">
+              <PhoneCall size={28} aria-hidden="true" />
+            </div>
+            <div className="flex-1">
+              <div className="mb-1.5 inline-flex items-center gap-1.5 rounded-full bg-emerald-200 px-3 py-0.5 text-[11px] font-black text-emerald-950">
+                <span>Sudah Membayar Tapi Akun Masih Terkunci?</span>
+              </div>
+              <h3 className="text-base font-black leading-snug text-emerald-950 sm:text-lg">
+                Hubungi Finance ({FINANCE_PHONE_DISPLAY}) dengan Bukti Transfer
+              </h3>
+              <p className="mt-1 text-xs leading-relaxed text-emerald-900/90 sm:text-sm">
+                Jika Bapak/Ibu Wali Santri <strong>sudah melakukan transfer/pelunasan SPP</strong> namun akun masih
+                terkunci, silakan langsung mengirimkan foto/bukti transfer ke nomor WhatsApp{" "}
+                <strong>Finance ({FINANCE_PHONE_DISPLAY})</strong> agar Tim Keuangan dapat segera memverifikasi dan
+                membukakan akses portal SIKAP ananda.
+              </p>
+            </div>
+          </div>
+
+          <div className="mt-5 flex flex-col items-stretch gap-3 border-t border-emerald-200/80 pt-4 sm:flex-row sm:items-center">
+            <a
+              href={`https://wa.me/${FINANCE_WA}?text=${encodeURIComponent(waText)}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={`inline-flex min-h-[48px] flex-1 items-center justify-center gap-2 rounded-xl bg-emerald-600 px-5 py-3 text-xs font-black text-white shadow-md transition-all hover:bg-emerald-700 motion-safe:hover:scale-[1.02] active:scale-[0.98] sm:text-sm ${focusRing}`}
+            >
+              <Send size={16} aria-hidden="true" />
+              <span>Kirim Bukti ke WA Finance</span>
+              <span className="sr-only">(buka di tab baru)</span>
+            </a>
+            <button
+              type="button"
+              onClick={onKonfirmasi}
+              className={`inline-flex min-h-[48px] items-center justify-center gap-2 rounded-xl border border-emerald-300 bg-white px-5 py-3 text-xs font-bold text-emerald-900 shadow-sm transition-colors hover:bg-slate-50 sm:text-sm ${focusRing}`}
+            >
+              <CreditCard size={16} aria-hidden="true" />
+              <span>Upload Bukti di Web</span>
+            </button>
+          </div>
+        </div>
+
+        <div className="mt-8 flex items-center justify-center border-t border-slate-200/80 pt-6">
+          <button
+            type="button"
+            onClick={onOpenSpp}
+            className={`inline-flex min-h-[44px] items-center gap-2 rounded-xl bg-slate-100 px-5 py-3 text-xs font-bold text-slate-700 shadow-sm transition-colors hover:bg-slate-200 hover:text-primary ${focusRing}`}
+          >
+            <CreditCard size={15} aria-hidden="true" />
+            <span>Lihat Rincian Riwayat SPP Santri (12 Bulan) &rarr;</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ═══════════════════════════ Isi tab ═══════════════════════════ */
+
+function TabRapor({ printId, cetakData, cetakError }: { printId: string; cetakData: any; cetakError: boolean }) {
+  const printHref = `/rapor/print/${printId}`;
+  return (
+    <>
+      <div className={`flex flex-col justify-between gap-4 rounded-3xl border border-slate-100 bg-white/95 p-5 shadow-xl shadow-primary/10 backdrop-blur sm:flex-row sm:items-center sm:p-6 ${NO_PRINT}`}>
+        <div className="flex items-center gap-3.5">
+          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-primary to-rose-900 text-white shadow-md shadow-primary/20">
+            <FileText size={24} aria-hidden="true" />
+          </div>
+          <div>
+            <h2 className="text-base font-extrabold text-slate-800 sm:text-lg">Rapor Hasil Belajar Santri (Kasyfud Darajat)</h2>
+            <p className="mt-0.5 text-xs text-slate-500">Penilaian Tengah Semester (PTS) • T.A. {TAHUN_AJARAN}</p>
+          </div>
+        </div>
+        <a href={printHref} target="_blank" rel="noopener noreferrer" className={btnPrimary}>
+          <Printer size={16} aria-hidden="true" />
+          <span>Cetak / Unduh PDF Resmi</span>
+          <span className="sr-only">(buka di tab baru)</span>
+        </a>
+      </div>
+
+      {cetakData ? (
+        <>
+          <p className={`flex items-center gap-1.5 rounded-xl border border-amber-200/80 bg-amber-50/90 px-3 py-2 text-[12px] font-medium text-amber-900 shadow-sm md:hidden ${NO_PRINT}`}>
+            <ArrowRight className="h-4 w-4 shrink-0 text-amber-500" aria-hidden="true" />
+            Geser ke kanan untuk melihat seluruh lembar rapor, atau gunakan tombol Cetak / Unduh PDF.
+          </p>
+          {/* Wadah scroll: w-max + mx-auto agar bagian kiri lembar tidak terpotong saat lebih lebar dari layar */}
+          <div className="custom-scrollbar overflow-x-auto pb-4 print:block print:overflow-visible print:p-0">
+            <div className="mx-auto w-max">
+              <RaporOfficialSheet data={cetakData} showPrintToolbar={false} />
+            </div>
+          </div>
+        </>
+      ) : cetakError ? (
+        <div role="alert" className={`rounded-3xl border border-slate-100 bg-white p-10 text-center shadow-sm ${NO_PRINT}`}>
+          <AlertCircle size={32} className="mx-auto mb-3 text-amber-500" aria-hidden="true" />
+          <p className="text-sm font-bold text-slate-700">Dokumen rapor belum dapat dimuat</p>
+          <p className="mt-1 text-xs text-slate-500">Silakan gunakan tombol Cetak / Unduh PDF Resmi di atas atau muat ulang halaman.</p>
+        </div>
+      ) : (
+        <div role="status" className={`rounded-3xl border border-slate-100 bg-white p-12 text-center shadow-sm ${NO_PRINT}`}>
+          <Loader2 className="mx-auto mb-3 text-primary motion-safe:animate-spin" size={32} aria-hidden="true" />
+          <p className="text-sm font-bold text-slate-600">Memuat Dokumen Resmi Rapor (A4)...</p>
+        </div>
+      )}
+
+      <div className={`flex justify-center pb-6 pt-2 ${NO_PRINT}`}>
+        <a href={printHref} target="_blank" rel="noopener noreferrer" className={`${btnPrimary} px-8 py-3.5 shadow-xl`}>
+          <Printer size={18} aria-hidden="true" />
+          <span>Cetak / Unduh PDF Resmi</span>
+          <span className="sr-only">(buka di tab baru)</span>
+        </a>
+      </div>
+    </>
+  );
+}
+
+function TabNilai({
+  items,
+  options,
+  filter,
+  onFilter,
+}: {
+  items: NilaiItem[];
+  options: string[];
+  filter: string;
+  onFilter: (v: string) => void;
+}) {
+  return (
+    <>
+      <FilterCard
+        icon={Filter}
+        title="Filter Mata Pelajaran"
+        desc="Pilih mata pelajaran tertentu (misal: Fiqh, Nahwu, Matematika) untuk melihat rincian nilai ananda"
+      >
+        <div className="w-full sm:w-72">
+          <label htmlFor="filter-mapel-nilai" className="sr-only">Filter mata pelajaran</label>
+          <select
+            id="filter-mapel-nilai"
+            className="form-control"
+            style={{ fontWeight: 600 }}
+            value={filter}
+            onChange={(e) => onFilter(e.target.value)}
+          >
+            <option value="">— Tampilkan Semua Mata Pelajaran —</option>
+            {options.map((nama) => (
+              <option key={nama} value={nama}>{nama}</option>
+            ))}
+          </select>
+        </div>
+      </FilterCard>
+
+      <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
+        {items.length === 0 ? (
+          <div className={`col-span-full p-12 text-center text-slate-400 ${surface}`}>
+            <BookOpen size={40} className="mx-auto mb-3 opacity-30" aria-hidden="true" />
+            <p className="font-bold text-slate-700">Belum ada nilai untuk mata pelajaran ini</p>
+            <p className="mt-1 text-xs text-slate-400">Silakan pilih mata pelajaran lain pada dropdown di atas.</p>
+          </div>
+        ) : (
+          items.map((item) => {
+            const n = item.nilaiAkhirNum;
+            return (
+              <article
+                key={item.mapel_id}
+                className="space-y-4 rounded-2xl border border-slate-100 bg-white/90 p-5 shadow-md backdrop-blur transition-shadow hover:shadow-lg sm:p-6"
+              >
+                <div className="flex items-start justify-between gap-4">
+                  <div className="min-w-0">
+                    <span className="rounded-full border border-primary/20 bg-primary/10 px-2.5 py-0.5 text-[10px] font-extrabold uppercase text-primary">
+                      {item.mapel_kategori || "Pelajaran Pokok"}
+                    </span>
+                    <h3 className="mt-1.5 break-words text-lg font-bold text-slate-800">{item.mapel_nama}</h3>
+                  </div>
+                  <div className="shrink-0 text-right">
+                    <span className="text-[10px] font-bold uppercase text-slate-400">Nilai Akhir</span>
+                    <p className="mt-0.5 text-2xl font-black leading-none text-primary">{item.nilaiAkhir || "-"}</p>
+                    <span className={`text-[11px] font-bold ${predikatColor(n)}`}>{item.predikat}</span>
+                  </div>
+                </div>
+
+                <div className="rounded-xl border border-primary/15 bg-primary/5 p-2.5 text-center">
+                  <span className="block text-[10px] font-bold text-primary">Nilai PTS Murni</span>
+                  <span className="mt-0.5 block text-base font-black text-primary">{item.ujian ?? "-"}</span>
+                </div>
+
+                <div className="flex items-center justify-between border-t border-slate-100 pt-3 text-xs text-slate-500">
+                  <span>Target KKM: <b>{item.kkm}.0</b></span>
+                  {n === null ? (
+                    <span className="inline-flex items-center gap-1 font-bold text-slate-400">— Belum Ada Nilai</span>
+                  ) : n >= item.kkm ? (
+                    <span className="inline-flex items-center gap-1 font-bold text-emerald-600">
+                      <CheckCircle2 size={13} aria-hidden="true" /> {n === item.kkm ? "Pas KKM" : "Di Atas KKM"}
+                    </span>
+                  ) : (
+                    <span className="inline-flex items-center gap-1 font-bold text-red-500">
+                      <XCircle size={13} aria-hidden="true" /> Di Bawah KKM
+                    </span>
+                  )}
+                </div>
+              </article>
+            );
+          })
+        )}
+      </div>
+    </>
+  );
+}
+
+function TabPresensi({
+  ringkasan,
+  rows,
+  totalRows,
+  mapelList,
+  filterMapel,
+  onFilterMapel,
+  filterStatus,
+  onFilterStatus,
+}: {
+  ringkasan: any;
+  rows: any[];
+  totalRows: number;
+  mapelList: string[];
+  filterMapel: string;
+  onFilterMapel: (v: string) => void;
+  filterStatus: string;
+  onFilterStatus: (v: string) => void;
+}) {
+  const tidakHadir = (ringkasan.totalSakit || 0) + (ringkasan.totalIzin || 0) + (ringkasan.totalAlpha || 0);
+  const chip = (active: boolean, activeCls: string) =>
+    `min-h-[36px] rounded-xl px-3 py-1.5 text-xs font-bold transition-all ${focusRing} ${
+      active ? activeCls : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+    }`;
+
+  return (
+    <>
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 sm:gap-4">
+        {PRESENSI_CARDS.map(({ key, label, caption, icon: Icon, tone }) => {
+          const t = TONE[tone];
+          return (
+            <div key={key} className={`rounded-2xl border p-4 shadow-md sm:p-5 ${t.card}`}>
+              <div className="flex items-center justify-between">
+                <span className={`text-xs font-bold uppercase ${t.label}`}>{label}</span>
+                <Icon size={18} className={t.icon} aria-hidden="true" />
+              </div>
+              <p className={`mt-2 text-3xl font-extrabold ${t.value}`}>{ringkasan[key] || 0}</p>
+              <span className={`text-[11px] font-medium ${t.caption}`}>{caption}</span>
+            </div>
+          );
+        })}
+      </div>
+
+      <div className={`overflow-hidden ${surface}`}>
+        <div className="flex flex-wrap items-center justify-between gap-4 border-b border-slate-100 p-5">
+          <div>
+            <h3 className="text-base font-bold text-slate-800">Riwayat Detail Presensi Harian</h3>
+            <p className="mt-0.5 text-xs text-slate-500">Catatan seluruh tanggal kehadiran dan ketidakhadiran ananda di kelas</p>
+          </div>
+
+          <div className="flex w-full flex-wrap items-center gap-2 sm:w-auto">
+            <label htmlFor="filter-mapel-presensi" className="sr-only">Filter mata pelajaran</label>
+            <select
+              id="filter-mapel-presensi"
+              className="form-control max-w-full py-1.5 text-xs sm:max-w-[200px]"
+              value={filterMapel}
+              onChange={(e) => onFilterMapel(e.target.value)}
+            >
+              <option value="">Semua Mata Pelajaran</option>
+              {mapelList.map((nama) => (
+                <option key={nama} value={nama}>{nama}</option>
+              ))}
+            </select>
+            <button
+              type="button"
+              aria-pressed={filterStatus === ""}
+              onClick={() => onFilterStatus("")}
+              className={chip(filterStatus === "", "bg-primary text-white shadow-md shadow-primary/30")}
+            >
+              Semua Status ({totalRows})
+            </button>
+            <button
+              type="button"
+              aria-pressed={filterStatus === "tidak_hadir"}
+              onClick={() => onFilterStatus("tidak_hadir")}
+              className={chip(filterStatus === "tidak_hadir", "bg-amber-600 text-white shadow-md shadow-amber-600/30")}
+            >
+              Ketidakhadiran ({tidakHadir})
+            </button>
+          </div>
+        </div>
+
+        <div className="overflow-x-auto">
+          <table className="w-full min-w-[500px] border-collapse text-left">
+            <caption className="sr-only">Riwayat presensi harian ananda</caption>
+            <thead>
+              <tr className="border-b border-slate-100 bg-slate-50 text-xs font-bold uppercase text-slate-500">
+                <th scope="col" className="w-12 px-4 py-3.5 text-center">No</th>
+                <th scope="col" className="px-4 py-3.5">Tanggal & Waktu</th>
+                <th scope="col" className="px-4 py-3.5">Mata Pelajaran</th>
+                <th scope="col" className="px-4 py-3.5 text-center">Status Kehadiran</th>
+                <th scope="col" className="px-4 py-3.5">Keterangan / Alasan</th>
+              </tr>
+            </thead>
+            <tbody>
+              {rows.length === 0 ? (
+                <tr>
+                  <td colSpan={5} className="py-10 text-center text-sm text-slate-400">
+                    Tidak ada catatan presensi pada filter ini.
+                  </td>
+                </tr>
+              ) : (
+                rows.map((p, idx) => {
+                  const st = PRESENSI_STATUS[p.status] ?? PRESENSI_STATUS.hadir;
+                  return (
+                    <tr key={p.id || idx} className="border-b border-slate-50 text-sm transition-colors hover:bg-slate-50/60">
+                      <td className="px-4 py-3 text-center font-semibold text-slate-400">{idx + 1}</td>
+                      <td className="px-4 py-3">
+                        <span className="block font-bold text-slate-800">{formatTanggal(p.tanggal)}</span>
+                        {p.jam_ke && <span className="mt-0.5 text-[10px] text-slate-500">Jam ke-{p.jam_ke}</span>}
+                      </td>
+                      <td className="px-4 py-3">
+                        <span className="text-xs font-semibold text-slate-700">{p.mapel_nama || "-"}</span>
+                      </td>
+                      <td className="px-4 py-3 text-center">
+                        <span className={`rounded-full border px-3 py-1 text-xs font-extrabold uppercase ${st.cls}`}>{st.text}</span>
+                      </td>
+                      <td className="px-4 py-3 text-xs text-slate-600">
+                        {p.keterangan || <span className="italic text-slate-300">Tidak ada catatan</span>}
+                      </td>
+                    </tr>
+                  );
+                })
+              )}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </>
+  );
+}
+
+function TabJurnal({
+  rows,
+  kelas,
+  mapelList,
+  filterMapel,
+  onFilterMapel,
+  keyword,
+  onKeyword,
+  onDetail,
+}: {
+  rows: any[];
+  kelas: string;
+  mapelList: string[];
+  filterMapel: string;
+  onFilterMapel: (v: string) => void;
+  keyword: string;
+  onKeyword: (v: string) => void;
+  onDetail: (row: any) => void;
+}) {
+  return (
+    <>
+      <FilterCard
+        icon={FileText}
+        title="Jurnal Mengajar Para Guru"
+        desc={`Transparansi KBM harian di kelas ${kelas} (Materi, Tujuan Pembelajaran & Aktivitas)`}
+      >
+        <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row">
+          <label htmlFor="filter-mapel-jurnal" className="sr-only">Filter mata pelajaran</label>
+          <select
+            id="filter-mapel-jurnal"
+            className="form-control text-sm"
+            value={filterMapel}
+            onChange={(e) => onFilterMapel(e.target.value)}
+          >
+            <option value="">Semua Mata Pelajaran</option>
+            {mapelList.map((nama) => (
+              <option key={nama} value={nama}>{nama}</option>
+            ))}
+          </select>
+          <label htmlFor="cari-jurnal" className="sr-only">Cari topik materi</label>
+          <input
+            id="cari-jurnal"
+            type="search"
+            placeholder="Cari topik materi..."
+            className="form-control text-sm"
+            value={keyword}
+            onChange={(e) => onKeyword(e.target.value)}
+          />
+        </div>
+      </FilterCard>
+
+      <p className="flex items-center gap-1.5 rounded-xl border border-amber-200/80 bg-amber-50/90 px-3 py-2 text-[12px] font-medium text-amber-900 shadow-sm sm:hidden">
+        <ArrowRight className="h-4 w-4 shrink-0 text-amber-500" aria-hidden="true" />
+        Geser tabel ke kanan untuk melihat rincian guru, jam pelajaran, dan tombol detail.
+      </p>
+
+      <div className={`overflow-hidden ${surface}`}>
+        <div className="w-full overflow-x-auto">
+          <table className="w-full min-w-[700px] border-collapse text-left">
+            <caption className="sr-only">Jurnal mengajar guru di kelas ananda</caption>
+            <thead>
+              <tr className="border-b border-slate-100 bg-slate-50 text-xs font-bold uppercase text-slate-500">
+                <th scope="col" className="sticky left-0 z-10 min-w-[120px] bg-slate-50 px-4 py-3.5">Tanggal</th>
+                <th scope="col" className="px-4 py-3.5">Guru Pengampu</th>
+                <th scope="col" className="px-4 py-3.5">Mata Pelajaran</th>
+                <th scope="col" className="px-4 py-3.5 text-center">Jam Ke</th>
+                <th scope="col" className="min-w-[200px] px-4 py-3.5">Materi Pembelajaran</th>
+                <th scope="col" className="px-4 py-3.5 text-center">Aksi</th>
+              </tr>
+            </thead>
+            <tbody>
+              {rows.length === 0 ? (
+                <tr>
+                  <td colSpan={6} className="py-10 text-center text-sm text-slate-400">
+                    Belum ada jurnal mengajar yang tersimpan di kelas ananda.
+                  </td>
+                </tr>
+              ) : (
+                rows.map((j) => (
+                  <tr key={j.id} className="group border-b border-slate-50 text-sm transition-colors hover:bg-slate-50/60">
+                    <td className="sticky left-0 z-[5] bg-white px-4 py-3.5 font-bold text-primary shadow-[3px_0_6px_-2px_rgba(0,0,0,0.05)] group-hover:bg-slate-50">
+                      {formatTanggal(j.tanggal)}
+                    </td>
+                    <td className="px-4 py-3.5 font-bold text-slate-800">{j.asatidz}</td>
+                    <td className="px-4 py-3.5 font-semibold text-slate-800">{j.mapel}</td>
+                    <td className="px-4 py-3.5 text-center">
+                      <span className="rounded-md bg-slate-100 px-2 py-0.5 font-mono text-xs font-bold text-slate-700">{j.jam_ke}</span>
+                    </td>
+                    <td className="max-w-xs truncate px-4 py-3.5 text-xs text-slate-700" title={j.materi}>
+                      {j.materi}
+                    </td>
+                    <td className="px-4 py-3.5 text-center">
+                      <button
+                        type="button"
+                        onClick={() => onDetail(j)}
+                        className={`inline-flex min-h-[36px] items-center gap-1 rounded-xl border border-slate-200 bg-slate-100 px-3 py-1 text-xs font-bold text-slate-800 shadow-sm transition-colors hover:bg-slate-200 ${focusRing}`}
+                      >
+                        <Eye size={13} className="text-primary" aria-hidden="true" />
+                        <span>Lihat Detail</span>
+                      </button>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </>
+  );
+}
+
+function TabTahfidz({ ujian, setoran }: { ujian: any[]; setoran: any[] }) {
+  return (
+    <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+      {/* Ujian tahfidz */}
+      <div className={`space-y-4 p-5 sm:p-6 ${surface}`}>
+        <div className="mb-2 flex items-center gap-3">
+          <IconBadge tone="bg-blue-50 text-blue-700">
+            <Trophy size={20} aria-hidden="true" />
+          </IconBadge>
+          <div>
+            <h3 className="text-base font-bold text-slate-800">Hasil Ujian Tahfidz Al-Qur&apos;an</h3>
+            <p className="text-xs text-slate-500">Evaluasi Pra-Target, Target, dan Itqon Santri</p>
+          </div>
+        </div>
+
+        {ujian.length === 0 ? (
+          <EmptyState icon={BookOpen}>Belum ada riwayat ujian tahfidz pada periode ini.</EmptyState>
+        ) : (
+          <div className="space-y-3">
+            {ujian.map((u) => {
+              const { surahNama, ayatText, halText } = normalizeUjianTahfidz(u);
+              return (
+                <div key={u.id} className="flex flex-col gap-3 rounded-2xl border border-slate-100 bg-slate-50/80 p-4 shadow-sm">
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="min-w-0">
+                      <span className="rounded-full bg-blue-100 px-2.5 py-0.5 text-[10px] font-extrabold uppercase tracking-wide text-blue-800">
+                        {u.jenis_ujian ? String(u.jenis_ujian).replace(/_/g, " ") : "UJIAN PRA TARGET"}
+                      </span>
+                      <h4 className="mt-1.5 flex flex-wrap items-center gap-2 text-sm font-bold text-slate-800 sm:text-base">
+                        <span>{u.juz ? `Juz ${u.juz}` : surahNama}</span>
+                        {ayatText && (
+                          <span className="rounded-md border border-rose-100 bg-rose-50 px-2 py-0.5 text-xs font-bold text-primary">
+                            ({ayatText})
+                          </span>
+                        )}
+                      </h4>
+                      <div className="mt-1 flex flex-wrap items-center gap-2 text-[11px] text-slate-500">
+                        <span>{formatTanggal(u.tanggal)}</span>
+                        {halText && (
+                          <>
+                            <span aria-hidden="true">•</span>
+                            <span className="rounded-md border border-emerald-200/50 bg-emerald-50 px-2 py-0.5 font-semibold text-emerald-700">
+                              {halText}
+                            </span>
+                          </>
+                        )}
+                      </div>
+                    </div>
+                    <div className="shrink-0 text-right">
+                      <span className={`rounded-xl border border-slate-200 bg-white px-3 py-1 text-sm font-black shadow-sm ${u.is_lulus ? "text-emerald-600" : "text-rose-600"}`}>
+                        {u.nilai_akhir}
+                      </span>
+                      <p className="mt-1 text-[10px] font-bold uppercase text-slate-400">{u.is_lulus ? "LULUS" : "MENGULANG"}</p>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-3 gap-2 border-t border-slate-200/60 pt-3">
+                    {[
+                      ["Kelancaran", u.nilai_kelancaran],
+                      ["Fashohah", u.nilai_bacaan],
+                      ["Adab", u.nilai_sikap],
+                    ].map(([label, val]) => (
+                      <div key={label as string} className="rounded-lg border border-slate-100 bg-white p-1.5 text-center shadow-sm">
+                        <p className="text-[9px] font-bold uppercase text-slate-500">{label}</p>
+                        <p className="text-xs font-bold text-slate-700">{(val as string | number) || "-"}</p>
+                      </div>
+                    ))}
+                  </div>
+
+                  {u.catatan && (
+                    <div className="mt-1 rounded-lg border border-amber-100/50 bg-amber-50/50 p-2">
+                      <p className="text-[10px] italic text-amber-700">&quot;{u.catatan}&quot;</p>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </div>
+
+      {/* Setoran harian */}
+      <div className={`space-y-4 p-5 sm:p-6 ${surface}`}>
+        <div className="mb-2 flex items-center gap-3">
+          <IconBadge tone="bg-emerald-50 text-emerald-700">
+            <BookOpen size={20} aria-hidden="true" />
+          </IconBadge>
+          <div>
+            <h3 className="text-base font-bold text-slate-800">Capaian Setoran Halaqoh Harian</h3>
+            <p className="text-xs text-slate-500">Ziyadah (hafalan baru) &amp; Murojaah ba&apos;da Subuh &amp; Maghrib</p>
+          </div>
+        </div>
+
+        {setoran.length === 0 ? (
+          <EmptyState icon={BookOpen}>Belum ada riwayat setoran tahfidz tercatat.</EmptyState>
+        ) : (
+          <div className="space-y-3">
+            {setoran.map((t) => (
+              <div key={t.id} className="flex items-center justify-between gap-4 rounded-2xl border border-slate-100 bg-slate-50/80 p-4 shadow-sm">
+                <div className="min-w-0">
+                  <span className="rounded bg-emerald-100 px-2 py-0.5 text-[10px] font-extrabold uppercase text-emerald-800">{t.jenis}</span>
+                  <h4 className="mt-1 text-sm font-bold text-slate-800">{t.surat} {t.ayat ? `(Ayat ${t.ayat})` : ""}</h4>
+                  <p className="mt-0.5 text-[11px] text-slate-500">{formatTanggal(t.tanggal)}</p>
+                </div>
+                <span className="shrink-0 rounded-xl border border-slate-200 bg-white px-3 py-1 text-xs font-bold text-emerald-700 shadow-sm">
+                  {t.keterangan || "Lancar"}
+                </span>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function sppItemClass(item: any): string {
+  if (item.is_bulan_ini) return "bg-amber-50/70 border-amber-300 ring-2 ring-amber-400/30 shadow-md";
+  if (item.status === "menunggu_verifikasi") return "bg-amber-50/50 border-amber-300 hover:bg-amber-100/50 shadow-sm";
+  if (item.status === "lunas") return "bg-slate-50/70 border-slate-200/80 hover:bg-white";
+  if (item.status === "belum_lunas") return "bg-rose-50/40 border-rose-200 hover:bg-rose-50/70";
+  return "bg-slate-50/30 border-slate-100 opacity-75";
+}
+
+function SppItemBadge({ status }: { status: string }) {
+  const base = "inline-flex shrink-0 items-center gap-1 rounded-xl px-2.5 py-1 text-[11px] font-bold";
+  if (status === "lunas") {
+    return (
+      <span className={`${base} bg-emerald-100 text-emerald-800`}>
+        <CheckCircle2 size={13} aria-hidden="true" /> <span>Lunas</span>
+      </span>
+    );
+  }
+  if (status === "menunggu_verifikasi") {
+    return (
+      <span className={`${base} border border-amber-300 bg-amber-100 text-amber-900`}>
+        <Clock size={13} className="text-amber-600 motion-safe:animate-pulse" aria-hidden="true" /> <span>Sedang Diverifikasi</span>
+      </span>
+    );
+  }
+  if (status === "belum_lunas") {
+    return (
+      <span className={`${base} bg-rose-100 text-rose-800`}>
+        <XCircle size={13} aria-hidden="true" /> <span>Belum Lunas</span>
+      </span>
+    );
+  }
+  return (
+    <span className={`${base} bg-slate-100 font-semibold text-slate-600`}>
+      <Clock size={13} aria-hidden="true" /> <span>Mendatang</span>
+    </span>
+  );
+}
+
+function TabSpp({
+  loading,
+  sppHistory,
+  santri,
+  onKonfirmasi,
+}: {
+  loading: boolean;
+  sppHistory: any;
+  santri: any;
+  onKonfirmasi: () => void;
+}) {
+  if (loading) {
+    return (
+      <div role="status" className={`p-12 text-center ${surface}`}>
+        <Loader2 className="mx-auto mb-3 h-10 w-10 text-primary motion-safe:animate-spin" aria-hidden="true" />
+        <p className="text-sm font-semibold text-slate-600">Memuat informasi SPP dan Wali Kelas...</p>
+      </div>
+    );
+  }
+
+  const wali = sppHistory?.wali_kelas;
+  const summary = sppHistory?.spp_summary;
+  const history: any[] = sppHistory?.spp_history || [];
+  const namaAnak = santri?.nama || sppHistory?.santri?.nama;
+  const kelas = santri?.kelas || sppHistory?.santri?.kelas;
+  const waWali = toWaNumber(wali?.no_hp);
+
+  return (
+    <>
+      {/* Wali kelas */}
+      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-primary via-[#7a0000] to-rose-950 p-6 text-white shadow-xl shadow-primary/20 sm:p-8">
+        <div className="pointer-events-none absolute -right-8 -top-8 h-48 w-48 rounded-full border border-white/10 bg-white/5" aria-hidden="true" />
+        <div className="relative z-10 flex flex-col justify-between gap-6 md:flex-row md:items-center">
+          <div className="flex items-center gap-4 sm:gap-5">
+            <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl border-2 border-white/20 bg-white/15 text-2xl font-black text-white shadow-lg backdrop-blur sm:h-20 sm:w-20" aria-hidden="true">
+              {wali?.nama ? wali.nama.slice(0, 2).toUpperCase() : <User size={32} />}
+            </div>
+            <div className="min-w-0">
+              <div className="mb-1.5 inline-flex items-center gap-1.5 rounded-full border border-white/20 bg-white/15 px-3 py-1 text-xs font-semibold text-rose-100">
+                <ShieldCheck size={13} aria-hidden="true" />
+                <span>Wali Kelas Ananda</span>
+              </div>
+              <h3 className="break-words text-lg font-black leading-tight text-white sm:text-xl">
+                {wali?.nama || "Ustadz Pembina Kelas"}
+              </h3>
+              <p className="mt-1 text-xs text-rose-100/90 sm:text-sm">
+                Kelas {kelas || "-"} &bull; {santri?.jenjang || sppHistory?.santri?.jenjang || "Pesantren Al-Imam"}
+              </p>
+            </div>
+          </div>
+
+          <div className="flex flex-col gap-3 sm:flex-row">
+            {waWali ? (
+              <a
+                href={`https://wa.me/${waWali}?text=${encodeURIComponent(
+                  `Assalamu'alaikum Warahmatullahi Wabarakatuh Ustadz ${wali.nama_panggilan || wali.nama}, saya orang tua dari ${namaAnak} (Kelas ${kelas}). Mohon izin bersilaturahmi dan berkonsultasi mengenai perkembangan ananda.`,
+                )}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={`inline-flex min-h-[48px] items-center justify-center gap-2.5 rounded-2xl bg-emerald-500 px-5 py-3 text-sm font-bold text-white shadow-lg shadow-emerald-950/20 transition-all hover:bg-emerald-600 motion-safe:hover:scale-[1.02] active:scale-[0.98] ${focusRing}`}
+              >
+                <PhoneCall size={18} aria-hidden="true" />
+                <span>Hubungi via WhatsApp</span>
+                <span className="sr-only">(buka di tab baru)</span>
+              </a>
+            ) : (
+              <div className="inline-flex items-center gap-2 rounded-2xl bg-white/10 px-4 py-3 text-xs font-medium text-white/80">
+                <AlertCircle size={15} aria-hidden="true" />
+                <span>Nomor kontak dapat dikoordinasikan via Kesantrian</span>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Ringkasan SPP */}
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+        <div className="rounded-2xl border border-emerald-100 bg-gradient-to-br from-emerald-50 to-white p-5 shadow-md">
+          <div className="mb-2 flex items-center justify-between">
+            <span className="text-xs font-bold uppercase tracking-wide text-emerald-700">Bulan Terbayar</span>
+            <div className="rounded-xl bg-emerald-500 p-2 text-white"><CheckCircle2 size={16} aria-hidden="true" /></div>
+          </div>
+          <p className="text-3xl font-black text-emerald-900">
+            {summary?.total_lunas || 0}
+            <span className="ml-1.5 text-base font-semibold text-emerald-600">Bulan</span>
+          </p>
+          <p className="mt-1 text-[11px] text-emerald-600">Status kewajiban lunas</p>
+        </div>
+
+        <div className="rounded-2xl border border-rose-100 bg-gradient-to-br from-rose-50 to-white p-5 shadow-md">
+          <div className="mb-2 flex items-center justify-between">
+            <span className="text-xs font-bold uppercase tracking-wide text-rose-700">Tunggakan / Belum Lunas</span>
+            <div className="rounded-xl bg-rose-500 p-2 text-white"><AlertTriangle size={16} aria-hidden="true" /></div>
+          </div>
+          <p className="text-3xl font-black text-rose-900">
+            {summary?.total_belum_lunas || 0}
+            <span className="ml-1.5 text-base font-semibold text-rose-600">Bulan</span>
+          </p>
+          <p className="mt-1 text-[11px] font-semibold text-rose-600">
+            {summary?.total_nominal_tunggakan
+              ? `Total ${formatRupiah(summary.total_nominal_tunggakan)}`
+              : "Perlu penyelesaian administrasi"}
+          </p>
+        </div>
+
+        <div className="rounded-2xl border border-blue-100 bg-gradient-to-br from-blue-50 to-white p-5 shadow-md">
+          <div className="mb-2 flex items-center justify-between">
+            <span className="text-xs font-bold uppercase tracking-wide text-blue-700">Total Terbayar (12 Bulan)</span>
+            <div className="rounded-xl bg-blue-500 p-2 text-white"><CreditCard size={16} aria-hidden="true" /></div>
+          </div>
+          <p className="text-2xl font-black text-blue-900">{formatRupiah(summary?.total_nominal_lunas)}</p>
+          <p className="mt-1 text-[11px] text-blue-600">Akumulasi riwayat tercatat</p>
+        </div>
+      </div>
+
+      {/* Riwayat */}
+      <div className={`space-y-5 p-5 sm:p-7 ${surface}`}>
+        <div className="flex flex-col justify-between gap-3 border-b border-slate-100 pb-3 sm:flex-row sm:items-center">
+          <div className="flex items-center gap-3">
+            <IconBadge tone="bg-primary/10 text-primary">
+              <Calendar size={20} aria-hidden="true" />
+            </IconBadge>
+            <div>
+              <h3 className="text-base font-bold text-slate-800 sm:text-lg">Riwayat SPP 12 Bulan Terakhir</h3>
+              <p className="text-xs text-slate-500">Transparansi pencatatan SPP bulanan santri di Safina Keuangan</p>
+            </div>
+          </div>
+          <div className="flex flex-wrap items-center gap-2 self-start sm:self-auto">
+            <button
+              type="button"
+              onClick={onKonfirmasi}
+              className={`inline-flex min-h-[44px] items-center gap-1.5 rounded-xl bg-primary px-3.5 py-1.5 text-xs font-bold text-white shadow-md shadow-primary/20 transition-all hover:bg-[#7a0000] motion-safe:hover:scale-[1.02] active:scale-[0.98] ${focusRing}`}
+            >
+              <CreditCard size={14} aria-hidden="true" />
+              <span>Konfirmasi Pembayaran (WA/Upload)</span>
+            </button>
+            <span className="rounded-full bg-slate-100 px-3 py-1.5 text-xs font-semibold text-slate-600">
+              Tahun Ajaran {TAHUN_AJARAN}
+            </span>
+          </div>
+        </div>
+
+        {history.length === 0 ? (
+          <EmptyState icon={CreditCard}>Belum ada riwayat SPP yang dapat ditampilkan.</EmptyState>
+        ) : (
+          <div className="grid grid-cols-1 gap-3.5 md:grid-cols-2 lg:grid-cols-3">
+            {history.map((item, idx) => (
+              <div key={idx} className={`rounded-2xl border p-4 transition-all ${sppItemClass(item)}`}>
+                <div className="mb-2 flex items-start justify-between gap-2">
+                  <div>
+                    <div className="flex flex-wrap items-center gap-2">
+                      <h4 className="text-sm font-extrabold text-slate-800">{item.label}</h4>
+                      {item.is_bulan_ini && (
+                        <span className="rounded-full bg-amber-500 px-2 py-0.5 text-[10px] font-black uppercase tracking-wider text-white">
+                          Bulan Ini
+                        </span>
+                      )}
+                    </div>
+                    <p className="mt-0.5 text-xs font-semibold text-slate-600">{formatRupiah(item.nominal)}</p>
+                  </div>
+                  <SppItemBadge status={item.status} />
+                </div>
+
+                <div className="flex items-center justify-between border-t border-slate-200/60 pt-2 text-[11px] text-slate-500">
+                  <span>Tanggal Bayar:</span>
+                  <span className="font-medium text-slate-700">
+                    {item.tanggal_bayar
+                      ? formatTanggal(item.tanggal_bayar)
+                      : item.status === "mendatang"
+                        ? "Belum Jatuh Tempo"
+                        : item.status === "menunggu_verifikasi"
+                          ? "Menunggu Admin"
+                          : "-"}
+                  </span>
+                </div>
+                {item.metode_bayar && (
+                  <div className="mt-1 flex items-center justify-between text-[10px] text-slate-400">
+                    <span>Metode:</span>
+                    <span className="font-semibold capitalize text-slate-600">{item.metode_bayar}</span>
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
+
+        <div className="mt-4 flex items-start gap-3 rounded-2xl border border-amber-200/80 bg-amber-50/80 p-4">
+          <AlertCircle className="mt-0.5 shrink-0 text-amber-700" size={18} aria-hidden="true" />
+          <div className="text-xs leading-relaxed text-amber-900">
+            <p className="font-bold">Informasi Pembayaran &amp; Rekonsiliasi SPP</p>
+            <p className="mt-0.5 text-amber-800">
+              Pembayaran SPP dilakukan melalui rekening resmi Pesantren Islam Al-Imam. Jika telah melakukan transfer
+              namun status belum terbarui, silakan klik tombol <strong>Konfirmasi Pembayaran (WA/Upload)</strong> di atas
+              atau hubungi Admin Keuangan via WhatsApp.
+            </p>
+          </div>
+        </div>
+      </div>
+    </>
+  );
+}
+
+/* ═══════════════════════════ Halaman ═══════════════════════════ */
+
 export default function RaporWaliPage() {
   const searchParams = useSearchParams();
   const santriId = searchParams.get("santri_id") || "";
+
   const [data, setData] = useState<any>(null);
   const [cetakData, setCetakData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-  
-  const [activeTab, setActiveTab] = useState<"ringkasan" | "nilai" | "presensi" | "jurnal" | "tahfidz" | "spp">("ringkasan");
+  const [loadError, setLoadError] = useState(false);
+  const [cetakError, setCetakError] = useState(false);
+  const [reloadKey, setReloadKey] = useState(0);
 
-  // Filters for Nilai Tab
-  const [filterMapelNilai, setFilterMapelNilai] = useState<string>("");
+  const [activeTab, setActiveTab] = useState<TabId>("ringkasan");
 
-  // Filters for Presensi Tab
-  const [filterStatusPresensi, setFilterStatusPresensi] = useState<string>("");
-  const [filterMapelPresensi, setFilterMapelPresensi] = useState<string>("");
+  const [filterMapelNilai, setFilterMapelNilai] = useState("");
+  const [filterStatusPresensi, setFilterStatusPresensi] = useState("");
+  const [filterMapelPresensi, setFilterMapelPresensi] = useState("");
+  const [filterMapelJurnal, setFilterMapelJurnal] = useState("");
+  const [filterKeywordJurnal, setFilterKeywordJurnal] = useState("");
 
-  // Filters for Jurnal Tab
-  const [filterMapelJurnal, setFilterMapelJurnal] = useState<string>("");
-  const [filterKeywordJurnal, setFilterKeywordJurnal] = useState<string>("");
-
-  // Modal Jurnal Detail
   const [selectedJurnal, setSelectedJurnal] = useState<any>(null);
 
-  // SPP History & Konfirmasi State
   const [sppHistory, setSppHistory] = useState<any>(null);
   const [loadingSpp, setLoadingSpp] = useState(false);
   const [isKonfirmasiOpen, setIsKonfirmasiOpen] = useState(false);
 
+  /* ── Data rapor + dokumen cetak (rapor tetap tampil walau dokumen cetak gagal) ── */
   useEffect(() => {
-    // Fetch from real API (if no santriId, API defaults to first active santri)
-    const urlRapor = santriId ? `/api/rapor?santri_id=${santriId}` : "/api/rapor";
-    const urlCetak = santriId 
-      ? `/api/rapor/cetak?santri_id=${santriId}&semester=Ganjil&tahun_ajaran=2026/2027` 
-      : "/api/rapor/cetak?semester=Ganjil&tahun_ajaran=2026/2027";
+    const controller = new AbortController();
+    const { signal } = controller;
 
-    Promise.all([
-      fetch(urlRapor).then((res) => res.json()),
-      fetch(urlCetak).then((res) => res.json())
-    ])
-      .then(([d1, d2]) => {
-        setData(d1);
-        setCetakData(d2);
+    setLoading(true);
+    setLoadError(false);
+    setCetakError(false);
+    setData(null);
+    setCetakData(null);
+    setSppHistory(null);
+
+    const raporQuery = santriId ? `?${new URLSearchParams({ santri_id: santriId })}` : "";
+    const cetakQuery = new URLSearchParams({
+      ...(santriId ? { santri_id: santriId } : {}),
+      semester: SEMESTER,
+      tahun_ajaran: TAHUN_AJARAN,
+    });
+    const getJson = (url: string) => fetch(url, { signal }).then((res) => res.json());
+
+    Promise.allSettled([getJson(`/api/rapor${raporQuery}`), getJson(`/api/rapor/cetak?${cetakQuery}`)]).then(
+      ([rapor, cetak]) => {
+        if (signal.aborted) return;
+        if (rapor.status === "fulfilled") setData(rapor.value);
+        else {
+          console.error("Error loading rapor data:", rapor.reason);
+          setLoadError(true);
+        }
+        if (cetak.status === "fulfilled") setCetakData(cetak.value);
+        else {
+          console.error("Error loading cetak data:", cetak.reason);
+          setCetakError(true);
+        }
         setLoading(false);
-      })
-      .catch((err) => {
-        console.error("Error loading rapor data:", err);
-        setLoading(false);
-      });
-  }, [santriId]);
+      },
+    );
+
+    return () => controller.abort();
+  }, [santriId, reloadKey]);
 
   const targetSantriId = santriId || data?.santri?.id || "";
-  const isAccessLocked = data?.spp?.lunas === false && data?.spp?.status !== "menunggu_verifikasi" && !data?.spp?.isUnlockedManual;
+  const isAccessLocked =
+    data?.spp?.lunas === false && data?.spp?.status !== "menunggu_verifikasi" && !data?.spp?.isUnlockedManual;
 
-  // Helper untuk refresh data SPP & Rapor setelah konfirmasi
+  /* ── Riwayat SPP: dimuat lebih awal agar modal konfirmasi selalu siap ── */
+  useEffect(() => {
+    if (!targetSantriId) return;
+    const controller = new AbortController();
+    setLoadingSpp(true);
+    fetch(`/api/wali/spp-history?santri_id=${encodeURIComponent(targetSantriId)}`, { signal: controller.signal })
+      .then((r) => r.json())
+      .then((d) => setSppHistory(d))
+      .catch((err) => {
+        if (err?.name !== "AbortError") console.error("Error loading SPP history:", err);
+      })
+      .finally(() => {
+        if (!controller.signal.aborted) setLoadingSpp(false);
+      });
+    return () => controller.abort();
+  }, [targetSantriId]);
+
+  /* ── Tab aktif selalu terlihat di baris tab yang bisa digeser ── */
+  useEffect(() => {
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    document
+      .getElementById(`tab-${activeTab}`)
+      ?.scrollIntoView({ block: "nearest", inline: "center", behavior: reduce ? "auto" : "smooth" });
+  }, [activeTab]);
+
   const refreshSppData = () => {
     if (!targetSantriId) return;
+    const id = encodeURIComponent(targetSantriId);
     setLoadingSpp(true);
     Promise.all([
-      fetch(`/api/wali/spp-history?santri_id=${targetSantriId}`).then(r => r.json()),
-      fetch(`/api/rapor?santri_id=${targetSantriId}`).then(r => r.json())
+      fetch(`/api/wali/spp-history?santri_id=${id}`).then((r) => r.json()),
+      fetch(`/api/rapor?santri_id=${id}`).then((r) => r.json()),
     ])
       .then(([sppRes, raporRes]) => {
         setSppHistory(sppRes);
         setData(raporRes);
-        setLoadingSpp(false);
       })
-      .catch((err) => {
-        console.error("Error refreshing SPP data:", err);
-        setLoadingSpp(false);
-      });
+      .catch((err) => console.error("Error refreshing SPP data:", err))
+      .finally(() => setLoadingSpp(false));
   };
 
-  // Eagerly fetch SPP History saat targetSantriId siap agar modal konfirmasi selalu siap
-  useEffect(() => {
-    if (!targetSantriId || sppHistory) return;
-    setLoadingSpp(true);
-    fetch(`/api/wali/spp-history?santri_id=${targetSantriId}`)
-      .then(r => r.json())
-      .then(d => { setSppHistory(d); setLoadingSpp(false); })
-      .catch(() => setLoadingSpp(false));
-  }, [targetSantriId, sppHistory]);
-
-  const handleKirimWA = async () => {
+  // TODO: ini masih SIMULASI. Belum ada pesan yang benar-benar dikirim; notifikasi "terkirim" hanya tampilan.
+  // Ganti isi setTimeout dengan pemanggilan endpoint pengiriman WhatsApp yang sebenarnya.
+  const handleKirimWA = () => {
     if (!data?.santri) return;
     Swal.fire({
       title: "Kirim Ringkasan ke WhatsApp?",
-      text: `Sistem akan merangkum progres ananda ${data?.santri?.nama} dan mengirimkannya ke WhatsApp wali santri.`,
+      text: `Sistem akan merangkum progres ananda ${data.santri.nama} dan mengirimkannya ke WhatsApp wali santri.`,
       icon: "question",
       showCancelButton: true,
       confirmButtonText: "Kirim Sekarang",
       cancelButtonText: "Batal",
-      confirmButtonColor: "#9b1b22" }).then(async (result) => {
-      if (result.isConfirmed) {
-        Swal.fire({
-          title: "Mengirim Notifikasi...",
-          text: "Menghubungkan ke gateway WhatsApp Pesantren Al-Imam",
-          allowOutsideClick: false,
-          didOpen: () => Swal.showLoading() });
-
-        setTimeout(() => {
-          Swal.fire("Laporan Terkirim!", `Ringkasan capaian santri telah berhasil diteruskan ke nomor WhatsApp Anda.`, "success");
-        }, 1200);
-      }
+      confirmButtonColor: "#9b1b22",
+    }).then((result) => {
+      if (!result.isConfirmed) return;
+      Swal.fire({
+        title: "Mengirim Notifikasi...",
+        text: "Menghubungkan ke gateway WhatsApp Pesantren Al-Imam",
+        allowOutsideClick: false,
+        didOpen: () => Swal.showLoading(),
+      });
+      setTimeout(() => {
+        Swal.fire(
+          "Laporan Terkirim!",
+          "Ringkasan capaian santri telah berhasil diteruskan ke nomor WhatsApp Anda.",
+          "success",
+        );
+      }, 1200);
     });
   };
 
-  const formatTanggal = (iso: any) => {
-    if (!iso) return "Ahad, 11 Okt 2026";
-    let d: Date;
-    if (iso instanceof Date) {
-      d = iso;
-    } else if (typeof iso === "string") {
-      const clean = iso.includes("T") ? iso.split("T")[0] : iso;
-      d = new Date(clean + "T00:00:00");
-      if (isNaN(d.getTime())) {
-        d = new Date(iso);
-      }
-    } else {
-      d = new Date(iso);
-    }
-    if (isNaN(d.getTime())) return "Ahad, 11 Okt 2026";
-    return d.toLocaleDateString("id-ID", {
-      weekday: "short",
-      day: "numeric",
-      month: "short",
-      year: "numeric" });
-  };
+  /* ── Turunan data ── */
+  const akademikGrouped = useMemo(() => groupAkademik(data?.detail?.akademik ?? []), [data]);
 
-  const isSyariahOrBahasa = (name: string): boolean => {
-    const low = name.toLowerCase();
-    const umumKeywords = ["matematika", "mtk", "ipa", "ips", "indonesia", "inggris", "pjok", "penjas", "seni", "pkn", "informatika", "prakarya", "kewirausahaan", "entrepreneurship"];
-    return !umumKeywords.some(u => low.includes(u));
-  };
-
-  const getKategoriMapel = (nama: string): "syariah" | "bahasa" | "umum" => {
-    const low = nama.toLowerCase();
-    if (["akidah", "hadis", "fikih", "ushul fikih", "sirah", "tahsin", "tahfidz", "adab", "akhlak", "tauhid", "tafsir", "tajwid", "mahfudzot"].some(k => low.includes(k))) return "syariah";
-    if (["bahasa arab", "nahwu", "shorof", "kitabah", "muthola", "imla", "khot", "insya", "muhadatsah"].some(k => low.includes(k))) return "bahasa";
-    return "umum";
-  };
-
-  const getKkm = (nama: string): number => {
-    return isSyariahOrBahasa(nama) ? 85 : 80;
-  };
-
-  // Group Academic Scores by Mapel
-  const akademikGrouped = useMemo(() => {
-    if (!data?.detail?.akademik) return [];
-    const map = new Map<string, any>();
-
-    data.detail.akademik.forEach((n: any) => {
-      if (!map.has(n.mapel_id)) {
-        map.set(n.mapel_id, {
-          mapel_id: n.mapel_id,
-          mapel_nama: n.mapel_nama,
-          mapel_kategori: n.mapel_kategori,
-          harian: 0,
-          kompetensi: 0,
-          sikap: 0,
-          ujian: 0,
-          hasHarian: false,
-          hasKomp: false,
-          hasSikap: false,
-          hasUjian: false });
-      }
-      const item = map.get(n.mapel_id);
-      const val = Number(n.nilai) || 0;
-      if (n.jenis.includes("harian") || n.jenis === "tugas" || n.jenis === "uh") {
-        item.harian = val;
-        item.hasHarian = true;
-      } else if (n.jenis.includes("kompetensi") || n.jenis === "komp") {
-        item.kompetensi = val;
-        item.hasKomp = true;
-      } else if (n.jenis.includes("sikap") || n.jenis === "adab") {
-        item.sikap = val;
-        item.hasSikap = true;
-      } else if (n.jenis === "pas" || n.jenis === "pts" || n.jenis.includes("ujian") || n.jenis.includes("sas") || n.jenis.includes("sat")) {
-        item.ujian = val;
-        item.hasUjian = true;
-      }
-    });
-
-    const categoryOrder: Record<string, number> = { syariah: 1, bahasa: 2, umum: 3 };
-    const items = Array.from(map.values()).map((item) => {
-      let naNum = null;
-      // MURNI PTS MODE
-      if (item.hasUjian) {
-        naNum = item.ujian;
-      }
-      
-      let predikat = "-";
-      if (naNum !== null) {
-        if (naNum >= 90) predikat = "A (Istimewa)";
-        else if (naNum >= 80) predikat = "B (Sangat Baik)";
-        else if (naNum >= 70) predikat = "C (Cukup)";
-        else predikat = "D (Perlu Bimbingan)";
-      }
-
-      const kat = getKategoriMapel(item.mapel_nama);
-      return {
-        ...item,
-        kategori: kat,
-        kkm: getKkm(item.mapel_nama),
-        nilaiAkhir: naNum !== null ? naNum.toFixed(1) : null,
-        nilaiAkhirNum: naNum !== null ? naNum : null,
-        predikat };
-    });
-
-    return items.sort((a, b) => {
-      const orderA = categoryOrder[a.kategori] || 99;
-      const orderB = categoryOrder[b.kategori] || 99;
-      if (orderA !== orderB) return orderA - orderB;
-      return a.mapel_nama.localeCompare(b.mapel_nama, "id");
-    });
+  const mapelListNames = useMemo<string[]>(() => {
+    const names = new Set<string>();
+    (data?.detail?.mapelList ?? []).forEach((m: any) => m?.nama && names.add(m.nama));
+    return Array.from(names);
   }, [data]);
 
-  const computedTotal = useMemo(() => {
-    return akademikGrouped.reduce((acc, curr) => acc + (curr.nilaiAkhirNum !== null ? Math.round(curr.nilaiAkhirNum) : 0), 0);
-  }, [akademikGrouped]);
+  // Dropdown nilai: gabungan daftar mapel dan mapel yang punya nilai, tanpa duplikat
+  const mapelOptionsNilai = useMemo<string[]>(() => {
+    const names = new Set<string>(mapelListNames);
+    akademikGrouped.forEach((a) => a.mapel_nama && names.add(a.mapel_nama));
+    return Array.from(names);
+  }, [mapelListNames, akademikGrouped]);
 
-  const computedAvg = useMemo(() => {
-    const valid = akademikGrouped.filter(a => a.nilaiAkhirNum !== null);
-    if (valid.length === 0) return 0;
-    return Math.round(computedTotal / valid.length);
-  }, [akademikGrouped, computedTotal]);
-
-  // Filtered Nilai
   const filteredAkademik = useMemo(() => {
     if (!filterMapelNilai) return akademikGrouped;
-    return akademikGrouped.filter((a) => a.mapel_id === filterMapelNilai || a.mapel_nama.toLowerCase().includes(filterMapelNilai.toLowerCase()));
+    const f = filterMapelNilai.toLowerCase();
+    return akademikGrouped.filter((a) => a.mapel_id === filterMapelNilai || a.mapel_nama.toLowerCase() === f);
   }, [akademikGrouped, filterMapelNilai]);
 
-  // Filtered Presensi
   const filteredPresensi = useMemo(() => {
-    if (!data?.detail?.presensi) return [];
-    let result = data.detail.presensi;
-
-    if (filterStatusPresensi === "tidak_hadir") {
-      result = result.filter((p: any) => p.status !== "hadir");
-    } else if (filterStatusPresensi) {
-      result = result.filter((p: any) => p.status === filterStatusPresensi);
-    }
-
-    if (filterMapelPresensi) {
-      result = result.filter((p: any) => p.mapel_nama === filterMapelPresensi);
-    }
-
+    let result: any[] = data?.detail?.presensi ?? [];
+    if (filterStatusPresensi === "tidak_hadir") result = result.filter((p) => p.status !== "hadir");
+    else if (filterStatusPresensi) result = result.filter((p) => p.status === filterStatusPresensi);
+    if (filterMapelPresensi) result = result.filter((p) => p.mapel_nama === filterMapelPresensi);
     return result;
   }, [data, filterStatusPresensi, filterMapelPresensi]);
 
-  // Filtered Jurnal
   const filteredJurnal = useMemo(() => {
-    if (!data?.detail?.jurnal) return [];
-    let result = data.detail.jurnal;
-
-    if (filterMapelJurnal) {
-      result = result.filter((j: any) => j.mapel === filterMapelJurnal);
-    }
-
+    let result: any[] = data?.detail?.jurnal ?? [];
+    if (filterMapelJurnal) result = result.filter((j) => j.mapel === filterMapelJurnal);
     if (filterKeywordJurnal) {
-      const keyword = filterKeywordJurnal.toLowerCase();
-      result = result.filter((j: any) => 
-        j.materi?.toLowerCase().includes(keyword) || 
-        j.kegiatan?.toLowerCase().includes(keyword) ||
-        j.catatan?.toLowerCase().includes(keyword)
+      const k = filterKeywordJurnal.toLowerCase();
+      result = result.filter(
+        (j) => j.materi?.toLowerCase().includes(k) || j.kegiatan?.toLowerCase().includes(k) || j.catatan?.toLowerCase().includes(k),
       );
     }
-
     return result;
   }, [data, filterMapelJurnal, filterKeywordJurnal]);
 
+  /* ── Keadaan halaman ── */
   if (loading) {
     return (
-      <div className="min-h-screen bg-slate-50 flex items-center justify-center p-6">
-        <div className="card p-10 text-center bg-white rounded-3xl shadow-sm border border-slate-100 max-w-sm w-full">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-          <h3 className="font-bold text-slate-800 text-lg">Memuat Rapor & Rekap Santri</h3>
-          <p className="text-xs text-slate-500 mt-1">Mengambil data nilai, presensi, dan jurnal guru...</p>
+      <CenterCard>
+        <div role="status">
+          <div className="mx-auto mb-4 h-12 w-12 rounded-full border-b-2 border-primary motion-safe:animate-spin" aria-hidden="true" />
+          <h3 className="text-lg font-bold text-slate-800">Memuat Rapor &amp; Rekap Santri</h3>
+          <p className="mt-1 text-xs text-slate-500">Mengambil data nilai, presensi, dan jurnal guru...</p>
         </div>
-      </div>
+      </CenterCard>
+    );
+  }
+
+  if (loadError) {
+    return (
+      <CenterCard>
+        <div role="alert">
+          <AlertCircle size={48} className="mx-auto mb-3 text-rose-500" aria-hidden="true" />
+          <h3 className="text-lg font-bold text-slate-800">Data belum bisa dimuat</h3>
+          <p className="mb-5 mt-1 text-sm text-slate-500">Periksa koneksi internet Anda, lalu coba lagi.</p>
+          <button type="button" onClick={() => setReloadKey((k) => k + 1)} className={btnPrimary}>
+            <RefreshCw size={16} aria-hidden="true" />
+            <span>Coba lagi</span>
+          </button>
+        </div>
+      </CenterCard>
     );
   }
 
   if (!data?.santri) {
     return (
-      <div className="min-h-screen bg-slate-50 flex items-center justify-center p-6">
-        <div className="card p-10 text-center bg-white rounded-3xl shadow-sm border border-slate-100 max-w-md">
-          <AlertCircle size={48} className="text-amber-500 mx-auto mb-3" />
-          <h3 className="font-bold text-slate-800 text-lg">Data Santri Tidak Ditemukan</h3>
-          <p className="text-sm text-slate-500 mt-1 mb-5">Silakan kembali ke halaman utama wali santri.</p>
-          <a href="/wali" className="btn btn-primary">Kembali ke Portal</a>
-        </div>
-      </div>
+      <CenterCard>
+        <AlertCircle size={48} className="mx-auto mb-3 text-amber-500" aria-hidden="true" />
+        <h3 className="text-lg font-bold text-slate-800">Data Santri Tidak Ditemukan</h3>
+        <p className="mb-5 mt-1 text-sm text-slate-500">Silakan kembali ke halaman utama wali santri.</p>
+        <a href="/wali" className={btnPrimary}>Kembali ke Portal</a>
+      </CenterCard>
     );
   }
 
-  const { santri, ringkasan, detail } = data;
-  const klsUpper = (santri?.kelas || "").toUpperCase();
-  const jenjangUpper = (santri?.jenjang || "").toUpperCase();
-  const isMTs = klsUpper.includes("MTS") || jenjangUpper === "MTS" || klsUpper.startsWith("7") || klsUpper.startsWith("8") || klsUpper.startsWith("9");
-  const isMA = jenjangUpper === "MA" || ["10", "11", "12"].some(k => klsUpper === k || klsUpper.startsWith(k + " ") || klsUpper.startsWith(k));
-  const isIL = klsUpper.includes("IL") || klsUpper.includes("I'DAD") || jenjangUpper.includes("I'DAD") || jenjangUpper.includes("IL");
+  const { santri } = data;
+  const ringkasan = data.ringkasan ?? {};
+  const detail = data.detail ?? {};
+  const nis = (santri?.nama ? getOfficialNis(santri.nama) : null) || santri.nis;
 
-  let headTitle = "Kepala Madrasah";
-  let headName = "Aziz Basuki, S.H.I., M.Pd.";
-  let waliKelasName = "Agus Cahyono";
-
-  if (isMA) {
-    headName = "Rethna Kartika Septianiar, S.Pd.";
-    waliKelasName = "Muhammad Thoriq Ibn Ziyad, Lc., M.Ag.";
-  } else if (isMTs) {
-    headName = "Ade Supyana, S.Pd.I.";
-    waliKelasName = "Agus Cahyono";
-  } else if (isIL) {
-    headTitle = "Kepala Kurikulum";
-    headName = "Imron Abdillah, S.Pd.";
-    waliKelasName = "Imron Abdillah, S.Pd.";
-  }
-
-  const getArabicMapelName = (nama: string): string => {
-    const low = nama.toLowerCase();
-    if (low.includes("akidah") || low.includes("tauhid")) return "العقيدة";
-    if (low.includes("fikih") || low.includes("fiqh")) return "الفقه";
-    if (low.includes("hadis") || low.includes("hadits")) return "الحديث";
-    if (low.includes("sirah") || low.includes("siroh")) return "السيرة النبوية";
-    if (low.includes("tahsin")) return "تحسين القرآن";
-    if (low.includes("tahfidz")) return "حفظ القرآن";
-    if (low.includes("bahasa arab")) return "اللغة العربية";
-    if (low.includes("kitabah") || low.includes("khot") || low.includes("imla")) return "الكتابة";
-    if (low.includes("shorof") || low.includes("shorf")) return "الصرف";
-    if (low.includes("nahwu")) return "النحو";
-    if (low.includes("indonesia")) return "اللغة الإندونيسية";
-    if (low.includes("inggris")) return "اللغة الإنجليزية";
-    if (low.includes("matematika") || low.includes("mtk")) return "الرياضيات";
-    if (low.includes("ipa")) return "العلوم الطبيعية";
-    if (low.includes("ips")) return "العلوم الاجتماعية";
-    if (low.includes("kewirausahaan") || low.includes("entrepreneurship")) return "ريادة الأعمال";
-    if (low.includes("tik") || low.includes("informatika")) return "تكنولوجيا المعلومات";
-    if (low.includes("penjas") || low.includes("pjok")) return "التربية البدنية";
-    if (low.includes("pkn") || low.includes("ppkn")) return "التربية الوطنية";
-    return nama;
-  };
+  const showLockedPanel = isAccessLocked && activeTab !== "spp";
+  const showTabs = !isAccessLocked;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-rose-50/30 to-slate-100 pb-20 print:p-0 print:m-0 print:bg-white print:min-h-0">
-      {/* Top Bar Navigation */}
-      <div className="bg-white/90 backdrop-blur border-b border-slate-200/80 sticky top-0 z-30 shadow-sm no-print print:hidden">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
-          <a
-            href="/wali"
-            className="inline-flex items-center gap-2 text-xs sm:text-sm font-bold text-slate-700 hover:text-primary transition-colors bg-slate-100 hover:bg-slate-200/70 px-3 py-2 rounded-xl"
-          >
-            <ArrowLeft size={16} />
-            <span>Kembali ke Pilihan Anak</span>
-          </a>
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-rose-50/30 to-slate-100 pb-20 print:m-0 print:min-h-0 print:bg-white print:p-0">
+      <TopBar santriId={santri.id} locked={isAccessLocked} onKirimWA={handleKirimWA} />
 
-          {!isAccessLocked && (
-            <div className="flex items-center gap-2">
-              <a
-                href={`/rapor/print/${santri.id}`}
-                target="_blank"
-                className="btn btn-outline btn-sm hidden sm:inline-flex items-center gap-1.5"
-                style={{ fontSize: 12, borderRadius: 10 }}
-              >
-                <Printer size={14} /> Cetak PDF
-              </a>
-              <button
-                onClick={handleKirimWA}
-                className="btn btn-primary btn-sm inline-flex items-center gap-1.5"
-                style={{ fontSize: 12, borderRadius: 10, padding: "8px 14px" }}
-              >
-                <Send size={14} /> Kirim ke WA
-              </button>
-            </div>
-          )}
-        </div>
-      </div>
+      <main className="mx-auto max-w-6xl space-y-6 px-4 pt-6 sm:space-y-8 sm:px-6 sm:pt-8 print:m-0 print:max-w-none print:space-y-0 print:p-0">
+        <ProfileBanner santri={santri} nis={nis} spp={data?.spp} locked={isAccessLocked} />
 
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 pt-8 space-y-8 print:p-0 print:m-0 print:max-w-none print:space-y-0">
-        {/* Profile Card Banner */}
-        <div className="bg-gradient-to-r from-primary via-[#7e141a] to-[#4a080d] text-white rounded-3xl p-8 sm:p-10 shadow-2xl shadow-primary/30 relative overflow-hidden no-print print:hidden">
-          <div className="absolute top-0 right-0 p-8 opacity-10 pointer-events-none">
-            <GraduationCap size={180} />
-          </div>
-          <div className="absolute -right-10 -top-10 w-64 h-64 bg-white/5 rounded-full border border-white/10 pointer-events-none" />
-
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 relative z-10">
-            <div className="flex items-center gap-4 sm:gap-6">
-              <div className="w-16 h-16 sm:w-20 sm:h-20 bg-white/20 backdrop-blur-md rounded-2xl border border-white/30 text-white flex items-center justify-center font-black text-2xl sm:text-3xl shadow-inner flex-shrink-0 ring-4 ring-white/20">
-                {(santri?.nama || "S").charAt(0)}
-              </div>
-              <div>
-                <div className="flex items-center gap-2 mb-1 flex-wrap">
-                  <span className="px-2.5 py-0.5 rounded-full bg-white/20 text-white text-[11px] font-bold tracking-wide">
-                    {santri.kelas}
-                  </span>
-                  <span className="text-white/80 font-mono text-xs">NIS: {(santri?.nama ? getOfficialNis(santri.nama) : null) || santri.nis}</span>
-                  {isAccessLocked ? (
-                    <span className="px-3 py-1 rounded-full bg-rose-600 text-white border border-rose-400 text-[11px] font-black flex items-center gap-1.5 shadow-md">
-                      <Lock size={12} /> Akses Terkunci: Tagihan SPP {data?.spp?.tunggakanCount || 1} Bulan
-                    </span>
-                  ) : data?.spp?.status === "menunggu_verifikasi" ? (
-                    <span className="px-2.5 py-0.5 rounded-full bg-amber-500/30 text-amber-200 border border-amber-400/40 text-[11px] font-extrabold flex items-center gap-1">
-                      <Clock size={12} className="animate-spin text-amber-300" /> SPP Sedang Diverifikasi Keuangan
-                    </span>
-                  ) : data?.spp?.lunas ? (
-                    <span className="px-2.5 py-0.5 rounded-full bg-emerald-500/30 text-emerald-200 border border-emerald-400/40 text-[11px] font-extrabold flex items-center gap-1">
-                      <CheckCircle2 size={12} /> SPP {data.spp.namaBulan} Lunas
-                    </span>
-                  ) : (
-                    <span className="px-2.5 py-0.5 rounded-full bg-rose-500/40 text-rose-200 border border-rose-400/50 text-[11px] font-extrabold flex items-center gap-1">
-                      <AlertCircle size={12} /> Tagihan SPP: {data?.spp?.tunggakanCount || 1} Bulan
-                    </span>
-                  )}
-                </div>
-                <h1 className="text-2xl sm:text-3xl font-extrabold text-white leading-tight">
-                  {santri.nama}
-                </h1>
-                <p className="text-white/80 text-xs sm:text-sm font-medium mt-0.5">
-                  Pesantren Al-Imam Al-Islami • Managed by Al-Andalus IIBS • Tahun Ajaran {santri?.tahun_ajaran || "2026/2027"}
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Banner Status Konfirmasi Menunggu Verifikasi */}
         {data?.spp?.status === "menunggu_verifikasi" && (
-          <div className="bg-gradient-to-r from-amber-50 via-amber-100/60 to-amber-50 border border-amber-200/90 rounded-3xl p-5 shadow-lg shadow-amber-950/5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 text-xs no-print print:hidden">
-            <div className="flex items-start sm:items-center gap-3.5">
-              <div className="p-3 rounded-2xl bg-amber-500 text-white shrink-0 shadow-md shadow-amber-950/20">
-                <Clock size={22} className="animate-spin" />
-              </div>
-              <div>
-                <div className="flex items-center gap-2 mb-0.5 flex-wrap">
-                  <span className="px-2 py-0.5 rounded-full bg-amber-200 text-amber-900 font-extrabold text-[10px] uppercase tracking-wider">
-                    Sedang Diverifikasi
-                  </span>
-                  <span className="font-extrabold text-amber-950 text-sm sm:text-base">
-                    Konfirmasi Pembayaran Sedang Diproses Keuangan
-                  </span>
-                </div>
-                <p className="text-amber-900/90 mt-0.5 leading-relaxed text-xs">
-                  Alhamdulillah, bukti pembayaran SPP ananda telah diterima dan sedang dalam antrean verifikasi Admin Keuangan. Seluruh akses lembar rapor dan mutabaah ananda tetap dibuka secara penuh.
-                </p>
-              </div>
-            </div>
-            <div className="flex items-center gap-2 self-stretch sm:self-auto shrink-0">
-              <button
-                onClick={() => setIsKonfirmasiOpen(true)}
-                className="px-4 py-2.5 bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs rounded-xl shadow-md transition-all flex items-center justify-center gap-1.5 flex-1 sm:flex-initial"
-              >
-                <CreditCard size={14} />
-                <span>Upload Bukti Tambahan</span>
-              </button>
-              <button
-                onClick={() => setActiveTab("spp")}
-                className="px-4 py-2.5 bg-white hover:bg-slate-50 text-amber-900 border border-amber-300 font-bold text-xs rounded-xl shadow-sm transition-all flex items-center justify-center gap-1.5 flex-1 sm:flex-initial"
-              >
-                <span>Lihat Tab SPP &rarr;</span>
-              </button>
-            </div>
-          </div>
+          <VerifyingBanner onUploadLagi={() => setIsKonfirmasiOpen(true)} onLihatSpp={() => setActiveTab("spp")} />
         )}
 
-        {/* TAMPILAN TERKUNCI KETAT (Jika Belum Lunas SPP & Belum Verifikasi) */}
-        {isAccessLocked && activeTab !== "spp" ? (
-          <div className="space-y-6 no-print print:hidden">
-            {/* Main Locked Card */}
-            <div className="bg-white/95 backdrop-blur rounded-3xl p-8 sm:p-12 shadow-2xl shadow-rose-950/10 border-2 border-rose-200 relative overflow-hidden text-center">
-              <div className="absolute top-0 right-0 w-96 h-96 bg-rose-50 rounded-full blur-3xl -z-10 pointer-events-none" />
-              <div className="absolute bottom-0 left-0 w-80 h-80 bg-amber-50/60 rounded-full blur-3xl -z-10 pointer-events-none" />
-
-              {/* Lock Icon with Glowing Pulse */}
-              <div className="relative inline-block mb-6">
-                <div className="w-24 h-24 rounded-3xl bg-gradient-to-br from-rose-600 via-rose-700 to-rose-900 text-white flex items-center justify-center shadow-2xl shadow-rose-600/40 mx-auto">
-                  <Lock size={44} className="stroke-[2.2]" />
-                </div>
-                <div className="absolute -top-1 -right-1 p-2 bg-amber-400 text-amber-950 rounded-full shadow-md animate-bounce">
-                  <AlertTriangle size={16} />
-                </div>
-              </div>
-
-              <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-rose-100 text-rose-800 text-xs font-black uppercase tracking-wider mb-4 border border-rose-200 shadow-sm">
-                <span>Akses Portal Santri Dinonaktifkan Sementara</span>
-              </div>
-
-              <h2 className="text-2xl sm:text-3xl font-black text-slate-800 tracking-tight max-w-2xl mx-auto leading-tight">
-                Kewajiban Administrasi SPP Ananda Belum Diselesaikan
-              </h2>
-
-              <p className="text-xs sm:text-sm text-slate-600 max-w-2xl mx-auto leading-relaxed mt-3">
-                Afwan Bapak/Ibu Wali Santri dari ananda <strong className="text-slate-900">{santri.nama}</strong> ({santri.kelas}), seluruh akses laporan hasil belajar (Lembar Rapor PTS Murni, Nilai Akademik, Rekap Presensi, Jurnal Pengajar, dan Mutabaah Tahfidz Al-Qur&apos;an) saat ini dinonaktifkan sementara hingga kewajiban administrasi SPP diselesaikan.
-              </p>
-
-              {/* Rincian Tagihan Card */}
-              <div className="max-w-xl mx-auto mt-8 p-6 rounded-2xl bg-gradient-to-br from-slate-50 to-rose-50/40 border border-rose-100 shadow-inner grid grid-cols-1 sm:grid-cols-3 gap-4 text-center">
-                <div className="p-3 bg-white rounded-xl border border-slate-100 shadow-sm">
-                  <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider block">Bulan Menunggak</span>
-                  <span className="text-xl font-black text-rose-600 mt-1 block">
-                    {data?.spp?.tunggakanCount || 1} Bulan
-                  </span>
-                  <span className="text-[10px] text-slate-400">TA 2026/2027</span>
-                </div>
-
-                <div className="p-3 bg-white rounded-xl border border-slate-100 shadow-sm sm:col-span-2">
-                  <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider block">Total Tagihan SPP</span>
-                  <span className="text-xl font-black text-slate-800 mt-1 block">
-                    {new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", maximumFractionDigits: 0 }).format(data?.spp?.totalTunggakanNominal || 1000000)}
-                  </span>
-                  <span className="text-[10px] text-rose-600 font-semibold truncate block">
-                    {data?.spp?.tunggakanBulan?.length > 0 ? `(${data.spp.tunggakanBulan.join(", ")})` : "SPP Belum Lunas"}
-                  </span>
-                </div>
-              </div>
-
-              {/* Rekening Pembayaran Resmi */}
-              <div className="max-w-xl mx-auto mt-6 p-6 rounded-2xl bg-slate-900 text-white shadow-xl text-left relative overflow-hidden">
-                <div className="absolute top-0 right-0 p-6 opacity-10 pointer-events-none">
-                  <CreditCard size={120} />
-                </div>
-                <div className="relative z-10">
-                  <div className="flex items-center justify-between gap-2 mb-3">
-                    <span className="text-[11px] font-black uppercase tracking-wider text-rose-300">
-                      Rekening Resmi Pembayaran SPP
-                    </span>
-                    <span className="px-2 py-0.5 rounded-full bg-white/10 text-[10px] font-mono text-white/80">
-                      BSI • Bank Syariah Indonesia
-                    </span>
-                  </div>
-
-                  <div className="flex items-baseline justify-between gap-4 flex-wrap">
-                    <div>
-                      <div className="text-2xl sm:text-3xl font-black font-mono tracking-wider text-white">
-                        4222224441
-                      </div>
-                      <div className="text-xs text-slate-300 mt-1">
-                        Atas Nama: <strong className="text-white">PP Al Andalus Al Imam</strong>
-                      </div>
-                    </div>
-
-                    <button
-                      onClick={() => {
-                        navigator.clipboard.writeText("4222224441");
-                        Swal.fire({
-                          icon: "success",
-                          title: "Nomor Rekening Disalin!",
-                          text: "BSI 4222224441 a.n. PP Al Andalus Al Imam",
-                          timer: 2000,
-                          showConfirmButton: false
-                        });
-                      }}
-                      className="px-4 py-2 rounded-xl bg-white/20 hover:bg-white/30 text-white text-xs font-bold transition-all shadow-sm"
-                    >
-                      Salin Nomor Rekening
-                    </button>
-                  </div>
-                </div>
-              </div>
-
-              {/* CRUCIAL NOTICE & DIRECT FINANCE WHATSAPP (085111403331) */}
-              <div className="max-w-xl mx-auto mt-8 p-6 sm:p-7 bg-gradient-to-r from-emerald-50 via-teal-50/80 to-emerald-50 border-2 border-emerald-400/90 rounded-3xl text-left shadow-lg shadow-emerald-950/5">
-                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
-                  <div className="p-3.5 bg-emerald-600 text-white rounded-2xl shrink-0 shadow-md">
-                    <PhoneCall size={28} />
-                  </div>
-                  <div className="flex-1">
-                    <div className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-emerald-200 text-emerald-950 text-[11px] font-black mb-1.5">
-                      <span>Sudah Membayar Tapi Akun Masih Terkunci?</span>
-                    </div>
-                    <h4 className="text-base sm:text-lg font-black text-emerald-950 leading-snug">
-                      Hubungi Finance (085111403331) dengan Bukti Transfer
-                    </h4>
-                    <p className="text-xs sm:text-sm text-emerald-900/90 leading-relaxed mt-1">
-                      Jika Bapak/Ibu Wali Santri <strong>sudah melakukan transfer/pelunasan SPP</strong> namun akun masih terkunci, silakan langsung mengirimkan foto/bukti transfer ke nomor WhatsApp <strong>Finance (085111403331)</strong> agar Tim Keuangan dapat segera memverifikasi dan membukakan akses portal SIKAP ananda.
-                    </p>
-                  </div>
-                </div>
-
-                <div className="mt-5 pt-4 border-t border-emerald-200/80 flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
-                  <a
-                    href={`https://wa.me/6285111403331?text=${encodeURIComponent(
-                      `Assalamu'alaikum Admin Keuangan Pesantren Al-Imam, saya wali dari ananda:\n• Nama: ${santri.nama}\n• NIS: ${(santri?.nama ? getOfficialNis(santri.nama) : null) || santri.nis}\n• Kelas: ${santri.kelas}\n\nSaya telah mentransfer pembayaran SPP sebesar ${new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", maximumFractionDigits: 0 }).format(data?.spp?.totalTunggakanNominal || 1000000)} dan melampirkan bukti transfer terlampir. Mohon bantuannya untuk membukakan akses portal SIKAP ananda. Jazaakumullah khayran.`
-                    )}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex-1 inline-flex items-center justify-center gap-2 px-5 py-3.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs sm:text-sm shadow-md transition-all hover:scale-[1.02] active:scale-[0.98]"
-                  >
-                    <Send size={16} />
-                    <span>Kirim Bukti ke WA Finance (085111403331)</span>
-                  </a>
-
-                  <button
-                    onClick={() => setIsKonfirmasiOpen(true)}
-                    className="inline-flex items-center justify-center gap-2 px-5 py-3.5 rounded-xl bg-white hover:bg-slate-50 text-emerald-900 border border-emerald-300 font-bold text-xs sm:text-sm shadow-sm transition-all"
-                  >
-                    <CreditCard size={16} />
-                    <span>Upload Bukti di Web</span>
-                  </button>
-                </div>
-              </div>
-
-              {/* Button to View SPP Ledger */}
-              <div className="mt-8 pt-6 border-t border-slate-200/80 flex flex-col sm:flex-row items-center justify-center gap-3">
-                <button
-                  onClick={() => setActiveTab("spp")}
-                  className="inline-flex items-center gap-2 text-xs font-bold text-slate-700 hover:text-primary transition-colors bg-slate-100 hover:bg-slate-200 px-5 py-3 rounded-xl shadow-sm"
-                >
-                  <CreditCard size={15} />
-                  <span>Lihat Rincian Riwayat SPP Santri (12 Bulan) &rarr;</span>
-                </button>
-              </div>
-            </div>
-          </div>
+        {showLockedPanel ? (
+          <LockedPanel
+            santri={santri}
+            nis={nis}
+            spp={data?.spp}
+            onOpenSpp={() => setActiveTab("spp")}
+            onKonfirmasi={() => setIsKonfirmasiOpen(true)}
+          />
         ) : (
           <>
-            {/* Grace Period Notification Banner (Tgl 1-10 jika lunas tapi masa bayar) */}
-            {data?.spp?.isGracePeriod && data?.spp?.lunas && (
-              <div className="bg-amber-50/90 backdrop-blur border border-amber-200/90 rounded-2xl p-4 flex items-center justify-between gap-4 text-xs shadow-md no-print print:hidden">
-                <div className="flex items-center gap-3">
-                  <div className="p-2 rounded-xl bg-amber-500 text-white shrink-0">
-                    <Clock size={16} />
-                  </div>
-                  <div>
-                    <h4 className="font-bold text-amber-950">Masa Pembayaran SPP Bulan {data.spp.namaBulan}</h4>
-                    <p className="text-amber-800/90 mt-0.5">
-                      Batas akhir pembayaran SPP adalah tanggal <strong>10 {data.spp.namaBulan}</strong>. Seluruh akses laporan santri tetap terbuka selama periode ini.
-                    </p>
-                  </div>
-                </div>
-                <div className="hidden sm:block text-right shrink-0">
-                  <span className="px-3 py-1 rounded-lg bg-amber-200/70 text-amber-900 font-bold">
-                    Masa Tenggang
-                  </span>
-                </div>
-              </div>
-            )}
-
-            {/* Back Button jika sedang di Tab SPP dalam kondisi locked */}
-            {isAccessLocked && activeTab === "spp" && (
-              <div className="bg-rose-50 border border-rose-200 rounded-2xl p-4 flex items-center justify-between gap-4 no-print print:hidden">
-                <div className="flex items-center gap-2.5 text-xs text-rose-900 font-bold">
-                  <Lock size={16} className="text-rose-600 shrink-0" />
-                  <span>Halaman ini hanya menampilkan rincian tagihan SPP. Lembar Rapor dan Mutabaah tetap terkunci.</span>
-                </div>
-                <button
-                  onClick={() => setActiveTab("ringkasan")}
-                  className="px-3.5 py-2 bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs rounded-xl shadow-sm transition-all shrink-0 flex items-center gap-1.5"
-                >
-                  <ArrowLeft size={13} />
-                  <span>Kembali ke Halaman Kunci</span>
-                </button>
-              </div>
-            )}
-
-            {/* Tab Navigation Menu (Hanya Tampil Jika Terbuka Penuh atau Tidak Terkunci) */}
-            {!isAccessLocked && (
-              <div className="bg-white/80 backdrop-blur rounded-2xl border border-slate-200/60 p-1.5 shadow-sm no-print print:hidden">
-                <div className="flex gap-1 overflow-x-auto">
-                  <button
-                    onClick={() => setActiveTab("ringkasan")}
-                    className={`px-4 py-2.5 rounded-xl transition-all flex items-center gap-2 whitespace-nowrap text-sm font-bold ${
-                      activeTab === "ringkasan"
-                        ? "bg-primary text-white shadow-md shadow-primary/30"
-                        : "text-slate-500 hover:bg-slate-100"
-                    }`}
-                  >
-                    <FileText size={16} />
-                    <span>1. Lembar Rapor Resmi</span>
-                  </button>
-
-                  <button
-                    onClick={() => setActiveTab("nilai")}
-                    className={`px-4 py-2.5 rounded-xl transition-all flex items-center gap-2 whitespace-nowrap text-sm font-bold ${
-                      activeTab === "nilai"
-                        ? "bg-primary text-white shadow-md shadow-primary/30"
-                        : "text-slate-500 hover:bg-slate-100"
-                    }`}
-                  >
-                    <BookOpen size={16} />
-                    <span>2. Nilai & Filter Mapel</span>
-                  </button>
-
-                  <button
-                    onClick={() => setActiveTab("presensi")}
-                    className={`px-4 py-2.5 rounded-xl transition-all flex items-center gap-2 whitespace-nowrap text-sm font-bold ${
-                      activeTab === "presensi"
-                        ? "bg-primary text-white shadow-md shadow-primary/30"
-                        : "text-slate-500 hover:bg-slate-100"
-                    }`}
-                  >
-                    <Calendar size={16} />
-                    <span>3. Rekap Presensi Absen</span>
-                  </button>
-
-                  <button
-                    onClick={() => setActiveTab("jurnal")}
-                    className={`px-4 py-2.5 rounded-xl transition-all flex items-center gap-2 whitespace-nowrap text-sm font-bold ${
-                      activeTab === "jurnal"
-                        ? "bg-primary text-white shadow-md shadow-primary/30"
-                        : "text-slate-500 hover:bg-slate-100"
-                    }`}
-                  >
-                    <FileText size={16} />
-                    <span>4. Jurnal Mengajar Guru</span>
-                  </button>
-
-                  <button
-                    onClick={() => setActiveTab("tahfidz")}
-                    className={`px-4 py-2.5 rounded-xl transition-all flex items-center gap-2 whitespace-nowrap text-sm font-bold ${
-                      activeTab === "tahfidz"
-                        ? "bg-primary text-white shadow-md shadow-primary/30"
-                        : "text-slate-500 hover:bg-slate-100"
-                    }`}
-                  >
-                    <HeartHandshake size={16} />
-                    <span>5. Halaqoh & Tahfidz Al-Qur&apos;an</span>
-                  </button>
-
-                  <button
-                    onClick={() => setActiveTab("spp")}
-                    className={`px-4 py-2.5 rounded-xl transition-all flex items-center gap-2 whitespace-nowrap text-sm font-bold ${
-                      activeTab === "spp"
-                        ? "bg-primary text-white shadow-md shadow-primary/30"
-                        : "text-slate-500 hover:bg-slate-100"
-                    }`}
-                  >
-                    <CreditCard size={16} />
-                    <span>6. SPP &amp; Wali Kelas</span>
-                  </button>
-                </div>
-              </div>
-            )}
+            {data?.spp?.isGracePeriod && data?.spp?.lunas && <GraceBanner namaBulan={data.spp.namaBulan} />}
+            {isAccessLocked && activeTab === "spp" && <LockedBackBar onBack={() => setActiveTab("ringkasan")} />}
+            {showTabs && <TabNav active={activeTab} onChange={setActiveTab} />}
           </>
         )}
 
-        {/* TAB CONTENT */}
-        {/* TAB 1: LEMBAR RAPOR RESMI (KASYFUD DARAJAT) */}
         {!isAccessLocked && activeTab === "ringkasan" && (
-          <div className="space-y-6">
-            {/* Header & Main Print Action Bar */}
-            <div className="card p-5 sm:p-6 shadow-xl shadow-primary/10 border border-slate-100 rounded-3xl bg-white/95 backdrop-blur flex flex-col sm:flex-row sm:items-center justify-between gap-4 no-print print:hidden">
-              <div className="flex items-center gap-3.5">
-                <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-primary to-rose-900 text-white flex items-center justify-center font-bold shadow-md shadow-primary/20 shrink-0">
-                  <FileText size={24} />
-                </div>
-                <div>
-                  <h3 className="font-extrabold text-slate-800 text-base sm:text-lg">
-                    Rapor Hasil Belajar Santri (Kasyfud Darajat)
-                  </h3>
-                  <p className="text-xs text-slate-500 mt-0.5">
-                    Penilaian Tengah Semester (PTS) • T.A. 2026/2027
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-2.5 flex-wrap">
-                <a
-                  href={`/rapor/print/${santri.id}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="btn btn-primary inline-flex items-center gap-2 text-xs sm:text-sm font-bold rounded-2xl px-5 py-2.5 shadow-lg shadow-primary/25 hover:scale-[1.02] transition-all"
-                >
-                  <Printer size={16} />
-                  <span>Cetak / Unduh PDF Resmi</span>
-                </a>
-              </div>
-            </div>
-
-            {/* LEMBAR RAPOR RESMI PESANTREN (100% IDENTIK DENGAN PRINT A4) */}
-            {cetakData ? (
-              <div className="w-full flex justify-center overflow-x-auto custom-scrollbar pb-4 print:overflow-visible print:p-0 print:m-0 print:block">
-                <RaporOfficialSheet data={cetakData} showPrintToolbar={false} />
-              </div>
-            ) : (
-              <div className="card p-12 text-center bg-white rounded-3xl shadow-sm border border-slate-100 no-print print:hidden">
-                <Loader2 className="animate-spin text-primary mx-auto mb-3" size={32} />
-                <p className="text-sm font-bold text-slate-600">Memuat Dokumen Resmi Rapor (A4)...</p>
-              </div>
-            )}
-
-            {/* TOMBOL AKSI CETAK DI DASAR RAPOR */}
-            <div className="flex justify-center pt-2 pb-6 no-print print:hidden">
-              <a
-                href={`/rapor/print/${santri?.id || cetakData?.santri?.id}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="btn btn-primary inline-flex items-center gap-2 text-sm font-bold rounded-2xl px-8 py-3.5 shadow-xl shadow-primary/30 hover:scale-[1.02] transition-all"
-              >
-                <Printer size={18} />
-                <span>Cetak / Unduh PDF Resmi</span>
-              </a>
-            </div>
-          </div>
+          <Panel id="ringkasan" tabbed={showTabs}>
+            <TabRapor printId={santri?.id || cetakData?.santri?.id} cetakData={cetakData} cetakError={cetakError} />
+          </Panel>
         )}
 
-        {/* TAB 2: DETAIL NILAI & FILTER PER MAPEL */}
         {!isAccessLocked && activeTab === "nilai" && (
-          <div className="space-y-6">
-            {/* Filter Bar specifically for Mapel */}
-            <div className="card p-5 bg-white/90 backdrop-blur rounded-2xl border border-slate-100 shadow-md flex flex-wrap items-center justify-between gap-4">
-              <div className="flex items-center gap-3">
-                <div className="p-2.5 bg-primary/10 text-primary rounded-xl">
-                  <Filter size={18} />
-                </div>
-                <div>
-                  <h3 className="font-bold text-slate-800 text-sm">Filter Mata Pelajaran</h3>
-                  <p className="text-xs text-slate-500">Pilih mata pelajaran tertentu (misal: Fiqh, Nahwu, Matematika) untuk melihat rincian nilai ananda</p>
-                </div>
-              </div>
-
-              <div className="w-full sm:w-72">
-                <select
-                  className="form-control"
-                  value={filterMapelNilai}
-                  onChange={(e) => setFilterMapelNilai(e.target.value)}
-                  style={{ fontWeight: 600 }}
-                >
-                  <option value="">— Tampilkan Semua Mata Pelajaran —</option>
-                  {(detail.mapelList || []).map((m: any) => (
-                    <option key={m.id || m.nama} value={m.nama}>
-                      {m.nama}
-                    </option>
-                  ))}
-                  {akademikGrouped.map((a) => (
-                    <option key={a.mapel_id} value={a.mapel_nama}>
-                      {a.mapel_nama}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            </div>
-
-            {/* Detailed Cards for each filtered Mapel */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-              {filteredAkademik.length === 0 ? (
-                <div className="col-span-full card p-12 text-center bg-white/90 backdrop-blur rounded-3xl border border-slate-100 text-slate-400 shadow-md">
-                  <BookOpen size={40} className="mx-auto mb-3 opacity-30" />
-                  <p className="font-bold text-slate-700">Belum ada nilai untuk mata pelajaran ini</p>
-                  <p className="text-xs text-slate-400 mt-1">Silakan pilih mata pelajaran lain pada dropdown di atas.</p>
-                </div>
-              ) : (
-                filteredAkademik.map((item) => (
-                  <div
-                    key={item.mapel_id}
-                    className="bg-white/90 backdrop-blur rounded-2xl p-6 border border-slate-100 shadow-md hover:shadow-lg transition-all space-y-4"
-                  >
-                    <div className="flex items-start justify-between gap-4">
-                      <div>
-                        <span className="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase bg-primary/10 text-primary border border-primary/20">
-                          {item.mapel_kategori || "Pelajaran Pokok"}
-                        </span>
-                        <h4 className="text-lg font-bold text-slate-800 mt-1.5">{item.mapel_nama}</h4>
-                      </div>
-                      <div className="text-right">
-                        <span className="text-[10px] font-bold text-slate-400 uppercase">Nilai Akhir</span>
-                        <p className="text-2xl font-black text-primary leading-none mt-0.5">
-                          {item.nilaiAkhir || "-"}
-                        </p>
-                        <span className={`text-[11px] font-bold ${
-                          item.nilaiAkhir && parseFloat(item.nilaiAkhir) >= 90 ? "text-emerald-700" :
-                          item.nilaiAkhir && parseFloat(item.nilaiAkhir) >= 80 ? "text-blue-700" :
-                          item.nilaiAkhir && parseFloat(item.nilaiAkhir) >= 70 ? "text-amber-700" :
-                          "text-red-600"
-                        }`}>{item.predikat}</span>
-                      </div>
-                    </div>
-
-                    {/* Breakdown 1 Component Boxes */}
-                    <div className="grid grid-cols-1 gap-2 pt-2 border-t border-slate-100 text-center">
-                      <div className="bg-primary/5 p-2.5 rounded-xl border border-primary/15">
-                        <span className="text-[10px] font-bold text-primary block">Nilai PTS Murni</span>
-                        <span className="text-base font-black text-primary mt-0.5 block">{item.hasUjian ? item.ujian : "-"}</span>
-                      </div>
-                    </div>
-
-                    <div className="flex items-center justify-between text-xs text-slate-500 pt-1">
-                      <span>Target KKM: <b>{item.kkm || getKkm(item.mapel_nama)}.0</b></span>
-                      {(() => {
-                        const nilai = item.nilaiAkhir ? parseFloat(item.nilaiAkhir) : null;
-                        const kkm = item.kkm || getKkm(item.mapel_nama);
-                        if (nilai === null) return <span className="inline-flex items-center gap-1 font-bold text-slate-400">— Belum Ada Nilai</span>;
-                        if (nilai >= kkm) return (
-                          <span className="inline-flex items-center gap-1 font-bold text-emerald-600">
-                            <CheckCircle2 size={13} /> {nilai === kkm ? "Pas KKM" : "Di Atas KKM"}
-                          </span>
-                        );
-                        return (
-                          <span className="inline-flex items-center gap-1 font-bold text-red-500">
-                            <XCircle size={13} /> Di Bawah KKM
-                          </span>
-                        );
-                      })()}
-                    </div>
-                  </div>
-                ))
-              )}
-            </div>
-          </div>
+          <Panel id="nilai" tabbed={showTabs}>
+            <TabNilai
+              items={filteredAkademik}
+              options={mapelOptionsNilai}
+              filter={filterMapelNilai}
+              onFilter={setFilterMapelNilai}
+            />
+          </Panel>
         )}
 
-        {/* TAB 3: REKAP PRESENSI LENGKAP */}
         {!isAccessLocked && activeTab === "presensi" && (
-          <div className="space-y-6">
-            {/* 4 Cards: Hadir, Sakit, Izin, Alpha */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-              <div className="bg-emerald-50/80 border border-emerald-200/80 p-5 rounded-2xl shadow-md">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-bold text-emerald-800 uppercase">Hadir</span>
-                  <CheckCircle2 size={18} className="text-emerald-600" />
-                </div>
-                <p className="text-3xl font-extrabold text-emerald-900 mt-2">{ringkasan.totalHadir || 0}</p>
-                <span className="text-[11px] text-emerald-700 font-medium">Hari Mengikuti KBM</span>
-              </div>
-
-              <div className="bg-amber-50/80 border border-amber-200/80 p-5 rounded-2xl shadow-md">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-bold text-amber-800 uppercase">Sakit</span>
-                  <AlertCircle size={18} className="text-amber-600" />
-                </div>
-                <p className="text-3xl font-extrabold text-amber-900 mt-2">{ringkasan.totalSakit || 0}</p>
-                <span className="text-[11px] text-amber-700 font-medium">Beristirahat / Dalam Perawatan</span>
-              </div>
-
-              <div className="bg-blue-50/80 border border-blue-200/80 p-5 rounded-2xl shadow-md">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-bold text-blue-800 uppercase">Izin</span>
-                  <HelpCircle size={18} className="text-blue-600" />
-                </div>
-                <p className="text-3xl font-extrabold text-blue-900 mt-2">{ringkasan.totalIzin || 0}</p>
-                <span className="text-[11px] text-blue-700 font-medium">Izin Resmi Pesantren</span>
-              </div>
-
-              <div className="bg-rose-50/80 border border-rose-200/80 p-5 rounded-2xl shadow-md">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-bold text-rose-800 uppercase">Alpha</span>
-                  <XCircle size={18} className="text-rose-600" />
-                </div>
-                <p className="text-3xl font-extrabold text-rose-900 mt-2">{ringkasan.totalAlpha || 0}</p>
-                <span className="text-[11px] text-rose-700 font-medium">Tanpa Keterangan</span>
-              </div>
-            </div>
-
-            {/* Presensi Table & Filter */}
-            <div className="card p-0 overflow-hidden shadow-xl shadow-primary/10 border border-slate-100 rounded-3xl bg-white/90 backdrop-blur">
-              <div className="p-5 border-b border-slate-100 flex flex-wrap items-center justify-between gap-4">
-                <div>
-                  <h3 className="font-bold text-slate-800 text-base">Riwayat Detail Presensi Harian</h3>
-                  <p className="text-xs text-slate-500 mt-0.5">Catatan seluruh tanggal kehadiran dan ketidakhadiran ananda di kelas</p>
-                </div>
-
-                <div className="flex flex-wrap items-center gap-2">
-                  <select
-                    className="form-control max-w-[200px] text-xs py-1.5"
-                    value={filterMapelPresensi}
-                    onChange={(e) => setFilterMapelPresensi(e.target.value)}
-                  >
-                    <option value="">Semua Mata Pelajaran</option>
-                    {(data.detail?.mapelList || []).map((m: any) => (
-                      <option key={m.id || m.nama} value={m.nama}>{m.nama}</option>
-                    ))}
-                  </select>
-                  <button
-                    onClick={() => setFilterStatusPresensi("")}
-                    className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
-                      filterStatusPresensi === "" ? "bg-primary text-white shadow-md shadow-primary/30" : "bg-slate-100 text-slate-600 hover:bg-slate-200"
-                    }`}
-                  >
-                    Semua Status ({data.detail.presensi?.length || 0})
-                  </button>
-                  <button
-                    onClick={() => setFilterStatusPresensi("tidak_hadir")}
-                    className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
-                      filterStatusPresensi === "tidak_hadir" ? "bg-amber-600 text-white shadow-md shadow-amber-600/30" : "bg-slate-100 text-slate-600 hover:bg-slate-200"
-                    }`}
-                  >
-                    Ketidakhadiran ({(ringkasan.totalSakit || 0) + (ringkasan.totalIzin || 0) + (ringkasan.totalAlpha || 0)})
-                  </button>
-                </div>
-              </div>
-
-              <div className="overflow-x-auto">
-                <table className="w-full text-left border-collapse" style={{ minWidth: 500 }}>
-                  <thead>
-                    <tr className="bg-slate-50 text-slate-500 text-xs font-bold uppercase border-b border-slate-100">
-                      <th className="py-3.5 px-4 w-12 text-center">No</th>
-                      <th className="py-3.5 px-4">Tanggal & Waktu</th>
-                      <th className="py-3.5 px-4">Mata Pelajaran</th>
-                      <th className="py-3.5 px-4 text-center">Status Kehadiran</th>
-                      <th className="py-3.5 px-4">Keterangan / Alasan</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {filteredPresensi.length === 0 ? (
-                      <tr>
-                        <td colSpan={5} className="text-center py-10 text-slate-400 text-sm">
-                          Tidak ada catatan presensi pada filter ini.
-                        </td>
-                      </tr>
-                    ) : (
-                      filteredPresensi.map((p: any, idx: number) => {
-                        let badgeClass = "bg-emerald-50 text-emerald-700 border-emerald-200";
-                        let statusText = "Hadir";
-                        if (p.status === "sakit") {
-                          badgeClass = "bg-amber-50 text-amber-700 border-amber-200";
-                          statusText = "Sakit";
-                        } else if (p.status === "izin") {
-                          badgeClass = "bg-blue-50 text-blue-700 border-blue-200";
-                          statusText = "Izin";
-                        } else if (p.status === "alpha") {
-                          badgeClass = "bg-rose-50 text-rose-700 border-rose-200";
-                          statusText = "Alpha";
-                        }
-
-                        return (
-                          <tr key={p.id || idx} className="border-b border-slate-50 hover:bg-slate-50/60 transition-colors text-sm shadow-sm">
-                            <td className="py-3 px-4 text-center text-slate-400 font-semibold">{idx + 1}</td>
-                            <td className="py-3 px-4">
-                              <span className="font-bold text-slate-800 block">{formatTanggal(p.tanggal)}</span>
-                              {p.jam_ke && <span className="text-[10px] text-slate-500 mt-0.5">Jam ke-{p.jam_ke}</span>}
-                            </td>
-                            <td className="py-3 px-4">
-                              <span className="font-semibold text-slate-700 text-xs">
-                                {p.mapel_nama || "-"}
-                              </span>
-                            </td>
-                            <td className="py-3 px-4 text-center">
-                              <span className={`px-3 py-1 rounded-full text-xs font-extrabold uppercase border ${badgeClass}`}>
-                                {statusText}
-                              </span>
-                            </td>
-                            <td className="py-3 px-4 text-slate-600 text-xs">
-                              {p.keterangan || <span className="text-slate-300 italic">Tidak ada catatan</span>}
-                            </td>
-                          </tr>
-                        );
-                      })
-                    )}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </div>
+          <Panel id="presensi" tabbed={showTabs}>
+            <TabPresensi
+              ringkasan={ringkasan}
+              rows={filteredPresensi}
+              totalRows={detail.presensi?.length || 0}
+              mapelList={mapelListNames}
+              filterMapel={filterMapelPresensi}
+              onFilterMapel={setFilterMapelPresensi}
+              filterStatus={filterStatusPresensi}
+              onFilterStatus={setFilterStatusPresensi}
+            />
+          </Panel>
         )}
 
-        {/* TAB 4: JURNAL MENGAJAR GURU DI KELAS ANANDA */}
         {!isAccessLocked && activeTab === "jurnal" && (
-          <div className="space-y-6">
-            {/* Filter Jurnal */}
-            <div className="card p-5 bg-white/90 backdrop-blur rounded-2xl border border-slate-100 shadow-md flex flex-wrap items-center justify-between gap-4">
-              <div className="flex items-center gap-3">
-                <div className="p-2.5 bg-primary/10 text-primary rounded-xl">
-                  <FileText size={18} />
-                </div>
-                <div>
-                  <h3 className="font-bold text-slate-800 text-sm">Jurnal Mengajar Para Guru</h3>
-                  <p className="text-xs text-slate-500">Transparansi KBM harian di kelas {santri.kelas} (Materi, Tujuan Pembelajaran & Aktivitas)</p>
-                </div>
-              </div>
-
-              <div className="w-full sm:w-auto flex flex-col sm:flex-row gap-3">
-                <select
-                  className="form-control text-sm"
-                  value={filterMapelJurnal}
-                  onChange={(e) => setFilterMapelJurnal(e.target.value)}
-                >
-                  <option value="">Semua Mata Pelajaran</option>
-                  {(data.detail?.mapelList || []).map((m: any) => (
-                    <option key={m.id || m.nama} value={m.nama}>{m.nama}</option>
-                  ))}
-                </select>
-                <input
-                  type="text"
-                  placeholder="Cari topik materi..."
-                  className="form-control text-sm"
-                  value={filterKeywordJurnal}
-                  onChange={(e) => setFilterKeywordJurnal(e.target.value)}
-                />
-              </div>
-            </div>
-
-            {/* Guidance on Mobile */}
-            <div className="sm:hidden flex items-center gap-1.5 px-3 py-2 bg-amber-50/90 border border-amber-200/80 rounded-xl text-[12px] font-medium text-amber-900 shadow-sm">
-              <ArrowRight className="w-4 h-4 text-amber-500 inline-block mr-1" /> Geser tabel ke kanan untuk melihat rincian guru, jam pelajaran, dan tombol detail.
-            </div>
-
-            {/* Jurnal Table */}
-            <div className="card p-0 overflow-hidden shadow-xl shadow-primary/10 border border-slate-100 rounded-3xl bg-white/90 backdrop-blur">
-              <div className="w-full overflow-x-auto">
-                <table className="w-full text-left border-collapse" style={{ minWidth: 700 }}>
-                  <thead>
-                    <tr className="bg-slate-50 text-slate-500 text-xs font-bold uppercase border-b border-slate-100">
-                      <th className="py-3.5 px-4" style={{ position: "sticky", left: 0, background: "#f8fafc", zIndex: 10, minWidth: 120 }}>Tanggal</th>
-                      <th className="py-3.5 px-4">Guru Pengampu</th>
-                      <th className="py-3.5 px-4">Mata Pelajaran</th>
-                      <th className="py-3.5 px-4 text-center">Jam Ke</th>
-                      <th className="py-3.5 px-4" style={{ minWidth: 200 }}>Materi Pembelajaran</th>
-                      <th className="py-3.5 px-4 text-center">Aksi</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {filteredJurnal.length === 0 ? (
-                      <tr>
-                        <td colSpan={6} className="text-center py-10 text-slate-400 text-sm">
-                          Belum ada jurnal mengajar yang tersimpan di kelas ananda.
-                        </td>
-                      </tr>
-                    ) : (
-                      filteredJurnal.map((j: any) => (
-                        <tr key={j.id} className="border-b border-slate-50 hover:bg-slate-50/60 transition-colors text-sm shadow-sm">
-                          <td
-                            className="py-3.5 px-4 font-bold text-primary"
-                            style={{ position: "sticky", left: 0, background: "#ffffff", zIndex: 5, boxShadow: "3px 0 6px -2px rgba(0,0,0,0.05)" }}
-                          >
-                            {formatTanggal(j.tanggal)}
-                          </td>
-                          <td className="py-3.5 px-4 font-bold text-slate-800">{j.asatidz}</td>
-                          <td className="py-3.5 px-4">
-                            <span className="font-semibold text-slate-800">{j.mapel}</span>
-                          </td>
-                          <td className="py-3.5 px-4 text-center">
-                            <span className="px-2 py-0.5 rounded-md bg-slate-100 text-slate-700 text-xs font-mono font-bold">
-                              {j.jam_ke}
-                            </span>
-                          </td>
-                          <td className="py-3.5 px-4 text-slate-700 text-xs truncate max-w-xs" title={j.materi}>
-                            {j.materi}
-                          </td>
-                          <td className="py-3.5 px-4 text-center">
-                            <button
-                              onClick={() => setSelectedJurnal({ ...j, kelas: j.kelas || santri.kelas, kelas_jenjang: santri.jenjang })}
-                              className="inline-flex items-center gap-1 px-3 py-1 rounded-xl text-xs font-bold bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-200 shadow-sm"
-                            >
-                              <Eye size={13} className="text-primary" />
-                              <span>Lihat Detail</span>
-                            </button>
-                          </td>
-                        </tr>
-                      ))
-                    )}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </div>
+          <Panel id="jurnal" tabbed={showTabs}>
+            <TabJurnal
+              rows={filteredJurnal}
+              kelas={santri.kelas}
+              mapelList={mapelListNames}
+              filterMapel={filterMapelJurnal}
+              onFilterMapel={setFilterMapelJurnal}
+              keyword={filterKeywordJurnal}
+              onKeyword={setFilterKeywordJurnal}
+              onDetail={(j) => setSelectedJurnal({ ...j, kelas: j.kelas || santri.kelas, kelas_jenjang: santri.jenjang })}
+            />
+          </Panel>
         )}
 
-        {/* TAB 5: HALAQOH & TAHFIDZ AL-QUR'AN */}
         {!isAccessLocked && activeTab === "tahfidz" && (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* 1. Hasil Ujian Tahfidz Card */}
-            <div className="bg-white/90 backdrop-blur rounded-3xl p-6 border border-slate-100 shadow-xl shadow-primary/10 space-y-4">
-              <div className="flex items-center gap-3 mb-2">
-                <div className="p-2.5 bg-blue-50 text-blue-700 rounded-xl">
-                  <Trophy size={20} />
-                </div>
-                <div>
-                  <h3 className="font-bold text-slate-800 text-base">Hasil Ujian Tahfidz Al-Qur&apos;an</h3>
-                  <p className="text-xs text-slate-500">Evaluasi Pra-Target, Target, dan Itqon Santri</p>
-                </div>
-              </div>
-
-              {(!detail.ujianTahfidz || detail.ujianTahfidz.length === 0) ? (
-                <div className="text-center text-slate-400 py-12">
-                  <BookOpen size={36} className="mx-auto mb-2 opacity-30" />
-                  <p className="text-sm font-medium">Belum ada riwayat ujian tahfidz pada periode ini.</p>
-                </div>
-              ) : (
-                <div className="space-y-3">
-                  {detail.ujianTahfidz?.map((u: any) => {
-                    let rawDari = u.ayat_dari !== null && u.ayat_dari !== undefined ? Number(u.ayat_dari) : null;
-                    let rawKe = u.ayat_ke !== null && u.ayat_ke !== undefined ? Number(u.ayat_ke) : null;
-
-                    let ayatDari = rawDari;
-                    let ayatKe = rawKe;
-                    if (ayatDari !== null && ayatKe !== null && ayatDari > ayatKe) {
-                      const temp = ayatDari;
-                      ayatDari = ayatKe;
-                      ayatKe = temp;
-                    }
-
-                    if (u.surah_nama?.toLowerCase().includes("yusuf")) {
-                      if (!ayatDari || !ayatKe || (ayatDari === 11 && ayatKe === 13) || (rawDari === 13 && rawKe === 11)) {
-                        ayatDari = 1;
-                        ayatKe = 52;
-                      }
-                    }
-
-                    const surahBase = u.surah_nama || "Yusuf";
-                    const surahNamaClean = surahBase.toLowerCase().startsWith("surah") ? surahBase : `Surah ${surahBase}`;
-                    const ayatText = ayatDari && ayatKe ? `Ayat ${ayatDari} - ${ayatKe}` : (u.surah_nama?.toLowerCase().includes("yusuf") ? "Ayat 1 - 52" : "");
-                    const halText = u.jumlah_halaman 
-                      ? `${u.jumlah_halaman} Halaman` 
-                      : (u.surah_nama?.toLowerCase().includes("yusuf") ? "5 Halaman" : null);
-
-                    return (
-                      <div key={u.id} className="p-4 rounded-2xl bg-slate-50/80 border border-slate-100 flex flex-col gap-3 shadow-sm">
-                        <div className="flex items-start justify-between">
-                          <div>
-                            <span className="text-[10px] font-extrabold uppercase px-2.5 py-0.5 rounded-full bg-blue-100 text-blue-800 tracking-wide">
-                              {u.jenis_ujian ? u.jenis_ujian.replace(/_/g, " ") : "UJIAN PRA TARGET"}
-                            </span>
-                            <h4 className="font-bold text-slate-800 text-sm sm:text-base mt-1.5 flex items-center flex-wrap gap-2">
-                              <span>{u.juz ? `Juz ${u.juz}` : surahNamaClean}</span>
-                              {ayatText && (
-                                <span className="text-xs font-bold text-primary bg-rose-50 px-2 py-0.5 rounded-md border border-rose-100">
-                                  ({ayatText})
-                                </span>
-                              )}
-                            </h4>
-                            <div className="flex items-center gap-2 mt-1 text-[11px] text-slate-500">
-                              <span>{formatTanggal(u.tanggal)}</span>
-                              {halText && (
-                                <>
-                                  <span>•</span>
-                                  <span className="font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200/50">
-                                    {halText}
-                                  </span>
-                                </>
-                              )}
-                            </div>
-                          </div>
-                          <div className="text-right">
-                            <span className={`px-3 py-1 rounded-xl bg-white border border-slate-200 text-sm font-black shadow-sm ${u.is_lulus ? 'text-emerald-600' : 'text-rose-600'}`}>
-                              {u.nilai_akhir}
-                            </span>
-                            <p className="text-[10px] font-bold mt-1 text-slate-400 uppercase">{u.is_lulus ? 'LULUS' : 'MENGULANG'}</p>
-                          </div>
-                        </div>
-                        <div className="grid grid-cols-3 gap-2 pt-3 border-t border-slate-200/60">
-                          <div className="text-center bg-white rounded-lg p-1.5 border border-slate-100 shadow-sm">
-                            <p className="text-[9px] text-slate-500 uppercase font-bold">Kelancaran</p>
-                            <p className="font-bold text-slate-700 text-xs">{u.nilai_kelancaran || "-"}</p>
-                          </div>
-                          <div className="text-center bg-white rounded-lg p-1.5 border border-slate-100 shadow-sm">
-                            <p className="text-[9px] text-slate-500 uppercase font-bold">Fashohah</p>
-                            <p className="font-bold text-slate-700 text-xs">{u.nilai_bacaan || "-"}</p>
-                          </div>
-                          <div className="text-center bg-white rounded-lg p-1.5 border border-slate-100 shadow-sm">
-                            <p className="text-[9px] text-slate-500 uppercase font-bold">Adab</p>
-                            <p className="font-bold text-slate-700 text-xs">{u.nilai_sikap || "-"}</p>
-                          </div>
-                        </div>
-                        {u.catatan && (
-                          <div className="bg-amber-50/50 p-2 rounded-lg border border-amber-100/50 mt-1">
-                            <p className="text-[10px] italic text-amber-700">&quot;{u.catatan}&quot;</p>
-                          </div>
-                        )}
-                      </div>
-                    );
-                  })}
-                </div>
-              )}
-            </div>
-
-            {/* 2. Capaian Mutabaah Tahfidz Harian Card */}
-            <div className="bg-white/90 backdrop-blur rounded-3xl p-6 border border-slate-100 shadow-xl shadow-primary/10 space-y-4">
-              <div className="flex items-center gap-3 mb-2">
-                <div className="p-2.5 bg-emerald-50 text-emerald-700 rounded-xl">
-                  <BookOpen size={20} />
-                </div>
-                <div>
-                  <h3 className="font-bold text-slate-800 text-base">Capaian Setoran Halaqoh Harian</h3>
-                  <p className="text-xs text-slate-500">Ziyadah (hafalan baru) &amp; Murojaah ba&apos;da Subuh &amp; Maghrib</p>
-                </div>
-              </div>
-
-              {(!detail.tahfidz || detail.tahfidz.length === 0) ? (
-                <div className="text-center text-slate-400 py-12">
-                  <BookOpen size={36} className="mx-auto mb-2 opacity-30" />
-                  <p className="text-sm font-medium">Belum ada riwayat setoran tahfidz tercatat.</p>
-                </div>
-              ) : (
-                <div className="space-y-3">
-                  {detail.tahfidz?.map((t: any) => (
-                    <div key={t.id} className="p-4 rounded-2xl bg-slate-50/80 border border-slate-100 flex items-center justify-between gap-4 shadow-sm">
-                      <div>
-                        <span className="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded bg-emerald-100 text-emerald-800">
-                          {t.jenis}
-                        </span>
-                        <h4 className="font-bold text-slate-800 text-sm mt-1">{t.surat} {t.ayat ? `(Ayat ${t.ayat})` : ""}</h4>
-                        <p className="text-[11px] text-slate-500 mt-0.5">{formatTanggal(t.tanggal)}</p>
-                      </div>
-                      <span className="px-3 py-1 rounded-xl bg-white border border-slate-200 text-xs font-bold text-emerald-700 shadow-sm">
-                        {t.keterangan || "Lancar"}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          </div>
+          <Panel id="tahfidz" tabbed={showTabs}>
+            <TabTahfidz ujian={detail.ujianTahfidz ?? []} setoran={detail.tahfidz ?? []} />
+          </Panel>
         )}
 
-        {/* TAB 6: SPP & WALI KELAS */}
         {activeTab === "spp" && (
-          <div className="space-y-6">
-            {loadingSpp ? (
-              <div className="card p-12 text-center bg-white/90 backdrop-blur rounded-3xl shadow-xl shadow-primary/10 border border-slate-100">
-                <Loader2 className="w-10 h-10 animate-spin text-primary mx-auto mb-3" />
-                <p className="text-slate-600 font-semibold text-sm">Memuat informasi SPP dan Wali Kelas...</p>
-              </div>
-            ) : (
-              <>
-                {/* 1. KARTU WALI KELAS */}
-                <div className="bg-gradient-to-br from-primary via-[#7a0000] to-rose-950 text-white rounded-3xl p-6 sm:p-8 shadow-xl shadow-primary/20 relative overflow-hidden">
-                  <div className="absolute -right-8 -top-8 w-48 h-48 bg-white/5 rounded-full border border-white/10 pointer-events-none" />
-                  <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
-                    <div className="flex items-center gap-4 sm:gap-5">
-                      <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-white/15 border-2 border-white/20 backdrop-blur flex items-center justify-center text-2xl font-black text-white shrink-0 shadow-lg">
-                        {sppHistory?.wali_kelas?.nama ? (
-                          sppHistory.wali_kelas.nama.slice(0, 2).toUpperCase()
-                        ) : (
-                          <User size={32} />
-                        )}
-                      </div>
-                      <div>
-                        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/15 border border-white/20 text-xs font-semibold text-rose-100 mb-1.5">
-                          <ShieldCheck size={13} />
-                          <span>Wali Kelas Ananda</span>
-                        </div>
-                        <h3 className="text-lg sm:text-xl font-black text-white leading-tight">
-                          {sppHistory?.wali_kelas?.nama || "Ustadz Pembina Kelas"}
-                        </h3>
-                        <p className="text-xs sm:text-sm text-rose-100/90 mt-1">
-                          Kelas {data?.santri?.kelas || sppHistory?.santri?.kelas || "-"} &bull; {data?.santri?.jenjang || sppHistory?.santri?.jenjang || "Pesantren Al-Imam"}
-                        </p>
-                      </div>
-                    </div>
-
-                    {/* WhatsApp Action Button */}
-                    <div className="flex flex-col sm:flex-row gap-3">
-                      {sppHistory?.wali_kelas?.no_hp ? (
-                        <a
-                          href={`https://wa.me/${sppHistory.wali_kelas.no_hp.replace(/[^0-9]/g, "").replace(/^0/, "62")}?text=${encodeURIComponent(
-                            `Assalamu'alaikum Warahmatullahi Wabarakatuh Ustadz ${sppHistory.wali_kelas.nama_panggilan || sppHistory.wali_kelas.nama}, saya orang tua dari ${data?.santri?.nama || sppHistory?.santri?.nama} (Kelas ${data?.santri?.kelas || sppHistory?.santri?.kelas}). Mohon izin bersilaturahmi dan berkonsultasi mengenai perkembangan ananda.`
-                          )}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center justify-center gap-2.5 px-5 py-3 rounded-2xl bg-emerald-500 hover:bg-emerald-600 text-white font-bold text-sm shadow-lg shadow-emerald-950/20 transition-all hover:scale-[1.02] active:scale-[0.98]"
-                        >
-                          <PhoneCall size={18} />
-                          <span>Hubungi via WhatsApp</span>
-                        </a>
-                      ) : (
-                        <div className="inline-flex items-center gap-2 px-4 py-3 rounded-2xl bg-white/10 text-white/80 text-xs font-medium">
-                          <AlertCircle size={15} />
-                          <span>Nomor kontak dapat dikoordinasikan via Kesantrian</span>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                </div>
-
-                {/* 2. STATS RINGKASAN SPP */}
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                  <div className="bg-gradient-to-br from-emerald-50 to-white rounded-2xl p-5 border border-emerald-100 shadow-md">
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="text-xs font-bold text-emerald-700 uppercase tracking-wide">Bulan Terbayar</span>
-                      <div className="p-2 bg-emerald-500 rounded-xl text-white">
-                        <CheckCircle2 size={16} />
-                      </div>
-                    </div>
-                    <p className="text-3xl font-black text-emerald-900">
-                      {sppHistory?.spp_summary?.total_lunas || 0}
-                      <span className="text-base font-semibold text-emerald-600 ml-1.5">Bulan</span>
-                    </p>
-                    <p className="text-[11px] text-emerald-600 mt-1">Status kewajiban lunas</p>
-                  </div>
-
-                  <div className="bg-gradient-to-br from-rose-50 to-white rounded-2xl p-5 border border-rose-100 shadow-md">
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="text-xs font-bold text-rose-700 uppercase tracking-wide">Tunggakan / Belum Lunas</span>
-                      <div className="p-2 bg-rose-500 rounded-xl text-white">
-                        <AlertTriangle size={16} />
-                      </div>
-                    </div>
-                    <p className="text-3xl font-black text-rose-900">
-                      {sppHistory?.spp_summary?.total_belum_lunas || 0}
-                      <span className="text-base font-semibold text-rose-600 ml-1.5">Bulan</span>
-                    </p>
-                    <p className="text-[11px] text-rose-600 mt-1 font-semibold">
-                      {sppHistory?.spp_summary?.total_nominal_tunggakan
-                        ? `Total Rp ${(sppHistory.spp_summary.total_nominal_tunggakan).toLocaleString("id-ID")}`
-                        : "Perlu penyelesaian administrasi"}
-                    </p>
-                  </div>
-
-                  <div className="bg-gradient-to-br from-blue-50 to-white rounded-2xl p-5 border border-blue-100 shadow-md">
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="text-xs font-bold text-blue-700 uppercase tracking-wide">Total Terbayar (12 Bulan)</span>
-                      <div className="p-2 bg-blue-500 rounded-xl text-white">
-                        <CreditCard size={16} />
-                      </div>
-                    </div>
-                    <p className="text-2xl font-black text-blue-900">
-                      Rp {(sppHistory?.spp_summary?.total_nominal_lunas || 0).toLocaleString("id-ID")}
-                    </p>
-                    <p className="text-[11px] text-blue-600 mt-1">Akumulasi riwayat tercatat</p>
-                  </div>
-                </div>
-
-                {/* 3. RIWAYAT PEMBAYARAN SPP 12 BULAN TERAKHIR */}
-                <div className="bg-white/90 backdrop-blur rounded-3xl p-6 sm:p-7 border border-slate-100 shadow-xl shadow-primary/10 space-y-5">
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-2 border-b border-slate-100">
-                    <div className="flex items-center gap-3">
-                      <div className="p-2.5 bg-primary/10 text-primary rounded-xl">
-                        <Calendar size={20} />
-                      </div>
-                      <div>
-                        <h3 className="font-bold text-slate-800 text-base sm:text-lg">Riwayat SPP 12 Bulan Terakhir</h3>
-                        <p className="text-xs text-slate-500">Transparansi pencatatan SPP bulanan santri di Safina Keuangan</p>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-2 self-start sm:self-auto flex-wrap">
-                      <button
-                        onClick={() => setIsKonfirmasiOpen(true)}
-                        className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-primary hover:bg-[#7a0000] text-white font-bold text-xs shadow-md shadow-primary/20 transition-all hover:scale-[1.02] active:scale-[0.98]"
-                      >
-                        <CreditCard size={14} />
-                        <span>Konfirmasi Pembayaran (WA/Upload)</span>
-                      </button>
-                      <span className="text-xs font-semibold px-3 py-1.5 rounded-full bg-slate-100 text-slate-600">
-                        Tahun Ajaran 2026/2027
-                      </span>
-                    </div>
-                  </div>
-
-                  {(!sppHistory?.spp_history || sppHistory.spp_history.length === 0) ? (
-                    <div className="text-center text-slate-400 py-12">
-                      <CreditCard size={36} className="mx-auto mb-2 opacity-30" />
-                      <p className="text-sm font-medium">Belum ada riwayat SPP yang dapat ditampilkan.</p>
-                    </div>
-                  ) : (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5">
-                      {sppHistory.spp_history.map((item: any, idx: number) => {
-                        const isLunas = item.status === "lunas";
-                        const isMenunggu = item.status === "menunggu_verifikasi";
-                        const isBelum = item.status === "belum_lunas";
-                        const isMendatang = item.status === "mendatang";
-
-                        return (
-                          <div
-                            key={idx}
-                            className={`p-4 rounded-2xl border transition-all ${
-                              item.is_bulan_ini
-                                ? "bg-amber-50/70 border-amber-300 ring-2 ring-amber-400/30 shadow-md"
-                                : isMenunggu
-                                ? "bg-amber-50/50 border-amber-300 hover:bg-amber-100/50 shadow-sm"
-                                : isLunas
-                                ? "bg-slate-50/70 border-slate-200/80 hover:bg-white"
-                                : isBelum
-                                ? "bg-rose-50/40 border-rose-200 hover:bg-rose-50/70"
-                                : "bg-slate-50/30 border-slate-100 opacity-75"
-                            }`}
-                          >
-                            <div className="flex items-start justify-between gap-2 mb-2">
-                              <div>
-                                <div className="flex items-center gap-2">
-                                  <h4 className="font-extrabold text-slate-800 text-sm">{item.label}</h4>
-                                  {item.is_bulan_ini && (
-                                    <span className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full bg-amber-500 text-white">
-                                      Bulan Ini
-                                    </span>
-                                  )}
-                                </div>
-                                <p className="text-xs font-semibold text-slate-600 mt-0.5">
-                                  Rp {(item.nominal || 0).toLocaleString("id-ID")}
-                                </p>
-                              </div>
-
-                              {isLunas ? (
-                                <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl bg-emerald-100 text-emerald-800 text-[11px] font-bold shrink-0">
-                                  <CheckCircle2 size={13} />
-                                  <span>Lunas</span>
-                                </span>
-                              ) : isMenunggu ? (
-                                <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl bg-amber-100 text-amber-900 border border-amber-300 text-[11px] font-bold shrink-0">
-                                  <Clock size={13} className="text-amber-600 animate-spin" />
-                                  <span>Sedang Diverifikasi</span>
-                                </span>
-                              ) : isBelum ? (
-                                <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl bg-rose-100 text-rose-800 text-[11px] font-bold shrink-0">
-                                  <XCircle size={13} />
-                                  <span>Belum Lunas</span>
-                                </span>
-                              ) : (
-                                <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl bg-slate-100 text-slate-600 text-[11px] font-semibold shrink-0">
-                                  <Clock size={13} />
-                                  <span>Mendatang</span>
-                                </span>
-                              )}
-                            </div>
-
-                            <div className="text-[11px] text-slate-500 pt-2 border-t border-slate-200/60 flex items-center justify-between">
-                              <span>Tanggal Bayar:</span>
-                              <span className="font-medium text-slate-700">
-                                {item.tanggal_bayar ? formatTanggal(item.tanggal_bayar) : isMendatang ? "Belum Jatuh Tempo" : isMenunggu ? "Menunggu Admin" : "-"}
-                              </span>
-                            </div>
-                            {item.metode_bayar && (
-                              <div className="text-[10px] text-slate-400 mt-1 flex items-center justify-between">
-                                <span>Metode:</span>
-                                <span className="font-semibold text-slate-600 capitalize">{item.metode_bayar}</span>
-                              </div>
-                            )}
-                          </div>
-                        );
-                      })}
-                    </div>
-                  )}
-
-                  {/* Catatan / Panduan Pembayaran */}
-                  <div className="p-4 rounded-2xl bg-amber-50/80 border border-amber-200/80 flex items-start gap-3 mt-4">
-                    <AlertCircle className="text-amber-700 shrink-0 mt-0.5" size={18} />
-                    <div className="text-xs text-amber-900 leading-relaxed">
-                      <p className="font-bold">Informasi Pembayaran &amp; Rekonsiliasi SPP</p>
-                      <p className="mt-0.5 text-amber-800">
-                        Pembayaran SPP dilakukan melalui rekening resmi Pesantren Islam Al-Imam. Jika telah melakukan transfer namun status belum terbarui, silakan klik tombol <strong>Konfirmasi Pembayaran (WA/Upload)</strong> di atas atau hubungi Admin Keuangan via WhatsApp.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </>
-            )}
-          </div>
+          <Panel id="spp" tabbed={showTabs}>
+            <TabSpp
+              loading={loadingSpp}
+              sppHistory={sppHistory}
+              santri={santri}
+              onKonfirmasi={() => setIsKonfirmasiOpen(true)}
+            />
+          </Panel>
         )}
-      </div>
+      </main>
 
-      {/* Modal Konfirmasi SPP Mandiri */}
       <ModalKonfirmasiSPP
         isOpen={isKonfirmasiOpen}
         onClose={() => setIsKonfirmasiOpen(false)}
         santriId={targetSantriId}
         santriNama={santri?.nama || ""}
-        santriNis={(santri?.nama ? getOfficialNis(santri.nama) : null) || santri?.nis || ""}
+        santriNis={nis || ""}
         santriKelas={santri?.kelas || ""}
         sppHistoryList={sppHistory?.spp_history || []}
         onSuccess={refreshSppData}
       />
 
-      {/* Ultra-Premium Jurnal Detail Modal */}
-      <JurnalDetailModal
-        data={selectedJurnal}
-        onClose={() => setSelectedJurnal(null)}
-      />
+      <JurnalDetailModal data={selectedJurnal} onClose={() => setSelectedJurnal(null)} />
     </div>
   );
 }

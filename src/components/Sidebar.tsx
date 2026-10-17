@@ -2,473 +2,447 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { 
-  BookOpen, 
-  LayoutDashboard, 
-  BookMarked, 
-  ClipboardCheck, 
-  UserCheck, 
-  BarChart3, 
-  LogOut, 
-  Menu, 
-  X, 
-  GraduationCap, 
-  Users, 
-  Settings, 
-  Database,
-  CreditCard,
-  HeartHandshake,
+import { useCallback, useEffect, useMemo, useState } from "react";
+import {
+  Award,
+  BarChart3,
   BookHeart,
-  Award
+  BookMarked,
+  BookOpen,
+  ClipboardCheck,
+  CreditCard,
+  Database,
+  FileSpreadsheet,
+  HeartHandshake,
+  LayoutDashboard,
+  LogOut,
+  Menu,
+  Settings,
+  UserCheck,
+  Users,
+  X,
 } from "lucide-react";
-import { FileSpreadsheet } from "lucide-react";
-import { useState } from "react";
+import type { LucideIcon } from "lucide-react";
+
+/* ═══════════════════════════ Konfigurasi menu ═══════════════════════════ */
 
 interface NavItem {
   href: string;
   label: string;
-  icon: React.ReactNode;
-  roles?: string[];
+  icon: LucideIcon;
+  /** Peran yang boleh melihat menu (huruf kecil semua; pencocokan tidak peka huruf besar/kecil). */
+  roles: string[];
+  /** Menu dengan aturan akses khusus (lihat canSeeRestricted). */
+  restricted?: boolean;
 }
 
 const NAV: NavItem[] = [
   {
     href: "/dashboard",
     label: "Dashboard",
-    icon: <LayoutDashboard size={18} />,
-    roles: ["admin_super", "ADMIN_SUPER", "guru", "GURU", "musyrif", "MUSYRIF", "pengampu_halaqoh", "PENGAMPU_HALAQOH", "wali_kelas", "WALI_KELAS", "mudir", "MUDIR", "kepala_sekolah", "KEPALA_SEKOLAH", "kadiv_pengasuhan", "KADIV_PENGASUHAN", "kadiv_asrama", "KADIV_ASRAMA", "kadiv_kedisiplinan", "KADIV_KEDISIPLINAN", "kadiv_kurikulum", "KADIV_KURIKULUM", "admin_keuangan", "ADMIN_KEUANGAN"] },
-  {
-    href: "/wali/rapor",
-    label: "Rapor & Akademik",
-    icon: <BookOpen size={18} />,
-    roles: ["wali_santri", "WALI_SANTRI", "orang_tua", "wali"] },
-  {
-    href: "/keuangan",
-    label: "Keuangan",
-    icon: <CreditCard size={18} />,
-    roles: ["admin_keuangan", "ADMIN_KEUANGAN", "admin_super", "ADMIN_SUPER", "mudir", "MUDIR"] },
+    icon: LayoutDashboard,
+    roles: [
+      "admin_super", "guru", "musyrif", "pengampu_halaqoh", "wali_kelas", "mudir",
+      "kepala_sekolah", "kadiv_pengasuhan", "kadiv_asrama", "kadiv_kedisiplinan",
+      "kadiv_kurikulum", "admin_keuangan",
+    ],
+  },
+  { href: "/wali/rapor", label: "Rapor & Akademik", icon: BookOpen, roles: ["wali_santri", "orang_tua", "wali"] },
+  { href: "/keuangan", label: "Keuangan", icon: CreditCard, roles: ["admin_keuangan", "admin_super", "mudir"] },
   {
     href: "/presensi/santri",
     label: "Presensi Santri",
-    icon: <ClipboardCheck size={18} />,
-    roles: ["guru", "GURU", "wali_kelas", "WALI_KELAS", "kadiv_kedisiplinan", "KADIV_KEDISIPLINAN", "kadiv_kurikulum", "KADIV_KURIKULUM", "kepala_sekolah", "KEPALA_SEKOLAH", "admin_super", "ADMIN_SUPER", "mudir", "MUDIR"] },
+    icon: ClipboardCheck,
+    roles: ["guru", "wali_kelas", "kadiv_kedisiplinan", "kadiv_kurikulum", "kepala_sekolah", "admin_super", "mudir"],
+  },
   {
     href: "/jurnal",
     label: "Jurnal Mengajar",
-    icon: <BookMarked size={18} />,
-    roles: ["guru", "GURU", "kadiv_kurikulum", "KADIV_KURIKULUM", "kepala_sekolah", "KEPALA_SEKOLAH", "admin_super", "ADMIN_SUPER", "mudir", "MUDIR"] },
+    icon: BookMarked,
+    roles: ["guru", "kadiv_kurikulum", "kepala_sekolah", "admin_super", "mudir"],
+  },
   {
     href: "/nilai",
     label: "Input Nilai",
-    icon: <BarChart3 size={18} />,
-    roles: ["guru", "GURU", "wali_kelas", "WALI_KELAS", "kadiv_kurikulum", "KADIV_KURIKULUM", "kepala_sekolah", "KEPALA_SEKOLAH", "admin_super", "ADMIN_SUPER", "mudir", "MUDIR"] },
+    icon: BarChart3,
+    roles: ["guru", "wali_kelas", "kadiv_kurikulum", "kepala_sekolah", "admin_super", "mudir"],
+  },
   {
     href: "/nilai/rekap",
     label: "Laporan Nilai",
-    icon: <FileSpreadsheet size={18} />,
-    roles: ["wali_kelas", "WALI_KELAS", "kadiv_kurikulum", "KADIV_KURIKULUM", "kepala_sekolah", "KEPALA_SEKOLAH", "admin_super", "ADMIN_SUPER", "mudir", "MUDIR"] },
+    icon: FileSpreadsheet,
+    roles: ["wali_kelas", "kadiv_kurikulum", "kepala_sekolah", "admin_super", "mudir"],
+    restricted: true,
+  },
   {
     href: "/akademik/pantau-nilai",
     label: "Pantau Nilai",
-    icon: <BarChart3 size={18} />,
-    roles: ["wali_kelas", "WALI_KELAS", "kadiv_kurikulum", "KADIV_KURIKULUM", "kepala_sekolah", "KEPALA_SEKOLAH", "admin_super", "ADMIN_SUPER", "mudir", "MUDIR"] },
+    icon: BarChart3,
+    roles: ["wali_kelas", "kadiv_kurikulum", "kepala_sekolah", "admin_super", "mudir"],
+    restricted: true,
+  },
   {
     href: "/wali-kelas",
     label: "Hub Wali Kelas",
-    icon: <Users size={18} />,
-    roles: ["wali_kelas", "WALI_KELAS", "kadiv_kurikulum", "KADIV_KURIKULUM", "kepala_sekolah", "KEPALA_SEKOLAH", "admin_super", "ADMIN_SUPER", "mudir", "MUDIR"] },
+    icon: Users,
+    roles: ["wali_kelas", "kadiv_kurikulum", "kepala_sekolah", "admin_super", "mudir"],
+  },
   {
     href: "/halaqoh",
     label: "Halaqoh & Mutabaah",
-    icon: <BookHeart size={18} />,
+    icon: BookHeart,
     roles: [
-      "pengampu", "PENGAMPU",
-      "musyrif", "MUSYRIF",
-      "guru", "GURU",
-      "wali_kelas", "WALI_KELAS",
-      "kadiv_pengasuhan", "KADIV_PENGASUHAN",
-      "kadiv_asrama", "KADIV_ASRAMA",
-      "kadiv_kurikulum", "KADIV_KURIKULUM",
-      "admin_super", "ADMIN_SUPER",
-      "mudir", "MUDIR",
-    ] },
+      "pengampu", "musyrif", "guru", "wali_kelas", "kadiv_pengasuhan", "kadiv_asrama",
+      "kadiv_kurikulum", "admin_super", "mudir",
+    ],
+  },
   {
     href: "/halaqoh/monitoring",
     label: "Pantau Ujian Tahfidz",
-    icon: <Award size={18} />,
-    roles: [
-      "wali_kelas", "WALI_KELAS",
-      "kadiv_kurikulum", "KADIV_KURIKULUM",
-      "admin_super", "ADMIN_SUPER",
-      "mudir", "MUDIR",
-    ] },
+    icon: Award,
+    roles: ["wali_kelas", "kadiv_kurikulum", "admin_super", "mudir"],
+    restricted: true,
+  },
   {
     href: "/ibadah",
     label: "Ibadah & Adab (BPI)",
-    icon: <HeartHandshake size={18} />,
+    icon: HeartHandshake,
     roles: [
-      "musyrif", "MUSYRIF",
-      "pengasuh", "PENGASUH",
-      "kadiv_pengasuhan", "KADIV_PENGASUHAN",
-      "kadiv_asrama", "KADIV_ASRAMA",
-      "kadiv_kedisiplinan", "KADIV_KEDISIPLINAN",
-      "wali_kelas", "WALI_KELAS",
-      "admin_super", "ADMIN_SUPER",
-      "mudir", "MUDIR",
-    ] },
+      "musyrif", "pengasuh", "kadiv_pengasuhan", "kadiv_asrama", "kadiv_kedisiplinan",
+      "wali_kelas", "admin_super", "mudir",
+    ],
+  },
   {
     href: "/presensi/asatidz",
     label: "Absensi Pegawai",
-    icon: <UserCheck size={18} />,
-    roles: ["guru", "GURU", "musyrif", "MUSYRIF", "pengampu", "PENGAMPU", "wali_kelas", "WALI_KELAS", "kepala_sekolah", "KEPALA_SEKOLAH", "kadiv_kurikulum", "KADIV_KURIKULUM", "kadiv_pengasuhan", "KADIV_PENGASUHAN", "admin_super", "ADMIN_SUPER", "mudir", "MUDIR"] },
+    icon: UserCheck,
+    roles: [
+      "guru", "musyrif", "pengampu", "wali_kelas", "kepala_sekolah", "kadiv_kurikulum",
+      "kadiv_pengasuhan", "admin_super", "mudir",
+    ],
+  },
   {
     href: "/pengaturan/kendali",
     label: "Pusat Kendali",
-    icon: <Settings size={18} />,
-    roles: ["admin_super", "ADMIN_SUPER", "kadiv_kurikulum", "KADIV_KURIKULUM", "mudir", "MUDIR"] },
-  {
-    href: "/master",
-    label: "Master Data",
-    icon: <Database size={18} />,
-    roles: ["admin_super", "ADMIN_SUPER", "mudir", "MUDIR", "kadiv_kurikulum", "KADIV_KURIKULUM"] },
+    icon: Settings,
+    roles: ["admin_super", "kadiv_kurikulum", "mudir"],
+  },
+  { href: "/master", label: "Master Data", icon: Database, roles: ["admin_super", "mudir", "kadiv_kurikulum"] },
 ];
 
-interface SidebarProps {
-  user: { nama: string; role: string; email: string; foto_url?: string; originalRole?: string };
+const ROLE_LABEL: Record<string, string> = {
+  ADMIN_SUPER: "Admin Super",
+  GURU: "Guru Mapel",
+  MUSYRIF: "Pengasuh Asrama",
+  PENGAMPU: "Pengampu Halaqoh",
+  PENGAMPU_HALAQOH: "Pengampu Halaqoh",
+  WALI_KELAS: "Wali Kelas",
+  MUDIR: "Mudir Pesantren",
+  KEPALA_SEKOLAH: "Kepala Sekolah",
+  KADIV_PENGASUHAN: "Kadiv Pengasuhan",
+  KADIV_ASRAMA: "Kadiv Asrama",
+  KADIV_KEDISIPLINAN: "Kadiv Kedisiplinan",
+  KADIV_KURIKULUM: "Kadiv Kurikulum",
+  ADMIN_KEUANGAN: "Admin Keuangan",
+  WALI_SANTRI: "Portal Wali Santri",
+};
+
+// TODO: pengecualian berdasarkan nama ini sebaiknya diganti dengan peran "wali_kelas"
+// / "kadiv_kurikulum" langsung di database, lalu daftar nama di bawah dihapus.
+const WALI_KELAS_BY_NAME = ["agus cahyono", "imron", "thoriq"];
+const KURIKULUM_BY_NAME = ["imron"];
+
+/* ═══════════════════════════ Helper ═══════════════════════════ */
+
+const focusRing =
+  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#550000]/40 focus-visible:ring-offset-1";
+
+function formatRoleDisplay(roleStr: string): string {
+  if (!roleStr) return "Pengguna";
+  return roleStr
+    .toUpperCase()
+    .split(",")
+    .map((r) => ROLE_LABEL[r.trim()] || r.trim())
+    .join(" & ");
 }
+
+/* ═══════════════════════════ Tipe ═══════════════════════════ */
+
+interface SidebarUser {
+  nama: string;
+  role: string;
+  email: string;
+  foto_url?: string;
+  originalRole?: string;
+}
+
+interface SidebarProps {
+  user: SidebarUser;
+}
+
+interface SidebarContentProps {
+  user: SidebarUser;
+  items: NavItem[];
+  activeHref: string | null;
+  onNavigate: () => void;
+  onLogout: () => void;
+  /** Hanya diisi pada drawer mobile: menampilkan tombol tutup. */
+  onClose?: () => void;
+}
+
+/* ═══════════════════════════ Isi sidebar ═══════════════════════════ */
+/* Didefinisikan di luar komponen Sidebar agar tidak dibuat ulang (dan di-remount) pada setiap render. */
+
+function SidebarContent({ user, items, activeHref, onNavigate, onLogout, onClose }: SidebarContentProps) {
+  const roleUpper = (user?.role || "").toUpperCase();
+  const isWaliRole = roleUpper.includes("WALI");
+  const isAdminRole = roleUpper.includes("ADMIN");
+  const isWaliSantri = (user?.role || "").toLowerCase() === "wali_santri";
+
+  const displayName = isWaliRole
+    ? (user?.nama || "User").replace(/^Wali dari\s+/i, "")
+    : user?.nama || "User";
+  const initial = (displayName || "U").charAt(0).toUpperCase();
+
+  return (
+    <>
+      {/* Logo */}
+      <div
+        className="sidebar-logo flex items-center justify-between gap-2.5 border-b bg-white pb-4 pl-[18px] pr-3.5"
+        style={{
+          paddingTop: "max(18px, env(safe-area-inset-top))",
+          borderBottomColor: "var(--border)",
+        }}
+      >
+        <div className="flex min-w-0 items-center gap-2.5">
+          <img src="/logo.png" alt="Logo Al-Imam" width={44} height={44} className="h-11 w-11 shrink-0 object-contain" />
+          <div className="min-w-0">
+            <h1 className="m-0 text-base font-extrabold leading-tight tracking-tight text-[#550000]">SIKAP</h1>
+            <p className="m-0 mt-0.5 truncate text-[10px] font-semibold uppercase tracking-[0.08em] text-slate-500">
+              Al-Imam Al-Islami
+            </p>
+          </div>
+        </div>
+
+        {onClose && (
+          <button
+            type="button"
+            onClick={onClose}
+            aria-label="Tutup menu"
+            className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-slate-100 text-slate-700 transition-colors hover:bg-slate-200 ${focusRing}`}
+          >
+            <X size={18} aria-hidden="true" />
+          </button>
+        )}
+      </div>
+
+      {/* Navigasi */}
+      <nav className="sidebar-nav sidebar-scroll-menu overscroll-contain" aria-label="Menu utama">
+        <div className="sidebar-section-title">Menu Utama</div>
+        {items.map(({ href, label, icon: Icon }) => {
+          const active = activeHref === href;
+          return (
+            <Link
+              key={href}
+              href={href}
+              onClick={onNavigate}
+              aria-current={active ? "page" : undefined}
+              className={`sidebar-link ${active ? "active" : ""} ${focusRing}`}
+            >
+              <Icon size={18} aria-hidden="true" />
+              {label}
+            </Link>
+          );
+        })}
+      </nav>
+
+      {/* Footer */}
+      <div className="sidebar-footer">
+        <div className="mb-3 flex items-center gap-2.5">
+          {user?.foto_url ? (
+            <img
+              src={user.foto_url}
+              alt=""
+              width={36}
+              height={36}
+              className="h-9 w-9 shrink-0 rounded-full border-[1.5px] border-[#ebdcc3] object-cover shadow-sm"
+            />
+          ) : (
+            <div
+              aria-hidden="true"
+              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-[#ebdcc3] bg-[#fdf5f5] text-sm font-extrabold text-[#550000]"
+            >
+              {initial}
+            </div>
+          )}
+          <div className="min-w-0 flex-1">
+            <p className="truncate text-[13px] font-bold text-[#550000]" title={displayName}>
+              {displayName}
+            </p>
+            <p
+              className={`truncate text-[11px] ${
+                isAdminRole ? "font-bold text-[#550000]" : "font-medium text-slate-500"
+              }`}
+            >
+              {formatRoleDisplay(user?.role || "")}
+            </p>
+          </div>
+        </div>
+
+        {!isWaliSantri && (
+          <button
+            type="button"
+            onClick={() => {
+              onNavigate();
+              window.dispatchEvent(new CustomEvent("open-teacher-mapel-modal"));
+            }}
+            className={`btn btn-ghost btn-sm mb-1.5 w-full cursor-pointer justify-center border-[#ebdcc3] bg-white py-[7px] text-[11px] font-bold text-[#380000] transition-colors hover:bg-[#fdf5f5] ${focusRing}`}
+          >
+            <BookOpen size={13} className="mr-1" aria-hidden="true" />
+            Atur Profil &amp; Mapel
+          </button>
+        )}
+
+        <div className="flex w-full gap-1.5">
+          <Link
+            href="/profile"
+            onClick={onNavigate}
+            className={`btn btn-ghost btn-sm flex-1 justify-center border-[#ebdcc3] bg-[#fcfaf8] py-[7px] text-[11px] text-slate-500 ${focusRing}`}
+          >
+            <Settings size={13} aria-hidden="true" />
+            Profil
+          </Link>
+          <button
+            type="button"
+            onClick={onLogout}
+            className={`btn btn-ghost btn-sm flex-1 cursor-pointer justify-center border-[#ebdcc3] bg-[#fdf5f5] py-[7px] text-[11px] text-[#550000] ${focusRing}`}
+          >
+            <LogOut size={13} aria-hidden="true" />
+            Keluar
+          </button>
+        </div>
+      </div>
+    </>
+  );
+}
+
+/* ═══════════════════════════ Sidebar ═══════════════════════════ */
 
 export default function Sidebar({ user }: SidebarProps) {
   const pathname = usePathname();
   const router = useRouter();
   const [mobileOpen, setMobileOpen] = useState(false);
 
-  const isActive = (href: string) => {
-    if (pathname === href) return true;
-    if (href === "/dashboard") return false;
-    if (href === "/nilai" && pathname.startsWith("/nilai/rekap")) return false;
-    
-    return pathname.startsWith(href);
-  };
+  const closeMobile = useCallback(() => setMobileOpen(false), []);
 
-  const userRoles = (user?.role || "").toLowerCase().split(",").map(r => r.trim());
-  const userName = (user?.nama || "").toLowerCase();
-  const isWaliByName = ["agus cahyono", "imron", "thoriq"].some(n => userName.includes(n));
-  const visibleNav = NAV.filter(
-    (item) => {
-      if (!item.roles) return true;
-      if (item.href === "/nilai/rekap" || item.href === "/akademik/pantau-nilai" || item.href === "/halaqoh/monitoring") {
-        const isSuper = userRoles.some(r => ["admin_super", "mudir", "kepala_sekolah", "admin_rapor"].includes(r));
-        const isKurikulum = userRoles.some(r => ["kadiv_kurikulum", "kepala_kurikulum"].includes(r)) || userName.includes("imron");
-        const isWali = userRoles.includes("wali_kelas") || isWaliByName;
-        return isSuper || isKurikulum || isWali;
-      }
-      return item.roles.some((r) => userRoles.includes(r.toLowerCase())) || (item.roles.includes("wali_kelas") && isWaliByName);
-    }
-  );
-
-  async function handleLogout() {
-    await fetch("/api/auth/logout", { method: "POST" });
-    router.push("/login");
-    router.refresh();
-  }
-
-  const formatRoleDisplay = (roleStr: string) => {
-    if (!roleStr) return "Pengguna";
-    const mapping: Record<string, string> = {
-      ADMIN_SUPER: "Admin Super",
-      GURU: "Guru Mapel",
-      MUSYRIF: "Pengasuh Asrama",
-      PENGAMPU: "Pengampu Halaqoh",
-      PENGAMPU_HALAQOH: "Pengampu Halaqoh",
-      WALI_KELAS: "Wali Kelas",
-      MUDIR: "Mudir Pesantren",
-      KEPALA_SEKOLAH: "Kepala Sekolah",
-      KADIV_PENGASUHAN: "Kadiv Pengasuhan",
-      KADIV_ASRAMA: "Kadiv Asrama",
-      KADIV_KEDISIPLINAN: "Kadiv Kedisiplinan",
-      KADIV_KURIKULUM: "Kadiv Kurikulum",
-      ADMIN_KEUANGAN: "Admin Keuangan",
-      WALI_SANTRI: "Portal Wali Santri" };
-    
-    return roleStr
-      .toUpperCase()
+  // Menu yang boleh dilihat pengguna
+  const visibleNav = useMemo(() => {
+    const userRoles = (user?.role || "")
+      .toLowerCase()
       .split(",")
-      .map(r => mapping[r.trim()] || r.trim())
-      .join(" & ");
-  };
+      .map((r) => r.trim())
+      .filter(Boolean);
+    const userName = (user?.nama || "").toLowerCase();
+    const isWaliByName = WALI_KELAS_BY_NAME.some((n) => userName.includes(n));
+    const hasRole = (list: string[]) => userRoles.some((r) => list.includes(r));
 
-  const SidebarContent = () => (
-    <>
-      {/* Logo */}
-      <div
-        className="sidebar-logo"
-        style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          gap: 10,
-          paddingTop: "max(18px, env(safe-area-inset-top))",
-          paddingBottom: "16px",
-          paddingLeft: "18px",
-          paddingRight: "14px",
-          background: "#ffffff",
-          borderBottom: "1px solid var(--border)" }}
-      >
-        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-          <img src="/logo.png" alt="Logo Al-Imam" style={{ width: 44, height: 44, objectFit: "contain" }} />
-          <div>
-            <h1 style={{ margin: 0, fontSize: "16px", fontWeight: 800, color: "#550000", letterSpacing: "-0.02em", lineHeight: 1.2 }}>SIKAP</h1>
-            <p style={{ margin: 0, fontSize: "10px", color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.08em", fontWeight: 600, marginTop: "2px" }}>Al-Imam Al-Islami</p>
-          </div>
-        </div>
+    const canSeeRestricted = () => {
+      const isSuper = hasRole(["admin_super", "mudir", "kepala_sekolah", "admin_rapor"]);
+      const isKurikulum =
+        hasRole(["kadiv_kurikulum", "kepala_kurikulum"]) || KURIKULUM_BY_NAME.some((n) => userName.includes(n));
+      const isWali = userRoles.includes("wali_kelas") || isWaliByName;
+      return isSuper || isKurikulum || isWali;
+    };
 
-        {/* Mobile close button inside drawer header */}
-        <button
-          type="button"
-          onClick={() => setMobileOpen(false)}
-          className="sm:hidden"
-          style={{
-            background: "#f1f5f9",
-            border: "none",
-            color: "var(--text-main)",
-            width: 32,
-            height: 32,
-            borderRadius: 8,
-            cursor: "pointer",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            flexShrink: 0,
-            transition: "all 0.15s ease" }}
-          aria-label="Tutup Menu"
-        >
-          <X size={18} />
-        </button>
-      </div>
+    return NAV.filter((item) => {
+      if (item.restricted) return canSeeRestricted();
+      return hasRole(item.roles) || (item.roles.includes("wali_kelas") && isWaliByName);
+    });
+  }, [user?.role, user?.nama]);
 
-      {/* Nav */}
-      <nav className="sidebar-nav sidebar-scroll-menu">
-        <div className="sidebar-section-title">Menu Utama</div>
-        {visibleNav.map((item) => (
-          <Link
-            key={item.href}
-            href={item.href}
-            className={`sidebar-link ${isActive(item.href) ? "active" : ""}`}
-            onClick={() => setMobileOpen(false)}
-            style={{
-              transform: isActive(item.href) ? "none" : undefined,
-              transition: "all 0.18s cubic-bezier(0.34, 1.56, 0.64, 1)" }}
-          >
-            {item.icon}
-            {item.label}
-          </Link>
-        ))}
-      </nav>
+  // Satu menu aktif saja: kecocokan terpanjang (mis. /halaqoh/monitoring tidak ikut menyalakan /halaqoh)
+  const activeHref = useMemo(() => {
+    let best: string | null = null;
+    for (const { href } of visibleNav) {
+      const match = href === "/dashboard" ? pathname === href : pathname === href || pathname.startsWith(`${href}/`);
+      if (match && (best === null || href.length > best.length)) best = href;
+    }
+    return best;
+  }, [pathname, visibleNav]);
 
-      {/* Footer */}
-      <div className="sidebar-footer">
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: 10,
-            marginBottom: 12 }}
-        >
-          {user?.foto_url ? (
-            <img
-              src={user.foto_url}
-              alt={user.nama || "Profile"}
-              style={{
-                width: 36,
-                height: 36,
-                borderRadius: "50%",
-                objectFit: "cover",
-                border: "1.5px solid #ebdcc3",
-                flexShrink: 0,
-                boxShadow: "0 2px 6px rgba(0,0,0,0.1)"
-              }}
-            />
-          ) : (
-            <div
-              style={{
-                width: 36,
-                height: 36,
-                borderRadius: "50%",
-                background: "#fdf5f5",
-                border: "1px solid #ebdcc3",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                flexShrink: 0,
-                fontSize: 14,
-                fontWeight: 800,
-                color: "#550000" }}
-            >
-              {(((user?.role || "").toUpperCase().includes("WALI")
-                ? (user?.nama || "").replace(/^Wali dari\s+/i, "")
-                : (user?.nama || "U")) || "U").charAt(0).toUpperCase()}
-            </div>
-          )}
-          <div style={{ flex: 1, minWidth: 0 }}>
-            <p
-              style={{
-                fontSize: 13,
-                fontWeight: 700,
-                color: "#550000",
-                overflow: "hidden",
-                textOverflow: "ellipsis",
-                whiteSpace: "nowrap" }}
-            >
-              {(user?.role || "").toUpperCase().includes("WALI")
-                ? (user?.nama || "User").replace(/^Wali dari\s+/i, "")
-                : (user?.nama || "User")}
-            </p>
-            <p
-              style={{
-                fontSize: 11,
-                color: (user?.role || "").toUpperCase().includes("ADMIN") ? "#550000" : "var(--text-muted)",
-                fontWeight: (user?.role || "").toUpperCase().includes("ADMIN") ? 700 : 500,
-                overflow: "hidden",
-                textOverflow: "ellipsis",
-                whiteSpace: "nowrap" }}
-            >
-              {formatRoleDisplay(user?.role || "")}
-            </p>
-          </div>
-        </div>
-          
-          {user?.role?.toLowerCase() !== "wali_santri" && (
-            <button
-              type="button"
-              onClick={() => {
-                setMobileOpen(false);
-                window.dispatchEvent(new CustomEvent("open-teacher-mapel-modal"));
-              }}
-              className="btn btn-ghost btn-sm"
-              style={{
-                width: "100%",
-                justifyContent: "center",
-                color: "#380000",
-                background: "#ffffff",
-                borderColor: "#ebdcc3",
-                padding: "7px 0",
-                fontSize: "11px",
-                fontWeight: 700,
-                cursor: "pointer",
-                transition: "all 0.2s ease"
-              }}
-            >
-              <BookOpen size={13} style={{ marginRight: 4 }} />
-              Atur Profil &amp; Mapel
-            </button>
-          )}
-          
-          <div style={{ display: "flex", gap: "6px", width: "100%" }}>
-            <Link
-              href="/profile"
-              className="btn btn-ghost btn-sm"
-              onClick={() => setMobileOpen(false)}
-              style={{
-                flex: 1,
-                justifyContent: "center",
-                color: "var(--text-muted)",
-                background: "#fcfaf8",
-                borderColor: "#ebdcc3",
-                padding: "7px 0",
-                fontSize: "11px"
-              }}
-            >
-              <Settings size={13} />
-              Profil
-            </Link>
-            <button
-              onClick={handleLogout}
-              className="btn btn-ghost btn-sm"
-              style={{
-                flex: 1,
-                justifyContent: "center",
-                color: "#550000",
-                background: "#fdf5f5",
-                borderColor: "#ebdcc3",
-                padding: "7px 0",
-                fontSize: "11px",
-                cursor: "pointer"
-              }}
-            >
-              <LogOut size={13} />
-              Keluar
-            </button>
-          </div>
-        </div>
-    </>
-  );
+  // Tutup drawer saat pindah halaman
+  useEffect(() => {
+    setMobileOpen(false);
+  }, [pathname]);
+
+  // Drawer mobile: kunci scroll latar + tutup dengan Escape
+  useEffect(() => {
+    if (!mobileOpen) return;
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setMobileOpen(false);
+    };
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.body.style.overflow = prevOverflow;
+      document.removeEventListener("keydown", onKey);
+    };
+  }, [mobileOpen]);
+
+  const handleLogout = useCallback(async () => {
+    try {
+      await fetch("/api/auth/logout", { method: "POST" });
+    } catch (err) {
+      console.error("Logout request failed:", err);
+    } finally {
+      router.push("/login");
+      router.refresh();
+    }
+  }, [router]);
+
+  const contentProps = { user, items: visibleNav, activeHref, onLogout: handleLogout };
 
   return (
     <>
-      {/* Mobile header */}
+      {/* Header mobile (ditampilkan lewat CSS di layar ≤ 768px) */}
       <div
-        style={{
-          display: "none",
-          position: "fixed",
-          top: 0,
-          left: 0,
-          right: 0,
-          height: 56,
-          background: "#550000",
-          borderBottom: "1px solid rgba(221, 193, 146, 0.2)",
-          zIndex: 50,
-          padding: "0 16px",
-          alignItems: "center",
-          justifyContent: "space-between",
-          boxShadow: "0 2px 12px rgba(85,0,0,0.25)" }}
-        className="mobile-header no-print print:hidden"
+        className="mobile-header no-print print:hidden fixed inset-x-0 top-0 z-50 h-14 items-center justify-between bg-[#550000] px-4 shadow-[0_2px_12px_rgba(85,0,0,0.25)]"
+        style={{ display: "none", borderBottom: "1px solid rgba(221, 193, 146, 0.2)" }}
       >
-        <span
-          style={{ color: "white", fontWeight: 800, fontSize: 16 }}
-        >
-          SIKAP
-        </span>
+        <span className="text-base font-extrabold tracking-tight text-white">SIKAP</span>
         <button
-          onClick={() => setMobileOpen(!mobileOpen)}
-          style={{
-            background: "none",
-            border: "none",
-            color: "white",
-            cursor: "pointer",
-            display: "flex",
-            padding: 4 }}
+          type="button"
+          onClick={() => setMobileOpen((o) => !o)}
+          aria-label={mobileOpen ? "Tutup menu" : "Buka menu"}
+          aria-expanded={mobileOpen}
+          aria-controls="sidebar-drawer"
+          className="-mr-2 flex h-11 w-11 items-center justify-center rounded-xl text-white transition-colors hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60"
         >
-          {mobileOpen ? <X size={22} /> : <Menu size={22} />}
+          {mobileOpen ? <X size={22} aria-hidden="true" /> : <Menu size={22} aria-hidden="true" />}
         </button>
       </div>
 
-      {/* Desktop sidebar */}
-      <aside className="app-sidebar overscroll-contain no-print print:hidden"
-        onWheel={(e) => {
-        const scrollMenu = e.currentTarget.querySelector('.sidebar-scroll-menu') || e.currentTarget;
-        if (scrollMenu) {
-          scrollMenu.scrollTop += e.deltaY;
-        }
-        e.stopPropagation();
-      }}>
-        <SidebarContent />
+      {/* Sidebar desktop */}
+      <aside className="app-sidebar no-print print:hidden overscroll-contain">
+        <SidebarContent {...contentProps} onNavigate={() => undefined} />
       </aside>
 
-      {/* Mobile sidebar overlay & drawer */}
+      {/* Overlay + drawer mobile */}
       {mobileOpen && (
         <>
           <div
-            className="no-print print:hidden"
-            onClick={() => setMobileOpen(false)}
-            style={{
-              position: "fixed",
-              inset: 0,
-              background: "rgba(15, 23, 42, 0.65)",
-              backdropFilter: "blur(6px)",
-              WebkitBackdropFilter: "blur(6px)",
-              zIndex: 1000 }}
+            className="no-print print:hidden fixed inset-0 z-[1000] bg-slate-900/65 backdrop-blur-[6px]"
+            onClick={closeMobile}
+            aria-hidden="true"
           />
-          <aside className="app-sidebar no-print print:hidden"
+          <aside
+            id="sidebar-drawer"
+            role="dialog"
+            aria-modal="true"
+            aria-label="Menu navigasi"
+            className="app-sidebar no-print print:hidden"
+            // Inline agar menimpa gaya .app-sidebar versi desktop
             style={{
               position: "fixed",
               top: 0,
@@ -477,20 +451,16 @@ export default function Sidebar({ user }: SidebarProps) {
               height: "100dvh",
               transform: "translateX(0)",
               zIndex: 1001,
-              width: "290px",
+              width: 290,
               maxWidth: "86vw",
               background: "#ffffff",
               boxShadow: "10px 0 40px rgba(0,0,0,0.35)",
               display: "flex",
-              flexDirection: "column" }}
-        onWheel={(e) => {
-        const scrollMenu = e.currentTarget.querySelector('.sidebar-scroll-menu') || e.currentTarget;
-        if (scrollMenu) {
-          scrollMenu.scrollTop += e.deltaY;
-        }
-        e.stopPropagation();
-      }}>
-            <SidebarContent />
+              flexDirection: "column",
+              paddingBottom: "env(safe-area-inset-bottom)",
+            }}
+          >
+            <SidebarContent {...contentProps} onNavigate={closeMobile} onClose={closeMobile} />
           </aside>
         </>
       )}
@@ -519,4 +489,3 @@ export default function Sidebar({ user }: SidebarProps) {
     </>
   );
 }
-
