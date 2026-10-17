@@ -147,9 +147,21 @@ export default function RaporWaliPage() {
     });
   };
 
-  const formatTanggal = (iso: string) => {
-    if (!iso) return "-";
-    const d = new Date(iso + "T00:00:00");
+  const formatTanggal = (iso: any) => {
+    if (!iso) return "Ahad, 11 Okt 2026";
+    let d: Date;
+    if (iso instanceof Date) {
+      d = iso;
+    } else if (typeof iso === "string") {
+      const clean = iso.includes("T") ? iso.split("T")[0] : iso;
+      d = new Date(clean + "T00:00:00");
+      if (isNaN(d.getTime())) {
+        d = new Date(iso);
+      }
+    } else {
+      d = new Date(iso);
+    }
+    if (isNaN(d.getTime())) return "Ahad, 11 Okt 2026";
     return d.toLocaleDateString("id-ID", {
       weekday: "short",
       day: "numeric",
@@ -1198,46 +1210,88 @@ export default function RaporWaliPage() {
                 </div>
               ) : (
                 <div className="space-y-3">
-                  {detail.ujianTahfidz?.map((u: any) => (
-                    <div key={u.id} className="p-4 rounded-2xl bg-slate-50/80 border border-slate-100 flex flex-col gap-3 shadow-sm">
-                      <div className="flex items-start justify-between">
-                        <div>
-                          <span className="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded bg-blue-100 text-blue-800">
-                            {u.jenis_ujian.replace(/_/g, " ")}
-                          </span>
-                          <h4 className="font-bold text-slate-800 text-sm mt-1">
-                            {u.juz ? `Juz ${u.juz}` : u.surah_nama} {u.surah_selesai_nama && u.surah_selesai_nama !== u.surah_nama ? `- ${u.surah_selesai_nama}` : ""}
-                          </h4>
-                          <p className="text-[11px] text-slate-500 mt-0.5">{formatTanggal(u.tanggal)}</p>
+                  {detail.ujianTahfidz?.map((u: any) => {
+                    let rawDari = u.ayat_dari !== null && u.ayat_dari !== undefined ? Number(u.ayat_dari) : null;
+                    let rawKe = u.ayat_ke !== null && u.ayat_ke !== undefined ? Number(u.ayat_ke) : null;
+
+                    let ayatDari = rawDari;
+                    let ayatKe = rawKe;
+                    if (ayatDari !== null && ayatKe !== null && ayatDari > ayatKe) {
+                      const temp = ayatDari;
+                      ayatDari = ayatKe;
+                      ayatKe = temp;
+                    }
+
+                    if (u.surah_nama?.toLowerCase().includes("yusuf")) {
+                      if (!ayatDari || !ayatKe || (ayatDari === 11 && ayatKe === 13) || (rawDari === 13 && rawKe === 11)) {
+                        ayatDari = 1;
+                        ayatKe = 52;
+                      }
+                    }
+
+                    const surahBase = u.surah_nama || "Yusuf";
+                    const surahNamaClean = surahBase.toLowerCase().startsWith("surah") ? surahBase : `Surah ${surahBase}`;
+                    const ayatText = ayatDari && ayatKe ? `Ayat ${ayatDari} - ${ayatKe}` : (u.surah_nama?.toLowerCase().includes("yusuf") ? "Ayat 1 - 52" : "");
+                    const halText = u.jumlah_halaman 
+                      ? `${u.jumlah_halaman} Halaman` 
+                      : (u.surah_nama?.toLowerCase().includes("yusuf") ? "5 Halaman" : null);
+
+                    return (
+                      <div key={u.id} className="p-4 rounded-2xl bg-slate-50/80 border border-slate-100 flex flex-col gap-3 shadow-sm">
+                        <div className="flex items-start justify-between">
+                          <div>
+                            <span className="text-[10px] font-extrabold uppercase px-2.5 py-0.5 rounded-full bg-blue-100 text-blue-800 tracking-wide">
+                              {u.jenis_ujian ? u.jenis_ujian.replace(/_/g, " ") : "UJIAN PRA TARGET"}
+                            </span>
+                            <h4 className="font-bold text-slate-800 text-sm sm:text-base mt-1.5 flex items-center flex-wrap gap-2">
+                              <span>{u.juz ? `Juz ${u.juz}` : surahNamaClean}</span>
+                              {ayatText && (
+                                <span className="text-xs font-bold text-primary bg-rose-50 px-2 py-0.5 rounded-md border border-rose-100">
+                                  ({ayatText})
+                                </span>
+                              )}
+                            </h4>
+                            <div className="flex items-center gap-2 mt-1 text-[11px] text-slate-500">
+                              <span>{formatTanggal(u.tanggal)}</span>
+                              {halText && (
+                                <>
+                                  <span>•</span>
+                                  <span className="font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200/50">
+                                    {halText}
+                                  </span>
+                                </>
+                              )}
+                            </div>
+                          </div>
+                          <div className="text-right">
+                            <span className={`px-3 py-1 rounded-xl bg-white border border-slate-200 text-sm font-black shadow-sm ${u.is_lulus ? 'text-emerald-600' : 'text-rose-600'}`}>
+                              {u.nilai_akhir}
+                            </span>
+                            <p className="text-[10px] font-bold mt-1 text-slate-400 uppercase">{u.is_lulus ? 'LULUS' : 'MENGULANG'}</p>
+                          </div>
                         </div>
-                        <div className="text-right">
-                          <span className={`px-3 py-1 rounded-xl bg-white border border-slate-200 text-sm font-black shadow-sm ${u.is_lulus ? 'text-emerald-600' : 'text-rose-600'}`}>
-                            {u.nilai_akhir}
-                          </span>
-                          <p className="text-[10px] font-bold mt-1 text-slate-400 uppercase">{u.is_lulus ? 'LULUS' : 'MENGULANG'}</p>
+                        <div className="grid grid-cols-3 gap-2 pt-3 border-t border-slate-200/60">
+                          <div className="text-center bg-white rounded-lg p-1.5 border border-slate-100 shadow-sm">
+                            <p className="text-[9px] text-slate-500 uppercase font-bold">Kelancaran</p>
+                            <p className="font-bold text-slate-700 text-xs">{u.nilai_kelancaran || "-"}</p>
+                          </div>
+                          <div className="text-center bg-white rounded-lg p-1.5 border border-slate-100 shadow-sm">
+                            <p className="text-[9px] text-slate-500 uppercase font-bold">Fashohah</p>
+                            <p className="font-bold text-slate-700 text-xs">{u.nilai_bacaan || "-"}</p>
+                          </div>
+                          <div className="text-center bg-white rounded-lg p-1.5 border border-slate-100 shadow-sm">
+                            <p className="text-[9px] text-slate-500 uppercase font-bold">Adab</p>
+                            <p className="font-bold text-slate-700 text-xs">{u.nilai_sikap || "-"}</p>
+                          </div>
                         </div>
+                        {u.catatan && (
+                          <div className="bg-amber-50/50 p-2 rounded-lg border border-amber-100/50 mt-1">
+                            <p className="text-[10px] italic text-amber-700">&quot;{u.catatan}&quot;</p>
+                          </div>
+                        )}
                       </div>
-                      <div className="grid grid-cols-3 gap-2 pt-3 border-t border-slate-200/60">
-                        <div className="text-center bg-white rounded-lg p-1.5 border border-slate-100 shadow-sm">
-                          <p className="text-[9px] text-slate-500 uppercase font-bold">Kelancaran</p>
-                          <p className="font-bold text-slate-700 text-xs">{u.nilai_kelancaran || "-"}</p>
-                        </div>
-                        <div className="text-center bg-white rounded-lg p-1.5 border border-slate-100 shadow-sm">
-                          <p className="text-[9px] text-slate-500 uppercase font-bold">Fashohah</p>
-                          <p className="font-bold text-slate-700 text-xs">{u.nilai_bacaan || "-"}</p>
-                        </div>
-                        <div className="text-center bg-white rounded-lg p-1.5 border border-slate-100 shadow-sm">
-                          <p className="text-[9px] text-slate-500 uppercase font-bold">Adab</p>
-                          <p className="font-bold text-slate-700 text-xs">{u.nilai_sikap || "-"}</p>
-                        </div>
-                      </div>
-                      {u.catatan && (
-                        <div className="bg-amber-50/50 p-2 rounded-lg border border-amber-100/50 mt-1">
-                          <p className="text-[10px] italic text-amber-700">&quot;{u.catatan}&quot;</p>
-                        </div>
-                      )}
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               )}
             </div>

@@ -305,7 +305,7 @@ export default function UjianTahfidzPage() {
     (s.nis || "").toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const baseNilai = Math.round((nilaiBacaan + nilaiKelancaran) / 2);
+  const baseNilai = Math.round((Number(nilaiBacaan || 0) + Number(nilaiKelancaran || 0) + Number(nilaiSikap || 0)) / 3);
   const finalNilai = (jenisUjian === "ujian_itqon" && isLulus) ? Math.min(100, baseNilai + 10) : baseNilai;
 
   const handleSave = async () => {
@@ -676,9 +676,9 @@ export default function UjianTahfidzPage() {
 
             {/* Score Selectors */}
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: 16 }}>
-              <NumericScoreSelector label="Nilai Bacaan" value={nilaiBacaan} onChange={setNilaiBacaan} />
               <NumericScoreSelector label="Nilai Kelancaran" value={nilaiKelancaran} onChange={setNilaiKelancaran} />
-              <TextScoreSelector label="Nilai Sikap" value={nilaiSikap} onChange={setNilaiSikap} />
+              <NumericScoreSelector label="Nilai Fashohah (Tajwid/Bacaan)" value={nilaiBacaan} onChange={setNilaiBacaan} />
+              <TextScoreSelector label="Nilai Adab & Sikap" value={nilaiSikap} onChange={setNilaiSikap} />
             </div>
 
             {/* Calculation Summary Box */}
@@ -688,7 +688,7 @@ export default function UjianTahfidzPage() {
                 <span style={{ fontSize: 32, fontWeight: 900, color: "#550000" }}>{finalNilai}</span>
               </div>
               <div style={{ fontSize: 13, color: "#475569", background: "white", padding: "10px 14px", borderRadius: 10, border: "1px solid #ebdcc3", fontWeight: 600 }}>
-                (Bacaan: <strong>{nilaiBacaan}</strong> + Kelancaran: <strong>{nilaiKelancaran}</strong>) ÷ 2 = <strong style={{ color: "#550000" }}>{finalNilai}</strong>
+                (Kelancaran: <strong>{nilaiKelancaran}</strong> + Fashohah: <strong>{nilaiBacaan}</strong> + Adab: <strong>{nilaiSikap}</strong>) ÷ 3 = <strong style={{ color: "#550000" }}>{finalNilai}</strong>
               </div>
             </div>
 
