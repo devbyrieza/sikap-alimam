@@ -316,6 +316,9 @@ export default function UjianTahfidzPage() {
       const selectedSantriData = allSantri.find(s => s.id === selectedSantriId);
       const pengampuId = selectedSantriData?.pengampu_id;
 
+      const finalAyatDari = Math.min(ayatDari || 1, ayatKe || 1);
+      const finalAyatKe = Math.max(ayatDari || 1, ayatKe || 1);
+
       const body = {
         santri_id: selectedSantriId,
         pegawai_id: pengampuId || undefined,
@@ -326,8 +329,8 @@ export default function UjianTahfidzPage() {
         surah_nama: selectedSurah?.nama_latin,
         surah_selesai_nomor: selectedSurahAkhir?.nomor,
         surah_selesai_nama: selectedSurahAkhir?.nama_latin,
-        ayat_dari: ayatDari,
-        ayat_ke: ayatKe,
+        ayat_dari: finalAyatDari,
+        ayat_ke: finalAyatKe,
         jumlah_halaman: jumlahHalaman,
         nilai_bacaan: nilaiBacaan,
         nilai_kelancaran: nilaiKelancaran,
@@ -615,8 +618,11 @@ export default function UjianTahfidzPage() {
                         }
                       }}
                       onBlur={() => {
-                        if (!ayatDari || ayatDari < 1) setAyatDari(1);
-                        else if (ayatDari > selectedSurah.total_ayat) setAyatDari(selectedSurah.total_ayat);
+                        let d = ayatDari;
+                        if (!d || d < 1) d = 1;
+                        else if (selectedSurah && d > selectedSurah.total_ayat) d = selectedSurah.total_ayat;
+                        setAyatDari(d);
+                        if (ayatKe < d) setAyatKe(d);
                       }}
                       style={{ ...inputStyle, background: "white", textAlign: "center", fontWeight: 800, fontSize: 15 }}
                       onFocus={e => (e.currentTarget.style.borderColor = "#550000")}

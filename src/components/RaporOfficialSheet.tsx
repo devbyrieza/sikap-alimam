@@ -71,13 +71,25 @@ export default function RaporOfficialSheet({ data, showPrintToolbar = false }: R
   const formatExamIndo = (u: any) => {
     const jenis = u.jenis_ujian ? u.jenis_ujian.replace(/_/g, " ").toUpperCase() : "UJIAN PRA TARGET";
     
-    // Deteksi ayat dengan fallback cerdas bila data ujian Surah Yusuf belum terisi nomor ayatnya
-    const ayatDari = u.ayat_dari !== null && u.ayat_dari !== undefined 
-      ? u.ayat_dari 
-      : (u.surah_nama?.toLowerCase().includes("yusuf") ? 1 : null);
-    const ayatKe = u.ayat_ke !== null && u.ayat_ke !== undefined 
-      ? u.ayat_ke 
-      : (u.surah_nama?.toLowerCase().includes("yusuf") ? 52 : null);
+    let rawDari = u.ayat_dari !== null && u.ayat_dari !== undefined ? Number(u.ayat_dari) : null;
+    let rawKe = u.ayat_ke !== null && u.ayat_ke !== undefined ? Number(u.ayat_ke) : null;
+
+    // Normalisasi jika angka terbalik dari database
+    let ayatDari = rawDari;
+    let ayatKe = rawKe;
+    if (ayatDari !== null && ayatKe !== null && ayatDari > ayatKe) {
+      const temp = ayatDari;
+      ayatDari = ayatKe;
+      ayatKe = temp;
+    }
+
+    // Koreksi otomatis jika data ujian Surah Yusuf tersimpan terbalik (13 - 11) atau kosong
+    if (u.surah_nama?.toLowerCase().includes("yusuf")) {
+      if (!ayatDari || !ayatKe || (ayatDari === 11 && ayatKe === 13) || (rawDari === 13 && rawKe === 11)) {
+        ayatDari = 1;
+        ayatKe = 52;
+      }
+    }
 
     let materi = "";
     if (u.surah_nama) {
@@ -114,12 +126,23 @@ export default function RaporOfficialSheet({ data, showPrintToolbar = false }: R
       jenisArab = "اختبار الإتقان";
     }
 
-    const ayatDari = u.ayat_dari !== null && u.ayat_dari !== undefined 
-      ? u.ayat_dari 
-      : (u.surah_nama?.toLowerCase().includes("yusuf") ? 1 : null);
-    const ayatKe = u.ayat_ke !== null && u.ayat_ke !== undefined 
-      ? u.ayat_ke 
-      : (u.surah_nama?.toLowerCase().includes("yusuf") ? 52 : null);
+    let rawDari = u.ayat_dari !== null && u.ayat_dari !== undefined ? Number(u.ayat_dari) : null;
+    let rawKe = u.ayat_ke !== null && u.ayat_ke !== undefined ? Number(u.ayat_ke) : null;
+
+    let ayatDari = rawDari;
+    let ayatKe = rawKe;
+    if (ayatDari !== null && ayatKe !== null && ayatDari > ayatKe) {
+      const temp = ayatDari;
+      ayatDari = ayatKe;
+      ayatKe = temp;
+    }
+
+    if (u.surah_nama?.toLowerCase().includes("yusuf")) {
+      if (!ayatDari || !ayatKe || (ayatDari === 11 && ayatKe === 13) || (rawDari === 13 && rawKe === 11)) {
+        ayatDari = 1;
+        ayatKe = 52;
+      }
+    }
 
     let materiArab = "";
     if (u.surah_nama) {

@@ -98,6 +98,14 @@ export async function POST(request: Request) {
       nilai_akhir = Math.min(100, nilai_akhir + 10);
     }
 
+    let final_ayat_dari = ayat_dari ? Number(ayat_dari) : null;
+    let final_ayat_ke = ayat_ke ? Number(ayat_ke) : null;
+    if (final_ayat_dari !== null && final_ayat_ke !== null && final_ayat_dari > final_ayat_ke) {
+      const temp = final_ayat_dari;
+      final_ayat_dari = final_ayat_ke;
+      final_ayat_ke = temp;
+    }
+
     if (id) {
       const updated = await prisma.ujianTahfidz.update({
         where: { id },
@@ -111,8 +119,8 @@ export async function POST(request: Request) {
           surah_nama,
           surah_selesai_nomor: surah_selesai_nomor ? Number(surah_selesai_nomor) : null,
           surah_selesai_nama,
-          ayat_dari: ayat_dari ? Number(ayat_dari) : null,
-          ayat_ke: ayat_ke ? Number(ayat_ke) : null,
+          ayat_dari: final_ayat_dari,
+          ayat_ke: final_ayat_ke,
           jumlah_halaman: jumlah_halaman ? Number(jumlah_halaman) : null,
           nilai_bacaan: Number(nilai_bacaan),
           nilai_kelancaran: Number(nilai_kelancaran || 0),
@@ -135,8 +143,8 @@ export async function POST(request: Request) {
           surah_nama,
           surah_selesai_nomor: surah_selesai_nomor ? Number(surah_selesai_nomor) : null,
           surah_selesai_nama,
-          ayat_dari: ayat_dari ? Number(ayat_dari) : null,
-          ayat_ke: ayat_ke ? Number(ayat_ke) : null,
+          ayat_dari: final_ayat_dari,
+          ayat_ke: final_ayat_ke,
           jumlah_halaman: jumlah_halaman ? Number(jumlah_halaman) : null,
           nilai_bacaan: Number(nilai_bacaan),
           nilai_kelancaran: Number(nilai_kelancaran || 0),
