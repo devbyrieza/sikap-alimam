@@ -3,7 +3,7 @@
 import React from "react";
 import { Printer } from "lucide-react";
 import { getOfficialNis } from "@/lib/officialSantri";
-import { surahData } from "@/lib/quran-madinah";
+import { surahData, calculateHalaman, searchSurah } from "@/lib/quran-madinah";
 
 interface RaporOfficialSheetProps {
   data: any;
@@ -83,12 +83,13 @@ export default function RaporOfficialSheet({ data, showPrintToolbar = false }: R
       ayatKe = temp;
     }
 
+    const isYusuf = Boolean(u.surah_nama?.toLowerCase().includes("yusuf"));
+    const isAnomalousRange = !ayatDari || !ayatKe || (ayatDari === 11 && ayatKe === 13) || (rawDari === 13 && rawKe === 11);
+
     // Koreksi otomatis jika data ujian Surah Yusuf tersimpan terbalik (13 - 11) atau kosong
-    if (u.surah_nama?.toLowerCase().includes("yusuf")) {
-      if (!ayatDari || !ayatKe || (ayatDari === 11 && ayatKe === 13) || (rawDari === 13 && rawKe === 11)) {
-        ayatDari = 1;
-        ayatKe = 52;
-      }
+    if (isYusuf && isAnomalousRange) {
+      ayatDari = 1;
+      ayatKe = 52;
     }
 
     let materi = "";
@@ -108,7 +109,29 @@ export default function RaporOfficialSheet({ data, showPrintToolbar = false }: R
         materi += ` (Ayat ${ayatDari} - ${ayatKe})`;
       }
     }
-    return { jenis, materi };
+
+    // Hitung Jumlah Halaman secara presisi
+    let rawHal = u.jumlah_halaman !== null && u.jumlah_halaman !== undefined ? Number(u.jumlah_halaman) : null;
+    let halValue = rawHal;
+
+    if (isYusuf && (isAnomalousRange || (ayatDari === 1 && ayatKe === 52) || (rawHal !== null && rawHal < 2))) {
+      halValue = 6.6; // Surah Yusuf ayat 1 - 52 (Juz 12) = 6.6 Halaman standar mushaf Madinah
+    } else if ((!halValue || halValue < 0.5) && ayatDari && ayatKe) {
+      let sNomor = Number(u.surah_nomor) || 0;
+      if (!sNomor && u.surah_nama) {
+        const found = searchSurah(u.surah_nama);
+        if (found && found.length > 0) {
+          sNomor = found[0].nomor;
+        }
+      }
+      if (sNomor > 0) {
+        halValue = calculateHalaman(sNomor, ayatDari, ayatKe);
+      }
+    }
+
+    const halText = halValue ? `${halValue} Halaman` : null;
+
+    return { jenis, materi, halText, halValue };
   };
 
   const formatExamArab = (u: any) => {
@@ -137,11 +160,12 @@ export default function RaporOfficialSheet({ data, showPrintToolbar = false }: R
       ayatKe = temp;
     }
 
-    if (u.surah_nama?.toLowerCase().includes("yusuf")) {
-      if (!ayatDari || !ayatKe || (ayatDari === 11 && ayatKe === 13) || (rawDari === 13 && rawKe === 11)) {
-        ayatDari = 1;
-        ayatKe = 52;
-      }
+    const isYusuf = Boolean(u.surah_nama?.toLowerCase().includes("yusuf"));
+    const isAnomalousRange = !ayatDari || !ayatKe || (ayatDari === 11 && ayatKe === 13) || (rawDari === 13 && rawKe === 11);
+
+    if (isYusuf && isAnomalousRange) {
+      ayatDari = 1;
+      ayatKe = 52;
     }
 
     let materiArab = "";
@@ -161,7 +185,29 @@ export default function RaporOfficialSheet({ data, showPrintToolbar = false }: R
         materiArab += ` (الآيات ${toArabicNum(ayatDari)} - ${toArabicNum(ayatKe)})`;
       }
     }
-    return { jenisArab, materiArab };
+
+    // Hitung Jumlah Halaman versi Bahasa Arab
+    let rawHal = u.jumlah_halaman !== null && u.jumlah_halaman !== undefined ? Number(u.jumlah_halaman) : null;
+    let halValue = rawHal;
+
+    if (isYusuf && (isAnomalousRange || (ayatDari === 1 && ayatKe === 52) || (rawHal !== null && rawHal < 2))) {
+      halValue = 6.6;
+    } else if ((!halValue || halValue < 0.5) && ayatDari && ayatKe) {
+      let sNomor = Number(u.surah_nomor) || 0;
+      if (!sNomor && u.surah_nama) {
+        const found = searchSurah(u.surah_nama);
+        if (found && found.length > 0) {
+          sNomor = found[0].nomor;
+        }
+      }
+      if (sNomor > 0) {
+        halValue = calculateHalaman(sNomor, ayatDari, ayatKe);
+      }
+    }
+
+    const halTextArab = halValue ? `${toArabicNum(halValue)} صفحة` : null;
+
+    return { jenisArab, materiArab, halTextArab, halValue };
   };
 
   // Nilai Sikap dari Ujian Pra-Target untuk Kepribadian Santri
@@ -1315,6 +1361,11 @@ export default function RaporOfficialSheet({ data, showPrintToolbar = false }: R
                               ({indoInfo.materi})
                             </div>
                           )}
+                          {indoInfo.halText && (
+                            <div style={{ fontSize: "9.5px", color: "#047857", marginTop: "2px", fontWeight: "bold" }}>
+                              Jumlah: {indoInfo.halText}
+                            </div>
+                          )}
                         </td>
                         <td style={{ border: "1px solid #94a3b8", padding: "3.5px 4px", textAlign: "center", verticalAlign: "middle", fontSize: "10.5px" }}>
                           {sikapStr}
@@ -1342,6 +1393,11 @@ export default function RaporOfficialSheet({ data, showPrintToolbar = false }: R
                           {arabInfo.materiArab && (
                             <div style={{ fontSize: "12px", color: "#1e293b", marginTop: "1px", fontFamily: "'Traditional Arabic', serif", lineHeight: "1.2" }}>
                               ({arabInfo.materiArab})
+                            </div>
+                          )}
+                          {arabInfo.halTextArab && (
+                            <div style={{ fontSize: "11px", color: "#047857", marginTop: "1px", fontFamily: "'Traditional Arabic', serif", fontWeight: "bold" }}>
+                              المقدار: {arabInfo.halTextArab}
                             </div>
                           )}
                         </td>
