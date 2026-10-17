@@ -1169,7 +1169,7 @@ export default function RaporOfficialSheet({ data, showPrintToolbar = false }: R
               </table>
             </div>
 
-            {/* 3. LAPORAN TAHSIN & TAHFIDZ (Bilateral Simetris Sempurna) */}
+            {/* 3. LAPORAN TAHSIN (Bilateral Simetris Sempurna) */}
             <div style={{ width: "100%", overflow: "visible", marginBottom: "7px" }}>
               <table className="rapor-table" style={{ width: "100%", tableLayout: "fixed", borderCollapse: "collapse", border: "1px solid #94a3b8", fontSize: "11px", fontFamily: "Arial, Helvetica, sans-serif" }}>
                 <colgroup>
@@ -1185,10 +1185,10 @@ export default function RaporOfficialSheet({ data, showPrintToolbar = false }: R
                 <thead>
                   <tr style={{ backgroundColor: "#f1f5f9" }}>
                     <th colSpan={3} className="border-divider-mid" style={{ border: "1px solid #94a3b8", borderRight: "2px solid #000000", padding: "4px 8px", textAlign: "left", color: "#000000", fontWeight: "bold", fontSize: "11.5px" }}>
-                      C. Laporan Tahsin &amp; Tahfidz (Program Al-Qur'an)
+                      C. Laporan Tahsin
                     </th>
                     <th colSpan={3} style={{ border: "1px solid #94a3b8", borderLeft: "2px solid #000000", padding: "4px 8px", textAlign: "right", color: "#000000", fontWeight: "bold", fontSize: "13.5px", fontFamily: "'Traditional Arabic', serif" }} dir="rtl">
-                      جـ . تقرير التحسين والتحفيظ (برنامج القرآن الكريم)
+                      جـ . تقرير التحسين
                     </th>
                   </tr>
                   <tr style={{ backgroundColor: "#f8fafc", fontSize: "10.5px" }}>
