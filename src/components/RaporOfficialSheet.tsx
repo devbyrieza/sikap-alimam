@@ -1052,7 +1052,7 @@ export default function RaporOfficialSheet({ data, showPrintToolbar = false }: R
                 </thead>
                 <tbody>
                   <tr style={{ backgroundColor: "white" }}>
-                    <td style={{ border: "1px solid #94a3b8", padding: "3.5px 8px" }}>1. Perilaku</td>
+                    <td style={{ border: "1px solid #94a3b8", padding: "3.5px 8px" }}>1. Sopan Santun</td>
                     <td className="border-divider-mid" style={{ border: "1px solid #94a3b8", borderRight: "2px solid #000000", padding: "3.5px 8px", textAlign: "center", fontWeight: "bold", fontSize: "11.5px" }}>{sikapGrade}</td>
                     <td style={{ border: "1px solid #94a3b8", borderLeft: "2px solid #000000", padding: "3.5px 8px", textAlign: "center", fontWeight: "bold", fontSize: "12px", fontFamily: "'Traditional Arabic', serif" }} dir="rtl">{toArabicPredikat(sikapGrade)}</td>
                     <td style={{ border: "1px solid #94a3b8", padding: "3.5px 8px", textAlign: "right", fontFamily: "'Traditional Arabic', serif", fontSize: "12.5px" }} dir="rtl">١. السلوك والأدب</td>
