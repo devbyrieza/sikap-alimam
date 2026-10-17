@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import {
   AlertCircle,
@@ -813,7 +813,79 @@ function LockedPanel({
 
 function TabRapor({ printId, cetakData, cetakError }: { printId: string; cetakData: any; cetakError: boolean }) {
   const printHref = `/rapor/print/${printId}`;
-  const [mobileFit, setMobileFit] = useState(false);
+  const [mobileFit, setMobileFit] = useState(true);
+  const fitContainerRef = useRef<HTMLDivElement>(null);
+  const fitContentRef = useRef<HTMLDivElement>(null);
+  const [fitScale, setFitScale] = useState<number>(0.4);
+  const [rawHeight, setRawHeight] = useState<number>(2300);
+
+  useEffect(() => {
+    if (!mobileFit) return;
+
+    const updateScaleAndHeight = () => {
+      if (fitContainerRef.current) {
+        const containerWidth = fitContainerRef.current.clientWidth;
+        if (containerWidth > 0) {
+          // Standard A4 width: 794px (~210mm pada 96 DPI)
+          // Berikan padding aman 12px (6px kiri, 6px kanan) agar seluruh border, bayangan, dan teks Arab tidak pernah terpotong
+          const targetWidth = 794;
+          const availableWidth = Math.max(260, containerWidth - 12);
+          const computedScale = Math.min(1, availableWidth / targetWidth);
+          setFitScale(computedScale);
+        }
+      }
+      if (fitContentRef.current) {
+        const h = fitContentRef.current.scrollHeight || fitContentRef.current.offsetHeight;
+        if (h > 0) {
+          setRawHeight(h);
+        }
+      }
+    };
+
+    updateScaleAndHeight();
+    const t1 = setTimeout(updateScaleAndHeight, 100);
+    const t2 = setTimeout(updateScaleAndHeight, 400);
+
+    let roContainer: ResizeObserver | null = null;
+    let roContent: ResizeObserver | null = null;
+
+    if (typeof ResizeObserver !== "undefined") {
+      if (fitContainerRef.current) {
+        roContainer = new ResizeObserver(() => updateScaleAndHeight());
+        roContainer.observe(fitContainerRef.current);
+      }
+      if (fitContentRef.current) {
+        roContent = new ResizeObserver(() => updateScaleAndHeight());
+        roContent.observe(fitContentRef.current);
+      }
+    }
+
+    window.addEventListener("resize", updateScaleAndHeight);
+    return () => {
+      clearTimeout(t1);
+      clearTimeout(t2);
+      roContainer?.disconnect();
+      roContent?.disconnect();
+      window.removeEventListener("resize", updateScaleAndHeight);
+    };
+  }, [mobileFit, cetakData]);
+
+  // Kalkulasi kompensasi margin untuk centering presisi
+  const marginX = (794 - 794 * fitScale) / 2;
+  const marginB = rawHeight > 0 ? (rawHeight - rawHeight * fitScale - 24) : 0;
+
+  const handleZoom = (delta: number) => {
+    setFitScale((prev) => Math.min(1.2, Math.max(0.25, Number((prev + delta).toFixed(2)))));
+  };
+
+  const resetZoom = () => {
+    if (fitContainerRef.current) {
+      const containerWidth = fitContainerRef.current.clientWidth;
+      const targetWidth = 794;
+      const availableWidth = Math.max(260, containerWidth - 12);
+      setFitScale(Math.min(1, availableWidth / targetWidth));
+    }
+  };
 
   return (
     <>
@@ -840,53 +912,109 @@ function TabRapor({ printId, cetakData, cetakError }: { printId: string; cetakDa
       {cetakData ? (
         <>
           {/* Kontrol responsif mobile: Pas Layar vs Ukuran Asli */}
-          <div className={`flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 rounded-2xl border border-amber-200/90 bg-amber-50/90 p-3.5 text-xs font-medium text-amber-950 shadow-sm md:hidden ${NO_PRINT}`}>
-            <div className="flex items-center gap-2">
-              <ArrowRight className="h-4 w-4 shrink-0 text-amber-600" aria-hidden="true" />
-              <span>Mode Tampilan Mobile:</span>
+          <div className={`flex flex-col gap-2.5 rounded-2xl border border-amber-200/90 bg-amber-50/90 p-3.5 text-xs font-medium text-amber-950 shadow-sm md:hidden ${NO_PRINT}`}>
+            <div className="flex items-center justify-between gap-2">
+              <div className="flex items-center gap-1.5 font-bold text-amber-900">
+                <ArrowRight className="h-4 w-4 shrink-0 text-amber-600" aria-hidden="true" />
+                <span>Mode Tampilan Mobile:</span>
+              </div>
+              <div className="flex items-center gap-1 rounded-xl border border-amber-300/80 bg-white/90 p-1">
+                <button
+                  type="button"
+                  onClick={() => setMobileFit(true)}
+                  className={`rounded-lg px-2.5 py-1 text-xs font-bold transition-all ${
+                    mobileFit
+                      ? "bg-[#550000] text-white shadow-sm"
+                      : "text-slate-600 hover:bg-slate-100"
+                  }`}
+                >
+                  📱 Pas Layar HP
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setMobileFit(false)}
+                  className={`rounded-lg px-2.5 py-1 text-xs font-bold transition-all ${
+                    !mobileFit
+                      ? "bg-[#550000] text-white shadow-sm"
+                      : "text-slate-600 hover:bg-slate-100"
+                  }`}
+                >
+                  🔍 Geser Ukuran Asli
+                </button>
+              </div>
             </div>
-            <div className="flex w-full sm:w-auto items-center gap-1.5 rounded-xl border border-amber-300/80 bg-white/90 p-1">
-              <button
-                type="button"
-                onClick={() => setMobileFit(true)}
-                className={`flex-1 sm:flex-initial rounded-lg px-3 py-1.5 text-xs font-bold transition-all ${
-                  mobileFit
-                    ? "bg-[#550000] text-white shadow-sm"
-                    : "text-slate-600 hover:bg-slate-100"
-                }`}
-              >
-                📱 Pas Layar HP
-              </button>
-              <button
-                type="button"
-                onClick={() => setMobileFit(false)}
-                className={`flex-1 sm:flex-initial rounded-lg px-3 py-1.5 text-xs font-bold transition-all ${
-                  !mobileFit
-                    ? "bg-[#550000] text-white shadow-sm"
-                    : "text-slate-600 hover:bg-slate-100"
-                }`}
-              >
-                🔍 Geser Ukuran Penuh
-              </button>
-            </div>
+
+            {mobileFit ? (
+              <div className="flex items-center justify-between text-[11px] font-bold text-slate-600 bg-white/80 rounded-xl px-3 py-1.5 border border-amber-200/60">
+                <span>Skala Tampilan: <strong className="text-[#550000]">{Math.round(fitScale * 100)}%</strong> (Otomatis Pas Layar)</span>
+                <div className="flex items-center gap-1.5">
+                  <button
+                    type="button"
+                    onClick={() => handleZoom(-0.05)}
+                    className="h-6 w-6 flex items-center justify-center rounded bg-slate-100 hover:bg-slate-200 text-slate-800 font-black text-sm"
+                    title="Perkecil"
+                  >
+                    -
+                  </button>
+                  <button
+                    type="button"
+                    onClick={resetZoom}
+                    className="px-2 py-0.5 rounded bg-slate-100 hover:bg-slate-200 text-slate-700 text-[10px] font-semibold"
+                    title="Kembalikan ke Pas Layar"
+                  >
+                    Reset
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleZoom(0.05)}
+                    className="h-6 w-6 flex items-center justify-center rounded bg-slate-100 hover:bg-slate-200 text-slate-800 font-black text-sm"
+                    title="Perbesar"
+                  >
+                    +
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <p className="text-[11px] text-amber-800">
+                Geser ke kanan / kiri pada lembar rapor untuk membaca rincian tulisan dalam ukuran 100%.
+              </p>
+            )}
           </div>
 
-          {/* Wadah sheet A4: jika mobileFit aktif, diperkecil proporsional pas di mobile screen */}
+          {/* Wadah sheet A4: jika mobileFit aktif, diskalakan proporsional pas di mobile screen */}
           {mobileFit ? (
-            <div className="w-full overflow-hidden rounded-2xl border border-slate-200 bg-slate-100/60 p-1 md:hidden">
-              <div
-                className="origin-top-left"
-                style={{
-                  transform: "scale(0.48)",
-                  width: "210mm",
-                  marginBottom: "-145mm",
-                }}
-              >
-                <RaporOfficialSheet data={cetakData} showPrintToolbar={false} />
+            <div
+              ref={fitContainerRef}
+              className="w-full -mx-1 sm:mx-0 overflow-hidden rounded-2xl border border-slate-200/90 bg-slate-100/70 py-3 px-1 md:hidden shadow-inner"
+            >
+              <div className="flex justify-center w-full overflow-hidden">
+                <div
+                  ref={fitContentRef}
+                  style={{
+                    width: "794px",
+                    transform: `scale(${fitScale})`,
+                    transformOrigin: "top center",
+                    flexShrink: 0,
+                    marginLeft: `-${marginX}px`,
+                    marginRight: `-${marginX}px`,
+                    marginBottom: `-${marginB}px`,
+                  }}
+                >
+                  <RaporOfficialSheet data={cetakData} showPrintToolbar={false} />
+                </div>
               </div>
             </div>
           ) : (
             <div className="custom-scrollbar overflow-x-auto pb-4 print:block print:overflow-visible print:p-0">
+              <div className="mx-auto w-max">
+                <RaporOfficialSheet data={cetakData} showPrintToolbar={false} />
+              </div>
+            </div>
+          )}
+
+          {/* Untuk layar md ke atas (tablet/desktop), selalu tampilkan ukuran standar jika mobileFit aktif */}
+          {mobileFit && (
+            <div className="hidden md:block custom-scrollbar overflow-x-auto pb-4 print:block print:overflow-visible print:p-0">
               <div className="mx-auto w-max">
                 <RaporOfficialSheet data={cetakData} showPrintToolbar={false} />
               </div>
