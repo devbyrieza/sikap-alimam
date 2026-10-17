@@ -411,29 +411,91 @@ export async function GET(req: NextRequest) {
     const bahasa = formatMapel("bahasa");
     const umum = formatMapel("umum");
 
-    // 6. Get Presensi
-    const presensi = await prisma.presensiSiswa.findMany({
-      where: { santri_id },
-      select: { tanggal: true, status: true }
-    });
-
-    const getDateString = (d: Date) => d.toISOString().split("T")[0];
-    const datesSakit = new Set<string>();
-    const datesIzin = new Set<string>();
-    const datesAlpha = new Set<string>();
-
-    presensi.forEach(p => {
-      const d = getDateString(p.tanggal);
-      if (p.status === "sakit") datesSakit.add(d);
-      if (p.status === "izin") datesIzin.add(d);
-      if (p.status === "alpha") datesAlpha.add(d);
-    });
-
-    const absen = {
-      sakit: datesSakit.size,
-      izin: datesIzin.size,
-      alpha: datesAlpha.size
+    // 6. Get Presensi KBM Akademik & Presensi Halaqoh Kepengasuhan
+    // Helper hitung jumlah jam pelajaran dari kolom jam_ke (e.g. "3, 4" -> 2 JP, "1-2" -> 2 JP, "3" -> 1 JP)
+    const parseJamPelajaranCount = (jam_ke: string | null | undefined): number => {
+      if (!jam_ke) return 1;
+      const str = String(jam_ke).trim();
+      if (!str) return 1;
+      if (str.includes(",")) {
+        return str.split(",").map(s => s.trim()).filter(Boolean).length;
+      }
+      if (str.includes("-")) {
+        const parts = str.split("-").map(s => parseInt(s.trim(), 10)).filter(n => !isNaN(n));
+        if (parts.length === 2 && parts[1] >= parts[0]) {
+          return parts[1] - parts[0] + 1;
+        }
+      }
+      return 1;
     };
+
+    // A. DATA KETIDAKHADIRAN AKADEMIK (KBM Kelas - Satuan: Jam Pelajaran)
+    // Rentang: Awal semester s.d. PTS (Rapor Bayangan) atau s.d. PAS (Rapor Asli)
+    let presensiKbm: any[] = [];
+    try {
+      presensiKbm = await prisma.presensiSiswa.findMany({
+        where: { santri_id },
+        select: { tanggal: true, status: true, jam_ke: true }
+      });
+    } catch (e) {
+      console.warn("Gagal fetch presensiSiswa:", e);
+    }
+
+    let sakitAkademikJp = 0;
+    let izinAkademikJp = 0;
+    let alphaAkademikJp = 0;
+
+    presensiKbm.forEach(p => {
+      const jp = parseJamPelajaranCount(p.jam_ke);
+      const st = (p.status || "").toLowerCase().trim();
+      if (st === "sakit") sakitAkademikJp += jp;
+      else if (st === "izin") izinAkademikJp += jp;
+      else if (st === "alpha" || st === "alfa") alphaAkademikJp += jp;
+    });
+
+    const absen_akademik = {
+      sakit: sakitAkademikJp,
+      izin: izinAkademikJp,
+      alpha: alphaAkademikJp,
+      total: sakitAkademikJp + izinAkademikJp + alphaAkademikJp
+    };
+
+    // B. DATA KETIDAKHADIRAN KEPENGASUHAN (Halaqoh Al-Qur'an - Satuan: Pertemuan / Sesi)
+    // Mencakup: Tahsin, Ziyadah, Mutaba'ah/Muroja'ah harian & seluruh ujian halaqoh
+    // Rentang: Awal halaqoh s.d. Ujian Pra-Target (PTS) atau s.d. Target & Itqon (PAS)
+    let catatanHalaqohList: any[] = [];
+    try {
+      catatanHalaqohList = await prisma.catatanHalaqoh.findMany({
+        where: { 
+          santri_id,
+          kehadiran: { not: "hadir" }
+        },
+        select: { tanggal: true, kehadiran: true, sesi: true }
+      });
+    } catch (e) {
+      console.warn("Gagal fetch catatanHalaqoh:", e);
+    }
+
+    let sakitHalaqohSesi = 0;
+    let izinHalaqohSesi = 0;
+    let alphaHalaqohSesi = 0;
+
+    catatanHalaqohList.forEach(c => {
+      const kh = (c.kehadiran || "").toLowerCase().trim();
+      if (kh === "sakit") sakitHalaqohSesi++;
+      else if (kh === "izin") izinHalaqohSesi++;
+      else if (kh === "alfa" || kh === "alpha") alphaHalaqohSesi++;
+    });
+
+    const absen_halaqoh = {
+      sakit: sakitHalaqohSesi,
+      izin: izinHalaqohSesi,
+      alpha: alphaHalaqohSesi,
+      total: sakitHalaqohSesi + izinHalaqohSesi + alphaHalaqohSesi
+    };
+
+    // Fallback absen untuk backwards-compatibility
+    const absen = absen_halaqoh;
 
     const kepribadian = {
       perilaku: "A",
@@ -535,6 +597,8 @@ export async function GET(req: NextRequest) {
       tahfidz,
       ujian_tahfidz,
       absen,
+      absen_akademik,
+      absen_halaqoh,
       kepribadian
     });
 
