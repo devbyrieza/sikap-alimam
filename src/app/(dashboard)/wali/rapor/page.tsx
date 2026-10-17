@@ -563,20 +563,20 @@ export default function RaporWaliPage() {
                   <div className="flex items-baseline justify-between gap-4 flex-wrap">
                     <div>
                       <div className="text-2xl sm:text-3xl font-black font-mono tracking-wider text-white">
-                        7244445556
+                        4222224441
                       </div>
                       <div className="text-xs text-slate-300 mt-1">
-                        Atas Nama: <strong className="text-white">Pesantren Islam Al-Imam</strong>
+                        Atas Nama: <strong className="text-white">PP Al Andalus Al Imam</strong>
                       </div>
                     </div>
 
                     <button
                       onClick={() => {
-                        navigator.clipboard.writeText("7244445556");
+                        navigator.clipboard.writeText("4222224441");
                         Swal.fire({
                           icon: "success",
                           title: "Nomor Rekening Disalin!",
-                          text: "BSI 7244445556 a.n. Pesantren Islam Al-Imam",
+                          text: "BSI 4222224441 a.n. PP Al Andalus Al Imam",
                           timer: 2000,
                           showConfirmButton: false
                         });

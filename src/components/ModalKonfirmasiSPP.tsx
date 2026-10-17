@@ -136,7 +136,7 @@ export default function ModalKonfirmasiSPP({
   const totalNominal = selectedBulan.length * nominalDefault;
 
   const handleCopyRek = () => {
-    navigator.clipboard.writeText("7711223344");
+    navigator.clipboard.writeText("4222224441");
     setCopiedRek(true);
     setTimeout(() => setCopiedRek(false), 2000);
   };
@@ -289,10 +289,10 @@ export default function ModalKonfirmasiSPP({
                 </span>
               </div>
               <p className="font-black text-base text-emerald-900 mt-1 tracking-wider font-mono">
-                BSI: 7711-2233-44
+                BSI: 4222224441
               </p>
               <p className="text-[11px] text-emerald-700 mt-0.5">
-                a.n. Yayasan Pesantren Islam Al-Imam Sukabumi
+                a.n. PP Al Andalus Al Imam
               </p>
             </div>
             <button
