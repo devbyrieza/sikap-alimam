@@ -18,9 +18,14 @@ import {
   GraduationCap,
   HeartHandshake,
   Loader2,
+  MessageCircle,
+  PhoneCall,
   RefreshCw,
+  RotateCcw,
+  ShieldCheck,
   Sparkles,
   Trophy,
+  User,
 } from "lucide-react";
 import Swal from "sweetalert2";
 import { getOfficialNis } from "@/lib/officialSantri";
@@ -34,6 +39,16 @@ const focusRing =
 const btnBase = `inline-flex min-h-[44px] items-center justify-center gap-2 rounded-2xl px-5 py-2.5 text-sm font-bold transition-all motion-safe:hover:scale-[1.02] active:scale-[0.98] ${focusRing}`;
 const btnPrimary = `${btnBase} bg-[#550000] text-white shadow-sm hover:bg-[#7a0000] active:scale-[0.98]`;
 const surface = "rounded-3xl border border-slate-200/80 bg-white shadow-sm hover:shadow-md transition-shadow";
+
+function toWaNumber(raw: string | null | undefined): string {
+  if (!raw) return "";
+  const digits = raw.replace(/\D/g, "");
+  if (!digits) return "";
+  if (digits.startsWith("62")) return digits;
+  if (digits.startsWith("0")) return `62${digits.slice(1)}`;
+  if (digits.startsWith("8")) return `62${digits}`;
+  return digits;
+}
 
 function formatTanggal(iso: string | null | undefined): string {
   if (!iso) return "-";
@@ -248,54 +263,30 @@ function ProfileBanner({
             style={{ background: currentFoto ? "transparent" : "rgba(255, 255, 255, 0.18)" }}
           >
             {uploading ? (
-              <div className="flex flex-col items-center justify-center gap-1">
-                <Loader2 size={24} className="animate-spin text-white" />
-                <span className="text-[10px] font-bold text-white tracking-wider">Upload...</span>
-              </div>
+              <Loader2 className="animate-spin text-white" size={32} />
             ) : currentFoto ? (
-              <>
-                <img
-                  src={currentFoto}
-                  alt={santri?.nama || "Foto Santri"}
-                  className="h-full w-full object-cover object-center"
-                />
-                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center text-white">
-                  <Camera size={18} />
-                  <span className="text-[9px] font-extrabold uppercase tracking-wider mt-0.5">Ubah</span>
-                </div>
-              </>
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={currentFoto} alt={santri?.nama || "Santri"} className="h-full w-full object-cover" />
             ) : (
-              <>
-                <span className="text-3xl sm:text-4xl font-black text-white drop-shadow">
-                  {(santri?.nama || "S").charAt(0).toUpperCase()}
-                </span>
-                <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center text-white">
-                  <Camera size={20} />
-                  <span className="text-[9px] font-extrabold uppercase tracking-wider mt-0.5">Upload</span>
-                </div>
-              </>
+              <span className="text-2xl sm:text-3xl font-black text-white">
+                {santri?.nama?.charAt(0)?.toUpperCase() || "S"}
+              </span>
             )}
-          </button>
 
-          {!uploading && (
-            <button
-              type="button"
-              onClick={handleAvatarClick}
-              title="Upload Foto Ananda"
-              className="absolute -bottom-1 -right-1 sm:bottom-0 sm:right-0 z-20 flex h-7 w-7 sm:h-8 sm:w-8 items-center justify-center rounded-full bg-white text-slate-800 shadow-lg ring-2 ring-white/80 transition-transform duration-200 hover:scale-110 active:scale-90 hover:bg-emerald-500 hover:text-white"
-            >
-              <Camera size={14} className="sm:size-4" />
-            </button>
-          )}
+            <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center text-white text-[10px] font-bold p-1 text-center">
+              <Camera size={18} className="mb-0.5" />
+              <span>{currentFoto ? "Ganti" : "Upload"}</span>
+            </div>
+          </button>
         </div>
 
         <div className="min-w-0 flex-1">
           <div className="mb-2 flex flex-wrap items-center justify-center sm:justify-start gap-2">
-            <span className="rounded-full bg-white/20 px-2.5 py-1 text-[11px] font-bold leading-tight tracking-wide text-white border border-white/30">
-              Kelas {santri.kelas}
-            </span>
-            <span className="font-mono text-xs text-white font-bold bg-black/25 px-2.5 py-0.5 rounded-full border border-white/20">
+            <span className="rounded-full bg-white/20 px-3 py-0.5 text-xs font-bold text-white backdrop-blur">
               NIS: {nis}
+            </span>
+            <span className="rounded-full bg-white/20 px-3 py-0.5 text-xs font-bold text-white backdrop-blur">
+              Kelas {santri?.kelas || "-"}
             </span>
             <span className="rounded-full bg-emerald-500/90 text-white px-2.5 py-0.5 text-xs font-bold shadow-sm">
               Halaqoh &amp; Tahfidz Al-Qur&apos;an
@@ -375,16 +366,16 @@ export default function WaliTahfidzPage() {
       .catch((err) => console.error("Error fetching anak list:", err));
   }, []);
 
-  useEffect(() => {
+  const loadTahfidzData = () => {
     if (!selectedSantriId) return;
     const controller = new AbortController();
     setLoading(true);
     setLoadError(false);
 
-    fetch(`/api/rapor?santri_id=${encodeURIComponent(selectedSantriId)}`, { signal: controller.signal })
+    fetch(`/api/wali/tahfidz?santri_id=${encodeURIComponent(selectedSantriId)}`, { signal: controller.signal })
       .then((r) => r.json())
       .then((res) => {
-        if (res?.error) setLoadError(true);
+        if (!res.success && res?.error) setLoadError(true);
         else setData(res);
       })
       .catch((err) => {
@@ -395,6 +386,11 @@ export default function WaliTahfidzPage() {
       });
 
     return () => controller.abort();
+  };
+
+  useEffect(() => {
+    const abort = loadTahfidzData();
+    return () => abort?.();
   }, [selectedSantriId]);
 
   const handleSelectSantri = (id: string) => {
@@ -409,8 +405,8 @@ export default function WaliTahfidzPage() {
       <div className="min-h-screen bg-[#f8fafc] flex items-center justify-center p-6">
         <div className={`p-10 text-center ${surface}`}>
           <div className="mx-auto mb-4 h-12 w-12 rounded-full border-b-2 border-[#550000] animate-spin" />
-          <h3 className="text-lg font-bold text-slate-800">Memuat Data Tahfidz Al-Qur&apos;an</h3>
-          <p className="mt-1 text-xs text-slate-500">Mengambil riwayat setoran ziyadah, murojaah, dan hasil ujian...</p>
+          <h3 className="text-lg font-bold text-slate-800">Memuat Data Halaqoh &amp; Tahfidz Al-Qur&apos;an</h3>
+          <p className="mt-1 text-xs text-slate-500">Mengambil riwayat setoran harian, kehadiran sesi, dan hasil ujian tahfidz...</p>
         </div>
       </div>
     );
@@ -425,7 +421,7 @@ export default function WaliTahfidzPage() {
           <p className="mb-5 mt-1 text-sm text-slate-500">Silakan kembali ke beranda atau coba muat ulang.</p>
           <div className="flex justify-center gap-3">
             <Link href="/wali" className={btnPrimary}>Kembali ke Beranda</Link>
-            <button type="button" onClick={() => setSelectedSantriId((id) => id)} className={btnBase + " bg-slate-100 text-slate-700"}>
+            <button type="button" onClick={() => loadTahfidzData()} className={btnBase + " bg-slate-100 text-slate-700"}>
               <RefreshCw size={15} /> Muat Ulang
             </button>
           </div>
@@ -434,14 +430,17 @@ export default function WaliTahfidzPage() {
     );
   }
 
-  const { santri } = data;
+  const { santri, pengampu_halaqoh: pengampu } = data;
   const ujianList: any[] = data?.ujian_tahfidz || [];
-  const setoranList: any[] = data?.tahfidz || [];
-  const presensiHalaqoh: any[] = data?.absen_halaqoh?.detail || [];
+  const setoranList: any[] = data?.setoran_tahfidz || [];
+  const presensiInfo = data?.presensi_halaqoh || {};
+  const presensiList: any[] = presensiInfo?.detail || [];
   const nis = (santri?.nama ? getOfficialNis(santri.nama) : null) || santri.nis;
 
   // Statistik ringkasan
   const totalLulus = ujianList.filter((u) => u.is_lulus).length;
+  const totalMengulang = ujianList.filter((u) => !u.is_lulus).length;
+  const waMusyrif = toWaNumber(pengampu?.no_hp);
 
   return (
     <div className="min-h-screen bg-[#f8fafc] pb-20">
@@ -516,6 +515,76 @@ export default function WaliTahfidzPage() {
           </div>
         </div>
 
+        {/* ── KARTU MUSYRIF PENGAMPU HALAQOH ANANDA ── */}
+        <div
+          className="relative overflow-hidden rounded-3xl p-6 text-white shadow-lg shadow-slate-900/10 sm:p-8"
+          style={{
+            background: "linear-gradient(135deg, #550000 0%, #7a0000 50%, #3a0000 100%)",
+            backgroundColor: "#550000",
+            color: "#ffffff",
+          }}
+        >
+          <div className="pointer-events-none absolute -right-8 -top-8 h-48 w-48 rounded-full border border-white/10 bg-white/5" aria-hidden="true" />
+          <div className="relative z-10 flex flex-col justify-between gap-6 md:flex-row md:items-center">
+            <div className="flex items-center gap-4 sm:gap-5">
+              <div
+                className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl border-2 border-white/20 text-2xl font-black text-white shadow-lg backdrop-blur sm:h-20 sm:w-20 overflow-hidden"
+                style={{ backgroundColor: "rgba(255, 255, 255, 0.15)", color: "#ffffff" }}
+                aria-hidden="true"
+              >
+                {pengampu?.foto_url ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={pengampu.foto_url} alt={pengampu.nama} className="h-full w-full object-cover" />
+                ) : pengampu?.nama ? (
+                  pengampu.nama.replace(/^ust(\.|adz)?\s*/i, "").slice(0, 2).toUpperCase()
+                ) : (
+                  <User size={32} />
+                )}
+              </div>
+              <div className="min-w-0">
+                <div
+                  className="mb-1.5 inline-flex items-center gap-1.5 rounded-full border border-white/20 px-3 py-1 text-xs font-semibold"
+                  style={{ backgroundColor: "rgba(255, 255, 255, 0.15)", color: "#ffe4e6" }}
+                >
+                  <HeartHandshake size={13} aria-hidden="true" />
+                  <span>Pengampu Halaqoh Ananda</span>
+                </div>
+                <h3 className="break-words text-xl font-black leading-tight sm:text-2xl" style={{ color: "#ffffff" }}>
+                  {pengampu?.nama || "Musyrif Halaqoh Al-Qur'an"}
+                </h3>
+                <p className="mt-1 text-xs sm:text-sm font-medium" style={{ color: "rgba(255, 228, 230, 0.9)" }}>
+                  {pengampu?.nama_kelompok || "Halaqoh Al-Qur'an"} &bull; Rutin Ba&apos;da Shubuh &amp; Maghrib
+                </p>
+              </div>
+            </div>
+
+            <div className="flex flex-col gap-3 sm:flex-row">
+              {waMusyrif ? (
+                <a
+                  href={`https://wa.me/${waMusyrif}?text=${encodeURIComponent(
+                    `Assalamu'alaikum Warahmatullahi Wabarakatuh Ustadz ${pengampu.nama_panggilan || pengampu.nama}, saya orang tua dari ${santri.nama} (Kelas ${santri.kelas}). Mohon izin bersilaturahmi dan berkonsultasi mengenai perkembangan hafalan Al-Qur'an ananda.`,
+                  )}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={`inline-flex min-h-[48px] items-center justify-center gap-2.5 rounded-2xl bg-emerald-500 px-6 py-3 text-sm font-bold text-white shadow-lg shadow-emerald-950/20 transition-all hover:bg-emerald-600 motion-safe:hover:scale-[1.02] active:scale-[0.98] ${focusRing}`}
+                  style={{ backgroundColor: "#059669", color: "#ffffff" }}
+                >
+                  <PhoneCall size={18} />
+                  <span>Hubungi via WhatsApp</span>
+                </a>
+              ) : (
+                <div
+                  className="inline-flex items-center gap-2 rounded-2xl px-4 py-3 text-xs font-medium"
+                  style={{ backgroundColor: "rgba(255, 255, 255, 0.1)", color: "rgba(255, 255, 255, 0.85)" }}
+                >
+                  <AlertCircle size={15} />
+                  <span>Nomor kontak dapat dikoordinasikan via Kesantrian</span>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+
         {/* 3 Kartu Ringkasan Tahfidz */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <div className="rounded-2xl border border-blue-200 bg-gradient-to-br from-blue-50 to-white p-5 shadow-sm">
@@ -524,7 +593,9 @@ export default function WaliTahfidzPage() {
               <Trophy size={20} className="text-blue-600" />
             </div>
             <p className="mt-2 text-3xl font-black text-blue-950">{ujianList.length}</p>
-            <p className="mt-1 text-xs text-blue-700 font-semibold">{totalLulus} dinyatakan Lulus</p>
+            <p className="mt-1 text-xs text-blue-700 font-semibold">
+              {totalLulus > 0 ? `${totalLulus} dinyatakan Lulus` : "Ujian berkala pra-target/target"}
+            </p>
           </div>
 
           <div className="rounded-2xl border border-emerald-200 bg-gradient-to-br from-emerald-50 to-white p-5 shadow-sm">
@@ -533,7 +604,7 @@ export default function WaliTahfidzPage() {
               <BookOpen size={20} className="text-emerald-600" />
             </div>
             <p className="mt-2 text-3xl font-black text-emerald-950">{setoranList.length}</p>
-            <p className="mt-1 text-xs text-emerald-700 font-semibold">Ziyadah &amp; Muroja&apos;ah</p>
+            <p className="mt-1 text-xs text-emerald-700 font-semibold">Ziyadah &amp; Muroja&apos;ah Harian</p>
           </div>
 
           <div className="rounded-2xl border border-amber-200 bg-gradient-to-br from-amber-50 to-white p-5 shadow-sm">
@@ -541,8 +612,10 @@ export default function WaliTahfidzPage() {
               <span className="text-xs font-bold uppercase tracking-wider text-amber-800">Kehadiran Halaqoh</span>
               <Clock size={20} className="text-amber-600" />
             </div>
-            <p className="mt-2 text-3xl font-black text-amber-950">{data?.absen_halaqoh?.total || 0} Kali</p>
-            <p className="mt-1 text-xs text-amber-700 font-semibold">Sesi Shubuh &amp; Maghrib</p>
+            <p className="mt-2 text-3xl font-black text-amber-950">{presensiInfo.total_sesi || 0} Sesi</p>
+            <p className="mt-1 text-xs text-amber-700 font-semibold">
+              Tingkat Kehadiran: {presensiInfo.persentase || 100}%
+            </p>
           </div>
         </div>
 
@@ -559,7 +632,7 @@ export default function WaliTahfidzPage() {
               }`}
             >
               <Trophy size={16} />
-              <span>1. Hasil Ujian Tahfidz &amp; Pra-Target</span>
+              <span>1. Hasil Ujian Tahfidz ({ujianList.length})</span>
             </button>
 
             <button
@@ -572,7 +645,7 @@ export default function WaliTahfidzPage() {
               }`}
             >
               <BookOpen size={16} />
-              <span>2. Setoran Halaqoh Harian</span>
+              <span>2. Setoran Halaqoh Harian ({setoranList.length})</span>
             </button>
 
             <button
@@ -585,7 +658,7 @@ export default function WaliTahfidzPage() {
               }`}
             >
               <Calendar size={16} />
-              <span>3. Kehadiran Halaqoh</span>
+              <span>3. Kehadiran Halaqoh ({presensiInfo.total_sesi || 0})</span>
             </button>
           </div>
         </div>
@@ -595,9 +668,26 @@ export default function WaliTahfidzPage() {
           <div className="space-y-4">
             {ujianList.length === 0 ? (
               <div className={`p-12 text-center text-slate-400 ${surface}`}>
-                <Trophy size={40} className="mx-auto mb-3 opacity-30" />
-                <p className="font-bold text-slate-700">Belum ada riwayat ujian tahfidz</p>
-                <p className="mt-1 text-xs text-slate-400">Hasil ujian pra-target dan target ananda akan ditampilkan di sini.</p>
+                <Trophy size={48} className="mx-auto mb-3 opacity-30 text-amber-500" />
+                <h4 className="font-bold text-slate-700 text-base">Belum Ada Riwayat Ujian Tahfidz</h4>
+                <p className="mt-1 text-xs text-slate-500 max-w-md mx-auto">
+                  Hasil penilaian ujian tahfidz ananda (ujian pra-target, ujian bulanan, ujian pekanan, maupun target kelulusan juz) akan otomatis tampil di sini segera setelah pengampu halaqoh memasukkan penilaian.
+                </p>
+                {waMusyrif && (
+                  <div className="mt-5">
+                    <a
+                      href={`https://wa.me/${waMusyrif}?text=${encodeURIComponent(
+                        `Assalamu'alaikum Warahmatullahi Wabarakatuh Ustadz ${pengampu.nama_panggilan || pengampu.nama}, saya orang tua dari ${santri.nama}. Mohon izin bertanya mengenai jadwal atau hasil ujian tahfidz ananda.`,
+                      )}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-2 rounded-xl bg-emerald-600 px-4 py-2 text-xs font-bold text-white shadow-sm hover:bg-emerald-700"
+                    >
+                      <PhoneCall size={14} />
+                      <span>Tanyakan Hasil Ujian ke Musyrif</span>
+                    </a>
+                  </div>
+                )}
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -614,7 +704,7 @@ export default function WaliTahfidzPage() {
                             {u.jenis_ujian ? String(u.jenis_ujian).replace(/_/g, " ") : "UJIAN PRA TARGET"}
                           </span>
                           <span
-                            className={`rounded-xl border px-3 py-1 text-sm font-black shadow-sm ${
+                            className={`rounded-xl border px-3 py-1 text-xs font-black shadow-sm ${
                               u.is_lulus ? "border-emerald-200 bg-emerald-50 text-emerald-700" : "border-rose-200 bg-rose-50 text-rose-700"
                             }`}
                           >
@@ -631,9 +721,15 @@ export default function WaliTahfidzPage() {
                           {halText && (
                             <>
                               <span>•</span>
-                              <span className="rounded-md border border-emerald-200 bg-emerald-50 px-2.5 py-0.5 font-bold text-emerald-800">
-                                Jumlah: {halText}
+                              <span className="rounded-md border border-emerald-200 bg-emerald-50 px-2 py-0.5 font-bold text-emerald-800">
+                                {halText}
                               </span>
+                            </>
+                          )}
+                          {u.penguji && (
+                            <>
+                              <span>•</span>
+                              <span className="text-slate-600">Penguji: <strong>{u.penguji}</strong></span>
                             </>
                           )}
                         </div>
@@ -672,31 +768,109 @@ export default function WaliTahfidzPage() {
           <div className="space-y-4">
             {setoranList.length === 0 ? (
               <div className={`p-12 text-center text-slate-400 ${surface}`}>
-                <BookOpen size={40} className="mx-auto mb-3 opacity-30" />
-                <p className="font-bold text-slate-700">Belum ada riwayat setoran harian</p>
-                <p className="mt-1 text-xs text-slate-400">Catatan ziyadah dan murojaah ba&apos;da Shubuh/Maghrib akan tampil di sini.</p>
+                <BookOpen size={48} className="mx-auto mb-3 opacity-30 text-emerald-500" />
+                <h4 className="font-bold text-slate-700 text-base">Belum Ada Riwayat Setoran Harian</h4>
+                <p className="mt-1 text-xs text-slate-500 max-w-md mx-auto">
+                  Catatan setoran rutin santri (tahsin, ziyadah hafalan baru, dan muroja&apos;ah) pada halaqoh ba&apos;da Shubuh &amp; Maghrib akan tampil di sini setelah diinput oleh musyrif pengampu halaqoh.
+                </p>
+                {waMusyrif && (
+                  <div className="mt-5">
+                    <a
+                      href={`https://wa.me/${waMusyrif}?text=${encodeURIComponent(
+                        `Assalamu'alaikum Warahmatullahi Wabarakatuh Ustadz ${pengampu.nama_panggilan || pengampu.nama}, saya orang tua dari ${santri.nama}. Mohon izin berkonsultasi mengenai perkembangan setoran hafalan ananda.`,
+                      )}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-2 rounded-xl bg-emerald-600 px-4 py-2 text-xs font-bold text-white shadow-sm hover:bg-emerald-700"
+                    >
+                      <PhoneCall size={14} />
+                      <span>Hubungi Musyrif via WhatsApp</span>
+                    </a>
+                  </div>
+                )}
               </div>
             ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                {setoranList.map((t) => (
-                  <div
-                    key={t.id}
-                    className="flex items-center justify-between gap-4 rounded-2xl border border-slate-200/80 bg-white p-4 shadow-sm hover:shadow-md transition-shadow"
-                  >
-                    <div className="min-w-0">
-                      <span className="rounded-full bg-emerald-100 px-2.5 py-0.5 text-[10px] font-extrabold uppercase text-emerald-800">
-                        {t.jenis || "Setoran"}
-                      </span>
-                      <h4 className="mt-1.5 text-sm font-bold text-slate-800">
-                        {t.surat} {t.ayat ? `(Ayat ${t.ayat})` : ""}
-                      </h4>
-                      <p className="mt-0.5 text-xs text-slate-500">{formatTanggal(t.tanggal)}</p>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                {setoranList.map((t) => {
+                  const isZiyadah = String(t.jenis).toLowerCase().includes("ziyadah");
+                  const isMurojaah = String(t.jenis).toLowerCase().includes("murojaah");
+                  const badgeCls = isZiyadah
+                    ? "bg-emerald-100 text-emerald-800 border-emerald-200"
+                    : isMurojaah
+                    ? "bg-blue-100 text-blue-800 border-blue-200"
+                    : "bg-purple-100 text-purple-800 border-purple-200";
+
+                  const sesiLabel =
+                    t.sesi === "subuh"
+                      ? "Halaqoh Shubuh"
+                      : t.sesi === "maghrib"
+                      ? "Ba'da Maghrib"
+                      : t.sesi === "dhuha"
+                      ? "Halaqoh Dhuha"
+                      : "Sesi Halaqoh";
+
+                  return (
+                    <div
+                      key={t.id}
+                      className="flex flex-col justify-between gap-3 rounded-2xl border border-slate-200/80 bg-white p-4 shadow-sm hover:shadow-md transition-shadow"
+                    >
+                      <div>
+                        <div className="flex items-center justify-between gap-2">
+                          <span className={`rounded-full border px-2.5 py-0.5 text-[10px] font-extrabold uppercase ${badgeCls}`}>
+                            {t.jenis || "Setoran"}
+                          </span>
+                          <span className="rounded-lg bg-slate-100 px-2 py-0.5 text-[10px] font-bold text-slate-600">
+                            {sesiLabel}
+                          </span>
+                        </div>
+
+                        <h4 className="mt-2 text-base font-bold text-slate-800">
+                          {t.surah_nama || t.surat || "Al-Qur'an"}
+                          {t.ayat_dari && t.ayat_ke ? (
+                            <span className="text-slate-600 font-semibold text-xs ml-1.5">
+                              (Ayat {t.ayat_dari} - {t.ayat_ke})
+                            </span>
+                          ) : t.ayat ? (
+                            <span className="text-slate-600 font-semibold text-xs ml-1.5">
+                              (Ayat {t.ayat})
+                            </span>
+                          ) : null}
+                        </h4>
+
+                        <div className="mt-1 flex flex-wrap items-center gap-2 text-xs text-slate-500">
+                          <span>{formatTanggal(t.tanggal)}</span>
+                          {t.jumlah_halaman && (
+                            <>
+                              <span>•</span>
+                              <span className="font-semibold text-emerald-700">{t.jumlah_halaman} Halaman</span>
+                            </>
+                          )}
+                          {t.musyrif && (
+                            <>
+                              <span>•</span>
+                              <span>Musyrif: <strong>{t.musyrif}</strong></span>
+                            </>
+                          )}
+                        </div>
+                      </div>
+
+                      <div className="flex items-center justify-between border-t border-slate-100 pt-2 text-xs">
+                        <span className="text-slate-500 italic">
+                          {t.catatan ? `"${t.catatan}"` : "Disimak dengan baik"}
+                        </span>
+                        {t.nilai_akhir ? (
+                          <span className="rounded-lg bg-emerald-50 border border-emerald-200 px-2.5 py-1 text-xs font-black text-emerald-800">
+                            Nilai: {t.nilai_akhir}
+                          </span>
+                        ) : (
+                          <span className="rounded-lg bg-slate-100 px-2 py-0.5 text-[11px] font-bold text-slate-600">
+                            Tercatat
+                          </span>
+                        )}
+                      </div>
                     </div>
-                    <span className="shrink-0 rounded-xl border border-emerald-200 bg-emerald-50 px-3 py-1.5 text-xs font-bold text-emerald-800 shadow-sm">
-                      {t.keterangan || "Lancar"}
-                    </span>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             )}
           </div>
@@ -704,34 +878,80 @@ export default function WaliTahfidzPage() {
 
         {/* ── SUB TAB 3: KEHADIRAN HALAQOH ── */}
         {activeTab === "presensi" && (
-          <div className={`p-6 ${surface}`}>
-            <h3 className="text-base font-bold text-slate-800 mb-2">Presensi Halaqoh Qur&apos;an Santri</h3>
-            <p className="text-xs text-slate-500 mb-5">Kehadiran santri pada sesi halaqoh Shubuh dan Maghrib bersama musyrif halaqoh.</p>
-
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center mb-6">
-              <div className="rounded-xl border border-emerald-200 bg-emerald-50 p-3">
-                <span className="text-[11px] font-bold uppercase text-emerald-800">Hadir</span>
-                <p className="mt-1 text-2xl font-black text-emerald-900">{data?.absen_halaqoh?.hadir || data?.absen_halaqoh?.total || 0}</p>
-              </div>
-              <div className="rounded-xl border border-blue-200 bg-blue-50 p-3">
-                <span className="text-[11px] font-bold uppercase text-blue-800">Sakit</span>
-                <p className="mt-1 text-2xl font-black text-blue-900">{data?.absen_halaqoh?.sakit || 0}</p>
-              </div>
-              <div className="rounded-xl border border-amber-200 bg-amber-50 p-3">
-                <span className="text-[11px] font-bold uppercase text-amber-800">Izin</span>
-                <p className="mt-1 text-2xl font-black text-amber-900">{data?.absen_halaqoh?.izin || 0}</p>
-              </div>
-              <div className="rounded-xl border border-rose-200 bg-rose-50 p-3">
-                <span className="text-[11px] font-bold uppercase text-rose-800">Alpa</span>
-                <p className="mt-1 text-2xl font-black text-rose-900">{data?.absen_halaqoh?.alpha || 0}</p>
-              </div>
-            </div>
-
-            <div className="rounded-2xl border border-slate-100 bg-slate-50/70 p-4 text-xs text-slate-600">
-              <p className="font-semibold text-slate-700">Catatan Pengasuhan Halaqoh:</p>
-              <p className="mt-1 leading-relaxed">
-                Santri wajib mengikuti kegiatan halaqoh Qur&apos;an secara disiplin setiap hari ba&apos;da shalat Shubuh dan ba&apos;da shalat Maghrib di masjid jami&apos; pesantren bersama musyrif halaqoh masing-masing.
+          <div className="space-y-6">
+            <div className={`p-6 ${surface}`}>
+              <h3 className="text-base font-bold text-slate-800 mb-1">Presensi Halaqoh Qur&apos;an Santri</h3>
+              <p className="text-xs text-slate-500 mb-5">
+                Kedisiplinan kehadiran ananda pada sesi halaqoh Shubuh dan Maghrib bersama musyrif halaqoh di masjid pesantren.
               </p>
+
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center mb-6">
+                <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-4">
+                  <span className="text-[11px] font-bold uppercase text-emerald-800">Hadir</span>
+                  <p className="mt-1 text-3xl font-black text-emerald-900">{presensiInfo.hadir || 0}</p>
+                  <p className="text-[10px] text-emerald-700 mt-0.5">Sesi halaqoh</p>
+                </div>
+                <div className="rounded-2xl border border-blue-200 bg-blue-50 p-4">
+                  <span className="text-[11px] font-bold uppercase text-blue-800">Sakit</span>
+                  <p className="mt-1 text-3xl font-black text-blue-900">{presensiInfo.sakit || 0}</p>
+                  <p className="text-[10px] text-blue-700 mt-0.5">Dengan surat/izin</p>
+                </div>
+                <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4">
+                  <span className="text-[11px] font-bold uppercase text-amber-800">Izin</span>
+                  <p className="mt-1 text-3xl font-black text-amber-900">{presensiInfo.izin || 0}</p>
+                  <p className="text-[10px] text-amber-700 mt-0.5">Izin resmi</p>
+                </div>
+                <div className="rounded-2xl border border-rose-200 bg-rose-50 p-4">
+                  <span className="text-[11px] font-bold uppercase text-rose-800">Alpa</span>
+                  <p className="mt-1 text-3xl font-black text-rose-900">{presensiInfo.alfa || 0}</p>
+                  <p className="text-[10px] text-rose-700 mt-0.5">Tanpa keterangan</p>
+                </div>
+              </div>
+
+              {/* Rincian Riwayat Presensi */}
+              {presensiList.length > 0 && (
+                <div className="overflow-hidden rounded-2xl border border-slate-200">
+                  <div className="bg-slate-50 px-4 py-3 border-b border-slate-200">
+                    <h4 className="text-xs font-bold uppercase tracking-wider text-slate-700">Riwayat Sesi Terakhir</h4>
+                  </div>
+                  <div className="divide-y divide-slate-100 max-h-80 overflow-y-auto custom-scrollbar">
+                    {presensiList.map((pr) => {
+                      const isHadir = pr.kehadiran === "hadir";
+                      const isSakit = pr.kehadiran === "sakit";
+                      const isIzin = pr.kehadiran === "izin";
+                      const statusColor = isHadir
+                        ? "bg-emerald-100 text-emerald-800"
+                        : isSakit
+                        ? "bg-blue-100 text-blue-800"
+                        : isIzin
+                        ? "bg-amber-100 text-amber-800"
+                        : "bg-rose-100 text-rose-800";
+
+                      const sesiText = pr.sesi === "subuh" ? "Shubuh" : pr.sesi === "maghrib" ? "Maghrib" : "Dhuha";
+
+                      return (
+                        <div key={pr.id} className="flex items-center justify-between p-3 text-xs hover:bg-slate-50/80">
+                          <div>
+                            <span className="font-bold text-slate-800">{formatTanggal(pr.tanggal)}</span>
+                            <span className="text-slate-400 ml-2">• Sesi {sesiText}</span>
+                            {pr.alasan && <p className="text-[11px] text-slate-500 mt-0.5">Ket: {pr.alasan}</p>}
+                          </div>
+                          <span className={`rounded-full px-2.5 py-0.5 text-[11px] font-bold uppercase ${statusColor}`}>
+                            {pr.kehadiran}
+                          </span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+
+              <div className="mt-5 rounded-2xl border border-slate-100 bg-slate-50/70 p-4 text-xs text-slate-600">
+                <p className="font-semibold text-slate-700">Catatan Pengasuhan Halaqoh:</p>
+                <p className="mt-1 leading-relaxed">
+                  Santri wajib mengikuti kegiatan halaqoh Qur&apos;an secara disiplin setiap hari ba&apos;da shalat Shubuh dan ba&apos;da shalat Maghrib di masjid jami&apos; pesantren bersama musyrif halaqoh masing-masing.
+                </p>
+              </div>
             </div>
           </div>
         )}

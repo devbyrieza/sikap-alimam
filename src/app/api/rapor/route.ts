@@ -353,6 +353,8 @@ export async function GET(req: NextRequest) {
       santri: santriInfo,
       is_locked: false,
       spp: sppInfo,
+      tahfidz,
+      ujian_tahfidz: ujianTahfidz,
       ringkasan: {
         persentaseKehadiran,
         totalHari,
