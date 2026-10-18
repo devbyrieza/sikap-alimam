@@ -16,6 +16,7 @@ import {
   User,
   GraduationCap,
   Star,
+  Info,
 } from "lucide-react";
 
 export default function LoginPage() {
@@ -533,16 +534,16 @@ export default function LoginPage() {
                   autoComplete="current-password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  placeholder={activeTab === "asatidzah" ? "Masukkan kata sandi akun" : "Format: DD-MM-YYYY (Contoh: 07-06-1997)"}
+                  placeholder={activeTab === "asatidzah" ? "Masukkan kata sandi akun" : "DD-MM-YYYY (Contoh: 17-08-2012)"}
                   style={{
                     width: "100%",
                     height: "48px",
-                    paddingLeft: "40px",
-                    paddingRight: "44px",
+                    paddingLeft: "38px",
+                    paddingRight: "38px",
                     background: "#f8fafc",
                     border: "1.5px solid #e2e8f0",
                     borderRadius: "12px",
-                    fontSize: "13px",
+                    fontSize: "12px",
                     fontWeight: 500,
                     color: "#0f172a",
                     outline: "none",
@@ -588,6 +589,24 @@ export default function LoginPage() {
                   )}
                 </button>
               </div>
+              {activeTab === "wali" && (
+                <div
+                  style={{
+                    marginTop: "6px",
+                    fontSize: "11px",
+                    color: "#64748b",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "5px",
+                    lineHeight: 1.4,
+                  }}
+                >
+                  <Info style={{ width: 13, height: 13, color: "#550000", flexShrink: 0 }} />
+                  <span>
+                    Format: <strong>DD-MM-YYYY</strong> &bull; Contoh: <strong style={{ color: "#550000" }}>17-08-2012</strong>
+                  </span>
+                </div>
+              )}
             </div>
 
             {/* Error */}
