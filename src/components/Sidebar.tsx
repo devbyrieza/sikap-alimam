@@ -52,7 +52,7 @@ const NAV: NavItem[] = [
   { href: "/wali/rapor", label: "Rapor Santri", icon: FileText, roles: ["wali_santri", "orang_tua", "wali"] },
   { href: "/wali/akademik", label: "Akademik & Mapel", icon: BookOpen, roles: ["wali_santri", "orang_tua", "wali"] },
   { href: "/wali/tahfidz", label: "Halaqoh & Tahfidz", icon: BookHeart, roles: ["wali_santri", "orang_tua", "wali"] },
-  { href: "/wali/spp", label: "SPP & Wali Kelas", icon: CreditCard, roles: ["wali_santri", "orang_tua", "wali"] },
+  { href: "/wali/spp", label: "SPP & Keuangan", icon: CreditCard, roles: ["wali_santri", "orang_tua", "wali"] },
   { href: "/keuangan", label: "Keuangan", icon: CreditCard, roles: ["admin_keuangan", "admin_super", "mudir"] },
   {
     href: "/presensi/santri",

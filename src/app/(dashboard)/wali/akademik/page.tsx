@@ -652,7 +652,7 @@ export default function WaliAkademikPage() {
               className="flex shrink-0 items-center gap-2 whitespace-nowrap rounded-xl px-4 py-2.5 text-xs sm:text-sm font-bold min-h-[44px] bg-slate-100/90 text-slate-600 hover:bg-slate-200 hover:text-slate-900 transition-all"
             >
               <CreditCard size={16} className="text-slate-400" />
-              <span>4. SPP &amp; Wali Kelas</span>
+              <span>4. SPP &amp; Keuangan</span>
             </Link>
           </div>
         </div>

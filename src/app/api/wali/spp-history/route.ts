@@ -112,6 +112,7 @@ export async function GET(req: NextRequest) {
         bulan: b.bulan,
         tahun: b.tahun,
         label: b.label,
+        bulanNama: b.label,
         status,
         nominal: record?.nominal || defaultNominal,
         tanggal_bayar: record?.tanggal_bayar || null,
@@ -128,6 +129,10 @@ export async function GET(req: NextRequest) {
     const belumLunas = sppHistory.filter((s) => s.status === "belum_lunas");
     const sum = (rows: { nominal: number }[]) => rows.reduce((acc, s) => acc + Number(s.nominal || 0), 0);
 
+    // Dapatkan status bulan ini secara akurat
+    const itemBulanIni = sppHistory.find((s) => s.is_bulan_ini);
+    const statusBulanIni = itemBulanIni?.status || (belumLunas.length === 0 ? "lunas" : "belum_lunas");
+
     return NextResponse.json({
       success: true,
       santri: {
@@ -140,11 +145,15 @@ export async function GET(req: NextRequest) {
       wali_kelas: waliKelas,
       spp_history: sppHistory,
       spp_summary: {
+        statusBulanIni,
+        status_bulan_ini: statusBulanIni,
+        totalTunggakanBulan: belumLunas.length,
+        total_belum_lunas: belumLunas.length,
+        totalTunggakanNominal: sum(belumLunas),
+        total_nominal_tunggakan: sum(belumLunas),
         total_lunas: lunas.length,
         total_menunggu_verifikasi: sppHistory.filter((s) => s.status === "menunggu_verifikasi").length,
-        total_belum_lunas: belumLunas.length,
         total_nominal_lunas: sum(lunas),
-        total_nominal_tunggakan: sum(belumLunas),
       },
     });
   } catch (error) {

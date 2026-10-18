@@ -482,12 +482,12 @@ export default function WaliSppPage() {
               className="flex shrink-0 items-center gap-2 whitespace-nowrap rounded-xl px-4 py-2.5 text-xs sm:text-sm font-bold min-h-[44px] bg-[#550000] text-white shadow-sm transition-all"
             >
               <CreditCard size={16} className="text-rose-200" />
-              <span>4. SPP &amp; Wali Kelas</span>
+              <span>4. SPP &amp; Keuangan</span>
             </Link>
           </div>
         </div>
 
-        {/* ── KARTU WALI KELAS ── */}
+        {/* ── KARTU LAYANAN KEUANGAN / FINANCE PESANTREN ── */}
         <div
           className="relative overflow-hidden rounded-3xl p-6 text-white shadow-lg shadow-slate-900/10 sm:p-8"
           style={{
@@ -500,52 +500,42 @@ export default function WaliSppPage() {
           <div className="relative z-10 flex flex-col justify-between gap-6 md:flex-row md:items-center">
             <div className="flex items-center gap-4 sm:gap-5">
               <div
-                className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl border-2 border-white/20 text-2xl font-black text-white shadow-lg backdrop-blur sm:h-20 sm:w-20"
+                className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl border-2 border-white/20 text-white shadow-lg backdrop-blur sm:h-20 sm:w-20"
                 style={{ backgroundColor: "rgba(255, 255, 255, 0.15)", color: "#ffffff" }}
                 aria-hidden="true"
               >
-                {wali?.nama ? wali.nama.slice(0, 2).toUpperCase() : <User size={32} />}
+                <Building2 size={36} />
               </div>
               <div className="min-w-0">
                 <div
                   className="mb-1.5 inline-flex items-center gap-1.5 rounded-full border border-white/20 px-3 py-1 text-xs font-semibold"
                   style={{ backgroundColor: "rgba(255, 255, 255, 0.15)", color: "#ffe4e6" }}
                 >
-                  <ShieldCheck size={13} aria-hidden="true" />
-                  <span>Wali Kelas Ananda</span>
+                  <CreditCard size={13} aria-hidden="true" />
+                  <span>Bagian Keuangan &amp; Administrasi SPP</span>
                 </div>
                 <h3 className="break-words text-xl font-black leading-tight sm:text-2xl" style={{ color: "#ffffff" }}>
-                  {wali?.nama || "Ustadz Pembina Kelas"}
+                  Finance Pesantren Al-Imam
                 </h3>
                 <p className="mt-1 text-xs sm:text-sm font-medium" style={{ color: "rgba(255, 228, 230, 0.9)" }}>
-                  Kelas {santri?.kelas || "-"} &bull; {santri?.jenjang || "Pesantren Al-Imam"}
+                  Layanan Konfirmasi Pembayaran &amp; Informasi SPP Santri &bull; WhatsApp: {FINANCE_PHONE_DISPLAY}
                 </p>
               </div>
             </div>
 
             <div className="flex flex-col gap-3 sm:flex-row">
-              {waWali ? (
-                <a
-                  href={`https://wa.me/${waWali}?text=${encodeURIComponent(
-                    `Assalamu'alaikum Warahmatullahi Wabarakatuh Ustadz ${wali.nama_panggilan || wali.nama}, saya orang tua dari ${santri.nama} (Kelas ${santri.kelas}). Mohon izin bersilaturahmi dan berkonsultasi mengenai perkembangan ananda.`,
-                  )}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={`inline-flex min-h-[48px] items-center justify-center gap-2.5 rounded-2xl bg-emerald-500 px-6 py-3 text-sm font-bold text-white shadow-lg shadow-emerald-950/20 transition-all hover:bg-emerald-600 motion-safe:hover:scale-[1.02] active:scale-[0.98] ${focusRing}`}
-                  style={{ backgroundColor: "#059669", color: "#ffffff" }}
-                >
-                  <PhoneCall size={18} />
-                  <span>Hubungi via WhatsApp</span>
-                </a>
-              ) : (
-                <div
-                  className="inline-flex items-center gap-2 rounded-2xl px-4 py-3 text-xs font-medium"
-                  style={{ backgroundColor: "rgba(255, 255, 255, 0.1)", color: "rgba(255, 255, 255, 0.85)" }}
-                >
-                  <AlertCircle size={15} />
-                  <span>Nomor kontak dapat dikoordinasikan via Kesantrian</span>
-                </div>
-              )}
+              <a
+                href={`https://wa.me/${FINANCE_WA}?text=${encodeURIComponent(
+                  `Assalamu'alaikum Warahmatullahi Wabarakatuh Bagian Keuangan Pesantren Al-Imam, saya orang tua dari ${santri.nama} (Kelas ${santri.kelas}). Mohon izin konfirmasi dan berkonsultasi mengenai administrasi SPP ananda.`,
+                )}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={`inline-flex min-h-[48px] items-center justify-center gap-2.5 rounded-2xl bg-emerald-500 px-6 py-3 text-sm font-bold text-white shadow-lg shadow-emerald-950/20 transition-all hover:bg-emerald-600 motion-safe:hover:scale-[1.02] active:scale-[0.98] ${focusRing}`}
+                style={{ backgroundColor: "#059669", color: "#ffffff" }}
+              >
+                <PhoneCall size={18} />
+                <span>Hubungi Finance via WhatsApp</span>
+              </a>
             </div>
           </div>
         </div>
@@ -573,7 +563,7 @@ export default function WaliSppPage() {
               <div className="rounded-2xl border border-slate-100 bg-slate-50/80 p-4">
                 <span className="text-[11px] font-bold uppercase text-slate-400">Status Bulan Ini</span>
                 <p className="mt-1.5 text-base font-extrabold text-slate-800">
-                  {summary.statusBulanIni === "lunas" ? (
+                  {summary.statusBulanIni === "lunas" || summary.status_bulan_ini === "lunas" || ((summary.totalTunggakanBulan ?? summary.total_belum_lunas ?? 0) === 0 && history.some(h => h.is_bulan_ini && h.status === "lunas")) ? (
                     <span className="text-emerald-700 flex items-center gap-1.5">
                       <CheckCircle2 size={16} /> Lunas
                     </span>
@@ -592,14 +582,14 @@ export default function WaliSppPage() {
               <div className="rounded-2xl border border-slate-100 bg-slate-50/80 p-4">
                 <span className="text-[11px] font-bold uppercase text-slate-400">Total Tunggakan</span>
                 <p className="mt-1.5 text-2xl font-black text-slate-900">
-                  {summary.totalTunggakanBulan || 0} <span className="text-xs font-semibold text-slate-500">Bulan</span>
+                  {summary.totalTunggakanBulan ?? summary.total_belum_lunas ?? 0} <span className="text-xs font-semibold text-slate-500">Bulan</span>
                 </p>
               </div>
 
               <div className="rounded-2xl border border-slate-100 bg-slate-50/80 p-4">
                 <span className="text-[11px] font-bold uppercase text-slate-400">Nominal Tagihan</span>
                 <p className="mt-1.5 text-xl font-black text-[#550000]">
-                  {formatRupiah(summary.totalTunggakanNominal)}
+                  {formatRupiah(summary.totalTunggakanNominal ?? summary.total_nominal_tunggakan ?? 0)}
                 </p>
               </div>
             </div>
@@ -619,7 +609,7 @@ export default function WaliSppPage() {
                         : "border-slate-200 bg-white"
                     }`}
                   >
-                    <p className="font-bold text-slate-800">{h.bulanNama}</p>
+                    <p className="font-bold text-slate-800">{h.bulanNama || h.label || `Bulan ${h.bulan}`}</p>
                     <p className="text-[11px] text-slate-500 mt-0.5">{formatRupiah(h.nominal)}</p>
                     <div className="mt-2">
                       {h.status === "lunas" ? (
