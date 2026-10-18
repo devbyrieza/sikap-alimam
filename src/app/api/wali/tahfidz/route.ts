@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getSession } from "@/lib/auth";
-import { calculateHalaman } from "@/lib/quran-madinah";
+import { calculateHalaman, formatMateriUjianTahfidz } from "@/lib/quran-madinah";
 import { cekStatusSpp } from "@/lib/keuangan";
 
 export const dynamic = "force-dynamic";
@@ -308,19 +308,20 @@ export async function GET(req: NextRequest) {
     });
 
     const ujianTahfidz = rawUjian.map((u) => {
-      const normalizedHal = normalizeUjianHalaman(u);
+      const formatted = formatMateriUjianTahfidz(u);
       return {
         id: u.id,
         tanggal: u.tanggal.toISOString().split("T")[0],
         jenis_ujian: u.jenis_ujian,
-        juz: u.juz,
+        juz: u.juz || formatted.detectedJuz,
         surah_nomor: u.surah_nomor,
-        surah_nama: u.surah_nama || "Yusuf",
+        surah_nama: formatted.displayTitle,
         surah_selesai_nomor: u.surah_selesai_nomor,
         surah_selesai_nama: u.surah_selesai_nama,
         ayat_dari: u.ayat_dari,
         ayat_ke: u.ayat_ke,
-        jumlah_halaman: normalizedHal,
+        ayat_text: formatted.displayAyat,
+        jumlah_halaman: formatted.halValue,
         nilai_bacaan: u.nilai_bacaan,
         nilai_kelancaran: u.nilai_kelancaran,
         nilai_sikap: u.nilai_sikap,

@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { getSession } from "@/lib/auth";
+import { detectJuzFromUjian } from "@/lib/quran-madinah";
 
 export const dynamic = 'force-dynamic';
 
@@ -106,6 +107,17 @@ export async function POST(request: Request) {
       final_ayat_ke = temp;
     }
 
+    let final_juz = juz ? Number(juz) : null;
+    if (!final_juz) {
+      final_juz = detectJuzFromUjian({
+        juz,
+        surah_nomor,
+        surah_selesai_nomor,
+        catatan,
+        jumlah_halaman,
+      });
+    }
+
     if (id) {
       const updated = await prisma.ujianTahfidz.update({
         where: { id },
@@ -114,7 +126,7 @@ export async function POST(request: Request) {
           pegawai_id,
           tanggal: new Date(tanggal),
           jenis_ujian,
-          juz: juz ? Number(juz) : null,
+          juz: final_juz,
           surah_nomor: surah_nomor ? Number(surah_nomor) : null,
           surah_nama,
           surah_selesai_nomor: surah_selesai_nomor ? Number(surah_selesai_nomor) : null,
@@ -138,7 +150,7 @@ export async function POST(request: Request) {
           pegawai_id,
           tanggal: new Date(tanggal),
           jenis_ujian,
-          juz: juz ? Number(juz) : null,
+          juz: final_juz,
           surah_nomor: surah_nomor ? Number(surah_nomor) : null,
           surah_nama,
           surah_selesai_nomor: surah_selesai_nomor ? Number(surah_selesai_nomor) : null,

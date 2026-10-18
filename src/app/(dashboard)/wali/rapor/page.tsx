@@ -38,7 +38,7 @@ import JurnalDetailModal from "@/components/JurnalDetailModal";
 import RaporOfficialSheet from "@/components/RaporOfficialSheet";
 import ModalKonfirmasiSPP from "@/components/ModalKonfirmasiSPP";
 import { getOfficialNis } from "@/lib/officialSantri";
-import { calculateHalaman } from "@/lib/quran-madinah";
+import { calculateHalaman, formatMateriUjianTahfidz } from "@/lib/quran-madinah";
 
 /* ═══════════════════════════ Konfigurasi ═══════════════════════════ */
 
@@ -263,42 +263,12 @@ function groupAkademik(rows: any[]): NilaiItem[] {
  * Sebaiknya diperbaiki di database, lalu blok ini dihapus.
  */
 function normalizeUjianTahfidz(u: any) {
-  const rawDari = u.ayat_dari !== null && u.ayat_dari !== undefined ? Number(u.ayat_dari) : null;
-  const rawKe = u.ayat_ke !== null && u.ayat_ke !== undefined ? Number(u.ayat_ke) : null;
-
-  let ayatDari = rawDari;
-  let ayatKe = rawKe;
-  if (ayatDari !== null && ayatKe !== null && ayatDari > ayatKe) {
-    [ayatDari, ayatKe] = [ayatKe, ayatDari];
-  }
-
-  const isYusuf = Boolean(u.surah_nama?.toLowerCase().includes("yusuf"));
-  const isAnomalousRange = !ayatDari || !ayatKe || (ayatDari === 11 && ayatKe === 13) || (rawDari === 13 && rawKe === 11);
-  if (isYusuf && isAnomalousRange) {
-    ayatDari = 1;
-    ayatKe = 52;
-  }
-
-  const surahBase: string = u.surah_nama || "Yusuf";
-  const surahNama = surahBase.toLowerCase().startsWith("surah") ? surahBase : `Surah ${surahBase}`;
-  const ayatText = ayatDari && ayatKe ? `Ayat ${ayatDari} - ${ayatKe}` : isYusuf ? "Ayat 1 - 52" : "";
-
-  // Halaman: jika Yusuf ayat 1-52 (atau jika data lama di DB tercatat 0.1 halaman sisa uji coba 2-3 ayat)
-  let rawHal = u.jumlah_halaman !== null && u.jumlah_halaman !== undefined ? Number(u.jumlah_halaman) : null;
-  let halValue = rawHal;
-
-  if (isYusuf && (isAnomalousRange || (ayatDari === 1 && ayatKe === 52) || (rawHal !== null && rawHal < 2))) {
-    halValue = 6.6; // Surah Yusuf ayat 1 - 52 (Juz 12) = 6.6 halaman standar mushaf Madinah
-  } else if ((!halValue || halValue < 0.5) && ayatDari && ayatKe) {
-    const sNomor = Number(u.surah_nomor) || (isYusuf ? 12 : 0);
-    if (sNomor > 0) {
-      halValue = calculateHalaman(sNomor, ayatDari, ayatKe);
-    }
-  }
-
-  const halText = halValue ? `${halValue} Halaman` : null;
-
-  return { surahNama, ayatText, halText };
+  const formatted = formatMateriUjianTahfidz(u);
+  return {
+    surahNama: formatted.displayTitle,
+    ayatText: formatted.displayAyat,
+    halText: formatted.halText,
+  };
 }
 
 /* ═══════════════════════════ Komponen kecil ═══════════════════════════ */
@@ -1617,8 +1587,8 @@ function TabTahfidz({ ujian, setoran }: { ujian: any[]; setoran: any[] }) {
                         {u.jenis_ujian ? String(u.jenis_ujian).replace(/_/g, " ") : "UJIAN PRA TARGET"}
                       </span>
                       <h4 className="mt-1.5 flex flex-wrap items-center gap-2 text-sm font-bold text-slate-800 sm:text-base">
-                        <span>{u.juz ? `Juz ${u.juz}` : surahNama}</span>
-                        {ayatText && (
+                        <span>{surahNama}</span>
+                        {ayatText && !surahNama.includes(ayatText) && (
                           <span className="rounded-md border border-rose-100 bg-rose-50 px-2 py-0.5 text-xs font-bold text-rose-950">
                             ({ayatText})
                           </span>

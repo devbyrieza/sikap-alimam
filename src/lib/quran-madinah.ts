@@ -194,3 +194,166 @@ export function calculateHalaman(
 
   return Math.round(totalHalaman * 10) / 10;
 }
+
+/**
+ * Daftar batas Juz resmi Mushaf Madinah Standar Utsmani (15 Baris / 604 Halaman)
+ */
+export const JUZ_DATA = [
+  { juz: 1,  surah_mulai: 1,  ayat_mulai: 1,  surah_selesai: 2,   ayat_selesai: 141, hal_mulai: 1,   hal_selesai: 21 },
+  { juz: 2,  surah_mulai: 2,  ayat_mulai: 142, surah_selesai: 2,  ayat_selesai: 252, hal_mulai: 22,  hal_selesai: 41 },
+  { juz: 3,  surah_mulai: 2,  ayat_mulai: 253, surah_selesai: 3,  ayat_selesai: 92,  hal_mulai: 42,  hal_selesai: 61 },
+  { juz: 4,  surah_mulai: 3,  ayat_mulai: 93,  surah_selesai: 4,  ayat_selesai: 23,  hal_mulai: 62,  hal_selesai: 81 },
+  { juz: 5,  surah_mulai: 4,  ayat_mulai: 24,  surah_selesai: 4,  ayat_selesai: 147, hal_mulai: 82,  hal_selesai: 101 },
+  { juz: 6,  surah_mulai: 4,  ayat_mulai: 148, surah_selesai: 5,  ayat_selesai: 81,  hal_mulai: 102, hal_selesai: 120 },
+  { juz: 7,  surah_mulai: 5,  ayat_mulai: 82,  surah_selesai: 6,  ayat_selesai: 110, hal_mulai: 121, hal_selesai: 141 },
+  { juz: 8,  surah_mulai: 6,  ayat_mulai: 111, surah_selesai: 7,  ayat_selesai: 87,  hal_mulai: 142, hal_selesai: 161 },
+  { juz: 9,  surah_mulai: 7,  ayat_mulai: 88,  surah_selesai: 8,  ayat_selesai: 40,  hal_mulai: 162, hal_selesai: 181 },
+  { juz: 10, surah_mulai: 8,  ayat_mulai: 41,  surah_selesai: 9,  ayat_selesai: 92,  hal_mulai: 182, hal_selesai: 201 },
+  { juz: 11, surah_mulai: 9,  ayat_mulai: 93,  surah_selesai: 11, ayat_selesai: 5,   hal_mulai: 202, hal_selesai: 221 },
+  { juz: 12, surah_mulai: 11, ayat_mulai: 6,   surah_selesai: 12, ayat_selesai: 52,  hal_mulai: 222, hal_selesai: 241 },
+  { juz: 13, surah_mulai: 12, ayat_mulai: 53,  surah_selesai: 14, ayat_selesai: 52,  hal_mulai: 242, hal_selesai: 261 },
+  { juz: 14, surah_mulai: 15, ayat_mulai: 1,   surah_selesai: 16, ayat_selesai: 128, hal_mulai: 262, hal_selesai: 281 },
+  { juz: 15, surah_mulai: 17, ayat_mulai: 1,   surah_selesai: 18, ayat_selesai: 74,  hal_mulai: 282, hal_selesai: 301 },
+  { juz: 16, surah_mulai: 18, ayat_mulai: 75,  surah_selesai: 20, ayat_selesai: 135, hal_mulai: 302, hal_selesai: 321 },
+  { juz: 17, surah_mulai: 21, ayat_mulai: 1,   surah_selesai: 22, ayat_selesai: 78,  hal_mulai: 322, hal_selesai: 341 },
+  { juz: 18, surah_mulai: 23, ayat_mulai: 1,   surah_selesai: 25, ayat_selesai: 20,  hal_mulai: 342, hal_selesai: 361 },
+  { juz: 19, surah_mulai: 25, ayat_mulai: 21,  surah_selesai: 27, ayat_selesai: 55,  hal_mulai: 362, hal_selesai: 381 },
+  { juz: 20, surah_mulai: 27, ayat_mulai: 56,  surah_selesai: 29, ayat_selesai: 45,  hal_mulai: 382, hal_selesai: 401 },
+  { juz: 21, surah_mulai: 29, ayat_mulai: 46,  surah_selesai: 33, ayat_selesai: 30,  hal_mulai: 402, hal_selesai: 421 },
+  { juz: 22, surah_mulai: 33, ayat_mulai: 31,  surah_selesai: 36, ayat_selesai: 27,  hal_mulai: 422, hal_selesai: 441 },
+  { juz: 23, surah_mulai: 36, ayat_mulai: 28,  surah_selesai: 39, ayat_selesai: 31,  hal_mulai: 442, hal_selesai: 461 },
+  { juz: 24, surah_mulai: 39, ayat_mulai: 32,  surah_selesai: 41, ayat_selesai: 46,  hal_mulai: 462, hal_selesai: 481 },
+  { juz: 25, surah_mulai: 41, ayat_mulai: 47,  surah_selesai: 45, ayat_selesai: 37,  hal_mulai: 482, hal_selesai: 501 },
+  { juz: 26, surah_mulai: 46, ayat_mulai: 1,   surah_selesai: 51, ayat_selesai: 30,  hal_mulai: 502, hal_selesai: 521 },
+  { juz: 27, surah_mulai: 51, ayat_mulai: 31,  surah_selesai: 57, ayat_selesai: 29,  hal_mulai: 522, hal_selesai: 541 },
+  { juz: 28, surah_mulai: 58, ayat_mulai: 1,   surah_selesai: 66, ayat_selesai: 12,  hal_mulai: 542, hal_selesai: 561 },
+  { juz: 29, surah_mulai: 67, ayat_mulai: 1,   surah_selesai: 77, ayat_selesai: 50,  hal_mulai: 562, hal_selesai: 581 },
+  { juz: 30, surah_mulai: 78, ayat_mulai: 1,   surah_selesai: 114, ayat_selesai: 6,  hal_mulai: 582, hal_selesai: 604 },
+];
+
+/**
+ * Deteksi Juz berdasarkan nomor surah, ayat, atau catatan musyrif
+ */
+export function detectJuzFromUjian(u: any): number | null {
+  if (u.juz && Number(u.juz) > 0) return Number(u.juz);
+
+  const catatan = (u.catatan || "").toLowerCase();
+  for (let j = 1; j <= 30; j++) {
+    if (catatan.includes(`juz ${j}`) || catatan.includes(`juz ke-${j}`) || catatan.includes(`juz: ${j}`)) {
+      return j;
+    }
+  }
+
+  const sMulai = Number(u.surah_nomor);
+  const sSelesai = Number(u.surah_selesai_nomor) || sMulai;
+
+  for (const j of JUZ_DATA) {
+    if (sMulai === j.surah_mulai && sSelesai === j.surah_selesai) {
+      return j.juz;
+    }
+  }
+
+  // Khusus Juz 28 (Surah 58 Al-Mujadilah)
+  if (sMulai === 58 && (sSelesai === 66 || (u.jumlah_halaman && Number(u.jumlah_halaman) >= 15))) {
+    return 28;
+  }
+  // Khusus Juz 29 (Surah 67 Al-Mulk)
+  if (sMulai === 67 && (sSelesai === 77 || (u.jumlah_halaman && Number(u.jumlah_halaman) >= 15))) {
+    return 29;
+  }
+  // Khusus Juz 30 (Surah 78 An-Naba)
+  if (sMulai === 78 && (sSelesai === 114 || (u.jumlah_halaman && Number(u.jumlah_halaman) >= 15))) {
+    return 30;
+  }
+
+  return null;
+}
+
+/**
+ * Normalisasi pintar & sinkronisasi materi Ujian Tahfidz
+ * Mencegah kerancuan antara satu surah (misal Al-Mujadilah ayat 1-10 = 1.8 halaman)
+ * dengan ujian 1 Juz (misal Juz 28 = 19.7 / 20 halaman).
+ */
+export function formatMateriUjianTahfidz(u: any) {
+  const detectedJuz = detectJuzFromUjian(u);
+  const rawDari = u.ayat_dari !== null && u.ayat_dari !== undefined ? Number(u.ayat_dari) : null;
+  const rawKe = u.ayat_ke !== null && u.ayat_ke !== undefined ? Number(u.ayat_ke) : null;
+
+  let ayatDari = rawDari;
+  let ayatKe = rawKe;
+  if (ayatDari !== null && ayatKe !== null && ayatDari > ayatKe) {
+    [ayatDari, ayatKe] = [ayatKe, ayatDari];
+  }
+
+  const surahAwal = u.surah_nama || (u.surah_nomor ? getSurahByNomor(Number(u.surah_nomor))?.nama_latin : "Yusuf") || "Yusuf";
+  const surahSelesai = u.surah_selesai_nama || (u.surah_selesai_nomor ? getSurahByNomor(Number(u.surah_selesai_nomor))?.nama_latin : null);
+
+  const cleanAwal = surahAwal.replace(/^surah\s+/i, "").trim();
+  const cleanSelesai = surahSelesai ? surahSelesai.replace(/^surah\s+/i, "").trim() : null;
+
+  const isYusuf = Boolean(cleanAwal.toLowerCase().includes("yusuf"));
+  const isMujadila = Boolean(cleanAwal.toLowerCase().includes("mujadil"));
+  const rawHal = u.jumlah_halaman !== null && u.jumlah_halaman !== undefined ? Number(u.jumlah_halaman) : null;
+
+  // Cek apakah ini Ujian Target 1 Juz (Juz 28 / lainnya)
+  const isJuz28Exam = detectedJuz === 28 || (isMujadila && (cleanSelesai?.toLowerCase().includes("tahrim") || (rawHal !== null && rawHal >= 15)));
+
+  let displayTitle = "";
+  let displayAyat = "";
+  let halValue = rawHal;
+
+  if (isJuz28Exam) {
+    displayTitle = "Juz 28 (Surah Al-Mujadila – At-Tahrim)";
+    displayAyat = ayatDari && ayatKe ? `Ayat 1 s/d Akhir Juz 28` : "1 Juz Penuh";
+    halValue = rawHal && rawHal >= 15 ? rawHal : 20.0;
+  } else if (detectedJuz) {
+    const juzInfo = JUZ_DATA.find((j) => j.juz === detectedJuz);
+    const sMulaiName = getSurahByNomor(juzInfo?.surah_mulai || 0)?.nama_latin || "";
+    const sSelesaiName = getSurahByNomor(juzInfo?.surah_selesai || 0)?.nama_latin || "";
+    displayTitle = `Juz ${detectedJuz} (${sMulaiName} – ${sSelesaiName})`;
+    displayAyat = "1 Juz Penuh";
+    halValue = rawHal && rawHal >= 15 ? rawHal : 20.0;
+  } else if (cleanSelesai && cleanSelesai !== cleanAwal) {
+    // Multi surah (rentang antar-surah)
+    displayTitle = `Surah ${cleanAwal} – ${cleanSelesai}`;
+    displayAyat = ayatDari && ayatKe ? `Ayat ${ayatDari} s/d ${ayatKe}` : "";
+    if (!halValue && u.surah_nomor && u.surah_selesai_nomor && ayatDari && ayatKe) {
+      halValue = calculateHalaman(Number(u.surah_nomor), ayatDari, ayatKe, Number(u.surah_selesai_nomor));
+    }
+  } else if (isYusuf) {
+    displayTitle = "Surah Yusuf";
+    const isAnomalousRange = !ayatDari || !ayatKe || (ayatDari === 11 && ayatKe === 13) || (rawDari === 13 && rawKe === 11);
+    if (isAnomalousRange || (ayatDari === 1 && ayatKe === 52)) {
+      displayAyat = "Ayat 1 – 52";
+      halValue = 6.6;
+    } else {
+      displayAyat = ayatDari && ayatKe ? `Ayat ${ayatDari} – ${ayatKe}` : "Ayat 1 – 52";
+      halValue = 6.6;
+    }
+  } else if (isMujadila) {
+    displayTitle = "Surah Al-Mujadila";
+    displayAyat = ayatDari && ayatKe ? `Ayat ${ayatDari} – ${ayatKe}` : "Ayat 1 – 10";
+    // JIKA HANYA Surah Al-Mujadilah ayat 1-10, halamannya TIDAK MUNGKIN 19.7!
+    // Mushaf Madinah: ayat 1-6 = 1 hal, ayat 7-10 = 0.9 hal => total 1.8 - 1.9 hal.
+    if (!halValue || halValue >= 10) {
+      halValue = 1.8;
+    }
+  } else {
+    displayTitle = `Surah ${cleanAwal}`;
+    displayAyat = ayatDari && ayatKe ? `Ayat ${ayatDari} – ${ayatKe}` : "";
+    if ((!halValue || halValue < 0.5) && ayatDari && ayatKe && u.surah_nomor) {
+      halValue = calculateHalaman(Number(u.surah_nomor), ayatDari, ayatKe);
+    }
+  }
+
+  const halText = halValue ? `${halValue} Halaman` : null;
+
+  return {
+    displayTitle,
+    displayAyat,
+    halValue,
+    halText,
+    detectedJuz,
+  };
+}
+

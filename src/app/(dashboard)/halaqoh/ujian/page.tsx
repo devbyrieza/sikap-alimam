@@ -5,7 +5,7 @@ import {
   ArrowLeft, Search, CalendarDays, Award, CheckCircle2, AlertCircle,
   Save, Star, ShieldCheck, Clock, ChevronDown, Target, BookOpen, FileText, Check, AlertTriangle } from "lucide-react";
 import Link from "next/link";
-import { calculateHalaman } from "@/lib/quran-madinah";
+import { calculateHalaman, detectJuzFromUjian } from "@/lib/quran-madinah";
 
 const JENIS_UJIAN_OPT = [
   { val: "ujian_pekanan", label: "Ujian Pekanan", target: "2 Halaman",             icon: <Clock size={18} />,       color: "#d97706", bg: "#fffbeb", border: "#fde68a" },
@@ -324,7 +324,14 @@ export default function UjianTahfidzPage() {
         pegawai_id: pengampuId || undefined,
         tanggal,
         jenis_ujian: jenisUjian,
-        juz: jenisUjian === "ujian_itqon" ? juz : undefined,
+        juz: jenisUjian === "ujian_itqon" 
+          ? juz 
+          : detectJuzFromUjian({
+              surah_nomor: selectedSurah?.nomor,
+              surah_selesai_nomor: selectedSurahAkhir?.nomor,
+              catatan,
+              jumlah_halaman: jumlahHalaman
+            }) || undefined,
         surah_nomor: selectedSurah?.nomor,
         surah_nama: selectedSurah?.nama_latin,
         surah_selesai_nomor: selectedSurahAkhir?.nomor,

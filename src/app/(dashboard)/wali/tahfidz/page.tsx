@@ -31,7 +31,7 @@ import {
 import Swal from "sweetalert2";
 import WaliAccessLocked from "@/components/WaliAccessLocked";
 import { getOfficialNis } from "@/lib/officialSantri";
-import { calculateHalaman } from "@/lib/quran-madinah";
+import { calculateHalaman, formatMateriUjianTahfidz } from "@/lib/quran-madinah";
 
 const TAHUN_AJARAN = "2026/2027";
 const SCHOOL_LINE = "Pesantren Al-Imam Al-Islami • Managed by Al-Andalus IIBS";
@@ -66,41 +66,13 @@ function formatTanggal(iso: string | null | undefined): string {
 }
 
 function normalizeUjianTahfidz(u: any) {
-  const rawDari = u.ayat_dari !== null && u.ayat_dari !== undefined ? Number(u.ayat_dari) : null;
-  const rawKe = u.ayat_ke !== null && u.ayat_ke !== undefined ? Number(u.ayat_ke) : null;
-
-  let ayatDari = rawDari;
-  let ayatKe = rawKe;
-  if (ayatDari !== null && ayatKe !== null && ayatDari > ayatKe) {
-    [ayatDari, ayatKe] = [ayatKe, ayatDari];
-  }
-
-  const isYusuf = Boolean(u.surah_nama?.toLowerCase().includes("yusuf"));
-  const isAnomalousRange = !ayatDari || !ayatKe || (ayatDari === 11 && ayatKe === 13) || (rawDari === 13 && rawKe === 11);
-  if (isYusuf && isAnomalousRange) {
-    ayatDari = 1;
-    ayatKe = 52;
-  }
-
-  const surahBase: string = u.surah_nama || "Yusuf";
-  const surahNama = surahBase.toLowerCase().startsWith("surah") ? surahBase : `Surah ${surahBase}`;
-  const ayatText = ayatDari && ayatKe ? `Ayat ${ayatDari} - ${ayatKe}` : isYusuf ? "Ayat 1 - 52" : "";
-
-  let rawHal = u.jumlah_halaman !== null && u.jumlah_halaman !== undefined ? Number(u.jumlah_halaman) : null;
-  let halValue = rawHal;
-
-  if (isYusuf && (isAnomalousRange || (ayatDari === 1 && ayatKe === 52) || (rawHal !== null && rawHal < 2))) {
-    halValue = 6.6;
-  } else if ((!halValue || halValue < 0.5) && ayatDari && ayatKe) {
-    const sNomor = Number(u.surah_nomor) || (isYusuf ? 12 : 0);
-    if (sNomor > 0) {
-      halValue = calculateHalaman(sNomor, ayatDari, ayatKe);
-    }
-  }
-
-  const halText = halValue ? `${halValue} Halaman` : null;
-
-  return { surahNama, ayatText, halText };
+  const formatted = formatMateriUjianTahfidz(u);
+  return {
+    surahNama: formatted.displayTitle,
+    ayatText: formatted.displayAyat,
+    halText: formatted.halText,
+    isJuz: Boolean(formatted.detectedJuz || formatted.displayTitle.startsWith("Juz")),
+  };
 }
 
 /* ═══════════════════════════ Komponen Profil Banner ═══════════════════════════ */
@@ -758,7 +730,7 @@ export default function WaliTahfidzPage() {
                         </div>
 
                         <h3 className="mt-3 text-base sm:text-lg font-black text-slate-800">
-                          {u.juz ? `Juz ${u.juz}` : surahNama} {ayatText && <span className="text-slate-600 font-bold">({ayatText})</span>}
+                          {surahNama} {ayatText && !surahNama.includes(ayatText) && <span className="text-slate-600 font-bold">({ayatText})</span>}
                         </h3>
 
                         <div className="mt-1.5 flex flex-wrap items-center gap-2 text-xs text-slate-500">
