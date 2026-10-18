@@ -13,9 +13,9 @@ const OFFICIAL_MUSYRIF_MAP: Record<
   { nama: string; nama_panggilan: string; kelompok: string; no_hp: string; tingkatan: string }
 > = {
   khalish: {
-    nama: "Ust. Agus Cahyono",
-    nama_panggilan: "Agus",
-    kelompok: "Halaqoh Ust. Agus Cahyono (MTs)",
+    nama: "Ust. Muhammad Iqbal, S.Pd",
+    nama_panggilan: "Iqbal",
+    kelompok: "Halaqoh Ust. Muhammad Iqbal (MTs)",
     no_hp: "081251971250",
     tingkatan: "MTs",
   },
@@ -34,16 +34,16 @@ const OFFICIAL_MUSYRIF_MAP: Record<
     tingkatan: "MTs",
   },
   "ahmad farros al barqy": {
-    nama: "Ust. Muhammad Iqbal, S.Pd",
-    nama_panggilan: "Iqbal",
-    kelompok: "Halaqoh Ust. Muhammad Iqbal (MTs)",
+    nama: "Ust. Azzam Aghnia Ilman",
+    nama_panggilan: "Azzam",
+    kelompok: "Halaqoh Ust. Azzam Aghnia Ilman (IL/MTs)",
     no_hp: "081251971250",
     tingkatan: "MTs",
   },
   farros: {
-    nama: "Ust. Muhammad Iqbal, S.Pd",
-    nama_panggilan: "Iqbal",
-    kelompok: "Halaqoh Ust. Muhammad Iqbal (MTs)",
+    nama: "Ust. Azzam Aghnia Ilman",
+    nama_panggilan: "Azzam",
+    kelompok: "Halaqoh Ust. Azzam Aghnia Ilman (IL/MTs)",
     no_hp: "081251971250",
     tingkatan: "MTs",
   },
