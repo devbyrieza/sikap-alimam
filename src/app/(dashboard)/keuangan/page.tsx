@@ -437,30 +437,42 @@ export default function KeuanganSPPPage() {
         display: "flex",
         justifyContent: "space-between",
         alignItems: "center",
-        background: "linear-gradient(135deg, #0f172a 0%, #1e293b 60%, #0369a1 100%)",
+        background: "linear-gradient(135deg, #550000 0%, #7a0000 45%, #420000 100%)",
         borderRadius: "24px",
         padding: "32px 36px",
-        boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.2), 0 8px 10px -6px rgba(0, 0, 0, 0.1)",
+        boxShadow: "0 20px 40px -15px rgba(85, 0, 0, 0.45), 0 8px 16px -6px rgba(85, 0, 0, 0.3)",
+        border: "1px solid rgba(221, 193, 146, 0.3)",
         color: "white",
         flexWrap: "wrap",
         gap: "24px",
         position: "relative",
         overflow: "hidden"
       }}>
+        {/* Subtle gold radial background glow */}
+        <div style={{
+          position: "absolute",
+          top: "-30%",
+          right: "-10%",
+          width: "400px",
+          height: "400px",
+          background: "radial-gradient(circle, rgba(221, 193, 146, 0.15) 0%, transparent 70%)",
+          pointerEvents: "none",
+        }} />
+
         <div style={{ display: "flex", flexDirection: "column", gap: "8px", position: "relative", zIndex: 10 }}>
-          <div style={{ display: "inline-flex", alignItems: "center", gap: "8px", padding: "4px 12px", borderRadius: "999px", background: "rgba(255,255,255,0.1)", border: "1px solid rgba(255,255,255,0.2)", fontSize: "12px", fontWeight: "bold", width: "fit-content" }}>
+          <div style={{ display: "inline-flex", alignItems: "center", gap: "8px", padding: "4px 12px", borderRadius: "999px", background: "rgba(221, 193, 146, 0.18)", border: "1px solid rgba(221, 193, 146, 0.45)", color: "#ddc192", fontSize: "12px", fontWeight: "bold", width: "fit-content" }}>
             <Sparkles className="w-3.5 h-3.5" /> Modul Admin Keuangan
           </div>
-          <h1 style={{ fontSize: "28px", fontWeight: "bold", margin: 0 }}>
+          <h1 style={{ fontSize: "28px", fontWeight: 900, margin: 0, color: "#ffffff", letterSpacing: "-0.02em" }}>
             Manajemen Pembayaran SPP Santri
           </h1>
-          <p style={{ color: "#cbd5e1", margin: 0, fontSize: "14px", maxWidth: "600px" }}>
-            Pantau kepatuhan SPP bulanan (jatuh tempo tgl 10) & kendalikan akses gembok portal wali santri secara real-time.
+          <p style={{ color: "#f5e6d3", margin: 0, fontSize: "14px", maxWidth: "600px", lineHeight: "1.5" }}>
+            Pantau kepatuhan SPP bulanan (jatuh tempo tgl 10) &amp; kendalikan akses gembok portal wali santri secara real-time.
           </p>
         </div>
 
         {/* Month & Year Switcher Controls */}
-        <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: "8px", background: "rgba(255,255,255,0.1)", backdropFilter: "blur(8px)", padding: "8px", borderRadius: "16px", border: "1px solid rgba(255,255,255,0.15)", position: "relative", zIndex: 10 }}>
+        <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: "8px", background: "rgba(0, 0, 0, 0.28)", backdropFilter: "blur(10px)", padding: "8px 10px", borderRadius: "18px", border: "1px solid rgba(221, 193, 146, 0.35)", position: "relative", zIndex: 10 }}>
           <button 
             onClick={() => {
               if (selectedBulan === 1) {
@@ -470,7 +482,7 @@ export default function KeuanganSPPPage() {
                 setSelectedBulan(selectedBulan - 1);
               }
             }}
-            style={{ padding: "8px", borderRadius: "12px", background: "rgba(255,255,255,0.1)", color: "white", border: "none", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}
+            style={{ padding: "8px", borderRadius: "12px", background: "rgba(221, 193, 146, 0.15)", color: "#ddc192", border: "1px solid rgba(221, 193, 146, 0.25)", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}
             title="Bulan Sebelumnya"
           >
             <ChevronLeft style={{ width: "16px", height: "16px" }} />
@@ -479,10 +491,10 @@ export default function KeuanganSPPPage() {
           <select
             value={selectedBulan}
             onChange={(e) => setSelectedBulan(Number(e.target.value))}
-            style={{ background: "transparent", color: "white", fontWeight: "bold", fontSize: "14px", padding: "6px 8px", borderRadius: "8px", border: "1px solid rgba(255,255,255,0.2)", outline: "none", cursor: "pointer", height: "32px", display: "flex", alignItems: "center" }}
+            style={{ background: "rgba(85, 0, 0, 0.6)", color: "#ffffff", fontWeight: "bold", fontSize: "14px", padding: "6px 10px", borderRadius: "10px", border: "1px solid rgba(221, 193, 146, 0.35)", outline: "none", cursor: "pointer", height: "34px", display: "flex", alignItems: "center" }}
           >
             {NAMA_BULAN.map((nama, idx) => (
-              <option key={idx} value={idx + 1} style={{ background: "#0f172a", color: "white" }}>
+              <option key={idx} value={idx + 1} style={{ background: "#550000", color: "white" }}>
                 {nama}
               </option>
             ))}
@@ -491,10 +503,10 @@ export default function KeuanganSPPPage() {
           <select
             value={selectedTahun}
             onChange={(e) => setSelectedTahun(Number(e.target.value))}
-            style={{ background: "transparent", color: "white", fontWeight: "bold", fontSize: "14px", padding: "6px 8px", borderRadius: "8px", border: "1px solid rgba(255,255,255,0.2)", outline: "none", cursor: "pointer", height: "32px", display: "flex", alignItems: "center" }}
+            style={{ background: "rgba(85, 0, 0, 0.6)", color: "#ffffff", fontWeight: "bold", fontSize: "14px", padding: "6px 10px", borderRadius: "10px", border: "1px solid rgba(221, 193, 146, 0.35)", outline: "none", cursor: "pointer", height: "34px", display: "flex", alignItems: "center" }}
           >
             {[2025, 2026, 2027].map((yr) => (
-              <option key={yr} value={yr} style={{ background: "#0f172a", color: "white" }}>
+              <option key={yr} value={yr} style={{ background: "#550000", color: "white" }}>
                 {yr}
               </option>
             ))}
@@ -509,7 +521,7 @@ export default function KeuanganSPPPage() {
                 setSelectedBulan(selectedBulan + 1);
               }
             }}
-            style={{ padding: "8px", borderRadius: "12px", background: "rgba(255,255,255,0.1)", color: "white", border: "none", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}
+            style={{ padding: "8px", borderRadius: "12px", background: "rgba(221, 193, 146, 0.15)", color: "#ddc192", border: "1px solid rgba(221, 193, 146, 0.25)", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}
             title="Bulan Berikutnya"
           >
             <ChevronRight style={{ width: "16px", height: "16px" }} />
@@ -517,7 +529,7 @@ export default function KeuanganSPPPage() {
 
           <button
             onClick={fetchData}
-            style={{ padding: "8px", borderRadius: "12px", background: "rgba(16, 185, 129, 0.4)", color: "#a7f3d0", border: "none", cursor: "pointer", marginLeft: "4px", display: "flex", alignItems: "center", justifyContent: "center" }}
+            style={{ padding: "8px", borderRadius: "12px", background: "rgba(221, 193, 146, 0.25)", color: "#ddc192", border: "1px solid rgba(221, 193, 146, 0.4)", cursor: "pointer", marginLeft: "4px", display: "flex", alignItems: "center", justifyContent: "center" }}
             title="Segarkan Data"
           >
             <RefreshCw className={loading ? "animate-spin" : ""} style={{ width: "16px", height: "16px" }} />
@@ -526,39 +538,59 @@ export default function KeuanganSPPPage() {
       </div>
 
       {/* Kartu Panduan Kendali Akses & Verifikasi SPP */}
-      <div style={{ background: "linear-gradient(135deg, #1e293b 0%, #0f172a 60%, #550000 100%)", borderRadius: "24px", padding: "24px 28px", color: "white", boxShadow: "0 10px 25px -5px rgba(0,0,0,0.25)", border: "1px solid rgba(255,255,255,0.12)" }}>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: "20px" }}>
+      <div style={{
+        background: "linear-gradient(135deg, #380000 0%, #550000 50%, #660000 100%)",
+        borderRadius: "24px",
+        padding: "26px 30px",
+        color: "white",
+        boxShadow: "0 16px 36px -10px rgba(85,0,0,0.35)",
+        border: "1px solid rgba(221, 193, 146, 0.35)",
+        position: "relative",
+        overflow: "hidden"
+      }}>
+        {/* Subtle gold accent light */}
+        <div style={{
+          position: "absolute",
+          top: "-40%",
+          left: "-10%",
+          width: "350px",
+          height: "350px",
+          background: "radial-gradient(circle, rgba(221, 193, 146, 0.12) 0%, transparent 70%)",
+          pointerEvents: "none",
+        }} />
+
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: "20px", position: "relative", zIndex: 10 }}>
           <div style={{ display: "flex", alignItems: "flex-start", gap: "14px", maxWidth: "680px" }}>
-            <div style={{ padding: "12px", borderRadius: "16px", background: "rgba(225, 29, 72, 0.2)", border: "1px solid rgba(251, 113, 133, 0.3)", color: "#fda4af", flexShrink: 0 }}>
+            <div style={{ padding: "12px", borderRadius: "16px", background: "rgba(221, 193, 146, 0.18)", border: "1px solid rgba(221, 193, 146, 0.4)", color: "#ddc192", flexShrink: 0 }}>
               <ShieldCheck style={{ width: "24px", height: "24px" }} />
             </div>
             <div>
-              <div style={{ display: "inline-flex", alignItems: "center", gap: "6px", padding: "3px 10px", borderRadius: "999px", background: "rgba(244, 63, 94, 0.2)", color: "#fecdd3", fontSize: "11px", fontWeight: "bold", border: "1px solid rgba(244, 63, 94, 0.3)", marginBottom: "6px" }}>
+              <div style={{ display: "inline-flex", alignItems: "center", gap: "6px", padding: "3px 10px", borderRadius: "999px", background: "rgba(221, 193, 146, 0.18)", color: "#ddc192", fontSize: "11px", fontWeight: "bold", border: "1px solid rgba(221, 193, 146, 0.35)", marginBottom: "6px" }}>
                 <span>Wewenang Admin Keuangan Al-Imam</span>
               </div>
-              <h3 style={{ fontSize: "18px", fontWeight: 900, margin: 0, color: "white" }}>
+              <h3 style={{ fontSize: "19px", fontWeight: 900, margin: 0, color: "#ffffff", letterSpacing: "-0.01em" }}>
                 Kendali Akses Portal Wali Santri &amp; Verifikasi Pembayaran
               </h3>
-              <p style={{ fontSize: "12px", color: "#cbd5e1", margin: "6px 0 0 0", lineHeight: "1.5" }}>
-                Gunakan saklar <strong style={{ color: "#34d399" }}>[ON / OFF]</strong> di kolom Akses Portal untuk membuka (Dispensasi) atau mengunci portal wali santri secara instan tanpa menunggu pelunasan. Bukti transfer yang diunggah wali santri akan masuk ke antrean verifikasi untuk disetujui dalam 1-klik.
+              <p style={{ fontSize: "12px", color: "#f3e7d8", margin: "6px 0 0 0", lineHeight: "1.5" }}>
+                Gunakan saklar <strong style={{ color: "#ddc192" }}>[ON / OFF]</strong> di kolom Akses Portal untuk membuka (Dispensasi) atau mengunci portal wali santri secara instan tanpa menunggu pelunasan. Bukti transfer yang diunggah wali santri akan masuk ke antrean verifikasi untuk disetujui dalam 1-klik.
               </p>
             </div>
           </div>
 
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: "10px", width: "100%", maxWidth: "420px" }}>
-            <div style={{ background: "rgba(255,255,255,0.07)", border: "1px solid rgba(255,255,255,0.12)", borderRadius: "16px", padding: "12px" }}>
-              <div style={{ display: "flex", alignItems: "center", gap: "6px", fontWeight: "bold", color: "#6ee7b7", fontSize: "12px", marginBottom: "4px" }}>
+            <div style={{ background: "rgba(0, 0, 0, 0.25)", border: "1px solid rgba(221, 193, 146, 0.28)", borderRadius: "16px", padding: "14px" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "6px", fontWeight: "bold", color: "#ddc192", fontSize: "12px", marginBottom: "4px" }}>
                 <Unlock style={{ width: "14px", height: "14px" }} /> Saklar ON / OFF
               </div>
-              <p style={{ margin: 0, fontSize: "11px", color: "#94a3b8", lineHeight: "1.3" }}>
+              <p style={{ margin: 0, fontSize: "11px", color: "rgba(255, 255, 255, 0.8)", lineHeight: "1.4" }}>
                 Klik tombol switch di kolom <strong>Akses Portal</strong> untuk membuka (ON) atau mengunci (OFF) manual.
               </p>
             </div>
-            <div style={{ background: "rgba(255,255,255,0.07)", border: "1px solid rgba(255,255,255,0.12)", borderRadius: "16px", padding: "12px" }}>
-              <div style={{ display: "flex", alignItems: "center", gap: "6px", fontWeight: "bold", color: "#fcd34d", fontSize: "12px", marginBottom: "4px" }}>
+            <div style={{ background: "rgba(0, 0, 0, 0.25)", border: "1px solid rgba(221, 193, 146, 0.28)", borderRadius: "16px", padding: "14px" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "6px", fontWeight: "bold", color: "#ddc192", fontSize: "12px", marginBottom: "4px" }}>
                 <Clock style={{ width: "14px", height: "14px" }} /> Verifikasi Bukti
               </div>
-              <p style={{ margin: 0, fontSize: "11px", color: "#94a3b8", lineHeight: "1.3" }}>
+              <p style={{ margin: 0, fontSize: "11px", color: "rgba(255, 255, 255, 0.8)", lineHeight: "1.4" }}>
                 Wali upload bukti transfer &rarr; periksa struk &rarr; klik <strong>Setujui &amp; Buka</strong> untuk membuka portal.
               </p>
             </div>

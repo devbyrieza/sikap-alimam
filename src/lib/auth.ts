@@ -18,6 +18,7 @@ export interface SessionPayload extends JWTPayload {
   spp_access_blocked?: boolean;
   spp_blocked_reason?: string;
   is_default_password?: boolean;
+  availableRoles?: string[];
 }
 
 export async function createSession(payload: SessionPayload) {
@@ -78,10 +79,21 @@ export async function getLiveSession(): Promise<SessionPayload | null> {
         ? (liveUser.nama || "").replace(/^Wali dari\s+/i, "")
         : (liveUser.nama || session.nama);
 
+      // Pertahankan peran yang dipilih jika:
+      // 1. Sedang dalam mode switch (originalRole ada)
+      // 2. Akun memiliki opsi multi-peran (availableRoles ada)
+      // 3. liveUser.role di DB adalah gabungan (e.g. "GURU,ADMIN_KEUANGAN") dan sesi memegang salah satu perannya
+      const isMultiRoleInDb = liveUser.role.includes(",");
+      const shouldKeepSessionRole =
+        Boolean(session.originalRole) ||
+        Boolean(session.availableRoles && session.availableRoles.length > 1) ||
+        (isMultiRoleInDb && session.role && liveUser.role.toUpperCase().includes(session.role.toUpperCase()));
+
+      const activeRole = shouldKeepSessionRole ? session.role : liveUser.role;
+
       return {
         ...session,
-        // Jika sedang dalam mode switch akun (originalRole ada), pertahankan peran dan nama yang dipilih
-        role: session.originalRole ? session.role : liveUser.role,
+        role: activeRole,
         nama: session.originalRole ? session.nama : (cleanNama || session.nama)
       };
     }

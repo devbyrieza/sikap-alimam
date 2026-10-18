@@ -15,6 +15,7 @@ import {
   Lock,
   User,
   GraduationCap,
+  CreditCard,
   Star,
   Info,
 } from "lucide-react";
@@ -29,7 +30,7 @@ export default function LoginPage() {
   const [activeTab, setActiveTab] = useState<"asatidzah" | "wali">("wali");
 
   const [requireRoleSelection, setRequireRoleSelection] = useState(false);
-  const [availableRoles, setAvailableRoles] = useState<string[]>([]);
+  const [availableRoles, setAvailableRoles] = useState<any[]>([]);
 
   const [showForgotModal, setShowForgotModal] = useState(false);
   const [forgotInput, setForgotInput] = useState("");
@@ -94,7 +95,7 @@ export default function LoginPage() {
         setAvailableRoles(json.availableRoles);
         return;
       }
-      router.push("/dashboard");
+      router.push(json.redirectTo || "/dashboard");
       router.refresh();
     } catch {
       setError("Terjadi kesalahan. Coba lagi.");
@@ -117,7 +118,7 @@ export default function LoginPage() {
         setError(json.error || "Login gagal");
         return;
       }
-      router.push("/dashboard");
+      router.push(json.redirectTo || "/dashboard");
       router.refresh();
     } catch {
       setError("Terjadi kesalahan. Coba lagi.");
@@ -793,40 +794,79 @@ export default function LoginPage() {
               </p>
             </div>
             <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-              {availableRoles.map((role) => (
-                <button
-                  key={role}
-                  onClick={() => handleRoleSelect(role)}
-                  style={{
-                    width: "100%",
-                    height: "44px",
-                    padding: "0 16px",
-                    borderRadius: "12px",
-                    border: "1.5px solid #e2e8f0",
-                    background: "#ffffff",
-                    color: "#0f172a",
-                    fontWeight: 700,
-                    fontSize: "12px",
-                    cursor: "pointer",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                    fontFamily: "inherit",
-                    transition: "all 0.15s",
-                  }}
-                  onMouseEnter={(e) => {
-                    (e.target as HTMLElement).style.borderColor = "#550000";
-                    (e.target as HTMLElement).style.background = "#fff8f8";
-                  }}
-                  onMouseLeave={(e) => {
-                    (e.target as HTMLElement).style.borderColor = "#e2e8f0";
-                    (e.target as HTMLElement).style.background = "#ffffff";
-                  }}
-                >
-                  <span style={{ textTransform: "capitalize" }}>{role.replace(/_/g, " ")}</span>
-                  <ArrowRight style={{ width: 14, height: 14, color: "#94a3b8" }} />
-                </button>
-              ))}
+              {availableRoles.map((item) => {
+                const roleKey = typeof item === "string" ? item : item.role;
+                const roleLabel = typeof item === "string" ? item.replace(/_/g, " ") : item.label;
+                const roleDesc = typeof item === "object" ? item.deskripsi : null;
+                const isKeuangan = roleKey.includes("KEUANGAN");
+                const isGuru = roleKey.includes("GURU");
+
+                return (
+                  <button
+                    key={roleKey}
+                    onClick={() => handleRoleSelect(roleKey)}
+                    style={{
+                      width: "100%",
+                      padding: "14px 16px",
+                      borderRadius: "16px",
+                      border: "1.5px solid #e2e8f0",
+                      background: "#ffffff",
+                      cursor: "pointer",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                      fontFamily: "inherit",
+                      textAlign: "left",
+                      transition: "all 0.18s ease",
+                      boxShadow: "0 2px 4px rgba(0,0,0,0.02)",
+                    }}
+                    onMouseEnter={(e) => {
+                      const el = e.currentTarget as HTMLElement;
+                      el.style.borderColor = "#550000";
+                      el.style.background = "#fff8f8";
+                      el.style.transform = "translateY(-1px)";
+                      el.style.boxShadow = "0 8px 18px -4px rgba(85,0,0,0.14)";
+                    }}
+                    onMouseLeave={(e) => {
+                      const el = e.currentTarget as HTMLElement;
+                      el.style.borderColor = "#e2e8f0";
+                      el.style.background = "#ffffff";
+                      el.style.transform = "translateY(0)";
+                      el.style.boxShadow = "0 2px 4px rgba(0,0,0,0.02)";
+                    }}
+                  >
+                    <div style={{ display: "flex", alignItems: "center", gap: "12px", minWidth: 0, flex: 1 }}>
+                      <div
+                        style={{
+                          width: 40,
+                          height: 40,
+                          borderRadius: "12px",
+                          background: isKeuangan ? "#fff0f0" : isGuru ? "#f0fdf4" : "#f8fafc",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          color: isKeuangan ? "#550000" : isGuru ? "#15803d" : "#475569",
+                          flexShrink: 0,
+                          border: `1px solid ${isKeuangan ? "rgba(85,0,0,0.2)" : isGuru ? "rgba(21,128,61,0.25)" : "#e2e8f0"}`,
+                        }}
+                      >
+                        {isKeuangan ? <CreditCard size={19} /> : isGuru ? <GraduationCap size={19} /> : <UserCheck size={19} />}
+                      </div>
+                      <div style={{ minWidth: 0, flex: 1 }}>
+                        <div style={{ fontSize: "13px", fontWeight: 800, color: "#0f172a", textTransform: "capitalize" }}>
+                          {roleLabel}
+                        </div>
+                        {roleDesc && (
+                          <div style={{ fontSize: "11px", color: "#64748b", fontWeight: 500, marginTop: "2px", lineHeight: "1.3" }}>
+                            {roleDesc}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                    <ArrowRight style={{ width: 16, height: 16, color: "#550000", flexShrink: 0, marginLeft: "10px" }} />
+                  </button>
+                );
+              })}
             </div>
             <button
               type="button"

@@ -20,6 +20,7 @@ export const ROLE_DESTINATIONS: Record<string, string> = {
   GURU_TEGUH: "/jurnal",
   GURU_IMAM: "/jurnal",
   GURU_SAIF: "/jurnal",
+  GURU_BACHTIAR: "/jurnal",
   MUSYRIF: "/halaqoh",
   WALI_SANTRI: "/wali",
 };
@@ -138,6 +139,14 @@ export const AVAILABLE_SWITCH_ROLES = [
     deskripsi: "Dewan Asatidz & Pengajar SIKAP Al-Imam",
   },
   {
+    role: "GURU_BACHTIAR",
+    targetRole: "GURU",
+    label: "Guru Mapel (B. Inggris)",
+    pejabat: "Maulidin Bachtiar",
+    targetEmail: "keuangan@pesantren-alimam.com",
+    deskripsi: "Guru Bahasa Inggris jenjang 7 MTs, input jurnal dan nilai",
+  },
+  {
     role: "MUSYRIF",
     targetRole: "MUSYRIF",
     label: "Pengampu Halaqoh",
@@ -169,14 +178,43 @@ export async function GET() {
       originalRoleUpper === "ADMIN_SUPER" ||
       currentRoleUpper === "MUDIR";
 
+    const emailLower = (session.email || "").toLowerCase();
+    const namaLower = (session.nama || "").toLowerCase();
+    const isBachtiar = emailLower.includes("keuangan") || namaLower.includes("bachtiar");
+    const hasMultiRoles = Boolean(session.availableRoles && session.availableRoles.length > 1);
+
+    const canSwitch = isSuperOrSwitched || isBachtiar || hasMultiRoles || Boolean(session.originalRole);
+
+    let returnedRoles = AVAILABLE_SWITCH_ROLES;
+    if (isBachtiar && !isSuperOrSwitched && !session.originalRole) {
+      returnedRoles = [
+        {
+          role: "ADMIN_KEUANGAN",
+          targetRole: "ADMIN_KEUANGAN",
+          label: "Admin Keuangan",
+          pejabat: "Maulidin Bachtiar",
+          targetEmail: "keuangan@pesantren-alimam.com",
+          deskripsi: "Kelola SPP santri, verifikasi transfer, & kendali portal",
+        },
+        {
+          role: "GURU_BACHTIAR",
+          targetRole: "GURU",
+          label: "Guru Mapel (B. Inggris)",
+          pejabat: "Maulidin Bachtiar",
+          targetEmail: "keuangan@pesantren-alimam.com",
+          deskripsi: "Input jurnal mengajar Bahasa Inggris & nilai harian",
+        }
+      ];
+    }
+
     return NextResponse.json({
       success: true,
-      canSwitch: isSuperOrSwitched,
+      canSwitch,
       currentRole: session.role,
       currentEmail: session.email,
       originalRole: session.originalRole || null,
       originalNama: session.originalNama || null,
-      roles: AVAILABLE_SWITCH_ROLES,
+      roles: returnedRoles,
     });
   } catch (error: any) {
     console.error("GET /api/auth/switch-role error:", error);
@@ -201,7 +239,12 @@ export async function POST(req: NextRequest) {
       originalRoleUpper === "ADMIN_SUPER" ||
       currentRoleUpper === "MUDIR";
 
-    if (!isSuperOrSwitched && !session.originalRole) {
+    const emailLower = (session.email || "").toLowerCase();
+    const namaLower = (session.nama || "").toLowerCase();
+    const isBachtiar = emailLower.includes("keuangan") || namaLower.includes("bachtiar");
+    const hasMultiRoles = Boolean(session.availableRoles && session.availableRoles.length > 1);
+
+    if (!isSuperOrSwitched && !session.originalRole && !isBachtiar && !hasMultiRoles) {
       return NextResponse.json(
         { error: "Fitur beralih akun hanya diizinkan untuk Admin Super dan peran berwewenang." },
         { status: 403 }

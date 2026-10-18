@@ -149,6 +149,7 @@ const ROLE_LABEL: Record<string, string> = {
   GURU_TEGUH: "Guru Entrepreneurship",
   GURU_IMAM: "Guru Asatidz",
   GURU_SAIF: "Guru Asatidz",
+  GURU_BACHTIAR: "Guru Bahasa Inggris (Bachtiar)",
   MUSYRIF: "Pengampu Halaqoh",
   PENGAMPU: "Pengampu Halaqoh",
   PENGAMPU_HALAQOH: "Pengampu Halaqoh",
@@ -176,13 +177,26 @@ const KURIKULUM_BY_NAME = ["imron"];
 const focusRing =
   "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#550000]/40 focus-visible:ring-offset-1";
 
-function formatRoleDisplay(roleStr: string): string {
+function formatRoleDisplay(roleStr: string, email?: string, nama?: string): string {
   if (!roleStr) return "Pengguna";
-  return roleStr
-    .toUpperCase()
-    .split(",")
-    .map((r) => ROLE_LABEL[r.trim()] || r.trim())
-    .join(" & ");
+  const emailLower = (email || "").toLowerCase();
+  const namaLower = (nama || "").toLowerCase();
+  const isBachtiar = emailLower.includes("keuangan") || namaLower.includes("bachtiar");
+
+  if (isBachtiar) {
+    if (roleStr.toUpperCase() === "ADMIN_KEUANGAN") return "Admin Keuangan";
+    if (roleStr.toUpperCase() === "GURU" || roleStr.toUpperCase() === "GURU_BACHTIAR") return "Guru Mapel (Bahasa Inggris)";
+    if (roleStr.includes(",")) return "Admin Keuangan";
+  }
+
+  if (roleStr.includes(",")) {
+    return roleStr
+      .toUpperCase()
+      .split(",")
+      .map((r) => ROLE_LABEL[r.trim()] || r.trim())
+      .join(" & ");
+  }
+  return ROLE_LABEL[roleStr.toUpperCase()] || roleStr;
 }
 
 /* ═══════════════════════════ Tipe ═══════════════════════════ */
@@ -219,13 +233,19 @@ function SidebarContent({ user, items, activeHref, onNavigate, onLogout, onClose
   const isSwitched = Boolean(user?.originalRole && user.originalRole.toUpperCase() !== roleUpper);
   const isSuperAdmin = roleUpper === "ADMIN_SUPER" || originalRoleUpper === "ADMIN_SUPER";
 
-  const isWaliRole = roleUpper.includes("WALI");
+  const isWaliSantri =
+    roleUpper === "WALI_SANTRI" ||
+    roleUpper.includes("WALI_SANTRI") ||
+    (user?.nama || "").toLowerCase().startsWith("wali dari");
+  const isWaliRole = isWaliSantri;
   const isAdminRole = roleUpper.includes("ADMIN");
-  const isWaliSantri = (user?.role || "").toLowerCase() === "wali_santri";
+  const isBachtiar =
+    (user?.email || "").toLowerCase().includes("keuangan") ||
+    (user?.nama || "").toLowerCase().includes("bachtiar");
 
   const [waliSppLocked, setWaliSppLocked] = useState<boolean>(false);
   const [switchRoles, setSwitchRoles] = useState<any[]>([]);
-  const [canSwitch, setCanSwitch] = useState<boolean>(isSuperAdmin || isSwitched);
+  const [canSwitch, setCanSwitch] = useState<boolean>(isSuperAdmin || isSwitched || isBachtiar);
   const [switching, setSwitching] = useState<boolean>(false);
 
   useEffect(() => {
@@ -312,6 +332,13 @@ function SidebarContent({ user, items, activeHref, onNavigate, onLogout, onClose
   const selectedRoleKey = useMemo(() => {
     const emailLower = (user?.email || "").toLowerCase();
     const namaLower = (user?.nama || "").toLowerCase();
+    const isUserBachtiar = emailLower.includes("keuangan") || namaLower.includes("bachtiar");
+
+    if (isUserBachtiar) {
+      if (roleUpper === "ADMIN_KEUANGAN") return "ADMIN_KEUANGAN";
+      if (roleUpper === "GURU") return "GURU_BACHTIAR";
+    }
+
     if (roleUpper === "ADMIN_SUPER") {
       if (emailLower.includes("wahab") || namaLower.includes("wahab")) return "ADMIN_SUPER_MUDIR";
       return "ADMIN_SUPER";
@@ -384,7 +411,7 @@ function SidebarContent({ user, items, activeHref, onNavigate, onLogout, onClose
                 </span>
               </div>
               <p className="text-[11px] font-semibold text-slate-700 truncate mb-2">
-                Sebagai: <span className="font-extrabold text-[#550000]">{formatRoleDisplay(user.role)}</span>
+                Sebagai: <span className="font-extrabold text-[#550000]">{formatRoleDisplay(user.role, user?.email, user?.nama)}</span>
               </p>
               <button
                 type="button"
@@ -439,6 +466,7 @@ function SidebarContent({ user, items, activeHref, onNavigate, onLogout, onClose
                     <option value="GURU_TEGUH">Guru Entrepreneurship — Teguh Hudaya, Lc., M.M.</option>
                     <option value="GURU_IMAM">Guru Asatidz — Imam Wahyudi</option>
                     <option value="GURU_SAIF">Guru Asatidz — Saif</option>
+                    <option value="GURU_BACHTIAR">Guru Mapel (B. Inggris) — Maulidin Bachtiar</option>
                     <option value="MUSYRIF">Pengampu Halaqoh — Muhammad Iqbal, S.Pd.</option>
                     <option value="WALI_SANTRI">Portal Wali Santri — Wali Santri Al-Imam</option>
                   </>
@@ -515,7 +543,7 @@ function SidebarContent({ user, items, activeHref, onNavigate, onLogout, onClose
                 isAdminRole ? "font-bold text-[#550000]" : "font-medium text-slate-500"
               }`}
             >
-              {formatRoleDisplay(user?.role || "")}
+              {formatRoleDisplay(user?.role || "", user?.email, user?.nama)}
             </p>
             {isSwitched && (
               <span className="inline-block mt-0.5 rounded px-1.5 py-0.5 text-[9px] font-black bg-amber-100 text-amber-800">
