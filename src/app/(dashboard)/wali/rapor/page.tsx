@@ -9,6 +9,7 @@ import {
   ArrowRight,
   BookOpen,
   Calendar,
+  Camera,
   CheckCircle2,
   Clock,
   CreditCard,
@@ -441,7 +442,132 @@ function BannerSppPill({ spp, locked }: { spp: any; locked: boolean }) {
   );
 }
 
-function ProfileBanner({ santri, nis, spp, locked }: { santri: any; nis: string; spp: any; locked: boolean }) {
+function ProfileBanner({
+  santri,
+  nis,
+  spp,
+  locked,
+  onFotoUpdated,
+}: {
+  santri: any;
+  nis: string;
+  spp: any;
+  locked: boolean;
+  onFotoUpdated?: (newUrl: string | null) => void;
+}) {
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [uploading, setUploading] = useState(false);
+  const [currentFoto, setCurrentFoto] = useState<string | null>(santri?.foto_url || null);
+
+  useEffect(() => {
+    setCurrentFoto(santri?.foto_url || null);
+  }, [santri?.foto_url]);
+
+  const handleAvatarClick = () => {
+    if (uploading) return;
+    if (currentFoto) {
+      Swal.fire({
+        title: "Foto Profil Ananda",
+        text: `Kelola foto profil untuk ${santri?.nama || "santri"}:`,
+        imageUrl: currentFoto,
+        imageAlt: santri?.nama,
+        imageHeight: 180,
+        showDenyButton: true,
+        showCancelButton: true,
+        confirmButtonText: "📷 Ganti Foto Baru",
+        denyButtonText: "🗑️ Hapus Foto",
+        cancelButtonText: "Tutup",
+        confirmButtonColor: "#550000",
+        denyButtonColor: "#be123c",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          fileInputRef.current?.click();
+        } else if (result.isDenied) {
+          handleDeleteFoto();
+        }
+      });
+    } else {
+      fileInputRef.current?.click();
+    }
+  };
+
+  const handleDeleteFoto = async () => {
+    if (!santri?.id) return;
+    try {
+      setUploading(true);
+      const res = await fetch(`/api/wali/foto-santri?santri_id=${encodeURIComponent(santri.id)}`, {
+        method: "DELETE",
+      });
+      const json = await res.json();
+      if (json.success) {
+        setCurrentFoto(null);
+        onFotoUpdated?.(null);
+        Swal.fire({
+          icon: "success",
+          title: "Foto Dihapus",
+          text: "Foto profil santri berhasil dihapus.",
+          timer: 1500,
+          showConfirmButton: false,
+        });
+      } else {
+        Swal.fire("Gagal", json.error || "Gagal menghapus foto", "error");
+      }
+    } catch (err) {
+      console.error("Error delete foto:", err);
+      Swal.fire("Gagal", "Terjadi kesalahan saat menghapus foto", "error");
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !santri?.id) return;
+
+    if (!file.type.startsWith("image/")) {
+      Swal.fire("Format Salah", "Pilih file gambar dengan format JPG, PNG, atau WEBP.", "warning");
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      Swal.fire("File Terlalu Besar", "Ukuran foto maksimal adalah 5 MB.", "warning");
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("santri_id", santri.id);
+    formData.append("foto", file);
+
+    setUploading(true);
+    try {
+      const res = await fetch("/api/wali/foto-santri", {
+        method: "POST",
+        body: formData,
+      });
+      const json = await res.json();
+
+      if (json.success && json.foto_url) {
+        setCurrentFoto(json.foto_url);
+        onFotoUpdated?.(json.foto_url);
+        Swal.fire({
+          icon: "success",
+          title: "Alhamdulillah!",
+          text: `Foto ananda ${santri.nama} berhasil diunggah.`,
+          timer: 2000,
+          showConfirmButton: false,
+        });
+      } else {
+        Swal.fire("Gagal Mengunggah", json.error || "Gagal memperbarui foto", "error");
+      }
+    } catch (err) {
+      console.error("Error upload foto:", err);
+      Swal.fire("Gagal", "Terjadi kendala jaringan saat mengunggah foto", "error");
+    } finally {
+      setUploading(false);
+      if (fileInputRef.current) fileInputRef.current.value = "";
+    }
+  };
+
   return (
     <header
       className={`relative overflow-hidden rounded-3xl p-5 text-white shadow-2xl shadow-[#550000]/30 sm:p-8 ${NO_PRINT}`}
@@ -456,12 +582,65 @@ function ProfileBanner({ santri, nis, spp, locked }: { santri: any; nis: string;
       />
 
       <div className="relative z-10 flex flex-col sm:flex-row items-center sm:items-start gap-4 sm:gap-6 text-center sm:text-left">
-        <div
-          className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl border border-white/40 text-2xl font-black text-white shadow-inner ring-4 ring-white/20 sm:h-20 sm:w-20 sm:text-3xl"
-          style={{ background: "rgba(255, 255, 255, 0.18)" }}
-          aria-hidden="true"
-        >
-          {(santri?.nama || "S").charAt(0).toUpperCase()}
+        {/* Kotak Avatar / Foto Ananda (Bisa diklik untuk Upload) */}
+        <div className="relative group shrink-0">
+          <input
+            type="file"
+            ref={fileInputRef}
+            onChange={handleFileChange}
+            accept="image/jpeg,image/png,image/webp,image/jpg"
+            className="hidden"
+          />
+
+          <button
+            type="button"
+            onClick={handleAvatarClick}
+            disabled={uploading}
+            title={currentFoto ? "Klik untuk ganti atau kelola foto ananda" : "Klik untuk upload foto ananda"}
+            className="relative flex h-20 w-20 sm:h-24 sm:w-24 shrink-0 items-center justify-center rounded-2xl sm:rounded-3xl border-2 border-white/40 overflow-hidden shadow-2xl ring-4 ring-white/20 transition-all duration-300 hover:scale-105 active:scale-95 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-white"
+            style={{ background: currentFoto ? "transparent" : "rgba(255, 255, 255, 0.18)" }}
+          >
+            {uploading ? (
+              <div className="flex flex-col items-center justify-center gap-1">
+                <Loader2 size={24} className="animate-spin text-white" />
+                <span className="text-[10px] font-bold text-white tracking-wider">Upload...</span>
+              </div>
+            ) : currentFoto ? (
+              <>
+                <img
+                  src={currentFoto}
+                  alt={santri?.nama || "Foto Santri"}
+                  className="h-full w-full object-cover object-center"
+                />
+                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center text-white">
+                  <Camera size={18} />
+                  <span className="text-[9px] font-extrabold uppercase tracking-wider mt-0.5">Ubah</span>
+                </div>
+              </>
+            ) : (
+              <>
+                <span className="text-3xl sm:text-4xl font-black text-white drop-shadow">
+                  {(santri?.nama || "S").charAt(0).toUpperCase()}
+                </span>
+                <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center text-white">
+                  <Camera size={20} />
+                  <span className="text-[9px] font-extrabold uppercase tracking-wider mt-0.5">Upload</span>
+                </div>
+              </>
+            )}
+          </button>
+
+          {/* Badge Icon Kamera di Sudut */}
+          {!uploading && (
+            <button
+              type="button"
+              onClick={handleAvatarClick}
+              title="Upload Foto Ananda"
+              className="absolute -bottom-1 -right-1 sm:bottom-0 sm:right-0 z-20 flex h-7 w-7 sm:h-8 sm:w-8 items-center justify-center rounded-full bg-white text-slate-800 shadow-lg ring-2 ring-white/80 transition-transform duration-200 hover:scale-110 active:scale-90 hover:bg-emerald-500 hover:text-white"
+            >
+              <Camera size={14} className="sm:size-4" />
+            </button>
+          )}
         </div>
 
         <div className="min-w-0 flex-1">
@@ -1981,7 +2160,15 @@ export default function RaporWaliPage() {
       <TopBar santriId={santri.id} locked={isAccessLocked} onKirimWA={handleKirimWA} />
 
       <main className="mx-auto max-w-6xl space-y-6 px-4 pt-6 sm:space-y-8 sm:px-6 sm:pt-8 print:m-0 print:max-w-none print:space-y-0 print:p-0">
-        <ProfileBanner santri={santri} nis={nis} spp={data?.spp} locked={isAccessLocked} />
+        <ProfileBanner
+          santri={santri}
+          nis={nis}
+          spp={data?.spp}
+          locked={isAccessLocked}
+          onFotoUpdated={(newUrl) => {
+            setData((prev: any) => (prev ? { ...prev, santri: { ...prev.santri, foto_url: newUrl } } : prev));
+          }}
+        />
 
         {data?.spp?.status === "menunggu_verifikasi" && (
           <VerifyingBanner onUploadLagi={() => setIsKonfirmasiOpen(true)} onLihatSpp={() => setActiveTab("spp")} />

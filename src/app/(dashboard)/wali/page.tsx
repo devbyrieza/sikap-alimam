@@ -323,11 +323,19 @@ export default function WaliDashboard() {
                   {/* Kiri: avatar + identitas */}
                   <div className="flex min-w-0 items-start gap-4 sm:gap-5">
                     <div
-                      className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl text-2xl font-black text-white shadow-lg shadow-[#550000]/20 ring-4 ring-rose-50 sm:h-20 sm:w-20 sm:text-3xl"
-                      style={{ background: "linear-gradient(135deg, #550000 0%, #7a0000 100%)" }}
+                      className="relative flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl text-2xl font-black text-white shadow-lg shadow-[#550000]/20 ring-4 ring-rose-50 sm:h-20 sm:w-20 sm:text-3xl overflow-hidden"
+                      style={{ background: anak.foto_url ? "transparent" : "linear-gradient(135deg, #550000 0%, #7a0000 100%)" }}
                       aria-hidden="true"
                     >
-                      {(anak?.nama || "A").charAt(0).toUpperCase()}
+                      {anak.foto_url ? (
+                        <img
+                          src={anak.foto_url}
+                          alt={anak.nama}
+                          className="h-full w-full object-cover object-center"
+                        />
+                      ) : (
+                        (anak?.nama || "A").charAt(0).toUpperCase()
+                      )}
                     </div>
 
                     <div className="min-w-0">
