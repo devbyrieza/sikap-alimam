@@ -12,6 +12,8 @@ export interface SessionPayload extends JWTPayload {
   nama_panggilan?: string;
   role: string;
   originalRole?: string;
+  originalUserId?: string;
+  originalNama?: string;
   asatidz_id?: string;
   spp_access_blocked?: boolean;
   spp_blocked_reason?: string;
@@ -78,8 +80,9 @@ export async function getLiveSession(): Promise<SessionPayload | null> {
 
       return {
         ...session,
-        role: liveUser.role,
-        nama: cleanNama || session.nama
+        // Jika sedang dalam mode switch akun (originalRole ada), pertahankan peran dan nama yang dipilih
+        role: session.originalRole ? session.role : liveUser.role,
+        nama: session.originalRole ? session.nama : (cleanNama || session.nama)
       };
     }
   } catch (e) {

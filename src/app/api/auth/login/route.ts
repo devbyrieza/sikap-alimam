@@ -316,7 +316,7 @@ export async function POST(req: NextRequest) {
       nama: formattedNama,
       nama_panggilan: user.pegawai?.nama_panggilan || undefined,
       role: user.role,
-      originalRole: user.role,
+      originalRole: undefined,
       asatidz_id: asatidzId,
       spp_access_blocked: (user as any).spp_access_blocked ?? false,
       spp_blocked_reason: (user as any).spp_blocked_reason ?? undefined,

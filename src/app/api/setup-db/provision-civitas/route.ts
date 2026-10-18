@@ -6,151 +6,206 @@ export const dynamic = 'force-dynamic';
 
 export async function GET() {
   try {
-    const adminPasswordHash = await bcrypt.hash("Paas2026!", 10);
-    const guruPasswordHash = await bcrypt.hash("Paas2026!", 10);
+    const hashDefault = await bcrypt.hash("PAAS2026!", 10);
+    const hashWahab = await bcrypt.hash("2026#@", 10);
 
-    // 1. Ambil semua data pegawai dengan kategori mengandung "GURU" atau "ASATIDZ" (case-insensitive)
-    const semuaGuru = await prisma.pegawai.findMany({
-      where: {
-        OR: [
-          { kategori_pegawai: { contains: 'GURU', mode: 'insensitive' } },
-          { kategori_pegawai: { contains: 'ASATIDZ', mode: 'insensitive' } }
-        ]
-      }
+    // 1. Kelas canonical
+    const kelasMts = await prisma.kelas.upsert({
+      where: { nama: "7 MTs" },
+      update: { jenjang: "MTs", is_active: true },
+      create: { nama: "7 MTs", jenjang: "MTs", is_active: true }
     });
+
+    const kelasIL = await prisma.kelas.upsert({
+      where: { nama: "IL" },
+      update: { jenjang: "IL", is_active: true },
+      create: { nama: "IL", jenjang: "IL", is_active: true }
+    });
+
+    // 2. Akun Peran Terpisah Civitas SIKAP
+    const canonicalAccounts = [
+      {
+        username: "admin",
+        email: "admin@pesantren-alimam.com",
+        nama: "Administrator Sistem",
+        role: "ADMIN_SUPER",
+        plainPassword: "PAAS2026!",
+        passwordHash: hashDefault,
+        jabatan: "Super Administrator IT & Sistem",
+        divisi: "IT & Sistem Informasi",
+        kategori: "PEGAWAI_UMUM",
+        nip: "2026081001",
+        phone: "081234567890"
+      },
+      {
+        username: "keuangan",
+        email: "keuangan@pesantren-alimam.com",
+        nama: "Ustadz Maulidin Bachtiar",
+        role: "ADMIN_KEUANGAN",
+        plainPassword: "PAAS2026!",
+        passwordHash: hashDefault,
+        jabatan: "Kepala Divisi Keuangan / Admin Keuangan",
+        divisi: "Keuangan & Administrasi",
+        kategori: "PEGAWAI_UMUM",
+        nip: "2026081002",
+        phone: "081234567891"
+      },
+      {
+        username: "kurikulum",
+        email: "kurikulum@pesantren-alimam.com",
+        nama: "Ustadz Agus Cahyono, S.Pd.",
+        role: "KADIV_KURIKULUM",
+        plainPassword: "PAAS2026!",
+        passwordHash: hashDefault,
+        jabatan: "Kadiv Kurikulum & Kepala Madrasah",
+        divisi: "Kurikulum & Akademik",
+        kategori: "ASATIDZ",
+        nip: "2026081003",
+        phone: "081234567892"
+      },
+      {
+        username: "pengasuhan",
+        email: "pengasuhan@pesantren-alimam.com",
+        nama: "Ustadz Wahab Rajasam, M.Pd.",
+        role: "KADIV_PENGASUHAN",
+        plainPassword: "2026#@",
+        passwordHash: hashWahab,
+        jabatan: "Kadiv Pengasuhan & Mudir Pesantren",
+        divisi: "Pengasuhan & Kesantrian",
+        kategori: "ASATIDZ",
+        nip: "2026081004",
+        phone: "081234567893"
+      },
+      {
+        username: "walikelas.il",
+        email: "walikelas@pesantren-alimam.com",
+        nama: "Ustadz Imran Fathillah, S.Pd.",
+        role: "WALI_KELAS",
+        plainPassword: "PAAS2026!",
+        passwordHash: hashDefault,
+        jabatan: "Wali Kelas IL & Pengajar",
+        divisi: "Akademik",
+        kategori: "ASATIDZ",
+        nip: "2026081005",
+        phone: "081234567894"
+      },
+      {
+        username: "guru.mapel",
+        email: "guru@pesantren-alimam.com",
+        nama: "Ustadz Abdil Aziz, S.Pd.",
+        role: "GURU",
+        plainPassword: "PAAS2026!",
+        passwordHash: hashDefault,
+        jabatan: "Guru Mata Pelajaran",
+        divisi: "Pengajaran & Pembelajaran",
+        kategori: "ASATIDZ",
+        nip: "2026081006",
+        phone: "081234567895"
+      },
+      {
+        username: "musyrif",
+        email: "musyrif@pesantren-alimam.com",
+        nama: "Ustadz Muhammad Iqbal, S.Pd.",
+        role: "MUSYRIF",
+        plainPassword: "PAAS2026!",
+        passwordHash: hashDefault,
+        jabatan: "Musyrif Tahfidz & Pengampu Halaqoh",
+        divisi: "Al-Qur'an & Halaqoh Tahfidz",
+        kategori: "MUSYRIF",
+        nip: "2026081007",
+        phone: "081234567896"
+      }
+    ];
 
     const results = [];
 
-    for (const pegawai of semuaGuru) {
-      const namaUpper = pegawai.nama_lengkap.toUpperCase();
-      
-      // Deteksi Multi-Role Admin Super
-      const isRieza = namaUpper.includes('RIEZA EKA TOMARA');
-      const isAbdilAziz = namaUpper.includes('ABDIL AZIZ');
-      const isWahab = namaUpper.includes('WAHAB RAJASAM');
-      
-      const isMultiRole = isRieza || isAbdilAziz || isWahab;
-      const role = isMultiRole ? 'ADMIN_SUPER' : 'GURU';
-      const passwordHash = isMultiRole ? adminPasswordHash : guruPasswordHash;
-      
-      // Tentukan Jabatan Khusus
-      let jabatanKhusus = pegawai.jabatan;
-      if (isRieza) jabatanKhusus = 'Kadiv IT & Pengajar';
-      if (isAbdilAziz) jabatanKhusus = 'Kadiv Kurikulum & Pengajar';
-      if (isWahab) jabatanKhusus = 'Mudir Pesantren & Pengajar';
-
-      // Update jabatan pegawai jika perlu
-      if (isMultiRole && pegawai.jabatan !== jabatanKhusus) {
-        await prisma.pegawai.update({
-          where: { id: pegawai.id },
-          data: { jabatan: jabatanKhusus }
-        });
-      }
-
-      // Tentukan Email (Gunakan yang ada di database, jika kosong baru buat email default)
-      let targetEmail = pegawai.email?.toLowerCase().trim();
-      
-      if (!targetEmail || targetEmail === '') {
-        // Buat email default: namadepan@pesantren-alimam.com
-        const namaDepan = pegawai.nama_lengkap.split(/[\s,]+/)[0].toLowerCase().replace(/[^a-z0-9]/g, '');
-        targetEmail = `${namaDepan}@pesantren-alimam.com`;
-        
-        // Update pegawai agar punya email ini
-        await prisma.pegawai.update({
-          where: { id: pegawai.id },
-          data: { email: targetEmail }
-        });
-      }
-
-      // Generate NIP (User ID) if not exist
-      let nipPegawai = pegawai.nip;
-      if (!nipPegawai) {
-        // Format NIP 10 Digit: 2026 (Tahun) + 08 (Bulan) + 4 digit random (e.g. 2026081234)
-        const randomDigits = Math.floor(1000 + Math.random() * 9000); // 1000 to 9999
-        nipPegawai = `202608${randomDigits}`; 
-        
-        try {
-          await prisma.pegawai.update({
-            where: { id: pegawai.id },
-            data: { nip: nipPegawai }
-          });
-        } catch(e) {
-          nipPegawai = `202608${Math.floor(1000 + Math.random() * 9000)}`;
-          await prisma.pegawai.update({
-            where: { id: pegawai.id },
-            data: { nip: nipPegawai }
-          });
-        }
-      }
-
-      // 2. Upsert User Account di SIKAP
+    for (const acc of canonicalAccounts) {
       const user = await prisma.user.upsert({
-        where: { email: targetEmail },
+        where: { email: acc.email },
         update: {
-          nama: pegawai.nama_lengkap,
-          role: role,
-          password: passwordHash,
-          is_active: true },
+          username: acc.username,
+          nama: acc.nama,
+          role: acc.role,
+          password: acc.passwordHash,
+          plain_password: acc.plainPassword,
+          phone: acc.phone,
+          is_active: true
+        },
         create: {
-          email: targetEmail,
-          nama: pegawai.nama_lengkap,
-          role: role,
-          password: passwordHash,
-          is_active: true } });
+          username: acc.username,
+          email: acc.email,
+          nama: acc.nama,
+          role: acc.role,
+          password: acc.passwordHash,
+          plain_password: acc.plainPassword,
+          phone: acc.phone,
+          is_active: true
+        }
+      });
 
-      // 3. Link ke Pegawai
-      if (!pegawai.user_id || pegawai.user_id !== user.id) {
+      let pegawai = await prisma.pegawai.findFirst({
+        where: {
+          OR: [
+            { user_id: user.id },
+            { email: acc.email },
+            { nama_lengkap: acc.nama }
+          ]
+        }
+      });
+
+      if (pegawai) {
         await prisma.pegawai.update({
           where: { id: pegawai.id },
-          data: { user_id: user.id }
+          data: {
+            user_id: user.id,
+            nama_lengkap: acc.nama,
+            email: acc.email,
+            divisi: acc.divisi,
+            jabatan: acc.jabatan,
+            kategori_pegawai: acc.kategori,
+            no_hp: acc.phone,
+            nip: acc.nip
+          }
+        });
+      } else {
+        pegawai = await prisma.pegawai.create({
+          data: {
+            user_id: user.id,
+            nama_lengkap: acc.nama,
+            email: acc.email,
+            divisi: acc.divisi,
+            jabatan: acc.jabatan,
+            kategori_pegawai: acc.kategori,
+            no_hp: acc.phone,
+            nip: acc.nip,
+            jenis_kelamin: "L"
+          }
+        });
+      }
+
+      if (acc.role === "WALI_KELAS" && acc.username.includes("il")) {
+        await prisma.kelas.update({
+          where: { id: kelasIL.id },
+          data: { wali_kelas_id: pegawai.id }
         });
       }
 
       results.push({
-        nama: pegawai.nama_lengkap,
-        email_digunakan: targetEmail,
-        email_asli_db: pegawai.email,
-        role: role,
-        isMultiRole: isMultiRole,
-        jabatan: jabatanKhusus || pegawai.jabatan,
-        pegawaiId: pegawai.id,
-        nipPegawai: nipPegawai });
-    }
-
-    // Pastikan Santri IL Pindahan (Iman Prayogo - NIS 2602070019) terdaftar
-    const kelasIL = await prisma.kelas.findFirst({
-      where: {
-        OR: [
-          { jenjang: "IL" },
-          { nama: { contains: "IL", mode: "insensitive" } },
-          { nama: { contains: "I'dad", mode: "insensitive" } }
-        ]
-      }
-    });
-
-    if (kelasIL) {
-      const imanExist = await prisma.santriAktif.findFirst({
-        where: { nama_lengkap: { contains: "Iman Prayogo", mode: "insensitive" } }
+        nama: acc.nama,
+        username: acc.username,
+        email: acc.email,
+        role: acc.role,
+        jabatan: acc.jabatan,
+        plain_password: acc.plainPassword
       });
-      if (!imanExist) {
-        await prisma.santriAktif.create({
-          data: {
-            nis: "2602070019",
-            nama_lengkap: "Iman Prayogo",
-            kelas_id: kelasIL.id,
-            jenis_kelamin: "L",
-            is_active: true
-          }
-        });
-        results.push({ santriAdded: "Iman Prayogo (NIS 2602070019)" });
-      }
     }
 
     return NextResponse.json({
       success: true,
-      message: 'Berhasil membuat dan mengonfigurasi seluruh akun Civitas Guru & Santri (Termasuk Iman Prayogo - 22 Santri IL)!',
+      message: 'Berhasil mengonfigurasi akun Civitas terpisah (Admin Super, Keuangan, Kurikulum, Pengasuhan, Wali Kelas, Guru Mapel, Musyrif).',
       total: results.length,
-      data: results });
+      data: results
+    });
 
   } catch (error: any) {
     console.error('Error provisioning civitas accounts:', error);

@@ -4,11 +4,13 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import {
+  ArrowLeftRight,
   Award,
   BarChart3,
   BookHeart,
   BookMarked,
   BookOpen,
+  ChevronDown,
   ClipboardCheck,
   CreditCard,
   Database,
@@ -19,7 +21,9 @@ import {
   Lock,
   LogOut,
   Menu,
+  RotateCcw,
   Settings,
+  Shield,
   UserCheck,
   Users,
   X,
@@ -180,6 +184,7 @@ interface SidebarUser {
   email: string;
   foto_url?: string;
   originalRole?: string;
+  originalNama?: string;
 }
 
 interface SidebarProps {
@@ -201,11 +206,76 @@ interface SidebarContentProps {
 
 function SidebarContent({ user, items, activeHref, onNavigate, onLogout, onClose }: SidebarContentProps) {
   const roleUpper = (user?.role || "").toUpperCase();
+  const originalRoleUpper = (user?.originalRole || "").toUpperCase();
+  const isSwitched = Boolean(user?.originalRole && user.originalRole.toUpperCase() !== roleUpper);
+  const isSuperAdmin = roleUpper === "ADMIN_SUPER" || originalRoleUpper === "ADMIN_SUPER";
+
   const isWaliRole = roleUpper.includes("WALI");
   const isAdminRole = roleUpper.includes("ADMIN");
   const isWaliSantri = (user?.role || "").toLowerCase() === "wali_santri";
 
   const [waliSppLocked, setWaliSppLocked] = useState<boolean>(false);
+  const [switchRoles, setSwitchRoles] = useState<any[]>([]);
+  const [canSwitch, setCanSwitch] = useState<boolean>(isSuperAdmin || isSwitched);
+  const [switching, setSwitching] = useState<boolean>(false);
+
+  useEffect(() => {
+    fetch("/api/auth/switch-role")
+      .then((r) => r.json())
+      .then((res) => {
+        if (res?.success) {
+          setSwitchRoles(res.roles || []);
+          if (res.canSwitch !== undefined) {
+            setCanSwitch(Boolean(res.canSwitch));
+          }
+        }
+      })
+      .catch(() => {});
+  }, []);
+
+  const handleRoleSelect = async (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const targetRole = e.target.value;
+    if (!targetRole || targetRole === roleUpper) return;
+    setSwitching(true);
+    try {
+      const res = await fetch("/api/auth/switch-role", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ target_role: targetRole }),
+      });
+      const data = await res.json();
+      if (data.success && data.redirectTo) {
+        window.location.href = data.redirectTo;
+      } else {
+        alert(data.error || "Gagal beralih akun");
+        setSwitching(false);
+      }
+    } catch (err) {
+      console.error("Gagal beralih akun:", err);
+      setSwitching(false);
+    }
+  };
+
+  const handleSwitchBack = async () => {
+    setSwitching(true);
+    try {
+      const res = await fetch("/api/auth/switch-role", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ switch_back: true }),
+      });
+      const data = await res.json();
+      if (data.success && data.redirectTo) {
+        window.location.href = data.redirectTo;
+      } else {
+        alert(data.error || "Gagal kembali ke akun utama");
+        setSwitching(false);
+      }
+    } catch (err) {
+      console.error("Gagal kembali ke akun utama:", err);
+      setSwitching(false);
+    }
+  };
 
   useEffect(() => {
     if (!isWaliRole && !isWaliSantri) return;
@@ -261,6 +331,85 @@ function SidebarContent({ user, items, activeHref, onNavigate, onLogout, onClose
           </button>
         )}
       </div>
+
+      {/* Role Switcher & Mode Akses (Platinum Standard Multi-User Switcher) */}
+      {(canSwitch || isSwitched) && (
+        <div className="border-b border-slate-200/80 bg-gradient-to-b from-slate-50/90 to-white px-3.5 py-3">
+          {/* Switched Mode Banner */}
+          {isSwitched && (
+            <div className="mb-2.5 rounded-xl border border-amber-200 bg-gradient-to-br from-amber-50 to-orange-50/60 p-2.5 shadow-sm">
+              <div className="flex items-center justify-between gap-1 mb-1">
+                <span className="flex items-center gap-1.5 text-[10px] font-black uppercase tracking-wider text-amber-900">
+                  <span className="relative flex h-2 w-2">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-amber-500"></span>
+                  </span>
+                  Mode Akses Aktif
+                </span>
+                <span className="rounded-md bg-amber-100 px-1.5 py-0.5 text-[9px] font-black text-amber-800">
+                  Impersonasi
+                </span>
+              </div>
+              <p className="text-[11px] font-semibold text-slate-700 truncate mb-2">
+                Sebagai: <span className="font-extrabold text-[#550000]">{formatRoleDisplay(user.role)}</span>
+              </p>
+              <button
+                type="button"
+                onClick={handleSwitchBack}
+                disabled={switching}
+                className="w-full flex items-center justify-center gap-1.5 py-1.5 px-3 rounded-lg bg-white border border-amber-300 text-amber-900 hover:bg-amber-100/60 text-[11px] font-bold shadow-xs transition-all active:scale-95 disabled:opacity-50"
+              >
+                <RotateCcw size={12} className={switching ? "animate-spin" : ""} />
+                <span>Kembali ke {ROLE_LABEL[user.originalRole || "ADMIN_SUPER"] || "Admin Super"}</span>
+              </button>
+            </div>
+          )}
+
+          {/* Quick Role Switcher Dropdown */}
+          <div className="space-y-1">
+            <div className="flex items-center justify-between px-0.5">
+              <span className="flex items-center gap-1 text-[10px] font-black uppercase tracking-wider text-slate-500">
+                <ArrowLeftRight size={11} className="text-[#550000]" />
+                Beralih Akun / Peran
+              </span>
+              {switching && (
+                <span className="text-[9px] font-bold text-slate-400 animate-pulse">Memuat...</span>
+              )}
+            </div>
+            <div className="relative">
+              <select
+                value={roleUpper}
+                onChange={handleRoleSelect}
+                disabled={switching}
+                aria-label="Pilih akun atau peran"
+                className="w-full appearance-none rounded-xl border border-slate-200 bg-white py-2 pl-3 pr-8 text-[11px] font-bold text-slate-800 shadow-xs transition-colors hover:border-[#550000]/40 focus:border-[#550000] focus:outline-none focus:ring-2 focus:ring-[#550000]/20 disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                {switchRoles.length > 0 ? (
+                  switchRoles.map((r) => (
+                    <option key={r.role} value={r.role}>
+                      {r.label} — {r.pejabat}
+                    </option>
+                  ))
+                ) : (
+                  <>
+                    <option value="ADMIN_SUPER">Admin Super — Administrator Sistem</option>
+                    <option value="ADMIN_KEUANGAN">Admin Keuangan — Ustd. Maulidin Bachtiar</option>
+                    <option value="KADIV_KURIKULUM">Kadiv Kurikulum — Ustd. Agus Cahyono, S.Pd.</option>
+                    <option value="KADIV_PENGASUHAN">Kadiv Pengasuhan — Ustd. Wahab Rajasam, M.Pd.</option>
+                    <option value="WALI_KELAS">Wali Kelas — Ustd. Imran Fathillah, S.Pd.</option>
+                    <option value="GURU">Guru Mapel — Ustd. Abdil Aziz, S.Pd.</option>
+                    <option value="MUSYRIF">Pengampu Halaqoh — Ustd. Muhammad Iqbal, S.Pd.</option>
+                    <option value="WALI_SANTRI">Portal Wali Santri — Wali Santri Al-Imam</option>
+                  </>
+                )}
+              </select>
+              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2.5 text-slate-400">
+                <ChevronDown size={13} />
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Navigasi */}
       <nav className="sidebar-nav sidebar-scroll-menu overscroll-contain" aria-label="Menu utama">
@@ -327,6 +476,11 @@ function SidebarContent({ user, items, activeHref, onNavigate, onLogout, onClose
             >
               {formatRoleDisplay(user?.role || "")}
             </p>
+            {isSwitched && (
+              <span className="inline-block mt-0.5 rounded px-1.5 py-0.5 text-[9px] font-black bg-amber-100 text-amber-800">
+                Mode Beralih (Asli: {ROLE_LABEL[user.originalRole || "ADMIN_SUPER"] || user.originalRole})
+              </span>
+            )}
           </div>
         </div>
 

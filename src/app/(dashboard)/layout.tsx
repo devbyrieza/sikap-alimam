@@ -108,6 +108,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
           role: liveRole,
           email: session.email || "",
           originalRole: session.originalRole,
+          originalNama: session.originalNama,
           // Foto profil dipakai Sidebar bila ada; bila kosong, Sidebar menampilkan inisial.
           foto_url: pegawai?.foto_url || undefined,
         }}
