@@ -445,7 +445,7 @@ export default function LoginPage() {
                   autoComplete="username"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder={activeTab === "asatidzah" ? "Username / Email / No. WA" : "Masukkan NIS Anak Anda"}
+                  placeholder={activeTab === "asatidzah" ? "Username / Email / No. WA" : "Masukkan NIS Ananda"}
                   style={{
                     width: "100%",
                     height: "48px",
