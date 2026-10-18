@@ -52,8 +52,8 @@ interface NilaiItem {
 const focusRing =
   "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2";
 const btnBase = `inline-flex min-h-[44px] items-center justify-center gap-2 rounded-2xl px-5 py-2.5 text-sm font-bold transition-all motion-safe:hover:scale-[1.02] active:scale-[0.98] ${focusRing}`;
-const btnPrimary = `${btnBase} bg-[#550000] text-white shadow-lg shadow-[#550000]/25 hover:bg-[#7a0000] active:scale-[0.98]`;
-const surface = "rounded-3xl border border-slate-100 bg-white/90 shadow-xl shadow-primary/10 backdrop-blur";
+const btnPrimary = `${btnBase} bg-[#550000] text-white shadow-sm hover:bg-[#7a0000] active:scale-[0.98]`;
+const surface = "rounded-3xl border border-slate-200/80 bg-white shadow-sm hover:shadow-md transition-shadow";
 
 function isSyariahOrBahasa(name: string): boolean {
   const low = name.toLowerCase();
@@ -276,7 +276,7 @@ function ProfileBanner({
 
   return (
     <header
-      className="relative overflow-hidden rounded-3xl p-5 text-white shadow-2xl shadow-[#550000]/30 sm:p-8"
+      className="relative overflow-hidden rounded-3xl p-5 text-white shadow-lg shadow-slate-900/10 sm:p-8"
       style={{ background: "linear-gradient(135deg, #550000 0%, #7a0000 50%, #3a0000 100%)" }}
     >
       <div className="pointer-events-none absolute right-0 top-0 p-6 opacity-10 sm:p-8" aria-hidden="true">
@@ -552,7 +552,7 @@ export default function WaliAkademikPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-rose-50/20 to-slate-100 flex items-center justify-center p-6">
+      <div className="min-h-screen bg-[#f8fafc] flex items-center justify-center p-6">
         <div className={`p-10 text-center ${surface}`}>
           <div className="mx-auto mb-4 h-12 w-12 rounded-full border-b-2 border-[#550000] animate-spin" />
           <h3 className="text-lg font-bold text-slate-800">Memuat Data Akademik Santri</h3>
@@ -564,7 +564,7 @@ export default function WaliAkademikPage() {
 
   if (loadError || !data?.santri) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-rose-50/20 to-slate-100 flex items-center justify-center p-6">
+      <div className="min-h-screen bg-[#f8fafc] flex items-center justify-center p-6">
         <div className={`p-10 text-center max-w-md ${surface}`}>
           <AlertCircle size={48} className="mx-auto mb-3 text-rose-500" />
           <h3 className="text-lg font-bold text-slate-800">Data Akademik Belum Tersedia</h3>
@@ -585,7 +585,7 @@ export default function WaliAkademikPage() {
   const nis = (santri?.nama ? getOfficialNis(santri.nama) : null) || santri.nis;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-rose-50/30 to-slate-100 pb-20">
+    <div className="min-h-screen bg-[#f8fafc] pb-20">
       {/* Top Bar Navigasi */}
       <div className="mx-auto max-w-6xl px-4 pt-4 sm:px-6 flex items-center justify-between">
         <Link
@@ -633,7 +633,7 @@ export default function WaliAkademikPage() {
 
             <Link
               href={`/wali/akademik?santri_id=${selectedSantriId}`}
-              className="flex shrink-0 items-center gap-2 whitespace-nowrap rounded-xl px-4 py-2.5 text-xs sm:text-sm font-bold min-h-[44px] bg-[#550000] text-white shadow-md shadow-[#550000]/30 transition-all"
+              className="flex shrink-0 items-center gap-2 whitespace-nowrap rounded-xl px-4 py-2.5 text-xs sm:text-sm font-bold min-h-[44px] bg-[#550000] text-white shadow-sm transition-all"
             >
               <BookOpen size={16} className="text-rose-200" />
               <span>2. Nilai &amp; Akademik</span>
@@ -665,7 +665,7 @@ export default function WaliAkademikPage() {
               onClick={() => setActiveTab("nilai")}
               className={`flex shrink-0 items-center gap-2 whitespace-nowrap rounded-xl px-4 py-2.5 text-xs sm:text-sm font-bold min-h-[44px] transition-all ${
                 activeTab === "nilai"
-                  ? "bg-[#550000] text-white shadow-md shadow-[#550000]/30"
+                  ? "bg-[#550000] text-white shadow-sm"
                   : "bg-slate-100/90 text-slate-600 hover:bg-slate-200"
               }`}
             >
@@ -678,7 +678,7 @@ export default function WaliAkademikPage() {
               onClick={() => setActiveTab("presensi")}
               className={`flex shrink-0 items-center gap-2 whitespace-nowrap rounded-xl px-4 py-2.5 text-xs sm:text-sm font-bold min-h-[44px] transition-all ${
                 activeTab === "presensi"
-                  ? "bg-[#550000] text-white shadow-md shadow-[#550000]/30"
+                  ? "bg-[#550000] text-white shadow-sm"
                   : "bg-slate-100/90 text-slate-600 hover:bg-slate-200"
               }`}
             >
@@ -691,7 +691,7 @@ export default function WaliAkademikPage() {
               onClick={() => setActiveTab("jurnal")}
               className={`flex shrink-0 items-center gap-2 whitespace-nowrap rounded-xl px-4 py-2.5 text-xs sm:text-sm font-bold min-h-[44px] transition-all ${
                 activeTab === "jurnal"
-                  ? "bg-[#550000] text-white shadow-md shadow-[#550000]/30"
+                  ? "bg-[#550000] text-white shadow-sm"
                   : "bg-slate-100/90 text-slate-600 hover:bg-slate-200"
               }`}
             >

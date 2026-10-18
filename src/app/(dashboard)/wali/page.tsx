@@ -160,7 +160,7 @@ function LoadingCard() {
     <div
       role="status"
       aria-live="polite"
-      className="rounded-3xl border border-slate-100 bg-white p-5 shadow-xl shadow-primary/10 sm:p-8"
+      className="rounded-3xl border border-slate-200/80 bg-white p-5 shadow-sm sm:p-8"
     >
       <span className="sr-only">Memuat data ananda…</span>
       <div className="flex animate-pulse items-center gap-4 motion-reduce:animate-none sm:gap-5">
@@ -196,7 +196,7 @@ function StateCard({
   return (
     <div
       role={role}
-      className="rounded-3xl border border-slate-100 bg-white p-8 text-center shadow-xl shadow-primary/10 sm:p-12"
+      className="rounded-3xl border border-slate-200/80 bg-white p-8 text-center shadow-sm sm:p-12"
     >
       <div className={`mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl ${iconTone}`}>
         <Icon size={26} aria-hidden="true" />
@@ -243,10 +243,10 @@ export default function WaliDashboard() {
   }, [load]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-rose-50/20 to-slate-100 pb-12 sm:pb-16">
+    <div className="min-h-screen bg-[#f8fafc] pb-12 sm:pb-16">
       {/* ── Banner ── */}
       <header
-        className="relative overflow-hidden rounded-b-[2rem] px-5 pb-24 pt-10 text-white shadow-2xl shadow-[#550000]/30 sm:rounded-b-[2.5rem] sm:pb-28 sm:pt-14"
+        className="relative overflow-hidden rounded-b-[2rem] px-5 pb-24 pt-10 text-white shadow-lg shadow-slate-900/10 sm:rounded-b-[2.5rem] sm:pb-28 sm:pt-14"
         style={{ background: "linear-gradient(135deg, #550000 0%, #7a0000 50%, #450000 100%)" }}
       >
         <div className="pointer-events-none absolute right-0 top-0 p-6 opacity-10 sm:p-8" aria-hidden="true">
@@ -286,7 +286,7 @@ export default function WaliDashboard() {
               <button
                 type="button"
                 onClick={() => load()}
-                className={`inline-flex min-h-[44px] items-center gap-2 rounded-2xl bg-[#550000] px-5 py-2.5 text-sm font-bold text-white shadow-lg shadow-[#550000]/25 transition-colors hover:bg-[#7a0000] active:scale-[0.98] ${focusRing}`}
+                className={`inline-flex min-h-[44px] items-center gap-2 rounded-2xl bg-[#550000] px-5 py-2.5 text-sm font-bold text-white shadow-sm transition-colors hover:bg-[#7a0000] active:scale-[0.98] ${focusRing}`}
               >
                 <RefreshCw size={16} aria-hidden="true" />
                 <span>Coba lagi</span>
@@ -316,14 +316,14 @@ export default function WaliDashboard() {
             return (
               <article
                 key={anak.id}
-                className="overflow-hidden rounded-3xl border border-slate-100/90 bg-white shadow-xl shadow-primary/10 transition-all duration-300 hover:border-primary/30 hover:shadow-2xl motion-reduce:transition-none"
+                className="overflow-hidden rounded-3xl border border-slate-200/80 bg-white shadow-sm hover:shadow-md transition-all duration-200 motion-reduce:transition-none"
               >
                 {/* Bagian atas */}
                 <div className="flex flex-col gap-6 p-5 sm:p-8 md:flex-row md:items-start md:justify-between">
                   {/* Kiri: avatar + identitas */}
                   <div className="flex min-w-0 items-start gap-4 sm:gap-5">
                     <div
-                      className="relative flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl text-2xl font-black text-white shadow-lg shadow-[#550000]/20 ring-4 ring-rose-50 sm:h-20 sm:w-20 sm:text-3xl overflow-hidden"
+                      className="relative flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl text-2xl font-black text-white shadow-md ring-4 ring-slate-100 sm:h-20 sm:w-20 sm:text-3xl overflow-hidden"
                       style={{ background: anak.foto_url ? "transparent" : "linear-gradient(135deg, #550000 0%, #7a0000 100%)" }}
                       aria-hidden="true"
                     >
@@ -383,10 +383,10 @@ export default function WaliDashboard() {
                   <div className="flex w-full shrink-0 flex-col gap-2.5 sm:flex-row md:w-auto md:flex-col lg:flex-row">
                     <a
                       href={`/wali/rapor?santri_id=${anak.id}`}
-                      className={`inline-flex min-h-[48px] items-center justify-center gap-2 rounded-2xl px-5 py-3 text-sm font-bold text-white shadow-lg transition-all motion-safe:hover:scale-[1.02] active:scale-[0.98] ${focusRing} ${
+                      className={`inline-flex min-h-[48px] items-center justify-center gap-2 rounded-2xl px-5 py-3 text-sm font-bold text-white shadow-sm transition-all motion-safe:hover:scale-[1.02] active:scale-[0.98] ${focusRing} ${
                         locked
-                          ? "bg-rose-600 shadow-rose-950/20 hover:bg-rose-700"
-                          : "bg-[#550000] shadow-[#550000]/25 hover:bg-[#7a0000]"
+                          ? "bg-rose-600 hover:bg-rose-700"
+                          : "bg-[#550000] hover:bg-[#7a0000]"
                       }`}
                     >
                       {locked ? (

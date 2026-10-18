@@ -90,9 +90,9 @@ const focusRing =
   "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2";
 
 const btnBase = `inline-flex min-h-[44px] items-center justify-center gap-2 rounded-2xl px-5 py-2.5 text-sm font-bold transition-all motion-safe:hover:scale-[1.02] active:scale-[0.98] ${focusRing}`;
-const btnPrimary = `${btnBase} bg-[#550000] text-white shadow-lg shadow-[#550000]/25 hover:bg-[#7a0000] active:scale-[0.98]`;
+const btnPrimary = `${btnBase} bg-[#550000] text-white shadow-sm hover:bg-[#7a0000] active:scale-[0.98]`;
 
-const surface = "rounded-3xl border border-slate-100 bg-white/90 shadow-xl shadow-primary/10 backdrop-blur";
+const surface = "rounded-3xl border border-slate-200/80 bg-white shadow-sm hover:shadow-md transition-shadow";
 
 type Tone = "emerald" | "amber" | "blue" | "rose";
 const TONE: Record<Tone, { card: string; label: string; icon: string; value: string; caption: string }> = {
@@ -396,7 +396,7 @@ function TopBar({ santriId, locked, onKirimWA }: { santriId: string; locked: boo
             <button
               type="button"
               onClick={onKirimWA}
-              className={`inline-flex min-h-[40px] items-center gap-1.5 rounded-xl bg-[#550000] px-3.5 text-xs font-bold text-white shadow-md shadow-[#550000]/25 transition-colors hover:bg-[#7a0000] active:scale-[0.98] ${focusRing}`}
+              className={`inline-flex min-h-[40px] items-center gap-1.5 rounded-xl bg-[#550000] px-3.5 text-xs font-bold text-white shadow-sm transition-colors hover:bg-[#7a0000] active:scale-[0.98] ${focusRing}`}
             >
               <Send size={14} aria-hidden="true" />
               <span>Kirim ke WA</span>
@@ -578,7 +578,7 @@ function ProfileBanner({
 
   return (
     <header
-      className={`relative overflow-hidden rounded-3xl p-5 text-white shadow-2xl shadow-[#550000]/30 sm:p-8 ${NO_PRINT}`}
+      className={`relative overflow-hidden rounded-3xl p-5 text-white shadow-lg shadow-slate-900/10 sm:p-8 ${NO_PRINT}`}
       style={{ background: "linear-gradient(135deg, #550000 0%, #7a0000 50%, #3a0000 100%)" }}
     >
       <div className="pointer-events-none absolute right-0 top-0 p-6 opacity-10 sm:p-8" aria-hidden="true">
@@ -797,7 +797,7 @@ function TabNav({ santriId }: { santriId: string }) {
       >
         <Link
           href={`/wali/rapor?santri_id=${santriId}`}
-          className="flex shrink-0 items-center gap-2 whitespace-nowrap rounded-xl px-4 py-2.5 text-xs sm:text-sm font-bold min-h-[44px] bg-[#550000] text-white shadow-md shadow-[#550000]/30 transition-all"
+          className="flex shrink-0 items-center gap-2 whitespace-nowrap rounded-xl px-4 py-2.5 text-xs sm:text-sm font-bold min-h-[44px] bg-[#550000] text-white shadow-sm transition-all"
         >
           <FileText size={16} className="text-rose-200" />
           <span>1. Lembar Rapor Resmi</span>
@@ -874,12 +874,12 @@ function LockedPanel({
 
   return (
     <div className={`space-y-6 ${NO_PRINT}`}>
-      <div className="relative overflow-hidden rounded-3xl border-2 border-rose-200 bg-white/95 p-6 text-center shadow-2xl shadow-rose-950/10 backdrop-blur sm:p-12">
+      <div className="relative overflow-hidden rounded-3xl border border-rose-200 bg-white p-6 text-center shadow-lg shadow-slate-900/5 sm:p-12">
         <div className="pointer-events-none absolute right-0 top-0 -z-10 h-96 w-96 rounded-full bg-rose-50 blur-3xl" aria-hidden="true" />
         <div className="pointer-events-none absolute bottom-0 left-0 -z-10 h-80 w-80 rounded-full bg-amber-50/60 blur-3xl" aria-hidden="true" />
 
         <div className="relative mb-6 inline-block">
-          <div className="mx-auto flex h-24 w-24 items-center justify-center rounded-3xl bg-gradient-to-br from-rose-600 via-rose-700 to-rose-900 text-white shadow-2xl shadow-rose-600/40">
+          <div className="mx-auto flex h-24 w-24 items-center justify-center rounded-3xl bg-gradient-to-br from-rose-600 via-rose-700 to-rose-900 text-white shadow-md">
             <Lock size={44} className="stroke-[2.2]" aria-hidden="true" />
           </div>
           <div className="absolute -right-1 -top-1 rounded-full bg-amber-400 p-2 text-amber-950 shadow-md motion-safe:animate-bounce">
@@ -1091,10 +1091,10 @@ function TabRapor({ printId, cetakData, cetakError }: { printId: string; cetakDa
 
   return (
     <>
-      <div className={`flex flex-col justify-between gap-4 rounded-3xl border border-slate-100 bg-white/95 p-5 shadow-xl shadow-primary/10 backdrop-blur sm:flex-row sm:items-center sm:p-6 ${NO_PRINT}`}>
+      <div className={`flex flex-col justify-between gap-4 rounded-3xl border border-slate-200/80 bg-white p-5 shadow-sm sm:flex-row sm:items-center sm:p-6 ${NO_PRINT}`}>
         <div className="flex items-center gap-3.5">
           <div
-            className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl text-white shadow-md shadow-rose-950/20"
+            className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl text-white shadow-md"
             style={{ background: "linear-gradient(135deg, #550000 0%, #881337 100%)" }}
           >
             <FileText size={22} className="text-white" aria-hidden="true" />
@@ -1404,7 +1404,7 @@ function TabPresensi({
               type="button"
               aria-pressed={filterStatus === ""}
               onClick={() => onFilterStatus("")}
-              className={chip(filterStatus === "", "bg-[#550000] text-white shadow-md shadow-[#550000]/30")}
+              className={chip(filterStatus === "", "bg-[#550000] text-white shadow-sm")}
             >
               Semua Status ({totalRows})
             </button>
@@ -1766,7 +1766,7 @@ function TabSpp({
     <>
       {/* Wali kelas */}
       <div
-        className="relative overflow-hidden rounded-3xl p-6 text-white shadow-xl shadow-[#550000]/25 sm:p-8"
+        className="relative overflow-hidden rounded-3xl p-6 text-white shadow-lg shadow-slate-900/10 sm:p-8"
         style={{
           background: "linear-gradient(135deg, #550000 0%, #7a0000 50%, #3a0000 100%)",
           backgroundColor: "#550000",
@@ -1884,7 +1884,7 @@ function TabSpp({
             <button
               type="button"
               onClick={onKonfirmasi}
-              className={`inline-flex min-h-[44px] items-center gap-1.5 rounded-xl bg-[#550000] px-3.5 py-1.5 text-xs font-bold text-white shadow-md shadow-[#550000]/20 transition-all hover:bg-[#7a0000] motion-safe:hover:scale-[1.02] active:scale-[0.98] ${focusRing}`}
+              className={`inline-flex min-h-[44px] items-center gap-1.5 rounded-xl bg-[#550000] px-3.5 py-1.5 text-xs font-bold text-white shadow-sm transition-all hover:bg-[#7a0000] motion-safe:hover:scale-[1.02] active:scale-[0.98] ${focusRing}`}
             >
               <CreditCard size={14} aria-hidden="true" />
               <span>Konfirmasi Pembayaran (WA/Upload)</span>
@@ -2206,7 +2206,7 @@ export default function RaporWaliPage() {
   const showTabs = !isAccessLocked;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-rose-50/30 to-slate-100 pb-20 print:m-0 print:min-h-0 print:bg-white print:p-0">
+    <div className="min-h-screen bg-[#f8fafc] pb-20 print:m-0 print:min-h-0 print:bg-white print:p-0">
       <TopBar santriId={santri.id} locked={isAccessLocked} onKirimWA={handleKirimWA} />
 
       <main className="mx-auto max-w-6xl space-y-6 px-4 pt-6 sm:space-y-8 sm:px-6 sm:pt-8 print:m-0 print:max-w-none print:space-y-0 print:p-0">
