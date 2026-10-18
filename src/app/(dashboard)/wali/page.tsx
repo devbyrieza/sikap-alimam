@@ -82,11 +82,11 @@ const DEMO_ANAK: Anak[] = [
   },
 ];
 
-const FEATURES: { icon: LucideIcon; label: string; accent?: boolean }[] = [
-  { icon: CalendarCheck, label: "Presensi & Absensi Harian" },
-  { icon: BookOpen, label: "Nilai PTS Murni & Jurnal Guru" },
-  { icon: CreditCard, label: "Riwayat SPP 12 Bulan" },
-  { icon: Sparkles, label: "Halaqoh & Tahfidz Al-Qur'an", accent: true },
+const FEATURES: { icon: LucideIcon; label: string; href: (id: string) => string; accent?: boolean }[] = [
+  { icon: CalendarCheck, label: "Presensi & Absensi Harian", href: (id) => `/wali/akademik?santri_id=${id}` },
+  { icon: BookOpen, label: "Nilai PTS Murni & Jurnal", href: (id) => `/wali/akademik?santri_id=${id}` },
+  { icon: CreditCard, label: "Riwayat SPP 12 Bulan", href: (id) => `/wali/spp?santri_id=${id}` },
+  { icon: Sparkles, label: "Halaqoh & Tahfidz Al-Qur'an", href: (id) => `/wali/tahfidz?santri_id=${id}`, accent: true },
 ];
 
 /* ─────────────────────────── Helper ─────────────────────────── */
@@ -443,21 +443,24 @@ export default function WaliDashboard() {
                 )}
 
                 {/* Ringkasan isi portal */}
-                <ul className="grid grid-cols-1 gap-x-4 gap-y-3 border-t border-slate-100 bg-slate-50/90 px-5 py-4 text-xs font-semibold text-slate-600 min-[420px]:grid-cols-2 sm:px-8 lg:grid-cols-4">
-                  {FEATURES.map(({ icon: Icon, label, accent }) => (
-                    <li
+                <div className="grid grid-cols-1 gap-2 border-t border-slate-100 bg-slate-50/90 p-3.5 min-[420px]:grid-cols-2 sm:px-6 sm:py-3 lg:grid-cols-4">
+                  {FEATURES.map(({ icon: Icon, label, href, accent }) => (
+                    <a
                       key={label}
-                      className={`flex items-center gap-2 ${accent ? "text-emerald-700" : ""}`}
+                      href={href(anak.id)}
+                      className={`flex items-center gap-2 rounded-xl p-2 text-xs font-semibold transition-all hover:bg-white hover:shadow-sm ${
+                        accent ? "text-emerald-700 hover:text-emerald-800" : "text-slate-700 hover:text-[#550000]"
+                      }`}
                     >
                       <Icon
                         size={15}
-                        className={`shrink-0 ${accent ? "" : "text-[#550000]"}`}
+                        className={`shrink-0 ${accent ? "text-emerald-600" : "text-[#550000]"}`}
                         aria-hidden="true"
                       />
                       <span>{label}</span>
-                    </li>
+                    </a>
                   ))}
-                </ul>
+                </div>
               </article>
             );
           })

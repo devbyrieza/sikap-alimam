@@ -2,11 +2,13 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
+import Link from "next/link";
 import {
   AlertCircle,
   AlertTriangle,
   ArrowLeft,
   ArrowRight,
+  BookHeart,
   BookOpen,
   Calendar,
   Camera,
@@ -447,12 +449,18 @@ function ProfileBanner({
   nis,
   spp,
   locked,
+  anakList = [],
+  currentSantriId = "",
+  onSelectSantri,
   onFotoUpdated,
 }: {
   santri: any;
   nis: string;
   spp: any;
   locked: boolean;
+  anakList?: any[];
+  currentSantriId?: string;
+  onSelectSantri?: (id: string) => void;
   onFotoUpdated?: (newUrl: string | null) => void;
 }) {
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -657,6 +665,27 @@ function ProfileBanner({
           <p className="mt-1 text-xs font-medium text-rose-100/90 sm:text-sm">
             {SCHOOL_LINE} • Tahun Ajaran {santri?.tahun_ajaran || TAHUN_AJARAN}
           </p>
+
+          {/* Selector jika wali memiliki lebih dari 1 ananda */}
+          {anakList.length > 1 && onSelectSantri && (
+            <div className="mt-3 flex flex-wrap items-center justify-center sm:justify-start gap-2 pt-2 border-t border-white/15">
+              <span className="text-[11px] font-bold text-rose-200">Pilih Ananda:</span>
+              {anakList.map((a) => (
+                <button
+                  key={a.id}
+                  type="button"
+                  onClick={() => onSelectSantri(a.id)}
+                  className={`rounded-xl px-3 py-1 text-xs font-bold transition-all ${
+                    a.id === currentSantriId
+                      ? "bg-white text-[#550000] shadow-md scale-105"
+                      : "bg-white/15 text-white hover:bg-white/25"
+                  }`}
+                >
+                  {a.nama} ({a.kelas})
+                </button>
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </header>
@@ -755,54 +784,48 @@ function LockedBackBar({ onBack }: { onBack: () => void }) {
   );
 }
 
-function TabNav({ active, onChange }: { active: TabId; onChange: (id: TabId) => void }) {
-  const onKeyDown = (e: React.KeyboardEvent) => {
-    const i = TABS.findIndex((t) => t.id === active);
-    let next = i;
-    if (e.key === "ArrowRight") next = (i + 1) % TABS.length;
-    else if (e.key === "ArrowLeft") next = (i - 1 + TABS.length) % TABS.length;
-    else if (e.key === "Home") next = 0;
-    else if (e.key === "End") next = TABS.length - 1;
-    else return;
-    e.preventDefault();
-    onChange(TABS[next].id);
-    document.getElementById(`tab-${TABS[next].id}`)?.focus();
-  };
-
+function TabNav({ santriId }: { santriId: string }) {
   return (
     <div
       className={`sticky top-14 z-20 w-full max-w-full overflow-hidden rounded-2xl border border-slate-200/80 bg-white/95 p-1.5 shadow-md backdrop-blur sm:top-16 ${NO_PRINT}`}
     >
       <div
         role="tablist"
-        aria-label="Bagian laporan ananda"
-        onKeyDown={onKeyDown}
+        aria-label="Menu portal ananda"
         className="flex flex-row flex-nowrap items-center gap-1.5 overflow-x-auto custom-scrollbar w-full py-0.5 px-0.5 overscroll-x-contain"
         style={{ WebkitOverflowScrolling: "touch" }}
       >
-        {TABS.map(({ id, label, icon: Icon }) => {
-          const selected = active === id;
-          return (
-            <button
-              key={id}
-              type="button"
-              role="tab"
-              id={`tab-${id}`}
-              aria-selected={selected}
-              aria-controls={`panel-${id}`}
-              tabIndex={selected ? 0 : -1}
-              onClick={() => onChange(id)}
-              className={`flex shrink-0 items-center gap-2 whitespace-nowrap rounded-xl px-3.5 py-2.5 text-xs sm:text-sm font-bold min-h-[44px] transition-all ${focusRing} ${
-                selected
-                  ? "bg-[#550000] text-white shadow-md shadow-[#550000]/30"
-                  : "bg-slate-100/90 text-slate-600 hover:bg-slate-200 hover:text-slate-900"
-              }`}
-            >
-              <Icon size={16} aria-hidden="true" className={selected ? "text-rose-200" : "text-slate-400"} />
-              <span>{label}</span>
-            </button>
-          );
-        })}
+        <Link
+          href={`/wali/rapor?santri_id=${santriId}`}
+          className="flex shrink-0 items-center gap-2 whitespace-nowrap rounded-xl px-4 py-2.5 text-xs sm:text-sm font-bold min-h-[44px] bg-[#550000] text-white shadow-md shadow-[#550000]/30 transition-all"
+        >
+          <FileText size={16} className="text-rose-200" />
+          <span>1. Lembar Rapor Resmi</span>
+        </Link>
+
+        <Link
+          href={`/wali/akademik?santri_id=${santriId}`}
+          className="flex shrink-0 items-center gap-2 whitespace-nowrap rounded-xl px-4 py-2.5 text-xs sm:text-sm font-bold min-h-[44px] bg-slate-100/90 text-slate-600 hover:bg-slate-200 hover:text-slate-900 transition-all"
+        >
+          <BookOpen size={16} className="text-slate-400" />
+          <span>2. Nilai &amp; Akademik</span>
+        </Link>
+
+        <Link
+          href={`/wali/tahfidz?santri_id=${santriId}`}
+          className="flex shrink-0 items-center gap-2 whitespace-nowrap rounded-xl px-4 py-2.5 text-xs sm:text-sm font-bold min-h-[44px] bg-slate-100/90 text-slate-600 hover:bg-slate-200 hover:text-slate-900 transition-all"
+        >
+          <HeartHandshake size={16} className="text-slate-400" />
+          <span>3. Halaqoh &amp; Tahfidz</span>
+        </Link>
+
+        <Link
+          href={`/wali/spp?santri_id=${santriId}`}
+          className="flex shrink-0 items-center gap-2 whitespace-nowrap rounded-xl px-4 py-2.5 text-xs sm:text-sm font-bold min-h-[44px] bg-slate-100/90 text-slate-600 hover:bg-slate-200 hover:text-slate-900 transition-all"
+        >
+          <CreditCard size={16} className="text-slate-400" />
+          <span>4. SPP &amp; Wali Kelas</span>
+        </Link>
       </div>
     </div>
   );
@@ -1949,6 +1972,24 @@ export default function RaporWaliPage() {
   const [sppHistory, setSppHistory] = useState<any>(null);
   const [loadingSpp, setLoadingSpp] = useState(false);
   const [isKonfirmasiOpen, setIsKonfirmasiOpen] = useState(false);
+  const [anakList, setAnakList] = useState<any[]>([]);
+
+  useEffect(() => {
+    fetch("/api/wali/anak")
+      .then((r) => r.json())
+      .then((res) => {
+        if (res.success && Array.isArray(res.data)) {
+          setAnakList(res.data);
+        }
+      })
+      .catch((err) => console.error("Error loading anak list:", err));
+  }, []);
+
+  useEffect(() => {
+    if (santriId && typeof window !== "undefined") {
+      localStorage.setItem("sikap_selected_santri_id", santriId);
+    }
+  }, [santriId]);
 
   /* ── Data rapor + dokumen cetak (rapor tetap tampil walau dokumen cetak gagal) ── */
   useEffect(() => {
@@ -2165,6 +2206,14 @@ export default function RaporWaliPage() {
           nis={nis}
           spp={data?.spp}
           locked={isAccessLocked}
+          anakList={anakList}
+          currentSantriId={targetSantriId}
+          onSelectSantri={(id) => {
+            if (typeof window !== "undefined") {
+              localStorage.setItem("sikap_selected_santri_id", id);
+              window.location.href = `/wali/rapor?santri_id=${id}`;
+            }
+          }}
           onFotoUpdated={(newUrl) => {
             setData((prev: any) => (prev ? { ...prev, santri: { ...prev.santri, foto_url: newUrl } } : prev));
           }}
@@ -2186,7 +2235,7 @@ export default function RaporWaliPage() {
           <>
             {data?.spp?.isGracePeriod && data?.spp?.lunas && <GraceBanner namaBulan={data.spp.namaBulan} />}
             {isAccessLocked && activeTab === "spp" && <LockedBackBar onBack={() => setActiveTab("ringkasan")} />}
-            {showTabs && <TabNav active={activeTab} onChange={setActiveTab} />}
+            {showTabs && <TabNav santriId={targetSantriId} />}
           </>
         )}
 

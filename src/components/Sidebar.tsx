@@ -13,6 +13,7 @@ import {
   CreditCard,
   Database,
   FileSpreadsheet,
+  FileText,
   HeartHandshake,
   LayoutDashboard,
   LogOut,
@@ -47,7 +48,11 @@ const NAV: NavItem[] = [
       "kadiv_kurikulum", "admin_keuangan",
     ],
   },
-  { href: "/wali/rapor", label: "Rapor & Akademik", icon: BookOpen, roles: ["wali_santri", "orang_tua", "wali"] },
+  { href: "/wali", label: "Beranda", icon: LayoutDashboard, roles: ["wali_santri", "orang_tua", "wali"] },
+  { href: "/wali/rapor", label: "Rapor Santri", icon: FileText, roles: ["wali_santri", "orang_tua", "wali"] },
+  { href: "/wali/akademik", label: "Akademik & Mapel", icon: BookOpen, roles: ["wali_santri", "orang_tua", "wali"] },
+  { href: "/wali/tahfidz", label: "Halaqoh & Tahfidz", icon: BookHeart, roles: ["wali_santri", "orang_tua", "wali"] },
+  { href: "/wali/spp", label: "SPP & Wali Kelas", icon: CreditCard, roles: ["wali_santri", "orang_tua", "wali"] },
   { href: "/keuangan", label: "Keuangan", icon: CreditCard, roles: ["admin_keuangan", "admin_super", "mudir"] },
   {
     href: "/presensi/santri",
@@ -364,7 +369,7 @@ export default function Sidebar({ user }: SidebarProps) {
   const activeHref = useMemo(() => {
     let best: string | null = null;
     for (const { href } of visibleNav) {
-      const match = href === "/dashboard" ? pathname === href : pathname === href || pathname.startsWith(`${href}/`);
+      const match = (href === "/dashboard" || href === "/wali") ? pathname === href : pathname === href || pathname.startsWith(`${href}/`);
       if (match && (best === null || href.length > best.length)) best = href;
     }
     return best;
