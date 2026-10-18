@@ -34,9 +34,16 @@ const OFFICIAL_MUSYRIF_MAP: Record<
     tingkatan: "MTs",
   },
   "ahmad farros al barqy": {
-    nama: "Ust. Agus Cahyono",
-    nama_panggilan: "Agus",
-    kelompok: "Halaqoh Ust. Agus Cahyono (MTs)",
+    nama: "Ust. Muhammad Iqbal, S.Pd",
+    nama_panggilan: "Iqbal",
+    kelompok: "Halaqoh Ust. Muhammad Iqbal (MTs)",
+    no_hp: "081251971250",
+    tingkatan: "MTs",
+  },
+  farros: {
+    nama: "Ust. Muhammad Iqbal, S.Pd",
+    nama_panggilan: "Iqbal",
+    kelompok: "Halaqoh Ust. Muhammad Iqbal (MTs)",
     no_hp: "081251971250",
     tingkatan: "MTs",
   },
@@ -217,15 +224,16 @@ export async function GET(req: NextRequest) {
       if (matched) {
         const m = matched[1];
         // Coba cari pegawai di DB jika ada
+        const searchKeyword = m.nama_panggilan || m.nama.replace(/^ust(\.|adz)?\s*/i, "").split(" ")[0];
         const dbPegawai = await prisma.pegawai.findFirst({
           where: {
-            nama_lengkap: { contains: "Agus Cahyono", mode: "insensitive" },
+            nama_lengkap: { contains: searchKeyword, mode: "insensitive" },
           },
           select: { id: true, nama_lengkap: true, nama_panggilan: true, no_hp: true, foto_url: true },
         });
 
         pengampuHalaqoh = {
-          id: dbPegawai?.id || "fallback-musyrif-agus",
+          id: dbPegawai?.id || `fallback-musyrif-${searchKeyword.toLowerCase()}`,
           nama: dbPegawai?.nama_lengkap || m.nama,
           nama_panggilan: dbPegawai?.nama_panggilan || m.nama_panggilan,
           nama_kelompok: m.kelompok,

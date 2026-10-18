@@ -604,7 +604,7 @@ export default function WaliTahfidzPage() {
               <BookOpen size={20} className="text-emerald-600" />
             </div>
             <p className="mt-2 text-3xl font-black text-emerald-950">{setoranList.length}</p>
-            <p className="mt-1 text-xs text-emerald-700 font-semibold">Ziyadah &amp; Muroja&apos;ah Harian</p>
+            <p className="mt-1 text-xs text-emerald-700 font-semibold">Setoran Tercatat di Sistem</p>
           </div>
 
           <div className="rounded-2xl border border-amber-200 bg-gradient-to-br from-amber-50 to-white p-5 shadow-sm">
@@ -614,8 +614,16 @@ export default function WaliTahfidzPage() {
             </div>
             <p className="mt-2 text-3xl font-black text-amber-950">{presensiInfo.total_sesi || 0} Sesi</p>
             <p className="mt-1 text-xs text-amber-700 font-semibold">
-              Tingkat Kehadiran: {presensiInfo.persentase || 100}%
+              Terekap Digital ({presensiInfo.persentase || 100}% Hadir)
             </p>
+          </div>
+        </div>
+
+        {/* Banner Penjelasan Transparan Rekap Halaqoh */}
+        <div className="flex items-start gap-3 rounded-2xl border border-sky-200 bg-sky-50/80 p-4 text-xs text-slate-700 shadow-sm">
+          <AlertCircle size={18} className="mt-0.5 shrink-0 text-sky-600" />
+          <div className="leading-relaxed">
+            <span className="font-bold text-sky-950">Catatan Rekapitulasi Halaqoh:</span> Jumlah sesi presensi ({presensiInfo.total_sesi || 0} sesi) dan setoran harian di atas merupakan rekaman resmi yang telah diinput oleh Musyrif Halaqoh ananda ke dalam sistem SIKAP. Kegiatan halaqoh Al-Qur&apos;an di pesantren senantiasa berjalan rutin setiap hari ba&apos;da Shubuh dan ba&apos;da Maghrib. Riwayat tanggal dan detail setoran dapat dilihat pada tab di bawah ini.
           </div>
         </div>
 
