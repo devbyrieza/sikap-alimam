@@ -230,8 +230,12 @@ interface SidebarContentProps {
 function SidebarContent({ user, items, activeHref, onNavigate, onLogout, onClose }: SidebarContentProps) {
   const roleUpper = (user?.role || "").toUpperCase();
   const originalRoleUpper = (user?.originalRole || "").toUpperCase();
-  const isSwitched = Boolean(user?.originalRole && user.originalRole.toUpperCase() !== roleUpper);
-  const isSuperAdmin = roleUpper === "ADMIN_SUPER" || originalRoleUpper === "ADMIN_SUPER";
+  const isSuperAdmin = roleUpper === "ADMIN_SUPER" || originalRoleUpper === "ADMIN_SUPER" || roleUpper === "MUDIR" || originalRoleUpper === "MUDIR";
+  const isRealSuperSwitched = Boolean(
+    user?.originalRole &&
+    (originalRoleUpper === "ADMIN_SUPER" || originalRoleUpper === "MUDIR") &&
+    originalRoleUpper !== roleUpper
+  );
 
   const isWaliSantri =
     roleUpper === "WALI_SANTRI" ||
@@ -243,9 +247,14 @@ function SidebarContent({ user, items, activeHref, onNavigate, onLogout, onClose
     (user?.email || "").toLowerCase().includes("keuangan") ||
     (user?.nama || "").toLowerCase().includes("bachtiar");
 
+  const BACHTIAR_STATIC_ROLES = [
+    { role: "ADMIN_KEUANGAN", label: "Admin Keuangan", pejabat: "Maulidin Bachtiar" },
+    { role: "GURU_BACHTIAR", label: "Guru Mapel (B. Inggris)", pejabat: "Maulidin Bachtiar" },
+  ];
+
   const [waliSppLocked, setWaliSppLocked] = useState<boolean>(false);
-  const [switchRoles, setSwitchRoles] = useState<any[]>([]);
-  const [canSwitch, setCanSwitch] = useState<boolean>(isSuperAdmin || isSwitched || isBachtiar);
+  const [switchRoles, setSwitchRoles] = useState<any[]>(isBachtiar ? BACHTIAR_STATIC_ROLES : []);
+  const [canSwitch, setCanSwitch] = useState<boolean>(isSuperAdmin || isRealSuperSwitched || isBachtiar);
   const [switching, setSwitching] = useState<boolean>(false);
 
   useEffect(() => {
@@ -335,8 +344,8 @@ function SidebarContent({ user, items, activeHref, onNavigate, onLogout, onClose
     const isUserBachtiar = emailLower.includes("keuangan") || namaLower.includes("bachtiar");
 
     if (isUserBachtiar) {
-      if (roleUpper === "ADMIN_KEUANGAN") return "ADMIN_KEUANGAN";
-      if (roleUpper === "GURU") return "GURU_BACHTIAR";
+      if (roleUpper === "GURU" || roleUpper === "GURU_BACHTIAR") return "GURU_BACHTIAR";
+      return "ADMIN_KEUANGAN";
     }
 
     if (roleUpper === "ADMIN_SUPER") {
@@ -393,10 +402,10 @@ function SidebarContent({ user, items, activeHref, onNavigate, onLogout, onClose
       </div>
 
       {/* Role Switcher & Mode Akses (Platinum Standard Multi-User Switcher) */}
-      {(canSwitch || isSwitched) && (
+      {(canSwitch || isRealSuperSwitched) && (
         <div className="border-b border-slate-200/80 bg-gradient-to-b from-slate-50/90 to-white px-3.5 py-3">
-          {/* Switched Mode Banner */}
-          {isSwitched && (
+          {/* Switched Mode Banner (Khusus Super Admin yang impersonasi akun lain) */}
+          {isRealSuperSwitched && (
             <div className="mb-2.5 rounded-xl border border-amber-200 bg-gradient-to-br from-amber-50 to-orange-50/60 p-2.5 shadow-sm">
               <div className="flex items-center justify-between gap-1 mb-1">
                 <span className="flex items-center gap-1.5 text-[10px] font-black uppercase tracking-wider text-amber-900">
@@ -450,26 +459,13 @@ function SidebarContent({ user, items, activeHref, onNavigate, onLogout, onClose
                       {r.label} — {r.pejabat}
                     </option>
                   ))
-                ) : (
+                ) : isBachtiar ? (
                   <>
-                    <option value="ADMIN_SUPER">Admin Super (Rieza) — Rieza Eka Tomara, S.Kom.</option>
-                    <option value="ADMIN_SUPER_MUDIR">Admin Super (Wahab) — Wahab Rajasam, M.Pd.</option>
                     <option value="ADMIN_KEUANGAN">Admin Keuangan — Maulidin Bachtiar</option>
-                    <option value="KADIV_KURIKULUM">Kadiv Kurikulum — Imron Abdillah, S.Pd.</option>
-                    <option value="KADIV_PENGASUHAN">Kadiv Kepengasuhan — Wahyudi Pranata, B.A.</option>
-                    <option value="WALI_KELAS_MTS">Wali Kelas MTs — Agus Cahyono</option>
-                    <option value="WALI_KELAS_IL">Wali Kelas IL — Imron Abdillah, S.Pd.</option>
-                    <option value="WALI_KELAS_MA">Wali Kelas MA — Muhammad Thoriq Ibn Ziyad, Lc., M.Ag.</option>
-                    <option value="GURU_ADE">Guru Bahasa Indonesia — Ade Supiana, S.Pd.I</option>
-                    <option value="GURU_ARIFIN">Guru Akidah — Arifin Syaifullah, Lc., M.M., M.Pd.</option>
-                    <option value="GURU_HARDIANSYAH">Guru IPA Terpadu — Hardiansyah, S.Pd.</option>
-                    <option value="GURU_TEGUH">Guru Entrepreneurship — Teguh Hudaya, Lc., M.M.</option>
-                    <option value="GURU_IMAM">Guru Asatidz — Imam Wahyudi</option>
-                    <option value="GURU_SAIF">Guru Asatidz — Saif</option>
                     <option value="GURU_BACHTIAR">Guru Mapel (B. Inggris) — Maulidin Bachtiar</option>
-                    <option value="MUSYRIF">Pengampu Halaqoh — Muhammad Iqbal, S.Pd.</option>
-                    <option value="WALI_SANTRI">Portal Wali Santri — Wali Santri Al-Imam</option>
                   </>
+                ) : (
+                  <option value={selectedRoleKey}>Memuat opsi peran...</option>
                 )}
               </select>
               <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2.5 text-slate-400">
@@ -545,7 +541,7 @@ function SidebarContent({ user, items, activeHref, onNavigate, onLogout, onClose
             >
               {formatRoleDisplay(user?.role || "", user?.email, user?.nama)}
             </p>
-            {isSwitched && (
+            {isRealSuperSwitched && (
               <span className="inline-block mt-0.5 rounded px-1.5 py-0.5 text-[9px] font-black bg-amber-100 text-amber-800">
                 Mode Beralih (Asli: {ROLE_LABEL[user.originalRole || "ADMIN_SUPER"] || user.originalRole})
               </span>

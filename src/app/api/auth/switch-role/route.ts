@@ -173,21 +173,36 @@ export async function GET() {
 
     const currentRoleUpper = (session.role || "").toUpperCase();
     const originalRoleUpper = (session.originalRole || "").toUpperCase();
-    const isSuperOrSwitched =
-      currentRoleUpper === "ADMIN_SUPER" ||
+
+    // Sesi adalah Admin Super jika:
+    // 1. Sesi asli sebelum switch adalah ADMIN_SUPER / MUDIR
+    // 2. Atau sesi aktif saat ini adalah ADMIN_SUPER / MUDIR (dan bukan akun Bachtiar asli)
+    const isRealSuperAdmin =
       originalRoleUpper === "ADMIN_SUPER" ||
-      currentRoleUpper === "MUDIR";
+      originalRoleUpper === "MUDIR" ||
+      (!session.originalRole && (currentRoleUpper === "ADMIN_SUPER" || currentRoleUpper === "MUDIR"));
 
     const emailLower = (session.email || "").toLowerCase();
     const namaLower = (session.nama || "").toLowerCase();
     const isBachtiar = emailLower.includes("keuangan") || namaLower.includes("bachtiar");
-    const hasMultiRoles = Boolean(session.availableRoles && session.availableRoles.length > 1);
 
-    const canSwitch = isSuperOrSwitched || isBachtiar || hasMultiRoles || Boolean(session.originalRole);
+    // Jika Admin Super asli (Rieza / Wahab): Berhak melihat & beralih ke seluruh 17 akun civitas
+    if (isRealSuperAdmin) {
+      return NextResponse.json({
+        success: true,
+        canSwitch: true,
+        isSuperAdmin: true,
+        currentRole: session.role,
+        currentEmail: session.email,
+        originalRole: session.originalRole || null,
+        originalNama: session.originalNama || null,
+        roles: AVAILABLE_SWITCH_ROLES,
+      });
+    }
 
-    let returnedRoles = AVAILABLE_SWITCH_ROLES;
-    if (isBachtiar && !isSuperOrSwitched && !session.originalRole) {
-      returnedRoles = [
+    // Jika Ust. Maulidin Bachtiar: HANYA boleh beralih antara 2 perannya sendiri!
+    if (isBachtiar) {
+      const bachtiarRoles = [
         {
           role: "ADMIN_KEUANGAN",
           targetRole: "ADMIN_KEUANGAN",
@@ -205,16 +220,26 @@ export async function GET() {
           deskripsi: "Input jurnal mengajar Bahasa Inggris & nilai harian",
         }
       ];
+
+      return NextResponse.json({
+        success: true,
+        canSwitch: true,
+        isSuperAdmin: false,
+        currentRole: session.role,
+        currentEmail: session.email,
+        originalRole: null, // Bukan impersonasi, ini peran mandiri
+        originalNama: null,
+        roles: bachtiarRoles,
+      });
     }
 
+    // Akun umum lainnya tidak memiliki hak switch
     return NextResponse.json({
       success: true,
-      canSwitch,
+      canSwitch: false,
+      isSuperAdmin: false,
       currentRole: session.role,
-      currentEmail: session.email,
-      originalRole: session.originalRole || null,
-      originalNama: session.originalNama || null,
-      roles: returnedRoles,
+      roles: [],
     });
   } catch (error: any) {
     console.error("GET /api/auth/switch-role error:", error);
@@ -234,24 +259,60 @@ export async function POST(req: NextRequest) {
 
     const currentRoleUpper = (session.role || "").toUpperCase();
     const originalRoleUpper = (session.originalRole || "").toUpperCase();
-    const isSuperOrSwitched =
-      currentRoleUpper === "ADMIN_SUPER" ||
+
+    const isRealSuperAdmin =
       originalRoleUpper === "ADMIN_SUPER" ||
-      currentRoleUpper === "MUDIR";
+      originalRoleUpper === "MUDIR" ||
+      (!session.originalRole && (currentRoleUpper === "ADMIN_SUPER" || currentRoleUpper === "MUDIR"));
 
     const emailLower = (session.email || "").toLowerCase();
     const namaLower = (session.nama || "").toLowerCase();
     const isBachtiar = emailLower.includes("keuangan") || namaLower.includes("bachtiar");
-    const hasMultiRoles = Boolean(session.availableRoles && session.availableRoles.length > 1);
 
-    if (!isSuperOrSwitched && !session.originalRole && !isBachtiar && !hasMultiRoles) {
+    if (!isRealSuperAdmin && !isBachtiar) {
       return NextResponse.json(
         { error: "Fitur beralih akun hanya diizinkan untuk Admin Super dan peran berwewenang." },
         { status: 403 }
       );
     }
 
-    // Alur 1: KEMBALI KE AKUN UTAMA (Switch Back)
+    // Kasus Spesifik Ust. Maulidin Bachtiar: HANYA boleh beralih antara Admin Keuangan dan Guru Bahasa Inggris miliknya
+    if (isBachtiar && !isRealSuperAdmin) {
+      if (
+        target_role !== "ADMIN_KEUANGAN" &&
+        target_role !== "GURU_BACHTIAR" &&
+        target_role !== "GURU"
+      ) {
+        return NextResponse.json(
+          { error: "Anda hanya berwenang beralih antara akun Admin Keuangan dan Guru Mapel Bahasa Inggris milik Anda sendiri." },
+          { status: 403 }
+        );
+      }
+
+      const effectiveRole = (target_role === "ADMIN_KEUANGAN") ? "ADMIN_KEUANGAN" : "GURU";
+      const redirectTo = (effectiveRole === "ADMIN_KEUANGAN") ? "/keuangan" : "/jurnal";
+
+      const updatedPayload = {
+        ...session,
+        role: effectiveRole,
+        originalRole: undefined,
+        originalUserId: undefined,
+        originalNama: undefined,
+        availableRoles: ["ADMIN_KEUANGAN", "GURU"],
+      };
+
+      await createSession(updatedPayload);
+
+      return NextResponse.json({
+        success: true,
+        switched: true,
+        role: effectiveRole,
+        selectedKey: (target_role === "ADMIN_KEUANGAN") ? "ADMIN_KEUANGAN" : "GURU_BACHTIAR",
+        redirectTo,
+      });
+    }
+
+    // Alur 1: KEMBALI KE AKUN UTAMA (Switch Back - Khusus Admin Super)
     if (switch_back) {
       const restoredRole = session.originalRole || "ADMIN_SUPER";
       const restoredUserId = session.originalUserId || session.userId;
