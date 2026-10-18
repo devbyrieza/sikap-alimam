@@ -1,7 +1,7 @@
 "use client";
 
-import React from "react";
-import { Printer } from "lucide-react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
+import { Printer, Smartphone, ZoomIn, ZoomOut, RotateCcw } from "lucide-react";
 import { getOfficialNis } from "@/lib/officialSantri";
 import { surahData, calculateHalaman, searchSurah } from "@/lib/quran-madinah";
 
@@ -11,6 +11,63 @@ interface RaporOfficialSheetProps {
 }
 
 export default function RaporOfficialSheet({ data, showPrintToolbar = false }: RaporOfficialSheetProps) {
+  const [mobileFit, setMobileFit] = useState(true);
+  const [fitScale, setFitScale] = useState(1);
+  const [zoomDelta, setZoomDelta] = useState(0);
+  const [rawHeight, setRawHeight] = useState(0);
+  const [isMobileScreen, setIsMobileScreen] = useState(false);
+  const fitContainerRef = useRef<HTMLDivElement>(null);
+  const fitContentRef = useRef<HTMLDivElement>(null);
+
+  const updateScale = useCallback(() => {
+    if (typeof window === "undefined") return;
+    const winWidth = window.innerWidth;
+    const isNarrow = winWidth < 820;
+    setIsMobileScreen(isNarrow);
+
+    if (isNarrow) {
+      const containerW = fitContainerRef.current?.clientWidth || winWidth;
+      const pad = winWidth < 480 ? 12 : 24;
+      const available = Math.max(260, Math.min(containerW, winWidth) - pad);
+      const baseScale = Number((available / 794).toFixed(3));
+      setFitScale(baseScale);
+    } else {
+      setFitScale(1);
+    }
+
+    if (fitContentRef.current) {
+      setRawHeight(fitContentRef.current.offsetHeight);
+    }
+  }, []);
+
+  useEffect(() => {
+    updateScale();
+    window.addEventListener("resize", updateScale);
+    window.addEventListener("orientationchange", updateScale);
+    const t1 = setTimeout(updateScale, 150);
+    const t2 = setTimeout(updateScale, 500);
+    return () => {
+      window.removeEventListener("resize", updateScale);
+      window.removeEventListener("orientationchange", updateScale);
+      clearTimeout(t1);
+      clearTimeout(t2);
+    };
+  }, [updateScale, data]);
+
+  const effectiveScale = Math.min(1.4, Math.max(0.25, Number((fitScale + zoomDelta).toFixed(3))));
+  const marginX = Math.max(0, (794 - 794 * effectiveScale) / 2);
+  const marginB = effectiveScale < 1 && rawHeight > 0 
+    ? Math.max(0, rawHeight - rawHeight * effectiveScale - 16) 
+    : 0;
+
+  const handleZoom = (delta: number) => {
+    setZoomDelta((prev) => Math.min(0.6, Math.max(-0.25, Number((prev + delta).toFixed(2)))));
+  };
+
+  const resetZoom = () => {
+    setZoomDelta(0);
+  };
+
   if (!data || data.error) {
     return (
       <div className="p-10 text-center text-red-500 font-sans">
@@ -446,6 +503,15 @@ export default function RaporOfficialSheet({ data, showPrintToolbar = false }: R
           background-color: transparent !important;
           outline: none !important;
         }
+
+        @media screen {
+          .rapor-page {
+            width: 794px !important;
+            min-width: 794px !important;
+            max-width: 794px !important;
+            box-sizing: border-box !important;
+          }
+        }
         
         @media print {
           @page { 
@@ -589,58 +655,170 @@ export default function RaporOfficialSheet({ data, showPrintToolbar = false }: R
       {/* TOOLBAR JIKA DIMINTA */}
       {showPrintToolbar && (
         <div 
-          className="no-print print:hidden flex items-center justify-between p-4 mb-6 rounded-2xl shadow-lg border"
+          className="no-print print:hidden mb-4 rounded-2xl shadow-lg border overflow-hidden"
           style={{ 
             backgroundColor: "#550000", 
             color: "white", 
-            maxWidth: "210mm", 
-            margin: "0 auto 24px auto" 
+            maxWidth: "794px", 
+            margin: "0 auto 16px auto" 
           }}
         >
-          <div>
-            <h2 style={{ fontSize: "17.5px", fontWeight: "bold", margin: 0 }}>
-              Lembar Rapor Santri (Kasyfud Darajat)
-            </h2>
-            <p style={{ fontSize: "11.5px", opacity: 0.9, margin: "3px 0 0 0" }}>
-              Format Resmi 2 Halaman • Standar Internasional Kertas A4 (210 × 297 mm)
-            </p>
+          {/* Main Toolbar Header */}
+          <div className="p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-white/10">
+            <div>
+              <div className="flex items-center gap-2">
+                <h2 style={{ fontSize: "16px", fontWeight: "bold", margin: 0 }}>
+                  Lembar Rapor Santri (Kasyfud Darajat)
+                </h2>
+                <span className="text-[10px] bg-white/15 px-2 py-0.5 rounded-full font-semibold">Resmi</span>
+              </div>
+              <p style={{ fontSize: "11px", opacity: 0.9, margin: "2px 0 0 0" }}>
+                Format 2 Halaman • Standar Internasional Kertas A4 (210 × 297 mm)
+              </p>
+            </div>
+
+            <button 
+              type="button"
+              onClick={() => window.print()}
+              className="no-print print:hidden w-full sm:w-auto justify-center"
+              style={{ 
+                padding: "10px 22px", 
+                borderRadius: "10px", 
+                backgroundColor: "#16a34a", 
+                color: "white", 
+                border: "none", 
+                cursor: "pointer", 
+                fontWeight: "bold", 
+                fontSize: "13px",
+                display: "flex", 
+                alignItems: "center", 
+                gap: "8px",
+                boxShadow: "0 4px 10px rgba(0, 0, 0, 0.25)"
+              }}
+            >
+              <Printer size={16} /> Cetak / Download PDF (A4)
+            </button>
           </div>
 
-          <button 
-            type="button"
-            onClick={() => window.print()}
-            className="no-print print:hidden"
-            style={{ 
-              padding: "10px 24px", 
-              borderRadius: "10px", 
-              backgroundColor: "#22c55e", 
-              color: "white", 
-              border: "none", 
-              cursor: "pointer", 
-              fontWeight: "bold", 
-              fontSize: "13px",
-              display: "flex", 
-              alignItems: "center", 
-              gap: "8px",
-              boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.15)"
-            }}
-          >
-            <Printer size={16} /> Cetak / Download PDF (A4)
-          </button>
+          {/* Mobile View Mode Controls */}
+          {isMobileScreen && (
+            <div className="bg-[#440000] p-3 text-xs flex flex-col gap-2">
+              <div className="flex items-center justify-between gap-2 flex-wrap">
+                <span className="text-white/80 font-semibold text-[11px] flex items-center gap-1.5">
+                  <Smartphone size={13} className="text-amber-400" />
+                  Mode Tampilan Layar HP:
+                </span>
+                <div className="inline-flex rounded-xl bg-black/20 p-1 border border-white/10">
+                  <button
+                    type="button"
+                    onClick={() => setMobileFit(true)}
+                    className={`px-3 py-1 rounded-lg text-[11px] font-bold transition-all ${
+                      mobileFit
+                        ? "bg-white text-[#550000] shadow-sm"
+                        : "text-white/80 hover:text-white"
+                    }`}
+                  >
+                    📱 Pas Layar HP
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setMobileFit(false)}
+                    className={`px-3 py-1 rounded-lg text-[11px] font-bold transition-all ${
+                      !mobileFit
+                        ? "bg-white text-[#550000] shadow-sm"
+                        : "text-white/80 hover:text-white"
+                    }`}
+                  >
+                    🔍 Geser Ukuran Asli
+                  </button>
+                </div>
+              </div>
+
+              {mobileFit ? (
+                <div className="flex items-center justify-between bg-black/25 rounded-xl px-3 py-1.5 border border-white/10 text-[11px]">
+                  <span className="text-white/90">
+                    Skala: <strong className="text-amber-300">{Math.round(effectiveScale * 100)}%</strong>
+                    <span className="text-[10px] text-white/60 ml-1.5">(Otomatis Pas Layar)</span>
+                  </span>
+                  <div className="flex items-center gap-1">
+                    <button
+                      type="button"
+                      onClick={() => handleZoom(-0.05)}
+                      className="h-6 w-6 flex items-center justify-center rounded bg-white/20 hover:bg-white/30 text-white font-bold"
+                      title="Perkecil"
+                    >
+                      <ZoomOut size={12} />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={resetZoom}
+                      className="px-2 py-0.5 rounded bg-white/20 hover:bg-white/30 text-white text-[10px] font-semibold"
+                      title="Kembalikan ke Pas Layar"
+                    >
+                      <RotateCcw size={10} className="inline mr-1" />
+                      Reset
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleZoom(0.05)}
+                      className="h-6 w-6 flex items-center justify-center rounded bg-white/20 hover:bg-white/30 text-white font-bold"
+                      title="Perbesar"
+                    >
+                      <ZoomIn size={12} />
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <p className="text-[10.5px] text-amber-200/90 m-0">
+                  👉 Geser ke kanan / kiri pada lembar rapor untuk membaca rincian tulisan dalam ukuran asli 100%.
+                </p>
+              )}
+            </div>
+          )}
         </div>
       )}
 
-      {/* ========================================================================= */}
-      {/* HALAMAN 1: RAPOR AKADEMIK (KASYFUD DARAJAT)                               */}
-      {/* ========================================================================= */}
+      {/* WRAPPER KONTEN LEMBAR RAPOR */}
       <div 
-        className="rapor-page max-w-[210mm] mx-auto bg-white p-[10mm] sm:p-[12mm] shadow-2xl rounded-3xl border border-slate-200/80 print:shadow-none print:border-none print:p-0 print:max-w-full relative" 
-        style={{ 
-          minHeight: "297mm", 
-          position: "relative", 
-          fontFamily: "Arial, Helvetica, sans-serif" 
-        }}
+        ref={fitContainerRef}
+        className={`w-full ${
+          showPrintToolbar && isMobileScreen
+            ? mobileFit
+              ? "overflow-hidden flex justify-center py-1"
+              : "overflow-x-auto overscroll-x-contain custom-scrollbar pb-6 print:overflow-visible"
+            : "flex justify-center"
+        }`}
       >
+        <div 
+          ref={fitContentRef}
+          style={{
+            width: "794px",
+            ...(showPrintToolbar && isMobileScreen && mobileFit
+              ? {
+                  transform: `scale(${effectiveScale})`,
+                  transformOrigin: "top center",
+                  flexShrink: 0,
+                  marginLeft: `-${marginX}px`,
+                  marginRight: `-${marginX}px`,
+                  marginBottom: `-${marginB}px`,
+                }
+              : {}),
+          }}
+          className="print:transform-none print:m-0 print:w-full flex flex-col items-center"
+        >
+          {/* ========================================================================= */}
+          {/* HALAMAN 1: RAPOR AKADEMIK (KASYFUD DARAJAT)                               */}
+          {/* ========================================================================= */}
+          <div 
+            className="rapor-page mx-auto bg-white p-[10mm] sm:p-[12mm] shadow-2xl rounded-3xl border border-slate-200/80 print:shadow-none print:border-none print:p-0 print:max-w-full relative" 
+            style={{ 
+              width: "794px",
+              minHeight: "297mm", 
+              position: "relative", 
+              fontFamily: "Arial, Helvetica, sans-serif",
+              boxSizing: "border-box"
+            }}
+          >
         <div 
           className="rapor-content-wrapper"
           style={{ 
@@ -1026,17 +1204,19 @@ export default function RaporOfficialSheet({ data, showPrintToolbar = false }: R
       </div>
 
       {/* PEMISAH HALAMAN */}
-      <div className="page-break my-8 no-print border-b-2 border-dashed border-slate-300 max-w-[210mm] mx-auto" />
+      <div className="page-break my-8 no-print border-b-2 border-dashed border-slate-300 w-[794px] mx-auto print:hidden" />
 
       {/* ========================================================================= */}
       {/* HALAMAN 2: KEPRIBADIAN, TAHSIN & TAHFIDZ, DAN PENGESAHAN DOKUMEN          */}
       {/* ========================================================================= */}
       <div 
-        className="rapor-page max-w-[210mm] mx-auto bg-white p-[10mm] sm:p-[12mm] shadow-2xl rounded-3xl border border-slate-200/80 print:shadow-none print:border-none print:p-0 print:max-w-full relative" 
+        className="rapor-page mx-auto bg-white p-[10mm] sm:p-[12mm] shadow-2xl rounded-3xl border border-slate-200/80 print:shadow-none print:border-none print:p-0 print:max-w-full relative" 
         style={{ 
+          width: "794px",
           minHeight: "297mm", 
           position: "relative", 
-          fontFamily: "Arial, Helvetica, sans-serif" 
+          fontFamily: "Arial, Helvetica, sans-serif",
+          boxSizing: "border-box"
         }}
       >
         <div 
@@ -1603,6 +1783,8 @@ export default function RaporOfficialSheet({ data, showPrintToolbar = false }: R
             <p style={{ margin: 0, flex: 1, color: "#111111", whiteSpace: "nowrap" }}>* Dokumen ini sah dan diterbitkan secara resmi oleh Pesantren Al-Imam Al-Islami (Managed by Al-Andalus IIBS).</p>
             <p style={{ margin: 0, fontWeight: "bold", whiteSpace: "nowrap", flexShrink: 0, color: "#111111" }}>Bagian 2: Rapor Kepengasuhan (Halaman 2 dari 2)</p>
           </div>
+        </div>
+      </div>
         </div>
       </div>
     </div>
