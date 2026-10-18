@@ -478,7 +478,10 @@ export default function WaliTahfidzPage() {
 
         {/* Navigasi 4 Portal Utama Wali */}
         <div className="sticky top-14 z-20 w-full overflow-hidden rounded-2xl border border-slate-200/80 bg-white/95 p-1.5 shadow-md backdrop-blur sm:top-16">
-          <div className="flex gap-1.5 overflow-x-auto custom-scrollbar w-full py-0.5 px-0.5">
+          <div
+            className="flex flex-row flex-nowrap items-center gap-1.5 overflow-x-auto custom-scrollbar w-full py-0.5 px-0.5 overscroll-x-contain"
+            style={{ WebkitOverflowScrolling: "touch" }}
+          >
             <Link
               href={`/wali/rapor?santri_id=${selectedSantriId}`}
               className="flex shrink-0 items-center gap-2 whitespace-nowrap rounded-xl px-4 py-2.5 text-xs sm:text-sm font-bold min-h-[44px] bg-slate-100/90 text-slate-600 hover:bg-slate-200 hover:text-slate-900 transition-all"

@@ -257,7 +257,14 @@ export default function ModalKonfirmasiSPP({
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header Modal */}
-        <div className="bg-gradient-to-r from-primary via-[#7a0000] to-rose-950 text-white p-5 sm:p-6 relative">
+        <div
+          className="p-5 sm:p-6 relative text-white"
+          style={{
+            background: "linear-gradient(135deg, #550000 0%, #7a0000 50%, #3a0000 100%)",
+            backgroundColor: "#550000",
+            color: "#ffffff",
+          }}
+        >
           <button
             type="button"
             onClick={onClose}

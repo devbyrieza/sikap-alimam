@@ -1774,22 +1774,36 @@ function TabSpp({
   return (
     <>
       {/* Wali kelas */}
-      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-primary via-[#7a0000] to-rose-950 p-6 text-white shadow-xl shadow-primary/20 sm:p-8">
+      <div
+        className="relative overflow-hidden rounded-3xl p-6 text-white shadow-xl shadow-[#550000]/25 sm:p-8"
+        style={{
+          background: "linear-gradient(135deg, #550000 0%, #7a0000 50%, #3a0000 100%)",
+          backgroundColor: "#550000",
+          color: "#ffffff",
+        }}
+      >
         <div className="pointer-events-none absolute -right-8 -top-8 h-48 w-48 rounded-full border border-white/10 bg-white/5" aria-hidden="true" />
         <div className="relative z-10 flex flex-col justify-between gap-6 md:flex-row md:items-center">
           <div className="flex items-center gap-4 sm:gap-5">
-            <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl border-2 border-white/20 bg-white/15 text-2xl font-black text-white shadow-lg backdrop-blur sm:h-20 sm:w-20" aria-hidden="true">
+            <div
+              className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl border-2 border-white/20 text-2xl font-black text-white shadow-lg backdrop-blur sm:h-20 sm:w-20"
+              style={{ backgroundColor: "rgba(255, 255, 255, 0.15)", color: "#ffffff" }}
+              aria-hidden="true"
+            >
               {wali?.nama ? wali.nama.slice(0, 2).toUpperCase() : <User size={32} />}
             </div>
             <div className="min-w-0">
-              <div className="mb-1.5 inline-flex items-center gap-1.5 rounded-full border border-white/20 bg-white/15 px-3 py-1 text-xs font-semibold text-rose-100">
+              <div
+                className="mb-1.5 inline-flex items-center gap-1.5 rounded-full border border-white/20 px-3 py-1 text-xs font-semibold"
+                style={{ backgroundColor: "rgba(255, 255, 255, 0.15)", color: "#ffe4e6" }}
+              >
                 <ShieldCheck size={13} aria-hidden="true" />
                 <span>Wali Kelas Ananda</span>
               </div>
-              <h3 className="break-words text-lg font-black leading-tight text-white sm:text-xl">
+              <h3 className="break-words text-lg font-black leading-tight sm:text-xl" style={{ color: "#ffffff" }}>
                 {wali?.nama || "Ustadz Pembina Kelas"}
               </h3>
-              <p className="mt-1 text-xs text-rose-100/90 sm:text-sm">
+              <p className="mt-1 text-xs sm:text-sm font-medium" style={{ color: "rgba(255, 228, 230, 0.9)" }}>
                 Kelas {kelas || "-"} &bull; {santri?.jenjang || sppHistory?.santri?.jenjang || "Pesantren Al-Imam"}
               </p>
             </div>
@@ -1804,13 +1818,17 @@ function TabSpp({
                 target="_blank"
                 rel="noopener noreferrer"
                 className={`inline-flex min-h-[48px] items-center justify-center gap-2.5 rounded-2xl bg-emerald-500 px-5 py-3 text-sm font-bold text-white shadow-lg shadow-emerald-950/20 transition-all hover:bg-emerald-600 motion-safe:hover:scale-[1.02] active:scale-[0.98] ${focusRing}`}
+                style={{ backgroundColor: "#059669", color: "#ffffff" }}
               >
                 <PhoneCall size={18} aria-hidden="true" />
                 <span>Hubungi via WhatsApp</span>
                 <span className="sr-only">(buka di tab baru)</span>
               </a>
             ) : (
-              <div className="inline-flex items-center gap-2 rounded-2xl bg-white/10 px-4 py-3 text-xs font-medium text-white/80">
+              <div
+                className="inline-flex items-center gap-2 rounded-2xl px-4 py-3 text-xs font-medium"
+                style={{ backgroundColor: "rgba(255, 255, 255, 0.1)", color: "rgba(255, 255, 255, 0.85)" }}
+              >
                 <AlertCircle size={15} aria-hidden="true" />
                 <span>Nomor kontak dapat dikoordinasikan via Kesantrian</span>
               </div>
