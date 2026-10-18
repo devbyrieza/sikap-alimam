@@ -162,22 +162,6 @@ export async function GET() {
         isWaliMA: true
       },
       {
-        username: "guru.mapel",
-        email: "guru@pesantren-alimam.com",
-        altEmail: "abdil.aziz@alimam.sch.id",
-        namaLengkap: "Abdil Aziz, B.A.",
-        namaPanggilan: "Ust. Abdil",
-        role: "GURU",
-        jabatan: "Guru Pengajar Bahasa Arab",
-        divisi: "Pengajaran & Pembelajaran",
-        kategori: "ASATIDZ",
-        mataPelajaran: "IL: Bahasa Arab",
-        nip: "2026081008",
-        phone: "081234567808",
-        passwordHash: hashDefault,
-        plainPassword: "PAAS2026!"
-      },
-      {
         username: "musyrif",
         email: "musyrif@pesantren-alimam.com",
         altEmail: "muhammad.iqbal@alimam.sch.id",
@@ -441,7 +425,7 @@ export async function GET() {
 
     return NextResponse.json({
       success: true,
-      message: 'Berhasil mengonfigurasi data resmi pejabat & civitas SIKAP Al-Imam (Rieza Eka Tomara, Wahab Rajasam, Maulidin Bachtiar, Imron Abdillah, Wahyudi Pranata, Agus Cahyono, Thoriq Ziyad, Abdil Aziz, Iqbal, dll).',
+      message: 'Berhasil mengonfigurasi data resmi pejabat & civitas SIKAP Al-Imam (Rieza Eka Tomara, Wahab Rajasam, Maulidin Bachtiar, Imron Abdillah, Wahyudi Pranata, Agus Cahyono, Thoriq Ziyad, Ade Supiana, Arifin Syaifullah, Hardiansyah, Teguh Hudaya, Muhammad Iqbal, dll).',
       total: results.length,
       data: results
     });

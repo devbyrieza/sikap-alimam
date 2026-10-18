@@ -143,6 +143,12 @@ const NAV: NavItem[] = [
 const ROLE_LABEL: Record<string, string> = {
   ADMIN_SUPER: "Admin Super",
   GURU: "Guru Mapel",
+  GURU_ADE: "Guru Bahasa Indonesia",
+  GURU_ARIFIN: "Guru Akidah",
+  GURU_HARDIANSYAH: "Guru IPA Terpadu",
+  GURU_TEGUH: "Guru Entrepreneurship",
+  GURU_IMAM: "Guru Asatidz",
+  GURU_SAIF: "Guru Asatidz",
   MUSYRIF: "Pengampu Halaqoh",
   PENGAMPU: "Pengampu Halaqoh",
   PENGAMPU_HALAQOH: "Pengampu Halaqoh",
@@ -315,6 +321,15 @@ function SidebarContent({ user, items, activeHref, onNavigate, onLogout, onClose
       if (emailLower.includes("ma") || namaLower.includes("thoriq")) return "WALI_KELAS_MA";
       return "WALI_KELAS_IL";
     }
+    if (roleUpper === "GURU") {
+      if (emailLower.includes("ade") || namaLower.includes("ade")) return "GURU_ADE";
+      if (emailLower.includes("arifin") || namaLower.includes("arifin")) return "GURU_ARIFIN";
+      if (emailLower.includes("hardian") || namaLower.includes("hardian")) return "GURU_HARDIANSYAH";
+      if (emailLower.includes("teguh") || namaLower.includes("teguh")) return "GURU_TEGUH";
+      if (emailLower.includes("imam") || namaLower.includes("imam")) return "GURU_IMAM";
+      if (emailLower.includes("saif") || namaLower.includes("saif")) return "GURU_SAIF";
+      return "GURU_ADE";
+    }
     return roleUpper;
   }, [roleUpper, user?.email, user?.nama]);
 
@@ -418,7 +433,12 @@ function SidebarContent({ user, items, activeHref, onNavigate, onLogout, onClose
                     <option value="WALI_KELAS_MTS">Wali Kelas MTs — Agus Cahyono</option>
                     <option value="WALI_KELAS_IL">Wali Kelas IL — Imron Abdillah, S.Pd.</option>
                     <option value="WALI_KELAS_MA">Wali Kelas MA — Muhammad Thoriq Ibn Ziyad, Lc., M.Ag.</option>
-                    <option value="GURU">Guru Mapel — Abdil Aziz, B.A.</option>
+                    <option value="GURU_ADE">Guru Bahasa Indonesia — Ade Supiana, S.Pd.I</option>
+                    <option value="GURU_ARIFIN">Guru Akidah — Arifin Syaifullah, Lc., M.M., M.Pd.</option>
+                    <option value="GURU_HARDIANSYAH">Guru IPA Terpadu — Hardiansyah, S.Pd.</option>
+                    <option value="GURU_TEGUH">Guru Entrepreneurship — Teguh Hudaya, Lc., M.M.</option>
+                    <option value="GURU_IMAM">Guru Asatidz — Imam Wahyudi</option>
+                    <option value="GURU_SAIF">Guru Asatidz — Saif</option>
                     <option value="MUSYRIF">Pengampu Halaqoh — Muhammad Iqbal, S.Pd.</option>
                     <option value="WALI_SANTRI">Portal Wali Santri — Wali Santri Al-Imam</option>
                   </>

@@ -3,10 +3,6 @@ import { syncAsatidzMapel } from "@/lib/syncAsatidzMapel";
 
 export const DISTRIBUSI_GURU_DATA = [
   {
-    namaMatch: ["Abdil Aziz", "Abdil"],
-    namaResmi: "Abdil Aziz, B.A.",
-    mapelString: "IL: Bahasa Arab" },
-  {
     namaMatch: ["Ade Supiana", "Ade Supyana"],
     namaResmi: "Ade Supiana, S.Pd.I",
     mapelString: "7 MTs: Bahasa Indonesia" },

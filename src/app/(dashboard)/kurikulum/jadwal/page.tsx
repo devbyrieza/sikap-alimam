@@ -25,7 +25,7 @@ export default function KurikulumJadwalPage() {
     setTimeout(() => {
       // Data statis untuk demo UI sesuai seed
       setJadwalList([
-        { id: "1", hari: "Senin", jam_ke: 3, waktu_mulai: "07:00", waktu_selesai: "07:40", kelas: { nama: "7 MTs" }, mapel: { nama: "Tahsin/Tahfizh Al-Quran", kategori: "syariah" }, pegawai: { nama_lengkap: "Abdil Aziz, B.A." }, tipe_pekan: "ganjil" },
+        { id: "1", hari: "Senin", jam_ke: 3, waktu_mulai: "07:00", waktu_selesai: "07:40", kelas: { nama: "7 MTs" }, mapel: { nama: "Tahsin/Tahfizh Al-Quran", kategori: "syariah" }, pegawai: { nama_lengkap: "Muhammad Iqbal, S.Pd." }, tipe_pekan: "ganjil" },
         { id: "2", hari: "Senin", jam_ke: 4, waktu_mulai: "07:40", waktu_selesai: "08:20", kelas: { nama: "7 MTs" }, mapel: { nama: "Bahasa Indonesia", kategori: "umum" }, pegawai: { nama_lengkap: "Ade Supiana" }, tipe_pekan: "ganjil" },
         { id: "3", hari: "Senin", jam_ke: 5, waktu_mulai: "08:20", waktu_selesai: "09:00", kelas: { nama: "7 MTs" }, mapel: { nama: "Bahasa Indonesia", kategori: "umum" }, pegawai: { nama_lengkap: "Ade Supiana" }, tipe_pekan: "ganjil" },
         { id: "4", hari: "Senin", jam_ke: 6, waktu_mulai: "09:00", waktu_selesai: "09:40", kelas: { nama: "7 MTs" }, mapel: { nama: "Bahasa Arab", kategori: "bahasa" }, pegawai: { nama_lengkap: "Wahyudi Pranata, B.A." }, tipe_pekan: "ganjil" },
