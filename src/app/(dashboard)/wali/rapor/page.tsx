@@ -1944,7 +1944,7 @@ function TabSpp({
           <div className="text-xs leading-relaxed text-amber-900">
             <p className="font-bold">Informasi Pembayaran &amp; Rekonsiliasi SPP</p>
             <p className="mt-0.5 text-amber-800">
-              Pembayaran SPP dilakukan melalui rekening resmi Pesantren Islam Al-Imam. Jika telah melakukan transfer
+              Pembayaran SPP dilakukan melalui rekening resmi Pesantren Al-Imam Al-Islami. Jika telah melakukan transfer
               namun status belum terbarui, silakan klik tombol <strong>Konfirmasi Pembayaran (WA/Upload)</strong> di atas
               atau hubungi Admin Keuangan via WhatsApp.
             </p>

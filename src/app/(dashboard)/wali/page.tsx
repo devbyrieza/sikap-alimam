@@ -25,7 +25,7 @@ import { getOfficialNis } from "@/lib/officialSantri";
 
 /* ─────────────────────────── Konfigurasi ─────────────────────────── */
 
-const SCHOOL_NAME = "Pesantren Islam Al-Imam";
+const SCHOOL_NAME = "Pesantren Al-Imam Al-Islami";
 const SEMESTER_LABEL = "Semester Ganjil 2026/2027";
 
 // Satu sumber untuk kontak Finance (sebelumnya tertulis di tiga tempat berbeda)

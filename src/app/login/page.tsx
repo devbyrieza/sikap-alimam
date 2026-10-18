@@ -281,18 +281,31 @@ export default function LoginPage() {
               style={{ width: 48, height: 48, objectFit: "contain" }}
             />
           </div>
-          <p
-            style={{
-              fontSize: "10px",
-              fontWeight: 800,
-              textTransform: "uppercase",
-              letterSpacing: "0.2em",
-              color: "#ddc192",
-              marginBottom: "6px",
-            }}
-          >
-            Pesantren Islam Al-Imam Sukabumi
-          </p>
+          <div style={{ marginBottom: "6px" }}>
+            <p
+              style={{
+                fontSize: "11px",
+                fontWeight: 800,
+                textTransform: "uppercase",
+                letterSpacing: "0.15em",
+                color: "#ddc192",
+                margin: "0 0 2px 0",
+              }}
+            >
+              Pesantren Al-Imam Al-Islami
+            </p>
+            <p
+              style={{
+                fontSize: "9px",
+                fontWeight: 600,
+                color: "rgba(255,255,255,0.7)",
+                letterSpacing: "0.08em",
+                margin: 0,
+              }}
+            >
+              Managed by Al-Andalus IIBS
+            </p>
+          </div>
           <h1
             style={{
               fontSize: "28px",
@@ -725,8 +738,8 @@ export default function LoginPage() {
 
         {/* Footer */}
         <div style={{ textAlign: "center" }}>
-          <p style={{ fontSize: "11px", color: "rgba(255,255,255,0.35)", fontWeight: 500 }}>
-            &copy; 2026 Pesantren Islam Al-Imam Sukabumi. Hak Cipta Dilindungi.
+          <p style={{ fontSize: "11px", color: "rgba(255,255,255,0.45)", fontWeight: 500 }}>
+            &copy; 2026 Pesantren Al-Imam Al-Islami (Managed by Al-Andalus IIBS). Hak Cipta Dilindungi.
           </p>
         </div>
       </div>
