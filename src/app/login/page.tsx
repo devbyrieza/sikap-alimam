@@ -406,7 +406,7 @@ export default function LoginPage() {
             <span style={{ fontSize: "11px", color: "#550000", fontWeight: 500, lineHeight: 1.4 }}>
               {activeTab === "asatidzah" 
                 ? <><strong style={{fontWeight: 800}}>PORTAL STAF:</strong> Gunakan <strong>Username / Email / No. WA</strong> untuk masuk.</>
-                : <><strong style={{fontWeight: 800}}>PORTAL WALI:</strong> Gunakan <strong>NIS Santri</strong> sebagai ID, dan <strong>Tanggal Lahir (DD-MM-YYYY)</strong> sebagai Password.</>
+                : <><strong style={{fontWeight: 800}}>PORTAL WALI:</strong> Gunakan <strong>NIS Ananda</strong> sebagai ID, dan <strong>Tanggal Lahir Ananda (DD-MM-YYYY)</strong> sebagai Kata Sandi.</>
               }
             </span>
           </div>
@@ -425,7 +425,7 @@ export default function LoginPage() {
                   letterSpacing: "0.06em",
                 }}
               >
-                {activeTab === "asatidzah" ? "Username / Email / No. WA" : "NIS (Nomor Induk Santri)"} <span style={{ color: "#ef4444" }}>*</span>
+                {activeTab === "asatidzah" ? "Username / Email / No. WA" : "NIS Ananda (Nomor Induk Santri)"} <span style={{ color: "#ef4444" }}>*</span>
               </label>
               <div style={{ position: "relative" }}>
                 <User
@@ -496,7 +496,7 @@ export default function LoginPage() {
                     letterSpacing: "0.06em",
                   }}
                 >
-                  {activeTab === "asatidzah" ? "Kata Sandi" : "Kata Sandi (Tanggal Lahir Santri)"} <span style={{ color: "#ef4444" }}>*</span>
+                  {activeTab === "asatidzah" ? "Kata Sandi" : "Kata Sandi (Tanggal Lahir Ananda)"} <span style={{ color: "#ef4444" }}>*</span>
                 </label>
                 <button
                   type="button"
