@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { getSession } from "@/lib/auth";
+import { getSession, getLiveSession } from "@/lib/auth";
 import { NAMA_BULAN } from "@/lib/keuangan";
 
 export async function GET(req: NextRequest) {
@@ -210,14 +210,31 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   try {
-    const session = await getSession();
+    const liveSession = await getLiveSession();
+    const session = liveSession || (await getSession());
     if (!session) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // Batasi akses hanya untuk Admin Keuangan dan Admin Super
+    // Batasi akses hanya untuk Admin Keuangan dan Admin Super (termasuk multi-role Maulidin Bachtiar)
     const roleUpper = (session.role || "").toUpperCase();
-    if (roleUpper !== "ADMIN_KEUANGAN" && roleUpper !== "ADMIN_SUPER" && roleUpper !== "MUDIR") {
+    const origRoleUpper = (session.originalRole || "").toUpperCase();
+    const emailLower = (session.email || "").toLowerCase();
+    const namaLower = (session.nama || "").toLowerCase();
+
+    const isAuthorized =
+      roleUpper.includes("ADMIN_KEUANGAN") ||
+      roleUpper.includes("KEUANGAN") ||
+      roleUpper.includes("ADMIN_SUPER") ||
+      roleUpper.includes("MUDIR") ||
+      origRoleUpper.includes("ADMIN_KEUANGAN") ||
+      origRoleUpper.includes("KEUANGAN") ||
+      origRoleUpper.includes("ADMIN_SUPER") ||
+      origRoleUpper.includes("MUDIR") ||
+      emailLower.includes("keuangan") ||
+      namaLower.includes("bachtiar");
+
+    if (!isAuthorized) {
       return NextResponse.json({ error: "Hanya Admin Keuangan / Admin Super yang berwenang mengubah status SPP" }, { status: 403 });
     }
 
@@ -251,7 +268,7 @@ export async function POST(req: NextRequest) {
 
       if (!waliUser) {
         const bcrypt2 = await import("bcryptjs");
-        const defaultPassword = "Paas2026!";
+        const defaultPassword = "PAAS2026!";
         const hashed = await bcrypt2.default.hash(defaultPassword, 10);
         waliUser = await prisma.user.create({
           data: {
@@ -293,8 +310,13 @@ export async function POST(req: NextRequest) {
         message = `Status akses portal ananda ${santri.nama_lengkap} dikembalikan ke sistem otomatisasi SPP.`;
       }
 
-      await prisma.user.update({
-        where: { id: waliUser.id },
+      await prisma.user.updateMany({
+        where: {
+          OR: [
+            { id: waliUser.id },
+            ...(santri.nis ? [{ username: santri.nis }] : [])
+          ]
+        },
         data: updateData
       });
 
@@ -315,7 +337,7 @@ export async function POST(req: NextRequest) {
 
       const santri = await prisma.santriAktif.findUnique({
         where: { id: santri_id },
-        select: { id: true, nama_lengkap: true }
+        select: { id: true, nis: true, nama_lengkap: true }
       });
       if (!santri) {
         return NextResponse.json({ error: "Santri tidak ditemukan" }, { status: 404 });
@@ -348,6 +370,17 @@ export async function POST(req: NextRequest) {
         });
         updatedMonths.push(NAMA_BULAN[m - 1]);
       }
+
+      // Buka blokir akses portal wali jika ada
+      await prisma.user.updateMany({
+        where: {
+          OR: [
+            { orang_tua: { some: { santri_id } } },
+            ...(santri.nis ? [{ username: santri.nis }] : [])
+          ]
+        },
+        data: { spp_access_blocked: false, spp_blocked_reason: null }
+      });
 
       return NextResponse.json({
         success: true,

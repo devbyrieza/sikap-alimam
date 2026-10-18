@@ -101,9 +101,9 @@ export async function POST(req: NextRequest) {
       });
 
       if (santri) {
-        // Cek SPP bulan ini: Hanya blokir jika ada catatan SPP eksplisit berstatus selain lunas
+        // Cek SPP bulan ini: Hanya blokir jika ada catatan SPP eksplisit berstatus selain lunas & bukan menunggu verifikasi
         const sppRecord = santri.pembayaran_spp[0];
-        const isSppBlocked = sppRecord ? (sppRecord.status !== 'lunas') : false;
+        const isSppBlocked = sppRecord ? (sppRecord.status !== 'lunas' && sppRecord.status !== 'menunggu_verifikasi') : false;
         const sppReason = isSppBlocked ? `SPP Bulan ${new Date().toLocaleString('id-ID', {month:'long'})} ${new Date().getFullYear()} Belum Lunas` : null;
 
         // Cari user khusus yang username-nya adalah NIS santri ini
@@ -120,13 +120,18 @@ export async function POST(req: NextRequest) {
             await prisma.orangTuaSantri.deleteMany({ where: { santri_id: santri.id } });
             await prisma.orangTuaSantri.create({ data: { user_id: dedicatedWaliUser.id, santri_id: santri.id } });
           }
-          if (dedicatedWaliUser.nama !== santri.nama_lengkap || sppRecord) {
+
+          const hasDispensasi = Boolean(dedicatedWaliUser.spp_blocked_reason?.includes("UNLOCKED_MANUAL"));
+          const finalBlocked = hasDispensasi ? false : isSppBlocked;
+          const finalReason = hasDispensasi ? dedicatedWaliUser.spp_blocked_reason : sppReason;
+
+          if (dedicatedWaliUser.nama !== santri.nama_lengkap || dedicatedWaliUser.spp_access_blocked !== finalBlocked) {
             user = await prisma.user.update({
               where: { id: dedicatedWaliUser.id },
               data: {
                 nama: santri.nama_lengkap,
-                spp_access_blocked: isSppBlocked,
-                spp_blocked_reason: sppReason
+                spp_access_blocked: finalBlocked,
+                spp_blocked_reason: finalReason
               },
               include: { pegawai: { select: { id: true, nama_lengkap: true, nama_panggilan: true } } }
             });
@@ -139,12 +144,16 @@ export async function POST(req: NextRequest) {
 
           if (existingWaliUser) {
             user = existingWaliUser;
+            const hasDispensasiExisting = Boolean(existingWaliUser.spp_blocked_reason?.includes("UNLOCKED_MANUAL"));
+            const finalBlockedExisting = hasDispensasiExisting ? false : isSppBlocked;
+            const finalReasonExisting = hasDispensasiExisting ? existingWaliUser.spp_blocked_reason : sppReason;
+
             user = await prisma.user.update({
               where: { id: existingWaliUser.id },
               data: {
                 nama: santri.nama_lengkap,
-                spp_access_blocked: isSppBlocked,
-                spp_blocked_reason: sppReason
+                spp_access_blocked: finalBlockedExisting,
+                spp_blocked_reason: finalReasonExisting
               },
               include: { pegawai: { select: { id: true, nama_lengkap: true, nama_panggilan: true } } }
             });
