@@ -143,13 +143,16 @@ const NAV: NavItem[] = [
 const ROLE_LABEL: Record<string, string> = {
   ADMIN_SUPER: "Admin Super",
   GURU: "Guru Mapel",
-  MUSYRIF: "Pengasuh Asrama",
+  MUSYRIF: "Pengampu Halaqoh",
   PENGAMPU: "Pengampu Halaqoh",
   PENGAMPU_HALAQOH: "Pengampu Halaqoh",
   WALI_KELAS: "Wali Kelas",
+  WALI_KELAS_MTS: "Wali Kelas MTs",
+  WALI_KELAS_IL: "Wali Kelas IL",
+  WALI_KELAS_MA: "Wali Kelas MA",
   MUDIR: "Mudir Pesantren",
   KEPALA_SEKOLAH: "Kepala Sekolah",
-  KADIV_PENGASUHAN: "Kadiv Pengasuhan",
+  KADIV_PENGASUHAN: "Kadiv Kepengasuhan",
   KADIV_ASRAMA: "Kadiv Asrama",
   KADIV_KEDISIPLINAN: "Kadiv Kedisiplinan",
   KADIV_KURIKULUM: "Kadiv Kurikulum",
@@ -300,6 +303,21 @@ function SidebarContent({ user, items, activeHref, onNavigate, onLogout, onClose
     : user?.nama || "User";
   const initial = (displayName || "U").charAt(0).toUpperCase();
 
+  const selectedRoleKey = useMemo(() => {
+    const emailLower = (user?.email || "").toLowerCase();
+    const namaLower = (user?.nama || "").toLowerCase();
+    if (roleUpper === "ADMIN_SUPER") {
+      if (emailLower.includes("wahab") || namaLower.includes("wahab")) return "ADMIN_SUPER_MUDIR";
+      return "ADMIN_SUPER";
+    }
+    if (roleUpper === "WALI_KELAS") {
+      if (emailLower.includes("mts") || namaLower.includes("agus")) return "WALI_KELAS_MTS";
+      if (emailLower.includes("ma") || namaLower.includes("thoriq")) return "WALI_KELAS_MA";
+      return "WALI_KELAS_IL";
+    }
+    return roleUpper;
+  }, [roleUpper, user?.email, user?.nama]);
+
   return (
     <>
       {/* Logo */}
@@ -378,7 +396,7 @@ function SidebarContent({ user, items, activeHref, onNavigate, onLogout, onClose
             </div>
             <div className="relative">
               <select
-                value={roleUpper}
+                value={selectedRoleKey}
                 onChange={handleRoleSelect}
                 disabled={switching}
                 aria-label="Pilih akun atau peran"
@@ -392,13 +410,16 @@ function SidebarContent({ user, items, activeHref, onNavigate, onLogout, onClose
                   ))
                 ) : (
                   <>
-                    <option value="ADMIN_SUPER">Admin Super — Administrator Sistem</option>
-                    <option value="ADMIN_KEUANGAN">Admin Keuangan — Ustd. Maulidin Bachtiar</option>
-                    <option value="KADIV_KURIKULUM">Kadiv Kurikulum — Ustd. Agus Cahyono, S.Pd.</option>
-                    <option value="KADIV_PENGASUHAN">Kadiv Pengasuhan — Ustd. Wahab Rajasam, M.Pd.</option>
-                    <option value="WALI_KELAS">Wali Kelas — Ustd. Imran Fathillah, S.Pd.</option>
-                    <option value="GURU">Guru Mapel — Ustd. Abdil Aziz, S.Pd.</option>
-                    <option value="MUSYRIF">Pengampu Halaqoh — Ustd. Muhammad Iqbal, S.Pd.</option>
+                    <option value="ADMIN_SUPER">Admin Super (Rieza) — Rieza Eka Tomara, S.Kom.</option>
+                    <option value="ADMIN_SUPER_MUDIR">Admin Super (Wahab) — Wahab Rajasam, M.Pd.</option>
+                    <option value="ADMIN_KEUANGAN">Admin Keuangan — Maulidin Bachtiar</option>
+                    <option value="KADIV_KURIKULUM">Kadiv Kurikulum — Imron Abdillah, S.Pd.</option>
+                    <option value="KADIV_PENGASUHAN">Kadiv Kepengasuhan — Wahyudi Pranata, B.A.</option>
+                    <option value="WALI_KELAS_MTS">Wali Kelas MTs — Agus Cahyono</option>
+                    <option value="WALI_KELAS_IL">Wali Kelas IL — Imron Abdillah, S.Pd.</option>
+                    <option value="WALI_KELAS_MA">Wali Kelas MA — Muhammad Thoriq Ibn Ziyad, Lc., M.Ag.</option>
+                    <option value="GURU">Guru Mapel — Abdil Aziz, B.A.</option>
+                    <option value="MUSYRIF">Pengampu Halaqoh — Muhammad Iqbal, S.Pd.</option>
                     <option value="WALI_SANTRI">Portal Wali Santri — Wali Santri Al-Imam</option>
                   </>
                 )}

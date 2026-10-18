@@ -10,6 +10,9 @@ export const ROLE_DESTINATIONS: Record<string, string> = {
   KADIV_KURIKULUM: "/jurnal",
   KADIV_PENGASUHAN: "/halaqoh",
   WALI_KELAS: "/wali-kelas",
+  WALI_KELAS_MTS: "/wali-kelas",
+  WALI_KELAS_IL: "/wali-kelas",
+  WALI_KELAS_MA: "/wali-kelas",
   GURU: "/jurnal",
   MUSYRIF: "/halaqoh",
   WALI_SANTRI: "/wali",
@@ -18,50 +21,90 @@ export const ROLE_DESTINATIONS: Record<string, string> = {
 export const AVAILABLE_SWITCH_ROLES = [
   {
     role: "ADMIN_SUPER",
-    label: "Admin Super",
-    pejabat: "Administrator Sistem",
-    deskripsi: "Akses penuh seluruh konfigurasi, master data, dan kendali sistem",
+    targetRole: "ADMIN_SUPER",
+    label: "Admin Super (Rieza)",
+    pejabat: "Rieza Eka Tomara, S.Kom.",
+    targetEmail: "rieza@pesantren-alimam.com",
+    deskripsi: "Akses penuh konfigurasi, master data, dan kendali sistem",
+  },
+  {
+    role: "ADMIN_SUPER_MUDIR",
+    targetRole: "ADMIN_SUPER",
+    label: "Admin Super (Wahab)",
+    pejabat: "Wahab Rajasam, M.Pd.",
+    targetEmail: "wahab@pesantren-alimam.com",
+    deskripsi: "Mudir Pesantren & Super Administrator",
   },
   {
     role: "ADMIN_KEUANGAN",
+    targetRole: "ADMIN_KEUANGAN",
     label: "Admin Keuangan",
-    pejabat: "Ustadz Maulidin Bachtiar",
+    pejabat: "Maulidin Bachtiar",
+    targetEmail: "keuangan@pesantren-alimam.com",
     deskripsi: "Kelola SPP, verifikasi bukti transfer, dan kendali portal santri",
   },
   {
     role: "KADIV_KURIKULUM",
+    targetRole: "KADIV_KURIKULUM",
     label: "Kadiv Kurikulum",
-    pejabat: "Ustadz Agus Cahyono, S.Pd.",
-    deskripsi: "Kepala Madrasah, monitoring jurnal mengajar, dan kurikulum",
+    pejabat: "Imron Abdillah, S.Pd.",
+    targetEmail: "kurikulum@pesantren-alimam.com",
+    deskripsi: "Kepala Kurikulum, monitoring jurnal mengajar, dan kurikulum",
   },
   {
     role: "KADIV_PENGASUHAN",
-    label: "Kadiv Pengasuhan",
-    pejabat: "Ustadz Wahab Rajasam, M.Pd.",
-    deskripsi: "Mudir & Kepala Divisi Pengasuhan, halaqoh, ibadah, dan kedisiplinan",
+    targetRole: "KADIV_PENGASUHAN",
+    label: "Kadiv Kepengasuhan",
+    pejabat: "Wahyudi Pranata, B.A.",
+    targetEmail: "pengasuhan@pesantren-alimam.com",
+    deskripsi: "Kadiv Kepengasuhan, pembinaan santri, mutabaah, dan kedisiplinan",
   },
   {
-    role: "WALI_KELAS",
-    label: "Wali Kelas",
-    pejabat: "Ustadz Imron Fathillah, S.Pd.",
-    deskripsi: "Wali Kelas IL / 7 MTs, pantau nilai, presensi, dan rapor kelas",
+    role: "WALI_KELAS_MTS",
+    targetRole: "WALI_KELAS",
+    label: "Wali Kelas MTs",
+    pejabat: "Agus Cahyono",
+    targetEmail: "walikelas.mts@pesantren-alimam.com",
+    deskripsi: "Wali Kelas 7 MTs, pantau nilai, presensi, dan rapor santri MTs",
+  },
+  {
+    role: "WALI_KELAS_IL",
+    targetRole: "WALI_KELAS",
+    label: "Wali Kelas IL",
+    pejabat: "Imron Abdillah, S.Pd.",
+    targetEmail: "kurikulum@pesantren-alimam.com",
+    deskripsi: "Wali Kelas I'dad Lughowi (IL), pantau nilai & rapor kelas IL",
+  },
+  {
+    role: "WALI_KELAS_MA",
+    targetRole: "WALI_KELAS",
+    label: "Wali Kelas MA",
+    pejabat: "Muhammad Thoriq Ibn Ziyad, Lc., M.Ag.",
+    targetEmail: "walikelas.ma@pesantren-alimam.com",
+    deskripsi: "Wali Kelas Madrasah Aliyah (MA), pantau nilai & rapor kelas MA",
   },
   {
     role: "GURU",
+    targetRole: "GURU",
     label: "Guru Mapel",
-    pejabat: "Ustadz Abdil Aziz, S.Pd.",
+    pejabat: "Abdil Aziz, B.A.",
+    targetEmail: "guru@pesantren-alimam.com",
     deskripsi: "Asatidz pengampu pelajaran, input jurnal, presensi, dan nilai",
   },
   {
     role: "MUSYRIF",
+    targetRole: "MUSYRIF",
     label: "Pengampu Halaqoh",
-    pejabat: "Ustadz Muhammad Iqbal, S.Pd.",
+    pejabat: "Muhammad Iqbal, S.Pd.",
+    targetEmail: "musyrif@pesantren-alimam.com",
     deskripsi: "Musyrif tahfidz Al-Qur'an, setoran mutabaah, dan ujian tahfidz",
   },
   {
     role: "WALI_SANTRI",
+    targetRole: "WALI_SANTRI",
     label: "Portal Wali Santri",
     pejabat: "Wali Santri Al-Imam",
+    targetEmail: "wali_2602070023@pesantren-alimam.com",
     deskripsi: "Akses laporan rapor, akademik, setoran halaqoh, dan tagihan SPP",
   },
 ];
@@ -84,6 +127,7 @@ export async function GET() {
       success: true,
       canSwitch: isSuperOrSwitched,
       currentRole: session.role,
+      currentEmail: session.email,
       originalRole: session.originalRole || null,
       originalNama: session.originalNama || null,
       roles: AVAILABLE_SWITCH_ROLES,
@@ -124,7 +168,6 @@ export async function POST(req: NextRequest) {
       const restoredUserId = session.originalUserId || session.userId;
       const restoredNama = session.originalNama || "Administrator Sistem";
 
-      // Cari user asli di database untuk mengembalikan email/profil lengkap
       const originalUser = await prisma.user.findUnique({
         where: { id: restoredUserId },
         include: { pegawai: true },
@@ -158,72 +201,29 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "target_role wajib diisi" }, { status: 400 });
     }
 
-    const targetUpper = target_role.toUpperCase();
-    const matchedConfig = AVAILABLE_SWITCH_ROLES.find((r) => r.role === targetUpper);
+    const matchedConfig = AVAILABLE_SWITCH_ROLES.find(
+      (r) => r.role === target_role || r.targetRole === target_role
+    );
 
-    // Cari user spesifik yang memegang peran tersebut di DB
-    let targetUser = await prisma.user.findFirst({
-      where: {
-        role: { equals: targetUpper, mode: "insensitive" },
-        is_active: true,
-      },
-      include: { pegawai: true },
-    });
+    const targetEffectiveRole = matchedConfig?.targetRole || target_role.toUpperCase();
 
-    // Jika belum ada user khusus dengan role tersebut, cari pegawai yang sesuai
-    if (!targetUser) {
-      if (targetUpper === "ADMIN_KEUANGAN") {
-        targetUser = await prisma.user.findFirst({
-          where: {
-            OR: [
-              { email: { contains: "keuangan", mode: "insensitive" } },
-              { username: { contains: "keuangan", mode: "insensitive" } },
-              { nama: { contains: "Bachtiar", mode: "insensitive" } },
-            ],
-          },
-          include: { pegawai: true },
-        });
-      } else if (targetUpper === "KADIV_KURIKULUM") {
-        targetUser = await prisma.user.findFirst({
-          where: {
-            OR: [
-              { email: { contains: "kurikulum", mode: "insensitive" } },
-              { nama: { contains: "Agus Cahyono", mode: "insensitive" } },
-            ],
-          },
-          include: { pegawai: true },
-        });
-      } else if (targetUpper === "KADIV_PENGASUHAN") {
-        targetUser = await prisma.user.findFirst({
-          where: {
-            OR: [
-              { email: { contains: "pengasuhan", mode: "insensitive" } },
-              { nama: { contains: "Wahab", mode: "insensitive" } },
-            ],
-          },
-          include: { pegawai: true },
-        });
-      } else if (targetUpper === "WALI_KELAS") {
-        targetUser = await prisma.user.findFirst({
-          where: {
-            OR: [
-              { email: { contains: "imran", mode: "insensitive" } },
-              { nama: { contains: "Imran", mode: "insensitive" } },
-            ],
-          },
-          include: { pegawai: true },
-        });
-      } else if (targetUpper === "MUSYRIF") {
-        targetUser = await prisma.user.findFirst({
-          where: {
-            OR: [
-              { email: { contains: "iqbal", mode: "insensitive" } },
-              { nama: { contains: "Iqbal", mode: "insensitive" } },
-            ],
-          },
-          include: { pegawai: true },
-        });
-      }
+    // Cari user spesifik berdasarkan targetEmail
+    let targetUser = null;
+    if (matchedConfig?.targetEmail) {
+      targetUser = await prisma.user.findFirst({
+        where: { email: matchedConfig.targetEmail },
+        include: { pegawai: true },
+      });
+    }
+
+    // Jika belum ketemu via email, cari via nama pejabat
+    if (!targetUser && matchedConfig?.pejabat) {
+      targetUser = await prisma.user.findFirst({
+        where: {
+          nama: { contains: matchedConfig.pejabat.split(",")[0].trim(), mode: "insensitive" },
+        },
+        include: { pegawai: true },
+      });
     }
 
     // Simpan originalRole dan originalUserId pertama kali beralih
@@ -241,7 +241,7 @@ export async function POST(req: NextRequest) {
       userId: newUserId,
       email: newEmail,
       nama: newNama,
-      role: targetUpper,
+      role: targetEffectiveRole,
       asatidz_id: newAsatidzId,
       originalRole,
       originalUserId,
@@ -250,12 +250,14 @@ export async function POST(req: NextRequest) {
 
     await createSession(newPayload);
 
-    const redirectTo = ROLE_DESTINATIONS[targetUpper] || "/dashboard";
+    const redirectTo =
+      ROLE_DESTINATIONS[target_role] || ROLE_DESTINATIONS[targetEffectiveRole] || "/dashboard";
 
     return NextResponse.json({
       success: true,
       switched: true,
-      role: targetUpper,
+      role: targetEffectiveRole,
+      selectedKey: target_role,
       nama: newNama,
       redirectTo,
     });
