@@ -18,6 +18,7 @@ import {
   GraduationCap,
   HeartHandshake,
   Loader2,
+  Lock,
   MessageCircle,
   RefreshCw,
   Search,
@@ -28,6 +29,7 @@ import {
 } from "lucide-react";
 import Swal from "sweetalert2";
 import JurnalDetailModal from "@/components/JurnalDetailModal";
+import WaliAccessLocked from "@/components/WaliAccessLocked";
 import { getOfficialNis } from "@/lib/officialSantri";
 
 /* ═══════════════════════════ Konfigurasi ═══════════════════════════ */
@@ -153,6 +155,7 @@ function ProfileBanner({
   currentSantriId,
   onSelectSantri,
   onFotoUpdated,
+  isAccessLocked,
 }: {
   santri: any;
   nis: string;
@@ -160,6 +163,7 @@ function ProfileBanner({
   currentSantriId: string;
   onSelectSantri: (id: string) => void;
   onFotoUpdated?: (newUrl: string | null) => void;
+  isAccessLocked?: boolean;
 }) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
@@ -356,9 +360,15 @@ function ProfileBanner({
             <span className="font-mono text-xs text-white font-bold bg-black/25 px-2.5 py-0.5 rounded-full border border-white/20">
               NIS: {nis}
             </span>
-            <span className="rounded-full bg-emerald-500/90 text-white px-2.5 py-0.5 text-xs font-bold shadow-sm">
-              Akademik &amp; Mapel
-            </span>
+            {isAccessLocked ? (
+              <span className="rounded-full bg-rose-600 text-white px-3 py-0.5 text-xs font-black shadow-sm inline-flex items-center gap-1.5">
+                <Lock size={12} /> Akses Terkunci · SPP Belum Lunas
+              </span>
+            ) : (
+              <span className="rounded-full bg-emerald-500/90 text-white px-2.5 py-0.5 text-xs font-bold shadow-sm">
+                Akademik &amp; Mapel
+              </span>
+            )}
           </div>
 
           <h1 className="break-words text-2xl font-extrabold leading-tight text-white sm:text-3xl">{santri.nama}</h1>
@@ -486,7 +496,7 @@ export default function WaliAkademikPage() {
     fetch(`/api/rapor?santri_id=${encodeURIComponent(selectedSantriId)}`, { signal: controller.signal })
       .then((r) => r.json())
       .then((res) => {
-        if (res?.error) {
+        if (res?.error && res?.error !== "SPP_TERKUNCI") {
           setLoadError(true);
         } else {
           setData(res);
@@ -582,6 +592,11 @@ export default function WaliAkademikPage() {
 
   const { santri } = data;
   const ringkasan = data.ringkasan ?? {};
+  const isAccessLocked = Boolean(
+    data?.is_locked ||
+    data?.error === "SPP_TERKUNCI" ||
+    (data?.spp && !data.spp.lunas && data.spp.status !== "menunggu_verifikasi" && !data.spp.isUnlockedManual)
+  );
   const nis = (santri?.nama ? getOfficialNis(santri.nama) : null) || santri.nis;
 
   return (
@@ -612,6 +627,7 @@ export default function WaliAkademikPage() {
           anakList={anakList}
           currentSantriId={selectedSantriId}
           onSelectSantri={handleSelectSantri}
+          isAccessLocked={isAccessLocked}
           onFotoUpdated={(newUrl) => {
             setData((prev: any) => (prev ? { ...prev, santri: { ...prev.santri, foto_url: newUrl } } : prev));
           }}
@@ -629,6 +645,7 @@ export default function WaliAkademikPage() {
             >
               <FileText size={16} className="text-slate-400" />
               <span>1. Lembar Rapor Resmi</span>
+              {isAccessLocked && <Lock size={12} className="text-rose-600 shrink-0" />}
             </Link>
 
             <Link
@@ -637,6 +654,7 @@ export default function WaliAkademikPage() {
             >
               <BookOpen size={16} className="text-rose-200" />
               <span>2. Nilai &amp; Akademik</span>
+              {isAccessLocked && <Lock size={12} className="text-rose-200 shrink-0" />}
             </Link>
 
             <Link
@@ -645,20 +663,34 @@ export default function WaliAkademikPage() {
             >
               <HeartHandshake size={16} className="text-slate-400" />
               <span>3. Halaqoh &amp; Tahfidz</span>
+              {isAccessLocked && <Lock size={12} className="text-rose-600 shrink-0" />}
             </Link>
 
             <Link
               href={`/wali/spp?santri_id=${selectedSantriId}`}
-              className="flex shrink-0 items-center gap-2 whitespace-nowrap rounded-xl px-4 py-2.5 text-xs sm:text-sm font-bold min-h-[44px] bg-slate-100/90 text-slate-600 hover:bg-slate-200 hover:text-slate-900 transition-all"
+              className={`flex shrink-0 items-center gap-2 whitespace-nowrap rounded-xl px-4 py-2.5 text-xs sm:text-sm font-bold min-h-[44px] transition-all ${
+                isAccessLocked
+                  ? "bg-emerald-600 text-white shadow-md hover:bg-emerald-700 animate-pulse"
+                  : "bg-slate-100/90 text-slate-600 hover:bg-slate-200 hover:text-slate-900"
+              }`}
             >
-              <CreditCard size={16} className="text-slate-400" />
-              <span>4. SPP &amp; Keuangan</span>
+              <CreditCard size={16} className={isAccessLocked ? "text-white" : "text-slate-400"} />
+              <span>4. SPP &amp; Keuangan {isAccessLocked && "(Selesaikan Di Sini)"}</span>
             </Link>
           </div>
         </div>
 
-        {/* Tab Navigasi Sub-Akademik */}
-        <div className="w-full overflow-hidden rounded-2xl border border-slate-200/60 bg-white/80 p-1.5 shadow-sm">
+        {/* Jika Akses Terkunci Karena SPP Belum Lunas */}
+        {isAccessLocked ? (
+          <WaliAccessLocked
+            santri={santri}
+            spp={data?.spp}
+            featureName="Nilai Akademik, Presensi KBM, dan Jurnal Guru"
+          />
+        ) : (
+          <>
+            {/* Tab Navigasi Sub-Akademik */}
+            <div className="w-full overflow-hidden rounded-2xl border border-slate-200/60 bg-white/80 p-1.5 shadow-sm">
           <div className="flex gap-1.5 overflow-x-auto custom-scrollbar w-full py-0.5 px-0.5">
             <button
               type="button"
@@ -967,6 +999,8 @@ export default function WaliAkademikPage() {
               )}
             </div>
           </div>
+        )}
+          </>
         )}
       </main>
 

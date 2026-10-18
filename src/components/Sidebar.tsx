@@ -16,6 +16,7 @@ import {
   FileText,
   HeartHandshake,
   LayoutDashboard,
+  Lock,
   LogOut,
   Menu,
   Settings,
@@ -204,6 +205,26 @@ function SidebarContent({ user, items, activeHref, onNavigate, onLogout, onClose
   const isAdminRole = roleUpper.includes("ADMIN");
   const isWaliSantri = (user?.role || "").toLowerCase() === "wali_santri";
 
+  const [waliSppLocked, setWaliSppLocked] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (!isWaliRole && !isWaliSantri) return;
+    fetch("/api/wali/anak")
+      .then((r) => r.json())
+      .then((res) => {
+        if (res?.success && Array.isArray(res.data) && res.data.length > 0) {
+          const hasLockedChild = res.data.some((s: any) => {
+            const spp = s.spp;
+            const verifying = spp?.status === "menunggu_verifikasi";
+            const unlockedManual = spp?.isUnlockedManual;
+            return !s.lunas && !verifying && !unlockedManual;
+          });
+          setWaliSppLocked(hasLockedChild);
+        }
+      })
+      .catch(() => {});
+  }, [isWaliRole, isWaliSantri]);
+
   const displayName = isWaliRole
     ? (user?.nama || "User").replace(/^Wali dari\s+/i, "")
     : user?.nama || "User";
@@ -246,16 +267,31 @@ function SidebarContent({ user, items, activeHref, onNavigate, onLogout, onClose
         <div className="sidebar-section-title">Menu Utama</div>
         {items.map(({ href, label, icon: Icon }) => {
           const active = activeHref === href;
+          const isLockedWaliMenu = waliSppLocked && (href === "/wali/rapor" || href === "/wali/akademik" || href === "/wali/tahfidz");
+          const isSppMenu = href === "/wali/spp";
+
           return (
             <Link
               key={href}
               href={href}
               onClick={onNavigate}
               aria-current={active ? "page" : undefined}
-              className={`sidebar-link ${active ? "active" : ""} ${focusRing}`}
+              className={`sidebar-link ${active ? "active" : ""} ${focusRing} ${
+                isLockedWaliMenu ? "text-rose-800 bg-rose-50/50 hover:bg-rose-100/50" : ""
+              }`}
             >
-              <Icon size={18} aria-hidden="true" />
-              {label}
+              <Icon size={18} aria-hidden="true" className={isLockedWaliMenu ? "text-rose-600 shrink-0" : "shrink-0"} />
+              <span className="flex-1 truncate">{label}</span>
+              {isLockedWaliMenu && (
+                <span className="ml-auto inline-flex items-center gap-1 rounded-full bg-rose-100 px-2 py-0.5 text-[10px] font-black text-rose-700">
+                  <Lock size={10} /> Terkunci
+                </span>
+              )}
+              {waliSppLocked && isSppMenu && (
+                <span className="ml-auto inline-flex items-center gap-1 rounded-full bg-emerald-600 px-2 py-0.5 text-[10px] font-extrabold text-white animate-pulse">
+                  Bayar SPP
+                </span>
+              )}
             </Link>
           );
         })}

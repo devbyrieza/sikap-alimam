@@ -784,7 +784,7 @@ function LockedBackBar({ onBack }: { onBack: () => void }) {
   );
 }
 
-function TabNav({ santriId }: { santriId: string }) {
+function TabNav({ santriId, locked }: { santriId: string; locked?: boolean }) {
   return (
     <div
       className={`sticky top-14 z-20 w-full max-w-full overflow-hidden rounded-2xl border border-slate-200/80 bg-white/95 p-1.5 shadow-md backdrop-blur sm:top-16 ${NO_PRINT}`}
@@ -801,6 +801,7 @@ function TabNav({ santriId }: { santriId: string }) {
         >
           <FileText size={16} className="text-rose-200" />
           <span>1. Lembar Rapor Resmi</span>
+          {locked && <Lock size={12} className="text-rose-200 ml-1" />}
         </Link>
 
         <Link
@@ -809,6 +810,7 @@ function TabNav({ santriId }: { santriId: string }) {
         >
           <BookOpen size={16} className="text-slate-400" />
           <span>2. Nilai &amp; Akademik</span>
+          {locked && <Lock size={12} className="text-rose-600 ml-1" />}
         </Link>
 
         <Link
@@ -817,14 +819,19 @@ function TabNav({ santriId }: { santriId: string }) {
         >
           <HeartHandshake size={16} className="text-slate-400" />
           <span>3. Halaqoh &amp; Tahfidz</span>
+          {locked && <Lock size={12} className="text-rose-600 ml-1" />}
         </Link>
 
         <Link
           href={`/wali/spp?santri_id=${santriId}`}
-          className="flex shrink-0 items-center gap-2 whitespace-nowrap rounded-xl px-4 py-2.5 text-xs sm:text-sm font-bold min-h-[44px] bg-slate-100/90 text-slate-600 hover:bg-slate-200 hover:text-slate-900 transition-all"
+          className={`flex shrink-0 items-center gap-2 whitespace-nowrap rounded-xl px-4 py-2.5 text-xs sm:text-sm font-bold min-h-[44px] transition-all ${
+            locked
+              ? "bg-emerald-600 text-white shadow-md hover:bg-emerald-700 animate-pulse"
+              : "bg-slate-100/90 text-slate-600 hover:bg-slate-200 hover:text-slate-900"
+          }`}
         >
-          <CreditCard size={16} className="text-slate-400" />
-          <span>4. SPP &amp; Keuangan</span>
+          <CreditCard size={16} className={locked ? "text-white" : "text-slate-400"} />
+          <span>4. SPP &amp; Keuangan {locked && "(Selesaikan Di Sini)"}</span>
         </Link>
       </div>
     </div>
@@ -2232,6 +2239,8 @@ export default function RaporWaliPage() {
           <VerifyingBanner onUploadLagi={() => setIsKonfirmasiOpen(true)} onLihatSpp={() => setActiveTab("spp")} />
         )}
 
+        <TabNav santriId={targetSantriId} locked={isAccessLocked} />
+
         {showLockedPanel ? (
           <LockedPanel
             santri={santri}
@@ -2244,7 +2253,6 @@ export default function RaporWaliPage() {
           <>
             {data?.spp?.isGracePeriod && data?.spp?.lunas && <GraceBanner namaBulan={data.spp.namaBulan} />}
             {isAccessLocked && activeTab === "spp" && <LockedBackBar onBack={() => setActiveTab("ringkasan")} />}
-            {showTabs && <TabNav santriId={targetSantriId} />}
           </>
         )}
 

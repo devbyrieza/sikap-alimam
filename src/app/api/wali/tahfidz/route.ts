@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getSession } from "@/lib/auth";
 import { calculateHalaman } from "@/lib/quran-madinah";
+import { cekStatusSpp } from "@/lib/keuangan";
 
 export const dynamic = "force-dynamic";
 
@@ -181,7 +182,42 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: "Santri not found" }, { status: 404 });
     }
 
-    // 4. Cari pengampu halaqoh (Musyrif)
+    // 4. Status Administrasi SPP & Penegakan Akses Terkunci
+    const userRole = (session.role || "").toUpperCase();
+    const isStaff =
+      !waliOnly &&
+      (userRole.includes("ADMIN") ||
+        userRole.includes("GURU") ||
+        userRole.includes("MUDIR") ||
+        userRole.includes("KEPALA") ||
+        userRole.includes("KADIV") ||
+        userRole.includes("MUSYRIF"));
+
+    const sppInfo = await cekStatusSpp(santri.id);
+    const isAccessLocked = !sppInfo.lunas && sppInfo.status !== "menunggu_verifikasi" && !sppInfo.isUnlockedManual;
+
+    if (isAccessLocked && !isStaff) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: "SPP_TERKUNCI",
+          is_locked: true,
+          message:
+            "Akses laporan halaqoh & tahfidz dinonaktifkan sementara karena terdapat kewajiban administrasi SPP yang belum diselesaikan.",
+          spp: sppInfo,
+          santri: {
+            id: santri.id,
+            nama: santri.nama_lengkap,
+            nis: santri.nis,
+            kelas: santri.kelas?.nama || "-",
+            jenjang: santri.kelas?.jenjang || "-",
+          },
+        },
+        { status: 403 },
+      );
+    }
+
+    // 5. Cari pengampu halaqoh (Musyrif)
     const keanggotaan = await prisma.halaqohAnggota.findFirst({
       where: { santri_id: santri.id },
       include: {
@@ -427,6 +463,8 @@ export async function GET(req: NextRequest) {
         persentase: persentaseKehadiran,
         detail: presensiList,
       },
+      spp: sppInfo,
+      is_locked: false,
     });
   } catch (error: any) {
     console.error("Error in /api/wali/tahfidz:", error);

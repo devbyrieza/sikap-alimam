@@ -145,6 +145,7 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({
         santri: santriInfo,
         is_locked: true,
+        error: "SPP_TERKUNCI",
         spp: sppInfo,
         ringkasan: {
           persentaseKehadiran: 0, totalHari: 0, totalHadir: 0, totalSakit: 0, totalIzin: 0,

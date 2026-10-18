@@ -18,6 +18,7 @@ import {
   GraduationCap,
   HeartHandshake,
   Loader2,
+  Lock,
   MessageCircle,
   PhoneCall,
   RefreshCw,
@@ -28,6 +29,7 @@ import {
   User,
 } from "lucide-react";
 import Swal from "sweetalert2";
+import WaliAccessLocked from "@/components/WaliAccessLocked";
 import { getOfficialNis } from "@/lib/officialSantri";
 import { calculateHalaman } from "@/lib/quran-madinah";
 
@@ -109,6 +111,7 @@ function ProfileBanner({
   currentSantriId,
   onSelectSantri,
   onFotoUpdated,
+  isAccessLocked,
 }: {
   santri: any;
   nis: string;
@@ -116,6 +119,7 @@ function ProfileBanner({
   currentSantriId: string;
   onSelectSantri: (id: string) => void;
   onFotoUpdated?: (newUrl: string | null) => void;
+  isAccessLocked?: boolean;
 }) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
@@ -288,9 +292,15 @@ function ProfileBanner({
             <span className="rounded-full bg-white/20 px-3 py-0.5 text-xs font-bold text-white backdrop-blur">
               Kelas {santri?.kelas || "-"}
             </span>
-            <span className="rounded-full bg-emerald-500/90 text-white px-2.5 py-0.5 text-xs font-bold shadow-sm">
-              Halaqoh &amp; Tahfidz Al-Qur&apos;an
-            </span>
+            {isAccessLocked ? (
+              <span className="rounded-full bg-rose-600 text-white px-3 py-0.5 text-xs font-black shadow-sm inline-flex items-center gap-1.5">
+                <Lock size={12} /> Akses Terkunci · SPP Belum Lunas
+              </span>
+            ) : (
+              <span className="rounded-full bg-emerald-500/90 text-white px-2.5 py-0.5 text-xs font-bold shadow-sm">
+                Halaqoh &amp; Tahfidz Al-Qur&apos;an
+              </span>
+            )}
           </div>
 
           <h1 className="break-words text-2xl font-extrabold leading-tight text-white sm:text-3xl">{santri.nama}</h1>
@@ -375,8 +385,13 @@ export default function WaliTahfidzPage() {
     fetch(`/api/wali/tahfidz?santri_id=${encodeURIComponent(selectedSantriId)}`, { signal: controller.signal })
       .then((r) => r.json())
       .then((res) => {
-        if (!res.success && res?.error) setLoadError(true);
-        else setData(res);
+        if (!res.success && res?.error === "SPP_TERKUNCI") {
+          setData(res);
+        } else if (!res.success && res?.error) {
+          setLoadError(true);
+        } else {
+          setData(res);
+        }
       })
       .catch((err) => {
         if (err?.name !== "AbortError") setLoadError(true);
@@ -431,6 +446,11 @@ export default function WaliTahfidzPage() {
   }
 
   const { santri, pengampu_halaqoh: pengampu } = data;
+  const isAccessLocked = Boolean(
+    data?.is_locked ||
+    data?.error === "SPP_TERKUNCI" ||
+    (data?.spp && !data.spp.lunas && data.spp.status !== "menunggu_verifikasi" && !data.spp.isUnlockedManual)
+  );
   const ujianList: any[] = data?.ujian_tahfidz || [];
   const setoranList: any[] = data?.setoran_tahfidz || [];
   const presensiInfo = data?.presensi_halaqoh || {};
@@ -470,6 +490,7 @@ export default function WaliTahfidzPage() {
           anakList={anakList}
           currentSantriId={selectedSantriId}
           onSelectSantri={handleSelectSantri}
+          isAccessLocked={isAccessLocked}
           onFotoUpdated={(newUrl) => {
             setData((prev: any) => (prev ? { ...prev, santri: { ...prev.santri, foto_url: newUrl } } : prev));
           }}
@@ -487,6 +508,7 @@ export default function WaliTahfidzPage() {
             >
               <FileText size={16} className="text-slate-400" />
               <span>1. Lembar Rapor Resmi</span>
+              {isAccessLocked && <Lock size={12} className="text-rose-600 shrink-0" />}
             </Link>
 
             <Link
@@ -495,6 +517,7 @@ export default function WaliTahfidzPage() {
             >
               <BookOpen size={16} className="text-slate-400" />
               <span>2. Nilai &amp; Akademik</span>
+              {isAccessLocked && <Lock size={12} className="text-rose-600 shrink-0" />}
             </Link>
 
             <Link
@@ -503,21 +526,35 @@ export default function WaliTahfidzPage() {
             >
               <HeartHandshake size={16} className="text-rose-200" />
               <span>3. Halaqoh &amp; Tahfidz</span>
+              {isAccessLocked && <Lock size={12} className="text-rose-200 shrink-0" />}
             </Link>
 
             <Link
               href={`/wali/spp?santri_id=${selectedSantriId}`}
-              className="flex shrink-0 items-center gap-2 whitespace-nowrap rounded-xl px-4 py-2.5 text-xs sm:text-sm font-bold min-h-[44px] bg-slate-100/90 text-slate-600 hover:bg-slate-200 hover:text-slate-900 transition-all"
+              className={`flex shrink-0 items-center gap-2 whitespace-nowrap rounded-xl px-4 py-2.5 text-xs sm:text-sm font-bold min-h-[44px] transition-all ${
+                isAccessLocked
+                  ? "bg-emerald-600 text-white shadow-md hover:bg-emerald-700 animate-pulse"
+                  : "bg-slate-100/90 text-slate-600 hover:bg-slate-200 hover:text-slate-900"
+              }`}
             >
-              <CreditCard size={16} className="text-slate-400" />
-              <span>4. SPP &amp; Keuangan</span>
+              <CreditCard size={16} className={isAccessLocked ? "text-white" : "text-slate-400"} />
+              <span>4. SPP &amp; Keuangan {isAccessLocked && "(Selesaikan Di Sini)"}</span>
             </Link>
           </div>
         </div>
 
-        {/* ── KARTU MUSYRIF PENGAMPU HALAQOH ANANDA ── */}
-        <div
-          className="relative overflow-hidden rounded-3xl p-6 text-white shadow-lg shadow-slate-900/10 sm:p-8"
+        {/* Jika Akses Terkunci Karena SPP Belum Lunas */}
+        {isAccessLocked ? (
+          <WaliAccessLocked
+            santri={santri}
+            spp={data?.spp}
+            featureName="Halaqoh &amp; Tahfidz Al-Qur'an (Setoran Harian, Presensi Sesi, dan Ujian Tahfidz)"
+          />
+        ) : (
+          <>
+            {/* ── KARTU MUSYRIF PENGAMPU HALAQOH ANANDA ── */}
+            <div
+              className="relative overflow-hidden rounded-3xl p-6 text-white shadow-lg shadow-slate-900/10 sm:p-8"
           style={{
             background: "linear-gradient(135deg, #550000 0%, #7a0000 50%, #3a0000 100%)",
             backgroundColor: "#550000",
@@ -962,6 +999,8 @@ export default function WaliTahfidzPage() {
               </div>
             </div>
           </div>
+        )}
+          </>
         )}
       </main>
     </div>
