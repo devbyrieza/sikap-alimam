@@ -94,7 +94,9 @@ export async function GET(req: NextRequest) {
 
       const parentUser = s.orang_tua?.[0]?.user || (s.nis ? userNisMap.get(s.nis) : null);
       const isUnlockedManual = !!(parentUser?.spp_blocked_reason && parentUser.spp_blocked_reason.includes("UNLOCKED_MANUAL"));
-      const isLockedManual = isIman ? false : !!(parentUser?.spp_access_blocked === true || (parentUser?.spp_blocked_reason && parentUser.spp_blocked_reason.includes("LOCKED_MANUAL")));
+      const isLockedManual = isIman
+        ? false
+        : !isUnlockedManual && !!(parentUser?.spp_access_blocked === true || (parentUser?.spp_blocked_reason && parentUser.spp_blocked_reason.startsWith("LOCKED_MANUAL")));
       
       // Status lock logic
       let lockStatus: "LUNAS" | "TENGGANG" | "TERKUNCI" = "LUNAS";

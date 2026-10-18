@@ -964,7 +964,7 @@ export default function KeuanganSPPPage() {
                   const isMenunggu = (item.spp.status as any) === "menunggu_verifikasi";
                   const isTerkunci = item.spp.lock_status === "TERKUNCI" && !isMenunggu;
                   const isTenggang = item.spp.lock_status === "TENGGANG";
-                  const isPortalOpen = !item.is_locked_manual && (item.is_unlocked_manual || isLunas || isMenunggu || isTenggang);
+                  const isPortalOpen = item.is_unlocked_manual || (!item.is_locked_manual && (isLunas || isMenunggu || isTenggang));
 
                   return (
                     <tr key={item.id} className="hover:bg-[#f0fdf4] transition-colors" style={{ backgroundColor: idx % 2 === 0 ? "white" : "#fafafa", borderBottom: "1px solid #f1f5f9" }}>
@@ -1100,7 +1100,7 @@ export default function KeuanganSPPPage() {
                               ) : (
                                 <>
                                   <span style={{ width: "7px", height: "7px", borderRadius: "999px", background: "#10b981" }} className="animate-ping" />
-                                  <span>ON (Terbuka)</span>
+                                  <span>{item.is_unlocked_manual ? "ON (Dispensasi)" : "ON (Terbuka)"}</span>
                                   <span style={{ width: "26px", height: "16px", borderRadius: "999px", background: "#10b981", display: "inline-flex", alignItems: "center", justifyContent: "flex-end", padding: "1px", marginLeft: "2px" }}>
                                     <span style={{ width: "14px", height: "14px", borderRadius: "999px", background: "white", display: "inline-flex", alignItems: "center", justifyContent: "center", boxShadow: "0 1px 2px rgba(0,0,0,0.2)" }}>
                                       <Unlock style={{ width: "8px", height: "8px", color: "#059669" }} />

@@ -166,7 +166,7 @@ export async function cekStatusSpp(
     });
 
     const isUnlockedManual = !!(waliUser?.spp_blocked_reason && waliUser.spp_blocked_reason.includes("UNLOCKED_MANUAL"));
-    const isLockedManual = !!(waliUser?.spp_access_blocked === true || (waliUser?.spp_blocked_reason && waliUser.spp_blocked_reason.includes("LOCKED_MANUAL")));
+    const isLockedManual = !isUnlockedManual && !!(waliUser?.spp_access_blocked === true || (waliUser?.spp_blocked_reason && waliUser.spp_blocked_reason.startsWith("LOCKED_MANUAL")));
 
     // Jika dikunci manual oleh Admin Keuangan
     if (isLockedManual) {
