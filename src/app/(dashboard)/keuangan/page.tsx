@@ -44,6 +44,8 @@ interface SantriSPPItem {
   is_unlocked_manual?: boolean;
   is_locked_manual?: boolean;
   portal_access?: "TERBUKA_PENUH" | "TERBUKA_DISPENSASI" | "TERBUKA_VERIFIKASI" | "TERBUKA_TENGGANG" | "TERKUNCI_OTOMATIS" | "TERKUNCI_MANUAL";
+  tunggakan_count?: number;
+  tunggakan_bulan?: string[];
   spp: {
     id: string | null;
     bulan: number;
@@ -957,6 +959,11 @@ export default function KeuanganSPPPage() {
                             <span style={{ display: "inline-flex", alignItems: "center", gap: "6px", padding: "4px 12px", borderRadius: "999px", background: "#d1fae5", color: "#065f46", fontWeight: 900, fontSize: "11px", border: "1px solid #a7f3d0" }}>
                               <CheckCircle2 style={{ width: "13px", height: "13px", color: "#059669" }} /> LUNAS
                             </span>
+                            {item.tunggakan_count && item.tunggakan_count > 0 ? (
+                              <span style={{ display: "inline-flex", alignItems: "center", gap: "3px", padding: "2px 8px", borderRadius: "6px", background: "#fee2e2", color: "#991b1b", fontWeight: "bold", fontSize: "10px", border: "1px solid #fecaca" }} title={`Menunggak bulan: ${item.tunggakan_bulan?.join(", ")}`}>
+                                Nunggak: {item.tunggakan_bulan?.join(", ")}
+                              </span>
+                            ) : null}
                             <button
                               onClick={() => handleToggleStatus(item)}
                               disabled={updatingId === item.id}

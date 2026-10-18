@@ -48,7 +48,7 @@ const DATA_SPP_EXCEL = [
   { nama: "Panji Ahmad", kelas: "IL", nominal: 1000000, juli: true, agustus: true, september: true, oktober: true },
   { nama: "Syeh Al Bani Irsyad Amrulloh", kelas: "IL", nominal: 1000000, juli: true, agustus: true, september: true, oktober: true },
   { nama: "Wahyu Hidayat", kelas: "IL", nominal: 1000000, juli: true, agustus: true, september: true, oktober: true },
-  { nama: "Iman Prayogo", kelas: "IL", nominal: 1000000, juli: false, agustus: true, september: true, oktober: true },
+  { nama: "Iman Prayogo", kelas: "IL", nominal: 1000000, juli: true, agustus: true, september: true, oktober: true },
 ];
 
 export async function GET() {
