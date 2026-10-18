@@ -125,6 +125,7 @@ export async function GET(req: NextRequest) {
     const filteredData = data.filter((item) => {
       if (statusFilter === "LUNAS") return item.spp.status === "lunas";
       if (statusFilter === "BELUM_LUNAS") return item.spp.status === "belum_lunas";
+      if (statusFilter === "MENUNGGU_VERIFIKASI") return item.spp.status === "menunggu_verifikasi";
       if (statusFilter === "TERKUNCI") return item.portal_access.startsWith("TERKUNCI");
       if (statusFilter === "DISPENSASI") return item.is_unlocked_manual;
       return true;

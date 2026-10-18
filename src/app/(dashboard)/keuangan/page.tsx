@@ -24,7 +24,12 @@ import {
   Save,
   X,
   Eye,
-  MessageSquare
+  MessageSquare,
+  ShieldCheck,
+  ThumbsDown,
+  Check,
+  Power,
+  HelpCircle
 } from "lucide-react";
 import Swal from "sweetalert2";
 
@@ -147,6 +152,54 @@ export default function KeuanganSPPPage() {
         fetchData();
       } else {
         Swal.fire("Gagal", data.error || "Gagal memverifikasi", "error");
+      }
+    } catch (e: any) {
+      Swal.fire("Error", e.message, "error");
+    } finally {
+      setVerifyingId(null);
+    }
+  }
+
+  // Tolak Konfirmasi Pembayaran SPP (Minta Bukti Transfer Ulang)
+  async function handleRejectPending(item: any) {
+    const { value: alasan } = await Swal.fire({
+      title: "Tolak Bukti Transfer?",
+      text: `Masukkan alasan penolakan untuk wali santri ananda ${item.santri?.nama_lengkap}:`,
+      input: "text",
+      inputPlaceholder: "Contoh: Bukti transfer buram / nominal tidak sesuai / dana belum masuk",
+      showCancelButton: true,
+      confirmButtonText: "Ya, Tolak Bukti",
+      cancelButtonText: "Batal",
+      confirmButtonColor: "#be123c"
+    });
+
+    if (!alasan) return;
+
+    setVerifyingId(item.id);
+    try {
+      const res = await fetch("/api/keuangan/spp", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          santri_id: item.santri_id,
+          bulan: item.bulan,
+          tahun: item.tahun,
+          status: "belum_lunas",
+          catatan: `[DITOLAK_KEUANGAN]: ${alasan}`
+        })
+      });
+      const data = await res.json();
+      if (res.ok) {
+        Swal.fire({
+          icon: "info",
+          title: "Bukti Transfer Ditolak",
+          text: "Status dikembalikan ke Belum Lunas. Wali santri dapat mengunggah bukti yang valid.",
+          timer: 3000,
+          showConfirmButton: false
+        });
+        fetchData();
+      } else {
+        Swal.fire("Gagal", data.error || "Gagal menolak bukti transfer", "error");
       }
     } catch (e: any) {
       Swal.fire("Error", e.message, "error");
@@ -444,8 +497,49 @@ export default function KeuanganSPPPage() {
         </div>
       </div>
 
+      {/* Kartu Panduan Kendali Akses & Verifikasi SPP */}
+      <div style={{ background: "linear-gradient(135deg, #1e293b 0%, #0f172a 60%, #550000 100%)", borderRadius: "24px", padding: "24px 28px", color: "white", boxShadow: "0 10px 25px -5px rgba(0,0,0,0.25)", border: "1px solid rgba(255,255,255,0.12)" }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: "20px" }}>
+          <div style={{ display: "flex", alignItems: "flex-start", gap: "14px", maxWidth: "680px" }}>
+            <div style={{ padding: "12px", borderRadius: "16px", background: "rgba(225, 29, 72, 0.2)", border: "1px solid rgba(251, 113, 133, 0.3)", color: "#fda4af", flexShrink: 0 }}>
+              <ShieldCheck style={{ width: "24px", height: "24px" }} />
+            </div>
+            <div>
+              <div style={{ display: "inline-flex", alignItems: "center", gap: "6px", padding: "3px 10px", borderRadius: "999px", background: "rgba(244, 63, 94, 0.2)", color: "#fecdd3", fontSize: "11px", fontWeight: "bold", border: "1px solid rgba(244, 63, 94, 0.3)", marginBottom: "6px" }}>
+                <span>Wewenang Admin Keuangan Al-Imam</span>
+              </div>
+              <h3 style={{ fontSize: "18px", fontWeight: 900, margin: 0, color: "white" }}>
+                Kendali Akses Portal Wali Santri &amp; Verifikasi Pembayaran
+              </h3>
+              <p style={{ fontSize: "12px", color: "#cbd5e1", margin: "6px 0 0 0", lineHeight: "1.5" }}>
+                Gunakan saklar <strong style={{ color: "#34d399" }}>[ON / OFF]</strong> di kolom Akses Portal untuk membuka (Dispensasi) atau mengunci portal wali santri secara instan tanpa menunggu pelunasan. Bukti transfer yang diunggah wali santri akan masuk ke antrean verifikasi untuk disetujui dalam 1-klik.
+              </p>
+            </div>
+          </div>
+
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: "10px", width: "100%", maxWidth: "420px" }}>
+            <div style={{ background: "rgba(255,255,255,0.07)", border: "1px solid rgba(255,255,255,0.12)", borderRadius: "16px", padding: "12px" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "6px", fontWeight: "bold", color: "#6ee7b7", fontSize: "12px", marginBottom: "4px" }}>
+                <Unlock style={{ width: "14px", height: "14px" }} /> Saklar ON / OFF
+              </div>
+              <p style={{ margin: 0, fontSize: "11px", color: "#94a3b8", lineHeight: "1.3" }}>
+                Klik tombol switch di kolom <strong>Akses Portal</strong> untuk membuka (ON) atau mengunci (OFF) manual.
+              </p>
+            </div>
+            <div style={{ background: "rgba(255,255,255,0.07)", border: "1px solid rgba(255,255,255,0.12)", borderRadius: "16px", padding: "12px" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "6px", fontWeight: "bold", color: "#fcd34d", fontSize: "12px", marginBottom: "4px" }}>
+                <Clock style={{ width: "14px", height: "14px" }} /> Verifikasi Bukti
+              </div>
+              <p style={{ margin: 0, fontSize: "11px", color: "#94a3b8", lineHeight: "1.3" }}>
+                Wali upload bukti transfer &rarr; periksa struk &rarr; klik <strong>Setujui &amp; Buka</strong> untuk membuka portal.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
       {/* Antrean Konfirmasi Pembayaran Menunggu Verifikasi */}
-      {pendingList.length > 0 && (
+      {pendingList.length > 0 ? (
         <div style={{ background: "linear-gradient(135deg, #fffbeb 0%, #fef3c7 50%, #fff7ed 100%)", border: "2px solid #fcd34d", borderRadius: "24px", padding: "24px", boxShadow: "0 10px 25px -5px rgba(245, 158, 11, 0.15)", display: "flex", flexDirection: "column", gap: "16px" }}>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "12px", borderBottom: "1px solid #fde68a", paddingBottom: "14px" }}>
             <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
@@ -462,7 +556,7 @@ export default function KeuanganSPPPage() {
                   </span>
                 </div>
                 <p style={{ fontSize: "12px", color: "#92400e", margin: "4px 0 0 0", lineHeight: "1.4" }}>
-                  Wali santri telah mengirim bukti transfer / melunasi SPP via portal. Verifikasi penerimaan dana lalu klik tombol <strong>[Setujui &amp; Lunas]</strong> untuk membuka akses portal secara permanen.
+                  Wali santri telah mengirim bukti transfer / melunasi SPP via portal. Verifikasi penerimaan dana lalu klik tombol <strong>[Setujui &amp; Buka Akses]</strong> untuk membuka akses portal secara permanen.
                 </p>
               </div>
             </div>
@@ -529,11 +623,11 @@ export default function KeuanganSPPPage() {
                     {proofUrl && (
                       <button
                         onClick={() => setSelectedProofUrl(proofUrl)}
-                        style={{ marginTop: "8px", width: "100%", padding: "6px 12px", borderRadius: "10px", background: "#f8fafc", border: "1px solid #e2e8f0", color: "#334155", fontSize: "11px", fontWeight: "bold", cursor: "pointer", display: "inline-flex", alignItems: "center", justifyContent: "center", gap: "6px" }}
-                        className="hover:bg-slate-100"
+                        style={{ marginTop: "8px", width: "100%", padding: "7px 12px", borderRadius: "10px", background: "#eff6ff", border: "1px solid #bfdbfe", color: "#1d4ed8", fontSize: "11px", fontWeight: "bold", cursor: "pointer", display: "inline-flex", alignItems: "center", justifyContent: "center", gap: "6px" }}
+                        className="hover:bg-blue-100 transition-colors"
                       >
                         <Eye style={{ width: "13px", height: "13px" }} />
-                        <span>Lihat Bukti Transfer</span>
+                        <span>Lihat Foto / Bukti Transfer</span>
                       </button>
                     )}
                   </div>
@@ -544,19 +638,54 @@ export default function KeuanganSPPPage() {
                       disabled={verifyingId === item.id}
                       style={{ flex: 1, padding: "8px 12px", borderRadius: "12px", background: "#059669", color: "white", fontWeight: "bold", fontSize: "12px", border: "none", cursor: "pointer", display: "inline-flex", alignItems: "center", justifyContent: "center", gap: "6px", boxShadow: "0 2px 4px rgba(5, 150, 105, 0.2)" }}
                       className="hover:bg-emerald-700 transition-colors"
+                      title="Setujui transfer dan buka akses portal wali santri"
                     >
                       {verifyingId === item.id ? (
                         <RefreshCw className="animate-spin" style={{ width: "13px", height: "13px" }} />
                       ) : (
                         <CheckCircle2 style={{ width: "14px", height: "14px" }} />
                       )}
-                      <span>Setujui (Lunas)</span>
+                      <span>Setujui &amp; Buka</span>
+                    </button>
+                    <button
+                      onClick={() => handleRejectPending(item)}
+                      disabled={verifyingId === item.id}
+                      style={{ padding: "8px 12px", borderRadius: "12px", background: "#fff1f2", color: "#be123c", border: "1px solid #fecdd3", fontWeight: "bold", fontSize: "12px", cursor: "pointer", display: "inline-flex", alignItems: "center", justifyContent: "center", gap: "4px" }}
+                      className="hover:bg-rose-100 transition-colors"
+                      title="Tolak bukti transfer jika tidak valid"
+                    >
+                      <XCircle style={{ width: "14px", height: "14px" }} />
+                      <span>Tolak</span>
                     </button>
                   </div>
                 </div>
               );
             })}
           </div>
+        </div>
+      ) : (
+        <div style={{ background: "linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%)", border: "1px solid #a7f3d0", borderRadius: "20px", padding: "16px 22px", display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "12px", boxShadow: "0 1px 3px rgba(0,0,0,0.04)" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+            <div style={{ padding: "8px", borderRadius: "12px", background: "#10b981", color: "white", display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <CheckCircle2 style={{ width: "18px", height: "18px" }} />
+            </div>
+            <div>
+              <div style={{ fontWeight: 800, fontSize: "13px", color: "#065f46" }}>
+                Antrean Verifikasi Kosong (0 Menunggu)
+              </div>
+              <div style={{ fontSize: "11px", color: "#047857", marginTop: "2px" }}>
+                Semua bukti transfer wali santri telah diproses. Pengajuan konfirmasi baru yang diunggah wali santri via portal akan langsung muncul di sini.
+              </div>
+            </div>
+          </div>
+          <button
+            onClick={fetchData}
+            style={{ padding: "6px 14px", borderRadius: "10px", background: "white", border: "1px solid #a7f3d0", color: "#065f46", fontSize: "11px", fontWeight: "bold", cursor: "pointer", display: "inline-flex", alignItems: "center", gap: "5px" }}
+            className="hover:bg-emerald-50 transition-colors"
+          >
+            <RefreshCw className={loading ? "animate-spin" : ""} style={{ width: "12px", height: "12px" }} />
+            <span>Cek Pengajuan Baru</span>
+          </button>
         </div>
       )}
 
@@ -685,34 +814,51 @@ export default function KeuanganSPPPage() {
           </select>
 
           {/* Filter Status */}
-          <div style={{ display: "inline-flex", background: "#f1f5f9", padding: "4px", borderRadius: "16px", border: "1px solid #e2e8f0", fontSize: "12px" }}>
+          <div style={{ display: "inline-flex", background: "#f1f5f9", padding: "4px", borderRadius: "16px", border: "1px solid #e2e8f0", fontSize: "12px", flexWrap: "wrap", gap: "4px" }}>
             <button
               onClick={() => setStatusFilter("ALL")}
-              style={{ padding: "8px 16px", borderRadius: "12px", fontWeight: "bold", border: "none", cursor: "pointer", transition: "all 0.2s", background: statusFilter === "ALL" ? "white" : "transparent", color: statusFilter === "ALL" ? "#0f172a" : "#475569", boxShadow: statusFilter === "ALL" ? "0 1px 2px rgba(0,0,0,0.05)" : "none" }}
+              style={{ padding: "8px 14px", borderRadius: "12px", fontWeight: "bold", border: "none", cursor: "pointer", transition: "all 0.2s", background: statusFilter === "ALL" ? "white" : "transparent", color: statusFilter === "ALL" ? "#0f172a" : "#475569", boxShadow: statusFilter === "ALL" ? "0 1px 2px rgba(0,0,0,0.05)" : "none" }}
             >
               Semua
             </button>
             <button
-              onClick={() => setStatusFilter("LUNAS")}
-              style={{ padding: "8px 16px", borderRadius: "12px", fontWeight: "bold", border: "none", cursor: "pointer", transition: "all 0.2s", background: statusFilter === "LUNAS" ? "#059669" : "transparent", color: statusFilter === "LUNAS" ? "white" : "#475569", boxShadow: statusFilter === "LUNAS" ? "0 1px 2px rgba(0,0,0,0.05)" : "none" }}
+              onClick={() => setStatusFilter("MENUNGGU_VERIFIKASI")}
+              style={{
+                padding: "8px 14px",
+                borderRadius: "12px",
+                fontWeight: "bold",
+                border: "none",
+                cursor: "pointer",
+                transition: "all 0.2s",
+                background: statusFilter === "MENUNGGU_VERIFIKASI" ? "#d97706" : pendingList.length > 0 ? "#fef3c7" : "transparent",
+                color: statusFilter === "MENUNGGU_VERIFIKASI" ? "white" : pendingList.length > 0 ? "#92400e" : "#475569",
+                boxShadow: statusFilter === "MENUNGGU_VERIFIKASI" ? "0 1px 2px rgba(0,0,0,0.05)" : "none"
+              }}
+              className={pendingList.length > 0 && statusFilter !== "MENUNGGU_VERIFIKASI" ? "animate-pulse" : ""}
             >
-              Lunas
+              ⏳ Menunggu Verifikasi ({summary?.total_pending_verifikasi || pendingList.length})
+            </button>
+            <button
+              onClick={() => setStatusFilter("LUNAS")}
+              style={{ padding: "8px 14px", borderRadius: "12px", fontWeight: "bold", border: "none", cursor: "pointer", transition: "all 0.2s", background: statusFilter === "LUNAS" ? "#059669" : "transparent", color: statusFilter === "LUNAS" ? "white" : "#475569", boxShadow: statusFilter === "LUNAS" ? "0 1px 2px rgba(0,0,0,0.05)" : "none" }}
+            >
+              Lunas ({summary?.total_lunas || 0})
             </button>
             <button
               onClick={() => setStatusFilter("BELUM_LUNAS")}
-              style={{ padding: "8px 16px", borderRadius: "12px", fontWeight: "bold", border: "none", cursor: "pointer", transition: "all 0.2s", background: statusFilter === "BELUM_LUNAS" ? "#d97706" : "transparent", color: statusFilter === "BELUM_LUNAS" ? "white" : "#475569", boxShadow: statusFilter === "BELUM_LUNAS" ? "0 1px 2px rgba(0,0,0,0.05)" : "none" }}
+              style={{ padding: "8px 14px", borderRadius: "12px", fontWeight: "bold", border: "none", cursor: "pointer", transition: "all 0.2s", background: statusFilter === "BELUM_LUNAS" ? "#d97706" : "transparent", color: statusFilter === "BELUM_LUNAS" ? "white" : "#475569", boxShadow: statusFilter === "BELUM_LUNAS" ? "0 1px 2px rgba(0,0,0,0.05)" : "none" }}
             >
-              Belum Lunas
+              Belum Lunas ({summary?.total_belum_lunas || 0})
             </button>
             <button
               onClick={() => setStatusFilter("TERKUNCI")}
-              style={{ padding: "8px 16px", borderRadius: "12px", fontWeight: "bold", border: "none", cursor: "pointer", transition: "all 0.2s", background: statusFilter === "TERKUNCI" ? "#e11d48" : "transparent", color: statusFilter === "TERKUNCI" ? "white" : "#475569", boxShadow: statusFilter === "TERKUNCI" ? "0 1px 2px rgba(0,0,0,0.05)" : "none" }}
+              style={{ padding: "8px 14px", borderRadius: "12px", fontWeight: "bold", border: "none", cursor: "pointer", transition: "all 0.2s", background: statusFilter === "TERKUNCI" ? "#e11d48" : "transparent", color: statusFilter === "TERKUNCI" ? "white" : "#475569", boxShadow: statusFilter === "TERKUNCI" ? "0 1px 2px rgba(0,0,0,0.05)" : "none" }}
             >
-              Terkunci
+              Terkunci ({summary?.total_terkunci || 0})
             </button>
             <button
               onClick={() => setStatusFilter("DISPENSASI")}
-              style={{ padding: "8px 16px", borderRadius: "12px", fontWeight: "bold", border: "none", cursor: "pointer", transition: "all 0.2s", background: statusFilter === "DISPENSASI" ? "#ea580c" : "transparent", color: statusFilter === "DISPENSASI" ? "white" : "#475569", boxShadow: statusFilter === "DISPENSASI" ? "0 1px 2px rgba(0,0,0,0.05)" : "none" }}
+              style={{ padding: "8px 14px", borderRadius: "12px", fontWeight: "bold", border: "none", cursor: "pointer", transition: "all 0.2s", background: statusFilter === "DISPENSASI" ? "#ea580c" : "transparent", color: statusFilter === "DISPENSASI" ? "white" : "#475569", boxShadow: statusFilter === "DISPENSASI" ? "0 1px 2px rgba(0,0,0,0.05)" : "none" }}
             >
               Dispensasi ({summary?.total_dispensasi || 0})
             </button>
@@ -722,18 +868,18 @@ export default function KeuanganSPPPage() {
 
       {/* Main Table */}
       <div style={{ background: "white", borderRadius: "24px", border: "1px solid #f1f5f9", boxShadow: "0 1px 3px 0 rgba(0,0,0,0.1)", overflow: "hidden" }}>
-        <div style={{ overflowX: "auto" }}>
+        <div style={{ overflowX: "auto" }} className="custom-scrollbar">
           <table style={{ width: "100%", textAlign: "left", borderCollapse: "collapse", fontSize: "14px" }}>
-            <thead style={{ background: "#f8fafc", borderBottom: "1px solid #e2e8f0" }}>
-              <tr style={{ fontSize: "11px", fontWeight: 900, textTransform: "uppercase", color: "#64748b", letterSpacing: "0.05em" }}>
-                <th style={{ padding: "16px 20px", textAlign: "center", width: "48px" }}>No</th>
-                <th style={{ padding: "16px 20px", minWidth: "200px" }}>Nama Santri &amp; NIS</th>
-                <th style={{ padding: "16px 20px", minWidth: "130px" }}>Kelas</th>
-                <th style={{ padding: "16px 20px", minWidth: "140px" }}>Tagihan SPP</th>
-                <th style={{ padding: "16px 20px", minWidth: "140px", textAlign: "center" }}>Status Pembayaran</th>
-                <th style={{ padding: "16px 20px", minWidth: "160px", textAlign: "center" }}>Akses Portal Wali</th>
-                <th style={{ padding: "16px 20px", minWidth: "140px" }}>Tgl Bayar</th>
-                <th style={{ padding: "16px 20px", minWidth: "160px", textAlign: "center" }}>Aksi Cepat</th>
+            <thead style={{ background: "#f8fafc", borderBottom: "2px solid #e2e8f0" }}>
+              <tr style={{ fontSize: "11px", fontWeight: 900, textTransform: "uppercase", color: "#475569", letterSpacing: "0.05em" }}>
+                <th style={{ padding: "14px 16px", textAlign: "center", width: "44px" }}>No</th>
+                <th style={{ padding: "14px 16px", minWidth: "180px" }}>Nama Santri &amp; NIS</th>
+                <th style={{ padding: "14px 16px", minWidth: "90px" }}>Kelas</th>
+                <th style={{ padding: "14px 16px", minWidth: "120px" }}>Tagihan SPP</th>
+                <th style={{ padding: "14px 16px", minWidth: "190px", textAlign: "center" }}>Status Pembayaran</th>
+                <th style={{ padding: "14px 16px", minWidth: "190px", textAlign: "center" }}>Akses Portal (ON / OFF)</th>
+                <th style={{ padding: "14px 16px", minWidth: "120px" }}>Tgl Bayar</th>
+                <th style={{ padding: "14px 16px", minWidth: "100px", textAlign: "center", position: "sticky", right: 0, background: "#f8fafc", boxShadow: "-3px 0 6px -2px rgba(0,0,0,0.05)", zIndex: 10 }}>Aksi</th>
               </tr>
             </thead>
             <tbody>
@@ -758,187 +904,238 @@ export default function KeuanganSPPPage() {
                   const isMenunggu = (item.spp.status as any) === "menunggu_verifikasi";
                   const isTerkunci = item.spp.lock_status === "TERKUNCI" && !isMenunggu;
                   const isTenggang = item.spp.lock_status === "TENGGANG";
+                  const isPortalOpen = !item.is_locked_manual && (item.is_unlocked_manual || isLunas || isMenunggu || isTenggang);
 
                   return (
                     <tr key={item.id} className="hover:bg-[#f0fdf4] transition-colors" style={{ backgroundColor: idx % 2 === 0 ? "white" : "#fafafa", borderBottom: "1px solid #f1f5f9" }}>
-                      <td style={{ padding: "16px 20px", textAlign: "center", fontWeight: "bold", color: "#94a3b8" }}>
+                      <td style={{ padding: "14px 16px", textAlign: "center", fontWeight: "bold", color: "#94a3b8" }}>
                         {idx + 1}
                       </td>
-                      <td style={{ padding: "16px 20px" }}>
+                      <td style={{ padding: "14px 16px" }}>
                         <div style={{ fontWeight: 900, color: "#1e293b", fontSize: "14px" }}>{item.nama_lengkap}</div>
                         <div style={{ fontSize: "11px", color: "#94a3b8", fontFamily: "monospace", marginTop: "2px" }}>NIS: {item.nis || "-"}</div>
                       </td>
-                      <td style={{ padding: "16px 20px" }}>
+                      <td style={{ padding: "14px 16px" }}>
                         <span style={{ display: "inline-flex", alignItems: "center", padding: "4px 10px", borderRadius: "8px", background: "#f1f5f9", color: "#1e293b", fontWeight: "bold", fontSize: "11px" }}>
                           {item.kelas_nama}
                         </span>
                       </td>
-                      <td style={{ padding: "16px 20px", fontWeight: "bold", color: "#1e293b" }}>
+                      <td style={{ padding: "14px 16px", fontWeight: "bold", color: "#1e293b" }}>
                         {formatRupiah(item.spp.nominal)}
                       </td>
-                      <td style={{ padding: "16px 20px", textAlign: "center" }}>
+
+                      {/* 1. Kolom Status Pembayaran & Tindakan Cepat */}
+                      <td style={{ padding: "14px 16px", textAlign: "center" }}>
                         {isLunas ? (
-                          <span style={{ display: "inline-flex", alignItems: "center", gap: "6px", padding: "4px 10px", borderRadius: "999px", background: "#d1fae5", color: "#065f46", fontWeight: 900, fontSize: "11px" }}>
-                            <CheckCircle2 style={{ width: "14px", height: "14px", color: "#059669" }} /> LUNAS
-                          </span>
+                          <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "4px" }}>
+                            <span style={{ display: "inline-flex", alignItems: "center", gap: "6px", padding: "4px 12px", borderRadius: "999px", background: "#d1fae5", color: "#065f46", fontWeight: 900, fontSize: "11px", border: "1px solid #a7f3d0" }}>
+                              <CheckCircle2 style={{ width: "13px", height: "13px", color: "#059669" }} /> LUNAS
+                            </span>
+                            <button
+                              onClick={() => handleToggleStatus(item)}
+                              disabled={updatingId === item.id}
+                              style={{ fontSize: "10px", color: "#94a3b8", background: "none", border: "none", textDecoration: "underline", cursor: "pointer" }}
+                              className="hover:text-rose-600 transition-colors"
+                              title="Batalkan status lunas jika salah catat"
+                            >
+                              Batalkan
+                            </button>
+                          </div>
                         ) : isMenunggu ? (
-                          <span style={{ display: "inline-flex", alignItems: "center", gap: "6px", padding: "4px 10px", borderRadius: "999px", background: "#fef3c7", color: "#92400e", fontWeight: 900, fontSize: "11px", border: "1px solid #fde68a" }}>
-                            <Clock style={{ width: "14px", height: "14px", color: "#d97706" }} className="animate-spin" /> VERIFIKASI WALI
-                          </span>
-                        ) : (
-                          <span style={{ display: "inline-flex", alignItems: "center", gap: "6px", padding: "4px 10px", borderRadius: "999px", background: "#fef3c7", color: "#92400e", fontWeight: 900, fontSize: "11px" }}>
-                            <Clock style={{ width: "14px", height: "14px", color: "#d97706" }} /> BELUM BAYAR
-                          </span>
-                        )}
-                      </td>
-                      <td style={{ padding: "16px 20px", textAlign: "center" }}>
-                        {item.is_locked_manual ? (
-                          <span style={{ display: "inline-flex", alignItems: "center", gap: "4px", padding: "4px 10px", borderRadius: "8px", background: "#fff1f2", color: "#be123c", fontWeight: "bold", fontSize: "11px", border: "1px solid rgba(225, 29, 72, 0.3)" }}>
-                            <Lock style={{ width: "12px", height: "12px", color: "#e11d48" }} /> Terkunci (Manual Admin)
-                          </span>
-                        ) : item.is_unlocked_manual ? (
-                          <span style={{ display: "inline-flex", alignItems: "center", gap: "4px", padding: "4px 10px", borderRadius: "8px", background: "#fff7ed", color: "#c2410c", fontWeight: "bold", fontSize: "11px", border: "1px solid rgba(234, 88, 12, 0.3)" }}>
-                            <Unlock style={{ width: "12px", height: "12px", color: "#ea580c" }} /> Terbuka (Dispensasi)
-                          </span>
-                        ) : isLunas ? (
-                          <span style={{ display: "inline-flex", alignItems: "center", gap: "4px", padding: "4px 10px", borderRadius: "8px", background: "#ecfdf5", color: "#047857", fontWeight: "bold", fontSize: "11px", border: "1px solid rgba(16, 185, 129, 0.2)" }}>
-                            <Unlock style={{ width: "12px", height: "12px", color: "#059669" }} /> Terbuka (Lunas)
-                          </span>
-                        ) : isMenunggu ? (
-                          <span style={{ display: "inline-flex", alignItems: "center", gap: "4px", padding: "4px 10px", borderRadius: "8px", background: "#eff6ff", color: "#1d4ed8", fontWeight: "bold", fontSize: "11px", border: "1px solid rgba(59, 130, 246, 0.3)" }}>
-                            <Unlock style={{ width: "12px", height: "12px", color: "#2563eb" }} /> Terbuka (Verifikasi)
-                          </span>
-                        ) : isTenggang ? (
-                          <span style={{ display: "inline-flex", alignItems: "center", gap: "4px", padding: "4px 10px", borderRadius: "8px", background: "#eff6ff", color: "#1d4ed8", fontWeight: "bold", fontSize: "11px", border: "1px solid rgba(59, 130, 246, 0.2)" }} title="Akses dibuka hingga tgl 10">
-                            <Clock style={{ width: "12px", height: "12px", color: "#2563eb" }} /> Masa Tenggang (Tgl 1-10)
-                          </span>
-                        ) : (
-                          <span style={{ display: "inline-flex", alignItems: "center", gap: "4px", padding: "4px 10px", borderRadius: "8px", background: "#fff1f2", color: "#be123c", fontWeight: "bold", fontSize: "11px", border: "1px solid rgba(225, 29, 72, 0.2)" }} className="animate-pulse">
-                            <Lock style={{ width: "12px", height: "12px", color: "#e11d48" }} /> Terkunci Otomatis
-                          </span>
-                        )}
-                      </td>
-                      <td style={{ padding: "16px 20px", color: "#64748b", fontWeight: 500 }}>
-                        {item.spp.tanggal_bayar ? (
-                          <div>
-                            <div style={{ fontWeight: 600, color: "#1e293b" }}>{item.spp.tanggal_bayar}</div>
-                            <div style={{ fontSize: "10px", color: "#94a3b8", textTransform: "uppercase", marginTop: "2px" }}>{item.spp.metode_bayar}</div>
+                          <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "6px" }}>
+                            <span style={{ display: "inline-flex", alignItems: "center", gap: "4px", padding: "4px 10px", borderRadius: "999px", background: "#fef3c7", color: "#92400e", fontWeight: 900, fontSize: "11px", border: "1px solid #fde68a" }} className="animate-pulse">
+                              <Clock style={{ width: "12px", height: "12px", color: "#d97706" }} className="animate-spin" /> Verifikasi Wali
+                            </span>
+                            <div style={{ display: "flex", alignItems: "center", gap: "4px" }}>
+                              <button
+                                onClick={() => {
+                                  const p = pendingList.find((x) => x.santri_id === item.id && x.bulan === selectedBulan && x.tahun === selectedTahun);
+                                  if (p) handleVerifyPending(p);
+                                  else handleToggleStatus(item);
+                                }}
+                                disabled={updatingId === item.id || verifyingId !== null}
+                                style={{ padding: "4px 8px", borderRadius: "8px", background: "#059669", color: "white", fontSize: "11px", fontWeight: "bold", border: "none", cursor: "pointer", display: "inline-flex", alignItems: "center", gap: "3px" }}
+                                className="hover:bg-emerald-700"
+                                title="Setujui transfer dan buka akses portal"
+                              >
+                                <CheckCircle2 style={{ width: "12px", height: "12px" }} /> Setujui
+                              </button>
+                              {(() => {
+                                const p = pendingList.find((x) => x.santri_id === item.id && x.bulan === selectedBulan && x.tahun === selectedTahun);
+                                let pUrl: string | null = null;
+                                if (p?.catatan?.includes("[BUKTI_TRANSFER:")) {
+                                  const m = p.catatan.match(/\[BUKTI_TRANSFER:(.*?)\]/);
+                                  if (m && m[1]) pUrl = m[1];
+                                }
+                                if (!pUrl && item.spp.catatan?.includes("[BUKTI_TRANSFER:")) {
+                                  const m = item.spp.catatan.match(/\[BUKTI_TRANSFER:(.*?)\]/);
+                                  if (m && m[1]) pUrl = m[1];
+                                }
+                                if (pUrl) {
+                                  return (
+                                    <button
+                                      onClick={() => setSelectedProofUrl(pUrl)}
+                                      style={{ padding: "4px 6px", borderRadius: "8px", background: "#eff6ff", border: "1px solid #bfdbfe", color: "#2563eb", cursor: "pointer" }}
+                                      title="Lihat Foto Bukti Transfer"
+                                    >
+                                      <Eye style={{ width: "12px", height: "12px" }} />
+                                    </button>
+                                  );
+                                }
+                                return null;
+                              })()}
+                            </div>
                           </div>
                         ) : (
-                          <span style={{ color: "#94a3b8", fontStyle: "italic" }}>-</span>
+                          <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "6px" }}>
+                            <span style={{ display: "inline-flex", alignItems: "center", gap: "4px", padding: "4px 10px", borderRadius: "999px", background: "#fef3c7", color: "#92400e", fontWeight: "bold", fontSize: "11px", border: "1px solid #fde68a" }}>
+                              <Clock style={{ width: "12px", height: "12px", color: "#d97706" }} /> BELUM BAYAR
+                            </span>
+                            <button
+                              onClick={() => handleToggleStatus(item)}
+                              disabled={updatingId === item.id}
+                              style={{ padding: "5px 12px", borderRadius: "10px", background: "#059669", color: "white", fontSize: "11px", fontWeight: "bold", border: "none", cursor: "pointer", display: "inline-flex", alignItems: "center", gap: "4px", boxShadow: "0 2px 4px rgba(5, 150, 105, 0.2)" }}
+                              className="hover:bg-emerald-700 transition-all"
+                              title="Tandai pembayaran SPP bulan ini lunas dan buka akses portal"
+                            >
+                              <CheckCircle2 style={{ width: "12px", height: "12px" }} /> Tandai Lunas
+                            </button>
+                          </div>
                         )}
                       </td>
-                      <td style={{ padding: "16px 20px", textAlign: "center" }}>
-                        <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "6px", flexWrap: "wrap" }}>
-                          {/* 1. Toggle Lunas */}
-                          <button
-                            onClick={() => handleToggleStatus(item)}
-                            disabled={updatingId === item.id}
-                            style={{
-                              padding: "7px 11px",
-                              borderRadius: "10px",
-                              fontWeight: "bold",
-                              fontSize: "11px",
-                              display: "flex",
-                              alignItems: "center",
-                              gap: "4px",
-                              cursor: "pointer",
-                              border: isLunas ? "1px solid #fecdd3" : "none",
-                              background: isLunas ? "#fff1f2" : isMenunggu ? "#059669" : "#10b981",
-                              color: isLunas ? "#be123c" : "white",
-                              boxShadow: isLunas ? "none" : "0 4px 6px -1px rgba(16, 185, 129, 0.2)",
-                              transition: "all 0.2s"
-                            }}
-                            className={isLunas ? "hover:bg-rose-100" : isMenunggu ? "hover:bg-emerald-700" : "hover:bg-emerald-600"}
-                            title={isLunas ? "Batalkan status lunas" : "Tandai lunas"}
-                          >
-                            {updatingId === item.id ? (
-                              <RefreshCw className="animate-spin" style={{ width: "13px", height: "13px" }} />
-                            ) : isLunas ? (
-                              <>
-                                <XCircle style={{ width: "13px", height: "13px" }} /> Batal Lunas
-                              </>
-                            ) : (
-                              <>
-                                <CheckCircle2 style={{ width: "13px", height: "13px" }} /> {isMenunggu ? "Setujui" : "Lunas"}
-                              </>
-                            )}
-                          </button>
 
-                          {/* 2. Tombol Buka / Kunci Akses Portal Wali */}
-                          {item.is_unlocked_manual ? (
+                      {/* 2. Kolom Akses Portal Wali Santri (Interactive Saklar ON / OFF) */}
+                      <td style={{ padding: "14px 16px", textAlign: "center" }}>
+                        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "4px" }}>
+                          {isPortalOpen ? (
                             <button
-                              onClick={() => handleTogglePortalLock(item, "auto")}
-                              disabled={updatingId === item.id}
-                              style={{
-                                padding: "7px 10px",
-                                borderRadius: "10px",
-                                fontWeight: "bold",
-                                fontSize: "11px",
-                                display: "flex",
-                                alignItems: "center",
-                                gap: "4px",
-                                cursor: "pointer",
-                                border: "1px solid #fed7aa",
-                                background: "#fff7ed",
-                                color: "#c2410c",
-                                transition: "all 0.2s"
-                              }}
-                              className="hover:bg-amber-100"
-                              title="Kembalikan status akses portal ke otomatisasi sistem"
-                            >
-                              <RefreshCw style={{ width: "13px", height: "13px" }} /> Reset
-                            </button>
-                          ) : (isTerkunci || item.is_locked_manual) ? (
-                            <button
-                              onClick={() => handleTogglePortalLock(item, "unlock")}
-                              disabled={updatingId === item.id}
-                              style={{
-                                padding: "7px 10px",
-                                borderRadius: "10px",
-                                fontWeight: "bold",
-                                fontSize: "11px",
-                                display: "flex",
-                                alignItems: "center",
-                                gap: "4px",
-                                cursor: "pointer",
-                                border: "none",
-                                background: "#059669",
-                                color: "white",
-                                boxShadow: "0 2px 4px rgba(5, 150, 105, 0.2)",
-                                transition: "all 0.2s"
-                              }}
-                              className="hover:bg-emerald-700"
-                              title="Buka akses portal wali santri secara manual (beri dispensasi)"
-                            >
-                              <Unlock style={{ width: "13px", height: "13px" }} /> Buka Akses
-                            </button>
-                          ) : (
-                            <button
+                              type="button"
                               onClick={() => handleTogglePortalLock(item, "lock")}
                               disabled={updatingId === item.id}
                               style={{
-                                padding: "7px 10px",
-                                borderRadius: "10px",
-                                fontWeight: "bold",
-                                fontSize: "11px",
-                                display: "flex",
+                                display: "inline-flex",
                                 alignItems: "center",
-                                gap: "4px",
+                                gap: "6px",
+                                padding: "6px 12px",
+                                borderRadius: "999px",
+                                background: "#ecfdf5",
+                                border: "2px solid #10b981",
+                                color: "#065f46",
+                                fontWeight: 900,
+                                fontSize: "11px",
                                 cursor: "pointer",
-                                border: "1px solid #fecdd3",
-                                background: "#fff1f2",
-                                color: "#be123c",
+                                boxShadow: "0 2px 4px rgba(16, 185, 129, 0.15)",
                                 transition: "all 0.2s"
                               }}
-                              className="hover:bg-rose-100"
-                              title="Kunci akses portal wali santri secara manual"
+                              className="hover:bg-emerald-100 hover:scale-[1.02] active:scale-[0.98]"
+                              title="Klik untuk MATIKAN / Kunci Akses Portal Santri (OFF)"
                             >
-                              <Lock style={{ width: "13px", height: "13px" }} /> Kunci
+                              {updatingId === item.id ? (
+                                <RefreshCw className="animate-spin" style={{ width: "12px", height: "12px" }} />
+                              ) : (
+                                <>
+                                  <span style={{ width: "7px", height: "7px", borderRadius: "999px", background: "#10b981" }} className="animate-ping" />
+                                  <span>ON (Terbuka)</span>
+                                  <span style={{ width: "26px", height: "16px", borderRadius: "999px", background: "#10b981", display: "inline-flex", alignItems: "center", justifyContent: "flex-end", padding: "1px", marginLeft: "2px" }}>
+                                    <span style={{ width: "14px", height: "14px", borderRadius: "999px", background: "white", display: "inline-flex", alignItems: "center", justifyContent: "center", boxShadow: "0 1px 2px rgba(0,0,0,0.2)" }}>
+                                      <Unlock style={{ width: "8px", height: "8px", color: "#059669" }} />
+                                    </span>
+                                  </span>
+                                </>
+                              )}
+                            </button>
+                          ) : (
+                            <button
+                              type="button"
+                              onClick={() => handleTogglePortalLock(item, "unlock")}
+                              disabled={updatingId === item.id}
+                              style={{
+                                display: "inline-flex",
+                                alignItems: "center",
+                                gap: "6px",
+                                padding: "6px 12px",
+                                borderRadius: "999px",
+                                background: "#fff1f2",
+                                border: "2px solid #f43f5e",
+                                color: "#9f1239",
+                                fontWeight: 900,
+                                fontSize: "11px",
+                                cursor: "pointer",
+                                boxShadow: "0 2px 4px rgba(244, 63, 94, 0.15)",
+                                transition: "all 0.2s"
+                              }}
+                              className="hover:bg-rose-100 hover:scale-[1.02] active:scale-[0.98]"
+                              title="Klik untuk NYALAKAN / Beri Dispensasi Buka Akses Portal (ON)"
+                            >
+                              {updatingId === item.id ? (
+                                <RefreshCw className="animate-spin" style={{ width: "12px", height: "12px" }} />
+                              ) : (
+                                <>
+                                  <span style={{ width: "26px", height: "16px", borderRadius: "999px", background: "#f43f5e", display: "inline-flex", alignItems: "center", justifyContent: "flex-start", padding: "1px", marginRight: "2px" }}>
+                                    <span style={{ width: "14px", height: "14px", borderRadius: "999px", background: "white", display: "inline-flex", alignItems: "center", justifyContent: "center", boxShadow: "0 1px 2px rgba(0,0,0,0.2)" }}>
+                                      <Lock style={{ width: "8px", height: "8px", color: "#e11d48" }} />
+                                    </span>
+                                  </span>
+                                  <span>OFF (Terkunci)</span>
+                                  <span style={{ width: "7px", height: "7px", borderRadius: "999px", background: "#f43f5e" }} />
+                                </>
+                              )}
                             </button>
                           )}
 
-                          {/* 3. Tombol Edit Rincian */}
+                          {/* Keterangan Status Akses & Tombol Reset */}
+                          <div style={{ fontSize: "10px", fontWeight: "bold" }}>
+                            {item.is_unlocked_manual ? (
+                              <span style={{ color: "#c2410c", display: "inline-flex", alignItems: "center", gap: "3px" }}>
+                                <Sparkles style={{ width: "10px", height: "10px" }} /> Dispensasi Admin
+                                <button
+                                  type="button"
+                                  onClick={() => handleTogglePortalLock(item, "auto")}
+                                  style={{ color: "#2563eb", background: "none", border: "none", textDecoration: "underline", cursor: "pointer", marginLeft: "2px" }}
+                                  title="Kembalikan ke status otomatisasi SPP"
+                                >
+                                  (Reset)
+                                </button>
+                              </span>
+                            ) : item.is_locked_manual ? (
+                              <span style={{ color: "#be123c", display: "inline-flex", alignItems: "center", gap: "3px" }}>
+                                Manual Dikunci
+                                <button
+                                  type="button"
+                                  onClick={() => handleTogglePortalLock(item, "auto")}
+                                  style={{ color: "#2563eb", background: "none", border: "none", textDecoration: "underline", cursor: "pointer", marginLeft: "2px" }}
+                                  title="Kembalikan ke status otomatisasi SPP"
+                                >
+                                  (Reset)
+                                </button>
+                              </span>
+                            ) : isLunas ? (
+                              <span style={{ color: "#059669" }}>Otomatis Lunas</span>
+                            ) : isMenunggu ? (
+                              <span style={{ color: "#2563eb" }}>Verifikasi Wali</span>
+                            ) : isTenggang ? (
+                              <span style={{ color: "#2563eb" }}>Masa Tenggang (Tgl 1-10)</span>
+                            ) : (
+                              <span style={{ color: "#be123c" }}>Terkunci SPP</span>
+                            )}
+                          </div>
+                        </div>
+                      </td>
+
+                      <td style={{ padding: "14px 16px", color: "#64748b", fontWeight: 500 }}>
+                        {item.spp.tanggal_bayar ? (
+                          <div>
+                            <div style={{ fontWeight: 600, color: "#1e293b", fontSize: "12px" }}>{item.spp.tanggal_bayar}</div>
+                            <div style={{ fontSize: "10px", color: "#94a3b8", textTransform: "uppercase", marginTop: "2px" }}>{item.spp.metode_bayar}</div>
+                          </div>
+                        ) : (
+                          <span style={{ color: "#94a3b8", fontStyle: "italic", fontSize: "12px" }}>-</span>
+                        )}
+                      </td>
+
+                      {/* 3. Kolom Aksi Cepat (Sticky agar tidak terpotong) */}
+                      <td style={{ padding: "14px 16px", textAlign: "center", position: "sticky", right: 0, background: "white", boxShadow: "-4px 0 8px -2px rgba(0,0,0,0.06)", zIndex: 10 }}>
+                        <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "4px" }}>
                           <button
                             onClick={() => openEditModal(item)}
                             style={{ padding: "7px 9px", borderRadius: "10px", background: "#f1f5f9", color: "#334155", border: "none", cursor: "pointer", transition: "background-color 0.2s" }}
