@@ -292,9 +292,24 @@ export async function POST(req: NextRequest) {
       const effectiveRole = (target_role === "ADMIN_KEUANGAN") ? "ADMIN_KEUANGAN" : "GURU";
       const redirectTo = (effectiveRole === "ADMIN_KEUANGAN") ? "/keuangan" : "/jurnal";
 
+      let asatidzId = session.asatidz_id;
+      if (!asatidzId) {
+        const p = await prisma.pegawai.findFirst({
+          where: {
+            OR: [
+              { user_id: session.userId },
+              { email: session.email },
+              { nama_lengkap: { contains: "Bachtiar", mode: "insensitive" } },
+            ],
+          },
+        });
+        if (p) asatidzId = p.id;
+      }
+
       const updatedPayload = {
         ...session,
         role: effectiveRole,
+        asatidz_id: asatidzId,
         originalRole: undefined,
         originalUserId: undefined,
         originalNama: undefined,

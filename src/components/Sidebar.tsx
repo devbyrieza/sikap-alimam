@@ -11,6 +11,7 @@ import {
   BookMarked,
   BookOpen,
   ChevronDown,
+  ChevronRight,
   ClipboardCheck,
   CreditCard,
   Database,
@@ -271,9 +272,8 @@ function SidebarContent({ user, items, activeHref, onNavigate, onLogout, onClose
       .catch(() => {});
   }, []);
 
-  const handleRoleSelect = async (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const targetRole = e.target.value;
-    if (!targetRole || targetRole === roleUpper) return;
+  const executeSwitchRole = async (targetRole: string) => {
+    if (!targetRole || targetRole === selectedRoleKey) return;
     setSwitching(true);
     try {
       const res = await fetch("/api/auth/switch-role", {
@@ -290,8 +290,13 @@ function SidebarContent({ user, items, activeHref, onNavigate, onLogout, onClose
       }
     } catch (err) {
       console.error("Gagal beralih akun:", err);
+      alert("Terjadi kendala saat beralih akun");
       setSwitching(false);
     }
+  };
+
+  const handleRoleSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    executeSwitchRole(e.target.value);
   };
 
   const handleSwitchBack = async () => {
@@ -369,6 +374,32 @@ function SidebarContent({ user, items, activeHref, onNavigate, onLogout, onClose
     return roleUpper;
   }, [roleUpper, user?.email, user?.nama]);
 
+  // Saring peran tujuan: Peran aktif saat ini TIDAK BOLEH muncul sebagai pilihan beralih!
+  const availableTargetRoles = useMemo(() => {
+    const list = switchRoles.length > 0 ? switchRoles : (isBachtiar ? BACHTIAR_STATIC_ROLES : []);
+    return list.filter((r) => {
+      // 1. Kecualikan jika key identik dengan selectedRoleKey saat ini
+      if (r.role === selectedRoleKey) return false;
+
+      // 2. Logika khusus akun Bachtiar:
+      if (isBachtiar) {
+        if (selectedRoleKey === "ADMIN_KEUANGAN" && (r.role === "ADMIN_KEUANGAN" || r.targetRole === "ADMIN_KEUANGAN")) {
+          return false;
+        }
+        if (selectedRoleKey === "GURU_BACHTIAR" && (r.role === "GURU_BACHTIAR" || r.role === "GURU" || r.targetRole === "GURU")) {
+          return false;
+        }
+      }
+
+      // 3. Logika untuk Super Admin yang sedang impersonasi:
+      if (r.targetRole && r.targetRole === roleUpper && r.role === selectedRoleKey) {
+        return false;
+      }
+
+      return true;
+    });
+  }, [switchRoles, selectedRoleKey, isBachtiar, roleUpper]);
+
   return (
     <>
       {/* Logo */}
@@ -434,45 +465,74 @@ function SidebarContent({ user, items, activeHref, onNavigate, onLogout, onClose
             </div>
           )}
 
-          {/* Quick Role Switcher Dropdown */}
-          <div className="space-y-1">
-            <div className="flex items-center justify-between px-0.5">
-              <span className="flex items-center gap-1 text-[10px] font-black uppercase tracking-wider text-slate-500">
-                <ArrowLeftRight size={11} className="text-[#550000]" />
-                Beralih Akun / Peran
-              </span>
-              {switching && (
-                <span className="text-[9px] font-bold text-slate-400 animate-pulse">Memuat...</span>
+          {/* Quick Role Switcher */}
+          {availableTargetRoles.length > 0 && (
+            <div className="space-y-1.5">
+              <div className="flex items-center justify-between px-0.5">
+                <span className="flex items-center gap-1.5 text-[10px] font-black uppercase tracking-wider text-slate-500">
+                  <ArrowLeftRight size={11} className="text-[#550000]" />
+                  Beralih Akun / Peran
+                </span>
+                {switching && (
+                  <span className="text-[9px] font-bold text-amber-600 animate-pulse">Memproses peralihan...</span>
+                )}
+              </div>
+
+              {availableTargetRoles.length === 1 ? (
+                /* Tombol Cepat 1-Klik untuk Pengguna Multi-Role (seperti Ust. Maulidin Bachtiar) */
+                <button
+                  type="button"
+                  onClick={() => executeSwitchRole(availableTargetRoles[0].role)}
+                  disabled={switching}
+                  className="w-full flex items-center justify-between gap-2.5 p-2.5 rounded-xl border border-[#ddc192]/60 bg-gradient-to-r from-white via-[#fdfbf7] to-[#fbf7ee] hover:from-[#fdf8f0] hover:to-[#f7edd9] hover:border-[#550000]/40 text-slate-800 shadow-xs transition-all group active:scale-[0.98] disabled:opacity-50 cursor-pointer"
+                >
+                  <div className="flex items-center gap-2.5 min-w-0">
+                    <div className="h-7 w-7 rounded-lg bg-[#550000]/10 flex items-center justify-center shrink-0 group-hover:bg-[#550000] text-[#550000] group-hover:text-white transition-colors">
+                      <ArrowLeftRight
+                        size={13}
+                        className={switching ? "animate-spin" : "group-hover:rotate-180 transition-transform duration-300"}
+                      />
+                    </div>
+                    <div className="text-left min-w-0">
+                      <div className="text-[9px] font-bold text-slate-400 uppercase tracking-wider">
+                        Beralih ke:
+                      </div>
+                      <div className="text-[11px] font-extrabold text-[#550000] truncate">
+                        {availableTargetRoles[0].label}
+                      </div>
+                    </div>
+                  </div>
+                  <ChevronRight
+                    size={14}
+                    className="text-[#550000]/60 group-hover:text-[#550000] group-hover:translate-x-0.5 transition-all shrink-0"
+                  />
+                </button>
+              ) : (
+                /* Dropdown Pilihan untuk Super Admin yang memiliki banyak peran tujuan */
+                <div className="relative">
+                  <select
+                    value=""
+                    onChange={handleRoleSelect}
+                    disabled={switching}
+                    aria-label="Pilih akun atau peran tujuan"
+                    className="w-full appearance-none rounded-xl border border-slate-200 bg-white py-2 pl-3 pr-8 text-[11px] font-bold text-slate-800 shadow-xs transition-colors hover:border-[#550000]/40 focus:border-[#550000] focus:outline-none focus:ring-2 focus:ring-[#550000]/20 disabled:cursor-not-allowed disabled:opacity-60 cursor-pointer"
+                  >
+                    <option value="" disabled>
+                      — Pilih Peran Tujuan ({availableTargetRoles.length} Pilihan) —
+                    </option>
+                    {availableTargetRoles.map((r) => (
+                      <option key={r.role} value={r.role}>
+                        {r.label} — {r.pejabat}
+                      </option>
+                    ))}
+                  </select>
+                  <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2.5 text-slate-400">
+                    <ChevronDown size={13} />
+                  </div>
+                </div>
               )}
             </div>
-            <div className="relative">
-              <select
-                value={selectedRoleKey}
-                onChange={handleRoleSelect}
-                disabled={switching}
-                aria-label="Pilih akun atau peran"
-                className="w-full appearance-none rounded-xl border border-slate-200 bg-white py-2 pl-3 pr-8 text-[11px] font-bold text-slate-800 shadow-xs transition-colors hover:border-[#550000]/40 focus:border-[#550000] focus:outline-none focus:ring-2 focus:ring-[#550000]/20 disabled:cursor-not-allowed disabled:opacity-60"
-              >
-                {switchRoles.length > 0 ? (
-                  switchRoles.map((r) => (
-                    <option key={r.role} value={r.role}>
-                      {r.label} — {r.pejabat}
-                    </option>
-                  ))
-                ) : isBachtiar ? (
-                  <>
-                    <option value="ADMIN_KEUANGAN">Admin Keuangan — Maulidin Bachtiar</option>
-                    <option value="GURU_BACHTIAR">Guru Mapel (B. Inggris) — Maulidin Bachtiar</option>
-                  </>
-                ) : (
-                  <option value={selectedRoleKey}>Memuat opsi peran...</option>
-                )}
-              </select>
-              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2.5 text-slate-400">
-                <ChevronDown size={13} />
-              </div>
-            </div>
-          </div>
+          )}
         </div>
       )}
 
