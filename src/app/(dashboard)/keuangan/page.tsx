@@ -122,22 +122,48 @@ export default function KeuanganSPPPage() {
     }
   }
 
-  // Verifikasi Konfirmasi Pembayaran dari Wali Santri (1-Click Approval)
+  // Verifikasi Konfirmasi Pembayaran dari Wali Santri (1-Click Approval / Multi-Bulan)
   async function handleVerifyPending(item: any) {
+    const sameSantriPending = pendingList.filter((p: any) => p.santri_id === item.santri_id);
+    let approveAll = true;
+
+    if (sameSantriPending.length > 1) {
+      const bulanListStr = sameSantriPending.map((p: any) => NAMA_BULAN[p.bulan - 1]).join(", ");
+      const confirmResult = await Swal.fire({
+        title: "Verifikasi Pembayaran SPP?",
+        html: `
+          <div style="font-size: 13px; text-align: left; line-height: 1.6; color: #334155;">
+            <p>Ditemukan <strong>${sameSantriPending.length} bulan SPP</strong> dalam antrean verifikasi ananda <strong>${item.santri?.nama_lengkap}</strong>:</p>
+            <p style="margin-top: 6px; font-weight: bold; color: #047857;">• ${bulanListStr}</p>
+            <p style="margin-top: 6px;">Total Pembayaran: <strong>Rp ${(sameSantriPending.reduce((acc: number, p: any) => acc + (p.nominal || 1000000), 0)).toLocaleString("id-ID")}</strong>.</p>
+            <p style="margin-top: 8px;">Apakah Anda ingin menyetujui dan melunaskan <strong>seluruh ${sameSantriPending.length} bulan</strong> tersebut sekaligus?</p>
+          </div>
+        `,
+        icon: "question",
+        showCancelButton: true,
+        showDenyButton: true,
+        confirmButtonText: `Ya, Setujui Semua (${sameSantriPending.length} Bulan)`,
+        denyButtonText: `Hanya Bulan ${NAMA_BULAN[item.bulan - 1]} Saja`,
+        cancelButtonText: "Batal",
+        confirmButtonColor: "#059669",
+        denyButtonColor: "#3b82f6"
+      });
+
+      if (confirmResult.isDismissed) return;
+      approveAll = confirmResult.isConfirmed;
+    }
+
     setVerifyingId(item.id);
     try {
       const res = await fetch("/api/keuangan/spp", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
+          action: "approve_verification",
           santri_id: item.santri_id,
           bulan: item.bulan,
           tahun: item.tahun,
-          status: "lunas",
-          nominal: item.nominal,
-          tanggal_bayar: new Date().toISOString().split("T")[0],
-          metode_bayar: item.metode_bayar || "transfer",
-          catatan: item.catatan ? `${item.catatan} (Diverifikasi Keuangan)` : "Diverifikasi Keuangan via antrean konfirmasi"
+          approve_all_pending: approveAll
         })
       });
       const data = await res.json();
@@ -145,7 +171,7 @@ export default function KeuanganSPPPage() {
         Swal.fire({
           icon: "success",
           title: "Pembayaran Diverifikasi & Lunas!",
-          text: `SPP ananda ${item.santri?.nama_lengkap} bulan ${NAMA_BULAN[item.bulan - 1]} ${item.tahun} resmi dicatat LUNAS. Akses portal wali telah dibuka penuh.`,
+          text: data.message || `SPP ananda ${item.santri?.nama_lengkap} resmi dicatat LUNAS. Akses portal wali telah dibuka penuh.`,
           timer: 3000,
           showConfirmButton: false
         });

@@ -686,6 +686,7 @@ export default function WaliSppPage() {
         santriNis={nis}
         santriKelas={santri.kelas}
         sppHistoryList={history}
+        totalNominalTunggakan={summary?.totalTunggakanNominal}
         onSuccess={() => {
           setIsKonfirmasiOpen(false);
           loadData();

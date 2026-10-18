@@ -329,6 +329,77 @@ export async function POST(req: NextRequest) {
       });
     }
 
+    // 3. ACTION: Setujui Verifikasi Konfirmasi SPP (1 Bulan atau Semua Bulan Pending Santri Terkait)
+    if (body.action === "approve_verification") {
+      const { santri_id, bulan, tahun = 2026, approve_all_pending = true } = body;
+      if (!santri_id) {
+        return NextResponse.json({ error: "santri_id wajib diisi" }, { status: 400 });
+      }
+
+      const santri = await prisma.santriAktif.findUnique({
+        where: { id: santri_id },
+        select: { id: true, nis: true, nama_lengkap: true }
+      });
+      if (!santri) {
+        return NextResponse.json({ error: "Santri tidak ditemukan" }, { status: 404 });
+      }
+
+      const now = new Date();
+
+      if (approve_all_pending) {
+        const pendingList = await prisma.pembayaranSPP.findMany({
+          where: { santri_id, status: "menunggu_verifikasi" }
+        });
+
+        for (const p of pendingList) {
+          await prisma.pembayaranSPP.update({
+            where: { id: p.id },
+            data: {
+              status: "lunas",
+              tanggal_bayar: now,
+              catatan: p.catatan ? `${p.catatan} (Diverifikasi Keuangan)` : "Diverifikasi Keuangan via antrean konfirmasi"
+            }
+          });
+        }
+
+        // Buka blokir akses portal wali jika ada
+        const waliUser = await prisma.user.findFirst({
+          where: {
+            OR: [
+              { orang_tua: { some: { santri_id } } },
+              ...(santri.nis ? [{ username: santri.nis }] : [])
+            ]
+          }
+        });
+        if (waliUser && waliUser.spp_access_blocked) {
+          await prisma.user.update({
+            where: { id: waliUser.id },
+            data: { spp_access_blocked: false, spp_blocked_reason: null }
+          });
+        }
+
+        return NextResponse.json({
+          success: true,
+          message: `Alhamdulillah! Seluruh ${pendingList.length > 0 ? pendingList.length : 1} bulan SPP ananda ${santri.nama_lengkap} berhasil diverifikasi LUNAS. Akses portal santri resmi dibuka penuh.`,
+          count: pendingList.length
+        });
+      } else {
+        await prisma.pembayaranSPP.updateMany({
+          where: { santri_id, bulan: Number(bulan), tahun: Number(tahun) },
+          data: {
+            status: "lunas",
+            tanggal_bayar: now,
+            catatan: "Diverifikasi Keuangan via antrean konfirmasi"
+          }
+        });
+
+        return NextResponse.json({
+          success: true,
+          message: `SPP ananda ${santri.nama_lengkap} bulan ${bulan} ${tahun} berhasil diverifikasi LUNAS.`
+        });
+      }
+    }
+
     const { santri_id, bulan, tahun, status, nominal, tanggal_bayar, metode_bayar, catatan } = body;
 
     if (!santri_id || !bulan || !tahun) {

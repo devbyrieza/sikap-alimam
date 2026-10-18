@@ -18,10 +18,12 @@ import {
   RefreshCw,
   ShieldCheck,
   Sparkles,
+  Upload,
   Users,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { getOfficialNis } from "@/lib/officialSantri";
+import ModalKonfirmasiSPP from "@/components/ModalKonfirmasiSPP";
 
 /* ─────────────────────────── Konfigurasi ─────────────────────────── */
 
@@ -49,6 +51,8 @@ interface WaliKelas {
 interface Spp {
   status?: string;
   tunggakanCount?: number;
+  tunggakanBulan?: string[];
+  totalTunggakanNominal?: number;
   isUnlockedManual?: boolean;
 }
 
@@ -214,6 +218,7 @@ export default function WaliDashboard() {
   const [anakList, setAnakList] = useState<Anak[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
+  const [selectedKonfirmasiAnak, setSelectedKonfirmasiAnak] = useState<Anak | null>(null);
 
   const load = useCallback(async (signal?: AbortSignal) => {
     setLoading(true);
@@ -426,14 +431,22 @@ export default function WaliDashboard() {
                         <strong>Sudah transfer?</strong> Kirim bukti ke WA Finance: <strong>{FINANCE_PHONE_DISPLAY}</strong>.
                       </span>
                     </div>
-                    <div className="flex w-full sm:w-auto shrink-0 items-center gap-2">
+                    <div className="flex w-full sm:w-auto shrink-0 flex-wrap items-center gap-2">
+                      <button
+                        type="button"
+                        onClick={() => setSelectedKonfirmasiAnak(anak)}
+                        className={`inline-flex min-h-[44px] flex-1 sm:flex-initial items-center justify-center gap-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 px-4 py-2 font-bold text-white shadow-sm transition-all motion-safe:hover:scale-[1.02] active:scale-[0.98] ${focusRing}`}
+                      >
+                        <Upload size={14} aria-hidden="true" />
+                        <span>Upload Bukti SPP</span>
+                      </button>
                       <a
                         href={`https://wa.me/${FINANCE_WA}?text=${encodeURIComponent(
-                          `Assalamu'alaikum Admin Keuangan Pesantren Al-Imam, saya wali dari ananda ${anak.nama} (NIS: ${nisResmi}, Kelas: ${anak.kelas}). Saya telah melakukan pembayaran SPP dan melampirkan bukti transfer terlampir. Mohon dibukakan akses portal SIKAP ananda. Jazaakumullah khayran.`,
+                          `Assalamu'alaikum Admin Keuangan Pesantren Al-Imam Al-Islami, saya wali dari ananda ${anak.nama} (NIS: ${nisResmi}, Kelas: ${anak.kelas}). Saya telah melakukan pembayaran SPP dan melampirkan bukti transfer terlampir. Mohon dibukakan akses portal SIKAP ananda. Jazaakumullah khayran.`,
                         )}`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className={`inline-flex min-h-[44px] flex-1 sm:flex-initial items-center justify-center gap-1.5 rounded-xl bg-emerald-600 px-4 py-2 font-bold text-white shadow-sm transition-all hover:bg-emerald-700 motion-safe:hover:scale-[1.02] ${focusRing}`}
+                        className={`inline-flex min-h-[44px] flex-1 sm:flex-initial items-center justify-center gap-1.5 rounded-xl border border-emerald-300 bg-white px-3.5 py-2 font-bold text-emerald-900 shadow-sm transition-all hover:bg-emerald-50 motion-safe:hover:scale-[1.02] ${focusRing}`}
                       >
                         <MessageCircle size={14} aria-hidden="true" />
                         <span>WA Finance</span>
@@ -441,10 +454,10 @@ export default function WaliDashboard() {
                       </a>
                       <a
                         href={`/wali/spp?santri_id=${anak.id}`}
-                        className={`inline-flex min-h-[44px] flex-1 sm:flex-initial items-center justify-center gap-1.5 rounded-xl bg-rose-700 px-4 py-2 font-bold text-white shadow-sm transition-all hover:bg-rose-800 motion-safe:hover:scale-[1.02] ${focusRing}`}
+                        className={`inline-flex min-h-[44px] flex-1 sm:flex-initial items-center justify-center gap-1.5 rounded-xl bg-[#550000] hover:bg-[#7a0000] px-3.5 py-2 font-bold text-white shadow-sm transition-all motion-safe:hover:scale-[1.02] ${focusRing}`}
                       >
                         <CreditCard size={14} aria-hidden="true" />
-                        <span>Bayar SPP</span>
+                        <span>Menu SPP</span>
                       </a>
                     </div>
                   </div>
@@ -536,6 +549,24 @@ export default function WaliDashboard() {
           </div>
         </section>
       </main>
+
+      {/* Modal Konfirmasi SPP Terintegrasi */}
+      {selectedKonfirmasiAnak && (
+        <ModalKonfirmasiSPP
+          isOpen={!!selectedKonfirmasiAnak}
+          onClose={() => setSelectedKonfirmasiAnak(null)}
+          santriId={selectedKonfirmasiAnak.id}
+          santriNama={selectedKonfirmasiAnak.nama}
+          santriNis={getOfficialNis(selectedKonfirmasiAnak.nama) || selectedKonfirmasiAnak.nis || "-"}
+          santriKelas={selectedKonfirmasiAnak.kelas}
+          tunggakanBulan={selectedKonfirmasiAnak.spp?.tunggakanBulan || []}
+          totalNominalTunggakan={selectedKonfirmasiAnak.spp?.totalTunggakanNominal}
+          onSuccess={() => {
+            setSelectedKonfirmasiAnak(null);
+            load();
+          }}
+        />
+      )}
     </div>
   );
 }

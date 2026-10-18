@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getSession } from "@/lib/auth";
+import { writeFile, access, mkdir } from "fs/promises";
+import path from "path";
+import crypto from "crypto";
 
 export const dynamic = "force-dynamic";
 
@@ -104,15 +107,42 @@ export async function POST(req: NextRequest) {
     const namaPengirim = clip(nama_rekening_pengirim, 100);
     const catatanWali = clip(catatan, 500);
 
-    const infoMetadata = JSON.stringify({
-      bank_pengirim: bank || "-",
-      nama_pengirim: namaPengirim || "-",
-      tanggal_transfer: tglTransfer.toISOString(),
-      catatan_wali: catatanWali,
-      waktu_konfirmasi: new Date().toISOString(),
-      // TODO: bukti_transfer belum disimpan. Simpan ke storage file (bukan base64 di database).
-      ada_bukti_foto: !!bukti_transfer,
-    });
+    const totalBayar = diproses.reduce((acc, i) => acc + nominalUntuk(i), 0);
+    const bulanLabels = diproses.map((i) => `${NAMA_BULAN[i.bulan]} ${i.tahun}`).join(", ");
+
+    // Simpan file bukti transfer jika ada (baik base64 maupun URL)
+    let proofUrl = "";
+    if (bukti_transfer && typeof bukti_transfer === "string") {
+      if (bukti_transfer.startsWith("data:image")) {
+        try {
+          const matches = bukti_transfer.match(/^data:image\/([a-zA-Z0-9]+);base64,(.+)$/);
+          if (matches) {
+            const ext = matches[1] === "jpeg" ? ".jpg" : `.${matches[1]}`;
+            const base64Data = matches[2];
+            const buffer = Buffer.from(base64Data, "base64");
+            const fileName = `spp_${crypto.randomUUID()}${ext}`;
+            const uploadDir = process.env.NODE_ENV === "production"
+              ? "/app/storage_data/uploads"
+              : path.join(process.cwd(), "storage_data", "uploads");
+            try {
+              await access(uploadDir);
+            } catch {
+              await mkdir(uploadDir, { recursive: true });
+            }
+            await writeFile(path.join(uploadDir, fileName), buffer);
+            proofUrl = `/api/uploads/${fileName}`;
+          }
+        } catch (e) {
+          console.error("Gagal menyimpan file bukti transfer:", e);
+        }
+      } else if (bukti_transfer.startsWith("/api/uploads") || bukti_transfer.startsWith("http")) {
+        proofUrl = bukti_transfer;
+      }
+    }
+
+    const catatanFinal = proofUrl
+      ? `[BUKTI_TRANSFER:${proofUrl}] Konfirmasi SPP (${bulanLabels}) Rp ${totalBayar.toLocaleString("id-ID")} via ${bank || "Transfer Bank"} a.n. ${namaPengirim || "-"}${catatanWali ? ` | Catatan: ${catatanWali}` : ""}`
+      : `Konfirmasi SPP (${bulanLabels}) Rp ${totalBayar.toLocaleString("id-ID")} via ${bank || "Transfer Bank"} a.n. ${namaPengirim || "-"}${catatanWali ? ` | Catatan: ${catatanWali}` : ""}`;
 
     // Semua bulan disimpan sekaligus: berhasil semua atau tidak sama sekali
     const updatedRecords = await prisma.$transaction(
@@ -128,26 +158,23 @@ export async function POST(req: NextRequest) {
             nominal,
             tanggal_bayar: tglTransfer,
             metode_bayar: "transfer",
-            catatan: infoMetadata,
+            catatan: catatanFinal,
           },
           update: {
             status: "menunggu_verifikasi",
             tanggal_bayar: tglTransfer,
             metode_bayar: "transfer",
-            catatan: infoMetadata,
+            catatan: catatanFinal,
           },
         });
       }),
     );
 
-    const totalBayar = diproses.reduce((acc, i) => acc + nominalUntuk(i), 0);
-    const bulanLabels = diproses.map((i) => `${NAMA_BULAN[i.bulan]} ${i.tahun}`).join(", ");
-
     const cleanAdminWa = normalizeWa(process.env.ADMIN_KEUANGAN_WA || FINANCE_WA_FALLBACK);
 
     const waText = [
       `*KONFIRMASI PEMBAYARAN SPP SANTRI*`,
-      `Pesantren Islam Al-Imam`,
+      `Pesantren Al-Imam Al-Islami Managed by Al-Andalus IIBS`,
       ``,
       `Assalamu'alaikum Warahmatullahi Wabarakatuh Admin Keuangan,`,
       `Saya wali santri ingin mengonfirmasi bahwa telah melakukan transfer SPP ananda:`,

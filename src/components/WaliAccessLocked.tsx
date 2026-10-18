@@ -12,8 +12,10 @@ import {
   MessageCircle,
   PhoneCall,
   ShieldAlert,
+  Upload,
 } from "lucide-react";
 import Swal from "sweetalert2";
+import ModalKonfirmasiSPP from "@/components/ModalKonfirmasiSPP";
 import { getOfficialNis } from "@/lib/officialSantri";
 
 export const FINANCE_PHONE_DISPLAY = "085111403331";
@@ -49,6 +51,7 @@ export default function WaliAccessLocked({
   onOpenKonfirmasiModal,
 }: WaliAccessLockedProps) {
   const [copied, setCopied] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const santriNama = santri?.nama || "Ananda";
   const santriKelas = santri?.kelas || "-";
@@ -176,7 +179,7 @@ export default function WaliAccessLocked({
           </div>
         </div>
 
-        {/* Hubungi Finance Al-Imam (085111403331) */}
+        {/* Hubungi Finance Al-Imam (085111403331) & Upload Bukti */}
         <div className="mx-auto mt-6 max-w-xl rounded-2xl border-2 border-emerald-400/90 bg-gradient-to-r from-emerald-50 via-teal-50/80 to-emerald-50 p-5 text-left shadow-lg shadow-emerald-950/5 sm:p-6">
           <div className="flex flex-col items-start gap-4 sm:flex-row sm:items-center">
             <div className="shrink-0 rounded-2xl bg-emerald-600 p-3 text-white shadow-md">
@@ -184,45 +187,41 @@ export default function WaliAccessLocked({
             </div>
             <div className="flex-1">
               <div className="mb-1 inline-flex items-center gap-1.5 rounded-full bg-emerald-200 px-3 py-0.5 text-[11px] font-black text-emerald-950">
-                <span>Sudah Transfer tapi Akun Masih Terkunci?</span>
+                <span>Sudah Transfer tapi Akses Masih Terkunci?</span>
               </div>
               <h3 className="text-base font-black leading-snug text-emerald-950">
-                Hubungi Finance ({FINANCE_PHONE_DISPLAY}) dengan Bukti Transfer
+                Langsung Upload Bukti Transfer ke Admin Keuangan
               </h3>
               <p className="mt-1 text-xs leading-relaxed text-emerald-900/90">
-                Bila Bapak/Ibu Wali Santri <strong>sudah melakukan transfer pelunasan SPP</strong> namun akun masih terkunci, silakan kirimkan foto/bukti transfer ke nomor WhatsApp Finance di bawah ini agar segera diverifikasi dan dibukakan aksesnya.
+                Bila Bapak/Ibu Wali Santri <strong>sudah melakukan transfer pelunasan SPP</strong>, silakan langsung unggah bukti transfer di bawah ini agar otomatis terintegrasi ke sistem dan segera diverifikasi oleh Admin Keuangan ({FINANCE_PHONE_DISPLAY}).
               </p>
             </div>
           </div>
 
           <div className="mt-4 flex flex-col items-stretch gap-2.5 border-t border-emerald-200/80 pt-4 sm:flex-row sm:items-center">
+            <button
+              type="button"
+              onClick={() => {
+                if (onOpenKonfirmasiModal) {
+                  onOpenKonfirmasiModal();
+                } else {
+                  setIsModalOpen(true);
+                }
+              }}
+              className="inline-flex min-h-[48px] flex-1 items-center justify-center gap-2 rounded-xl bg-emerald-600 px-5 py-2.5 text-xs font-black text-white shadow-md transition-all hover:bg-emerald-700 active:scale-[0.98]"
+            >
+              <Upload size={16} aria-hidden="true" />
+              <span>Upload Bukti Transfer Sekarang</span>
+            </button>
             <a
               href={`https://wa.me/${FINANCE_WA}?text=${waText}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex min-h-[46px] flex-1 items-center justify-center gap-2 rounded-xl bg-emerald-600 px-5 py-2.5 text-xs font-black text-white shadow-md transition-all hover:bg-emerald-700 active:scale-[0.98]"
+              className="inline-flex min-h-[48px] items-center justify-center gap-2 rounded-xl border border-emerald-300 bg-white px-4 py-2.5 text-xs font-bold text-emerald-900 shadow-sm transition-colors hover:bg-slate-50"
             >
               <MessageCircle size={16} aria-hidden="true" />
-              <span>Kirim Bukti ke WhatsApp Finance</span>
+              <span>Chat WA Finance</span>
             </a>
-            {onOpenKonfirmasiModal ? (
-              <button
-                type="button"
-                onClick={onOpenKonfirmasiModal}
-                className="inline-flex min-h-[46px] items-center justify-center gap-2 rounded-xl border border-emerald-300 bg-white px-4 py-2.5 text-xs font-bold text-emerald-900 shadow-sm transition-colors hover:bg-slate-50"
-              >
-                <CreditCard size={16} aria-hidden="true" />
-                <span>Upload Bukti di Web</span>
-              </button>
-            ) : (
-              <Link
-                href={`/wali/spp?santri_id=${santriId}`}
-                className="inline-flex min-h-[46px] items-center justify-center gap-2 rounded-xl border border-emerald-300 bg-white px-4 py-2.5 text-xs font-bold text-emerald-900 shadow-sm transition-colors hover:bg-slate-50"
-              >
-                <CreditCard size={16} aria-hidden="true" />
-                <span>Buka Menu SPP</span>
-              </Link>
-            )}
           </div>
         </div>
 
@@ -244,6 +243,22 @@ export default function WaliAccessLocked({
           </Link>
         </div>
       </div>
+
+      {/* Modal Konfirmasi SPP Terintegrasi */}
+      <ModalKonfirmasiSPP
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        santriId={santriId}
+        santriNama={santriNama}
+        santriNis={santriNis}
+        santriKelas={santriKelas}
+        tunggakanBulan={bulanList}
+        totalNominalTunggakan={nominal}
+        onSuccess={() => {
+          setIsModalOpen(false);
+          window.location.reload();
+        }}
+      />
     </div>
   );
 }

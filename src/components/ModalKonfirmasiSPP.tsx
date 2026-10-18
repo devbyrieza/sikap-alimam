@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import {
   X,
   CreditCard,
@@ -15,7 +15,8 @@ import {
   Calendar,
   Building2,
   User,
-  Loader2
+  Loader2,
+  Sparkles
 } from "lucide-react";
 import Swal from "sweetalert2";
 
@@ -26,7 +27,9 @@ interface ModalKonfirmasiSPPProps {
   santriNama: string;
   santriNis: string;
   santriKelas: string;
-  sppHistoryList: any[];
+  sppHistoryList?: any[];
+  tunggakanBulan?: string[];
+  totalNominalTunggakan?: number;
   onSuccess: () => void;
 }
 
@@ -45,6 +48,21 @@ const NAMA_BULAN_MAP: Record<number, string> = {
   6: "Juni 2027"
 };
 
+const BULAN_TO_NUM: Record<string, number> = {
+  januari: 1,
+  februari: 2,
+  maret: 3,
+  april: 4,
+  mei: 5,
+  juni: 6,
+  juli: 7,
+  agustus: 8,
+  september: 9,
+  oktober: 10,
+  november: 11,
+  desember: 12,
+};
+
 export default function ModalKonfirmasiSPP({
   isOpen,
   onClose,
@@ -53,14 +71,39 @@ export default function ModalKonfirmasiSPP({
   santriNis,
   santriKelas,
   sppHistoryList,
+  tunggakanBulan,
+  totalNominalTunggakan,
   onSuccess
 }: ModalKonfirmasiSPPProps) {
-  // Ambil bulan-bulan yang belum lunas
-  const unpaidMonths = (sppHistoryList || []).filter(
-    (item) => item.status === "belum_lunas" || item.status === "menunggu_verifikasi"
-  );
+  const nominalDefault = 1000000;
 
-  const nominalDefault = unpaidMonths[0]?.nominal || 1000000;
+  // Sinkronkan bulan-bulan tunggakan secara akurat
+  const unpaidMonths = useMemo(() => {
+    // 1. Prioritaskan tunggakanBulan (dari cekStatusSpp) jika tersedia
+    if (Array.isArray(tunggakanBulan) && tunggakanBulan.length > 0) {
+      return tunggakanBulan.map((bName) => {
+        const cleanName = String(bName).toLowerCase().trim();
+        const bNum = BULAN_TO_NUM[cleanName] || 10;
+        return {
+          bulan: bNum,
+          tahun: bNum >= 7 ? 2026 : 2027,
+          nominal: nominalDefault,
+          status: "belum_lunas" as const,
+        };
+      });
+    }
+
+    // 2. Jika ada sppHistoryList, filter hanya bulan yang belum lunas / menunggu verifikasi
+    if (Array.isArray(sppHistoryList) && sppHistoryList.length > 0) {
+      const filtered = sppHistoryList.filter(
+        (item) => item.status === "belum_lunas" || item.status === "menunggu_verifikasi"
+      );
+      if (filtered.length > 0) return filtered;
+    }
+
+    // 3. Default ke bulan berjalan jika tidak ada rincian
+    return [{ bulan: 10, tahun: 2026, nominal: nominalDefault, status: "belum_lunas" as const }];
+  }, [sppHistoryList, tunggakanBulan]);
 
   const [selectedBulan, setSelectedBulan] = useState<number[]>([]);
   const [bankPengirim, setBankPengirim] = useState("");
@@ -74,12 +117,12 @@ export default function ModalKonfirmasiSPP({
   const [copiedRek, setCopiedRek] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
-  // Default pilih semua bulan tunggakan
+  // Default pilih otomatis seluruh bulan tunggakan yang tersinkron
   useEffect(() => {
     if (unpaidMonths.length > 0) {
       setSelectedBulan(unpaidMonths.map((m) => m.bulan));
     }
-  }, [sppHistoryList]);
+  }, [unpaidMonths]);
 
   // Mandatory Rule: Lock background scroll when modal open
   useEffect(() => {
@@ -180,6 +223,16 @@ export default function ModalKonfirmasiSPP({
         icon: "warning",
         title: "Bank Pengirim Wajib Diisi",
         text: "Contoh: BSI, BCA, Mandiri, BRI, Bank Muamalat, dll."
+      });
+      return;
+    }
+
+    if (!buktiBase64) {
+      Swal.fire({
+        icon: "warning",
+        title: "Foto Bukti Transfer Wajib Dilampirkan",
+        text: `Silakan lampirkan foto struk ATM, screenshot m-Banking, atau resi bukti transfer untuk pelunasan ${selectedBulan.length} bulan SPP ananda agar Admin Keuangan dapat memverifikasi.`,
+        confirmButtonColor: "#550000"
       });
       return;
     }
@@ -312,11 +365,70 @@ export default function ModalKonfirmasiSPP({
             </button>
           </div>
 
+          {/* Kotak Notifikasi Sinkronisasi Tunggakan Dinamis */}
+          {unpaidMonths.length > 0 && (
+            <div
+              className={`p-4 rounded-2xl border flex items-start gap-3 shadow-sm ${
+                unpaidMonths.length > 1
+                  ? "bg-rose-50/90 border-rose-200 text-rose-950"
+                  : "bg-amber-50/90 border-amber-200 text-amber-950"
+              }`}
+            >
+              <AlertCircle
+                size={18}
+                className={`shrink-0 mt-0.5 ${
+                  unpaidMonths.length > 1 ? "text-rose-600" : "text-amber-600"
+                }`}
+              />
+              <div className="text-xs leading-relaxed">
+                <span
+                  className={`inline-block px-2.5 py-0.5 rounded-full font-black text-[10px] uppercase tracking-wider mb-1 ${
+                    unpaidMonths.length > 1
+                      ? "bg-rose-200 text-rose-900"
+                      : "bg-amber-200 text-amber-900"
+                  }`}
+                >
+                  Tunggakan Terdeteksi: {unpaidMonths.length} Bulan
+                </span>
+                <p className="font-bold text-slate-900 text-xs">
+                  {unpaidMonths.length === 1
+                    ? `Kewajiban SPP ananda saat ini hanya untuk bulan ${
+                        NAMA_BULAN_MAP[unpaidMonths[0].bulan] || `Bulan ${unpaidMonths[0].bulan}`
+                      } (Rp ${nominalDefault.toLocaleString("id-ID")}).`
+                    : `Kewajiban SPP ananda tercatat ${unpaidMonths.length} bulan: ${unpaidMonths
+                        .map((m) => NAMA_BULAN_MAP[m.bulan] || `Bulan ${m.bulan}`)
+                        .join(", ")} (Total Rp ${(unpaidMonths.length * nominalDefault).toLocaleString(
+                        "id-ID"
+                      )}).`}
+                </p>
+                <p className="mt-1 text-slate-600 text-[11px]">
+                  {unpaidMonths.length === 1
+                    ? `Silakan unggah bukti transfer khusus pembayaran SPP bulan ${
+                        NAMA_BULAN_MAP[unpaidMonths[0].bulan] || `Bulan ${unpaidMonths[0].bulan}`
+                      } di bawah ini.`
+                    : `Seluruh ke-${unpaidMonths.length} bulan tunggakan telah dipilih otomatis di bawah. Silakan unggah bukti transfer pelunasan ke-${unpaidMonths.length} bulan tersebut agar akses portal ananda dapat langsung dibuka kembali.`}
+                </p>
+              </div>
+            </div>
+          )}
+
           {/* Pilihan Bulan yang Ditransfer */}
           <div className="space-y-2">
-            <label className="font-bold text-slate-700 block text-xs">
-              1. Pilih Bulan SPP yang Telah Ditransfer:
-            </label>
+            <div className="flex items-center justify-between">
+              <label className="font-bold text-slate-700 block text-xs">
+                1. Pilih Bulan SPP yang Telah Ditransfer: <span className="text-rose-500">*</span>
+              </label>
+              {unpaidMonths.length > 1 && (
+                <button
+                  type="button"
+                  onClick={() => setSelectedBulan(unpaidMonths.map((m) => m.bulan))}
+                  className="text-[11px] font-bold text-primary hover:underline"
+                >
+                  Pilih Semua ({unpaidMonths.length} Bulan)
+                </button>
+              )}
+            </div>
+
             {unpaidMonths.length === 0 ? (
               <p className="text-slate-400 italic">Tidak ada tunggakan tercatat.</p>
             ) : (
@@ -349,6 +461,16 @@ export default function ModalKonfirmasiSPP({
                 })}
               </div>
             )}
+
+            {selectedBulan.length < unpaidMonths.length && selectedBulan.length > 0 && (
+              <div className="p-2.5 rounded-xl bg-amber-50 border border-amber-200 text-[11px] text-amber-800 flex items-start gap-2">
+                <AlertCircle size={14} className="shrink-0 text-amber-600 mt-0.5" />
+                <span>
+                  <strong>Perhatian:</strong> Anda memilih {selectedBulan.length} dari total {unpaidMonths.length} bulan tunggakan. Akses portal yang terkunci baru dapat dibuka secara otomatis setelah seluruh tunggakan dilunasi atau diverifikasi Bagian Keuangan.
+                </span>
+              </div>
+            )}
+
             <div className="p-2.5 rounded-xl bg-slate-100 flex items-center justify-between text-xs font-bold text-slate-800">
               <span>Total yang Dikonfirmasi:</span>
               <span className="text-primary font-black text-sm">
@@ -401,10 +523,10 @@ export default function ModalKonfirmasiSPP({
             />
           </div>
 
-          {/* Upload Foto Struk Bukti Bayar */}
+          {/* Upload Foto Struk Bukti Bayar (Wajib) */}
           <div>
             <label className="font-bold text-slate-700 block mb-1">
-              5. Foto / Screenshot Bukti Transfer (Opsional tapi Disarankan):
+              5. Foto / Screenshot Bukti Transfer: <span className="text-rose-600 font-extrabold">* (Wajib Diunggah)</span>
             </label>
             <div className="border-2 border-dashed border-slate-200 hover:border-primary/50 rounded-2xl p-4 text-center bg-slate-50/70 transition-all">
               {previewUrl ? (

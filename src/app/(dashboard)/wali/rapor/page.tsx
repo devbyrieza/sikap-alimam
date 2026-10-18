@@ -982,24 +982,24 @@ function LockedPanel({
           </div>
 
           <div className="mt-5 flex flex-col items-stretch gap-3 border-t border-emerald-200/80 pt-4 sm:flex-row sm:items-center">
+            <button
+              type="button"
+              onClick={onKonfirmasi}
+              className={`inline-flex min-h-[48px] flex-1 items-center justify-center gap-2 rounded-xl bg-emerald-600 px-5 py-3 text-xs font-black text-white shadow-md transition-all hover:bg-emerald-700 motion-safe:hover:scale-[1.02] active:scale-[0.98] sm:text-sm ${focusRing}`}
+            >
+              <CreditCard size={16} aria-hidden="true" />
+              <span>Upload Bukti Transfer Sekarang</span>
+            </button>
             <a
               href={`https://wa.me/${FINANCE_WA}?text=${encodeURIComponent(waText)}`}
               target="_blank"
               rel="noopener noreferrer"
-              className={`inline-flex min-h-[48px] flex-1 items-center justify-center gap-2 rounded-xl bg-emerald-600 px-5 py-3 text-xs font-black text-white shadow-md transition-all hover:bg-emerald-700 motion-safe:hover:scale-[1.02] active:scale-[0.98] sm:text-sm ${focusRing}`}
-            >
-              <Send size={16} aria-hidden="true" />
-              <span>Kirim Bukti ke WA Finance</span>
-              <span className="sr-only">(buka di tab baru)</span>
-            </a>
-            <button
-              type="button"
-              onClick={onKonfirmasi}
               className={`inline-flex min-h-[48px] items-center justify-center gap-2 rounded-xl border border-emerald-300 bg-white px-5 py-3 text-xs font-bold text-emerald-900 shadow-sm transition-colors hover:bg-slate-50 sm:text-sm ${focusRing}`}
             >
-              <CreditCard size={16} aria-hidden="true" />
-              <span>Upload Bukti di Web</span>
-            </button>
+              <Send size={16} aria-hidden="true" />
+              <span>Chat WA Finance</span>
+              <span className="sr-only">(buka di tab baru)</span>
+            </a>
           </div>
         </div>
 
@@ -2329,6 +2329,8 @@ export default function RaporWaliPage() {
         santriNis={nis || ""}
         santriKelas={santri?.kelas || ""}
         sppHistoryList={sppHistory?.spp_history || []}
+        tunggakanBulan={Array.isArray(data?.spp?.tunggakanBulan) ? data.spp.tunggakanBulan : []}
+        totalNominalTunggakan={data?.spp?.totalTunggakanNominal}
         onSuccess={refreshSppData}
       />
 
