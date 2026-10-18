@@ -1073,8 +1073,8 @@ function TabRapor({ printId, cetakData, cetakError }: { printId: string; cetakDa
   }, [mobileFit, cetakData]);
 
   // Kalkulasi kompensasi margin untuk centering presisi
-  const marginX = (794 - 794 * fitScale) / 2;
-  const marginB = rawHeight > 0 ? (rawHeight - rawHeight * fitScale - 24) : 0;
+  const marginX = Math.max(0, (794 - 794 * fitScale) / 2);
+  const marginB = fitScale < 1 && rawHeight > 0 ? Math.max(0, rawHeight - rawHeight * fitScale - 16) : 0;
 
   const handleZoom = (delta: number) => {
     setFitScale((prev) => Math.min(1.2, Math.max(0.25, Number((prev + delta).toFixed(2)))));
@@ -1187,7 +1187,7 @@ function TabRapor({ printId, cetakData, cetakError }: { printId: string; cetakDa
           {mobileFit ? (
             <div
               ref={fitContainerRef}
-              className="w-full -mx-1 sm:mx-0 overflow-hidden rounded-2xl border border-slate-200/90 bg-slate-100/70 py-3 px-1 md:hidden shadow-inner"
+              className="w-full -mx-1 sm:mx-0 overflow-hidden rounded-2xl border border-slate-200/90 bg-slate-100/70 py-3 px-1 shadow-inner"
             >
               <div className="flex justify-center w-full overflow-hidden">
                 <div
@@ -1208,15 +1208,6 @@ function TabRapor({ printId, cetakData, cetakError }: { printId: string; cetakDa
             </div>
           ) : (
             <div className="custom-scrollbar overflow-x-auto pb-4 print:block print:overflow-visible print:p-0">
-              <div className="mx-auto w-max">
-                <RaporOfficialSheet data={cetakData} showPrintToolbar={false} />
-              </div>
-            </div>
-          )}
-
-          {/* Untuk layar md ke atas (tablet/desktop), selalu tampilkan ukuran standar jika mobileFit aktif */}
-          {mobileFit && (
-            <div className="hidden md:block custom-scrollbar overflow-x-auto pb-4 print:block print:overflow-visible print:p-0">
               <div className="mx-auto w-max">
                 <RaporOfficialSheet data={cetakData} showPrintToolbar={false} />
               </div>
