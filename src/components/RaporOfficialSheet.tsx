@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef, useCallback } from "react";
-import { Printer, Smartphone, ZoomIn, ZoomOut, RotateCcw } from "lucide-react";
+import { Printer, Smartphone, ZoomIn, ZoomOut, RotateCcw, Download, HelpCircle, X, CheckCircle2 } from "lucide-react";
 import { getOfficialNis } from "@/lib/officialSantri";
 import { surahData, calculateHalaman, searchSurah } from "@/lib/quran-madinah";
 
@@ -16,8 +16,20 @@ export default function RaporOfficialSheet({ data, showPrintToolbar = false }: R
   const [zoomDelta, setZoomDelta] = useState(0);
   const [rawHeight, setRawHeight] = useState(0);
   const [isMobileScreen, setIsMobileScreen] = useState(false);
+  const [showGuideModal, setShowGuideModal] = useState(false);
   const fitContainerRef = useRef<HTMLDivElement>(null);
   const fitContentRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (showGuideModal) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "unset";
+    }
+    return () => {
+      document.body.style.overflow = "unset";
+    };
+  }, [showGuideModal]);
 
   const updateScale = useCallback(() => {
     if (typeof window === "undefined") return;
@@ -553,6 +565,15 @@ export default function RaporOfficialSheet({ data, showPrintToolbar = false }: R
             width: 100% !important;
           }
 
+          .rapor-fit-content {
+            transform: none !important;
+            transform-origin: top left !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            width: 100% !important;
+            max-width: 100% !important;
+          }
+
           .rapor-table,
           .rapor-table table {
             width: 100% !important;
@@ -677,27 +698,39 @@ export default function RaporOfficialSheet({ data, showPrintToolbar = false }: R
               </p>
             </div>
 
-            <button 
-              type="button"
-              onClick={() => window.print()}
-              className="no-print print:hidden w-full sm:w-auto justify-center"
-              style={{ 
-                padding: "10px 22px", 
-                borderRadius: "10px", 
-                backgroundColor: "#16a34a", 
-                color: "white", 
-                border: "none", 
-                cursor: "pointer", 
-                fontWeight: "bold", 
-                fontSize: "13px",
-                display: "flex", 
-                alignItems: "center", 
-                gap: "8px",
-                boxShadow: "0 4px 10px rgba(0, 0, 0, 0.25)"
-              }}
-            >
-              <Printer size={16} /> Cetak / Download PDF (A4)
-            </button>
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full sm:w-auto">
+              <button 
+                type="button"
+                onClick={() => window.print()}
+                className="no-print print:hidden flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs sm:text-sm shadow-md transition-all active:scale-[0.98] cursor-pointer"
+              >
+                <Download size={16} />
+                <span>Unduh / Simpan PDF (A4)</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setShowGuideModal(true)}
+                className="no-print print:hidden flex items-center justify-center gap-1.5 px-3.5 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 border border-white/25 text-white text-xs font-bold transition-all active:scale-[0.98] cursor-pointer"
+                title="Panduan cara simpan PDF di smartphone"
+              >
+                <HelpCircle size={14} className="text-amber-300" />
+                <span>Cara Simpan di HP</span>
+              </button>
+            </div>
+          </div>
+
+          {/* Tips Cepat Download PDF di Smartphone */}
+          <div className="px-4 py-3 bg-[#440000] border-b border-white/10 text-xs text-amber-100 flex items-start gap-2.5">
+            <span className="text-base leading-none shrink-0 mt-0.5">💡</span>
+            <div className="leading-relaxed min-w-0">
+              <strong className="text-white">Cara Menyimpan Rapor Menjadi File PDF di HP:</strong>
+              <p className="mt-0.5 text-white/90 text-[11px] leading-normal">
+                1. Klik tombol hijau <strong>"Unduh / Simpan PDF"</strong> di atas.<br />
+                2. Pada layar cetak HP, ubah pilihan <strong>Printer / Tujuan</strong> menjadi <strong className="text-amber-300 font-extrabold underline">"Simpan sebagai PDF"</strong> (Save as PDF).<br />
+                3. Klik ikon <strong>Simpan (💾)</strong>. File PDF rapor resmi 2 halaman akan otomatis tersimpan di HP Anda.
+              </p>
+            </div>
           </div>
 
           {/* Mobile View Mode Controls */}
@@ -778,6 +811,122 @@ export default function RaporOfficialSheet({ data, showPrintToolbar = false }: R
         </div>
       )}
 
+      {/* MODAL PANDUAN CARA SIMPAN PDF DI SMARTPHONE */}
+      {showGuideModal && (
+        <div 
+          className="no-print print:hidden fixed inset-0 z-50 flex items-center justify-center bg-black/65 backdrop-blur-xs p-4 overflow-y-auto overscroll-contain"
+          onClick={() => setShowGuideModal(false)}
+        >
+          <div 
+            className="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-7 shadow-2xl border border-slate-200 overflow-hidden text-slate-800 my-auto"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between pb-3.5 border-b border-slate-100">
+              <div className="flex items-center gap-2.5">
+                <div className="h-10 w-10 rounded-xl bg-emerald-100 text-emerald-800 flex items-center justify-center font-bold shrink-0">
+                  <Download size={20} />
+                </div>
+                <div>
+                  <h3 className="text-base font-extrabold text-slate-900 m-0 leading-tight">
+                    Panduan Download Rapor di HP
+                  </h3>
+                  <p className="text-[11px] text-slate-500 m-0 mt-0.5">
+                    Cara menyimpan rapor resmi 2 halaman menjadi file PDF
+                  </p>
+                </div>
+              </div>
+              <button 
+                type="button" 
+                onClick={() => setShowGuideModal(false)}
+                className="h-8 w-8 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center transition-colors cursor-pointer"
+              >
+                <X size={16} />
+              </button>
+            </div>
+
+            <div className="mt-4 space-y-3.5 max-h-[68vh] overflow-y-auto pr-1 custom-scrollbar text-xs">
+              {/* Android Card */}
+              <div className="rounded-2xl border border-emerald-200 bg-emerald-50/70 p-4">
+                <div className="flex items-center gap-2 font-black text-emerald-950 mb-2 text-sm">
+                  <span>📱</span>
+                  <span>Pengguna HP Android (Samsung, Xiaomi, Oppo, Vivo, dll.)</span>
+                </div>
+                <ol className="list-decimal pl-4 space-y-1.5 text-slate-700 text-[11.5px] leading-relaxed">
+                  <li>
+                    Tekan tombol hijau <strong>"Unduh / Simpan PDF"</strong>.
+                  </li>
+                  <li>
+                    Layar pratinjau cetak HP akan terbuka. Di bagian paling atas yang bertuliskan <em>"Pilih Printer"</em>, klik dan ubah menjadi <strong className="text-emerald-800 font-extrabold">"Simpan sebagai PDF"</strong> (Save as PDF).
+                  </li>
+                  <li>
+                    Tekan ikon lingkaran kuning/hijau bertuliskan <strong>PDF (💾)</strong> di pojok kanan atas.
+                  </li>
+                  <li>
+                    Pilih folder tujuan (misal: Download/Dokumen) lalu tekan <strong>Simpan</strong>. Rapor resmi ananda akan otomatis tersimpan di HP Anda!
+                  </li>
+                </ol>
+              </div>
+
+              {/* iPhone Card */}
+              <div className="rounded-2xl border border-sky-200 bg-sky-50/70 p-4">
+                <div className="flex items-center gap-2 font-black text-sky-950 mb-2 text-sm">
+                  <span>🍏</span>
+                  <span>Pengguna iPhone &amp; iPad (iOS / Safari)</span>
+                </div>
+                <ol className="list-decimal pl-4 space-y-1.5 text-slate-700 text-[11.5px] leading-relaxed">
+                  <li>
+                    Tekan tombol hijau <strong>"Unduh / Simpan PDF"</strong>.
+                  </li>
+                  <li>
+                    Saat jendela Print terbuka, pada gambar pratinjau lembar rapor di bawah, lakukan gerakan <strong className="text-sky-800 font-extrabold">cubit memperbesar (Pinch-to-Zoom)</strong> dengan 2 jari Anda keluar.
+                  </li>
+                  <li>
+                    Tampilan pratinjau akan langsung berubah menjadi dokumen PDF utuh.
+                  </li>
+                  <li>
+                    Tekan tombol <strong>Bagikan / Share (ikon kotak panah ke atas 📤)</strong> di pojok bawah/atas, lalu pilih <strong className="text-sky-800 font-extrabold">"Simpan ke File" (Save to Files)</strong>.
+                  </li>
+                </ol>
+              </div>
+
+              {/* Laptop Card */}
+              <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                <div className="flex items-center gap-2 font-black text-slate-900 mb-2 text-sm">
+                  <span>💻</span>
+                  <span>Pengguna Laptop / Komputer (Chrome, Edge, Firefox)</span>
+                </div>
+                <ol className="list-decimal pl-4 space-y-1.5 text-slate-700 text-[11.5px] leading-relaxed">
+                  <li>
+                    Tekan tombol hijau <strong>"Unduh / Simpan PDF"</strong> (atau tekan <code>Ctrl + P</code>).
+                  </li>
+                  <li>
+                    Pada pilihan Destination / Tujuan, pilih <strong>"Save as PDF"</strong>.
+                  </li>
+                  <li>
+                    Pastikan ukuran kertas <strong>A4</strong>, lalu klik <strong>Save</strong>.
+                  </li>
+                </ol>
+              </div>
+            </div>
+
+            <div className="mt-5 pt-3.5 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-3">
+              <span className="text-[11px] text-slate-400 text-center sm:text-left">Pesantren Al-Imam Al-Islami</span>
+              <button
+                type="button"
+                onClick={() => {
+                  setShowGuideModal(false);
+                  window.print();
+                }}
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs shadow-md transition-all active:scale-[0.98] cursor-pointer"
+              >
+                <Download size={15} />
+                <span>Paham, Lanjutkan Download Sekarang</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* WRAPPER KONTEN LEMBAR RAPOR */}
       <div 
         ref={fitContainerRef}
@@ -804,7 +953,7 @@ export default function RaporOfficialSheet({ data, showPrintToolbar = false }: R
                 }
               : {}),
           }}
-          className="print:transform-none print:m-0 print:w-full flex flex-col items-center"
+          className="rapor-fit-content print:transform-none print:m-0 print:w-full flex flex-col items-center"
         >
           {/* ========================================================================= */}
           {/* HALAMAN 1: RAPOR AKADEMIK (KASYFUD DARAJAT)                               */}

@@ -15,6 +15,7 @@ import {
   CheckCircle2,
   Clock,
   CreditCard,
+  Download,
   Eye,
   FileText,
   Filter,
@@ -357,10 +358,10 @@ function TopBar({ santriId, locked, onKirimWA }: { santriId: string; locked: boo
               href={`/rapor/print/${santriId}`}
               target="_blank"
               rel="noopener noreferrer"
-              className={`hidden min-h-[40px] items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3.5 text-xs font-bold text-slate-700 shadow-sm transition-colors hover:bg-slate-50 sm:inline-flex ${focusRing}`}
+              className={`inline-flex min-h-[40px] items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-bold text-slate-700 shadow-sm transition-colors hover:bg-slate-50 hover:text-[#550000] active:scale-[0.98] ${focusRing}`}
             >
-              <Printer size={14} aria-hidden="true" />
-              <span>Cetak PDF</span>
+              <Download size={14} className="text-[#550000]" aria-hidden="true" />
+              <span>Unduh / Cetak PDF</span>
               <span className="sr-only">(buka di tab baru)</span>
             </a>
             <button
@@ -369,7 +370,8 @@ function TopBar({ santriId, locked, onKirimWA }: { santriId: string; locked: boo
               className={`inline-flex min-h-[40px] items-center gap-1.5 rounded-xl bg-[#550000] px-3.5 text-xs font-bold text-white shadow-sm transition-colors hover:bg-[#7a0000] active:scale-[0.98] ${focusRing}`}
             >
               <Send size={14} aria-hidden="true" />
-              <span>Kirim ke WA</span>
+              <span className="hidden sm:inline">Kirim ke WA</span>
+              <span className="sm:hidden">WA</span>
             </button>
           </div>
         )}
@@ -1082,8 +1084,8 @@ function TabRapor({ printId, cetakData, cetakError }: { printId: string; cetakDa
           </div>
         </div>
         <a href={printHref} target="_blank" rel="noopener noreferrer" className={btnPrimary}>
-          <Printer size={16} aria-hidden="true" />
-          <span>Cetak / Unduh PDF Resmi</span>
+          <Download size={16} aria-hidden="true" />
+          <span>Unduh / Cetak PDF Resmi (A4)</span>
           <span className="sr-only">(buka di tab baru)</span>
         </a>
       </div>

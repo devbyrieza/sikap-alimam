@@ -9,6 +9,7 @@ import {
   ChevronRight,
   Clock,
   CreditCard,
+  Download,
   FileText,
   GraduationCap,
   Lock,
@@ -408,10 +409,10 @@ export default function WaliDashboard() {
                         href={`/rapor/print/${anak.id}`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className={`inline-flex min-h-[48px] items-center justify-center gap-2 rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-bold text-slate-700 shadow-sm transition-all hover:bg-slate-50 motion-safe:hover:scale-[1.02] ${focusRing}`}
+                        className={`inline-flex min-h-[48px] items-center justify-center gap-2 rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-bold text-slate-700 shadow-sm transition-all hover:bg-slate-50 hover:text-[#550000] motion-safe:hover:scale-[1.02] active:scale-[0.98] ${focusRing}`}
                       >
-                        <Printer size={15} aria-hidden="true" />
-                        <span>Cetak PDF</span>
+                        <Download size={15} className="text-[#550000]" aria-hidden="true" />
+                        <span>Unduh / Cetak PDF</span>
                         <span className="sr-only">(buka di tab baru)</span>
                       </a>
                     )}
