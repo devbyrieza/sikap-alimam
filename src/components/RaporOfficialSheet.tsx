@@ -557,12 +557,15 @@ export default function RaporOfficialSheet({ data, showPrintToolbar = false }: R
           .app-layout { padding: 0 !important; margin: 0 !important; display: block !important; background: #ffffff !important; }
           .app-content { margin: 0 !important; padding: 0 !important; width: 100% !important; max-width: 100% !important; background: #ffffff !important; }
           
-          #rapor-print-container { 
+          #rapor-print-container,
+          .rapor-fit-container { 
             padding: 0 !important; 
             margin: 0 !important; 
             background: #ffffff !important; 
             display: block !important; 
             width: 100% !important;
+            min-height: 0 !important;
+            height: auto !important;
           }
 
           .rapor-fit-content {
@@ -572,6 +575,7 @@ export default function RaporOfficialSheet({ data, showPrintToolbar = false }: R
             padding: 0 !important;
             width: 100% !important;
             max-width: 100% !important;
+            min-height: 0 !important;
           }
 
           .rapor-table,
@@ -930,12 +934,12 @@ export default function RaporOfficialSheet({ data, showPrintToolbar = false }: R
       {/* WRAPPER KONTEN LEMBAR RAPOR */}
       <div 
         ref={fitContainerRef}
-        className={`w-full ${
+        className={`w-full rapor-fit-container ${
           showPrintToolbar && isMobileScreen
             ? mobileFit
-              ? "overflow-hidden flex justify-center py-1"
-              : "overflow-x-auto overscroll-x-contain custom-scrollbar pb-6 print:overflow-visible"
-            : "flex justify-center"
+              ? "overflow-hidden flex justify-center py-1 print:p-0 print:m-0 print:block"
+              : "overflow-x-auto overscroll-x-contain custom-scrollbar pb-6 print:overflow-visible print:p-0 print:m-0 print:block"
+            : "flex justify-center print:p-0 print:m-0 print:block"
         }`}
       >
         <div 

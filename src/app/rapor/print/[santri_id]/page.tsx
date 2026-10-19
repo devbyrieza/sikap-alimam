@@ -116,7 +116,7 @@ export default function CetakRaporPage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-100/70 p-2 sm:p-8 print:p-0 print:bg-white overflow-x-hidden print:overflow-visible">
+    <div id="rapor-print-container" className="min-h-screen bg-slate-100/70 p-2 sm:p-8 print:p-0 print:m-0 print:min-h-0 print:bg-white overflow-x-hidden print:overflow-visible">
       <RaporOfficialSheet data={data} showPrintToolbar={true} />
     </div>
   );
