@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef, useCallback } from "react";
-import { Printer, Smartphone, ZoomIn, ZoomOut, RotateCcw, Download, HelpCircle, X, CheckCircle2 } from "lucide-react";
+import { Printer, Smartphone, ZoomIn, ZoomOut, RotateCcw, Download, HelpCircle, X, CheckCircle2, Loader2 } from "lucide-react";
 import { getOfficialNis } from "@/lib/officialSantri";
 import { surahData, calculateHalaman, searchSurah } from "@/lib/quran-madinah";
 
@@ -17,11 +17,13 @@ export default function RaporOfficialSheet({ data, showPrintToolbar = false }: R
   const [rawHeight, setRawHeight] = useState(0);
   const [isMobileScreen, setIsMobileScreen] = useState(false);
   const [showGuideModal, setShowGuideModal] = useState(false);
+  const [isDownloading, setIsDownloading] = useState(false);
+  const [downloadProgress, setDownloadProgress] = useState("");
   const fitContainerRef = useRef<HTMLDivElement>(null);
   const fitContentRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (showGuideModal) {
+    if (showGuideModal || isDownloading) {
       document.body.style.overflow = "hidden";
     } else {
       document.body.style.overflow = "unset";
@@ -29,7 +31,7 @@ export default function RaporOfficialSheet({ data, showPrintToolbar = false }: R
     return () => {
       document.body.style.overflow = "unset";
     };
-  }, [showGuideModal]);
+  }, [showGuideModal, isDownloading]);
 
   const updateScale = useCallback(() => {
     if (typeof window === "undefined") return;
@@ -305,6 +307,180 @@ export default function RaporOfficialSheet({ data, showPrintToolbar = false }: R
     disiplinGrade = "D";
   }
 
+  const handleDirectDownloadPdf = async () => {
+    if (isDownloading) return;
+    setIsDownloading(true);
+    setDownloadProgress("Menyiapkan dokumen rapor...");
+
+    try {
+      // @ts-ignore
+      const html2canvasModule = await import("html2canvas");
+      const html2canvas = html2canvasModule.default || html2canvasModule;
+      const { jsPDF } = await import("jspdf");
+
+      const page1El = document.getElementById("rapor-page-1");
+      const page2El = document.getElementById("rapor-page-2");
+
+      if (!page1El || !page2El) {
+        console.warn("Elemen halaman rapor tidak ditemukan, beralih ke dialog cetak.");
+        window.print();
+        return;
+      }
+
+      setDownloadProgress("Memproses Halaman 1 (Akademik)...");
+
+      // Container off-screen untuk rendering presisi A4 tanpa terpengaruh zoom/skala layar HP
+      const offscreen = document.createElement("div");
+      offscreen.style.position = "fixed";
+      offscreen.style.left = "-99999px";
+      offscreen.style.top = "0";
+      offscreen.style.width = "794px";
+      offscreen.style.zIndex = "-9999";
+      offscreen.style.backgroundColor = "#ffffff";
+      document.body.appendChild(offscreen);
+
+      const prepareClone = (original: HTMLElement) => {
+        const clone = original.cloneNode(true) as HTMLElement;
+        clone.removeAttribute("id");
+        clone.className = "rapor-page mx-auto bg-white";
+        clone.style.width = "794px";
+        clone.style.minWidth = "794px";
+        clone.style.maxWidth = "794px";
+        clone.style.height = "1123px";
+        clone.style.minHeight = "1123px";
+        clone.style.maxHeight = "1123px";
+        clone.style.boxSizing = "border-box";
+        clone.style.padding = "11mm 6mm 2mm 13mm"; // Sesuai margin cetak resmi
+        clone.style.margin = "0";
+        clone.style.boxShadow = "none";
+        clone.style.border = "none";
+        clone.style.borderRadius = "0";
+        clone.style.transform = "none";
+        clone.style.backgroundColor = "#ffffff";
+        clone.style.overflow = "hidden";
+
+        const wrapper = clone.querySelector(".rapor-content-wrapper") as HTMLElement;
+        if (wrapper) {
+          wrapper.style.height = "100%";
+          wrapper.style.minHeight = "100%";
+          wrapper.style.maxHeight = "100%";
+          wrapper.style.display = "flex";
+          wrapper.style.flexDirection = "column";
+          wrapper.style.justifyContent = "space-between";
+          wrapper.style.boxSizing = "border-box";
+        }
+
+        const imgs = clone.querySelectorAll("img");
+        imgs.forEach((img) => {
+          img.crossOrigin = "anonymous";
+        });
+
+        return clone;
+      };
+
+      // Pastikan font web selesai dimuat
+      if (document.fonts?.ready) {
+        await document.fonts.ready;
+      }
+
+      // Render Halaman 1
+      const clone1 = prepareClone(page1El);
+      offscreen.appendChild(clone1);
+
+      // Tunggu gambar di halaman 1 selesai termuat
+      const imgs1 = Array.from(clone1.querySelectorAll("img"));
+      await Promise.all(
+        imgs1.map((img) => {
+          if (img.complete) return Promise.resolve();
+          return new Promise((resolve) => {
+            img.onload = resolve;
+            img.onerror = resolve;
+          });
+        })
+      );
+
+      const canvas1 = await html2canvas(clone1, {
+        scale: 2, // 2x Retina Resolution
+        useCORS: true,
+        allowTaint: false,
+        backgroundColor: "#ffffff",
+        logging: false,
+        windowWidth: 794,
+        scrollX: 0,
+        scrollY: 0,
+      });
+
+      offscreen.removeChild(clone1);
+      setDownloadProgress("Memproses Halaman 2 (Tahfidz & Kepengasuhan)...");
+
+      // Render Halaman 2
+      const clone2 = prepareClone(page2El);
+      offscreen.appendChild(clone2);
+
+      const imgs2 = Array.from(clone2.querySelectorAll("img"));
+      await Promise.all(
+        imgs2.map((img) => {
+          if (img.complete) return Promise.resolve();
+          return new Promise((resolve) => {
+            img.onload = resolve;
+            img.onerror = resolve;
+          });
+        })
+      );
+
+      const canvas2 = await html2canvas(clone2, {
+        scale: 2,
+        useCORS: true,
+        allowTaint: false,
+        backgroundColor: "#ffffff",
+        logging: false,
+        windowWidth: 794,
+        scrollX: 0,
+        scrollY: 0,
+      });
+
+      // Bersihkan offscreen container
+      document.body.removeChild(offscreen);
+
+      setDownloadProgress("Menyusun lembar PDF resmi A4...");
+
+      // Susun Dokumen jsPDF A4 Portrait
+      const pdf = new jsPDF({
+        orientation: "portrait",
+        unit: "mm",
+        format: "a4",
+        compress: true,
+      });
+
+      // Tambahkan Halaman 1
+      const imgData1 = canvas1.toDataURL("image/jpeg", 0.95);
+      pdf.addImage(imgData1, "JPEG", 0, 0, 210, 297, undefined, "FAST");
+
+      // Tambahkan Halaman 2
+      pdf.addPage("a4", "portrait");
+      const imgData2 = canvas2.toDataURL("image/jpeg", 0.95);
+      pdf.addImage(imgData2, "JPEG", 0, 0, 210, 297, undefined, "FAST");
+
+      // Beri nama file yang rapi sesuai identitas santri
+      const cleanSantriName = (santri?.nama || "Santri")
+        .replace(/[^a-zA-Z0-9_\-\s]/g, "")
+        .trim()
+        .replace(/\s+/g, "_");
+      const fileName = `Rapor_${cleanSantriName}_PTS_2026.pdf`;
+
+      setDownloadProgress("Mengunduh ke perangkat...");
+      // Download file langsung ke folder Download
+      pdf.save(fileName);
+    } catch (error) {
+      console.error("Gagal melakukan unduh PDF langsung:", error);
+      alert("Sedang mengalihkan ke dialog cetak standar...");
+      window.print();
+    } finally {
+      setIsDownloading(false);
+      setDownloadProgress("");
+    }
+  };
+
   const renderTabelKategori = (judul: string, judulArab: string, mapelList: any[], startIndex: number = 1) => {
     if (!mapelList || mapelList.length === 0) return null;
     const cellPad = "3.8px 4px";
@@ -516,6 +692,11 @@ export default function RaporOfficialSheet({ data, showPrintToolbar = false }: R
           outline: none !important;
         }
 
+        [dir="rtl"],
+        .arabic-text {
+          font-family: 'Traditional Arabic', 'Amiri', 'Noto Naskh Arabic', Arial, serif !important;
+        }
+
         @media screen {
           .rapor-page {
             width: 794px !important;
@@ -541,7 +722,10 @@ export default function RaporOfficialSheet({ data, showPrintToolbar = false }: R
             margin: 0 !important; 
             padding: 0 !important; 
           }
-          .arabic-text { font-family: 'Traditional Arabic', serif !important; }
+          [dir="rtl"],
+          .arabic-text { 
+            font-family: 'Traditional Arabic', 'Amiri', 'Noto Naskh Arabic', Arial, serif !important; 
+          }
           .no-print, .mobile-header, .app-sidebar, .sidebar-nav, .sidebar-scroll-menu, nav, header, aside, .btn, button {
             display: none !important;
             visibility: hidden !important;
@@ -702,38 +886,68 @@ export default function RaporOfficialSheet({ data, showPrintToolbar = false }: R
               </p>
             </div>
 
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full sm:w-auto">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 w-full sm:w-auto">
+              {/* TOMBOL 1: UNDUH / SIMPAN PDF (DIRECT DOWNLOAD KE FOLDER DOWNLOADS) */}
+              <button 
+                type="button"
+                onClick={handleDirectDownloadPdf}
+                disabled={isDownloading}
+                className="no-print print:hidden flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 disabled:bg-emerald-800 text-white font-black text-xs sm:text-sm shadow-md transition-all active:scale-[0.98] cursor-pointer"
+                title="Langsung mengunduh file PDF rapor 2 halaman ke folder Download perangkat Anda"
+              >
+                {isDownloading ? (
+                  <>
+                    <Loader2 size={16} className="animate-spin" />
+                    <span>{downloadProgress || "Mengunduh PDF..."}</span>
+                  </>
+                ) : (
+                  <>
+                    <Download size={16} />
+                    <span>Unduh / Simpan PDF</span>
+                  </>
+                )}
+              </button>
+
+              {/* TOMBOL 2: CETAK / PRINT (WINDOW.PRINT) */}
               <button 
                 type="button"
                 onClick={() => window.print()}
-                className="no-print print:hidden flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs sm:text-sm shadow-md transition-all active:scale-[0.98] cursor-pointer"
+                disabled={isDownloading}
+                className="no-print print:hidden flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-white hover:bg-slate-100 border border-slate-200 text-slate-900 font-extrabold text-xs sm:text-sm shadow-md transition-all active:scale-[0.98] cursor-pointer"
+                title="Cetak langsung menggunakan mesin printer fisik atau dialog cetak browser"
               >
-                <Download size={16} />
-                <span>Unduh / Simpan PDF (A4)</span>
+                <Printer size={16} className="text-[#550000]" />
+                <span>Cetak / Print</span>
               </button>
 
+              {/* TOMBOL 3: PANDUAN CARA SIMPAN DI HP */}
               <button
                 type="button"
                 onClick={() => setShowGuideModal(true)}
+                disabled={isDownloading}
                 className="no-print print:hidden flex items-center justify-center gap-1.5 px-3.5 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 border border-white/25 text-white text-xs font-bold transition-all active:scale-[0.98] cursor-pointer"
                 title="Panduan cara simpan PDF di smartphone"
               >
                 <HelpCircle size={14} className="text-amber-300" />
-                <span>Cara Simpan di HP</span>
+                <span className="hidden sm:inline">Panduan HP</span>
+                <span className="sm:hidden">Bantuan</span>
               </button>
             </div>
           </div>
 
-          {/* Tips Cepat Download PDF di Smartphone */}
+          {/* Tips Cepat Download & Cetak */}
           <div className="px-4 py-3 bg-[#440000] border-b border-white/10 text-xs text-amber-100 flex items-start gap-2.5">
             <span className="text-base leading-none shrink-0 mt-0.5">💡</span>
             <div className="leading-relaxed min-w-0">
-              <strong className="text-white">Cara Menyimpan Rapor Menjadi File PDF di HP:</strong>
-              <p className="mt-0.5 text-white/90 text-[11px] leading-normal">
-                1. Klik tombol hijau <strong>"Unduh / Simpan PDF"</strong> di atas.<br />
-                2. Pada layar cetak HP, ubah pilihan <strong>Printer / Tujuan</strong> menjadi <strong className="text-amber-300 font-extrabold underline">"Simpan sebagai PDF"</strong> (Save as PDF).<br />
-                3. Klik ikon <strong>Simpan (💾)</strong>. File PDF rapor resmi 2 halaman akan otomatis tersimpan di HP Anda.
-              </p>
+              <strong className="text-white">Pilihan Memperoleh Lembar Rapor Resmi:</strong>
+              <div className="mt-1 text-white/90 text-[11px] leading-relaxed space-y-1">
+                <p>
+                  • <strong className="text-emerald-300">Unduh Otomatis:</strong> Klik tombol hijau <strong>"Unduh / Simpan PDF"</strong> untuk langsung men-download file PDF 2 halaman ke folder Download HP atau laptop Anda.
+                </p>
+                <p>
+                  • <strong className="text-white">Cetak Fisik / Print:</strong> Klik tombol <strong>"Cetak / Print"</strong> untuk mencetak dokumen langsung ke mesin printer kertas.
+                </p>
+              </div>
             </div>
           </div>
 
@@ -815,6 +1029,32 @@ export default function RaporOfficialSheet({ data, showPrintToolbar = false }: R
         </div>
       )}
 
+      {/* OVERLAY LOADING PROSES UNDUH PDF */}
+      {isDownloading && (
+        <div 
+          className="no-print print:hidden fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-xs p-4"
+          style={{ overscrollBehavior: "contain" }}
+        >
+          <div className="bg-white rounded-3xl p-6 sm:p-8 max-w-sm w-full text-center shadow-2xl border border-slate-100 flex flex-col items-center">
+            <div className="w-16 h-16 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center mb-4 shadow-inner">
+              <Loader2 className="animate-spin" size={32} />
+            </div>
+            <h3 className="text-base font-black text-slate-900 m-0">
+              Sedang Menyiapkan File PDF...
+            </h3>
+            <p className="text-xs text-slate-600 mt-2 mb-4 leading-relaxed">
+              {downloadProgress || "Memproses lembar rapor resmi 2 halaman..."}
+            </p>
+            <div className="w-full bg-slate-100 rounded-full h-2 overflow-hidden mb-3">
+              <div className="bg-emerald-600 h-full w-3/4 animate-pulse rounded-full" />
+            </div>
+            <p className="text-[11px] font-semibold text-emerald-800 m-0">
+              File akan otomatis tersimpan di folder Download perangkat Anda
+            </p>
+          </div>
+        </div>
+      )}
+
       {/* MODAL PANDUAN CARA SIMPAN PDF DI SMARTPHONE */}
       {showGuideModal && (
         <div 
@@ -832,10 +1072,10 @@ export default function RaporOfficialSheet({ data, showPrintToolbar = false }: R
                 </div>
                 <div>
                   <h3 className="text-base font-extrabold text-slate-900 m-0 leading-tight">
-                    Panduan Download Rapor di HP
+                    Panduan Unduh &amp; Cetak Rapor
                   </h3>
                   <p className="text-[11px] text-slate-500 m-0 mt-0.5">
-                    Cara menyimpan rapor resmi 2 halaman menjadi file PDF
+                    Dua cara mudah menyimpan rapor resmi 2 halaman
                   </p>
                 </div>
               </div>
@@ -849,24 +1089,43 @@ export default function RaporOfficialSheet({ data, showPrintToolbar = false }: R
             </div>
 
             <div className="mt-4 space-y-3.5 max-h-[68vh] overflow-y-auto pr-1 custom-scrollbar text-xs">
-              {/* Android Card */}
-              <div className="rounded-2xl border border-emerald-200 bg-emerald-50/70 p-4">
-                <div className="flex items-center gap-2 font-black text-emerald-950 mb-2 text-sm">
+              {/* Rekomendasi: Unduh Langsung */}
+              <div className="rounded-2xl border-2 border-emerald-300 bg-emerald-50/80 p-4">
+                <div className="flex items-center gap-2 font-black text-emerald-950 mb-1.5 text-sm">
+                  <span>⚡</span>
+                  <span>Cara 1: Unduh Otomatis (Paling Praktis)</span>
+                </div>
+                <p className="text-slate-700 text-[11.5px] leading-relaxed mb-3">
+                  Cukup klik tombol hijau <strong>"Unduh / Simpan PDF"</strong> di toolbar atas. Sistem akan otomatis memproses dan men-download file PDF rapor ananda langsung ke folder <strong>Download</strong> perangkat HP atau komputer Anda.
+                </p>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowGuideModal(false);
+                    handleDirectDownloadPdf();
+                  }}
+                  className="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs shadow-sm transition-all active:scale-[0.98] cursor-pointer"
+                >
+                  <Download size={14} />
+                  <span>Unduh File PDF Sekarang</span>
+                </button>
+              </div>
+
+              {/* Cara 2: Android Card */}
+              <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                <div className="flex items-center gap-2 font-black text-slate-900 mb-2 text-sm">
                   <span>📱</span>
-                  <span>Pengguna HP Android (Samsung, Xiaomi, Oppo, Vivo, dll.)</span>
+                  <span>Cara 2: Simpan Manual via HP Android</span>
                 </div>
                 <ol className="list-decimal pl-4 space-y-1.5 text-slate-700 text-[11.5px] leading-relaxed">
                   <li>
-                    Tekan tombol hijau <strong>"Unduh / Simpan PDF"</strong>.
+                    Tekan tombol <strong>"Cetak / Print"</strong>.
                   </li>
                   <li>
-                    Layar pratinjau cetak HP akan terbuka. Di bagian paling atas yang bertuliskan <em>"Pilih Printer"</em>, klik dan ubah menjadi <strong className="text-emerald-800 font-extrabold">"Simpan sebagai PDF"</strong> (Save as PDF).
+                    Di bagian atas layar cetak, ubah pilihan Printer menjadi <strong className="text-emerald-800 font-extrabold">"Simpan sebagai PDF"</strong> (Save as PDF).
                   </li>
                   <li>
-                    Tekan ikon lingkaran kuning/hijau bertuliskan <strong>PDF (💾)</strong> di pojok kanan atas.
-                  </li>
-                  <li>
-                    Pilih folder tujuan (misal: Download/Dokumen) lalu tekan <strong>Simpan</strong>. Rapor resmi ananda akan otomatis tersimpan di HP Anda!
+                    Tekan ikon lingkaran bertuliskan <strong>PDF (💾)</strong> lalu klik <strong>Simpan</strong>.
                   </li>
                 </ol>
               </div>
@@ -879,16 +1138,13 @@ export default function RaporOfficialSheet({ data, showPrintToolbar = false }: R
                 </div>
                 <ol className="list-decimal pl-4 space-y-1.5 text-slate-700 text-[11.5px] leading-relaxed">
                   <li>
-                    Tekan tombol hijau <strong>"Unduh / Simpan PDF"</strong>.
+                    Tekan tombol <strong>"Cetak / Print"</strong>.
                   </li>
                   <li>
-                    Saat jendela Print terbuka, pada gambar pratinjau lembar rapor di bawah, lakukan gerakan <strong className="text-sky-800 font-extrabold">cubit memperbesar (Pinch-to-Zoom)</strong> dengan 2 jari Anda keluar.
+                    Pada pratinjau lembar rapor di bawah, lakukan gerakan <strong className="text-sky-800 font-extrabold">cubit memperbesar (Pinch-to-Zoom)</strong> dengan 2 jari Anda keluar untuk membuka PDF utuh.
                   </li>
                   <li>
-                    Tampilan pratinjau akan langsung berubah menjadi dokumen PDF utuh.
-                  </li>
-                  <li>
-                    Tekan tombol <strong>Bagikan / Share (ikon kotak panah ke atas 📤)</strong> di pojok bawah/atas, lalu pilih <strong className="text-sky-800 font-extrabold">"Simpan ke File" (Save to Files)</strong>.
+                    Tekan tombol <strong>Bagikan / Share (📤)</strong> lalu pilih <strong className="text-sky-800 font-extrabold">"Simpan ke File" (Save to Files)</strong>.
                   </li>
                 </ol>
               </div>
@@ -897,34 +1153,42 @@ export default function RaporOfficialSheet({ data, showPrintToolbar = false }: R
               <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
                 <div className="flex items-center gap-2 font-black text-slate-900 mb-2 text-sm">
                   <span>💻</span>
-                  <span>Pengguna Laptop / Komputer (Chrome, Edge, Firefox)</span>
+                  <span>Pengguna Komputer / Laptop</span>
                 </div>
                 <ol className="list-decimal pl-4 space-y-1.5 text-slate-700 text-[11.5px] leading-relaxed">
                   <li>
-                    Tekan tombol hijau <strong>"Unduh / Simpan PDF"</strong> (atau tekan <code>Ctrl + P</code>).
+                    Tekan tombol <strong>"Cetak / Print"</strong> (atau tekan <code>Ctrl + P</code>).
                   </li>
                   <li>
-                    Pada pilihan Destination / Tujuan, pilih <strong>"Save as PDF"</strong>.
-                  </li>
-                  <li>
-                    Pastikan ukuran kertas <strong>A4</strong>, lalu klik <strong>Save</strong>.
+                    Pilih printer fisik Anda untuk langsung mencetak ke kertas, atau pilih Destination <strong>"Save as PDF"</strong> untuk menyimpan file.
                   </li>
                 </ol>
               </div>
             </div>
 
-            <div className="mt-5 pt-3.5 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-3">
-              <span className="text-[11px] text-slate-400 text-center sm:text-left">Pesantren Al-Imam Al-Islami</span>
+            <div className="mt-5 pt-3.5 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-2.5">
               <button
                 type="button"
                 onClick={() => {
                   setShowGuideModal(false);
                   window.print();
                 }}
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition-all active:scale-[0.98] cursor-pointer"
+              >
+                <Printer size={14} className="text-[#550000]" />
+                <span>Buka Dialog Cetak / Print</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  setShowGuideModal(false);
+                  handleDirectDownloadPdf();
+                }}
                 className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs shadow-md transition-all active:scale-[0.98] cursor-pointer"
               >
-                <Download size={15} />
-                <span>Paham, Lanjutkan Download Sekarang</span>
+                <Download size={14} />
+                <span>Unduh File PDF Sekarang</span>
               </button>
             </div>
           </div>
@@ -963,6 +1227,7 @@ export default function RaporOfficialSheet({ data, showPrintToolbar = false }: R
           {/* HALAMAN 1: RAPOR AKADEMIK (KASYFUD DARAJAT)                               */}
           {/* ========================================================================= */}
           <div 
+            id="rapor-page-1"
             className="rapor-page mx-auto bg-white p-[10mm] sm:p-[12mm] shadow-2xl rounded-3xl border border-slate-200/80 print:shadow-none print:border-none print:p-0 print:max-w-full relative" 
             style={{ 
               width: "794px",
@@ -987,14 +1252,14 @@ export default function RaporOfficialSheet({ data, showPrintToolbar = false }: R
           <div>
             {/* Kop Surat Resmi */}
             <div style={{ display: "flex", alignItems: "center", borderBottom: "3px solid #000000", paddingBottom: "4px", marginBottom: "6px", fontFamily: '"Times New Roman", Times, serif' }}>
-              <img src="/logo.png" alt="Logo Al-Imam" style={{ width: "56px", height: "56px", objectFit: "contain" }} />
+              <img crossOrigin="anonymous" src="/logo.png" alt="Logo Al-Imam" style={{ width: "56px", height: "56px", objectFit: "contain" }} />
               <div style={{ flex: 1, textAlign: "center", fontFamily: '"Times New Roman", Times, serif' }}>
                 <h1 style={{ fontSize: "17.5px", fontWeight: "900", margin: 0, letterSpacing: "1px", color: "#000000", fontFamily: '"Times New Roman", Times, serif' }}>PESANTREN AL-IMAM AL-ISLAMI</h1>
                 <p style={{ margin: "1px 0 2px 0", fontSize: "10px", fontWeight: "bold", color: "#666", fontStyle: "italic", fontFamily: '"Times New Roman", Times, serif' }}>Managed by Al-Andalus International Islamic Boarding School</p>
                 <p style={{ margin: "1px 0 0 0", fontSize: "10.5px", fontWeight: "bold", color: "#333", fontFamily: '"Times New Roman", Times, serif' }}>Kaderisasi Ummat Hanif, Kontributif, dan Adaptif</p>
                 <p style={{ margin: "1px 0 0 0", fontSize: "7.5px", color: "#555", whiteSpace: "nowrap", letterSpacing: "-0.1px", fontFamily: '"Times New Roman", Times, serif' }}>Jl. Pelabuhan II, Gg. Cirengkol, Kampung Pupunjul, Desa Cikembar, Kec. Cikembar, Kab. Sukabumi, Jawa Barat 43157 | Website: pesantren-alimam.com</p>
               </div>
-              <img src="/logo-andalus.png" alt="Logo Al-Andalus" style={{ width: "56px", height: "56px", objectFit: "contain" }} />
+              <img crossOrigin="anonymous" src="/logo-andalus.png" alt="Logo Al-Andalus" style={{ width: "56px", height: "56px", objectFit: "contain" }} />
             </div>
 
             {/* Judul Arab & Terjemahan */}
@@ -1315,6 +1580,7 @@ export default function RaporOfficialSheet({ data, showPrintToolbar = false }: R
                   display: "inline-block" 
                 }}>
                   <img 
+                    crossOrigin="anonymous"
                     src={`https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=https://sikap.pesantren-alimam.com/verify/${santri?.id || "santri"}?doc=akademik`}
                     alt="QR Verifikasi Dokumen"
                     style={{ width: "78px", height: "78px", display: "block" }}
@@ -1363,6 +1629,7 @@ export default function RaporOfficialSheet({ data, showPrintToolbar = false }: R
       {/* HALAMAN 2: KEPRIBADIAN, TAHSIN & TAHFIDZ, DAN PENGESAHAN DOKUMEN          */}
       {/* ========================================================================= */}
       <div 
+        id="rapor-page-2"
         className="rapor-page mx-auto bg-white p-[10mm] sm:p-[12mm] shadow-2xl rounded-3xl border border-slate-200/80 print:shadow-none print:border-none print:p-0 print:max-w-full relative" 
         style={{ 
           width: "794px",
@@ -1387,14 +1654,14 @@ export default function RaporOfficialSheet({ data, showPrintToolbar = false }: R
           <div>
             {/* Kop Surat Resmi Halaman 2 */}
             <div style={{ display: "flex", alignItems: "center", borderBottom: "3px solid #000000", paddingBottom: "4px", marginBottom: "6px", fontFamily: '"Times New Roman", Times, serif' }}>
-              <img src="/logo.png" alt="Logo Al-Imam" style={{ width: "56px", height: "56px", objectFit: "contain" }} />
+              <img crossOrigin="anonymous" src="/logo.png" alt="Logo Al-Imam" style={{ width: "56px", height: "56px", objectFit: "contain" }} />
               <div style={{ flex: 1, textAlign: "center", fontFamily: '"Times New Roman", Times, serif' }}>
                 <h1 style={{ fontSize: "17.5px", fontWeight: "900", margin: 0, letterSpacing: "1px", color: "#000000", fontFamily: '"Times New Roman", Times, serif' }}>PESANTREN AL-IMAM AL-ISLAMI</h1>
                 <p style={{ margin: "1px 0 2px 0", fontSize: "10px", fontWeight: "bold", color: "#666", fontStyle: "italic", fontFamily: '"Times New Roman", Times, serif' }}>Managed by Al-Andalus International Islamic Boarding School</p>
                 <p style={{ margin: "1px 0 0 0", fontSize: "10.5px", fontWeight: "bold", color: "#333", fontFamily: '"Times New Roman", Times, serif' }}>Kaderisasi Ummat Hanif, Kontributif, dan Adaptif</p>
                 <p style={{ margin: "1px 0 0 0", fontSize: "7.5px", color: "#555", whiteSpace: "nowrap", letterSpacing: "-0.1px", fontFamily: '"Times New Roman", Times, serif' }}>Jl. Pelabuhan II, Gg. Cirengkol, Kampung Pupunjul, Desa Cikembar, Kec. Cikembar, Kab. Sukabumi, Jawa Barat 43157 | Website: pesantren-alimam.com</p>
               </div>
-              <img src="/logo-andalus.png" alt="Logo Al-Andalus" style={{ width: "56px", height: "56px", objectFit: "contain" }} />
+              <img crossOrigin="anonymous" src="/logo-andalus.png" alt="Logo Al-Andalus" style={{ width: "56px", height: "56px", objectFit: "contain" }} />
             </div>
 
             {/* Judul Arab & Terjemahan Halaman 2 */}
@@ -1898,6 +2165,7 @@ export default function RaporOfficialSheet({ data, showPrintToolbar = false }: R
                   display: "inline-block" 
                 }}>
                   <img 
+                    crossOrigin="anonymous"
                     src={`https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=https://sikap.pesantren-alimam.com/verify/${santri?.id || "santri"}?doc=pengasuhan`}
                     alt="QR Verifikasi Kepengasuhan"
                     style={{ width: "78px", height: "78px", display: "block" }}
