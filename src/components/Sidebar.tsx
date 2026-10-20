@@ -180,14 +180,23 @@ const focusRing =
 
 function formatRoleDisplay(roleStr: string, email?: string, nama?: string): string {
   if (!roleStr) return "Pengguna";
-  const emailLower = (email || "").toLowerCase();
   const namaLower = (nama || "").toLowerCase();
-  const isBachtiar = emailLower.includes("keuangan") || namaLower.includes("bachtiar");
 
-  if (isBachtiar) {
-    if (roleStr.toUpperCase() === "ADMIN_KEUANGAN") return "Admin Keuangan";
-    if (roleStr.toUpperCase() === "GURU" || roleStr.toUpperCase() === "GURU_BACHTIAR") return "Guru Mapel (Bahasa Inggris)";
-    if (roleStr.includes(",")) return "Admin Keuangan";
+  if (roleStr.toUpperCase() === "GURU") {
+    if (namaLower.includes("rieza") || namaLower.includes("reza")) return "Guru Mapel (Matematika MTs)";
+    if (namaLower.includes("bachtiar")) return "Guru Mapel (Bahasa Inggris)";
+    if (namaLower.includes("wahab")) return "Guru Mapel (Fiqh)";
+    if (namaLower.includes("imron")) return "Guru Mapel (Nahwu & Tahsin)";
+    if (namaLower.includes("wahyudi")) return "Guru Mapel (Bahasa Arab)";
+    if (namaLower.includes("cahyono") || namaLower.includes("agus")) return "Guru Mapel (Kitabah)";
+    if (namaLower.includes("thoriq")) return "Guru Mapel (Siroh & Hadis)";
+    if (namaLower.includes("iqbal")) return "Guru Mapel (Shorf & Tahsin)";
+    return "Guru Mapel";
+  }
+
+  if (roleStr.toUpperCase() === "ADMIN_SUPER") {
+    if (namaLower.includes("wahab")) return "Mudir Pesantren";
+    return "Admin Super";
   }
 
   if (roleStr.includes(",")) {
@@ -231,31 +240,18 @@ interface SidebarContentProps {
 function SidebarContent({ user, items, activeHref, onNavigate, onLogout, onClose }: SidebarContentProps) {
   const roleUpper = (user?.role || "").toUpperCase();
   const originalRoleUpper = (user?.originalRole || "").toUpperCase();
-  const isSuperAdmin = roleUpper === "ADMIN_SUPER" || originalRoleUpper === "ADMIN_SUPER" || roleUpper === "MUDIR" || originalRoleUpper === "MUDIR";
-  const isRealSuperSwitched = Boolean(
-    user?.originalRole &&
-    (originalRoleUpper === "ADMIN_SUPER" || originalRoleUpper === "MUDIR") &&
-    originalRoleUpper !== roleUpper
-  );
+  const isUserSwitched = Boolean(user?.originalRole && originalRoleUpper !== roleUpper);
+  const isAdminRole = roleUpper.includes("ADMIN") || roleUpper.includes("MUDIR");
 
   const isWaliSantri =
     roleUpper === "WALI_SANTRI" ||
     roleUpper.includes("WALI_SANTRI") ||
     (user?.nama || "").toLowerCase().startsWith("wali dari");
   const isWaliRole = isWaliSantri;
-  const isAdminRole = roleUpper.includes("ADMIN");
-  const isBachtiar =
-    (user?.email || "").toLowerCase().includes("keuangan") ||
-    (user?.nama || "").toLowerCase().includes("bachtiar");
-
-  const BACHTIAR_STATIC_ROLES = [
-    { role: "ADMIN_KEUANGAN", label: "Admin Keuangan", pejabat: "Maulidin Bachtiar" },
-    { role: "GURU_BACHTIAR", label: "Guru Mapel (B. Inggris)", pejabat: "Maulidin Bachtiar" },
-  ];
 
   const [waliSppLocked, setWaliSppLocked] = useState<boolean>(false);
-  const [switchRoles, setSwitchRoles] = useState<any[]>(isBachtiar ? BACHTIAR_STATIC_ROLES : []);
-  const [canSwitch, setCanSwitch] = useState<boolean>(isSuperAdmin || isRealSuperSwitched || isBachtiar);
+  const [switchRoles, setSwitchRoles] = useState<any[]>([]);
+  const [canSwitch, setCanSwitch] = useState<boolean>(false);
   const [switching, setSwitching] = useState<boolean>(false);
 
   useEffect(() => {
@@ -264,16 +260,14 @@ function SidebarContent({ user, items, activeHref, onNavigate, onLogout, onClose
       .then((res) => {
         if (res?.success) {
           setSwitchRoles(res.roles || []);
-          if (res.canSwitch !== undefined) {
-            setCanSwitch(Boolean(res.canSwitch));
-          }
+          setCanSwitch(Boolean(res.canSwitch));
         }
       })
       .catch(() => {});
   }, []);
 
   const executeSwitchRole = async (targetRole: string) => {
-    if (!targetRole || targetRole === selectedRoleKey) return;
+    if (!targetRole || targetRole.toUpperCase() === roleUpper) return;
     setSwitching(true);
     try {
       const res = await fetch("/api/auth/switch-role", {
@@ -285,12 +279,12 @@ function SidebarContent({ user, items, activeHref, onNavigate, onLogout, onClose
       if (data.success && data.redirectTo) {
         window.location.href = data.redirectTo;
       } else {
-        alert(data.error || "Gagal beralih akun");
+        alert(data.error || "Gagal beralih peran");
         setSwitching(false);
       }
     } catch (err) {
-      console.error("Gagal beralih akun:", err);
-      alert("Terjadi kendala saat beralih akun");
+      console.error("Gagal beralih peran:", err);
+      alert("Terjadi kendala saat beralih peran");
       setSwitching(false);
     }
   };
@@ -311,11 +305,11 @@ function SidebarContent({ user, items, activeHref, onNavigate, onLogout, onClose
       if (data.success && data.redirectTo) {
         window.location.href = data.redirectTo;
       } else {
-        alert(data.error || "Gagal kembali ke akun utama");
+        alert(data.error || "Gagal kembali ke peran utama");
         setSwitching(false);
       }
     } catch (err) {
-      console.error("Gagal kembali ke akun utama:", err);
+      console.error("Gagal kembali ke peran utama:", err);
       setSwitching(false);
     }
   };
@@ -343,62 +337,16 @@ function SidebarContent({ user, items, activeHref, onNavigate, onLogout, onClose
     : user?.nama || "User";
   const initial = (displayName || "U").charAt(0).toUpperCase();
 
-  const selectedRoleKey = useMemo(() => {
-    const emailLower = (user?.email || "").toLowerCase();
-    const namaLower = (user?.nama || "").toLowerCase();
-    const isUserBachtiar = emailLower.includes("keuangan") || namaLower.includes("bachtiar");
-
-    if (isUserBachtiar) {
-      if (roleUpper === "GURU" || roleUpper === "GURU_BACHTIAR") return "GURU_BACHTIAR";
-      return "ADMIN_KEUANGAN";
-    }
-
-    if (roleUpper === "ADMIN_SUPER") {
-      if (emailLower.includes("wahab") || namaLower.includes("wahab")) return "ADMIN_SUPER_MUDIR";
-      return "ADMIN_SUPER";
-    }
-    if (roleUpper === "WALI_KELAS") {
-      if (emailLower.includes("mts") || namaLower.includes("agus")) return "WALI_KELAS_MTS";
-      if (emailLower.includes("ma") || namaLower.includes("thoriq")) return "WALI_KELAS_MA";
-      return "WALI_KELAS_IL";
-    }
-    if (roleUpper === "GURU") {
-      if (emailLower.includes("ade") || namaLower.includes("ade")) return "GURU_ADE";
-      if (emailLower.includes("arifin") || namaLower.includes("arifin")) return "GURU_ARIFIN";
-      if (emailLower.includes("hardian") || namaLower.includes("hardian")) return "GURU_HARDIANSYAH";
-      if (emailLower.includes("teguh") || namaLower.includes("teguh")) return "GURU_TEGUH";
-      if (emailLower.includes("imam") || namaLower.includes("imam")) return "GURU_IMAM";
-      if (emailLower.includes("saif") || namaLower.includes("saif")) return "GURU_SAIF";
-      return "GURU_ADE";
-    }
-    return roleUpper;
-  }, [roleUpper, user?.email, user?.nama]);
-
   // Saring peran tujuan: Peran aktif saat ini TIDAK BOLEH muncul sebagai pilihan beralih!
+  // Jika sedang beralih peran, tombol "Kembali ke [Peran Asli]" sudah ada di banner atas sehingga tidak diduplikasi di bawah.
   const availableTargetRoles = useMemo(() => {
-    const list = switchRoles.length > 0 ? switchRoles : (isBachtiar ? BACHTIAR_STATIC_ROLES : []);
-    return list.filter((r) => {
-      // 1. Kecualikan jika key identik dengan selectedRoleKey saat ini
-      if (r.role === selectedRoleKey) return false;
-
-      // 2. Logika khusus akun Bachtiar:
-      if (isBachtiar) {
-        if (selectedRoleKey === "ADMIN_KEUANGAN" && (r.role === "ADMIN_KEUANGAN" || r.targetRole === "ADMIN_KEUANGAN")) {
-          return false;
-        }
-        if (selectedRoleKey === "GURU_BACHTIAR" && (r.role === "GURU_BACHTIAR" || r.role === "GURU" || r.targetRole === "GURU")) {
-          return false;
-        }
-      }
-
-      // 3. Logika untuk Super Admin yang sedang impersonasi:
-      if (r.targetRole && r.targetRole === roleUpper && r.role === selectedRoleKey) {
-        return false;
-      }
-
+    return switchRoles.filter((r) => {
+      const rUpper = r.role.toUpperCase();
+      if (rUpper === roleUpper) return false;
+      if (isUserSwitched && rUpper === originalRoleUpper) return false;
       return true;
     });
-  }, [switchRoles, selectedRoleKey, isBachtiar, roleUpper]);
+  }, [switchRoles, roleUpper, isUserSwitched, originalRoleUpper]);
 
   return (
     <>
@@ -432,11 +380,11 @@ function SidebarContent({ user, items, activeHref, onNavigate, onLogout, onClose
         )}
       </div>
 
-      {/* Role Switcher & Mode Akses (Platinum Standard Multi-User Switcher) */}
-      {(canSwitch || isRealSuperSwitched) && (
+      {/* Role Switcher & Mode Akses (Platinum Standard Intra-User Switcher) */}
+      {(canSwitch || isUserSwitched) && (
         <div className="border-b border-slate-200/80 bg-gradient-to-b from-slate-50/90 to-white px-3.5 py-3">
-          {/* Switched Mode Banner (Khusus Super Admin yang impersonasi akun lain) */}
-          {isRealSuperSwitched && (
+          {/* Switched Mode Banner (Saat user sedang beralih ke peran tambahannya) */}
+          {isUserSwitched && (
             <div className="mb-2.5 rounded-xl border border-amber-200 bg-gradient-to-br from-amber-50 to-orange-50/60 p-2.5 shadow-sm">
               <div className="flex items-center justify-between gap-1 mb-1">
                 <span className="flex items-center gap-1.5 text-[10px] font-black uppercase tracking-wider text-amber-900">
@@ -444,10 +392,10 @@ function SidebarContent({ user, items, activeHref, onNavigate, onLogout, onClose
                     <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
                     <span className="relative inline-flex rounded-full h-2 w-2 bg-amber-500"></span>
                   </span>
-                  Mode Akses Aktif
+                  Peran Tambahan Aktif
                 </span>
                 <span className="rounded-md bg-amber-100 px-1.5 py-0.5 text-[9px] font-black text-amber-800">
-                  Impersonasi
+                  Peran Tambahan
                 </span>
               </div>
               <p className="text-[11px] font-semibold text-slate-700 truncate mb-2">
@@ -457,10 +405,10 @@ function SidebarContent({ user, items, activeHref, onNavigate, onLogout, onClose
                 type="button"
                 onClick={handleSwitchBack}
                 disabled={switching}
-                className="w-full flex items-center justify-center gap-1.5 py-1.5 px-3 rounded-lg bg-white border border-amber-300 text-amber-900 hover:bg-amber-100/60 text-[11px] font-bold shadow-xs transition-all active:scale-95 disabled:opacity-50"
+                className="w-full flex items-center justify-center gap-1.5 py-1.5 px-3 rounded-lg bg-white border border-amber-300 text-amber-900 hover:bg-amber-100/60 text-[11px] font-bold shadow-xs transition-all active:scale-95 disabled:opacity-50 cursor-pointer"
               >
                 <RotateCcw size={12} className={switching ? "animate-spin" : ""} />
-                <span>Kembali ke {ROLE_LABEL[user.originalRole || "ADMIN_SUPER"] || "Admin Super"}</span>
+                <span>Kembali ke {ROLE_LABEL[user.originalRole || "ADMIN_SUPER"] || "Peran Utama"}</span>
               </button>
             </div>
           )}
@@ -471,7 +419,7 @@ function SidebarContent({ user, items, activeHref, onNavigate, onLogout, onClose
               <div className="flex items-center justify-between px-0.5">
                 <span className="flex items-center gap-1.5 text-[10px] font-black uppercase tracking-wider text-slate-500">
                   <ArrowLeftRight size={11} className="text-[#550000]" />
-                  Beralih Akun / Peran
+                  Beralih Peran
                 </span>
                 {switching && (
                   <span className="text-[9px] font-bold text-amber-600 animate-pulse">Memproses peralihan...</span>
@@ -479,7 +427,7 @@ function SidebarContent({ user, items, activeHref, onNavigate, onLogout, onClose
               </div>
 
               {availableTargetRoles.length === 1 ? (
-                /* Tombol Cepat 1-Klik untuk Pengguna Multi-Role (seperti Ust. Maulidin Bachtiar) */
+                /* Tombol Cepat 1-Klik untuk Pengguna Multi-Role (seperti Ust. Maulidin Bachtiar atau Ust. Rieza Eka Tomara) */
                 <button
                   type="button"
                   onClick={() => executeSwitchRole(availableTargetRoles[0].role)}
@@ -508,13 +456,13 @@ function SidebarContent({ user, items, activeHref, onNavigate, onLogout, onClose
                   />
                 </button>
               ) : (
-                /* Dropdown Pilihan untuk Super Admin yang memiliki banyak peran tujuan */
+                /* Dropdown Pilihan untuk Pengguna dengan 3+ Peran */
                 <div className="relative">
                   <select
                     value=""
                     onChange={handleRoleSelect}
                     disabled={switching}
-                    aria-label="Pilih akun atau peran tujuan"
+                    aria-label="Pilih peran tujuan"
                     className="w-full appearance-none rounded-xl border border-slate-200 bg-white py-2 pl-3 pr-8 text-[11px] font-bold text-slate-800 shadow-xs transition-colors hover:border-[#550000]/40 focus:border-[#550000] focus:outline-none focus:ring-2 focus:ring-[#550000]/20 disabled:cursor-not-allowed disabled:opacity-60 cursor-pointer"
                   >
                     <option value="" disabled>
@@ -522,7 +470,7 @@ function SidebarContent({ user, items, activeHref, onNavigate, onLogout, onClose
                     </option>
                     {availableTargetRoles.map((r) => (
                       <option key={r.role} value={r.role}>
-                        {r.label} — {r.pejabat}
+                        {r.label}
                       </option>
                     ))}
                   </select>
@@ -601,7 +549,7 @@ function SidebarContent({ user, items, activeHref, onNavigate, onLogout, onClose
             >
               {formatRoleDisplay(user?.role || "", user?.email, user?.nama)}
             </p>
-            {isRealSuperSwitched && (
+            {isUserSwitched && (
               <span className="inline-block mt-0.5 rounded px-1.5 py-0.5 text-[9px] font-black bg-amber-100 text-amber-800">
                 Mode Beralih (Asli: {ROLE_LABEL[user.originalRole || "ADMIN_SUPER"] || user.originalRole})
               </span>

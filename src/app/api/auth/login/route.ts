@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { createSession } from "@/lib/auth";
+import { getUserMultiRoles } from "@/lib/multiRole";
 import bcrypt from "bcryptjs";
 
 export async function POST(req: NextRequest) {
@@ -320,50 +321,7 @@ export async function POST(req: NextRequest) {
       user.plain_password === "Andalus2026!";
 
     // Deteksi opsi peran ganda (Multi-Role) untuk akun civitas
-    let multiRoles: { role: string; label: string; deskripsi: string; redirectTo: string }[] = [];
-    const emailLower = (user.email || "").toLowerCase();
-    const usernameLower = (user.username || "").toLowerCase();
-    const namaLower = (user.nama || "").toLowerCase();
-
-    // 1. Kasus Spesifik: Ust. Maulidin Bachtiar (Admin Keuangan & Guru Mapel Bahasa Inggris)
-    if (
-      emailLower.includes("keuangan") || 
-      usernameLower.includes("keuangan") || 
-      namaLower.includes("bachtiar")
-    ) {
-      multiRoles = [
-        {
-          role: "ADMIN_KEUANGAN",
-          label: "Admin Keuangan",
-          deskripsi: "Kelola SPP santri, verifikasi bukti transfer & kendali saklar portal",
-          redirectTo: "/keuangan"
-        },
-        {
-          role: "GURU",
-          label: "Guru Mapel (Bahasa Inggris)",
-          deskripsi: "Input jurnal mengajar, presensi santri, & nilai harian",
-          redirectTo: "/jurnal"
-        }
-      ];
-    } else if (user.role && user.role.includes(",")) {
-      // 2. Kasus peran gabungan di database (misal "ADMIN_SUPER,GURU")
-      const rawRoles = user.role.split(",").map((r: string) => r.trim().toUpperCase());
-      const roleLabels: Record<string, { label: string; deskripsi: string; redirectTo: string }> = {
-        ADMIN_SUPER: { label: "Admin Super", deskripsi: "Akses penuh konfigurasi, master data & sistem", redirectTo: "/dashboard" },
-        ADMIN_KEUANGAN: { label: "Admin Keuangan", deskripsi: "Kelola SPP santri & gembok portal", redirectTo: "/keuangan" },
-        KADIV_KURIKULUM: { label: "Kadiv Kurikulum", deskripsi: "Monitoring jurnal mengajar & kurikulum", redirectTo: "/jurnal" },
-        KADIV_PENGASUHAN: { label: "Kadiv Kepengasuhan", deskripsi: "Pembinaan santri & kedisiplinan", redirectTo: "/halaqoh" },
-        WALI_KELAS: { label: "Wali Kelas", deskripsi: "Kelola kelas binaan, nilai & rapor santri", redirectTo: "/wali-kelas" },
-        GURU: { label: "Guru Mapel", deskripsi: "Input jurnal mengajar & nilai harian", redirectTo: "/jurnal" },
-        MUSYRIF: { label: "Pengampu Halaqoh", deskripsi: "Setoran mutabaah & ujian tahfidz", redirectTo: "/halaqoh" },
-      };
-      multiRoles = rawRoles.map((r: string) => ({
-        role: r,
-        label: roleLabels[r]?.label || r.replace(/_/g, " "),
-        deskripsi: roleLabels[r]?.deskripsi || `Masuk sebagai ${r}`,
-        redirectTo: roleLabels[r]?.redirectTo || "/dashboard"
-      }));
-    }
+    const multiRoles = await getUserMultiRoles(user.id);
 
     // Jika pengguna memiliki lebih dari satu peran dan belum memilih saat login:
     if (multiRoles.length > 1 && !selectedRole) {
