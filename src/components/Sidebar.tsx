@@ -49,9 +49,9 @@ const NAV: NavItem[] = [
     label: "Dashboard",
     icon: LayoutDashboard,
     roles: [
-      "admin_super", "guru", "musyrif", "pengampu_halaqoh", "wali_kelas", "mudir",
-      "kepala_sekolah", "kadiv_pengasuhan", "kadiv_asrama", "kadiv_kedisiplinan",
-      "kadiv_kurikulum", "admin_keuangan",
+      "admin_super", "guru", "musyrif", "pengasuh", "pengampu_halaqoh", "pengampu", "wali_kelas", "mudir",
+      "kepala_sekolah", "kepala_pengasuhan", "kadiv_pengasuhan", "kepala_asrama", "kadiv_asrama",
+      "kepala_kedisiplinan", "kadiv_kedisiplinan", "kepala_kurikulum", "kadiv_kurikulum", "admin_keuangan",
     ],
   },
   { href: "/wali", label: "Beranda", icon: LayoutDashboard, roles: ["wali_santri", "orang_tua", "wali"] },
@@ -64,54 +64,58 @@ const NAV: NavItem[] = [
     href: "/presensi/santri",
     label: "Presensi Santri",
     icon: ClipboardCheck,
-    roles: ["guru", "wali_kelas", "kadiv_kedisiplinan", "kadiv_kurikulum", "kepala_sekolah", "admin_super", "mudir"],
+    roles: [
+      "guru", "wali_kelas", "kepala_kedisiplinan", "kadiv_kedisiplinan", "kepala_kurikulum",
+      "kadiv_kurikulum", "kepala_sekolah", "admin_super", "mudir",
+    ],
   },
   {
     href: "/jurnal",
     label: "Jurnal Mengajar",
     icon: BookMarked,
-    roles: ["guru", "kadiv_kurikulum", "kepala_sekolah", "admin_super", "mudir"],
+    roles: ["guru", "kepala_kurikulum", "kadiv_kurikulum", "kepala_sekolah", "admin_super", "mudir"],
   },
   {
     href: "/nilai",
     label: "Input Nilai",
     icon: BarChart3,
-    roles: ["guru", "wali_kelas", "kadiv_kurikulum", "kepala_sekolah", "admin_super", "mudir"],
+    roles: ["guru", "wali_kelas", "kepala_kurikulum", "kadiv_kurikulum", "kepala_sekolah", "admin_super", "mudir"],
   },
   {
     href: "/nilai/rekap",
     label: "Laporan Nilai",
     icon: FileSpreadsheet,
-    roles: ["wali_kelas", "kadiv_kurikulum", "kepala_sekolah", "admin_super", "mudir"],
+    roles: ["wali_kelas", "kepala_kurikulum", "kadiv_kurikulum", "kepala_sekolah", "admin_super", "mudir"],
     restricted: true,
   },
   {
     href: "/akademik/pantau-nilai",
     label: "Pantau Nilai",
     icon: BarChart3,
-    roles: ["wali_kelas", "kadiv_kurikulum", "kepala_sekolah", "admin_super", "mudir"],
+    roles: ["wali_kelas", "kepala_kurikulum", "kadiv_kurikulum", "kepala_sekolah", "admin_super", "mudir"],
     restricted: true,
   },
   {
     href: "/wali-kelas",
     label: "Hub Wali Kelas",
     icon: Users,
-    roles: ["wali_kelas", "kadiv_kurikulum", "kepala_sekolah", "admin_super", "mudir"],
+    roles: ["wali_kelas", "kepala_kurikulum", "kadiv_kurikulum", "kepala_sekolah", "admin_super", "mudir"],
   },
   {
     href: "/halaqoh",
     label: "Halaqoh & Mutabaah",
     icon: BookHeart,
     roles: [
-      "pengampu", "musyrif", "guru", "wali_kelas", "kadiv_pengasuhan", "kadiv_asrama",
-      "kadiv_kurikulum", "admin_super", "mudir",
+      "pengampu", "pengampu_halaqoh", "musyrif", "pengasuh", "guru", "wali_kelas",
+      "kepala_pengasuhan", "kadiv_pengasuhan", "kepala_asrama", "kadiv_asrama",
+      "kepala_kurikulum", "kadiv_kurikulum", "admin_super", "mudir",
     ],
   },
   {
     href: "/halaqoh/monitoring",
     label: "Pantau Ujian Tahfidz",
     icon: Award,
-    roles: ["wali_kelas", "kadiv_kurikulum", "admin_super", "mudir"],
+    roles: ["wali_kelas", "kepala_kurikulum", "kadiv_kurikulum", "admin_super", "mudir"],
     restricted: true,
   },
   {
@@ -119,8 +123,8 @@ const NAV: NavItem[] = [
     label: "Ibadah & Adab (BPI)",
     icon: HeartHandshake,
     roles: [
-      "musyrif", "pengasuh", "kadiv_pengasuhan", "kadiv_asrama", "kadiv_kedisiplinan",
-      "wali_kelas", "admin_super", "mudir",
+      "pengasuh", "musyrif", "kepala_pengasuhan", "kadiv_pengasuhan", "kepala_asrama", "kadiv_asrama",
+      "kepala_kedisiplinan", "kadiv_kedisiplinan", "wali_kelas", "admin_super", "mudir",
     ],
   },
   {
@@ -128,7 +132,8 @@ const NAV: NavItem[] = [
     label: "Absensi Pegawai",
     icon: UserCheck,
     roles: [
-      "guru", "musyrif", "pengampu", "wali_kelas", "kepala_sekolah", "kadiv_kurikulum",
+      "guru", "musyrif", "pengasuh", "pengampu", "pengampu_halaqoh", "wali_kelas",
+      "kepala_sekolah", "kepala_kurikulum", "kadiv_kurikulum", "kepala_pengasuhan",
       "kadiv_pengasuhan", "admin_super", "mudir",
     ],
   },
@@ -136,13 +141,29 @@ const NAV: NavItem[] = [
     href: "/pengaturan/kendali",
     label: "Pusat Kendali",
     icon: Settings,
-    roles: ["admin_super", "kadiv_kurikulum", "mudir"],
+    roles: ["admin_super", "kepala_kurikulum", "kadiv_kurikulum", "mudir"],
   },
-  { href: "/master", label: "Master Data", icon: Database, roles: ["admin_super", "mudir", "kadiv_kurikulum"] },
+  { href: "/master", label: "Master Data", icon: Database, roles: ["admin_super", "mudir", "kepala_kurikulum", "kadiv_kurikulum"] },
 ];
 
-const ROLE_LABEL: Record<string, string> = {
+export const ROLE_LABEL: Record<string, string> = {
   ADMIN_SUPER: "Admin Super",
+  ADMIN: "Admin Super",
+  ADMIN_KEUANGAN: "Admin Keuangan",
+  MUDIR: "Mudir Pesantren",
+  KEPALA_SEKOLAH: "Kepala Sekolah",
+  KEPALA_PENGASUHAN: "Kepala Kepengasuhan",
+  KADIV_PENGASUHAN: "Kepala Kepengasuhan",
+  KEPALA_ASRAMA: "Kepala Asrama",
+  KADIV_ASRAMA: "Kepala Asrama",
+  KEPALA_KEDISIPLINAN: "Kepala Kedisiplinan",
+  KADIV_KEDISIPLINAN: "Kepala Kedisiplinan",
+  KEPALA_KURIKULUM: "Kepala Kurikulum",
+  KADIV_KURIKULUM: "Kepala Kurikulum",
+  WALI_KELAS: "Wali Kelas",
+  WALI_KELAS_MTS: "Wali Kelas MTs",
+  WALI_KELAS_IL: "Wali Kelas IL",
+  WALI_KELAS_MA: "Wali Kelas MA",
   GURU: "Guru Mapel",
   GURU_ADE: "Guru Bahasa Indonesia",
   GURU_ARIFIN: "Guru Akidah",
@@ -151,25 +172,15 @@ const ROLE_LABEL: Record<string, string> = {
   GURU_IMAM: "Guru Asatidz",
   GURU_SAIF: "Guru Asatidz",
   GURU_BACHTIAR: "Guru Bahasa Inggris (Bachtiar)",
-  MUSYRIF: "Pengampu Halaqoh",
-  PENGAMPU: "Pengampu Halaqoh",
+  PENGASUH: "Pengasuh",
+  MUSYRIF: "Pengasuh",
   PENGAMPU_HALAQOH: "Pengampu Halaqoh",
-  WALI_KELAS: "Wali Kelas",
-  WALI_KELAS_MTS: "Wali Kelas MTs",
-  WALI_KELAS_IL: "Wali Kelas IL",
-  WALI_KELAS_MA: "Wali Kelas MA",
-  MUDIR: "Mudir Pesantren",
-  KEPALA_SEKOLAH: "Kepala Sekolah",
-  KADIV_PENGASUHAN: "Kadiv Kepengasuhan",
-  KADIV_ASRAMA: "Kadiv Asrama",
-  KADIV_KEDISIPLINAN: "Kadiv Kedisiplinan",
-  KADIV_KURIKULUM: "Kadiv Kurikulum",
-  ADMIN_KEUANGAN: "Admin Keuangan",
+  PENGAMPU: "Pengampu Halaqoh",
   WALI_SANTRI: "Portal Wali Santri",
 };
 
 // TODO: pengecualian berdasarkan nama ini sebaiknya diganti dengan peran "wali_kelas"
-// / "kadiv_kurikulum" langsung di database, lalu daftar nama di bawah dihapus.
+// / "kepala_kurikulum" langsung di database, lalu daftar nama di bawah dihapus.
 const WALI_KELAS_BY_NAME = ["agus cahyono", "imron", "thoriq"];
 const KURIKULUM_BY_NAME = ["imron"];
 
@@ -180,9 +191,10 @@ const focusRing =
 
 function formatRoleDisplay(roleStr: string, email?: string, nama?: string): string {
   if (!roleStr) return "Pengguna";
+  const rUpper = roleStr.toUpperCase();
   const namaLower = (nama || "").toLowerCase();
 
-  if (roleStr.toUpperCase() === "GURU") {
+  if (rUpper === "GURU") {
     if (namaLower.includes("rieza") || namaLower.includes("reza")) return "Guru Mapel (Matematika MTs)";
     if (namaLower.includes("bachtiar")) return "Guru Mapel (Bahasa Inggris)";
     if (namaLower.includes("wahab")) return "Guru Mapel (Fiqh)";
@@ -194,9 +206,49 @@ function formatRoleDisplay(roleStr: string, email?: string, nama?: string): stri
     return "Guru Mapel";
   }
 
-  if (roleStr.toUpperCase() === "ADMIN_SUPER") {
+  if (rUpper === "ADMIN_SUPER") {
     if (namaLower.includes("wahab")) return "Mudir Pesantren";
     return "Admin Super";
+  }
+
+  if (rUpper === "MUDIR") {
+    return "Mudir Pesantren";
+  }
+
+  if (rUpper === "KEPALA_SEKOLAH") {
+    return "Kepala Sekolah";
+  }
+
+  if (rUpper === "KEPALA_KURIKULUM" || rUpper === "KADIV_KURIKULUM") {
+    return "Kepala Kurikulum";
+  }
+
+  if (rUpper === "KEPALA_PENGASUHAN" || rUpper === "KADIV_PENGASUHAN") {
+    return "Kepala Kepengasuhan";
+  }
+
+  if (rUpper === "WALI_KELAS") {
+    if (namaLower.includes("cahyono") || namaLower.includes("agus")) return "Wali Kelas 7 MTs";
+    if (namaLower.includes("imron")) return "Wali Kelas IL";
+    if (namaLower.includes("thoriq")) return "Wali Kelas MA";
+    return "Wali Kelas";
+  }
+
+  if (rUpper === "PENGAMPU_HALAQOH" || rUpper === "PENGAMPU") {
+    return "Pengampu Halaqoh";
+  }
+
+  if (rUpper === "PENGASUH") {
+    return "Pengasuh";
+  }
+
+  if (rUpper === "MUSYRIF") {
+    if (namaLower.includes("iqbal")) return "Pengampu Halaqoh";
+    return "Pengasuh";
+  }
+
+  if (rUpper === "ADMIN_KEUANGAN") {
+    return "Admin Keuangan";
   }
 
   if (roleStr.includes(",")) {
@@ -206,7 +258,7 @@ function formatRoleDisplay(roleStr: string, email?: string, nama?: string): stri
       .map((r) => ROLE_LABEL[r.trim()] || r.trim())
       .join(" & ");
   }
-  return ROLE_LABEL[roleStr.toUpperCase()] || roleStr;
+  return ROLE_LABEL[rUpper] || roleStr;
 }
 
 /* ═══════════════════════════ Tipe ═══════════════════════════ */

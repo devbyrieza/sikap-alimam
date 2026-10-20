@@ -17,7 +17,7 @@ model User {
   password       String
   plain_password String?
   nama           String
-  role           String   @default("guru") // ADMIN_SUPER | ADMIN_KEUANGAN | MUDIR | KEPALA_SEKOLAH | KADIV_PENGASUHAN | KADIV_ASRAMA | KADIV_KEDISIPLINAN | KADIV_KURIKULUM | GURU | MUSYRIF | WALI_SANTRI
+  role           String   @default("guru") // ADMIN_SUPER | ADMIN_KEUANGAN | MUDIR | KEPALA_SEKOLAH | KEPALA_PENGASUHAN | KEPALA_KURIKULUM | WALI_KELAS | GURU | PENGASUH | PENGAMPU_HALAQOH | WALI_SANTRI
   is_active      Boolean  @default(true)
   must_change_password Boolean @default(false)
   spp_access_blocked  Boolean  @default(false) // jika true, Wali Santri tidak bisa akses SIKAP

@@ -171,7 +171,7 @@ export default function RaporWaliKelasPage() {
             <ShieldAlert size={44} color="#e11d48" style={{ margin: "0 auto 12px" }} />
             <h3 style={{ fontSize: "18px", fontWeight: "bold", color: "#9f1239", margin: "0 0 6px" }}>Akses Terbatas</h3>
             <p style={{ color: "#be123c", maxWidth: 460, margin: "0 auto", fontSize: "14px" }}>
-              Halaman ini diperuntukkan bagi Wali Kelas, Kadiv Kurikulum, dan Admin Super.
+              Halaman ini diperuntukkan bagi Wali Kelas, Kepala Kurikulum, dan Admin Super.
             </p>
           </div>
         ) : (

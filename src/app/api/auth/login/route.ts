@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { createSession } from "@/lib/auth";
-import { getUserMultiRoles } from "@/lib/multiRole";
+import { getUserMultiRoles, ROLE_DESTINATIONS } from "@/lib/multiRole";
 import bcrypt from "bcryptjs";
 
 export async function POST(req: NextRequest) {
@@ -336,17 +336,7 @@ export async function POST(req: NextRequest) {
     const effectiveRole = selectedRole ? selectedRole.toUpperCase() : (multiRoles.length > 0 ? multiRoles[0].role : user.role);
 
     // Tentukan URL tujuan dashboard berdasarkan peran aktif
-    const roleRedirectMap: Record<string, string> = {
-      ADMIN_SUPER: "/dashboard",
-      ADMIN_KEUANGAN: "/keuangan",
-      KADIV_KURIKULUM: "/jurnal",
-      KADIV_PENGASUHAN: "/halaqoh",
-      WALI_KELAS: "/wali-kelas",
-      GURU: "/jurnal",
-      MUSYRIF: "/halaqoh",
-      WALI_SANTRI: "/wali",
-    };
-    const finalRedirectTo = roleRedirectMap[effectiveRole] || "/dashboard";
+    const finalRedirectTo = ROLE_DESTINATIONS[effectiveRole] || "/dashboard";
 
     await createSession({
       userId: user.id,

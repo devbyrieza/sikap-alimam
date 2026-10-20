@@ -45,7 +45,8 @@ export async function GET(req: NextRequest) {
 export async function POST(req: NextRequest) {
   try {
     const session = await getSession();
-    if (!session || (!session.role?.includes("ADMIN_SUPER") && !session.role?.includes("KADIV_KURIKULUM"))) {
+    const roleUpper = (session?.role || "").toUpperCase();
+    if (!session || (!roleUpper.includes("ADMIN_SUPER") && !roleUpper.includes("MUDIR") && !roleUpper.includes("KEPALA_KURIKULUM") && !roleUpper.includes("KADIV_KURIKULUM"))) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 

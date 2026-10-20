@@ -20,7 +20,7 @@ const SETTINGS_INFO = [
   {
     key: "LOCK_INPUT_HALAQOH",
     title: "Penginputan Ujian Tahfidz / Halaqoh",
-    desc: "Kunci akses menu Input Ujian Tahfidz agar musyrif/pengampu tidak bisa mengubah nilai ujian yang sudah berlalu.",
+    desc: "Kunci akses menu Input Ujian Tahfidz agar pengampu halaqoh tidak bisa mengubah nilai ujian yang sudah berlalu.",
     icon: <BookOpen size={24} className="text-emerald-500" />
   },
   {
@@ -32,7 +32,7 @@ const SETTINGS_INFO = [
   {
     key: "LOCK_INPUT_IBADAH",
     title: "Pengisian Jurnal Ibadah & Adab",
-    desc: "Kunci akses penilaian ibadah (shalat jamaah, adab) oleh musyrif asrama.",
+    desc: "Kunci akses penilaian ibadah (shalat jamaah, adab) oleh pengasuh santri.",
     icon: <UserCheck size={24} className="text-purple-500" />
   }
 ];

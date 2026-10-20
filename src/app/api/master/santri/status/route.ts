@@ -14,11 +14,12 @@ export async function POST(req: NextRequest) {
       userRole.includes("ADMIN") || 
       userRole.includes("MUDIR") || 
       userRole.includes("KEPALA_SEKOLAH") ||
+      userRole.includes("KEPALA_PENGASUHAN") ||
       userRole.includes("KADIV_PENGASUHAN");
 
     if (!isAuthorized) {
       return NextResponse.json(
-        { error: "Hanya Admin Super, Mudir, Kepala Sekolah, atau Kadiv Pengasuhan yang berhak mengubah status kesiswaan." },
+        { error: "Hanya Admin Super, Mudir, Kepala Sekolah, atau Kepala Kepengasuhan yang berhak mengubah status kesiswaan." },
         { status: 403 }
       );
     }

@@ -56,7 +56,11 @@ export async function POST(req: NextRequest) {
     });
 
     const role = (session.role || "").toUpperCase();
-    const isStaff = ["ADMIN", "SUPERADMIN", "KADIV_PENGASUHAN", "PENGASUHAN", "MUSYRIF", "WALI_KELAS", "GURU"].includes(role);
+    const isStaff = [
+      "ADMIN", "SUPERADMIN", "ADMIN_SUPER", "MUDIR", "KEPALA_SEKOLAH",
+      "KEPALA_PENGASUHAN", "KADIV_PENGASUHAN", "PENGASUHAN", "PENGASUH",
+      "PENGAMPU_HALAQOH", "MUSYRIF", "WALI_KELAS", "GURU"
+    ].includes(role);
     const isMatchingUsername = session.email?.startsWith(santri.nis || "") || false;
 
     if (!isParent && !isStaff && !isMatchingUsername) {
@@ -120,7 +124,11 @@ export async function DELETE(req: NextRequest) {
     });
 
     const role = (session.role || "").toUpperCase();
-    const isStaff = ["ADMIN", "SUPERADMIN", "KADIV_PENGASUHAN", "PENGASUHAN", "MUSYRIF", "WALI_KELAS", "GURU"].includes(role);
+    const isStaff = [
+      "ADMIN", "SUPERADMIN", "ADMIN_SUPER", "MUDIR", "KEPALA_SEKOLAH",
+      "KEPALA_PENGASUHAN", "KADIV_PENGASUHAN", "PENGASUHAN", "PENGASUH",
+      "PENGAMPU_HALAQOH", "MUSYRIF", "WALI_KELAS", "GURU"
+    ].includes(role);
 
     if (!isParent && !isStaff) {
       return NextResponse.json({ success: false, error: "Anda tidak memiliki akses untuk menghapus foto santri ini" }, { status: 403 });

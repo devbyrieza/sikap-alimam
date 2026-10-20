@@ -403,17 +403,16 @@ export default function MasterGuruPage() {
             <label style={{ display:"block", fontSize:14, fontWeight:700, color:"#064e3b", marginBottom:12 }}>Hak Akses Sistem (Multi-Role)</label>
             <div style={{ display:"flex", flexWrap:"wrap", gap:12 }}>
               {[
-                { value: "GURU", label: "Guru Mapel" },
-                { value: "MUSYRIF", label: "Pengampu Halaqoh" },
-                { value: "WALI_KELAS", label: "Wali Kelas" },
-                { value: "MUDIR", label: "Mudir Pesantren" },
-                { value: "KEPALA_SEKOLAH", label: "Kepala Sekolah" },
-                { value: "KADIV_PENGASUHAN", label: "Kadiv Pengasuhan" },
-                { value: "KADIV_ASRAMA", label: "Kadiv Asrama" },
-                { value: "KADIV_KEDISIPLINAN", label: "Kadiv Kedisiplinan" },
-                { value: "KADIV_KURIKULUM", label: "Kadiv Kurikulum" },
-                { value: "ADMIN_KEUANGAN", label: "Admin Keuangan" },
                 { value: "ADMIN_SUPER", label: "Admin Super" },
+                { value: "ADMIN_KEUANGAN", label: "Admin Keuangan" },
+                { value: "MUDIR", label: "Mudir" },
+                { value: "KEPALA_SEKOLAH", label: "Kepala Sekolah" },
+                { value: "KEPALA_PENGASUHAN", label: "Kepala Kepengasuhan" },
+                { value: "KEPALA_KURIKULUM", label: "Kepala Kurikulum" },
+                { value: "WALI_KELAS", label: "Wali Kelas" },
+                { value: "GURU", label: "Guru Mapel" },
+                { value: "PENGASUH", label: "Pengasuh" },
+                { value: "PENGAMPU_HALAQOH", label: "Pengampu Halaqoh" },
               ].map(role => (
                 <label key={role.value} style={{
                   display:"flex", alignItems:"center", gap:8, background:"white", padding:"8px 16px", borderRadius:12,
@@ -527,17 +526,24 @@ export default function MasterGuruPage() {
                         <>
                           {g.user.role.split(",").map((r: string, i: number) => {
                             const roleMap: Record<string, string> = {
-                              GURU: "Guru Mapel",
-                              MUSYRIF: "Pengampu Halaqoh",
-                              WALI_KELAS: "Wali Kelas",
+                              ADMIN_SUPER: "Admin Super",
+                              ADMIN_KEUANGAN: "Admin Keuangan",
                               MUDIR: "Mudir Pesantren",
                               KEPALA_SEKOLAH: "Kepala Sekolah",
-                              KADIV_PENGASUHAN: "Kadiv Pengasuhan",
-                              KADIV_ASRAMA: "Kadiv Asrama",
-                              KADIV_KEDISIPLINAN: "Kadiv Kedisiplinan",
-                              KADIV_KURIKULUM: "Kadiv Kurikulum",
-                              ADMIN_KEUANGAN: "Admin Keuangan",
-                              ADMIN_SUPER: "Admin Super" };
+                              KEPALA_PENGASUHAN: "Kepala Kepengasuhan",
+                              KADIV_PENGASUHAN: "Kepala Kepengasuhan",
+                              KEPALA_KURIKULUM: "Kepala Kurikulum",
+                              KADIV_KURIKULUM: "Kepala Kurikulum",
+                              KEPALA_ASRAMA: "Kepala Asrama",
+                              KADIV_ASRAMA: "Kepala Asrama",
+                              KEPALA_KEDISIPLINAN: "Kepala Kedisiplinan",
+                              KADIV_KEDISIPLINAN: "Kepala Kedisiplinan",
+                              WALI_KELAS: "Wali Kelas",
+                              GURU: "Guru Mapel",
+                              PENGASUH: "Pengasuh",
+                              PENGAMPU_HALAQOH: "Pengampu Halaqoh",
+                              MUSYRIF: "Pengasuh",
+                            };
                             const roleKey = r.trim().toUpperCase();
                             const labelText = roleMap[roleKey] || roleKey;
                             return (

@@ -23,7 +23,7 @@ export async function GET(request: Request) {
   }
 
   const userRole = (session.role || "").toLowerCase();
-  const isAdminOrKadiv = userRole.includes("admin") || userRole.includes("mudir") || userRole.includes("kadiv");
+  const isAdminOrKadiv = userRole.includes("admin") || userRole.includes("mudir") || userRole.includes("kepala") || userRole.includes("kadiv");
 
   try {
     const [santriAktif, kelompokHalaqoh] = await Promise.all([

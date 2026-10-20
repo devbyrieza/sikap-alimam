@@ -6,7 +6,7 @@ export default async function DistribusiHalaqohLayout({ children }: { children: 
   const session = await getSession();
   const userRoles = (session?.role || "").toLowerCase().split(",").map(r => r.trim());
 
-  const allowedRoles = ["admin_super", "mudir", "kadiv_pengasuhan"];
+  const allowedRoles = ["admin_super", "mudir", "kepala_pengasuhan", "kadiv_pengasuhan"];
   const hasAccess = userRoles.some(role => allowedRoles.includes(role));
 
   if (!hasAccess) {

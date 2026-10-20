@@ -6,7 +6,10 @@ export default async function PresensiSantriLayout({ children }: { children: Rea
   const session = await getLiveSession();
   const userRoles = (session?.role || "").toLowerCase().split(",").map(r => r.trim());
   
-  const allowedRoles = ["guru", "wali_kelas", "kadiv_kedisiplinan", "kadiv_kurikulum", "kepala_sekolah", "admin_super", "mudir"];
+  const allowedRoles = [
+    "guru", "wali_kelas", "kepala_kedisiplinan", "kadiv_kedisiplinan",
+    "kepala_kurikulum", "kadiv_kurikulum", "kepala_sekolah", "admin_super", "mudir"
+  ];
   const hasAccess = userRoles.some(role => allowedRoles.includes(role));
   
   if (!hasAccess) {

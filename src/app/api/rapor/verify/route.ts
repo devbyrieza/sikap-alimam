@@ -93,6 +93,7 @@ export async function GET(req: NextRequest) {
           penandatangan: {
             pengampu_halaqoh: pengampu,
             // TODO: pindahkan ke konfigurasi pejabat agar tidak perlu ubah kode saat berganti.
+            kepala_pengasuhan: "Wahyudi Pranata, Lc.",
             kadiv_pengasuhan: "Wahyudi Pranata, Lc.",
           },
           ...(sealed ? { keamanan: "Segel digital HMAC-SHA256 valid" } : {}),

@@ -6,7 +6,7 @@ export default async function WaliKelasLayout({ children }: { children: ReactNod
   const session = await getLiveSession();
   const userRoles = (session?.role || "").toLowerCase().split(",").map(r => r.trim());
   
-  const allowedRoles = ["wali_kelas", "kadiv_kurikulum", "kepala_sekolah", "admin_super", "mudir"];
+  const allowedRoles = ["wali_kelas", "kepala_kurikulum", "kadiv_kurikulum", "kepala_sekolah", "admin_super", "mudir"];
   const hasAccess = userRoles.some(role => allowedRoles.includes(role));
   
   if (!hasAccess) {

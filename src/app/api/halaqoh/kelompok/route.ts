@@ -25,7 +25,7 @@ export async function GET(request: Request) {
     
     // If mode=all, we don't enforce pegawai_id filter (useful for Badal / Search)
     if (mode !== 'all') {
-      if (!pegawai_id && !userRole.includes("admin_super") && !userRole.includes("mudir") && !userRole.includes("kadiv_pengasuhan")) {
+      if (!pegawai_id && !userRole.includes("admin_super") && !userRole.includes("mudir") && !userRole.includes("kepala_pengasuhan") && !userRole.includes("kadiv_pengasuhan")) {
         if (session.asatidz_id) {
           pegawai_id = session.asatidz_id;
         } else if (session.userId) {

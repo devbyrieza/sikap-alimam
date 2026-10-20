@@ -6,7 +6,7 @@ export default async function JurnalLayout({ children }: { children: ReactNode }
   const session = await getLiveSession();
   const userRoles = (session?.role || "").toLowerCase().split(",").map(r => r.trim());
   
-  const allowedRoles = ["guru", "kadiv_kurikulum", "kepala_sekolah", "admin_super", "mudir"];
+  const allowedRoles = ["guru", "kepala_kurikulum", "kadiv_kurikulum", "kepala_sekolah", "admin_super", "mudir"];
   const hasAccess = userRoles.some(role => allowedRoles.includes(role));
   
   if (!hasAccess) {
