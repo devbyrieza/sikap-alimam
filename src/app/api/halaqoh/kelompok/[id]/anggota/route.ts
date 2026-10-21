@@ -15,7 +15,7 @@ export async function POST(
   const role = (session.role || "").toLowerCase();
   const isAllowed = role.includes("admin_super") || role.includes("kepala_pengasuhan") || role.includes("kadiv_pengasuhan");
   if (!isAllowed) {
-    return NextResponse.json({ error: "Akses ditolak. Hanya Admin Super dan Kepala Kepengasuhan yang berhak mengelola anggota kelompok." }, { status: 403 });
+    return NextResponse.json({ error: "Akses ditolak. Hanya Admin Super dan Kepala Pengasuhan yang berhak mengelola anggota kelompok." }, { status: 403 });
   }
 
   try {
@@ -50,7 +50,7 @@ export async function DELETE(
   const role = (session.role || "").toLowerCase();
   const isAllowed = role.includes("admin_super") || role.includes("kepala_pengasuhan") || role.includes("kadiv_pengasuhan");
   if (!isAllowed) {
-    return NextResponse.json({ error: "Akses ditolak. Hanya Admin Super dan Kepala Kepengasuhan yang berhak mengelola anggota kelompok." }, { status: 403 });
+    return NextResponse.json({ error: "Akses ditolak. Hanya Admin Super dan Kepala Pengasuhan yang berhak mengelola anggota kelompok." }, { status: 403 });
   }
 
   const { searchParams } = new URL(request.url);

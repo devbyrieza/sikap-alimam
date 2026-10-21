@@ -19,7 +19,7 @@ export async function POST(req: NextRequest) {
 
     if (!isAuthorized) {
       return NextResponse.json(
-        { error: "Hanya Admin Super, Mudir, Kepala Sekolah, atau Kepala Kepengasuhan yang berhak mengubah status kesiswaan." },
+        { error: "Hanya Admin Super, Mudir, Kepala Sekolah, atau Kepala Pengasuhan yang berhak mengubah status kesiswaan." },
         { status: 403 }
       );
     }

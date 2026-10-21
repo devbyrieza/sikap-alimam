@@ -2120,11 +2120,11 @@ export default function RaporOfficialSheet({ data, showPrintToolbar = false }: R
                   </div>
                 </div>
 
-                {/* Kolom 2: Kepala Kepengasuhan */}
+                {/* Kolom 2: Kepala Pengasuhan */}
                 <div style={{ display: "flex", flexDirection: "column", justifyContent: "space-between", height: "140px", padding: "0 2px" }}>
                   <div>
                     <p style={{ margin: 0 }}>Mengetahui,</p>
-                    <p style={{ margin: "2px 0 0 0" }}>Kepala Kepengasuhan</p>
+                    <p style={{ margin: "2px 0 0 0" }}>Kepala Pengasuhan</p>
                   </div>
                   <div style={{ minHeight: "28px", display: "flex", alignItems: "flex-end", justifyContent: "center" }}>
                     <p style={{ fontWeight: "bold", margin: 0, fontSize: "10px", whiteSpace: "nowrap", letterSpacing: "-0.2px" }}>

@@ -34,7 +34,7 @@ export const ROLE_DESTINATIONS: Record<string, string> = {
  * 2. Admin Keuangan
  * 3. Mudir
  * 4. Kepala Sekolah
- * 5. Kepala Kepengasuhan
+ * 5. Kepala Pengasuhan
  * 6. Kepala Kurikulum
  * 7. Wali Kelas (tergantung kelas apa)
  * 8. Guru Mapel (tergantung mapel apa)
@@ -111,8 +111,8 @@ export async function getUserMultiRoles(userId: string): Promise<UserRoleOption[
   } else if (primaryRole === "KEPALA_PENGASUHAN" || primaryRole === "KADIV_PENGASUHAN") {
     addRole(
       "KEPALA_PENGASUHAN",
-      "Kepala Kepengasuhan",
-      "Kepala Kepengasuhan, pembinaan adab, asrama & ibadah santri",
+      "Kepala Pengasuhan",
+      "Kepala Pengasuhan, pembinaan adab, asrama & ibadah santri",
       "/halaqoh"
     );
   } else if (primaryRole === "WALI_KELAS") {

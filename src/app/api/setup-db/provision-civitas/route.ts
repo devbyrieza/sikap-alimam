@@ -118,7 +118,7 @@ export async function GET() {
         namaLengkap: "Wahyudi Pranata, B.A.",
         namaPanggilan: "Ust. Wahyudi",
         role: "KEPALA_PENGASUHAN",
-        jabatan: "Kepala Kepengasuhan & Asatidz",
+        jabatan: "Kepala Pengasuhan & Asatidz",
         divisi: "Kepengasuhan & Kesantrian",
         kategori: "ASATIDZ",
         mataPelajaran: "7 MTs: Bahasa Arab",

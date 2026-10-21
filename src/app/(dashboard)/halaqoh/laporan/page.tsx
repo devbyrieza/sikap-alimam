@@ -313,7 +313,7 @@ export default function LaporanHalaqohPage() {
               />
             </div>
             <div>
-              <label style={labelStyle}>Nama Kepala Kepengasuhan (TTD)</label>
+              <label style={labelStyle}>Nama Kepala Pengasuhan (TTD)</label>
               <input
                 type="text"
                 value={kepalaPengasuhanNama}
@@ -482,10 +482,10 @@ export default function LaporanHalaqohPage() {
                 <div style={{ fontSize: 10, color: "#64748b", marginTop: 2 }}>Pengampu Halaqoh</div>
               </div>
 
-              {/* Kepala Kepengasuhan & Stempel */}
+              {/* Kepala Pengasuhan & Stempel */}
               <div style={{ minWidth: 180, position: "relative" }}>
                 <div style={{ fontSize: 11, color: "#64748b", fontWeight: 600 }}>Mengetahui,</div>
-                <div style={{ fontSize: 13, fontWeight: 800, color: "#1e293b", marginTop: 2 }}>Kepala Kepengasuhan</div>
+                <div style={{ fontSize: 13, fontWeight: 800, color: "#1e293b", marginTop: 2 }}>Kepala Pengasuhan</div>
                 
                 <div style={{ height: 60, display: "flex", alignItems: "center", justifyContent: "center", position: "relative" }}>
                   {showDigitalSignature && (
@@ -516,7 +516,7 @@ export default function LaporanHalaqohPage() {
                 <div style={{ fontWeight: 800, color: "#1e293b", fontSize: 13, textDecoration: "underline" }}>
                   {kepalaPengasuhanNama || "___________________"}
                 </div>
-                <div style={{ fontSize: 10, color: "#64748b", marginTop: 2 }}>Kepala Kepengasuhan Pesantren</div>
+                <div style={{ fontSize: 10, color: "#64748b", marginTop: 2 }}>Kepala Pengasuhan Pesantren</div>
               </div>
             </div>
 

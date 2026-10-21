@@ -55,8 +55,9 @@ export async function GET() {
       if (p.jabatan) {
         let newJabatan = p.jabatan
           .replace(/Kadiv Kurikulum/gi, 'Kepala Kurikulum')
-          .replace(/Kadiv Kepengasuhan/gi, 'Kepala Kepengasuhan')
-          .replace(/Kadiv Pengasuhan/gi, 'Kepala Kepengasuhan')
+          .replace(/Kadiv Kepengasuhan/gi, 'Kepala Pengasuhan')
+          .replace(/Kadiv Pengasuhan/gi, 'Kepala Pengasuhan')
+          .replace(/Kepala Kepengasuhan/gi, 'Kepala Pengasuhan')
           .replace(/Kadiv Asrama/gi, 'Kepala Asrama')
           .replace(/Kadiv Kedisiplinan/gi, 'Kepala Kedisiplinan')
           .replace(/Kepala Divisi Keuangan/gi, 'Kepala Keuangan')

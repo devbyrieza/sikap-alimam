@@ -152,8 +152,8 @@ export const ROLE_LABEL: Record<string, string> = {
   ADMIN_KEUANGAN: "Admin Keuangan",
   MUDIR: "Mudir Pesantren",
   KEPALA_SEKOLAH: "Kepala Sekolah",
-  KEPALA_PENGASUHAN: "Kepala Kepengasuhan",
-  KADIV_PENGASUHAN: "Kepala Kepengasuhan",
+  KEPALA_PENGASUHAN: "Kepala Pengasuhan",
+  KADIV_PENGASUHAN: "Kepala Pengasuhan",
   KEPALA_ASRAMA: "Kepala Asrama",
   KADIV_ASRAMA: "Kepala Asrama",
   KEPALA_KEDISIPLINAN: "Kepala Kedisiplinan",
@@ -224,7 +224,7 @@ function formatRoleDisplay(roleStr: string, email?: string, nama?: string): stri
   }
 
   if (rUpper === "KEPALA_PENGASUHAN" || rUpper === "KADIV_PENGASUHAN") {
-    return "Kepala Kepengasuhan";
+    return "Kepala Pengasuhan";
   }
 
   if (rUpper === "WALI_KELAS") {
