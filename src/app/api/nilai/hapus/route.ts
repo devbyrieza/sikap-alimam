@@ -5,7 +5,8 @@ import { getSession } from "@/lib/auth";
 export async function DELETE(req: NextRequest) {
   try {
     const session = await getSession();
-    if (!session || !session.role?.includes("ADMIN_SUPER")) {
+    const isSuper = session?.role?.includes("ADMIN_SUPER") || session?.role?.includes("MUDIR");
+    if (!session || !isSuper) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
@@ -13,7 +14,7 @@ export async function DELETE(req: NextRequest) {
     const lockSetting = await prisma.kalenderAkademik.findFirst({
       where: { kategori: "PENGATURAN_SISTEM", nama_kegiatan: "LOCK_INPUT_NILAI" }
     });
-    if (lockSetting?.is_libur && !session.role?.includes("ADMIN_SUPER")) {
+    if (lockSetting?.is_libur && !isSuper) {
       return NextResponse.json({ error: "Akses Ditolak: Penginputan nilai sudah dikunci oleh Admin Kurikulum." }, { status: 403 });
     }
 

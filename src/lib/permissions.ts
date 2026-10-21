@@ -86,7 +86,13 @@ export function getLaporanNilaiAccess(profile: UserProfileAuth): LaporanNilaiAcc
   let allowedJenjang: JenjangType[] | "ALL" = "ALL";
   let userTitle = "Pengguna";
 
-  if (isAdminSuper) {
+  if (roleStr.includes("mudir")) {
+    userTitle = "Mudir Pesantren";
+    allowedJenjang = "ALL";
+  } else if (roleStr.includes("kepala_sekolah")) {
+    userTitle = "Kepala Sekolah";
+    allowedJenjang = "ALL";
+  } else if (isAdminSuper) {
     userTitle = "Admin Super";
     allowedJenjang = "ALL";
   } else if (isKepalaKurikulum) {

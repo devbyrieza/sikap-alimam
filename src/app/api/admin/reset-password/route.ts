@@ -14,8 +14,8 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Tidak terautentikasi" }, { status: 401 });
     }
 
-    // Hanya ADMIN / SUPER_ADMIN yang boleh
-    const allowedRoles = ["ADMIN", "SUPER_ADMIN"];
+    // Hanya ADMIN / SUPER_ADMIN / MUDIR yang boleh
+    const allowedRoles = ["ADMIN", "SUPER_ADMIN", "ADMIN_SUPER", "MUDIR"];
     const userRoles = session.role?.split(",").map((r: string) => r.trim().toUpperCase()) ?? [];
     const isAuthorized = userRoles.some((r: string) => allowedRoles.includes(r));
 

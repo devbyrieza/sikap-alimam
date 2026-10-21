@@ -5,7 +5,8 @@ import { getSession } from "@/lib/auth";
 export async function DELETE(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const session = await getSession();
-    if (!session || !session.role?.includes("ADMIN_SUPER")) {
+    const isSuper = session?.role?.includes("ADMIN_SUPER") || session?.role?.includes("MUDIR");
+    if (!session || !isSuper) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 

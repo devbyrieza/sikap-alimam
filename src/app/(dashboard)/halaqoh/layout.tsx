@@ -9,7 +9,7 @@ export default async function HalaqohLayout({ children }: { children: ReactNode 
   const allowedRoles = [
     "musyrif", "pengasuh", "pengampu", "pengampu_halaqoh", "guru",
     "wali_kelas", "kepala_pengasuhan", "kadiv_pengasuhan", "kepala_asrama", "kadiv_asrama",
-    "kepala_kurikulum", "kadiv_kurikulum", "admin_super", "mudir",
+    "kepala_kurikulum", "kadiv_kurikulum", "kepala_sekolah", "admin_super", "mudir",
   ];
   const hasAccess = userRoles.some(role => allowedRoles.includes(role));
   

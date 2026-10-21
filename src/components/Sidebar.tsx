@@ -108,14 +108,14 @@ const NAV: NavItem[] = [
     roles: [
       "pengampu", "pengampu_halaqoh", "musyrif", "pengasuh", "guru", "wali_kelas",
       "kepala_pengasuhan", "kadiv_pengasuhan", "kepala_asrama", "kadiv_asrama",
-      "kepala_kurikulum", "kadiv_kurikulum", "admin_super", "mudir",
+      "kepala_kurikulum", "kadiv_kurikulum", "kepala_sekolah", "admin_super", "mudir",
     ],
   },
   {
     href: "/halaqoh/monitoring",
     label: "Pantau Ujian Tahfidz",
     icon: Award,
-    roles: ["wali_kelas", "kepala_kurikulum", "kadiv_kurikulum", "admin_super", "mudir"],
+    roles: ["wali_kelas", "kepala_kurikulum", "kadiv_kurikulum", "kepala_sekolah", "admin_super", "mudir"],
     restricted: true,
   },
   {
@@ -141,9 +141,9 @@ const NAV: NavItem[] = [
     href: "/pengaturan/kendali",
     label: "Pusat Kendali",
     icon: Settings,
-    roles: ["admin_super", "kepala_kurikulum", "kadiv_kurikulum", "mudir"],
+    roles: ["admin_super", "kepala_kurikulum", "kadiv_kurikulum", "kepala_sekolah", "mudir"],
   },
-  { href: "/master", label: "Master Data", icon: Database, roles: ["admin_super", "mudir", "kepala_kurikulum", "kadiv_kurikulum"] },
+  { href: "/master", label: "Master Data", icon: Database, roles: ["admin_super", "mudir", "kepala_kurikulum", "kadiv_kurikulum", "kepala_sekolah"] },
 ];
 
 export const ROLE_LABEL: Record<string, string> = {

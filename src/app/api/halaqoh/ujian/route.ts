@@ -53,7 +53,7 @@ export async function POST(request: Request) {
     const lockSetting = await prisma.kalenderAkademik.findFirst({
       where: { kategori: "PENGATURAN_SISTEM", nama_kegiatan: "LOCK_INPUT_HALAQOH" }
     });
-    if (lockSetting?.is_libur && !session?.role?.includes("ADMIN_SUPER")) {
+    if (lockSetting?.is_libur && !session?.role?.includes("ADMIN_SUPER") && !session?.role?.includes("MUDIR")) {
       return NextResponse.json({ error: "Akses Ditolak: Penginputan Ujian Halaqoh sudah dikunci oleh Admin Kurikulum." }, { status: 403 });
     }
 

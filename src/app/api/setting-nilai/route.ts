@@ -8,7 +8,7 @@ export const dynamic = "force-dynamic";
 export async function GET(req: NextRequest) {
   try {
     const session = await getSession();
-    const isAdminSuper = session?.role?.includes("ADMIN_SUPER");
+    const isAdminSuper = session?.role?.includes("ADMIN_SUPER") || session?.role?.includes("MUDIR");
 
     // We use KalenderAkademik to store the lock setting
     // nama_kegiatan: "LOCK_INPUT_NILAI" 

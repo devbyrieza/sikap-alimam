@@ -15,7 +15,7 @@ const SUPPORTED_KEYS = [
 export async function GET(req: NextRequest) {
   try {
     const session = await getSession();
-    const isAdminSuper = session?.role?.includes("ADMIN_SUPER");
+    const isAdminSuper = session?.role?.includes("ADMIN_SUPER") || session?.role?.includes("MUDIR");
 
     const settings = await prisma.kalenderAkademik.findMany({
       where: {
@@ -46,7 +46,14 @@ export async function POST(req: NextRequest) {
   try {
     const session = await getSession();
     const roleUpper = (session?.role || "").toUpperCase();
-    if (!session || (!roleUpper.includes("ADMIN_SUPER") && !roleUpper.includes("MUDIR") && !roleUpper.includes("KEPALA_KURIKULUM") && !roleUpper.includes("KADIV_KURIKULUM"))) {
+    if (
+      !session ||
+      (!roleUpper.includes("ADMIN_SUPER") &&
+        !roleUpper.includes("MUDIR") &&
+        !roleUpper.includes("KEPALA_KURIKULUM") &&
+        !roleUpper.includes("KADIV_KURIKULUM") &&
+        !roleUpper.includes("KEPALA_SEKOLAH"))
+    ) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 

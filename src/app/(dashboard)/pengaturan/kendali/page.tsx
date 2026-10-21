@@ -105,7 +105,7 @@ export default function PusatKendaliSistem() {
             Pusat Kendali Akses
           </h1>
           <p className="text-base text-slate-300 leading-relaxed">
-            Halaman ini digunakan oleh Kepala Divisi Kurikulum untuk menutup atau membuka gerbang penginputan data secara terpusat (Lock System).
+            Halaman ini digunakan oleh Kepala Kurikulum & Pimpinan untuk menutup atau membuka gerbang penginputan data secara terpusat (Lock System).
           </p>
         </div>
       </div>

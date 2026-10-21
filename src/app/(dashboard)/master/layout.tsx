@@ -8,7 +8,7 @@ export default async function MasterLayout({ children }: { children: ReactNode }
   const session = await getSession();
   const userRoles = (session?.role || "").toLowerCase().split(",").map(r => r.trim());
 
-  const allowedRoles = ["admin_super", "mudir", "kepala_kurikulum", "kadiv_kurikulum"];
+  const allowedRoles = ["admin_super", "mudir", "kepala_kurikulum", "kadiv_kurikulum", "kepala_sekolah"];
   const hasAccess = userRoles.some(role => allowedRoles.includes(role));
 
   if (!hasAccess) {
