@@ -678,7 +678,7 @@ export const SAFELIST = [
   "min-h-[44px]",
   "min-h-[52px]",
   "min-h-[70vh]",
-  "min-h-screen",
+  "min-h-dvh",
   "min-w-0",
   "min-w-[1000px] max-w-full",
   "min-w-[150px]",

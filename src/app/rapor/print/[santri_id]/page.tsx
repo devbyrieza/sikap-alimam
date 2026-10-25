@@ -35,7 +35,7 @@ export default function CetakRaporPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-50">
+      <div className="min-h-dvh flex items-center justify-center bg-slate-50">
         <div className="p-8 text-center bg-white rounded-2xl shadow-md border border-slate-200">
           <Loader2 className="animate-spin text-primary mx-auto mb-3" size={32} />
           <p className="font-bold text-slate-700 text-sm">Memuat Rapor Resmi...</p>
@@ -54,7 +54,7 @@ export default function CetakRaporPage() {
     );
 
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-100 via-rose-50/40 to-slate-200 p-4 sm:p-6">
+      <div className="min-h-dvh flex items-center justify-center bg-gradient-to-br from-slate-100 via-rose-50/40 to-slate-200 p-4 sm:p-6">
         <div className="max-w-xl w-full bg-white/95 backdrop-blur rounded-3xl shadow-2xl border border-rose-200/80 p-8 sm:p-10 text-center relative overflow-hidden">
           <div className="w-20 h-20 mx-auto rounded-3xl bg-gradient-to-br from-rose-600 to-rose-900 text-white flex items-center justify-center shadow-xl shadow-rose-950/20 mb-6">
             <Lock size={36} />
@@ -107,7 +107,7 @@ export default function CetakRaporPage() {
 
   if (!data || data.error) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-50">
+      <div className="min-h-dvh flex items-center justify-center bg-slate-50">
         <div className="p-8 text-center bg-white rounded-2xl shadow-md border border-rose-200 text-rose-600 font-bold">
           Data rapor tidak ditemukan.
         </div>
@@ -116,7 +116,7 @@ export default function CetakRaporPage() {
   }
 
   return (
-    <div id="rapor-print-container" className="min-h-screen bg-slate-100/70 p-2 sm:p-8 print:p-0 print:m-0 print:min-h-0 print:bg-white overflow-x-hidden print:overflow-visible">
+    <div id="rapor-print-container" className="min-h-dvh bg-slate-100/70 p-2 sm:p-8 print:p-0 print:m-0 print:min-h-0 print:bg-white overflow-x-hidden print:overflow-visible">
       <RaporOfficialSheet data={data} showPrintToolbar={true} />
     </div>
   );

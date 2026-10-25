@@ -249,7 +249,7 @@ export default function WaliDashboard() {
   }, [load]);
 
   return (
-    <div className="min-h-screen bg-[#f8fafc] pb-12 sm:pb-16">
+    <div className="min-h-dvh bg-[#f8fafc] pb-12 sm:pb-16">
       {/* ── Banner ── */}
       <header
         className="relative overflow-hidden rounded-b-[2rem] px-5 pb-24 pt-10 text-white shadow-lg shadow-slate-900/10 sm:rounded-b-[2.5rem] sm:pb-28 sm:pt-14"

@@ -62,7 +62,7 @@ export default function AksesDiblokirPage() {
   );
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-rose-50 via-slate-50 to-rose-100/50 p-4 sm:p-6">
+    <div className="min-h-dvh flex items-center justify-center bg-gradient-to-br from-rose-50 via-slate-50 to-rose-100/50 p-4 sm:p-6">
       <div className="w-full max-w-xl rounded-3xl border-2 border-rose-200/90 bg-white/95 p-6 sm:p-10 text-center shadow-2xl shadow-rose-950/10 backdrop-blur">
         {/* Ikon Gembok / Shield */}
         <div className="mx-auto mb-5 flex h-20 w-20 items-center justify-center rounded-3xl bg-gradient-to-br from-rose-600 to-[#550000] text-white shadow-xl shadow-rose-950/20 ring-4 ring-rose-100">

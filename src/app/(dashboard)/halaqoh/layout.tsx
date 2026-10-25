@@ -18,7 +18,7 @@ export default async function HalaqohLayout({ children }: { children: ReactNode 
   }
 
   return (
-    <div className="w-full min-h-screen">
+    <div className="w-full min-h-dvh">
       {children}
     </div>
   );

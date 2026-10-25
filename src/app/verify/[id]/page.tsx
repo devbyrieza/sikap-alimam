@@ -27,7 +27,7 @@ export default async function VerifyPage({ params }: { params: Promise<{ id: str
 
   if (!santri || error) {
     return (
-      <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center p-6 font-sans">
+      <div className="min-h-dvh bg-slate-50 flex flex-col items-center justify-center p-6 font-sans">
         <div className="bg-white p-8 rounded-3xl shadow-xl max-w-md w-full text-center border-t-8 border-red-500">
           <div className="w-20 h-20 bg-red-100 text-red-600 rounded-full flex items-center justify-center mx-auto mb-6">
             <XCircle size={40} />
@@ -45,7 +45,7 @@ export default async function VerifyPage({ params }: { params: Promise<{ id: str
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-white to-slate-50 flex flex-col items-center justify-center p-6 font-sans">
+    <div className="min-h-dvh bg-gradient-to-br from-emerald-50 via-white to-slate-50 flex flex-col items-center justify-center p-6 font-sans">
       <div className="bg-white p-8 rounded-3xl shadow-2xl max-w-md w-full border-t-8 border-emerald-500 relative overflow-hidden">
         
         {/* Watermark Logo */}

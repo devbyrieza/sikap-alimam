@@ -143,7 +143,7 @@ function ResetPasswordForm() {
 
 export default function ResetPasswordPage() {
   return (
-    <div className="min-h-screen bg-[#f3f4f6] flex flex-col justify-center items-center p-4">
+    <div className="min-h-dvh bg-[#f3f4f6] flex flex-col justify-center items-center p-4">
       <div className="w-full max-w-md bg-white rounded-3xl p-6 sm:p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100">
         <div className="text-center mb-6">
           <h1 className="text-2xl font-bold text-slate-800 tracking-tight">Buat Sandi Baru</h1>

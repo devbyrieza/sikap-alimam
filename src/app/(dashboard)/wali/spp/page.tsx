@@ -397,7 +397,7 @@ export default function WaliSppPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#f8fafc] flex items-center justify-center p-6">
+      <div className="min-h-dvh bg-[#f8fafc] flex items-center justify-center p-6">
         <div className={`p-10 text-center ${surface}`}>
           <div className="mx-auto mb-4 h-12 w-12 rounded-full border-b-2 border-[#550000] animate-spin" />
           <h3 className="text-lg font-bold text-slate-800">Memuat Informasi SPP &amp; Wali Kelas</h3>
@@ -415,7 +415,7 @@ export default function WaliSppPage() {
   const waWali = toWaNumber(wali?.no_hp);
 
   return (
-    <div className="min-h-screen bg-[#f8fafc] pb-20">
+    <div className="min-h-dvh bg-[#f8fafc] pb-20">
       {/* Top Bar Navigasi */}
       <div className="mx-auto max-w-6xl px-4 pt-4 sm:px-6 flex items-center justify-between">
         <Link

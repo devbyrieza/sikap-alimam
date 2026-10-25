@@ -276,7 +276,7 @@ function normalizeUjianTahfidz(u: any) {
 
 function CenterCard({ children }: { children: React.ReactNode }) {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-slate-50 p-6">
+    <div className="flex min-h-dvh items-center justify-center bg-slate-50 p-6">
       <div className="w-full max-w-md rounded-3xl border border-slate-100 bg-white p-8 text-center shadow-sm sm:p-10">
         {children}
       </div>
@@ -2185,7 +2185,7 @@ export default function RaporWaliPage() {
   const showTabs = !isAccessLocked;
 
   return (
-    <div className="min-h-screen bg-[#f8fafc] pb-20 print:m-0 print:min-h-0 print:bg-white print:p-0">
+    <div className="min-h-dvh bg-[#f8fafc] pb-20 print:m-0 print:min-h-0 print:bg-white print:p-0">
       <TopBar santriId={santri.id} locked={isAccessLocked} onKirimWA={handleKirimWA} />
 
       <main className="mx-auto max-w-6xl space-y-6 px-4 pt-6 sm:space-y-8 sm:px-6 sm:pt-8 print:m-0 print:max-w-none print:space-y-0 print:p-0">
