@@ -896,7 +896,8 @@ export default function InputNilaiPage() {
           {/* ── DESKTOP TABLE VIEW (Responsive) ── */}
           <div className="hidden md:block" style={{ background: "white", borderRadius: "24px", boxShadow: "0 4px 20px rgba(85,0,0,0.03)", border: "1px solid #ebdcc3", overflow: "hidden" }}>
             <div style={{ overflowX: "auto", position: "relative" }}>
-              <table className="platinum-table" style={{ width: "100%", borderCollapse: "collapse", minWidth: 720, fontSize: "14px" }}>
+              <div className="w-full overflow-x-auto">
+<table className="platinum-table" style={{ width: "100%", borderCollapse: "collapse", minWidth: 720, fontSize: "14px" }}>
                 <thead>
                   <tr style={{ background: "#fdf8f0", borderBottom: "1px solid #ebdcc3" }}>
                     <th className="sticky-col" style={{ position: "sticky", left: 0, zIndex: 25, background: "#fdf8f0", padding: "16px 12px", textAlign: "center", width: 50, borderBottom: "1px solid #ebdcc3", color: "#550000", fontWeight: 800 }}>No</th>
@@ -1017,6 +1018,7 @@ export default function InputNilaiPage() {
                   )}
                 </tbody>
               </table>
+</div>
             </div>
           </div>
 

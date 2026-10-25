@@ -373,7 +373,8 @@ export default function RaporWaliKelasPage() {
                 </div>
               ) : (
                 <div style={{ overflowX: "auto" }}>
-                  <table style={{ width: "100%", borderCollapse: "collapse", textAlign: "left", fontSize: "13px" }}>
+                  <div className="w-full overflow-x-auto">
+<table style={{ width: "100%", borderCollapse: "collapse", textAlign: "left", fontSize: "13px" }}>
                     <thead>
                       <tr style={{ background: "#f8fafc", color: "#475569", borderBottom: "1px solid #e2e8f0" }}>
                         <th style={{ padding: "14px 20px", width: "60px", textAlign: "center" }}>No</th>
@@ -442,6 +443,7 @@ export default function RaporWaliKelasPage() {
                       })}
                     </tbody>
                   </table>
+</div>
                 </div>
               )}
             </div>

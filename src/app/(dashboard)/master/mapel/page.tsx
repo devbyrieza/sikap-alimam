@@ -273,7 +273,8 @@ export default function MasterMapelPage() {
           <div style={{ padding:48, textAlign:"center", color:"#94a3b8" }}>Tidak ada mata pelajaran yang sesuai.</div>
         ) : (
           <div style={{ overflowX:"auto" }}>
-            <table style={{ width:"100%", borderCollapse:"collapse", minWidth:800 }}>
+            <div className="w-full overflow-x-auto">
+<table style={{ width:"100%", borderCollapse:"collapse", minWidth:800 }}>
               <thead>
                 <tr style={{ background:"#f8fafc" }}>
                   {["No", "Mata Pelajaran", "Nama Arab", "Kategori", "Kelas", "Aksi"].map((h, i) => (
@@ -364,6 +365,7 @@ export default function MasterMapelPage() {
                 })}
               </tbody>
             </table>
+</div>
           </div>
         )}
       </div>

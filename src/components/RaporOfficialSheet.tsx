@@ -1301,7 +1301,8 @@ export default function RaporOfficialSheet({ data, showPrintToolbar = false }: R
             {/* Biodata Santri */}
             <div style={{ display: "flex", justifyContent: "space-between", fontSize: "11px", marginBottom: "6px", fontWeight: "bold", fontFamily: "Arial, Helvetica, sans-serif" }}>
               <div>
-                <table className="biodata-table" style={{ width: "100%", border: "none", borderCollapse: "separate" }}>
+                <div className="w-full overflow-x-auto">
+<table className="biodata-table" style={{ width: "100%", border: "none", borderCollapse: "separate" }}>
                   <tbody>
                     <tr style={{ border: "none" }}>
                       <td style={{ width: 85, padding: "1.5px 0", border: "none" }}>Nama</td>
@@ -1320,9 +1321,11 @@ export default function RaporOfficialSheet({ data, showPrintToolbar = false }: R
                     </tr>
                   </tbody>
                 </table>
+</div>
               </div>
               <div style={{ textAlign: "right" }}>
-                <table className="biodata-table" style={{ display: "inline-block", textAlign: "left", border: "none", borderCollapse: "separate" }}>
+                <div className="w-full overflow-x-auto">
+<table className="biodata-table" style={{ display: "inline-block", textAlign: "left", border: "none", borderCollapse: "separate" }}>
                   <tbody>
                     <tr style={{ border: "none" }}>
                       <td style={{ padding: "1.5px 0", whiteSpace: "nowrap", border: "none" }}>Semester</td>
@@ -1343,12 +1346,14 @@ export default function RaporOfficialSheet({ data, showPrintToolbar = false }: R
                     </tr>
                   </tbody>
                 </table>
+</div>
               </div>
             </div>
 
             {/* TABEL UTAMA AKADEMIK (10 Kolom Bilateral Simetris) */}
             <div style={{ width: "100%", overflow: "visible", marginBottom: "8px" }}>
-              <table className="rapor-table" style={{ width: "100%", tableLayout: "fixed", borderCollapse: "collapse", border: "1px solid #94a3b8", fontSize: "11.5px" }}>
+              <div className="w-full overflow-x-auto">
+<table className="rapor-table" style={{ width: "100%", tableLayout: "fixed", borderCollapse: "collapse", border: "1px solid #94a3b8", fontSize: "11.5px" }}>
                 <colgroup>
                   {/* Sisi Kiri (50%) */}
                   <col style={{ width: "4.5%" }} />   {/* 1. No */}
@@ -1419,11 +1424,13 @@ export default function RaporOfficialSheet({ data, showPrintToolbar = false }: R
                   </tr>
                 </tbody>
               </table>
+</div>
             </div>
 
             {/* 2. TABEL KETIDAKHADIRAN KELAS (Kotak Terpisah Bilateral Simetris) */}
             <div style={{ width: "100%", overflow: "visible", marginBottom: "8px" }}>
-              <table 
+              <div className="w-full overflow-x-auto">
+<table 
                 className="rapor-table" 
                 style={{ 
                   width: "100%", 
@@ -1486,6 +1493,7 @@ export default function RaporOfficialSheet({ data, showPrintToolbar = false }: R
                   </tr>
                 </tbody>
               </table>
+</div>
             </div>
 
             {/* AREA TANDA TANGAN AKADEMIK (3 Kolom) + QR CODE */}
@@ -1623,7 +1631,7 @@ export default function RaporOfficialSheet({ data, showPrintToolbar = false }: R
       </div>
 
       {/* PEMISAH HALAMAN */}
-      <div className="page-break my-8 no-print border-b-2 border-dashed border-slate-300 w-[794px] mx-auto print:hidden" />
+      <div className="page-break my-8 no-print border-b-2 border-dashed border-slate-300 w-[794px] mx-auto print:hidden max-w-full" />
 
       {/* ========================================================================= */}
       {/* HALAMAN 2: KEPRIBADIAN, TAHSIN & TAHFIDZ, DAN PENGESAHAN DOKUMEN          */}
@@ -1703,7 +1711,8 @@ export default function RaporOfficialSheet({ data, showPrintToolbar = false }: R
             {/* Biodata Santri Halaman 2 */}
             <div style={{ display: "flex", justifyContent: "space-between", fontSize: "11px", marginBottom: "6px", fontWeight: "bold", fontFamily: "Arial, Helvetica, sans-serif" }}>
               <div>
-                <table className="biodata-table" style={{ width: "100%", border: "none", borderCollapse: "separate" }}>
+                <div className="w-full overflow-x-auto">
+<table className="biodata-table" style={{ width: "100%", border: "none", borderCollapse: "separate" }}>
                   <tbody>
                     <tr style={{ border: "none" }}>
                       <td style={{ width: 85, padding: "1.5px 0", border: "none" }}>Nama</td>
@@ -1722,9 +1731,11 @@ export default function RaporOfficialSheet({ data, showPrintToolbar = false }: R
                     </tr>
                   </tbody>
                 </table>
+</div>
               </div>
               <div style={{ textAlign: "right" }}>
-                <table className="biodata-table" style={{ display: "inline-block", textAlign: "left", border: "none", borderCollapse: "separate" }}>
+                <div className="w-full overflow-x-auto">
+<table className="biodata-table" style={{ display: "inline-block", textAlign: "left", border: "none", borderCollapse: "separate" }}>
                   <tbody>
                     <tr style={{ border: "none" }}>
                       <td style={{ padding: "1.5px 0", whiteSpace: "nowrap", border: "none" }}>Semester</td>
@@ -1745,12 +1756,14 @@ export default function RaporOfficialSheet({ data, showPrintToolbar = false }: R
                     </tr>
                   </tbody>
                 </table>
+</div>
               </div>
             </div>
 
             {/* 1. KEPRIBADIAN SANTRI (Kotak Terpisah Bilateral Simetris) */}
             <div style={{ width: "100%", overflow: "visible", marginBottom: "7px" }}>
-              <table 
+              <div className="w-full overflow-x-auto">
+<table 
                 className="rapor-table" 
                 style={{ 
                   width: "100%", 
@@ -1820,11 +1833,13 @@ export default function RaporOfficialSheet({ data, showPrintToolbar = false }: R
                   </tr>
                 </tbody>
               </table>
+</div>
             </div>
 
             {/* 2. KETIDAKHADIRAN HALAQOH (Kotak Terpisah Bilateral Simetris) */}
             <div style={{ width: "100%", overflow: "visible", marginBottom: "7px" }}>
-              <table 
+              <div className="w-full overflow-x-auto">
+<table 
                 className="rapor-table" 
                 style={{ 
                   width: "100%", 
@@ -1904,11 +1919,13 @@ export default function RaporOfficialSheet({ data, showPrintToolbar = false }: R
                   </tr>
                 </tbody>
               </table>
+</div>
             </div>
 
             {/* 3. LAPORAN TAHSIN (Bilateral Simetris Sempurna) */}
             <div style={{ width: "100%", overflow: "visible", marginBottom: "7px" }}>
-              <table className="rapor-table" style={{ width: "100%", tableLayout: "fixed", borderCollapse: "collapse", border: "1px solid #94a3b8", fontSize: "11px", fontFamily: "Arial, Helvetica, sans-serif" }}>
+              <div className="w-full overflow-x-auto">
+<table className="rapor-table" style={{ width: "100%", tableLayout: "fixed", borderCollapse: "collapse", border: "1px solid #94a3b8", fontSize: "11px", fontFamily: "Arial, Helvetica, sans-serif" }}>
                 <colgroup>
                   {/* Sisi Kiri (50% Indonesia) */}
                   <col style={{ width: "28%" }} />
@@ -2011,11 +2028,13 @@ export default function RaporOfficialSheet({ data, showPrintToolbar = false }: R
                   )}
                 </tbody>
               </table>
+</div>
             </div>
 
             {/* 4. EVALUASI PENCAPAIAN TAHSIN (Bilateral Simetris Sempurna) */}
             <div style={{ width: "100%", overflow: "visible", marginBottom: "7px" }}>
-              <table className="rapor-table" style={{ width: "100%", tableLayout: "fixed", borderCollapse: "collapse", border: "1px solid #94a3b8", fontSize: "10.5px", fontFamily: "Arial, Helvetica, sans-serif" }}>
+              <div className="w-full overflow-x-auto">
+<table className="rapor-table" style={{ width: "100%", tableLayout: "fixed", borderCollapse: "collapse", border: "1px solid #94a3b8", fontSize: "10.5px", fontFamily: "Arial, Helvetica, sans-serif" }}>
                 <colgroup>
                   <col style={{ width: "50%" }} />
                   <col style={{ width: "50%" }} />
@@ -2071,6 +2090,7 @@ export default function RaporOfficialSheet({ data, showPrintToolbar = false }: R
                   </tr>
                 </tbody>
               </table>
+</div>
             </div>
 
             {/* 5. AREA TANDA TANGAN (3 Kolom) + QR CODE */}

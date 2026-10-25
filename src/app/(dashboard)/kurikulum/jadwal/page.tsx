@@ -105,7 +105,8 @@ export default function KurikulumJadwalPage() {
             </h3>
           </div>
           <div style={{ overflowX: "auto" }}>
-            <table style={{ width: "100%", textAlign: "left", borderCollapse: "collapse", fontSize: "14px" }}>
+            <div className="w-full overflow-x-auto">
+<table style={{ width: "100%", textAlign: "left", borderCollapse: "collapse", fontSize: "14px" }}>
               <thead style={{ background: "#f1f5f9", color: "#475569", textTransform: "uppercase", fontSize: "12px", fontWeight: "bold" }}>
                 <tr>
                   <th style={{ padding: "16px 20px" }}>Hari</th>
@@ -145,6 +146,7 @@ export default function KurikulumJadwalPage() {
                 ))}
               </tbody>
             </table>
+</div>
           </div>
         </div>
       )}

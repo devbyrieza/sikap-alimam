@@ -257,7 +257,8 @@ export default function TahfidzDetailPage() {
           </div>
         ) : (
           <div className="custom-scrollbar" style={{ overflowX: "auto" }}>
-            <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13, minWidth: 860 }}>
+            <div className="w-full overflow-x-auto">
+<table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13, minWidth: 860 }}>
               <thead>
                 <tr style={{ background: "#f8fafc", borderBottom: "2px solid #e2e8f0" }}>
                   {["Tanggal", "Kategori", "Batas Setoran", "Halaman", "Nilai", "Catatan", "Musyrif", ...(userRole?.includes("ADMIN_SUPER") ? ["Aksi"] : [])].map((h, i) => (
@@ -318,6 +319,7 @@ export default function TahfidzDetailPage() {
                 })}
               </tbody>
             </table>
+</div>
           </div>
         )}
       </div>

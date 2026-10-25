@@ -745,7 +745,8 @@ export default function UjianTahfidzPage() {
           <div style={{ padding: 48, textAlign: "center", color: "#94a3b8", fontSize: 13 }}>Belum ada riwayat ujian</div>
         ) : (
           <div className="custom-scrollbar" style={{ overflowX: "auto" }}>
-            <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13, minWidth: 850 }}>
+            <div className="w-full overflow-x-auto">
+<table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13, minWidth: 850 }}>
               <thead>
                 <tr style={{ background: "#f8fafc", borderBottom: "2px solid #e2e8f0" }}>
                   {["Tanggal", "Santri", "Jenis Ujian", "Materi", "Nilai Akhir", "Penguji", "Aksi"].map((h, i) => (
@@ -789,6 +790,7 @@ export default function UjianTahfidzPage() {
                 })}
               </tbody>
             </table>
+</div>
           </div>
         )}
       </div>

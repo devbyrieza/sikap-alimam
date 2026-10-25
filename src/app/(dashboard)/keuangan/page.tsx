@@ -933,7 +933,8 @@ export default function KeuanganSPPPage() {
       {/* Main Table */}
       <div style={{ background: "white", borderRadius: "24px", border: "1px solid #f1f5f9", boxShadow: "0 1px 3px 0 rgba(0,0,0,0.1)", overflow: "hidden" }}>
         <div style={{ overflowX: "auto" }} className="custom-scrollbar">
-          <table style={{ width: "100%", textAlign: "left", borderCollapse: "collapse", fontSize: "14px" }}>
+          <div className="w-full overflow-x-auto">
+<table style={{ width: "100%", textAlign: "left", borderCollapse: "collapse", fontSize: "14px" }}>
             <thead style={{ background: "#f8fafc", borderBottom: "2px solid #e2e8f0" }}>
               <tr style={{ fontSize: "11px", fontWeight: 900, textTransform: "uppercase", color: "#475569", letterSpacing: "0.05em" }}>
                 <th style={{ padding: "14px 16px", textAlign: "center", width: "44px" }}>No</th>
@@ -1221,6 +1222,7 @@ export default function KeuanganSPPPage() {
               )}
             </tbody>
           </table>
+</div>
         </div>
       </div>
 

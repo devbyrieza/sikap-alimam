@@ -444,7 +444,8 @@ export default function RiwayatPresensiSantriPage() {
               </div>
             ) : (
               <div style={{ overflowX: "auto" }}>
-                <table style={{ fontSize: 13, width: "100%", borderCollapse: "collapse" }}>
+                <div className="w-full overflow-x-auto">
+<table style={{ fontSize: 13, width: "100%", borderCollapse: "collapse" }}>
                   <thead>
                     <tr style={{ background: "#fdf8f0", borderBottom: "1px solid #ebdcc3" }}>
                       <th style={{ padding: "12px 16px", textAlign: "left", color: "#550000", fontWeight: 800, width: 60 }}>#</th>
@@ -550,6 +551,7 @@ export default function RiwayatPresensiSantriPage() {
                     })}
                   </tbody>
                 </table>
+</div>
               </div>
             )}
           </div>

@@ -535,7 +535,8 @@ export default function MasterSantriPage() {
         }}
       >
         <div style={{ overflowX: "auto" }} className="custom-scrollbar">
-          <table style={{ width: "100%", borderCollapse: "collapse", textAlign: "left", fontSize: 13 }}>
+          <div className="w-full overflow-x-auto">
+<table style={{ width: "100%", borderCollapse: "collapse", textAlign: "left", fontSize: 13 }}>
             <thead style={{ background: "#f8fafc", borderBottom: "1px solid #e2e8f0" }}>
               <tr>
                 <th style={{ padding: "14px 18px", width: 50, textAlign: "center", color: "#475569", fontWeight: 700 }}>NO</th>
@@ -698,6 +699,7 @@ export default function MasterSantriPage() {
               )}
             </tbody>
           </table>
+</div>
         </div>
       </div>
 

@@ -230,7 +230,8 @@ export default function IbadahHarianPage() {
       {kelasId && !loading && (
         <div style={{ background: "white", borderRadius: "24px", boxShadow: "0 1px 3px 0 rgba(0,0,0,0.1)", border: "1px solid #f1f5f9", overflow: "hidden" }}>
           <div style={{ overflowX: "auto" }}>
-            <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "14px", textAlign: "left" }}>
+            <div className="w-full overflow-x-auto">
+<table style={{ width: "100%", borderCollapse: "collapse", fontSize: "14px", textAlign: "left" }}>
               <thead style={{ background: "#f8fafc" }}>
                 <tr>
                   <th
@@ -316,6 +317,7 @@ export default function IbadahHarianPage() {
                 )}
               </tbody>
             </table>
+</div>
           </div>
           
           <div style={{ padding: "16px 20px", background: "#f8fafc", borderTop: "1px solid #f1f5f9", display: "flex", justifyContent: "flex-end" }}>

@@ -868,7 +868,7 @@ export default function HalaqohInputPage() {
           <div className="p-12 text-center text-[13px] text-slate-400">Belum ada catatan halaqoh untuk sesi ini</div>
         ) : (
           <div className="custom-scrollbar overflow-x-auto">
-            <table className="w-full min-w-[850px] text-[13px]">
+            <table className="w-full min-w-[850px] text-[13px] max-w-full">
               <thead>
                 <tr className="border-b-2 border-slate-200 bg-slate-50">
                   {["Tanggal", "Santri", "Jenis", "Materi / Surah", "Ayat", "Halaman", "Nilai akhir", "Kehadiran", "Catatan", "Aksi"].map(h => (

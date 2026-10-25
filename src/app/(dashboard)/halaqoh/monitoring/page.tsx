@@ -677,7 +677,8 @@ export default function MonitoringUjianPage() {
               </div>
             ) : (
               <div className="custom-scrollbar" style={{ overflowX: "auto" }}>
-                <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 12.5, minWidth: 980 }}>
+                <div className="w-full overflow-x-auto">
+<table style={{ width: "100%", borderCollapse: "collapse", fontSize: 12.5, minWidth: 980 }}>
                   <thead>
                     <tr style={{ background: "#f8fafc", borderBottom: "2px solid #e2e8f0" }}>
                       <th style={{ padding: "12px 14px", textAlign: "center", width: 44, color: "#475569", fontWeight: 800 }}>No</th>
@@ -869,6 +870,7 @@ export default function MonitoringUjianPage() {
                     })}
                   </tbody>
                 </table>
+</div>
               </div>
             )}
           </div>

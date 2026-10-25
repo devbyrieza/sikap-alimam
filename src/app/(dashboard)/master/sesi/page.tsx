@@ -135,7 +135,8 @@ export default function MasterSesiPage() {
         <div style={{ textAlign: "center", padding: "40px 0" }}>Memuat data...</div>
       ) : (
         <div style={{ background: "white", borderRadius: "24px", boxShadow: "0 1px 3px 0 rgba(0, 0, 0, 0.1)", border: "1px solid #f1f5f9", overflow: "hidden" }}>
-          <table style={{ width: "100%", borderCollapse: "collapse", textAlign: "left" }}>
+          <div className="w-full overflow-x-auto">
+<table style={{ width: "100%", borderCollapse: "collapse", textAlign: "left" }}>
             <thead style={{ backgroundColor: "#f8fafc" }}>
               <tr>
                 <th style={{ padding: "16px 20px", fontSize: "12px", fontWeight: "bold", color: "#64748b", textTransform: "uppercase", letterSpacing: "0.05em" }}>Jam Ke</th>
@@ -168,6 +169,7 @@ export default function MasterSesiPage() {
               ))}
             </tbody>
           </table>
+</div>
         </div>
       )}
     </div>

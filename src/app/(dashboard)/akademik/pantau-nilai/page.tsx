@@ -362,7 +362,7 @@ export default function PantauNilaiPage() {
                        target="_blank"
                        className="ml-auto inline-flex items-center justify-center gap-2 px-4 py-2 bg-primary text-white font-bold text-xs rounded-xl shadow-md shadow-primary/20 hover:bg-primary/90 transition-all"
                        title="Cetak Rapor Resmi A4 (210 x 297 mm)"
-                     >
+                      rel="noopener noreferrer">
                        <Printer size={14} /> Cetak Rapor Resmi (A4)
                      </a>
                    </div>

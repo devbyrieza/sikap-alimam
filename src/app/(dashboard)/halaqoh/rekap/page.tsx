@@ -347,7 +347,8 @@ export default function HalaqohRekapPage() {
           </div>
         ) : (
           <div className="custom-scrollbar" style={{ overflowX: "auto" }}>
-            <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13, minWidth: 900 }}>
+            <div className="w-full overflow-x-auto">
+<table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13, minWidth: 900 }}>
               <thead>
                 <tr style={{ background: "#f8fafc", borderBottom: "2px solid #e2e8f0" }}>
                   {["Tanggal", "Santri", "Sesi", "Jenis", "Materi", "Hlm", "Kehadiran", "Lancar", "Bacaan", "Sikap", "Akhir"].map((h, i) => (
@@ -407,6 +408,7 @@ export default function HalaqohRekapPage() {
                 })}
               </tbody>
             </table>
+</div>
           </div>
         )}
       </div>

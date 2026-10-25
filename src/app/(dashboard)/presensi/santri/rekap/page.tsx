@@ -384,7 +384,8 @@ export default function RekapPresensiSantriPage() {
             </div>
 
             <div style={{ overflowX: "auto", WebkitOverflowScrolling: "touch" }}>
-              <table style={{ fontSize: 13, width: "100%", borderCollapse: "separate", borderSpacing: 0, minWidth: 700 }}>
+              <div className="w-full overflow-x-auto">
+<table style={{ fontSize: 13, width: "100%", borderCollapse: "separate", borderSpacing: 0, minWidth: 700 }}>
                 <thead>
                   <tr style={{ background: "#fdf8f0" }}>
                     <th style={{ width: 40, textAlign: "center", position: "sticky", left: 0, background: "#fdf8f0", zIndex: 20, borderBottom: "1px solid #ebdcc3", padding: "12px 8px", color: "#550000", fontWeight: 800 }}>
@@ -464,6 +465,7 @@ export default function RekapPresensiSantriPage() {
                   )}
                 </tbody>
               </table>
+</div>
             </div>
           </>
         )}

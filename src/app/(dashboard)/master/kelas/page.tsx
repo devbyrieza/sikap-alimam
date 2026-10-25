@@ -254,7 +254,8 @@ export default function MasterKelasPage() {
           <div style={{ padding:48, textAlign:"center", color:"#94a3b8" }}>Belum ada data kelas yang terdaftar.</div>
         ) : (
           <div style={{ overflowX:"auto" }}>
-            <table style={{ width:"100%", borderCollapse:"collapse", minWidth:700 }}>
+            <div className="w-full overflow-x-auto">
+<table style={{ width:"100%", borderCollapse:"collapse", minWidth:700 }}>
               <thead>
                 <tr style={{ background:"#f8fafc" }}>
                   {["No", "Nama Kelas", "Jenjang", "Wali Kelas", "Santri", "Mapel", "Status", "Aksi"].map((h, i) => (
@@ -381,6 +382,7 @@ export default function MasterKelasPage() {
                 })}
               </tbody>
             </table>
+</div>
           </div>
         )}
       </div>

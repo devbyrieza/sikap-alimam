@@ -485,7 +485,8 @@ export default function HalaqohDashboardPage() {
                 </span>
               </div>
               <div className="custom-scrollbar" style={{ overflowX: "auto" }}>
-                <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13, minWidth: 920 }}>
+                <div className="w-full overflow-x-auto">
+<table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13, minWidth: 920 }}>
                   <thead>
                     <tr style={{ background: "#f8fafc", borderBottom: "2px solid #e2e8f0" }}>
                       {["No", "Santri / NIS", "Kelas", "Kelompok & Pengampu", "Ziyadah Terakhir", "Murojaah Terakhir", "Ujian Pekanan", ""].map((h, i) => (
@@ -576,6 +577,7 @@ export default function HalaqohDashboardPage() {
                     ))}
                   </tbody>
                 </table>
+</div>
               </div>
             </div>
           )}

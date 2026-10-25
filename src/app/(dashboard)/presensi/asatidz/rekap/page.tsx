@@ -260,7 +260,8 @@ export default function RekapBulananPage() {
             </div>
           ) : (
             <div style={{ overflowX: "auto" }}>
-              <table style={{ fontSize: 12, width: "100%", borderCollapse: "collapse" }}>
+              <div className="w-full overflow-x-auto">
+<table style={{ fontSize: 12, width: "100%", borderCollapse: "collapse" }}>
                 <thead>
                   <tr style={{ background: "#fdf8f0", borderBottom: "1px solid #ebdcc3" }}>
                     <th
@@ -377,6 +378,7 @@ export default function RekapBulananPage() {
                   )}
                 </tbody>
               </table>
+</div>
             </div>
           )}
         </div>

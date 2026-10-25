@@ -376,7 +376,8 @@ export default function TahfidzPage() {
 
           <div style={{ background: "white", borderRadius: "16px", padding: 0, overflow: "hidden", boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)" }}>
             <div style={{ overflowX: "auto" }}>
-              <table style={{ width: "100%", borderCollapse: "collapse", minWidth: 900 }}>
+              <div className="w-full overflow-x-auto">
+<table style={{ width: "100%", borderCollapse: "collapse", minWidth: 900 }}>
                 <thead>
                   <tr style={{ background: "#f8fafc", borderBottom: "2px solid #e2e8f0", fontSize: 14, color: "#475569" }}>
                     <th style={{ padding: "16px 20px", textAlign: "left", width: 40, fontWeight: 600 }}>#</th>
@@ -491,6 +492,7 @@ export default function TahfidzPage() {
                   })}
                 </tbody>
               </table>
+</div>
             </div>
           </div>
 

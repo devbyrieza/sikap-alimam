@@ -616,7 +616,8 @@ export default function RekapNilaiPage() {
               </div>
 
               <div style={{ overflowX: "auto", WebkitOverflowScrolling: "touch" }}>
-                <table className="platinum-table" style={{ width: "100%", borderCollapse: "collapse", fontSize: "14px", minWidth: "max-content" }}>
+                <div className="w-full overflow-x-auto">
+<table className="platinum-table" style={{ width: "100%", borderCollapse: "collapse", fontSize: "14px", minWidth: "max-content" }}>
                   <thead>
                     <tr style={{ background: "#fdf8f0" }}>
                       <th className="sticky-col" style={{ position: "sticky", left: 0, zIndex: 20, background: "#fdf8f0", width: 40, textAlign: "center", borderBottom: "1px solid #ebdcc3", padding: "14px 16px", color: "#550000", fontWeight: 800 }}>#</th>
@@ -696,7 +697,7 @@ export default function RekapNilaiPage() {
                                       whiteSpace: "nowrap",
                                       boxShadow: "0 2px 4px rgba(85, 0, 0, 0.2)" 
                                     }}
-                                  >
+                                   rel="noopener noreferrer">
                                     <Printer size={13} /> Cetak Rapor (A4)
                                   </a>
                                 </div>
@@ -707,6 +708,7 @@ export default function RekapNilaiPage() {
                     )}
                   </tbody>
                 </table>
+</div>
               </div>
             </>
           )}

@@ -314,7 +314,8 @@ export default function TahfidzMutabaahPage() {
           </div>
         ) : (
           <div className="custom-scrollbar" style={{ overflowX: "auto" }}>
-            <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13, minWidth: 960 }}>
+            <div className="w-full overflow-x-auto">
+<table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13, minWidth: 960 }}>
               <thead>
                 <tr style={{ background: "#f8fafc", borderBottom: "2px solid #e2e8f0" }}>
                   {["#", "Nama Santri / NIS", "Kelas", "Kelompok & Pengampu", "Ziyadah Terakhir", "Murojaah Terakhir", "Ujian Pekanan", ""].map((h, i) => (
@@ -432,6 +433,7 @@ export default function TahfidzMutabaahPage() {
                 ))}
               </tbody>
             </table>
+</div>
           </div>
         )}
       </div>

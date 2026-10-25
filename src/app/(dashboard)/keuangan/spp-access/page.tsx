@@ -148,7 +148,8 @@ export default function SppAccessPage() {
             <div>Tidak ada data Wali Santri</div>
           </div>
         ) : (
-          <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
+          <div className="w-full overflow-x-auto">
+<table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
             <thead>
               <tr style={{ background: "#f8fafc", borderBottom: "1.5px solid #e2e8f0", color: "#475569" }}>
                 <th style={{ padding: "12px 16px", textAlign: "left" }}>No</th>
@@ -224,6 +225,7 @@ export default function SppAccessPage() {
               ))}
             </tbody>
           </table>
+</div>
         )}
       </div>
 

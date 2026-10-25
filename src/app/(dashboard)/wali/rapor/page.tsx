@@ -1399,7 +1399,7 @@ function TabPresensi({
         </div>
 
         <div className="overflow-x-auto">
-          <table className="w-full min-w-[500px] border-collapse text-left">
+          <table className="w-full min-w-[500px] border-collapse text-left max-w-full">
             <caption className="sr-only">Riwayat presensi harian ananda</caption>
             <thead>
               <tr className="border-b border-slate-100 bg-slate-50 text-xs font-bold uppercase text-slate-500">
@@ -1506,7 +1506,7 @@ function TabJurnal({
 
       <div className={`overflow-hidden ${surface}`}>
         <div className="w-full overflow-x-auto">
-          <table className="w-full min-w-[700px] border-collapse text-left">
+          <table className="w-full min-w-[700px] border-collapse text-left max-w-full">
             <caption className="sr-only">Jurnal mengajar guru di kelas ananda</caption>
             <thead>
               <tr className="border-b border-slate-100 bg-slate-50 text-xs font-bold uppercase text-slate-500">

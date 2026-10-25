@@ -543,7 +543,8 @@ export default function JurnalClientFilter({
               WebkitOverflowScrolling: "touch",
               touchAction: "pan-x pan-y" }}
           >
-            <table style={{ width: "100%", minWidth: 780, borderCollapse: "collapse", fontSize: 13 }}>
+            <div className="w-full overflow-x-auto">
+<table style={{ width: "100%", minWidth: 780, borderCollapse: "collapse", fontSize: 13 }}>
               <thead>
                 <tr style={{ background: "#fdf8f0", borderBottom: "1px solid #ebdcc3" }}>
                   <th style={{ padding: "14px 18px", fontWeight: 800, fontSize: 12, textTransform: "uppercase", letterSpacing: "0.04em", color: "#550000", textAlign: "left", width: 140 }}>
@@ -676,6 +677,7 @@ export default function JurnalClientFilter({
                 })}
               </tbody>
             </table>
+</div>
           </div>
         </div>
       )}
