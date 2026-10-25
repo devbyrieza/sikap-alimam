@@ -1306,3 +1306,12 @@ input[type="checkbox"], input[type="radio"], input[type="submit"], input[type="b
     margin: 11mm 6mm 2mm 13mm;
   }
 }
+
+/* mobile-input-zoom-fix: cegah auto-zoom saat fokus input di iOS/HP */
+@media (max-width: 640px) {
+  input:not([type="checkbox"]):not([type="radio"]),
+  select,
+  textarea {
+    font-size: 16px;
+  }
+}
