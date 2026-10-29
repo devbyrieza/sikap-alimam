@@ -64,7 +64,7 @@
   --warning:         #d97706;
   --danger:          #dc2626;
   --info:            #550000;
-  --radius:          24px;
+  --radius:          16px;
   --shadow-sm:       0 2px 8px rgba(0,0,0,.04), 0 1px 2px rgba(0,0,0,.02);
   --shadow-md:       0 4px 6px -1px rgba(0, 0, 0, 0.07), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
   --shadow-lg:       0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -4px rgba(0, 0, 0, 0.04);
@@ -225,14 +225,13 @@ body {
   background: var(--bg-card);
   border: 1px solid var(--border);
   border-radius: var(--radius);
-  box-shadow: var(--shadow-md);
+  box-shadow: var(--shadow-sm);
   padding: 24px;
-  transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.25s ease;
-  will-change: transform;
+  transition: box-shadow 0.25s ease, border-color 0.25s ease;
 }
 .card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 12px 32px rgba(85, 0, 0, 0.09), 0 4px 12px rgba(0,0,0,0.04);
+  box-shadow: 0 8px 24px rgba(85, 0, 0, 0.06), 0 2px 8px rgba(0,0,0,0.03);
+  border-color: var(--gold);
 }
 .glass-panel {
   background: rgba(255, 255, 255, 0.85);
@@ -243,7 +242,8 @@ body {
   box-shadow: var(--shadow-lg);
 }
 .glowing-shadow {
-  box-shadow: 0 0 32px rgba(85, 0, 0, 0.22), 0 0 8px rgba(221, 193, 146, 0.15);
+  /* dinetralkan: tanpa glow (lihat DESIGN.md) */
+  box-shadow: var(--shadow-md);
 }
 .card-title {
   font-size: 16px;
@@ -262,12 +262,10 @@ body {
   align-items: center;
   gap: 16px;
   box-shadow: var(--shadow-sm);
-  transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.25s ease;
-  will-change: transform;
+  transition: box-shadow 0.25s ease;
 }
 .stat-card:hover {
-  transform: translateY(-2px) scale(1.01);
-  box-shadow: 0 10px 28px rgba(85, 0, 0, 0.08), 0 2px 8px rgba(0,0,0,0.04);
+  box-shadow: 0 4px 12px -2px rgba(0, 0, 0, 0.08);
 }
 .stat-icon {
   width: 52px; height: 52px;
@@ -291,7 +289,7 @@ body {
   font-weight: 600;
   cursor: pointer;
   border: none;
-  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease, background 0.15s ease;
+  transition: background 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
   text-decoration: none;
   white-space: nowrap;
 }
@@ -303,10 +301,9 @@ body {
 }
 .btn-primary:hover:not(:disabled) {
   background: var(--primary-light);
-  box-shadow: 0 8px 22px rgba(85, 0, 0, 0.38), 0 2px 6px rgba(85,0,0,0.12);
-  transform: translateY(-2px);
+  box-shadow: var(--shadow-sm);
 }
-.btn-primary:active:not(:disabled) { transform: translateY(0px); }
+.btn-primary:active:not(:disabled) { transform: scale(0.98); }
 .btn-secondary {
   background: var(--secondary);
   color: var(--primary-dark);
@@ -315,16 +312,15 @@ body {
 }
 .btn-secondary:hover:not(:disabled) {
   background: var(--secondary-light);
-  transform: translateY(-2px);
-  box-shadow: 0 6px 18px rgba(221, 193, 146, 0.45);
+  box-shadow: var(--shadow-sm);
 }
-.btn-secondary:active:not(:disabled) { transform: translateY(0); }
+.btn-secondary:active:not(:disabled) { transform: scale(0.98); }
 .btn-ghost {
   background: transparent;
   color: var(--text-muted);
   border: 1px solid var(--border);
 }
-.btn-ghost:hover:not(:disabled) { background: var(--bg); color: var(--text-main); transform: translateY(-1px); }
+.btn-ghost:hover:not(:disabled) { background: var(--bg); color: var(--text-main); }
 .btn-sm { padding: 6px 12px; font-size: 13px; border-radius: 10px; }
 .btn-lg { padding: 14px 28px; font-size: 16px; border-radius: 16px; }
 .btn-pill { border-radius: 99px !important; padding-left: 22px; padding-right: 22px; }
@@ -748,7 +744,7 @@ html, body {
      Replaces harsh outline with smooth ring + offset */
   :focus-visible {
     outline: none;
-    box-shadow: 0 0 0 2px #F8FAFC, 0 0 0 4px var(--color-primary, #0f766e);
+    box-shadow: 0 0 0 2px var(--bg), 0 0 0 4px var(--primary, #550000);
     border-radius: 10px;
     transition: box-shadow 0.15s cubic-bezier(0.4, 0, 0.2, 1);
   }
@@ -844,7 +840,6 @@ html, body {
   .card:hover {
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08),
                 0 3px 8px rgba(0, 0, 0, 0.04);
-    transform: translateY(-1px);
   }
 
   /* Glass card variant - BLU signature glassmorphism */
@@ -874,7 +869,6 @@ html, body {
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.13),
                 0 8px 20px rgba(0, 0, 0, 0.07),
                 0 2px 5px rgba(0, 0, 0, 0.04);
-    transform: translateY(-2px);
   }
 }
 
@@ -1147,42 +1141,8 @@ svg:not(:has(text)), svg:not(:has(text)) * {
   user-select: none !important;
 }
 
-/* Highlight seleksi teks yang tegas, jelas, dan kontras tinggi (Vivid Selection) */
-::selection {
-  background-color: #2563eb !important;
-  color: #ffffff !important;
-  -webkit-text-fill-color: #ffffff !important;
-}
-
-::-moz-selection {
-  background-color: #2563eb !important;
-  color: #ffffff !important;
-}
-
-/* Highlight seleksi di dalam form input dan textarea */
-input::selection, textarea::selection {
-  background-color: #2563eb !important;
-  color: #ffffff !important;
-  -webkit-text-fill-color: #ffffff !important;
-}
-
-input::-moz-selection, textarea::-moz-selection {
-  background-color: #2563eb !important;
-  color: #ffffff !important;
-}
-/* Global Cursor Override Requested by User */
-* {
-  cursor: pointer !important;
-}
-input, textarea, [contenteditable="true"] {
-  cursor: text !important;
-}
-input[type="checkbox"], input[type="radio"], input[type="submit"], input[type="button"], input[type="file"] {
-  cursor: pointer !important;
-}
-:disabled {
-  cursor: not-allowed !important;
-}
+/* Highlight seleksi: satu definisi final ada di atas */
+/* Global cursor override dihapus (lihat DESIGN.md) - kembali ke default browser */
 
 /* ======================================================================
    PRINT STYLES - STANDAR INTERNASIONAL RAPOR RESMI A4
@@ -1313,5 +1273,15 @@ input[type="checkbox"], input[type="radio"], input[type="submit"], input[type="b
   select,
   textarea {
     font-size: 16px;
+  }
+}
+
+/* PREFERS-REDUCED-MOTION (wajib per DESIGN.md) */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }
