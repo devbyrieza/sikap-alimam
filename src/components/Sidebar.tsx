@@ -13,6 +13,7 @@ import {
   ChevronDown,
   ChevronRight,
   ClipboardCheck,
+  ClipboardList,
   CreditCard,
   Database,
   FileSpreadsheet,
@@ -74,6 +75,13 @@ const NAV: NavItem[] = [
     label: "Jurnal Mengajar",
     icon: BookMarked,
     roles: ["guru", "kepala_kurikulum", "kadiv_kurikulum", "kepala_sekolah", "admin_super", "mudir"],
+  },
+  {
+    href: "/jurnal/monitoring",
+    label: "Pantau Jurnal Guru",
+    icon: ClipboardList,
+    roles: ["wali_kelas", "kepala_kurikulum", "kadiv_kurikulum", "kepala_sekolah", "admin_super", "mudir"],
+    restricted: true,
   },
   {
     href: "/nilai",

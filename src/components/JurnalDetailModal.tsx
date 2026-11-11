@@ -13,6 +13,7 @@ import {
   CheckCircle2,
   User,
   Sparkles } from "lucide-react";
+import { formatTanggalLongID } from "@/lib/jurnalDateUtils";
 
 export interface JurnalDetailData {
   id: string;
@@ -39,24 +40,20 @@ interface JurnalDetailModalProps {
 
 function formatTanggalLengkap(iso: string) {
   if (!iso) return "-";
-  const d = new Date(iso.includes("T") ? iso : iso + "T00:00:00");
-  return d.toLocaleDateString("id-ID", {
-    weekday: "long",
-    day: "numeric",
-    month: "long",
-    year: "numeric" });
+  const cleanIso = iso.includes("T") ? iso.split("T")[0] : iso;
+  return formatTanggalLongID(cleanIso);
 }
 
 const JAM_WAKTU: Record<string, { mulai: string, selesai: string }> = {
-  "1": { mulai: "05:40", selesai: "06:20" },
-  "2": { mulai: "06:20", selesai: "07:00" },
+  "1": { mulai: "04:50", selesai: "05:30" },
+  "2": { mulai: "05:30", selesai: "06:10" },
   "3": { mulai: "07:00", selesai: "07:40" },
   "4": { mulai: "07:40", selesai: "08:20" },
   "5": { mulai: "08:20", selesai: "09:00" },
   "6": { mulai: "09:00", selesai: "09:40" },
-  "7": { mulai: "09:40", selesai: "10:20" },
-  "8": { mulai: "10:20", selesai: "11:00" },
-  "9": { mulai: "11:00", selesai: "11:40" },
+  "7": { mulai: "10:00", selesai: "10:40" },
+  "8": { mulai: "10:40", selesai: "11:20" },
+  "9": { mulai: "11:20", selesai: "12:00" },
   "10": { mulai: "13:00", selesai: "13:40" },
   "11": { mulai: "13:40", selesai: "14:20" } };
 

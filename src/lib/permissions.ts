@@ -1,17 +1,17 @@
-import { JenjangType, getJenjangFromKelas } from "./kelas";
+import type { JenjangType } from "./kelas";
 
 export interface UserProfileAuth {
   user?: {
     id?: string;
-    nama?: string;
-    email?: string;
-    role?: string;
+    nama?: string | null;
+    email?: string | null;
+    role?: string | null;
   } | null;
   pegawai?: {
     id?: string;
     nama_lengkap?: string;
-    jabatan?: string;
-    kategori_pegawai?: string;
+    jabatan?: string | null;
+    kategori_pegawai?: string | null;
   } | null;
 }
 
@@ -37,7 +37,9 @@ export interface LaporanNilaiAccess {
  *    - IL: Imron Abdillah, S.Pd. (Kelas IL)
  *    - MA: Muhammad Thoriq Ibn Ziyad, Lc., M.Ag. (Kelas 10, 11, 12)
  */
-export function getLaporanNilaiAccess(profile: UserProfileAuth): LaporanNilaiAccess {
+export function getLaporanNilaiAccess(
+  profile: UserProfileAuth,
+): LaporanNilaiAccess {
   const user = profile?.user;
   const pegawai = profile?.pegawai;
 
@@ -51,7 +53,7 @@ export function getLaporanNilaiAccess(profile: UserProfileAuth): LaporanNilaiAcc
     "mudir",
     "kepala_sekolah",
     "admin_rapor",
-    "super_admin"
+    "super_admin",
   ].some((r) => roleStr.includes(r));
 
   // 2. Kepala Kurikulum (Imron Abdillah, S.Pd.)
@@ -67,17 +69,30 @@ export function getLaporanNilaiAccess(profile: UserProfileAuth): LaporanNilaiAcc
   // - Muhammad Thoriq Ibn Ziyad, Lc., M.Ag. (Wali Kelas MA)
   const isWaliMTs =
     namaStr.includes("agus cahyono") ||
-    (roleStr.includes("wali_kelas") && (jabatanStr.includes("mts") || jabatanStr.includes("7") || jabatanStr.includes("8") || jabatanStr.includes("9")));
+    (roleStr.includes("wali_kelas") &&
+      (jabatanStr.includes("mts") ||
+        jabatanStr.includes("7") ||
+        jabatanStr.includes("8") ||
+        jabatanStr.includes("9")));
 
   const isWaliIL =
     namaStr.includes("imron") ||
-    (roleStr.includes("wali_kelas") && (jabatanStr.includes("il") || jabatanStr.includes("idad") || jabatanStr.includes("lugho")));
+    (roleStr.includes("wali_kelas") &&
+      (jabatanStr.includes("il") ||
+        jabatanStr.includes("idad") ||
+        jabatanStr.includes("lugho")));
 
   const isWaliMA =
     namaStr.includes("thoriq") ||
-    (roleStr.includes("wali_kelas") && (jabatanStr.includes("ma") || jabatanStr.includes("aliyah") || jabatanStr.includes("10") || jabatanStr.includes("11") || jabatanStr.includes("12")));
+    (roleStr.includes("wali_kelas") &&
+      (jabatanStr.includes("ma") ||
+        jabatanStr.includes("aliyah") ||
+        jabatanStr.includes("10") ||
+        jabatanStr.includes("11") ||
+        jabatanStr.includes("12")));
 
-  const isGenericWali = roleStr.includes("wali_kelas") || jabatanStr.includes("wali kelas");
+  const isGenericWali =
+    roleStr.includes("wali_kelas") || jabatanStr.includes("wali kelas");
   const isWaliKelas = isWaliMTs || isWaliIL || isWaliMA || isGenericWali;
 
   const canAccess = isAdminSuper || isKepalaKurikulum || isWaliKelas;
@@ -121,6 +136,6 @@ export function getLaporanNilaiAccess(profile: UserProfileAuth): LaporanNilaiAcc
     isWaliIL,
     isWaliMA,
     allowedJenjang,
-    userTitle
+    userTitle,
   };
 }

@@ -1,25 +1,30 @@
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
-import { BookOpen, Plus } from "lucide-react";
+import { BookOpen, CalendarDays, ClipboardList, Plus } from "lucide-react";
 import JurnalClientFilter from "./JurnalClientFilter";
 import { sortKelas } from "@/lib/kelas";
-import { getSession } from "@/lib/auth";
+import { getLiveSession } from "@/lib/auth";
+import { getLaporanNilaiAccess } from "@/lib/permissions";
+import { normalizeClassLabel } from "@/lib/jurnalMonitoring";
 
 export const dynamic = "force-dynamic";
 
 const formatName = (str: string) => {
   if (!str) return "-";
-  return str.split(' ').map(word => {
-    if (word.includes('.')) return word; 
-    if (word === word.toUpperCase() || word === word.toLowerCase()) {
-      return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
-    }
-    return word;
-  }).join(' ');
+  return str
+    .split(" ")
+    .map((word) => {
+      if (word.includes(".")) return word;
+      if (word === word.toUpperCase() || word === word.toLowerCase()) {
+        return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+      }
+      return word;
+    })
+    .join(" ");
 };
 
 const normalizeMapelName = (name: string) => {
-  let normalized = name.replace(/^\[.*?\]\s*/, ""); // Hapus awalan seperti "[7 MTs] "
+  let normalized = name.replace(/^\[.*?\]\s*/, "");
   if (normalized === "Tahsin/Tahfidz Al-Quran") {
     normalized = "Tahsin Al-Qur'an";
   }
@@ -27,56 +32,101 @@ const normalizeMapelName = (name: string) => {
 };
 
 export const metadata = {
-  title: "Jurnal Mengajar — SIAKAD Al-Imam",
-  description: "Daftar jurnal mengajar guru Pesantren Al-Imam Al-Islami" };
+  title: "Jurnal Mengajar — SIKAP Al-Imam",
+  description: "Daftar jurnal mengajar guru Pesantren Al-Imam Al-Islami",
+};
 
 async function getJurnal() {
-  const jurnal = await prisma.jurnalMengajar.findMany({
-    orderBy: { tanggal: "desc" },
+  return prisma.jurnalMengajar.findMany({
+    orderBy: [{ tanggal: "desc" }, { created_at: "desc" }],
     include: {
       pegawai: { select: { id: true, nama_lengkap: true } },
       mapel: { select: { id: true, nama: true } },
-      kelas: { select: { id: true, nama: true, jenjang: true } } } });
-  return jurnal;
+      kelas: { select: { id: true, nama: true, jenjang: true } },
+    },
+  });
 }
 
 export default async function JurnalPage() {
-  const session = await getSession();
-  const isAdminSuper = session?.role === "ADMIN_SUPER";
+  const session = await getLiveSession();
+  const roleStr = (session?.role || "").toLowerCase();
+  const isAdminSuper =
+    roleStr.includes("admin_super") || roleStr.includes("mudir");
+
+  const pegawai = session?.userId
+    ? await prisma.pegawai.findFirst({
+        where: {
+          OR: [
+            ...(session.asatidz_id ? [{ id: session.asatidz_id }] : []),
+            { user_id: session.userId },
+            ...(session.email ? [{ email: session.email }] : []),
+          ],
+        },
+        select: {
+          id: true,
+          nama_lengkap: true,
+          jabatan: true,
+          kategori_pegawai: true,
+        },
+      })
+    : null;
+
+  const access = getLaporanNilaiAccess({
+    user: session
+      ? {
+          id: session.userId,
+          nama: session.nama,
+          email: session.email,
+          role: session.role,
+        }
+      : null,
+    pegawai,
+  });
 
   // 1. Fetch Jurnal
   const jurnal = await getJurnal();
+  const kelasWithJurnalIds = new Set(jurnal.map((j) => j.kelas_id));
 
-  // 2. Fetch Kelas Aktif (Saat ini hanya 7 MTs dan IL, plus kelas yang ditambahkan Admin Super)
+  // 2. Fetch Kelas Aktif (tetap tampilkan kelas berjalan seperti 7 MTs, IL, 11 MA, 12 MA yang memiliki santri/jurnal)
   const rawKelas = await prisma.kelas.findMany({
     where: { is_active: true },
-    select: { id: true, nama: true, jenjang: true } });
+    select: {
+      id: true,
+      nama: true,
+      jenjang: true,
+      _count: { select: { santri: true, jurnal: true } },
+    },
+  });
 
-  // Normalisasi & eliminasi duplikasi / placeholder yang belum berjalan
   const seenKelas = new Set<string>();
-  const normalizedKelasList: { id: string; nama: string; jenjang: string | null }[] = [];
+  const normalizedKelasList: {
+    id: string;
+    nama: string;
+    jenjang: string | null;
+  }[] = [];
 
   for (const k of rawKelas) {
-    let name = k.nama.trim();
-    // Standarisasi I'dad Lughowy ke IL
-    if (name === "I'dad Lughowy" || name === "I'dad" || name === "Idad Lughowy") {
-      name = "IL";
-    }
+    const { kelasNama, jenjang } = normalizeClassLabel(k.nama, k.jenjang);
+    const hasActivity =
+      kelasNama === "7 MTs" ||
+      kelasNama === "IL" ||
+      k._count.santri > 0 ||
+      k._count.jurnal > 0 ||
+      kelasWithJurnalIds.has(k.id);
+    if (!hasActivity) continue;
 
-    // Filter placeholder kelas yang belum dibuka saat ini (8 MTs, 9 MTs, 10 MA, 11 MA, 12 MA)
-    if (["8 MTs", "9 MTs", "10 MA", "11 MA", "12 MA"].includes(name)) {
-      continue;
-    }
-
-    if (!seenKelas.has(name)) {
-      seenKelas.add(name);
-      normalizedKelasList.push({ ...k, nama: name });
+    if (!seenKelas.has(kelasNama)) {
+      seenKelas.add(kelasNama);
+      normalizedKelasList.push({ id: k.id, nama: kelasNama, jenjang });
     }
   }
 
-  // Pastikan kelas 7 MTs dan IL selalu ada dalam daftar master
   if (!seenKelas.has("7 MTs")) {
-    normalizedKelasList.push({ id: "kelas-7-mts", nama: "7 MTs", jenjang: "MTs" });
+    normalizedKelasList.push({
+      id: "kelas-7-mts",
+      nama: "7 MTs",
+      jenjang: "MTs",
+    });
   }
   if (!seenKelas.has("IL")) {
     normalizedKelasList.push({ id: "kelas-il", nama: "IL", jenjang: "IL" });
@@ -84,11 +134,15 @@ export default async function JurnalPage() {
 
   const kelasList = sortKelas(normalizedKelasList);
 
-  // 3. Fetch Data Guru (ASATIDZ / GURU dari SIMPEG)
+  // 3. Fetch Data Guru
   let asatidzData = await prisma.pegawai.findMany({
     where: {
       OR: [
-        { kategori_pegawai: { in: ["ASATIDZ", "GURU", "Guru", "asatidz", "guru", "PENGAJAR"] } },
+        {
+          kategori_pegawai: {
+            in: ["ASATIDZ", "GURU", "Guru", "asatidz", "guru", "PENGAJAR"],
+          },
+        },
         { kategori_pegawai: { contains: "ASATIDZ", mode: "insensitive" } },
         { kategori_pegawai: { contains: "GURU", mode: "insensitive" } },
         { jabatan: { contains: "Guru", mode: "insensitive" } },
@@ -96,125 +150,107 @@ export default async function JurnalPage() {
         { jabatan: { contains: "Asatidz", mode: "insensitive" } },
         { jabatan: { contains: "Ustadz", mode: "insensitive" } },
         { mata_pelajaran: { not: null } },
-      ] },
+      ],
+    },
     select: { id: true, nama_lengkap: true },
-    orderBy: { nama_lengkap: "asc" } });
+    orderBy: { nama_lengkap: "asc" },
+  });
 
-  // Fallback 1: Jika kategori belum diset spesifik di DB, ambil seluruh pegawai SIMPEG
   if (asatidzData.length === 0) {
     asatidzData = await prisma.pegawai.findMany({
       select: { id: true, nama_lengkap: true },
-      orderBy: { nama_lengkap: "asc" } });
+      orderBy: { nama_lengkap: "asc" },
+    });
   }
 
-  // Fallback 2: Jika pegawai kosong, cek user dengan role 'guru'
-  if (asatidzData.length === 0) {
-    const userGurus = await prisma.user.findMany({
-      where: {
-        role: { in: ["guru", "GURU", "asatidz", "ASATIDZ"] },
-        is_active: true },
-      select: { id: true, nama: true },
-      orderBy: { nama: "asc" } });
-    asatidzData = userGurus.map((u) => ({ id: u.id, nama_lengkap: u.nama }));
-  }
-
-  // Kumpulkan daftar nama guru unik (dari master pegawai + jurnal yang sudah tercatat)
   const asatidzSet = new Set<string>();
-  asatidzData.forEach((a) => {
+  for (const a of asatidzData) {
     if (a.nama_lengkap) asatidzSet.add(formatName(a.nama_lengkap.trim()));
-  });
-  jurnal.forEach((j) => {
-    if (j.pegawai?.nama_lengkap) asatidzSet.add(formatName(j?.pegawai?.nama_lengkap.trim()));
-  });
-  const asatidzList = Array.from(asatidzSet).sort((a, b) => a.localeCompare(b, "id"));
-
-  // Serialize Jurnal for Client Component (Normalisasi nama kelas I'dad Lughowy -> IL)
-  const jurnalSerialized = jurnal.map((j) => {
-    let kelasNama = j.kelas?.nama || "-";
-    if (kelasNama === "I'dad Lughowy" || kelasNama === "I'dad" || kelasNama === "Idad Lughowy") {
-      kelasNama = "IL";
-    } else {
-      kelasNama = kelasNama.replace(/\s*(MTs|MA|IL)$/i, "");
+  }
+  for (const j of jurnal) {
+    if (j.pegawai?.nama_lengkap) {
+      asatidzSet.add(formatName(j.pegawai.nama_lengkap.trim()));
     }
+  }
+  const asatidzList = Array.from(asatidzSet).sort((a, b) =>
+    a.localeCompare(b, "id"),
+  );
+
+  // 4. Serialize Jurnal dengan label kelas kanonik agar filter kelas & jenjang selalu sinkron
+  const jurnalSerialized = jurnal.map((j) => {
+    const { kelasNama, jenjang } = normalizeClassLabel(
+      j.kelas?.nama || "-",
+      j.kelas?.jenjang,
+    );
 
     return {
       id: j.id,
       tanggal: j.tanggal.toISOString().split("T")[0],
-      asatidz: j.pegawai?.nama_lengkap ? formatName(j?.pegawai?.nama_lengkap.trim()) : "-",
-      mapel: j.mapel?.nama ? normalizeMapelName(j?.mapel?.nama) : "-",
+      asatidz: j.pegawai?.nama_lengkap
+        ? formatName(j.pegawai.nama_lengkap.trim())
+        : "-",
+      mapel: j.mapel?.nama ? normalizeMapelName(j.mapel.nama) : "-",
       kelas: kelasNama,
-      kelas_jenjang: j.kelas?.jenjang || null,
+      kelas_jenjang: jenjang,
       jam_ke: j.jam_ke ?? "-",
       materi: j.materi,
       learning_outcome: j.learning_outcome ?? "",
       kegiatan: j.kegiatan,
-      catatan: j.catatan ?? "" };
+      catatan: j.catatan ?? "",
+    };
   });
 
   return (
-    <div className="page-container">
-      {/* ── Al-Imam Platinum Hero Banner ── */}
-      <div className="hero-banner">
-        {/* Decorative Background Elements */}
-        <div style={{ position:"absolute", top:0, right:0, width:256, height:256, background:"rgba(221, 193, 146, 0.15)", borderRadius:"50%", filter:"blur(40px)", transform:"translate(30%, -50%)", pointerEvents:"none" }}></div>
-        <div style={{ position:"absolute", bottom:0, left:0, width:192, height:192, background:"rgba(221, 193, 146, 0.1)", borderRadius:"50%", filter:"blur(40px)", transform:"translate(-25%, 50%)", pointerEvents:"none" }}></div>
-
-        <div style={{ position: "relative", zIndex: 1, flex: 1, minWidth: 0 }}>
-          <div style={{ display:"flex", alignItems:"center", gap:6, background:"rgba(221, 193, 146, 0.18)", padding:"5px 12px", borderRadius:20, border:"1px solid rgba(221, 193, 146, 0.4)", width:"fit-content", marginBottom:8 }}>
-            <div style={{ width:7, height:7, borderRadius:"50%", background:"#ddc192", boxShadow:"0 0 6px rgba(221, 193, 146, 0.9)" }}></div>
-            <span style={{ fontSize:11, fontWeight:800, letterSpacing:"0.5px", color:"#fdf8f0", textTransform:"uppercase" }}>Modul Akademik & Pengajaran</span>
+    <div className="mx-auto flex w-full max-w-7xl flex-col gap-5 p-4 md:p-6">
+      {/* Header Panel */}
+      <div className="flex flex-wrap items-center justify-between gap-4 rounded-[12px] border border-[#e7e2da] bg-[#550000] p-5 text-white shadow-xs md:p-6">
+        <div className="min-w-0 flex-1">
+          <div className="mb-2 inline-flex items-center gap-2 rounded-full border border-[#ddc192]/40 bg-[#ddc192]/15 px-3 py-1 text-[11px] font-semibold text-[#fdf8f0]">
+            <span className="h-2 w-2 rounded-full bg-[#ddc192]" />
+            Modul Akademik &amp; Pengajaran
           </div>
-          <h1 style={{ fontSize: "clamp(20px, 4vw, 30px)", fontWeight: 800, margin: 0, display: "flex", alignItems: "center", gap: "10px", color: "white" }}>
-            <BookOpen size={26} color="#ddc192" /> Jurnal Mengajar
+          <h1 className="flex items-center gap-2.5 text-2xl font-bold tracking-[-0.02em] text-white md:text-3xl">
+            <BookOpen size={26} className="text-[#ddc192]" /> Jurnal Mengajar
           </h1>
-          <p style={{ marginTop: "6px", color: "rgba(253, 248, 240, 0.9)", fontSize: "14px", margin: "6px 0 0 0" }}>
-            Rekap agenda belajar mengajar guru & asatidz Pesantren Al-Imam Al-Islami
+          <p className="mt-1 text-sm text-[#fdf8f0]/85">
+            Rekap agenda belajar mengajar guru &amp; asatidz Pesantren Al-Imam Al-Islami
           </p>
         </div>
 
-        <div style={{ position: "relative", zIndex: 1 }}>
-          <Link href="/jurnal/tambah" style={{
-            background: "linear-gradient(135deg, #ffffff 0%, #fffbeb 100%)",
-            color: "#550000",
-            padding: "13px 26px",
-            borderRadius: "16px",
-            fontWeight: 900,
-            fontSize: "15px",
-            display: "inline-flex",
-            alignItems: "center",
-            gap: "10px",
-            textDecoration: "none",
-            boxShadow: "0 10px 25px -5px rgba(255, 255, 255, 0.4), 0 8px 16px -4px rgba(0, 0, 0, 0.3)",
-            border: "2px solid #fbbf24",
-            letterSpacing: "0.02em",
-            transition: "all 0.25s cubic-bezier(0.4, 0, 0.2, 1)"
-          }}>
-            <div style={{
-              width: 28,
-              height: 28,
-              borderRadius: 10,
-              background: "#550000",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              color: "#ffffff"
-            }}>
-              <Plus size={18} strokeWidth={3} />
-            </div>
-            <span>+ Tambah Jurnal</span>
+        <div className="flex flex-wrap items-center gap-2.5">
+          {access.canAccess && (
+            <Link
+              href="/jurnal/monitoring"
+              className="inline-flex items-center gap-2 rounded-[10px] border border-[#ddc192]/50 bg-[#380000] px-4 py-2.5 text-xs font-semibold text-[#fdf8f0] transition-colors duration-150 hover:bg-[#2a0000]"
+            >
+              <ClipboardList size={16} className="text-[#ddc192]" />
+              Pantau Jurnal Guru
+            </Link>
+          )}
+          <Link
+            href="/guru/jadwal"
+            className="inline-flex items-center gap-2 rounded-[10px] border border-white/20 bg-white/10 px-4 py-2.5 text-xs font-semibold text-white transition-colors duration-150 hover:bg-white/20"
+          >
+            <CalendarDays size={16} />
+            Jadwal Mengajar
+          </Link>
+          <Link
+            href="/jurnal/tambah"
+            className="inline-flex items-center gap-2 rounded-[10px] border border-[#ddc192] bg-white px-4 py-2.5 text-xs font-bold text-[#550000] transition-colors duration-150 hover:bg-[#fcfaf8]"
+          >
+            <Plus size={16} />
+            Tambah Jurnal
           </Link>
         </div>
       </div>
 
       {/* Content */}
-      <div style={{ width: "100%" }}>
-        <JurnalClientFilter 
-          data={jurnalSerialized} 
-          kelasList={kelasList}
-          asatidzList={asatidzList}
-          isAdminSuper={isAdminSuper}
-        />
-      </div>
+      <JurnalClientFilter
+        data={jurnalSerialized}
+        kelasList={kelasList}
+        asatidzList={asatidzList}
+        isAdminSuper={isAdminSuper}
+      />
     </div>
   );
 }

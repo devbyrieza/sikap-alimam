@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getSession } from "@/lib/auth";
+import { syncAsatidzMapel } from "@/lib/syncAsatidzMapel";
 
 // GET: Ambil status mapel guru saat ini
 export async function GET() {
@@ -75,6 +76,7 @@ export async function POST(req: NextRequest) {
         kategori_pegawai: "GURU,ASATIDZ",
         jabatan: "Pengajar / Guru",
         mata_pelajaran: mata_pelajaran.trim() } });
+    await syncAsatidzMapel(newPegawai.id, newPegawai.mata_pelajaran);
     return NextResponse.json({
       success: true,
       message: "Data mapel berhasil disimpan!",
@@ -86,6 +88,8 @@ export async function POST(req: NextRequest) {
     data: {
       mata_pelajaran: mata_pelajaran.trim(),
       updated_at: new Date() } });
+
+  await syncAsatidzMapel(updatedPegawai.id, updatedPegawai.mata_pelajaran);
 
   return NextResponse.json({
     success: true,

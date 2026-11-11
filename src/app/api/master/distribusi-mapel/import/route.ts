@@ -1,8 +1,6 @@
 import { NextResponse } from "next/server";
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "@/lib/prisma";
 import { Client } from "pg";
-
-const prisma = new PrismaClient();
 
 export async function POST(request: Request) {
   try {
@@ -113,7 +111,18 @@ export async function POST(request: Request) {
         where: { pegawai_id: pegawaiId },
         include: { kelas: true, mapel: true }
       });
-      const strMapel = allTugas.map(t => `[${t.kelas?.nama}] ${t.mapel?.nama}`).join(", ");
+      const byKelas = new Map<string, string[]>();
+      for (const t of allTugas) {
+        const kn = (t.kelas?.nama || "").trim();
+        const mn = (t.mapel?.nama || "").trim();
+        if (!kn || !mn) continue;
+        const arr = byKelas.get(kn) || [];
+        if (!arr.some((x) => x.toLowerCase() === mn.toLowerCase())) arr.push(mn);
+        byKelas.set(kn, arr);
+      }
+      const strMapel = Array.from(byKelas.entries())
+        .map(([kn, ms]) => `${kn}: ${ms.join(", ")}`)
+        .join("; ");
       
       await prisma.pegawai.update({
         where: { id: pegawaiId },

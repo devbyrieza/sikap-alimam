@@ -1,177 +1,675 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import { Clock, Plus, Trash2, Edit2, Save } from "lucide-react";
+import Link from "next/link";
+import type React from "react";
+import { useCallback, useEffect, useState } from "react";
+import {
+  ArrowLeft,
+  CalendarDays,
+  Check,
+  Clock,
+  Edit2,
+  Loader2,
+  Plus,
+  RefreshCw,
+  Save,
+  Trash2,
+  X,
+} from "lucide-react";
 import Swal from "sweetalert2";
 
+interface MasterSesiRow {
+  id: string;
+  jam_ke: number;
+  waktu_mulai: string;
+  waktu_selesai: string;
+  durasi_menit: number;
+  is_active: boolean;
+}
+
+const DRAFT_KEY = "sikap_master_sesi_form_draft";
+
+function calcDurationMinutes(mulai: string, selesai: string): number {
+  const m1 = /^(\d{2}):(\d{2})$/.exec(mulai);
+  const m2 = /^(\d{2}):(\d{2})$/.exec(selesai);
+  if (!m1 || !m2) return 40;
+  const t1 = Number(m1[1]) * 60 + Number(m1[2]);
+  const t2 = Number(m2[1]) * 60 + Number(m2[2]);
+  const diff = t2 - t1;
+  return diff > 0 ? diff : 40;
+}
+
 export default function MasterSesiPage() {
-  const [sesi, setSesi] = useState<any[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [sesi, setSesi] = useState<MasterSesiRow[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [canManage, setCanManage] = useState(false);
 
-  // Form State
   const [isAdding, setIsAdding] = useState(false);
-  const [form, setForm] = useState({ jam_ke: "", waktu_mulai: "", waktu_selesai: "", durasi_menit: "40" });
+  const [form, setForm] = useState({
+    jam_ke: "",
+    waktu_mulai: "07:00",
+    waktu_selesai: "07:40",
+    durasi_menit: "40",
+  });
 
-  useEffect(() => {
-    // Mock Fetching initial data
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editForm, setEditForm] = useState({
+    jam_ke: "",
+    waktu_mulai: "",
+    waktu_selesai: "",
+    durasi_menit: "40",
+  });
+
+  const loadData = useCallback(async () => {
     setLoading(true);
-    setTimeout(() => {
-      setSesi([
-        { id: "1", jam_ke: 1, waktu_mulai: "04:50", waktu_selesai: "05:30", durasi_menit: 40 },
-        { id: "2", jam_ke: 2, waktu_mulai: "05:30", waktu_selesai: "06:10", durasi_menit: 40 },
-        { id: "3", jam_ke: 3, waktu_mulai: "07:00", waktu_selesai: "07:40", durasi_menit: 40 },
+    try {
+      const [sesiRes, profileRes] = await Promise.all([
+        fetch("/api/master/sesi", { cache: "no-store" }),
+        fetch("/api/profile", { cache: "no-store" }),
       ]);
+      const sesiJson = await sesiRes.json();
+      if (Array.isArray(sesiJson)) {
+        setSesi(sesiJson);
+      }
+      const pJson = await profileRes.json();
+      const roleStr = String(pJson?.user?.role || "").toLowerCase();
+      const namaStr = String(
+        pJson?.pegawai?.nama_lengkap || pJson?.user?.nama || "",
+      ).toLowerCase();
+      const allowed =
+        roleStr.includes("admin_super") ||
+        roleStr.includes("mudir") ||
+        roleStr.includes("kepala_sekolah") ||
+        roleStr.includes("kepala_kurikulum") ||
+        roleStr.includes("kadiv_kurikulum") ||
+        namaStr.includes("imron");
+      setCanManage(allowed);
+    } catch (err) {
+      console.error("Gagal memuat master sesi:", err);
+      Swal.fire({
+        icon: "error",
+        title: "Gagal Memuat Data",
+        text: "Tidak dapat mengambil daftar sesi waktu dari server.",
+        confirmButtonColor: "#550000",
+      });
+    } finally {
       setLoading(false);
-    }, 500);
+    }
   }, []);
 
-  const handleSave = () => {
+  useEffect(() => {
+    loadData();
+  }, [loadData]);
+
+  // Pulihkan draf tambah sesi dari localStorage
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem(DRAFT_KEY);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed && (parsed.jam_ke || parsed.waktu_mulai)) {
+          setForm({
+            jam_ke: String(parsed.jam_ke || ""),
+            waktu_mulai: String(parsed.waktu_mulai || "07:00"),
+            waktu_selesai: String(parsed.waktu_selesai || "07:40"),
+            durasi_menit: String(parsed.durasi_menit || "40"),
+          });
+          if (parsed.isAdding) setIsAdding(true);
+        }
+      }
+    } catch {
+      // Abaikan draf rusak
+    }
+  }, []);
+
+  // Autosave draf form tambah sesi
+  useEffect(() => {
+    if (!isAdding && !form.jam_ke) return;
+    try {
+      localStorage.setItem(
+        DRAFT_KEY,
+        JSON.stringify({ ...form, isAdding }),
+      );
+    } catch {
+      // Abaikan kuota penuh
+    }
+  }, [form, isAdding]);
+
+  const handleSaveNew = async (e: React.FormEvent) => {
+    e.preventDefault();
     if (!form.jam_ke || !form.waktu_mulai || !form.waktu_selesai) {
-      Swal.fire("Error", "Semua kolom wajib diisi", "error");
+      Swal.fire({
+        icon: "warning",
+        title: "Data Belum Lengkap",
+        text: "Jam ke-, waktu mulai, dan waktu selesai wajib diisi.",
+        confirmButtonColor: "#550000",
+      });
       return;
     }
 
-    const newEntry = {
-      id: Date.now().toString(),
-      jam_ke: parseInt(form.jam_ke),
-      waktu_mulai: form.waktu_mulai,
-      waktu_selesai: form.waktu_selesai,
-      durasi_menit: parseInt(form.durasi_menit) };
-
-    setSesi([...sesi, newEntry].sort((a, b) => a.jam_ke - b.jam_ke));
-    setIsAdding(false);
-    setForm({ jam_ke: "", waktu_mulai: "", waktu_selesai: "", durasi_menit: "40" });
-    Swal.fire("Berhasil", "Sesi jam pelajaran berhasil ditambahkan", "success");
+    setSaving(true);
+    try {
+      const res = await fetch("/api/master/sesi", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          jam_ke: Number.parseInt(form.jam_ke, 10),
+          waktu_mulai: form.waktu_mulai,
+          waktu_selesai: form.waktu_selesai,
+          durasi_menit: Number.parseInt(form.durasi_menit, 10) || 40,
+        }),
+      });
+      const json = await res.json();
+      if (!res.ok) {
+        throw new Error(json?.error || "Gagal menyimpan sesi waktu");
+      }
+      localStorage.removeItem(DRAFT_KEY);
+      setIsAdding(false);
+      setForm({
+        jam_ke: "",
+        waktu_mulai: "07:00",
+        waktu_selesai: "07:40",
+        durasi_menit: "40",
+      });
+      await loadData();
+      Swal.fire({
+        icon: "success",
+        title: "Sesi Ditambahkan",
+        text: "Slot jam pelajaran berhasil disimpan dan tersinkron ke jadwal KBM.",
+        timer: 1800,
+        showConfirmButton: false,
+      });
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : "Terjadi kesalahan";
+      Swal.fire({
+        icon: "error",
+        title: "Gagal Menambah Sesi",
+        text: msg,
+        confirmButtonColor: "#550000",
+      });
+    } finally {
+      setSaving(false);
+    }
   };
 
-  const handleDelete = (id: string) => {
+  const startEdit = (row: MasterSesiRow) => {
+    setEditingId(row.id);
+    setEditForm({
+      jam_ke: String(row.jam_ke),
+      waktu_mulai: row.waktu_mulai,
+      waktu_selesai: row.waktu_selesai,
+      durasi_menit: String(row.durasi_menit),
+    });
+  };
+
+  const handleSaveEdit = async (id: string) => {
+    if (!editForm.jam_ke || !editForm.waktu_mulai || !editForm.waktu_selesai) {
+      Swal.fire({
+        icon: "warning",
+        title: "Data Belum Lengkap",
+        text: "Semua kolom waktu wajib diisi.",
+        confirmButtonColor: "#550000",
+      });
+      return;
+    }
+
+    setSaving(true);
+    try {
+      const res = await fetch("/api/master/sesi", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          id,
+          jam_ke: Number.parseInt(editForm.jam_ke, 10),
+          waktu_mulai: editForm.waktu_mulai,
+          waktu_selesai: editForm.waktu_selesai,
+          durasi_menit: Number.parseInt(editForm.durasi_menit, 10) || 40,
+        }),
+      });
+      const json = await res.json();
+      if (!res.ok) {
+        throw new Error(json?.error || "Gagal memperbarui sesi waktu");
+      }
+      setEditingId(null);
+      await loadData();
+      Swal.fire({
+        icon: "success",
+        title: "Sesi Diperbarui",
+        timer: 1500,
+        showConfirmButton: false,
+      });
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : "Terjadi kesalahan";
+      Swal.fire({
+        icon: "error",
+        title: "Gagal Memperbarui",
+        text: msg,
+        confirmButtonColor: "#550000",
+      });
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleDelete = (row: MasterSesiRow) => {
     Swal.fire({
-      title: "Hapus Sesi?",
-      text: "Data yang dihapus tidak bisa dikembalikan.",
+      title: `Hapus Sesi Jam ke-${row.jam_ke}?`,
+      text: "Penghapusan ini akan menghilangkan slot jam dari daftar master sesi.",
       icon: "warning",
       showCancelButton: true,
+      confirmButtonColor: "#dc2626",
+      cancelButtonColor: "#64748b",
       confirmButtonText: "Ya, Hapus",
-      cancelButtonText: "Batal" }).then((result) => {
-      if (result.isConfirmed) {
-        setSesi(sesi.filter((s) => s.id !== id));
-        Swal.fire("Terhapus!", "Sesi berhasil dihapus.", "success");
+      cancelButtonText: "Batal",
+    }).then(async (result) => {
+      if (!result.isConfirmed) return;
+      try {
+        const res = await fetch(
+          `/api/master/sesi?id=${encodeURIComponent(row.id)}`,
+          { method: "DELETE" },
+        );
+        const json = await res.json();
+        if (!res.ok) {
+          throw new Error(json?.error || "Gagal menghapus sesi");
+        }
+        await loadData();
+        Swal.fire({
+          icon: "success",
+          title: "Terhapus",
+          text: `Sesi jam ke-${row.jam_ke} telah dihapus.`,
+          timer: 1500,
+          showConfirmButton: false,
+        });
+      } catch (err: unknown) {
+        const msg = err instanceof Error ? err.message : "Terjadi kesalahan";
+        Swal.fire({
+          icon: "error",
+          title: "Gagal Menghapus",
+          text: msg,
+          confirmButtonColor: "#550000",
+        });
       }
     });
   };
 
   return (
-    <div style={{ padding: "24px 28px", maxWidth: 1200, margin: "0 auto", display: "flex", flexDirection: "column", gap: 24 }}>
-      <div style={{
-        display: "flex",
-        justifyContent: "space-between",
-        alignItems: "center",
-        background: "linear-gradient(135deg, #0f172a 0%, #1e293b 60%, #0369a1 100%)",
-        borderRadius: "24px",
-        padding: "32px 36px",
-        boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.2), 0 8px 10px -6px rgba(0, 0, 0, 0.1)",
-        color: "white",
-        flexWrap: "wrap",
-        gap: "24px"
-      }}>
+    <div className="mx-auto flex w-full max-w-6xl flex-col gap-5 p-4 md:p-6">
+      {/* Header Panel */}
+      <div className="flex flex-wrap items-center justify-between gap-4 rounded-[12px] border border-[#e7e2da] bg-white p-5 shadow-xs">
         <div>
-          <h1 style={{ fontSize: "28px", fontWeight: "bold", margin: 0, display: "flex", alignItems: "center", gap: "8px" }}>
-            <Clock size={28} /> Master Sesi Waktu
+          <div className="mb-1.5 flex items-center gap-2">
+            <Link
+              href="/master"
+              className="inline-flex items-center gap-1 rounded-[8px] border border-[#e7e2da] bg-[#fcfaf8] px-2.5 py-1 text-xs font-semibold text-[#44403c] transition-colors duration-150 hover:bg-[#f6f1e8]"
+            >
+              <ArrowLeft size={14} /> Master Data
+            </Link>
+            <Link
+              href="/kurikulum/jadwal"
+              className="inline-flex items-center gap-1 rounded-[8px] border border-[#e7e2da] bg-[#fcfaf8] px-2.5 py-1 text-xs font-semibold text-[#550000] transition-colors duration-150 hover:bg-[#f6f1e8]"
+            >
+              <CalendarDays size={14} /> Pusat Jadwal Pelajaran
+            </Link>
+          </div>
+          <h1 className="flex items-center gap-2.5 text-2xl font-bold tracking-[-0.02em] text-[#550000]">
+            <Clock size={24} className="text-[#550000]" /> Master Sesi Waktu KBM
           </h1>
-          <p style={{ color: "#cbd5e1", margin: "8px 0 0 0", fontSize: "14px" }}>
-            Kelola slot jam pelajaran KBM per harinya secara dinamis.
+          <p className="mt-1 text-sm text-[#44403c]">
+            Pengaturan slot jam pelajaran resmi yang tersinkron langsung ke jadwal KBM dan form jurnal mengajar.
           </p>
         </div>
-        <button 
-          onClick={() => setIsAdding(!isAdding)}
-          style={{
-            padding: "10px 18px",
-            borderRadius: "14px",
-            backgroundColor: isAdding ? "#475569" : "#0ea5e9",
-            color: "white",
-            border: "none",
-            fontWeight: "bold",
-            display: "flex",
-            alignItems: "center",
-            gap: "8px",
-            cursor: "pointer",
-            boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)",
-            transition: "background-color 0.2s"
-          }}
-        >
-          {isAdding ? "Batal" : <><Plus size={16} /> Tambah Sesi</>}
-        </button>
+
+        <div className="flex flex-wrap items-center gap-2.5">
+          <button
+            type="button"
+            onClick={loadData}
+            disabled={loading}
+            className="inline-flex cursor-pointer items-center gap-2 rounded-[10px] border border-[#e7e2da] bg-white px-3.5 py-2 text-xs font-semibold text-[#1a1a1a] transition-colors duration-150 hover:bg-[#f6f1e8] disabled:opacity-50"
+          >
+            <RefreshCw size={14} className={loading ? "animate-spin" : ""} />
+            Muat Ulang
+          </button>
+
+          {canManage && (
+            <button
+              type="button"
+              onClick={() => setIsAdding((prev) => !prev)}
+              className="inline-flex cursor-pointer items-center gap-2 rounded-[10px] bg-[#550000] px-4 py-2 text-xs font-semibold text-white transition-colors duration-150 hover:bg-[#380000] active:scale-[0.98]"
+            >
+              {isAdding ? <X size={15} /> : <Plus size={15} />}
+              {isAdding ? "Tutup Form" : "Tambah Sesi"}
+            </button>
+          )}
+        </div>
       </div>
 
-      {isAdding && (
-        <div style={{ background: "white", borderRadius: "24px", padding: "24px", border: "1px solid #e2e8f0", boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.05)" }} className="animate-in fade-in slide-in-from-top-4">
-          <h3 style={{ fontWeight: "bold", fontSize: "18px", color: "#1e293b", margin: "0 0 16px 0", paddingBottom: "8px", borderBottom: "1px solid #e2e8f0" }}>Form Tambah Sesi Baru</h3>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "16px" }}>
+      {/* Form Tambah Sesi */}
+      {isAdding && canManage && (
+        <form
+          onSubmit={handleSaveNew}
+          className="rounded-[12px] border border-[#e7e2da] bg-white p-5 shadow-xs"
+        >
+          <div className="mb-4 flex items-center justify-between border-b border-[#f0ece4] pb-3">
+            <h2 className="text-base font-semibold text-[#1a1a1a]">
+              Tambah Slot Jam Pelajaran Baru
+            </h2>
+            <span className="rounded-[8px] bg-[#faf6ee] px-2.5 py-1 text-xs font-medium text-[#550000]">
+              Draf tersimpan otomatis
+            </span>
+          </div>
+
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             <div>
-              <label style={{ display: "block", fontSize: "14px", fontWeight: 500, color: "#475569", marginBottom: "4px" }}>Jam Ke-</label>
-              <input type="number" value={form.jam_ke} onChange={(e) => setForm({...form, jam_ke: e.target.value})} style={{ width: "100%", borderRadius: "12px", border: "1px solid #cbd5e1", padding: "10px 14px" }} placeholder="Misal: 11" />
+              <label className="mb-1.5 block text-[13px] font-semibold text-[#44403c]">
+                Jam Ke-
+              </label>
+              <input
+                type="number"
+                min={1}
+                max={20}
+                value={form.jam_ke}
+                onChange={(e) => setForm({ ...form, jam_ke: e.target.value })}
+                placeholder="Misal: 10"
+                className="w-full rounded-[10px] border border-[#e7e2da] bg-[#fcfaf8] px-3.5 py-2 text-sm tabular-nums text-[#1a1a1a] outline-none focus:border-[#550000] focus:bg-white"
+              />
             </div>
+
             <div>
-              <label style={{ display: "block", fontSize: "14px", fontWeight: 500, color: "#475569", marginBottom: "4px" }}>Waktu Mulai</label>
-              <input type="time" value={form.waktu_mulai} onChange={(e) => setForm({...form, waktu_mulai: e.target.value})} style={{ width: "100%", borderRadius: "12px", border: "1px solid #cbd5e1", padding: "10px 14px" }} />
+              <label className="mb-1.5 block text-[13px] font-semibold text-[#44403c]">
+                Waktu Mulai
+              </label>
+              <input
+                type="time"
+                value={form.waktu_mulai}
+                onChange={(e) => {
+                  const val = e.target.value;
+                  setForm({
+                    ...form,
+                    waktu_mulai: val,
+                    durasi_menit: String(
+                      calcDurationMinutes(val, form.waktu_selesai),
+                    ),
+                  });
+                }}
+                className="w-full rounded-[10px] border border-[#e7e2da] bg-[#fcfaf8] px-3.5 py-2 text-sm tabular-nums text-[#1a1a1a] outline-none focus:border-[#550000] focus:bg-white"
+              />
             </div>
+
             <div>
-              <label style={{ display: "block", fontSize: "14px", fontWeight: 500, color: "#475569", marginBottom: "4px" }}>Waktu Selesai</label>
-              <input type="time" value={form.waktu_selesai} onChange={(e) => setForm({...form, waktu_selesai: e.target.value})} style={{ width: "100%", borderRadius: "12px", border: "1px solid #cbd5e1", padding: "10px 14px" }} />
+              <label className="mb-1.5 block text-[13px] font-semibold text-[#44403c]">
+                Waktu Selesai
+              </label>
+              <input
+                type="time"
+                value={form.waktu_selesai}
+                onChange={(e) => {
+                  const val = e.target.value;
+                  setForm({
+                    ...form,
+                    waktu_selesai: val,
+                    durasi_menit: String(
+                      calcDurationMinutes(form.waktu_mulai, val),
+                    ),
+                  });
+                }}
+                className="w-full rounded-[10px] border border-[#e7e2da] bg-[#fcfaf8] px-3.5 py-2 text-sm tabular-nums text-[#1a1a1a] outline-none focus:border-[#550000] focus:bg-white"
+              />
             </div>
+
             <div>
-              <label style={{ display: "block", fontSize: "14px", fontWeight: 500, color: "#475569", marginBottom: "4px" }}>Durasi (Menit)</label>
-              <input type="number" value={form.durasi_menit} onChange={(e) => setForm({...form, durasi_menit: e.target.value})} style={{ width: "100%", borderRadius: "12px", border: "1px solid #cbd5e1", padding: "10px 14px" }} />
+              <label className="mb-1.5 block text-[13px] font-semibold text-[#44403c]">
+                Durasi (Menit)
+              </label>
+              <input
+                type="number"
+                min={10}
+                max={240}
+                value={form.durasi_menit}
+                onChange={(e) =>
+                  setForm({ ...form, durasi_menit: e.target.value })
+                }
+                className="w-full rounded-[10px] border border-[#e7e2da] bg-[#fcfaf8] px-3.5 py-2 text-sm tabular-nums text-[#1a1a1a] outline-none focus:border-[#550000] focus:bg-white"
+              />
             </div>
           </div>
-          <div style={{ marginTop: "16px", display: "flex", justifyContent: "flex-end" }}>
-            <button onClick={handleSave} style={{ backgroundColor: "#10b981", color: "white", padding: "10px 18px", borderRadius: "14px", fontWeight: "bold", display: "flex", alignItems: "center", gap: "8px", border: "none", cursor: "pointer", boxShadow: "0 4px 6px -1px rgba(16, 185, 129, 0.3)" }}>
-              <Save size={18} /> Simpan Data
+
+          <div className="mt-4 flex justify-end gap-2">
+            <button
+              type="button"
+              onClick={() => {
+                localStorage.removeItem(DRAFT_KEY);
+                setForm({
+                  jam_ke: "",
+                  waktu_mulai: "07:00",
+                  waktu_selesai: "07:40",
+                  durasi_menit: "40",
+                });
+                setIsAdding(false);
+              }}
+              className="cursor-pointer rounded-[10px] border border-[#e7e2da] bg-white px-4 py-2 text-xs font-semibold text-[#44403c] transition-colors duration-150 hover:bg-[#f6f1e8]"
+            >
+              Batal
+            </button>
+            <button
+              type="submit"
+              disabled={saving}
+              className="inline-flex cursor-pointer items-center gap-2 rounded-[10px] bg-[#550000] px-4 py-2 text-xs font-semibold text-white transition-colors duration-150 hover:bg-[#380000] disabled:opacity-50"
+            >
+              {saving ? (
+                <Loader2 size={14} className="animate-spin" />
+              ) : (
+                <Save size={14} />
+              )}
+              Simpan Sesi
             </button>
           </div>
-        </div>
+        </form>
       )}
 
-      {loading ? (
-        <div style={{ textAlign: "center", padding: "40px 0" }}>Memuat data...</div>
-      ) : (
-        <div style={{ background: "white", borderRadius: "24px", boxShadow: "0 1px 3px 0 rgba(0, 0, 0, 0.1)", border: "1px solid #f1f5f9", overflow: "hidden" }}>
-          <div className="w-full overflow-x-auto">
-<table style={{ width: "100%", borderCollapse: "collapse", textAlign: "left" }}>
-            <thead style={{ backgroundColor: "#f8fafc" }}>
-              <tr>
-                <th style={{ padding: "16px 20px", fontSize: "12px", fontWeight: "bold", color: "#64748b", textTransform: "uppercase", letterSpacing: "0.05em" }}>Jam Ke</th>
-                <th style={{ padding: "16px 20px", fontSize: "12px", fontWeight: "bold", color: "#64748b", textTransform: "uppercase", letterSpacing: "0.05em" }}>Rentang Waktu</th>
-                <th style={{ padding: "16px 20px", fontSize: "12px", fontWeight: "bold", color: "#64748b", textTransform: "uppercase", letterSpacing: "0.05em", textAlign: "center" }}>Durasi</th>
-                <th style={{ padding: "16px 20px", fontSize: "12px", fontWeight: "bold", color: "#64748b", textTransform: "uppercase", letterSpacing: "0.05em", textAlign: "right" }}>Aksi</th>
-              </tr>
-            </thead>
-            <tbody>
-              {sesi.map((s, idx) => (
-                <tr key={s.id} className="hover:bg-[#f0fdf4] transition-colors" style={{ backgroundColor: idx % 2 === 0 ? "white" : "#fafafa", borderBottom: "1px solid #f1f5f9" }}>
-                  <td style={{ padding: "16px 20px", whiteSpace: "nowrap" }}>
-                    <span style={{ backgroundColor: "#e0f2fe", color: "#0369a1", padding: "6px 16px", borderRadius: "999px", fontWeight: "bold", fontSize: "14px" }}>Sesi {s.jam_ke}</span>
-                  </td>
-                  <td style={{ padding: "16px 20px", whiteSpace: "nowrap", color: "#1e293b", fontWeight: 600, fontFamily: "monospace", fontSize: "15px" }}>
-                    {s.waktu_mulai} - {s.waktu_selesai}
-                  </td>
-                  <td style={{ padding: "16px 20px", whiteSpace: "nowrap", textAlign: "center", color: "#64748b", fontWeight: 500 }}>
-                    {s.durasi_menit} Menit
-                  </td>
-                  <td style={{ padding: "16px 20px", whiteSpace: "nowrap", textAlign: "right" }}>
-                    <button style={{ color: "#f59e0b", background: "transparent", border: "none", padding: "8px", borderRadius: "8px", cursor: "pointer", margin: "0 4px" }} className="hover:bg-amber-50">
-                      <Edit2 size={18} />
-                    </button>
-                    <button onClick={() => handleDelete(s.id)} style={{ color: "#ef4444", background: "transparent", border: "none", padding: "8px", borderRadius: "8px", cursor: "pointer" }} className="hover:bg-red-50">
-                      <Trash2 size={18} />
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-</div>
+      {/* Tabel Sesi Waktu */}
+      <div className="overflow-hidden rounded-[12px] border border-[#e7e2da] bg-white shadow-xs">
+        <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[#f0ece4] px-5 py-3.5">
+          <div>
+            <h2 className="text-base font-semibold text-[#1a1a1a]">
+              Daftar Sesi Jam Pelajaran
+            </h2>
+            <p className="text-xs text-[#44403c]">
+              Sesi 1–2 untuk program Diniyah Subuh; Sesi 3–9 untuk KBM Kelas Reguler (07:00–12:00 WIB).
+            </p>
+          </div>
+          <span className="rounded-full bg-[#faf6ee] px-3 py-1 text-xs font-semibold tabular-nums text-[#550000]">
+            {sesi.length} Sesi Terdaftar
+          </span>
         </div>
-      )}
+
+        {loading ? (
+          <div className="flex items-center justify-center gap-2.5 py-12 text-sm text-[#44403c]">
+            <Loader2 size={18} className="animate-spin text-[#550000]" />
+            Memuat daftar sesi waktu...
+          </div>
+        ) : (
+          <div className="w-full overflow-x-auto">
+            <table className="w-full border-collapse text-left text-[13px]">
+              <thead>
+                <tr className="border-b border-[#e7e2da] bg-[#faf6ee] text-[#1a1a1a]">
+                  <th className="px-4 py-2.5 font-semibold">Jam Ke</th>
+                  <th className="px-4 py-2.5 font-semibold">Rentang Waktu</th>
+                  <th className="px-4 py-2.5 text-center font-semibold">
+                    Durasi
+                  </th>
+                  <th className="px-4 py-2.5 font-semibold">Kategori</th>
+                  <th className="px-4 py-2.5 font-semibold">Status</th>
+                  {canManage && (
+                    <th className="px-4 py-2.5 text-right font-semibold">
+                      Aksi
+                    </th>
+                  )}
+                </tr>
+              </thead>
+              <tbody>
+                {sesi.map((s) => {
+                  const isEditing = editingId === s.id;
+                  const isSubuh = s.jam_ke <= 2;
+
+                  return (
+                    <tr
+                      key={s.id}
+                      className="border-b border-[#f0ece4] transition-colors duration-150 hover:bg-[#faf6ee]"
+                    >
+                      <td className="px-4 py-2.5 whitespace-nowrap">
+                        {isEditing ? (
+                          <input
+                            type="number"
+                            value={editForm.jam_ke}
+                            onChange={(e) =>
+                              setEditForm({
+                                ...editForm,
+                                jam_ke: e.target.value,
+                              })
+                            }
+                            className="w-20 rounded-[8px] border border-[#550000] px-2.5 py-1 text-xs font-semibold tabular-nums"
+                          />
+                        ) : (
+                          <span className="inline-flex items-center rounded-full bg-[#fdf5f5] px-3 py-1 text-xs font-semibold tabular-nums text-[#550000]">
+                            Jam ke-{s.jam_ke}
+                          </span>
+                        )}
+                      </td>
+
+                      <td className="px-4 py-2.5 whitespace-nowrap font-semibold tabular-nums text-[#1a1a1a]">
+                        {isEditing ? (
+                          <div className="flex items-center gap-1.5">
+                            <input
+                              type="time"
+                              value={editForm.waktu_mulai}
+                              onChange={(e) => {
+                                const val = e.target.value;
+                                setEditForm({
+                                  ...editForm,
+                                  waktu_mulai: val,
+                                  durasi_menit: String(
+                                    calcDurationMinutes(
+                                      val,
+                                      editForm.waktu_selesai,
+                                    ),
+                                  ),
+                                });
+                              }}
+                              className="rounded-[8px] border border-[#550000] px-2 py-1 text-xs tabular-nums"
+                            />
+                            <span className="text-xs text-[#44403c]">–</span>
+                            <input
+                              type="time"
+                              value={editForm.waktu_selesai}
+                              onChange={(e) => {
+                                const val = e.target.value;
+                                setEditForm({
+                                  ...editForm,
+                                  waktu_selesai: val,
+                                  durasi_menit: String(
+                                    calcDurationMinutes(
+                                      editForm.waktu_mulai,
+                                      val,
+                                    ),
+                                  ),
+                                });
+                              }}
+                              className="rounded-[8px] border border-[#550000] px-2 py-1 text-xs tabular-nums"
+                            />
+                          </div>
+                        ) : (
+                          `${s.waktu_mulai} – ${s.waktu_selesai} WIB`
+                        )}
+                      </td>
+
+                      <td className="px-4 py-2.5 text-center whitespace-nowrap tabular-nums text-[#44403c]">
+                        {isEditing ? (
+                          <input
+                            type="number"
+                            value={editForm.durasi_menit}
+                            onChange={(e) =>
+                              setEditForm({
+                                ...editForm,
+                                durasi_menit: e.target.value,
+                              })
+                            }
+                            className="w-20 rounded-[8px] border border-[#550000] px-2 py-1 text-center text-xs tabular-nums"
+                          />
+                        ) : (
+                          `${s.durasi_menit} Menit`
+                        )}
+                      </td>
+
+                      <td className="px-4 py-2.5 whitespace-nowrap">
+                        <span
+                          className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium ${
+                            isSubuh
+                              ? "bg-amber-100 text-amber-800"
+                              : "bg-slate-100 text-slate-700"
+                          }`}
+                        >
+                          {isSubuh ? "Sesi Pagi / Halaqoh" : "KBM Reguler"}
+                        </span>
+                      </td>
+
+                      <td className="px-4 py-2.5 whitespace-nowrap">
+                        <span className="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-2.5 py-0.5 text-xs font-semibold text-emerald-700">
+                          <span className="h-1.5 w-1.5 rounded-full bg-emerald-600" />
+                          Aktif
+                        </span>
+                      </td>
+
+                      {canManage && (
+                        <td className="px-4 py-2.5 text-right whitespace-nowrap">
+                          {isEditing ? (
+                            <div className="inline-flex items-center gap-1.5">
+                              <button
+                                type="button"
+                                onClick={() => handleSaveEdit(s.id)}
+                                disabled={saving}
+                                className="inline-flex cursor-pointer items-center gap-1 rounded-[8px] bg-emerald-600 px-2.5 py-1 text-xs font-semibold text-white hover:bg-emerald-700"
+                              >
+                                <Check size={13} /> Simpan
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => setEditingId(null)}
+                                className="inline-flex cursor-pointer items-center gap-1 rounded-[8px] border border-[#e7e2da] bg-white px-2.5 py-1 text-xs font-semibold text-[#44403c] hover:bg-[#f6f1e8]"
+                              >
+                                <X size={13} /> Batal
+                              </button>
+                            </div>
+                          ) : (
+                            <div className="inline-flex items-center gap-1">
+                              <button
+                                type="button"
+                                onClick={() => startEdit(s)}
+                                title="Edit waktu sesi"
+                                className="cursor-pointer rounded-[8px] p-1.5 text-amber-700 transition-colors duration-150 hover:bg-amber-50"
+                              >
+                                <Edit2 size={15} />
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => handleDelete(s)}
+                                title="Hapus sesi"
+                                className="cursor-pointer rounded-[8px] p-1.5 text-rose-700 transition-colors duration-150 hover:bg-rose-50"
+                              >
+                                <Trash2 size={15} />
+                              </button>
+                            </div>
+                          )}
+                        </td>
+                      )}
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
     </div>
   );
 }

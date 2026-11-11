@@ -1,10 +1,27 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Swal from "sweetalert2";
-import { BookOpen, ChevronLeft, Loader2, FileText, Zap, Clock, Save, Calendar, MessageSquare, Microscope, BookMarked, Edit3, Check, Trash2, RotateCcw, AlertCircle } from "lucide-react";
+import {
+  BookOpen,
+  ChevronLeft,
+  Loader2,
+  FileText,
+  Clock,
+  Save,
+  Calendar,
+  BookMarked,
+  Check,
+  RotateCcw,
+  AlertCircle,
+} from "lucide-react";
 import Link from "next/link";
+import {
+  formatTanggalLongID,
+  getJakartaTodayISO,
+  isValidISODate,
+} from "@/lib/jurnalDateUtils";
 
 type Kelas = { id: string; nama: string; jenjang: string | null };
 type Asatidz = { id: string; nama_lengkap: string; jabatan: string | null };
@@ -17,38 +34,44 @@ type MasterData = {
   asatidzmMapel: AsatidzmMapel[];
 };
 
-const NAMA_HARI = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
-const NAMA_BULAN = [
-  "Januari", "Februari", "Maret", "April", "Mei", "Juni",
-  "Juli", "Agustus", "September", "Oktober", "November", "Desember"
-];
+type SesiWaktuRow = {
+  id: string;
+  jam_ke: number;
+  waktu_mulai: string;
+  waktu_selesai: string;
+  durasi_menit: number;
+};
 
-const JAM_OPTIONS = ["3", "4", "5", "6", "7", "8", "9", "Khusus"];
+const DEFAULT_WAKTU_MAP: Record<string, string> = {
+  "1": "04.50-05.30",
+  "2": "05.30-06.10",
+  "3": "07.00-07.40",
+  "4": "07.40-08.20",
+  "5": "08.20-09.00",
+  "6": "09.00-09.40",
+  "7": "10.00-10.40",
+  "8": "10.40-11.20",
+  "9": "11.20-12.00",
+};
 
-function formatTanggalIndo(isoDate: string): string {
-  if (!isoDate) return "";
-  const d = new Date(isoDate + "T00:00:00");
-  const hari = NAMA_HARI[d.getDay()];
-  const tgl = d.getDate();
-  const bln = NAMA_BULAN[d.getMonth()];
-  const thn = d.getFullYear();
-  return `${hari}, ${tgl} ${bln} ${thn}`;
-}
-
-export default function EditJurnalPage({ params }: { params: Promise<{ id: string }> }) {
+export default function EditJurnalPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
   const [id, setId] = useState<string>("");
 
   useEffect(() => {
-    params.then(p => setId(p.id));
+    params.then((p) => setId(p.id));
   }, [params]);
 
   const router = useRouter();
-  const today = new Date().toISOString().split("T")[0];
+  const today = useMemo(() => getJakartaTodayISO(), []);
+  const editDraftKey = id ? `siakad_jurnal_edit_draft_${id}` : "";
 
   const [master, setMaster] = useState<MasterData | null>(null);
-  const [currentUser, setCurrentUser] = useState<any>(null);
-  const [loadingMaster, setLoadingMaster] = useState(true);
-  const [loadingInitial, setLoadingInitial] = useState(true);
+  const [sesiList, setSesiList] = useState<SesiWaktuRow[]>([]);
+  const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [lastSaved, setLastSaved] = useState<string | null>(null);
 
@@ -56,6 +79,7 @@ export default function EditJurnalPage({ params }: { params: Promise<{ id: strin
   const [jenjangFilter, setJenjangFilter] = useState("");
   const [kelasId, setKelasId] = useState("");
   const [mapelId, setMapelId] = useState("");
+  const [namaMapelCustom, setNamaMapelCustom] = useState("");
   const [asatidId, setAsatidId] = useState("");
   const [tanggal, setTanggal] = useState(today);
   const [jamKe, setJamKe] = useState<string[]>([]);
@@ -68,100 +92,132 @@ export default function EditJurnalPage({ params }: { params: Promise<{ id: strin
   const [catatan, setCatatan] = useState("");
   const [isDraftRestored, setIsDraftRestored] = useState(false);
 
-  // Autosave draft ke localStorage
-  useEffect(() => {
-    if (kelasId || mapelId || asatidId || materi || subMateri || learningOutcome || kegiatan || catatan) {
-      const savedAt = new Date().toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" });
-      const p = { kelasId, mapelId, asatidId, tanggal, jamKe, jamKhususMulai, jamKhususSelesai, materi, subMateri, learningOutcome, kegiatan, catatan, _savedAt: savedAt };
-      localStorage.setItem("siakad_jurnal_draft", JSON.stringify(p));
-      setLastSaved(savedAt);
-    }
-  }, [kelasId, mapelId, asatidId, tanggal, jamKe, jamKhususMulai, jamKhususSelesai, materi, subMateri, learningOutcome, kegiatan, catatan]);
+  const hydratedRef = useRef(false);
+  const skipNextAutosaveRef = useRef(true);
 
-  // Load draft dari localStorage
-  useEffect(() => {
-    const draft = localStorage.getItem("siakad_jurnal_draft");
-    if (draft) {
-      try {
-        const p = JSON.parse(draft);
-        const hasContent = p.materi || p.learningOutcome || p.kegiatan || p.catatan || p.kelasId;
-        if (p.kelasId) setKelasId(p.kelasId);
-        if (p.mapelId) setMapelId(p.mapelId);
-        if (p.asatidId) setAsatidId(p.asatidId);
-        if (p.tanggal) setTanggal(p.tanggal);
-        if (p.jamKe) {
-          if (Array.isArray(p.jamKe)) setJamKe(p.jamKe);
-          else if (typeof p.jamKe === "string") setJamKe(p.jamKe.split(",").map((s: string) => s.trim()));
-        }
-        if (p.jamKhususMulai) setJamKhususMulai(p.jamKhususMulai);
-        if (p.jamKhususSelesai) setJamKhususSelesai(p.jamKhususSelesai);
-        if (p.materi) setMateri(p.materi);
-        if (p.subMateri) setSubMateri(p.subMateri);
-        if (p.learningOutcome) setLearningOutcome(p.learningOutcome);
-        if (p.kegiatan) setKegiatan(p.kegiatan);
-        if (p.catatan) setCatatan(p.catatan);
-        setLastSaved(p._savedAt || null);
-        if (hasContent) {
-          setIsDraftRestored(true);
-        }
-      } catch (e) { /* ignore */ }
-    }
-  }, []);
+  const selectedKelasInfo = master?.kelas.find((k) => k.id === kelasId);
+  const isSpecialClass =
+    selectedKelasInfo?.nama.toLowerCase().includes("11 ma") ||
+    selectedKelasInfo?.nama.toLowerCase().includes("12 ma");
 
-  // Reset Draft function
-  const handleResetDraft = () => {
-    Swal.fire({
-      title: "Kosongkan Formulir?",
-      text: "Semua tulisan draf yang tersimpan otomatis di perangkat ini akan dihapus.",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#dc2626",
-      cancelButtonColor: "#64748b",
-      confirmButtonText: "Ya, Bersihkan",
-      cancelButtonText: "Batal" }).then((result) => {
-      if (result.isConfirmed) {
-        localStorage.removeItem("siakad_jurnal_draft");
-        setKelasId("");
-        setMapelId("");
-        setAsatidId("");
-        setTanggal(today);
-        setJamKe([]);
-        setJamKhususMulai("");
-        setJamKhususSelesai("");
-        setMateri("");
-        setSubMateri("");
-        setLearningOutcome("");
-        setKegiatan("");
-        setCatatan("");
-        setLastSaved(null);
-        setIsDraftRestored(false);
-        Swal.fire({
-          icon: "success",
-          title: "Draf Dibersihkan",
-          text: "Formulir telah dikosongkan.",
-          timer: 1500,
-          showConfirmButton: false });
+  // Daftar sesi jam dinamis tersinkron dari /api/master/sesi
+  const { jamOptions, waktuMap } = useMemo(() => {
+    const map: Record<string, string> = { ...DEFAULT_WAKTU_MAP };
+    const existingNums = new Set(
+      jamKe.filter((x) => /^\d+$/.test(x)).map((x) => Number(x)),
+    );
+
+    if (sesiList.length > 0) {
+      const opts: string[] = [];
+      for (const s of sesiList) {
+        const key = String(s.jam_ke);
+        map[key] = `${s.waktu_mulai.replace(":", ".")}-${s.waktu_selesai.replace(":", ".")}`;
+        if (s.jam_ke >= 3 || existingNums.has(s.jam_ke)) {
+          opts.push(key);
+        }
       }
-    });
-  };
+      for (const n of existingNums) {
+        const key = String(n);
+        if (!opts.includes(key)) opts.push(key);
+      }
+      opts.sort((a, b) => Number(a) - Number(b));
+      opts.push("Khusus");
+      return { jamOptions: opts, waktuMap: map };
+    }
 
-  // Load data jurnal yang akan di-edit
+    const base = ["3", "4", "5", "6", "7", "8", "9"];
+    for (const n of existingNums) {
+      const key = String(n);
+      if (!base.includes(key)) base.push(key);
+    }
+    base.sort((a, b) => Number(a) - Number(b));
+    base.push("Khusus");
+    return { jamOptions: base, waktuMap: map };
+  }, [sesiList, jamKe]);
+
+  // Muat master, sesi, profile, dan jurnal secara paralel setelah `id` siap
   useEffect(() => {
     if (!id) return;
-    fetch(`/api/jurnal/${id}`, { cache: "no-store" })
-      .then(res => res.json())
-      .then(res => {
-        if (res.data) {
-          const j = res.data;
+    let active = true;
+    hydratedRef.current = false;
+    skipNextAutosaveRef.current = true;
+    setLoading(true);
+
+    Promise.all([
+      fetch("/api/master", { cache: "no-store" }).then((r) => r.json()),
+      fetch("/api/profile", { cache: "no-store" }).then((r) => r.json()),
+      fetch("/api/master/sesi", { cache: "no-store" })
+        .then((r) => r.json())
+        .catch(() => []),
+      fetch(`/api/jurnal/${id}`, { cache: "no-store" }).then((r) => r.json()),
+    ])
+      .then(([masterData, profileData, sesiData, jurnalRes]) => {
+        if (!active) return;
+
+        setMaster(masterData);
+        if (Array.isArray(sesiData)) {
+          setSesiList(sesiData);
+        }
+
+        const allKelas: Kelas[] = masterData?.kelas || [];
+        const draftKey = `siakad_jurnal_edit_draft_${id}`;
+        const rawDraft = localStorage.getItem(draftKey);
+        let draftParsed: Record<string, unknown> | null = null;
+        if (rawDraft) {
+          try {
+            draftParsed = JSON.parse(rawDraft);
+          } catch {
+            draftParsed = null;
+          }
+        }
+
+        if (draftParsed && (draftParsed.materi || draftParsed.kegiatan || draftParsed.kelasId)) {
+          const dk = String(draftParsed.kelasId || "");
+          const matchedK = dk ? allKelas.find((k) => k.id === dk) : undefined;
+          setJenjangFilter(
+            String(draftParsed.jenjangFilter || matchedK?.jenjang || ""),
+          );
+          setKelasId(dk);
+          setMapelId(String(draftParsed.mapelId || ""));
+          setNamaMapelCustom(String(draftParsed.namaMapelCustom || ""));
+          setAsatidId(String(draftParsed.asatidId || ""));
+          if (isValidISODate(String(draftParsed.tanggal || ""))) {
+            setTanggal(String(draftParsed.tanggal));
+          }
+          if (Array.isArray(draftParsed.jamKe)) {
+            setJamKe(draftParsed.jamKe.map(String));
+          } else if (typeof draftParsed.jamKe === "string") {
+            setJamKe(draftParsed.jamKe.split(",").map((s) => s.trim()).filter(Boolean));
+          }
+          setJamKhususMulai(String(draftParsed.jamKhususMulai || ""));
+          setJamKhususSelesai(String(draftParsed.jamKhususSelesai || ""));
+          setMateri(String(draftParsed.materi || ""));
+          setSubMateri(String(draftParsed.subMateri || ""));
+          setLearningOutcome(String(draftParsed.learningOutcome || ""));
+          setKegiatan(String(draftParsed.kegiatan || ""));
+          setCatatan(String(draftParsed.catatan || ""));
+          setLastSaved(draftParsed._savedAt ? String(draftParsed._savedAt) : null);
+          setIsDraftRestored(true);
+        } else if (jurnalRes?.data) {
+          const j = jurnalRes.data;
+          const matchedK = j.kelas_id
+            ? allKelas.find((k) => k.id === j.kelas_id)
+            : undefined;
+          setJenjangFilter(matchedK?.jenjang || "");
           setKelasId(j.kelas_id || "");
           setMapelId(j.mapel_id || "");
-          setAsatidId(j.pegawai_id || "");
-          setTanggal(j.tanggal ? j.tanggal.split("T")[0] : today);
+          setAsatidId(j.pegawai_id || profileData?.pegawai?.id || "");
+          setTanggal(
+            j.tanggal ? String(j.tanggal).split("T")[0] : today,
+          );
           if (j.jam_ke) {
-            const parsed = j.jam_ke.split(",").map((x: string) => x.trim());
+            const parsed = String(j.jam_ke)
+              .split(",")
+              .map((x: string) => x.trim())
+              .filter(Boolean);
             const finalJamKe: string[] = [];
-            parsed.forEach((val: string) => {
-              if (val.startsWith("Khusus")) {
+            for (const val of parsed) {
+              if (val.toLowerCase().startsWith("khusus")) {
                 finalJamKe.push("Khusus");
                 const match = val.match(/\((.*?)-(.*?)\)/);
                 if (match) {
@@ -171,7 +227,7 @@ export default function EditJurnalPage({ params }: { params: Promise<{ id: strin
               } else {
                 finalJamKe.push(val);
               }
-            });
+            }
             setJamKe(finalJamKe);
           }
           setMateri(j.materi || "");
@@ -179,101 +235,136 @@ export default function EditJurnalPage({ params }: { params: Promise<{ id: strin
           setLearningOutcome(j.learning_outcome || "");
           setKegiatan(j.kegiatan || "");
           setCatatan(j.catatan || "");
+          setIsDraftRestored(false);
         }
-      })
-      .catch(e => console.error(e))
-      .finally(() => setLoadingInitial(false));
-  }, [id, today]);
 
-  // Load master data
-  useEffect(() => {
-    Promise.all([
-      fetch("/api/master", { cache: "no-store" }).then((r) => r.json()),
-      fetch("/api/profile", { cache: "no-store" }).then((r) => r.json())
-    ])
-      .then(([masterData, profileData]) => {
-        setMaster(masterData);
-        if (profileData?.data) {
-          setCurrentUser(profileData.data);
-          
-          const role = (profileData.data.role || "").toLowerCase();
-          const isAdmin = role.includes("admin_super");
-          
-          if (profileData.data.asatidz_id && !isAdmin && !asatidId) {
-            setAsatidId(profileData.data.asatidz_id);
-          }
-        }
-        setLoadingMaster(false);
+        hydratedRef.current = true;
+        setLoading(false);
       })
       .catch(() => {
-        setLoadingMaster(false);
+        if (!active) return;
+        setLoading(false);
         Swal.fire({
           icon: "error",
           title: "Gagal memuat data",
-          text: "Tidak dapat mengambil data master. Coba refresh halaman." });
+          text: "Tidak dapat mengambil data jurnal atau master. Coba refresh halaman.",
+          confirmButtonColor: "#550000",
+        });
       });
-  }, []);
 
-  // Tampilkan semua jenjang yang ada di master.kelas
+    return () => {
+      active = false;
+    };
+  }, [id, today]);
+
+  // Autosave ke localStorage khusus untuk jurnal ini SAAT user mengubah form
+  useEffect(() => {
+    if (!editDraftKey || loading || !hydratedRef.current) return;
+    if (skipNextAutosaveRef.current) {
+      skipNextAutosaveRef.current = false;
+      return;
+    }
+    const savedAt = new Date().toLocaleTimeString("id-ID", {
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+    const payload = {
+      jenjangFilter,
+      kelasId,
+      mapelId,
+      namaMapelCustom,
+      asatidId,
+      tanggal,
+      jamKe,
+      jamKhususMulai,
+      jamKhususSelesai,
+      materi,
+      subMateri,
+      learningOutcome,
+      kegiatan,
+      catatan,
+      _savedAt: savedAt,
+    };
+    localStorage.setItem(editDraftKey, JSON.stringify(payload));
+    setLastSaved(savedAt);
+  }, [
+    editDraftKey,
+    loading,
+    jenjangFilter,
+    kelasId,
+    mapelId,
+    namaMapelCustom,
+    asatidId,
+    tanggal,
+    jamKe,
+    jamKhususMulai,
+    jamKhususSelesai,
+    materi,
+    subMateri,
+    learningOutcome,
+    kegiatan,
+    catatan,
+  ]);
+
+  const handleResetDraft = () => {
+    Swal.fire({
+      title: "Hapus Perubahan Draf Lokal?",
+      text: "Draf lokal untuk edit jurnal ini akan dihapus dan data dimuat ulang dari server.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#dc2626",
+      cancelButtonColor: "#64748b",
+      confirmButtonText: "Ya, Muat Ulang Server",
+      cancelButtonText: "Batal",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        if (editDraftKey) localStorage.removeItem(editDraftKey);
+        localStorage.removeItem("siakad_jurnal_draft");
+        setLastSaved(null);
+        setIsDraftRestored(false);
+        window.location.reload();
+      }
+    });
+  };
+
   const availableJenjangs = useMemo(() => {
     const defaultJenjangs = ["MTs", "IL", "MA"];
     if (!master?.kelas) return defaultJenjangs;
-    const uniqueJenjangs = Array.from(new Set(master.kelas.map(k => k.jenjang).filter(Boolean))) as string[];
+    const uniqueJenjangs = Array.from(
+      new Set(master.kelas.map((k) => k.jenjang).filter(Boolean)),
+    ) as string[];
     return uniqueJenjangs.length > 0 ? uniqueJenjangs : defaultJenjangs;
   }, [master]);
 
-  // Auto-select Jenjang jika hanya ada 1 pilihan (hanya jika belum terisi dari data initial)
-  useEffect(() => {
-    if (availableJenjangs.length === 1 && !jenjangFilter) {
-      setJenjangFilter(availableJenjangs[0]);
-    }
-  }, [availableJenjangs, jenjangFilter]);
-
   const filteredKelasList = useMemo(() => {
-    let list = master?.kelas || [];
-    if (jenjangFilter) {
-      list = list.filter((k) => k.jenjang === jenjangFilter);
-    }
-    return list;
+    const list = master?.kelas || [];
+    if (!jenjangFilter) return list;
+    return list.filter((k) => k.jenjang === jenjangFilter);
   }, [jenjangFilter, master]);
 
-  useEffect(() => {
-    if (kelasId) {
-      const exists = filteredKelasList.find((k) => k.id === kelasId);
-      if (!exists && !loadingInitial) setKelasId("");
-    }
-  }, [filteredKelasList, kelasId, loadingInitial]);
-
   const mapelList = useMemo(() => {
-    // 1. Get mapels directly assigned to this class
-    let list: any[] = (kelasId && master?.mapel?.[kelasId]) ? [...master.mapel[kelasId]] : [];
+    const list: Mapel[] =
+      kelasId && master?.mapel?.[kelasId] ? [...master.mapel[kelasId]] : [];
 
-    const selectedKelas = master?.kelas?.find((k: any) => k.id === kelasId);
+    const selectedKelas = master?.kelas?.find((k) => k.id === kelasId);
     const selectedJenjang = selectedKelas?.jenjang;
 
-    // 2. Aggregate mapels from all classes belonging to the SAME jenjang
     if (selectedJenjang && master?.kelas && master?.mapel) {
       const sameJenjangKelasIds = master.kelas
-        .filter((k: any) => k.jenjang === selectedJenjang)
-        .map((k: any) => k.id);
+        .filter((k) => k.jenjang === selectedJenjang)
+        .map((k) => k.id);
 
-      const extraMapels: any[] = [];
+      const mapelNames = new Set(list.map((m) => m.nama.toLowerCase()));
       for (const kId of sameJenjangKelasIds) {
-        if (master.mapel[kId]) {
-          extraMapels.push(...master.mapel[kId]);
-        }
-      }
-
-      // Deduplicate by name
-      const mapelNames = new Set(list.map((m: any) => m.nama.toLowerCase()));
-      for (const em of extraMapels) {
-        if (!mapelNames.has(em.nama.toLowerCase())) {
-          list.push(em);
-          mapelNames.add(em.nama.toLowerCase());
+        for (const em of master.mapel[kId] || []) {
+          if (!mapelNames.has(em.nama.toLowerCase())) {
+            list.push(em);
+            mapelNames.add(em.nama.toLowerCase());
+          }
         }
       }
     }
-    
+
     return list;
   }, [kelasId, master]);
 
@@ -285,372 +376,381 @@ export default function EditJurnalPage({ params }: { params: Promise<{ id: strin
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!kelasId || !mapelId || !asatidId || !tanggal || !materi || !kegiatan) {
+    if (
+      !kelasId ||
+      (!mapelId && !namaMapelCustom) ||
+      !asatidId ||
+      !tanggal ||
+      !materi ||
+      !kegiatan
+    ) {
       Swal.fire({
         icon: "warning",
         title: "Form Tidak Lengkap",
         text: "Mohon lengkapi semua field yang wajib diisi.",
-        confirmButtonColor: "#0f172a" });
+        confirmButtonColor: "#550000",
+      });
       return;
     }
 
     setSubmitting(true);
     try {
+      const sortedJamKe =
+        jamKe.length > 0
+          ? [...jamKe]
+              .sort((a, b) => {
+                if (a === "Khusus") return 1;
+                if (b === "Khusus") return -1;
+                return Number.parseInt(a, 10) - Number.parseInt(b, 10);
+              })
+              .map((j) => {
+                if (j === "Khusus" && jamKhususMulai && jamKhususSelesai) {
+                  return `Khusus (${jamKhususMulai}-${jamKhususSelesai})`;
+                }
+                return j;
+              })
+              .join(", ")
+          : null;
+
+      const useCustomMapel = Boolean(isSpecialClass && mapelList.length === 0);
       const res = await fetch(`/api/jurnal/${id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           pegawai_id: asatidId,
-          mapel_id: mapelId,
+          mapel_id: useCustomMapel ? undefined : mapelId,
+          nama_mapel_custom: useCustomMapel ? namaMapelCustom : undefined,
           kelas_id: kelasId,
           tanggal,
-          jam_ke: jamKe.length > 0 ? jamKe.sort((a, b) => {
-            if (a === "Khusus") return 1;
-            if (b === "Khusus") return -1;
-            return parseInt(a) - parseInt(b);
-          }).map(j => {
-            if (j === "Khusus" && jamKhususMulai && jamKhususSelesai) {
-              return `Khusus (${jamKhususMulai}-${jamKhususSelesai})`;
-            }
-            return j;
-          }).join(", ") : null,
+          jam_ke: sortedJamKe,
           materi,
           sub_materi: subMateri || null,
           learning_outcome: learningOutcome || null,
           kegiatan,
-          catatan: catatan || null }) });
+          catatan: catatan || null,
+        }),
+      });
 
       const json = await res.json();
       if (!res.ok) {
         throw new Error(json.error || "Gagal menyimpan jurnal");
       }
 
-      await Swal.fire({
-        icon: "success",
-        title: "Jurnal Tersimpan!",
-        text: "Jurnal mengajar berhasil ditambahkan.",
-        confirmButtonColor: "#0f172a",
-        timer: 2000,
-        timerProgressBar: true });
-
+      if (editDraftKey) localStorage.removeItem(editDraftKey);
       localStorage.removeItem("siakad_jurnal_draft");
       localStorage.removeItem("sikap_pending_jurnal_date");
+
+      await Swal.fire({
+        icon: "success",
+        title: "Perubahan Tersimpan!",
+        text: "Jurnal mengajar berhasil diperbarui.",
+        confirmButtonColor: "#550000",
+        timer: 1800,
+        timerProgressBar: true,
+      });
+
       router.push("/jurnal");
+      router.refresh();
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : "Terjadi kesalahan";
       Swal.fire({
         icon: "error",
         title: "Gagal Menyimpan",
         text: message,
-        confirmButtonColor: "#0f172a" });
+        confirmButtonColor: "#550000",
+      });
     } finally {
       setSubmitting(false);
     }
   };
 
   return (
-    <div style={{ padding: "24px 28px", maxWidth: 900, margin: "0 auto", display: "flex", flexDirection: "column", gap: 24 }}>
-      {/* Premium Hero Banner */}
-      <div style={{
-        display: "flex",
-        flexWrap: "wrap",
-        justifyContent: "space-between",
-        alignItems: "center",
-        background: "linear-gradient(135deg, #550000 0%, #440000 100%)",
-        borderRadius: "24px",
-        padding: "32px 36px",
-        color: "white",
-        boxShadow: "0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05)",
-        gap: "16px"
-      }}>
-        <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
+    <div className="mx-auto flex w-full max-w-4xl flex-col gap-5 p-4 md:p-6">
+      {/* Header Card */}
+      <div className="flex flex-wrap items-center justify-between gap-4 rounded-[12px] border border-[#e7e2da] bg-[#550000] p-5 text-white shadow-xs md:p-6">
+        <div className="flex items-center gap-3.5">
           <Link
             href="/jurnal"
-            style={{
-              background: "rgba(255,255,255,0.1)",
-              border: "1px solid rgba(255,255,255,0.2)",
-              color: "white",
-              height: "44px",
-              width: "44px",
-              borderRadius: "14px",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              cursor: "pointer",
-              transition: "all 0.2s",
-              textDecoration: "none"
-            }}
+            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px] border border-white/20 bg-white/10 text-white transition-colors duration-150 hover:bg-white/20"
+            aria-label="Kembali ke daftar jurnal"
           >
             <ChevronLeft size={20} />
           </Link>
           <div>
-            <h1 style={{ fontSize: "28px", fontWeight: "bold", margin: 0, display: "flex", alignItems: "center", gap: "8px" }}>
-              <BookMarked size={28} /> Edit Jurnal Mengajar
+            <h1 className="flex items-center gap-2 text-xl font-bold tracking-[-0.02em] text-white md:text-2xl">
+              <BookMarked size={22} className="text-[#ddc192]" /> Edit Jurnal Mengajar
             </h1>
-            <p style={{ marginTop: "8px", opacity: 0.9, fontSize: "16px" }}>Ubah catatan kegiatan belajar mengajar</p>
+            <p className="mt-0.5 text-xs text-white/85 md:text-sm">
+              Perbarui catatan kegiatan belajar mengajar
+            </p>
           </div>
         </div>
-        <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+
+        <div className="flex items-center gap-2">
           {lastSaved && (
-            <div style={{ fontSize: 13, fontWeight: 600, color: "white", background: "rgba(0,0,0,0.2)", padding: "6px 12px", borderRadius: "12px", display: "flex", alignItems: "center", gap: 6 }}>
-              <Save size={14} style={{ color: "#10b981" }} />
-              <span>Draf: {lastSaved}</span>
+            <div className="inline-flex items-center gap-1.5 rounded-[10px] border border-white/15 bg-black/20 px-3 py-1.5 text-xs font-semibold text-white">
+              <Save size={13} className="text-emerald-300" />
+              <span className="tabular-nums">Draf: {lastSaved}</span>
             </div>
           )}
-          {(kelasId || materi || learningOutcome || kegiatan || catatan) && (
+          {isDraftRestored && (
             <button
               type="button"
               onClick={handleResetDraft}
-              style={{
-                fontSize: "13px",
-                fontWeight: "bold",
-                color: "#ef4444",
-                background: "white",
-                border: "none",
-                padding: "8px 12px",
-                borderRadius: "12px",
-                display: "flex",
-                alignItems: "center",
-                gap: "6px",
-                cursor: "pointer",
-                boxShadow: "0 2px 4px rgba(0,0,0,0.1)"
-              }}
-              title="Kosongkan form dan hapus draf"
+              className="inline-flex cursor-pointer items-center gap-1.5 rounded-[10px] border border-white/20 bg-white px-3 py-1.5 text-xs font-semibold text-rose-700 hover:bg-[#fcfaf8]"
+              title="Kembalikan ke data server"
             >
-              <RotateCcw size={14} />
-              <span>Reset Form</span>
+              <RotateCcw size={13} />
+              <span>Reset Draf</span>
             </button>
           )}
         </div>
       </div>
 
-      <div>
-        {/* Banner Draf Dipulihkan */}
-        {isDraftRestored && (
-          <div style={{ marginBottom: "20px", background: "#fffbeb", border: "1px solid #fde68a", borderRadius: "16px", padding: "16px 20px", display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: "12px" }}>
-            <div style={{ display: "flex", alignItems: "flex-start", gap: "10px" }}>
-              <AlertCircle size={20} style={{ color: "#d97706", flexShrink: 0, marginTop: "2px" }} />
-              <div>
-                <p style={{ fontSize: "14px", fontWeight: "bold", color: "#78350f", margin: 0 }}>Draf Belum Tersimpan Dipulihkan</p>
-                <p style={{ fontSize: "13px", color: "#92400e", marginTop: "4px", margin: 0 }}>
-                  Formulir ini otomatis memuat data ketikan terakhir dari perangkat Anda agar data tidak hilang jika halaman tertutup.
-                </p>
-              </div>
+      {isDraftRestored && (
+        <div className="flex flex-wrap items-start justify-between gap-3 rounded-[12px] border border-amber-200 bg-amber-50 p-4">
+          <div className="flex items-start gap-2.5">
+            <AlertCircle size={18} className="mt-0.5 shrink-0 text-amber-600" />
+            <div>
+              <p className="text-sm font-semibold text-amber-900">
+                Draf Perubahan Lokal Dipulihkan
+              </p>
+              <p className="mt-0.5 text-xs text-amber-800">
+                Menampilkan ketikan terakhir yang belum sempat disimpan untuk jurnal ini.
+              </p>
             </div>
-            <button
-              type="button"
-              onClick={handleResetDraft}
-              style={{ fontSize: "13px", fontWeight: "bold", color: "#ef4444", background: "white", border: "1px solid #fca5a5", padding: "6px 12px", borderRadius: "10px", flexShrink: 0, cursor: "pointer", boxShadow: "0 1px 2px rgba(0,0,0,0.05)" }}
-            >
-              Hapus Draf
-            </button>
           </div>
-        )}
-        
-        {loadingMaster ? (
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "center", minHeight: 200, gap: 12, color: "#64748b", fontSize: 15, fontWeight: 500 }}>
-            <Loader2 size={24} style={{ animation: "spin 1s linear infinite", color: "#0f172a" }} />
-            Memuat data master...
-          </div>
-        ) : (
-          <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
-            {/* Card 1: Informasi Mengajar */}
-            <div style={{ background: "white", borderRadius: "16px", padding: "24px", boxShadow: "0 4px 6px -1px rgba(0,0,0,0.1)", display: "flex", flexDirection: "column", gap: "20px" }}>
-              <div style={{ fontWeight: "bold", fontSize: "18px", color: "#1e293b", display: "flex", alignItems: "center", gap: "8px", borderBottom: "1px solid #f1f5f9", paddingBottom: "16px", margin: 0 }}>
-                <BookOpen size={20} color="#f59e0b" />
-                Informasi Mengajar
+          <button
+            type="button"
+            onClick={handleResetDraft}
+            className="cursor-pointer rounded-[10px] border border-rose-200 bg-white px-3 py-1.5 text-xs font-semibold text-rose-700 hover:bg-rose-50"
+          >
+            Muat Data Server
+          </button>
+        </div>
+      )}
+
+      {loading ? (
+        <div className="flex min-h-[220px] items-center justify-center gap-2.5 rounded-[12px] border border-[#e7e2da] bg-white text-sm text-[#44403c] shadow-xs">
+          <Loader2 size={20} className="animate-spin text-[#550000]" />
+          Memuat data jurnal dan master...
+        </div>
+      ) : (
+        <form onSubmit={handleSubmit} className="flex flex-col gap-5">
+          {/* Card 1: Informasi Mengajar */}
+          <div className="flex flex-col gap-5 rounded-[12px] border border-[#e7e2da] bg-white p-5 shadow-xs">
+            <div className="flex items-center gap-2 border-b border-[#f0ece4] pb-3.5 text-base font-semibold text-[#1a1a1a]">
+              <BookOpen size={18} className="text-[#550000]" />
+              Informasi Mengajar
+            </div>
+
+            <div>
+              <label className="mb-1.5 block text-[13px] font-semibold text-[#44403c]">
+                Tanggal <span className="text-rose-600">*</span>
+              </label>
+              <input
+                type="date"
+                value={tanggal}
+                onChange={(e) => setTanggal(e.target.value)}
+                required
+                className="w-full max-w-[260px] rounded-[10px] border border-[#e7e2da] bg-[#fcfaf8] px-3.5 py-2.5 text-sm text-[#1a1a1a] outline-none focus:border-[#550000] focus:bg-white"
+              />
+              {tanggal && (
+                <div className="mt-2 flex items-center gap-1.5 text-xs font-semibold text-[#550000]">
+                  <Calendar size={14} /> {formatTanggalLongID(tanggal)}
+                </div>
+              )}
+            </div>
+
+            <div className="grid gap-5 md:grid-cols-2">
+              <div>
+                <label className="mb-1.5 block text-[13px] font-semibold text-[#44403c]">
+                  Nama Guru <span className="text-rose-600">*</span>
+                </label>
+                <select
+                  value={asatidId}
+                  onChange={(e) => setAsatidId(e.target.value)}
+                  required
+                  className="w-full rounded-[10px] border border-[#e7e2da] bg-white px-3.5 py-2.5 text-sm text-[#1a1a1a] outline-none focus:border-[#550000]"
+                >
+                  <option value="">-- Pilih Guru --</option>
+                  {master?.asatidz.map((a) => (
+                    <option key={a.id} value={a.id}>
+                      {a.nama_lengkap}
+                    </option>
+                  ))}
+                </select>
               </div>
 
-              {/* Tanggal + nama hari */}
               <div>
-                <label style={{ display: "block", fontSize: "13px", fontWeight: 600, color: "#475569", marginBottom: "8px" }}>
-                  Tanggal <span style={{ color: "#ef4444" }}>*</span>
-                </label>
-                <input
-                  type="date"
-                  value={tanggal}
-                  onChange={(e) => setTanggal(e.target.value)}
-                  required
-                  style={{ padding: "12px 16px", borderRadius: "12px", border: "1px solid #cbd5e1", fontSize: "15px", outline: "none", width: "100%", maxWidth: "260px" }}
-                />
-                {tanggal && (
-                  <div style={{ marginTop: "8px", fontSize: "14px", fontWeight: 600, color: "#0f172a", display: "flex", alignItems: "center", gap: "6px" }}>
-                    <Calendar size={16} /> {formatTanggalIndo(tanggal)}
+                <div className="mb-1.5 flex items-end justify-between gap-2">
+                  <div>
+                    <label className="flex items-center gap-1.5 text-[13px] font-semibold text-[#44403c]">
+                      <Clock size={14} />
+                      Jam ke- (KBM Kelas)
+                    </label>
+                    <p className="text-[11px] text-[#78716c]">
+                      Tersinkron dengan Master Sesi Waktu Pesantren
+                    </p>
+                  </div>
+                  {jamKe.length > 0 && (
+                    <span className="rounded-full bg-emerald-100 px-2.5 py-0.5 text-xs font-semibold tabular-nums text-emerald-700">
+                      {jamKe.length} Sesi
+                    </span>
+                  )}
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {jamOptions.map((j) => {
+                    const isSelected = jamKe.includes(j);
+                    return (
+                      <button
+                        key={j}
+                        type="button"
+                        onClick={() => {
+                          if (isSelected) {
+                            setJamKe(jamKe.filter((k) => k !== j));
+                          } else {
+                            setJamKe([...jamKe, j]);
+                          }
+                        }}
+                        className={`relative flex min-w-[74px] cursor-pointer flex-col items-center justify-center rounded-[10px] border px-3 py-2 text-center transition-colors duration-150 ${
+                          isSelected
+                            ? "border-[#550000] bg-[#fdf5f5] text-[#550000]"
+                            : "border-[#e7e2da] bg-white text-[#44403c] hover:bg-[#faf6ee]"
+                        }`}
+                      >
+                        {isSelected && j !== "Khusus" && (
+                          <span className="absolute -right-1.5 -top-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-[#550000] text-white">
+                            <Check size={10} strokeWidth={3} />
+                          </span>
+                        )}
+                        {j === "Khusus" ? (
+                          <>
+                            <span className="flex items-center gap-1 text-xs font-bold">
+                              {isSelected && <Check size={12} strokeWidth={3} />}
+                              Khusus
+                            </span>
+                            <span className="text-[10px] text-[#78716c]">
+                              Menyesuaikan
+                            </span>
+                          </>
+                        ) : (
+                          <>
+                            <span className="text-sm font-bold tabular-nums leading-tight">
+                              Jam {j}
+                            </span>
+                            <span className="mt-0.5 text-[10px] font-medium tabular-nums text-[#78716c]">
+                              {waktuMap[j] || "-"}
+                            </span>
+                          </>
+                        )}
+                      </button>
+                    );
+                  })}
+                </div>
+
+                {jamKe.includes("Khusus") && (
+                  <div className="mt-3 rounded-[10px] border border-dashed border-[#e7e2da] bg-[#fcfaf8] p-3">
+                    <label className="mb-1.5 block text-xs font-semibold text-[#44403c]">
+                      Tentukan Waktu Khusus <span className="text-rose-600">*</span>
+                    </label>
+                    <div className="flex items-center gap-2.5">
+                      <input
+                        type="time"
+                        value={jamKhususMulai}
+                        onChange={(e) => setJamKhususMulai(e.target.value)}
+                        required={jamKe.includes("Khusus")}
+                        className="rounded-[8px] border border-[#e7e2da] bg-white px-3 py-1.5 text-sm text-[#1a1a1a]"
+                      />
+                      <span className="text-xs font-semibold text-[#78716c]">
+                        s.d.
+                      </span>
+                      <input
+                        type="time"
+                        value={jamKhususSelesai}
+                        onChange={(e) => setJamKhususSelesai(e.target.value)}
+                        required={jamKe.includes("Khusus")}
+                        className="rounded-[8px] border border-[#e7e2da] bg-white px-3 py-1.5 text-sm text-[#1a1a1a]"
+                      />
+                    </div>
                   </div>
                 )}
               </div>
 
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "24px" }}>
-                {/* Asatidz */}
-                <div>
-                  <label style={{ display: "block", fontSize: "14px", fontWeight: 600, color: "#475569", marginBottom: "8px" }}>
-                    Nama Guru <span style={{ color: "#ef4444" }}>*</span>
-                  </label>
-                  <select
-                    value={asatidId}
-                    onChange={(e) => setAsatidId(e.target.value)}
-                    required
-                    style={{ padding: "12px 16px", borderRadius: "12px", border: "1px solid #cbd5e1", fontSize: "15px", outline: "none", width: "100%", backgroundColor: "white" }}
-                  >
-                    <option value="">-- Pilih Guru --</option>
-                    {master?.asatidz.map((a) => (
-                      <option key={a.id} value={a.id}>
-                        {a.nama_lengkap}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                {/* Jam ke- */}
-                <div>
-                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: "8px" }}>
-                    <div>
-                      <label style={{ display: "flex", alignItems: "center", gap: "6px", fontSize: "13px", fontWeight: 600, color: "#475569", margin: 0, marginBottom: "4px" }}>
-                        <Clock size={16} />
-                        Jam ke- (KBM Kelas)
-                      </label>
-                      <p style={{ fontSize: "11px", color: "#64748b", fontWeight: 500, margin: 0 }}>KBM Mulai jam ke-3 (07.00 WIB)</p>
-                    </div>
-                    {jamKe.length > 0 && (
-                      <span style={{ fontSize: "12px", fontWeight: 600, background: "#d1fae5", color: "#065f46", padding: "4px 10px", borderRadius: "99px", whiteSpace: "nowrap" }}>
-                        Durasi: {jamKe.length} Jam
-                      </span>
-                    )}
-                  </div>
-                  <div style={{ display: "flex", flexWrap: "wrap", gap: "8px" }}>
-                    {JAM_OPTIONS.map((j) => {
-                      const isSelected = jamKe.includes(j);
-                      const waktuMap: Record<string, string> = {
-                        "3": "07.00-07.40",
-                        "4": "07.40-08.20",
-                        "5": "08.20-09.00",
-                        "6": "09.00-09.40",
-                        "7": "10.00-10.40",
-                        "8": "10.40-11.20",
-                        "9": "11.20-12.00" };
-                      return (
-                        <button
-                          key={j}
-                          type="button"
-                          onClick={() => {
-                            if (isSelected) {
-                              setJamKe(jamKe.filter(k => k !== j));
-                            } else {
-                              setJamKe([...jamKe, j]);
-                            }
-                          }}
-                          style={{
-                            position: "relative",
-                            display: "flex",
-                            flexDirection: "column",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            transition: "all 0.2s",
-                            fontWeight: "bold",
-                            borderRadius: "12px",
-                            border: "2px solid",
-                            padding: "6px 12px",
-                            minWidth: "64px",
-                            height: "auto",
-                            ...(isSelected ? {
-                              background: "#ecfdf5", color: "#047857", borderColor: "#10b981", boxShadow: "0 1px 2px rgba(0,0,0,0.05)"
-                            } : {
-                              background: "white", color: "#64748b", borderColor: "#e2e8f0"
-                            }),
-                            cursor: "pointer"
-                          }}
-                        >
-                          {isSelected && j !== "Khusus" && (
-                            <div style={{ position: "absolute", top: "-6px", right: "-6px", background: "#10b981", color: "white", borderRadius: "50%", padding: "2px", boxShadow: "0 1px 2px rgba(0,0,0,0.1)", zIndex: 10 }}>
-                              <Check size={12} strokeWidth={4} />
-                            </div>
-                          )}
-                          {isSelected && j === "Khusus" && (
-                            <div style={{ display: "flex", alignItems: "center", marginBottom: "2px" }}>
-                              <Check size={14} strokeWidth={3} style={{ marginRight: "4px" }} />
-                              <span style={{ fontSize: "14px" }}>{j}</span>
-                            </div>
-                          )}
-                          {!isSelected && j === "Khusus" && <span style={{ fontSize: "14px", marginBottom: "2px" }}>{j}</span>}
-                          {j === "Khusus" && <span style={{ fontSize: "9px", fontWeight: 600, color: isSelected ? "#059669" : "#94a3b8" }}>Menyesuaikan</span>}
-                          
-                          {/* For numbers */}
-                          {j !== "Khusus" && (
-                            <>
-                              <span style={{ fontSize: "14px", lineHeight: 1, marginBottom: "4px" }}>{j}</span>
-                              <span style={{ fontSize: "9px", fontWeight: 700, color: isSelected ? "#059669" : "#94a3b8", lineHeight: 1 }}>{waktuMap[j]}</span>
-                            </>
-                          )}
-                        </button>
-                      );
-                    })}
-                  </div>
-                  {jamKe.includes("Khusus") && (
-                    <div style={{ marginTop: "12px", padding: "12px", background: "#f8fafc", borderRadius: "12px", border: "1px dashed #cbd5e1" }}>
-                      <label style={{ display: "block", fontSize: "12px", fontWeight: 600, color: "#475569", marginBottom: "8px" }}>Tentukan Waktu Khusus <span style={{ color: "#ef4444" }}>*</span></label>
-                      <div style={{ display: "flex", gap: "12px", alignItems: "center" }}>
-                        <input type="time" value={jamKhususMulai} onChange={e => setJamKhususMulai(e.target.value)} required={jamKe.includes("Khusus")} style={{ padding: "8px 12px", borderRadius: "8px", border: "1px solid #cbd5e1", outline: "none", fontSize: "14px", background: "white", color: "#334155" }} />
-                        <span style={{ color: "#64748b", fontWeight: 600, fontSize: "13px" }}>s.d</span>
-                        <input type="time" value={jamKhususSelesai} onChange={e => setJamKhususSelesai(e.target.value)} required={jamKe.includes("Khusus")} style={{ padding: "8px 12px", borderRadius: "8px", border: "1px solid #cbd5e1", outline: "none", fontSize: "14px", background: "white", color: "#334155" }} />
-                      </div>
-                    </div>
+              <div>
+                <label className="mb-1.5 block text-[13px] font-semibold text-[#44403c]">
+                  Jenjang <span className="text-rose-600">*</span>
+                </label>
+                <select
+                  value={jenjangFilter}
+                  onChange={(e) => {
+                    setJenjangFilter(e.target.value);
+                    setKelasId("");
+                    setMapelId("");
+                    setNamaMapelCustom("");
+                  }}
+                  className="w-full rounded-[10px] border border-[#e7e2da] bg-white px-3.5 py-2.5 text-sm text-[#1a1a1a] outline-none focus:border-[#550000]"
+                >
+                  {availableJenjangs.length > 1 && (
+                    <option value="">— Semua Jenjang —</option>
                   )}
-                </div>
+                  {availableJenjangs.map((j) => (
+                    <option key={j} value={j}>
+                      {j}
+                    </option>
+                  ))}
+                </select>
+              </div>
 
-                {/* Jenjang */}
-                <div>
-                  <label style={{ display: "block", fontSize: "13px", fontWeight: 600, color: "#475569", marginBottom: "8px" }}>
-                    Jenjang <span style={{ color: "#ef4444" }}>*</span>
-                  </label>
-                  <select
-                    value={jenjangFilter}
-                    onChange={(e) => setJenjangFilter(e.target.value)}
-                    style={{ padding: "12px 16px", borderRadius: "12px", border: "1px solid #cbd5e1", fontSize: "15px", outline: "none", width: "100%", backgroundColor: "white" }}
-                  >
-                    {availableJenjangs.length > 1 && <option value="">— Semua Jenjang —</option>}
-                    {availableJenjangs.map((j) => (
-                      <option key={j} value={j}>
-                        {j}
-                      </option>
-                    ))}
-                  </select>
-                </div>
+              <div>
+                <label className="mb-1.5 block text-[13px] font-semibold text-[#44403c]">
+                  Kelas <span className="text-rose-600">*</span>
+                </label>
+                <select
+                  value={kelasId}
+                  onChange={(e) => {
+                    setKelasId(e.target.value);
+                    setMapelId("");
+                    setNamaMapelCustom("");
+                  }}
+                  required
+                  disabled={jenjangFilter !== "" && filteredKelasList.length === 0}
+                  className="w-full rounded-[10px] border border-[#e7e2da] bg-white px-3.5 py-2.5 text-sm text-[#1a1a1a] outline-none focus:border-[#550000] disabled:bg-slate-100"
+                >
+                  <option value="">— Pilih Kelas —</option>
+                  {filteredKelasList.map((k) => (
+                    <option key={k.id} value={k.id}>
+                      {k.nama}
+                    </option>
+                  ))}
+                </select>
+              </div>
 
-                {/* Kelas */}
-                <div>
-                  <label style={{ display: "block", fontSize: "13px", fontWeight: 600, color: "#475569", marginBottom: "8px" }}>
-                    Kelas <span style={{ color: "#ef4444" }}>*</span>
-                  </label>
-                  <select
-                    value={kelasId}
-                    onChange={(e) => setKelasId(e.target.value)}
+              <div className="md:col-span-2">
+                <label className="mb-1.5 block text-[13px] font-semibold text-[#44403c]">
+                  Mata Pelajaran <span className="text-rose-600">*</span>
+                </label>
+                {isSpecialClass && mapelList.length === 0 ? (
+                  <input
+                    type="text"
+                    placeholder="Ketik nama mata pelajaran..."
+                    value={namaMapelCustom}
+                    onChange={(e) => setNamaMapelCustom(e.target.value)}
                     required
-                    disabled={jenjangFilter !== "" && filteredKelasList.length === 0}
-                    style={{ padding: "12px 16px", borderRadius: "12px", border: "1px solid #cbd5e1", fontSize: "15px", outline: "none", width: "100%", backgroundColor: (jenjangFilter !== "" && filteredKelasList.length === 0) ? "#f1f5f9" : "white" }}
-                  >
-                    <option value="">— Pilih Kelas —</option>
-                    {filteredKelasList.map((k) => (
-                      <option key={k.id} value={k.id}>
-                        {k.nama}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                {/* Mata Pelajaran */}
-                <div>
-                  <label style={{ display: "block", fontSize: "13px", fontWeight: 600, color: "#475569", marginBottom: "8px" }}>
-                    Mata Pelajaran <span style={{ color: "#ef4444" }}>*</span>
-                  </label>
+                    className="w-full rounded-[10px] border border-[#e7e2da] bg-white px-3.5 py-2.5 text-sm text-[#1a1a1a] outline-none focus:border-[#550000]"
+                  />
+                ) : (
                   <select
                     value={mapelId}
                     onChange={(e) => setMapelId(e.target.value)}
                     required
                     disabled={!kelasId}
-                    style={{ padding: "12px 16px", borderRadius: "12px", border: "1px solid #cbd5e1", fontSize: "15px", outline: "none", width: "100%", backgroundColor: !kelasId ? "#f1f5f9" : "white" }}
+                    className="w-full rounded-[10px] border border-[#e7e2da] bg-white px-3.5 py-2.5 text-sm text-[#1a1a1a] outline-none focus:border-[#550000] disabled:bg-slate-100"
                   >
                     <option value="">
-                      {kelasId ? "— Pilih Mata Pelajaran —" : "— Pilih kelas terlebih dahulu —"}
+                      {kelasId
+                        ? "— Pilih Mata Pelajaran —"
+                        : "— Pilih kelas terlebih dahulu —"}
                     </option>
                     {mapelList.map((m) => (
                       <option key={m.id} value={m.id}>
@@ -658,154 +758,136 @@ export default function EditJurnalPage({ params }: { params: Promise<{ id: strin
                       </option>
                     ))}
                   </select>
-                  {kelasId && mapelList.length === 0 && (
-                    <p style={{ fontSize: "13px", color: "#d97706", marginTop: "8px", fontWeight: 500, margin: 0 }}>
-                      Belum ada mapel untuk kelas ini
-                    </p>
-                  )}
-                </div>
-              </div>
-            </div>
-
-            {/* Card 2: Isi Jurnal */}
-            <div style={{ background: "white", borderRadius: "16px", padding: "24px", boxShadow: "0 4px 6px -1px rgba(0,0,0,0.1)", display: "flex", flexDirection: "column", gap: "20px" }}>
-              <div style={{ fontWeight: "bold", fontSize: "18px", color: "#1e293b", display: "flex", alignItems: "center", gap: "8px", borderBottom: "1px solid #f1f5f9", paddingBottom: "16px", margin: 0 }}>
-                <FileText size={20} color="#f59e0b" /> Isi Jurnal
-              </div>
-
-              {/* Topik Jurnal */}
-              <div>
-                <label style={{ display: "block", fontSize: "13px", fontWeight: 600, color: "#475569", marginBottom: "8px" }}>
-                  Topik Jurnal <span style={{ color: "#ef4444" }}>*</span>
-                </label>
-                <textarea
-                  rows={3}
-                  placeholder="Tuliskan topik jurnal hari ini..."
-                  value={materi}
-                  onChange={(e) => {
-                    setMateri(e.target.value);
-                    handleTextareaResize(e);
-                  }}
-                  style={{ minHeight: "80px", width: "100%", padding: "14px 16px", borderRadius: "12px", border: "1px solid #cbd5e1", fontSize: "15px", outline: "none", fontFamily: "inherit", resize: "none" }}
-                  required
-                />
-              </div>
-
-              {/* Sub Topik Jurnal */}
-              <div>
-                <label style={{ display: "block", fontSize: "13px", fontWeight: 600, color: "#475569", marginBottom: "8px" }}>
-                  Sub Topik Jurnal <span style={{ color: "#ef4444" }}>*</span>
-                </label>
-                <textarea
-                  rows={2}
-                  placeholder="Tuliskan sub topik yang spesifik..."
-                  value={subMateri}
-                  onChange={(e) => {
-                    setSubMateri(e.target.value);
-                    handleTextareaResize(e);
-                  }}
-                  style={{ minHeight: "60px", width: "100%", padding: "14px 16px", borderRadius: "12px", border: "1px solid #cbd5e1", fontSize: "15px", outline: "none", fontFamily: "inherit", resize: "none" }}
-                  required
-                />
-              </div>
-
-              <div>
-                <label style={{ display: "block", fontSize: "13px", fontWeight: 600, color: "#475569", marginBottom: "8px" }}>
-                  Learning Objective (LO) / Tujuan Pembelajaran <span style={{ color: "#ef4444" }}>*</span>
-                </label>
-                <textarea
-                  rows={3}
-                  placeholder="Tuliskan learning objective atau tujuan pembelajaran yang ingin dicapai..."
-                  value={learningOutcome}
-                  onChange={(e) => {
-                    setLearningOutcome(e.target.value);
-                    handleTextareaResize(e);
-                  }}
-                  style={{ minHeight: "80px", width: "100%", padding: "14px 16px", borderRadius: "12px", border: "1px solid #cbd5e1", fontSize: "15px", outline: "none", fontFamily: "inherit", resize: "none" }}
-                  required
-                />
-              </div>
-
-              <div>
-                <label style={{ display: "block", fontSize: "13px", fontWeight: 600, color: "#475569", marginBottom: "8px" }}>
-                  Strategi Pembelajaran <span style={{ color: "#ef4444" }}>*</span>
-                </label>
-                <textarea
-                  rows={4}
-                  placeholder="Deskripsikan strategi untuk mencapai target/tujuan pembelajaran..."
-                  value={kegiatan}
-                  onChange={(e) => {
-                    setKegiatan(e.target.value);
-                    handleTextareaResize(e);
-                  }}
-                  style={{ minHeight: "100px", width: "100%", padding: "14px 16px", borderRadius: "12px", border: "1px solid #cbd5e1", fontSize: "15px", outline: "none", fontFamily: "inherit", resize: "none" }}
-                  required
-                />
-              </div>
-
-              <div>
-                <label style={{ display: "block", fontSize: "13px", fontWeight: 600, color: "#475569", marginBottom: "8px" }}>
-                  Catatan Lainnya (Opsional)
-                </label>
-                <textarea
-                  rows={3}
-                  placeholder="Catatan tambahan, kendala, atau evaluasi..."
-                  value={catatan}
-                  onChange={(e) => {
-                    setCatatan(e.target.value);
-                    handleTextareaResize(e);
-                  }}
-                  style={{ minHeight: "80px", width: "100%", padding: "14px 16px", borderRadius: "12px", border: "1px solid #cbd5e1", fontSize: "15px", outline: "none", fontFamily: "inherit", resize: "none" }}
-                />
-              </div>
-            </div>
-
-            {/* Actions */}
-            <div style={{ display: "flex", gap: "16px", justifyContent: "flex-end", alignItems: "center" }}>
-              {lastSaved && (
-                <span style={{ fontSize: "13px", color: "#64748b", display: "flex", alignItems: "center", gap: "6px", fontWeight: 500 }}>
-                  <Save size={14} /> Draft tersimpan pukul {lastSaved}
-                </span>
-              )}
-              <Link href="/jurnal" style={{ background: "transparent", color: "#475569", padding: "14px 24px", borderRadius: "14px", fontWeight: 600, textDecoration: "none", border: "1px solid #cbd5e1" }}>
-                Batal
-              </Link>
-              <button
-                type="submit"
-                disabled={submitting}
-                style={{
-                  background: "#550000",
-                  color: "white",
-                  padding: "14px 28px",
-                  borderRadius: "14px",
-                  fontWeight: "bold",
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "10px",
-                  border: "none",
-                  cursor: submitting ? "not-allowed" : "pointer",
-                  opacity: submitting ? 0.7 : 1,
-                  fontSize: "15px",
-                  boxShadow: "0 4px 14px rgba(85,0,0,0.25)",
-                  transition: "all 0.2s"
-                }}
-              >
-                {submitting ? (
-                  <>
-                    <Loader2 size={18} style={{ animation: "spin 1s linear infinite" }} />
-                    Menyimpan...
-                  </>
-                ) : (
-                  <>
-                    <BookOpen size={18} />
-                    Simpan Jurnal
-                  </>
                 )}
-              </button>
+              </div>
             </div>
-          </form>
-        )}
-      </div>
+          </div>
+
+          {/* Card 2: Isi Jurnal */}
+          <div className="flex flex-col gap-4 rounded-[12px] border border-[#e7e2da] bg-white p-5 shadow-xs">
+            <div className="flex items-center gap-2 border-b border-[#f0ece4] pb-3.5 text-base font-semibold text-[#1a1a1a]">
+              <FileText size={18} className="text-[#550000]" /> Isi Jurnal
+            </div>
+
+            <div>
+              <label className="mb-1.5 block text-[13px] font-semibold text-[#44403c]">
+                Topik Jurnal <span className="text-rose-600">*</span>
+              </label>
+              <textarea
+                rows={3}
+                placeholder="Tuliskan topik jurnal hari ini..."
+                value={materi}
+                onChange={(e) => {
+                  setMateri(e.target.value);
+                  handleTextareaResize(e);
+                }}
+                required
+                className="min-h-[80px] w-full resize-none rounded-[10px] border border-[#e7e2da] bg-white px-3.5 py-2.5 text-sm text-[#1a1a1a] outline-none focus:border-[#550000]"
+              />
+            </div>
+
+            <div>
+              <label className="mb-1.5 block text-[13px] font-semibold text-[#44403c]">
+                Sub Topik Jurnal <span className="text-rose-600">*</span>
+              </label>
+              <textarea
+                rows={2}
+                placeholder="Tuliskan sub topik yang spesifik..."
+                value={subMateri}
+                onChange={(e) => {
+                  setSubMateri(e.target.value);
+                  handleTextareaResize(e);
+                }}
+                required
+                className="min-h-[60px] w-full resize-none rounded-[10px] border border-[#e7e2da] bg-white px-3.5 py-2.5 text-sm text-[#1a1a1a] outline-none focus:border-[#550000]"
+              />
+            </div>
+
+            <div>
+              <label className="mb-1.5 block text-[13px] font-semibold text-[#44403c]">
+                Learning Objective (LO) / Tujuan Pembelajaran{" "}
+                <span className="text-rose-600">*</span>
+              </label>
+              <textarea
+                rows={3}
+                placeholder="Tuliskan learning objective atau tujuan pembelajaran yang ingin dicapai..."
+                value={learningOutcome}
+                onChange={(e) => {
+                  setLearningOutcome(e.target.value);
+                  handleTextareaResize(e);
+                }}
+                required
+                className="min-h-[80px] w-full resize-none rounded-[10px] border border-[#e7e2da] bg-white px-3.5 py-2.5 text-sm text-[#1a1a1a] outline-none focus:border-[#550000]"
+              />
+            </div>
+
+            <div>
+              <label className="mb-1.5 block text-[13px] font-semibold text-[#44403c]">
+                Strategi Pembelajaran <span className="text-rose-600">*</span>
+              </label>
+              <textarea
+                rows={4}
+                placeholder="Deskripsikan strategi untuk mencapai target/tujuan pembelajaran..."
+                value={kegiatan}
+                onChange={(e) => {
+                  setKegiatan(e.target.value);
+                  handleTextareaResize(e);
+                }}
+                required
+                className="min-h-[100px] w-full resize-none rounded-[10px] border border-[#e7e2da] bg-white px-3.5 py-2.5 text-sm text-[#1a1a1a] outline-none focus:border-[#550000]"
+              />
+            </div>
+
+            <div>
+              <label className="mb-1.5 block text-[13px] font-semibold text-[#44403c]">
+                Catatan Lainnya (Opsional)
+              </label>
+              <textarea
+                rows={3}
+                placeholder="Catatan tambahan, kendala, atau evaluasi..."
+                value={catatan}
+                onChange={(e) => {
+                  setCatatan(e.target.value);
+                  handleTextareaResize(e);
+                }}
+                className="min-h-[80px] w-full resize-none rounded-[10px] border border-[#e7e2da] bg-white px-3.5 py-2.5 text-sm text-[#1a1a1a] outline-none focus:border-[#550000]"
+              />
+            </div>
+          </div>
+
+          {/* Actions */}
+          <div className="flex flex-wrap items-center justify-end gap-3">
+            {lastSaved && (
+              <span className="mr-auto flex items-center gap-1.5 text-xs font-medium text-[#78716c]">
+                <Save size={14} /> Draf tersimpan pukul {lastSaved}
+              </span>
+            )}
+            <Link
+              href="/jurnal"
+              className="rounded-[10px] border border-[#e7e2da] bg-white px-5 py-2.5 text-sm font-semibold text-[#44403c] hover:bg-[#f6f1e8]"
+            >
+              Batal
+            </Link>
+            <button
+              type="submit"
+              disabled={submitting}
+              className="inline-flex cursor-pointer items-center gap-2 rounded-[10px] bg-[#550000] px-6 py-2.5 text-sm font-semibold text-white transition-colors duration-150 hover:bg-[#380000] active:scale-[0.98] disabled:opacity-60"
+            >
+              {submitting ? (
+                <>
+                  <Loader2 size={16} className="animate-spin" />
+                  Menyimpan...
+                </>
+              ) : (
+                <>
+                  <BookOpen size={16} />
+                  Simpan Perubahan
+                </>
+              )}
+            </button>
+          </div>
+        </form>
+      )}
     </div>
   );
 }

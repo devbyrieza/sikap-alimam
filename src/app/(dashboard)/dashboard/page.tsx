@@ -1,11 +1,18 @@
-import { getSession } from "@/lib/auth";
+import { getLiveSession } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { BookMarked, ClipboardCheck, UserCheck, BarChart3, TrendingUp, Clock, Hand, Zap, BookOpen, AlertTriangle, ArrowRight, FileText, Award, Users } from "lucide-react";
+import { BookMarked, CalendarDays, ClipboardCheck, ClipboardList, UserCheck, BarChart3, TrendingUp, Clock, Hand, Zap, BookOpen, AlertTriangle, ArrowRight, FileText, Award, Users } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import Link from "next/link";
 import type { ReactNode } from "react";
 import RealtimeClock from "@/components/RealtimeClock";
 import { syncScheduleFromPDF } from "@/lib/syncScheduleFromPDF";
+import { getLaporanNilaiAccess } from "@/lib/permissions";
+import {
+  getDayNameID,
+  getJakartaTodayISO,
+  getWeekParityOfDate,
+  parseISODateUTC,
+} from "@/lib/jurnalDateUtils";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -79,7 +86,7 @@ function QuickLink({ href, icon: Icon, primary, children }: {
 }
 
 export default async function DashboardPage() {
-  const session = await getSession();
+  const session = await getLiveSession();
   const userRoles = (session?.role || "").toLowerCase().split(",").map(r => r.trim());
   const isWaliSantri = userRoles.includes("wali_santri") || userRoles.includes("orang_tua") || userRoles.includes("wali");
   if (isWaliSantri) { const { redirect } = await import("next/navigation"); redirect("/wali/rapor"); }
@@ -94,9 +101,7 @@ export default async function DashboardPage() {
                             currentUser?.plain_password === "HalaqohAlimam2026!" || 
                             currentUser?.plain_password === "Sikap2026!";
 
-  const today = new Date();
-  const todayStr = new Intl.DateTimeFormat("en-CA", {
-    timeZone: "Asia/Jakarta", year: "numeric", month: "2-digit", day: "2-digit" }).format(today);
+  const todayStr = getJakartaTodayISO();
 
   // Stats paralel
   let totalAsatidz = 0;
@@ -110,11 +115,9 @@ export default async function DashboardPage() {
   let asatidzId: string | null = session?.asatidz_id || null;
 
   try {
-    const todayDate = new Date(todayStr);
-    
-    // Cari nama hari dalam bahasa Indonesia
-    const dayNames = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
-    const currentDayName = dayNames[today.getDay()];
+    const todayDate = parseISODateUTC(todayStr);
+    const currentDayName = getDayNameID(todayStr);
+    const currentWeekParity = getWeekParityOfDate(todayStr);
 
     // Resolved Asatidz ID untuk user yang sedang login
     if (!asatidzId && session?.userId) {
@@ -154,9 +157,13 @@ export default async function DashboardPage() {
         orderBy: { jam_masuk: "desc" }, take: 8 }),
       prisma.presensiSiswa.findMany({
         where: { tanggal: todayDate }, select: { status: true } }),
-      // Query 7: Jadwal Mengajar Guru
+      // Query 7: Jadwal Mengajar Guru (disaring berdasar hari Jakarta & paritas pekan aktif)
       asatidzId ? prisma.jadwalPelajaran.findMany({
-        where: { pegawai_id: asatidzId, hari: currentDayName },
+        where: {
+          pegawai_id: asatidzId,
+          hari: currentDayName,
+          OR: [{ tipe_pekan: "semua" }, { tipe_pekan: currentWeekParity }],
+        },
         include: { mapel: { select: { nama: true } }, kelas: { select: { nama: true } } },
         orderBy: { jam_ke: "asc" }
       }) : Promise.resolve([])
@@ -187,6 +194,27 @@ export default async function DashboardPage() {
   const isGuru = userRolesStr.includes("GURU") || userRolesStr.includes("TEACHER");
   const isPengampu = userRolesStr.includes("MUSYRIF") || userRolesStr.includes("PENGAMPU");
   const isWaliKelas = userRolesStr.includes("WALI_KELAS");
+  const monitorAccess = getLaporanNilaiAccess({
+    user: session
+      ? {
+          id: session.userId,
+          nama: session.nama,
+          email: session.email,
+          role: session.role,
+        }
+      : null,
+    pegawai: asatidzId
+      ? await prisma.pegawai.findUnique({
+          where: { id: asatidzId },
+          select: {
+            id: true,
+            nama_lengkap: true,
+            jabatan: true,
+            kategori_pegawai: true,
+          },
+        })
+      : null,
+  });
 
   let greetingName = "Ust. User";
   if (session?.nama_panggilan) {
@@ -273,7 +301,7 @@ export default async function DashboardPage() {
 
       {/* Jadwal mengajar */}
       {(asatidzId || !isSuperAdmin) && (
-        <SectionCard title="Jadwal mengajar hari ini" icon={Clock} iconClass="text-primary">
+        <SectionCard title="Jadwal mengajar hari ini" icon={Clock} iconClass="text-primary" href="/guru/jadwal" linkLabel="Jadwal pekan ini">
           {jadwalHariIni.length === 0 ? (
             <Empty>Alhamdulillah, tidak ada jadwal mengajar untuk hari ini.</Empty>
           ) : (
@@ -304,9 +332,13 @@ export default async function DashboardPage() {
           {(isGuru || isSuperAdmin) && (
             <>
               <QuickLink href="/jurnal/tambah" icon={BookMarked} primary>Tambah jurnal</QuickLink>
+              <QuickLink href="/guru/jadwal" icon={CalendarDays}>Jadwal mengajar</QuickLink>
               <QuickLink href="/presensi/santri" icon={ClipboardCheck}>Presensi kelas</QuickLink>
               <QuickLink href="/nilai" icon={BarChart3}>Input nilai</QuickLink>
             </>
+          )}
+          {monitorAccess.canAccess && (
+            <QuickLink href="/jurnal/monitoring" icon={ClipboardList}>Pantau jurnal guru</QuickLink>
           )}
           {(isPengampu || isSuperAdmin) && (
             <>

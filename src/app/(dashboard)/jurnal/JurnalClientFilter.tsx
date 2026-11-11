@@ -12,8 +12,14 @@ import {
   LayoutGrid,
   Table as TableIcon,
   ChevronRight,
-  Sparkles } from "lucide-react";
+  Sparkles,
+} from "lucide-react";
 import { getJenjangFromKelas } from "@/lib/kelas";
+import {
+  DAY_SHORT_ID,
+  MONTH_SHORT_ID,
+  getDayIndexUTC,
+} from "@/lib/jurnalDateUtils";
 import JurnalDetailModal from "@/components/JurnalDetailModal";
 
 export type KelasObject = {
@@ -36,20 +42,37 @@ export type JurnalRow = {
   catatan: string;
 };
 
+function normalizeKelasDisplay(rawName: string, rawJenjang?: string | null): string {
+  const clean = (rawName || "").trim();
+  const upper = clean.toUpperCase();
+  const jenjang = getJenjangFromKelas(clean, rawJenjang);
+  if (
+    jenjang === "IL" ||
+    upper === "IL" ||
+    upper.includes("I'DAD") ||
+    upper.includes("IDAD") ||
+    upper.includes("LUGHOW")
+  ) {
+    return "IL";
+  }
+  if (/^(7|8|9)$/.test(clean)) return `${clean} MTs`;
+  if (/^(10|11|12)$/.test(clean)) return `${clean} MA`;
+  return clean || "-";
+}
+
 function formatTanggal(iso: string) {
-  const d = new Date(iso + "T00:00:00");
-  return d.toLocaleDateString("id-ID", {
-    weekday: "short",
-    day: "numeric",
-    month: "short",
-    year: "numeric" });
+  if (!iso || !/^\d{4}-\d{2}-\d{2}$/.test(iso)) return iso || "-";
+  const [y, m, d] = iso.split("-").map(Number);
+  const dow = getDayIndexUTC(iso);
+  return `${DAY_SHORT_ID[dow]}, ${d} ${MONTH_SHORT_ID[m - 1] || ""} ${y}`;
 }
 
 export default function JurnalClientFilter({
   data,
   kelasList = [],
   asatidzList = [],
-  isAdminSuper = false }: {
+  isAdminSuper = false,
+}: {
   data: JurnalRow[];
   kelasList?: (string | KelasObject)[];
   asatidzList?: string[];
@@ -61,100 +84,78 @@ export default function JurnalClientFilter({
   const [filterAsatidz, setFilterAsatidz] = useState("");
   const [viewMode, setViewMode] = useState<"card" | "table">("card");
 
-  // Modal State for viewing complete journal detail
   const [selectedJurnal, setSelectedJurnal] = useState<JurnalRow | null>(null);
 
-  // Normalisasi kelasList menjadi objek terstandar (hanya kelas aktif: 7 MTs dan IL)
   const normalizedKelasList = useMemo<KelasObject[]>(() => {
     const list: KelasObject[] = [];
     const seen = new Set<string>();
 
     if (kelasList.length > 0) {
       for (const k of kelasList) {
-        let name = typeof k === "string" ? k.trim() : k.nama.trim();
-        if (name === "I'dad Lughowy" || name === "I'dad" || name === "Idad Lughowy") {
-          name = "IL";
-        }
-        // Jangan tampilkan placeholder yang belum berjalan
-        if (["8 MTs", "9 MTs", "10 MA", "11 MA", "12 MA"].includes(name)) {
-          continue;
-        }
+        const rawNama = typeof k === "string" ? k : k.nama;
+        const rawJenjang = typeof k === "string" ? null : k.jenjang;
+        const name = normalizeKelasDisplay(rawNama, rawJenjang);
         if (!seen.has(name)) {
           seen.add(name);
           list.push({
             id: typeof k === "string" ? name : k.id,
             nama: name,
-            jenjang: typeof k === "string" ? getJenjangFromKelas(name) : (k.jenjang || getJenjangFromKelas(name, k.jenjang)) });
+            jenjang: getJenjangFromKelas(name, rawJenjang),
+          });
         }
       }
     } else {
-      // Fallback dari data jika tidak ada props
-      const set = new Set(data.map((j) => {
-        let n = j.kelas.trim();
-        if (n === "I'dad Lughowy" || n === "I'dad") n = "IL";
-        return n;
-      }));
-      set.forEach((nama) => {
-        if (!["8 MTs", "9 MTs", "10 MA", "11 MA", "12 MA"].includes(nama)) {
+      for (const j of data) {
+        const name = normalizeKelasDisplay(j.kelas, j.kelas_jenjang);
+        if (!seen.has(name)) {
+          seen.add(name);
           list.push({
-            nama,
-            jenjang: getJenjangFromKelas(nama) });
+            nama: name,
+            jenjang: getJenjangFromKelas(name, j.kelas_jenjang),
+          });
         }
-      });
+      }
     }
 
     return list;
   }, [kelasList, data]);
 
-  // Daftar Kelas yang disaring HANYA jika Jenjang sudah dipilih
   const availableClasses = useMemo(() => {
-    if (!filterJenjang) {
-      return [];
-    }
+    if (!filterJenjang) return [];
     return normalizedKelasList.filter((k) => {
       const jenjang = getJenjangFromKelas(k.nama, k.jenjang);
       return jenjang === filterJenjang;
     });
   }, [normalizedKelasList, filterJenjang]);
 
-  // Saat Jenjang berganti, reset pilihan kelas
   const handleJenjangChange = (newJenjang: string) => {
     setFilterJenjang(newJenjang);
     setFilterKelas("");
   };
 
-  // Normalisasi Daftar Guru dari SIMPEG + Jurnal
   const finalAsatidzList = useMemo(() => {
     const set = new Set<string>();
-    asatidzList.forEach((a) => {
+    for (const a of asatidzList) {
       if (a && a.trim()) set.add(a.trim());
-    });
-    data.forEach((j) => {
+    }
+    for (const j of data) {
       if (j.asatidz && j.asatidz.trim() && j.asatidz !== "-") {
         set.add(j.asatidz.trim());
       }
-    });
+    }
     return Array.from(set).sort((a, b) => a.localeCompare(b, "id"));
   }, [asatidzList, data]);
 
-  // Saring data jurnal
   const filtered = useMemo(() => {
     return data.filter((j) => {
-      // 1. Filter Tanggal
       if (filterTanggal && j.tanggal !== filterTanggal) return false;
-
-      // 2. Filter Jenjang
+      const canonicalKelas = normalizeKelasDisplay(j.kelas, j.kelas_jenjang);
       if (filterJenjang) {
-        const itemJenjang = getJenjangFromKelas(j.kelas, j.kelas_jenjang);
+        const itemJenjang = getJenjangFromKelas(canonicalKelas, j.kelas_jenjang);
         if (itemJenjang !== filterJenjang) return false;
       }
-
-      // 3. Filter Kelas
-      if (filterKelas && j.kelas !== filterKelas) return false;
-
-      // 4. Filter Guru / Asatidz
+      if (filterKelas && canonicalKelas !== filterKelas) return false;
       if (filterAsatidz && j.asatidz !== filterAsatidz) return false;
-
       return true;
     });
   }, [data, filterTanggal, filterJenjang, filterKelas, filterAsatidz]);
@@ -166,54 +167,34 @@ export default function JurnalClientFilter({
     setFilterAsatidz("");
   };
 
-  const isFiltered = Boolean(filterTanggal || filterJenjang || filterKelas || filterAsatidz);
+  const isFiltered = Boolean(
+    filterTanggal || filterJenjang || filterKelas || filterAsatidz,
+  );
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+    <div className="flex flex-col gap-4">
       {/* Filter Bar */}
-      <div
-        style={{
-          display: "flex",
-          gap: 14,
-          flexWrap: "wrap",
-          alignItems: "flex-end",
-          padding: "20px 24px",
-          borderRadius: 20,
-          background: "#ffffff",
-          border: "1px solid #ebdcc3",
-          boxShadow: "0 2px 12px rgba(85,0,0,0.03)" }}
-      >
-        {/* 1. Filter Tanggal */}
-        <div style={{ minWidth: 150, flex: "1 1 140px", display: "flex", flexDirection: "column", gap: 6 }}>
-          <label style={{ fontWeight: 700, fontSize: 13, display: "flex", alignItems: "center", gap: 6, color: "#550000" }}>
-            <Calendar size={14} color="#550000" /> Filter Tanggal
+      <div className="flex flex-wrap items-end gap-3.5 rounded-[12px] border border-[#e7e2da] bg-white p-4 shadow-xs md:p-5">
+        <div className="min-w-[150px] flex-1 flex flex-col gap-1.5">
+          <label className="flex items-center gap-1.5 text-xs font-semibold text-[#550000]">
+            <Calendar size={14} /> Filter Tanggal
           </label>
           <input
             type="date"
-            className="form-control"
             value={filterTanggal}
             onChange={(e) => setFilterTanggal(e.target.value)}
-            style={{ borderRadius: 12, border: "1px solid #ebdcc3", padding: "9px 12px", background: "#fdf8f0", fontSize: 13, outline: "none" }}
+            className="w-full rounded-[10px] border border-[#e7e2da] bg-[#fcfaf8] px-3 py-2 text-xs text-[#1a1a1a] outline-none focus:border-[#550000] focus:bg-white"
           />
         </div>
 
-        {/* 2. Filter Jenjang */}
-        <div style={{ minWidth: 160, flex: "1 1 150px", display: "flex", flexDirection: "column", gap: 6 }}>
-          <label style={{ fontWeight: 700, fontSize: 13, display: "flex", alignItems: "center", gap: 6, color: "#550000" }}>
-            <GraduationCap size={14} color="#550000" /> Filter Jenjang
+        <div className="min-w-[160px] flex-1 flex flex-col gap-1.5">
+          <label className="flex items-center gap-1.5 text-xs font-semibold text-[#550000]">
+            <GraduationCap size={14} /> Filter Jenjang
           </label>
           <select
-            className="form-control"
             value={filterJenjang}
             onChange={(e) => handleJenjangChange(e.target.value)}
-            style={{
-              borderRadius: 12,
-              border: "1px solid #ebdcc3",
-              padding: "9px 12px",
-              background: "#fdf8f0",
-              fontSize: 13,
-              fontWeight: filterJenjang ? 700 : 500,
-              outline: "none" }}
+            className="w-full rounded-[10px] border border-[#e7e2da] bg-[#fcfaf8] px-3 py-2 text-xs font-medium text-[#1a1a1a] outline-none focus:border-[#550000] focus:bg-white"
           >
             <option value="">Semua Jenjang</option>
             <option value="MTs">MTs (Madrasah Tsanawiyah)</option>
@@ -222,30 +203,20 @@ export default function JurnalClientFilter({
           </select>
         </div>
 
-        {/* 3. Filter Kelas */}
-        <div style={{ minWidth: 160, flex: "1 1 150px", display: "flex", flexDirection: "column", gap: 6 }}>
-          <label style={{ fontWeight: 700, fontSize: 13, display: "flex", alignItems: "center", gap: 6, color: "#550000" }}>
-            <BookOpen size={14} color="#550000" /> Filter Kelas
+        <div className="min-w-[160px] flex-1 flex flex-col gap-1.5">
+          <label className="flex items-center gap-1.5 text-xs font-semibold text-[#550000]">
+            <BookOpen size={14} /> Filter Kelas
           </label>
           <select
-            className="form-control"
             value={filterKelas}
             onChange={(e) => setFilterKelas(e.target.value)}
-            disabled={!filterJenjang || (availableClasses.length === 0 && filterJenjang === "MA")}
-            style={{
-              borderRadius: 12,
-              border: "1px solid #ebdcc3",
-              padding: "9px 12px",
-              background: !filterJenjang ? "#faf8f5" : "#fdf8f0",
-              cursor: !filterJenjang ? "not-allowed" : "pointer",
-              color: !filterJenjang ? "#a8a29e" : "#1a1a1a",
-              fontSize: 13,
-              outline: "none" }}
+            disabled={!filterJenjang || availableClasses.length === 0}
+            className="w-full rounded-[10px] border border-[#e7e2da] bg-[#fcfaf8] px-3 py-2 text-xs text-[#1a1a1a] outline-none focus:border-[#550000] disabled:cursor-not-allowed disabled:bg-slate-100 disabled:text-[#78716c]"
           >
             {!filterJenjang ? (
               <option value="">— Pilih Jenjang Dahulu —</option>
-            ) : availableClasses.length === 0 && filterJenjang === "MA" ? (
-              <option value="">(Belum ada kelas aktif MA)</option>
+            ) : availableClasses.length === 0 ? (
+              <option value="">(Belum ada kelas aktif {filterJenjang})</option>
             ) : (
               <>
                 <option value="">Semua Kelas di {filterJenjang}</option>
@@ -259,16 +230,14 @@ export default function JurnalClientFilter({
           </select>
         </div>
 
-        {/* 4. Filter Guru / Asatidz */}
-        <div style={{ minWidth: 180, flex: "1 1 180px", display: "flex", flexDirection: "column", gap: 6 }}>
-          <label style={{ fontWeight: 700, fontSize: 13, display: "flex", alignItems: "center", gap: 6, color: "#550000" }}>
-            <User size={14} color="#550000" /> Filter Guru
+        <div className="min-w-[180px] flex-1 flex flex-col gap-1.5">
+          <label className="flex items-center gap-1.5 text-xs font-semibold text-[#550000]">
+            <User size={14} /> Filter Guru
           </label>
           <select
-            className="form-control"
             value={filterAsatidz}
             onChange={(e) => setFilterAsatidz(e.target.value)}
-            style={{ borderRadius: 12, border: "1px solid #ebdcc3", padding: "9px 12px", background: "#fdf8f0", fontSize: 13, outline: "none" }}
+            className="w-full rounded-[10px] border border-[#e7e2da] bg-[#fcfaf8] px-3 py-2 text-xs text-[#1a1a1a] outline-none focus:border-[#550000] focus:bg-white"
           >
             <option value="">Semua Guru</option>
             {finalAsatidzList.map((a) => (
@@ -279,245 +248,122 @@ export default function JurnalClientFilter({
           </select>
         </div>
 
-        {/* Reset Button */}
         {isFiltered && (
           <button
             type="button"
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: 6,
-              color: "#b91c1c",
-              background: "#fef2f2",
-              border: "1px solid #fecaca",
-              padding: "9px 14px",
-              borderRadius: 12,
-              fontWeight: 700,
-              fontSize: 13,
-              cursor: "pointer" }}
             onClick={handleReset}
+            className="inline-flex cursor-pointer items-center gap-1.5 rounded-[10px] border border-rose-200 bg-rose-50 px-3.5 py-2 text-xs font-semibold text-rose-700 hover:bg-rose-100"
           >
-            <RotateCcw size={14} />
+            <RotateCcw size={13} />
             Reset
           </button>
         )}
 
-        <div
-          style={{
-            marginLeft: "auto",
-            fontSize: 13,
-            fontWeight: 700,
-            color: "#550000",
-            background: "#fdf5f5",
-            padding: "6px 14px",
-            borderRadius: 20,
-            border: "1px solid #ebdcc3",
-            alignSelf: "center" }}
-        >
+        <div className="ml-auto rounded-full border border-[#e7e2da] bg-[#fdf5f5] px-3.5 py-1.5 text-xs font-bold tabular-nums text-[#550000]">
           {filtered.length} Jurnal
         </div>
       </div>
 
-      {/* Control Bar: View Mode Switcher (Visible on mobile & desktop) */}
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          padding: "10px 16px",
-          background: "#ffffff",
-          borderRadius: 16,
-          border: "1px solid #ebdcc3",
-          flexWrap: "wrap",
-          gap: 10 }}
-      >
-        <div style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 13, fontWeight: 700, color: "#550000" }}>
-          <Sparkles size={16} color="#ddc192" />
+      {/* Control Bar: View Mode Switcher */}
+      <div className="flex flex-wrap items-center justify-between gap-2.5 rounded-[12px] border border-[#e7e2da] bg-white px-4 py-2.5 shadow-xs">
+        <div className="flex items-center gap-2 text-xs font-semibold text-[#550000]">
+          <Sparkles size={15} className="text-[#b89758]" />
           <span>Tampilan Jurnal</span>
         </div>
 
-        <div style={{ display: "flex", gap: 6, background: "#fdf8f0", padding: 4, borderRadius: 12, border: "1px solid #ebdcc3" }}>
+        <div className="flex gap-1.5 rounded-[10px] border border-[#e7e2da] bg-[#faf6ee] p-1">
           <button
             type="button"
             onClick={() => setViewMode("card")}
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: 6,
-              padding: "6px 14px",
-              borderRadius: 8,
-              fontSize: 12,
-              fontWeight: 700,
-              border: "none",
-              cursor: "pointer",
-              background: viewMode === "card" ? "#550000" : "transparent",
-              color: viewMode === "card" ? "#ffffff" : "#64748b",
-              transition: "all 0.2s" }}
+            className={`inline-flex cursor-pointer items-center gap-1.5 rounded-[8px] px-3 py-1.5 text-xs font-semibold transition-colors duration-150 ${
+              viewMode === "card"
+                ? "bg-[#550000] text-white"
+                : "text-[#44403c] hover:bg-white"
+            }`}
           >
-            <LayoutGrid size={14} />
-            <span>Kartu Modern</span>
+            <LayoutGrid size={13} />
+            <span>Kartu</span>
           </button>
 
           <button
             type="button"
             onClick={() => setViewMode("table")}
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: 6,
-              padding: "6px 14px",
-              borderRadius: 8,
-              fontSize: 12,
-              fontWeight: 700,
-              border: "none",
-              cursor: "pointer",
-              background: viewMode === "table" ? "#550000" : "transparent",
-              color: viewMode === "table" ? "#ffffff" : "#64748b",
-              transition: "all 0.2s" }}
+            className={`inline-flex cursor-pointer items-center gap-1.5 rounded-[8px] px-3 py-1.5 text-xs font-semibold transition-colors duration-150 ${
+              viewMode === "table"
+                ? "bg-[#550000] text-white"
+                : "text-[#44403c] hover:bg-white"
+            }`}
           >
-            <TableIcon size={14} />
-            <span>Tabel Lengkap</span>
+            <TableIcon size={13} />
+            <span>Tabel</span>
           </button>
         </div>
       </div>
 
-      {/* ── EMPTY STATE ── */}
       {filtered.length === 0 ? (
-        <div
-          style={{
-            background: "#ffffff",
-            borderRadius: 20,
-            border: "1px solid #ebdcc3",
-            textAlign: "center",
-            padding: "54px 20px" }}
-        >
-          <BookOpen
-            size={44}
-            style={{ margin: "0 auto 12px", color: "#ddc192" }}
-          />
-          <div style={{ fontWeight: 800, fontSize: 16, color: "#1a1a1a" }}>
+        <div className="rounded-[12px] border border-[#e7e2da] bg-white px-5 py-14 text-center shadow-xs">
+          <BookOpen size={40} className="mx-auto mb-3 text-[#ddc192]" />
+          <div className="text-base font-bold text-[#1a1a1a]">
             Belum ada jurnal yang sesuai dengan filter
           </div>
-          <div style={{ fontSize: 13, marginTop: 4, color: "#64748b" }}>
+          <div className="mt-1 text-xs text-[#44403c]">
             Coba ubah filter tanggal, jenjang, kelas, atau guru pengampu di atas.
           </div>
         </div>
       ) : viewMode === "card" ? (
-        /* ── CARD VIEW (Ultra Responsive for Mobile & Desktop) ── */
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))",
-            gap: 16 }}
-        >
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           {filtered.map((j) => {
             const jenjang = getJenjangFromKelas(j.kelas, j.kelas_jenjang);
 
             return (
               <div
                 key={j.id}
-                style={{
-                  background: "#ffffff",
-                  borderRadius: 20,
-                  border: "1px solid #ebdcc3",
-                  padding: "18px 20px",
-                  boxShadow: "0 4px 16px rgba(85,0,0,0.03)",
-                  display: "flex",
-                  flexDirection: "column",
-                  justifyContent: "space-between",
-                  gap: 14,
-                  transition: "transform 0.2s, box-shadow 0.2s" }}
+                className="flex flex-col justify-between gap-3.5 rounded-[12px] border border-[#e7e2da] bg-white p-4 shadow-xs transition-colors duration-150 hover:border-[#b89758]"
               >
-                {/* Header Card: Tanggal, Jenjang & Kelas */}
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 10 }}>
-                  <div>
-                    <div style={{ display: "inline-flex", alignItems: "center", gap: 6, background: "#fdf5f5", color: "#550000", padding: "4px 10px", borderRadius: 8, fontSize: 12, fontWeight: 800, border: "1px solid #fae4e4" }}>
-                      <Calendar size={12} color="#550000" />
-                      {formatTanggal(j.tanggal)}
-                    </div>
+                <div className="flex items-start justify-between gap-2">
+                  <div className="inline-flex items-center gap-1.5 rounded-[8px] border border-[#e7e2da] bg-[#fdf5f5] px-2.5 py-1 text-xs font-semibold text-[#550000]">
+                    <Calendar size={12} />
+                    {formatTanggal(j.tanggal)}
                   </div>
 
-                  <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                    <span
-                      style={{
-                        fontSize: 11,
-                        fontWeight: 800,
-                        padding: "3px 8px",
-                        borderRadius: 8,
-                        background: jenjang === "MTs" ? "#fdf5f5" : "#fdf8f0",
-                        color: jenjang === "MTs" ? "#550000" : "#b89758",
-                        border: "1px solid #ebdcc3" }}
-                    >
+                  <div className="flex items-center gap-1.5">
+                    <span className="rounded-[8px] border border-[#e7e2da] bg-[#faf6ee] px-2 py-0.5 text-[11px] font-semibold text-[#44403c]">
                       {jenjang}
                     </span>
-                    <span
-                      style={{
-                        fontSize: 11,
-                        fontWeight: 800,
-                        padding: "3px 8px",
-                        borderRadius: 8,
-                        background: "#550000",
-                        color: "#ffffff" }}
-                    >
+                    <span className="rounded-[8px] bg-[#550000] px-2 py-0.5 text-[11px] font-semibold text-white">
                       {j.kelas}
                     </span>
                   </div>
                 </div>
 
-                {/* Mapel & Guru */}
                 <div>
-                  <h4 style={{ margin: "0 0 4px 0", fontSize: 16, fontWeight: 800, color: "#1a1a1a", lineHeight: 1.3 }}>
+                  <h4 className="text-base font-bold leading-snug text-[#1a1a1a]">
                     {j.mapel}
                   </h4>
-                  <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 13, color: "#64748b", fontWeight: 600 }}>
-                    <User size={14} color="#b89758" />
+                  <div className="mt-1 flex items-center gap-1.5 text-xs font-medium text-[#44403c]">
+                    <User size={13} className="text-[#b89758]" />
                     <span>{j.asatidz}</span>
                   </div>
                 </div>
 
-                {/* Materi Snippet */}
-                <div
-                  style={{
-                    background: "#fdf8f0",
-                    border: "1px solid #f6ecd9",
-                    padding: "10px 12px",
-                    borderRadius: 12,
-                    fontSize: 12,
-                    color: "#475569",
-                    lineHeight: 1.4 }}
-                >
-                  <div style={{ fontWeight: 700, color: "#550000", marginBottom: 2 }}>Materi:</div>
-                  <div style={{ overflow: "hidden", textOverflow: "ellipsis", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical" }}>
-                    {j.materi}
-                  </div>
+                <div className="rounded-[10px] border border-[#f0ece4] bg-[#fcfaf8] p-3 text-xs text-[#44403c]">
+                  <div className="mb-0.5 font-semibold text-[#550000]">Materi:</div>
+                  <div className="line-clamp-2">{j.materi}</div>
                 </div>
 
-                {/* Footer Card: Jam & Detail Button */}
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", paddingTop: 8, borderTop: "1px solid #f5ede1" }}>
-                  <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 12, fontWeight: 700, color: "#550000" }}>
-                    <Clock size={14} color="#b89758" />
+                <div className="flex items-center justify-between border-t border-[#f0ece4] pt-2.5">
+                  <div className="flex items-center gap-1.5 text-xs font-semibold text-[#550000]">
+                    <Clock size={13} className="text-[#b89758]" />
                     <span>{j.jam_ke !== "-" ? `Jam ke-${j.jam_ke}` : "Reguler"}</span>
                   </div>
 
                   <button
                     type="button"
                     onClick={() => setSelectedJurnal(j)}
-                    style={{
-                      display: "inline-flex",
-                      alignItems: "center",
-                      gap: 6,
-                      background: "#550000",
-                      color: "#ffffff",
-                      border: "none",
-                      padding: "8px 16px",
-                      borderRadius: 10,
-                      fontSize: 12,
-                      fontWeight: 800,
-                      cursor: "pointer",
-                      boxShadow: "0 2px 8px rgba(85,0,0,0.15)" }}
+                    className="inline-flex cursor-pointer items-center gap-1.5 rounded-[10px] bg-[#550000] px-3.5 py-1.5 text-xs font-semibold text-white transition-colors duration-150 hover:bg-[#380000]"
                   >
-                    <Eye size={13} color="#ddc192" />
-                    <span>Lihat Detail</span>
+                    <Eye size={13} className="text-[#ddc192]" />
+                    <span>Detail</span>
                     <ChevronRight size={13} />
                   </button>
                 </div>
@@ -526,149 +372,68 @@ export default function JurnalClientFilter({
           })}
         </div>
       ) : (
-        /* ── TABLE VIEW (Smooth Horizontally Scrollable) ── */
-        <div
-          style={{
-            background: "#ffffff",
-            borderRadius: 20,
-            border: "1px solid #ebdcc3",
-            boxShadow: "0 4px 16px rgba(85,0,0,0.03)",
-            overflow: "hidden" }}
-        >
-          {/* Touch-Friendly Table Wrapper */}
-          <div
-            style={{
-              width: "100%",
-              overflowX: "auto",
-              WebkitOverflowScrolling: "touch",
-              touchAction: "pan-x pan-y" }}
-          >
-            <div className="w-full overflow-x-auto">
-<table style={{ width: "100%", minWidth: 780, borderCollapse: "collapse", fontSize: 13 }}>
+        <div className="overflow-hidden rounded-[12px] border border-[#e7e2da] bg-white shadow-xs">
+          <div className="w-full overflow-x-auto">
+            <table className="w-full min-w-[780px] border-collapse text-left text-[13px]">
               <thead>
-                <tr style={{ background: "#fdf8f0", borderBottom: "1px solid #ebdcc3" }}>
-                  <th style={{ padding: "14px 18px", fontWeight: 800, fontSize: 12, textTransform: "uppercase", letterSpacing: "0.04em", color: "#550000", textAlign: "left", width: 140 }}>
-                    Tanggal
+                <tr className="border-b border-[#e7e2da] bg-[#faf6ee] text-[#1a1a1a]">
+                  <th className="px-4 py-2.5 font-semibold">Tanggal</th>
+                  <th className="px-4 py-2.5 font-semibold">Guru Pengampu</th>
+                  <th className="px-4 py-2.5 font-semibold">Mata Pelajaran</th>
+                  <th className="px-4 py-2.5 text-center font-semibold">
+                    Jenjang &amp; Kelas
                   </th>
-                  <th style={{ padding: "14px 16px", fontWeight: 800, fontSize: 12, textTransform: "uppercase", letterSpacing: "0.04em", color: "#550000", textAlign: "left", minWidth: 170 }}>
-                    Guru Pengampu
-                  </th>
-                  <th style={{ padding: "14px 16px", fontWeight: 800, fontSize: 12, textTransform: "uppercase", letterSpacing: "0.04em", color: "#550000", textAlign: "left", minWidth: 160 }}>
-                    Mata Pelajaran
-                  </th>
-                  <th style={{ padding: "14px 16px", fontWeight: 800, fontSize: 12, textTransform: "uppercase", letterSpacing: "0.04em", color: "#550000", textAlign: "center", minWidth: 130 }}>
-                    Jenjang & Kelas
-                  </th>
-                  <th style={{ padding: "14px 16px", fontWeight: 800, fontSize: 12, textTransform: "uppercase", letterSpacing: "0.04em", color: "#550000", textAlign: "center", width: 110 }}>
-                    Jam
-                  </th>
-                  <th style={{ padding: "14px 16px", fontWeight: 800, fontSize: 12, textTransform: "uppercase", letterSpacing: "0.04em", color: "#550000", textAlign: "left", minWidth: 200 }}>
-                    Materi
-                  </th>
-                  <th style={{ padding: "14px 16px", fontWeight: 800, fontSize: 12, textTransform: "uppercase", letterSpacing: "0.04em", color: "#550000", textAlign: "center", width: 110 }}>
-                    Aksi
-                  </th>
+                  <th className="px-4 py-2.5 text-center font-semibold">Jam</th>
+                  <th className="px-4 py-2.5 font-semibold">Materi</th>
+                  <th className="px-4 py-2.5 text-center font-semibold">Aksi</th>
                 </tr>
               </thead>
               <tbody>
-                {filtered.map((j, idx) => {
+                {filtered.map((j) => {
                   const jenjang = getJenjangFromKelas(j.kelas, j.kelas_jenjang);
-                  const bgRow = idx % 2 === 0 ? "#ffffff" : "#fdfcf9";
 
                   return (
                     <tr
                       key={j.id}
-                      style={{
-                        background: bgRow,
-                        borderBottom: "1px solid #f5ede1",
-                        transition: "background 0.2s" }}
+                      className="border-b border-[#f0ece4] transition-colors duration-150 hover:bg-[#faf6ee]"
                     >
-                      {/* Tanggal */}
-                      <td style={{ padding: "14px 18px", fontWeight: 800, color: "#550000", fontSize: 13 }}>
+                      <td className="px-4 py-2.5 whitespace-nowrap font-semibold text-[#550000]">
                         {formatTanggal(j.tanggal)}
                       </td>
-
-                      {/* Guru Pengampu */}
-                      <td style={{ padding: "14px 16px", fontWeight: 700, color: "#1a1a1a", fontSize: 13 }}>
+                      <td className="px-4 py-2.5 font-semibold text-[#1a1a1a]">
                         {j.asatidz}
                       </td>
-
-                      {/* Mata Pelajaran */}
-                      <td style={{ padding: "14px 16px", fontWeight: 700, color: "#1a1a1a" }}>
+                      <td className="px-4 py-2.5 font-medium text-[#1a1a1a]">
                         {j.mapel}
                       </td>
-
-                      {/* Jenjang & Kelas */}
-                      <td style={{ padding: "14px 16px", textAlign: "center" }}>
-                        <div style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
-                          <span
-                            style={{
-                              fontSize: 11,
-                              fontWeight: 800,
-                              padding: "2px 7px",
-                              borderRadius: 6,
-                              background: jenjang === "MTs" ? "#fdf5f5" : "#fdf8f0",
-                              color: jenjang === "MTs" ? "#550000" : "#b89758",
-                              border: "1px solid #ebdcc3" }}
-                          >
+                      <td className="px-4 py-2.5 text-center whitespace-nowrap">
+                        <div className="inline-flex items-center gap-1.5">
+                          <span className="rounded-[8px] border border-[#e7e2da] bg-[#faf6ee] px-2 py-0.5 text-[11px] font-semibold text-[#44403c]">
                             {jenjang}
                           </span>
-                          <span
-                            style={{
-                              fontSize: 11,
-                              fontWeight: 800,
-                              padding: "2px 7px",
-                              borderRadius: 6,
-                              background: "#550000",
-                              color: "#ffffff" }}
-                          >
+                          <span className="rounded-[8px] bg-[#550000] px-2 py-0.5 text-[11px] font-semibold text-white">
                             {j.kelas}
                           </span>
                         </div>
                       </td>
-
-                      {/* Jam */}
-                      <td style={{ padding: "14px 16px", textAlign: "center" }}>
-                        <span style={{ fontSize: 11, fontWeight: 700, color: "#550000", background: "#fdf5f5", padding: "3px 8px", borderRadius: 6, border: "1px solid #ebdcc3" }}>
+                      <td className="px-4 py-2.5 text-center whitespace-nowrap">
+                        <span className="rounded-[8px] border border-[#e7e2da] bg-[#fdf5f5] px-2 py-0.5 text-xs font-semibold tabular-nums text-[#550000]">
                           {j.jam_ke}
                         </span>
                       </td>
-
-                      {/* Materi */}
                       <td
-                        style={{
-                          padding: "14px 16px",
-                          maxWidth: 220,
-                          overflow: "hidden",
-                          textOverflow: "ellipsis",
-                          whiteSpace: "nowrap",
-                          color: "#475569",
-                          fontSize: 13 }}
+                        className="max-w-[240px] truncate px-4 py-2.5 text-[#44403c]"
                         title={j.materi}
                       >
                         {j.materi}
                       </td>
-
-                      {/* Aksi */}
-                      <td style={{ padding: "14px 16px", textAlign: "center" }}>
+                      <td className="px-4 py-2.5 text-center whitespace-nowrap">
                         <button
                           type="button"
                           onClick={() => setSelectedJurnal(j)}
-                          style={{
-                            display: "inline-flex",
-                            alignItems: "center",
-                            gap: 5,
-                            padding: "6px 12px",
-                            borderRadius: 10,
-                            fontWeight: 800,
-                            fontSize: 12,
-                            background: "#550000",
-                            color: "#ffffff",
-                            border: "none",
-                            cursor: "pointer",
-                            boxShadow: "0 2px 6px rgba(85,0,0,0.12)" }}
+                          className="inline-flex cursor-pointer items-center gap-1 rounded-[10px] bg-[#550000] px-3 py-1.5 text-xs font-semibold text-white hover:bg-[#380000]"
                         >
-                          <Eye size={12} color="#ddc192" />
+                          <Eye size={12} className="text-[#ddc192]" />
                           <span>Detail</span>
                         </button>
                       </td>
@@ -677,7 +442,6 @@ export default function JurnalClientFilter({
                 })}
               </tbody>
             </table>
-</div>
           </div>
         </div>
       )}
