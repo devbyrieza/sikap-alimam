@@ -2,21 +2,16 @@
  * Standarisasi Validasi Format Username & Password
  * Sesuai Aturan Arsitektur Al-Andalus / Al-Imam (.agents/AGENTS.md)
  */
+import {
+  validateUsernameFormat as validateStandardUsername,
+  generateProfessionalUsername,
+  normalizeUsernameInput,
+} from "./username";
 
-export function validateUsernameFormat(username: string): { isValid: boolean; error?: string } {
-  if (!username) return { isValid: true };
+export { generateProfessionalUsername, normalizeUsernameInput };
 
-  const clean = username.trim().toLowerCase();
-
-  if (clean.length < 4 || clean.length > 30) {
-    return { isValid: false, error: "Username harus berjumlah 4 hingga 30 karakter" };
-  }
-
-  if (!/^[a-z0-9._]+$/.test(clean)) {
-    return { isValid: false, error: "Username hanya boleh huruf kecil (a-z), angka (0-9), titik (.), atau underscore (_)" };
-  }
-
-  return { isValid: true };
+export function validateUsernameFormat(username: string): { isValid: boolean; error?: string; normalized?: string } {
+  return validateStandardUsername(username);
 }
 
 export function validateNewPasswordFormat(password: string): { isValid: boolean; error?: string } {
