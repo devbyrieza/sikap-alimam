@@ -1,5 +1,6 @@
 import { getLiveSession } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import TeacherCheckInButton from "@/components/TeacherCheckInButton";
 import { BookMarked, CalendarDays, ClipboardCheck, ClipboardList, UserCheck, BarChart3, TrendingUp, Clock, Hand, Zap, BookOpen, AlertTriangle, ArrowRight, FileText, Award, Users } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import Link from "next/link";
@@ -102,6 +103,7 @@ export default async function DashboardPage() {
                             currentUser?.plain_password === "Sikap2026!";
 
   const todayStr = getJakartaTodayISO();
+  const todayDate = parseISODateUTC(todayStr);
 
   // Stats paralel
   let totalAsatidz = 0;
@@ -115,7 +117,6 @@ export default async function DashboardPage() {
   let asatidzId: string | null = session?.asatidz_id || null;
 
   try {
-    const todayDate = parseISODateUTC(todayStr);
     const currentDayName = getDayNameID(todayStr);
     const currentWeekParity = getWeekParityOfDate(todayStr);
 
@@ -180,6 +181,34 @@ export default async function DashboardPage() {
 
   } catch (err) {
     console.error("DashboardPage: error fetching stats:", err);
+  }
+
+  // ── Alur KBM Terpadu (Presensi Guru -> Presensi Santri -> Jurnal Mengajar) ──
+  let teacherPresensiHariIni: any = null;
+  let todayPresensiSiswaList: { kelas_id: string; mapel_id: string | null; jam_ke: string | null }[] = [];
+  let todayJurnalList: { kelas_id: string; mapel_id: string | null; jam_ke: string | null }[] = [];
+
+  try {
+    const [resTeacherPresensi, resPresensiSiswa, resJurnal] = await Promise.allSettled([
+      asatidzId
+        ? prisma.presensiAsatidz.findUnique({
+            where: { pegawai_id_tanggal: { pegawai_id: asatidzId, tanggal: todayDate } },
+          })
+        : Promise.resolve(null),
+      prisma.presensiSiswa.findMany({
+        where: { tanggal: todayDate },
+        select: { kelas_id: true, mapel_id: true, jam_ke: true },
+      }),
+      prisma.jurnalMengajar.findMany({
+        where: { tanggal: todayDate, ...(asatidzId ? { pegawai_id: asatidzId } : {}) },
+        select: { kelas_id: true, mapel_id: true, jam_ke: true },
+      }),
+    ]);
+    if (resTeacherPresensi.status === "fulfilled") teacherPresensiHariIni = resTeacherPresensi.value;
+    if (resPresensiSiswa.status === "fulfilled") todayPresensiSiswaList = resPresensiSiswa.value || [];
+    if (resJurnal.status === "fulfilled") todayJurnalList = resJurnal.value || [];
+  } catch (err) {
+    console.error("DashboardPage: error fetching KBM workflow status:", err);
   }
 
   const totalPresensiSantri = presensiSantri.length;
@@ -299,28 +328,127 @@ export default async function DashboardPage() {
         )}
       </div>
 
-      {/* Jadwal mengajar */}
+      {/* Jadwal mengajar & Alur KBM Terpadu */}
       {(asatidzId || !isSuperAdmin) && (
         <SectionCard title="Jadwal mengajar hari ini" icon={Clock} iconClass="text-primary" href="/guru/jadwal" linkLabel="Jadwal pekan ini">
+          {/* Banner Peringatan Langkah 1: Check-in Guru (jika belum presensi) */}
+          {!teacherPresensiHariIni && (
+            <div className="mb-4 p-4 rounded-2xl bg-amber-50/95 border-2 border-amber-300 text-amber-950 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-amber-500/20 flex items-center justify-center text-amber-800 font-extrabold text-base shrink-0 border border-amber-300">
+                  1
+                </div>
+                <div>
+                  <div className="text-sm font-extrabold text-amber-950 flex items-center gap-1.5">
+                    <span>Langkah 1: Silakan Check-In Kehadiran Guru Hari Ini</span>
+                    <span className="text-[10px] bg-amber-200 text-amber-900 px-2 py-0.5 rounded-full font-black uppercase">Wajib</span>
+                  </div>
+                  <div className="text-xs text-amber-800/90 mt-0.5">
+                    Konfirmasi kehadiran mengajar Anda hari ini sebelum mengabsen santri & mengisi jurnal KBM
+                  </div>
+                </div>
+              </div>
+              <TeacherCheckInButton pegawaiId={asatidzId} label="🚀 Check-In Hadir Mengajar" />
+            </div>
+          )}
+
+          {/* Workflow Guide Bar */}
+          <div className="mb-4 px-4 py-2.5 rounded-xl bg-gradient-to-r from-emerald-50 via-teal-50 to-blue-50 border border-teal-200/60 flex flex-wrap items-center justify-between gap-2 text-xs">
+            <div className="flex items-center gap-2 font-bold text-teal-950">
+              <span className="text-sm">🌟</span>
+              <span>Alur KBM Terpadu:</span>
+            </div>
+            <div className="flex items-center gap-1.5 font-bold text-[11px]">
+              <span className={teacherPresensiHariIni ? "text-emerald-700 font-extrabold flex items-center gap-0.5" : "text-amber-700 font-extrabold flex items-center gap-0.5"}>
+                {teacherPresensiHariIni ? "✓ 1. Presensi Guru" : "1. Presensi Guru"}
+              </span>
+              <span className="text-slate-400">➔</span>
+              <span className={todayPresensiSiswaList.length > 0 ? "text-emerald-700 font-extrabold" : "text-teal-900"}>
+                2. Presensi Santri
+              </span>
+              <span className="text-slate-400">➔</span>
+              <span className={todayJurnalList.length > 0 ? "text-emerald-700 font-extrabold" : "text-slate-700"}>
+                3. Jurnal KBM
+              </span>
+            </div>
+          </div>
+
           {jadwalHariIni.length === 0 ? (
             <Empty>Alhamdulillah, tidak ada jadwal mengajar untuk hari ini.</Empty>
           ) : (
             <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
-              {jadwalHariIni.map((j) => (
-                <div key={j.id} className="flex items-center gap-4 rounded-2xl border border-l-4 border-[#ebdcc3] border-l-primary bg-[#fdfaf7] p-4">
-                  <div className="flex h-12 w-12 shrink-0 flex-col items-center justify-center rounded-full bg-primary/5 text-primary">
-                    <span className="text-[10px] font-semibold uppercase">Jam</span>
-                    <span className="text-base font-extrabold leading-none">{j.jam_ke}</span>
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <div className="mb-1 truncate text-sm font-bold text-slate-900">{j.mapel?.nama || "Mapel kosong"}</div>
-                    <div className="flex flex-wrap items-center gap-1.5 text-xs text-slate-500">
-                      <span className="rounded bg-[#fdf5f5] px-1.5 py-0.5 font-semibold text-primary">Kelas {j.kelas?.nama}</span>
-                      <span>{j.waktu_mulai} - {j.waktu_selesai}</span>
+              {jadwalHariIni.map((j) => {
+                const step1Done = Boolean(teacherPresensiHariIni);
+                const step2Done = todayPresensiSiswaList.some(
+                  (p) => p.kelas_id === j.kelas_id && (p.mapel_id === j.mapel_id || !p.mapel_id)
+                );
+                const step3Done = todayJurnalList.some(
+                  (jm) => jm.kelas_id === j.kelas_id && (jm.mapel_id === j.mapel_id || !jm.mapel_id)
+                );
+                const allDone = step1Done && step2Done && step3Done;
+
+                const todayISO = todayDate.toISOString().split("T")[0];
+                const absenSantriUrl = `/presensi/santri?kelas_id=${j.kelas_id}&mapel_id=${j.mapel_id}&jam_ke=${j.jam_ke}&from_workflow=true`;
+                const jurnalUrl = `/jurnal/tambah?kelas_id=${j.kelas_id}&mapel_id=${j.mapel_id}&jam_ke=${j.jam_ke}&tanggal=${todayISO}`;
+
+                return (
+                  <div key={j.id} className="flex flex-col rounded-2xl border border-l-4 border-[#ebdcc3] border-l-primary bg-[#fdfaf7] p-4 shadow-xs">
+                    <div className="flex items-center gap-3">
+                      <div className="flex h-11 w-11 shrink-0 flex-col items-center justify-center rounded-xl bg-primary/10 text-primary">
+                        <span className="text-[9px] font-bold uppercase tracking-wider">Jam</span>
+                        <span className="text-base font-extrabold leading-none">{j.jam_ke}</span>
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <div className="truncate text-sm font-extrabold text-slate-900">{j.mapel?.nama || "Mapel kosong"}</div>
+                        <div className="flex flex-wrap items-center gap-1.5 text-xs text-slate-500 mt-0.5">
+                          <span className="rounded-md bg-primary/10 px-1.5 py-0.5 font-bold text-primary">Kelas {j.kelas?.nama}</span>
+                          <span>{j.waktu_mulai} - {j.waktu_selesai}</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Alur Langkah KBM */}
+                    <div className="mt-3 pt-3 border-t border-[#ebdcc3]/70 flex flex-wrap items-center justify-between gap-2">
+                      <div className="flex items-center gap-1">
+                        <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${step1Done ? "bg-emerald-100 text-emerald-800" : "bg-amber-100 text-amber-800"}`} title={step1Done ? "Guru sudah hadir" : "Guru belum check-in"}>
+                          {step1Done ? "✓ Guru" : "1. Guru"}
+                        </span>
+                        <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${step2Done ? "bg-emerald-100 text-emerald-800" : step1Done ? "bg-blue-100 text-blue-800" : "bg-slate-100 text-slate-400"}`} title={step2Done ? "Santri sudah diabsen" : "Santri belum diabsen"}>
+                          {step2Done ? "✓ Santri" : "2. Santri"}
+                        </span>
+                        <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${step3Done ? "bg-emerald-100 text-emerald-800" : step2Done ? "bg-amber-100 text-amber-800" : "bg-slate-100 text-slate-400"}`} title={step3Done ? "Jurnal KBM sudah diisi" : "Jurnal belum diisi"}>
+                          {step3Done ? "✓ Jurnal" : "3. Jurnal"}
+                        </span>
+                      </div>
+
+                      {/* Tombol Aksi Berantai */}
+                      {allDone ? (
+                        <span className="text-[11px] font-extrabold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2.5 py-1 rounded-xl flex items-center gap-1">
+                          ✓ Selesai KBM
+                        </span>
+                      ) : !step1Done ? (
+                        <span className="text-[11px] font-bold text-amber-700 bg-amber-50 px-2 py-1 rounded-lg">
+                          Harap Check-In Guru
+                        </span>
+                      ) : !step2Done ? (
+                        <Link
+                          href={absenSantriUrl}
+                          className="text-[11px] font-extrabold text-white bg-primary hover:bg-primary-700 px-3 py-1 rounded-xl shadow-xs transition-all flex items-center gap-1"
+                        >
+                          <span>2. Absen Santri ➔</span>
+                        </Link>
+                      ) : (
+                        <Link
+                          href={jurnalUrl}
+                          className="text-[11px] font-extrabold text-white bg-amber-600 hover:bg-amber-700 px-3 py-1 rounded-xl shadow-xs transition-all flex items-center gap-1"
+                        >
+                          <span>3. Isi Jurnal KBM ➔</span>
+                        </Link>
+                      )}
                     </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           )}
         </SectionCard>

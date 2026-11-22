@@ -247,7 +247,7 @@ export async function GET(req: NextRequest) {
     const rataRataTotal = currentSantriData?.average || 0;
     const studentRank = rankMap.get(santri_id) || 1;
 
-    // 8. Presensi KBM pelajaran resmi
+    // 8. Presensi KBM pelajaran resmi — Sistem Dinamis Berkeadilan (Hari & JP)
     const presensiRaw = await prisma.presensiSiswa.findMany({
       where: { santri_id, mapel_id: { not: null } },
       include: { mapel: { select: { nama: true } } },
@@ -255,21 +255,85 @@ export async function GET(req: NextRequest) {
     });
     const presensi = presensiRaw.filter((p) => p.mapel?.nama != null);
 
+    const parseJpCount = (jam_ke: string | null | undefined): number => {
+      if (!jam_ke) return 1;
+      const str = String(jam_ke).trim();
+      if (!str) return 1;
+      if (str.includes(",")) {
+        return str.split(",").map((s) => s.trim()).filter(Boolean).length;
+      }
+      if (str.includes("-")) {
+        const parts = str.split("-").map((s) => parseInt(s.trim(), 10)).filter((n) => !isNaN(n));
+        if (parts.length === 2 && parts[1] >= parts[0]) return parts[1] - parts[0] + 1;
+      }
+      return 1;
+    };
+
+    // Beban jam per hari dinamis dari jadwal kelas
+    let avgJpPerHari = 8;
+    try {
+      if (kelas_id) {
+        const jadwalKelas = await prisma.jadwalPelajaran.findMany({
+          where: { kelas_id },
+          select: { hari: true },
+        });
+        if (jadwalKelas.length > 0) {
+          const perHariCount: Record<string, number> = {};
+          jadwalKelas.forEach((j) => {
+            perHariCount[j.hari] = (perHariCount[j.hari] || 0) + 1;
+          });
+          const counts = Object.values(perHariCount);
+          if (counts.length > 0) {
+            avgJpPerHari = Math.max(1, Math.round(counts.reduce((a, b) => a + b, 0) / counts.length));
+          }
+        }
+      }
+    } catch (e) {
+      console.warn("Gagal hitung avgJpPerHari di rapor/route:", e);
+    }
+
     const getDateString = (d: Date) => d.toISOString().split("T")[0];
     const datesHadir = new Set<string>();
     const datesSakit = new Set<string>();
     const datesIzin = new Set<string>();
-    const datesAlpha = new Set<string>();
     const datesTotal = new Set<string>();
+
+    let totalJpSakit = 0;
+    let totalJpIzin = 0;
+    let totalJpAlpha = 0;
+    const alphaPerTanggal: Record<string, number> = {};
 
     presensi.forEach((p) => {
       const d = getDateString(p.tanggal);
+      const jp = parseJpCount(p.jam_ke);
       datesTotal.add(d);
-      if (p.status === "hadir") datesHadir.add(d);
-      if (p.status === "sakit") datesSakit.add(d);
-      if (p.status === "izin") datesIzin.add(d);
-      if (p.status === "alpha") datesAlpha.add(d);
+
+      if (p.status === "hadir") {
+        datesHadir.add(d);
+      } else if (p.status === "sakit") {
+        datesSakit.add(d);
+        totalJpSakit += jp;
+      } else if (p.status === "izin") {
+        datesIzin.add(d);
+        totalJpIzin += jp;
+      } else if (p.status === "alpha" || p.status === "alfa") {
+        totalJpAlpha += jp;
+        alphaPerTanggal[d] = (alphaPerTanggal[d] || 0) + jp;
+      }
     });
+
+    let fullDayAlphaCount = 0;
+    let partialAlphaJp = 0;
+    Object.entries(alphaPerTanggal).forEach(([dStr, aJp]) => {
+      if (aJp >= avgJpPerHari) {
+        fullDayAlphaCount++;
+      } else {
+        partialAlphaJp += aJp;
+      }
+    });
+    const convertedAlphaDays = Math.floor(partialAlphaJp / avgJpPerHari);
+    const totalAlphaHari = fullDayAlphaCount + convertedAlphaDays;
+    const sisaAlphaJp = partialAlphaJp % avgJpPerHari;
 
     const totalHari = datesTotal.size;
     const totalHadir = datesHadir.size;
@@ -362,7 +426,12 @@ export async function GET(req: NextRequest) {
         totalHadir,
         totalSakit: datesSakit.size,
         totalIzin: datesIzin.size,
-        totalAlpha: datesAlpha.size,
+        totalAlpha: totalAlphaHari,
+        totalJpSakit,
+        totalJpIzin,
+        totalJpAlpha,
+        sisaAlphaJp,
+        avgJpPerHari,
         persentaseShubuh,
         ranking: studentRank,
         totalNilai: Math.round(studentTotalNilai),

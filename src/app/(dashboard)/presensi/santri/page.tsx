@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useEffect, useCallback, useMemo } from "react";
-import { useRouter } from "next/navigation";
+import { useState, useEffect, useCallback, useMemo, Suspense } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import Swal from "sweetalert2";
 import ModuleTabs from "@/components/ModuleTabs";
@@ -72,8 +72,13 @@ function formatTanggalWithHari(dateStr: string) {
   }
 }
 
-export default function PresensiSantriPage() {
+function PresensiSantriInner() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const urlKelasId = searchParams.get("kelas_id") || "";
+  const urlMapelId = searchParams.get("mapel_id") || "";
+  const urlJamKe = searchParams.get("jam_ke") || "";
+  const fromWorkflow = searchParams.get("from_workflow") === "true";
   const today = new Intl.DateTimeFormat("en-CA", {
     timeZone: "Asia/Jakarta",
     year: "numeric",
@@ -165,6 +170,19 @@ export default function PresensiSantriPage() {
         setMaster(data);
         setKelasList(data.kelas || []);
         setLoadingMaster(false);
+
+        if (urlKelasId) {
+          const k = (data.kelas || []).find((x: Kelas) => x.id === urlKelasId);
+          if (k) {
+            if (k.jenjang) setSelectedJenjang(k.jenjang);
+            setSelectedKelas(k.id);
+            if (urlMapelId) setMapelId(urlMapelId);
+            if (urlJamKe) {
+              const parts = urlJamKe.split(",").map((s: string) => s.trim()).filter(Boolean);
+              if (parts.length > 0) setJamKe(parts);
+            }
+          }
+        }
       })
       .catch(() => {
         setLoadingMaster(false);
@@ -174,7 +192,7 @@ export default function PresensiSantriPage() {
           text: "Tidak dapat mengambil data master.",
           confirmButtonColor: "var(--primary)" });
       });
-  }, []);
+  }, [urlKelasId, urlMapelId, urlJamKe]);
 
   // Tampilkan semua jenjang yang ada di master.kelas
   const availableJenjangs = useMemo(() => {
@@ -428,12 +446,32 @@ export default function PresensiSantriPage() {
 
       localStorage.removeItem("siakad_presensi_draft");
 
-      Swal.fire({
+      const nextAction = await Swal.fire({
         icon: "success",
-        title: "Presensi Berhasil Disimpan!",
-        text: `Data presensi ${json.count} santri telah berhasil tersimpan ke sistem.`,
+        title: "Langkah 2: Presensi Selesai!",
+        html: `
+          <div style="font-size:13px; color:#475569; margin-bottom: 12px; text-align:center;">
+            Data presensi <strong>${json.count}</strong> santri berhasil tersimpan ke sistem.
+          </div>
+          <div style="padding:12px; background:#f0fdf4; border-radius:12px; border:1px solid #bbf7d0; font-size:12px; color:#166534; font-weight:700; text-align:left;">
+            🌟 <strong>Alur KBM Terpadu:</strong><br/>
+            Langkah 1 (Guru) ✅ & Langkah 2 (Santri) ✅ Selesai.<br/>
+            Silakan lanjut ke <strong>Langkah 3 — Mengisi Jurnal KBM</strong>.
+          </div>
+        `,
+        showCancelButton: true,
         confirmButtonColor: "var(--primary)",
-        confirmButtonText: "Selesai" });
+        cancelButtonColor: "#64748b",
+        confirmButtonText: "3. Lanjut Isi Jurnal KBM ➔",
+        cancelButtonText: "Tetap di Halaman Ini",
+      });
+
+      if (nextAction.isConfirmed) {
+        const jamStr = Array.isArray(jamKe) ? jamKe.join(",") : jamKe;
+        router.push(
+          `/jurnal/tambah?kelas_id=${selectedKelas}&mapel_id=${mapelId || ""}&jam_ke=${jamStr}&tanggal=${tanggal}&from_workflow=true`
+        );
+      }
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : "Terjadi kesalahan";
       Swal.fire({
@@ -478,6 +516,26 @@ export default function PresensiSantriPage() {
           { label: "Riwayat per Santri", href: "/presensi/santri/riwayat", exact: true, icon: <UserCheck size={16} /> },
         ]}
       />
+
+      {/* Banner Panduan Alur KBM Terpadu (Langkah 2) */}
+      {fromWorkflow && (
+        <div className="w-full p-4 rounded-2xl bg-teal-50 border-2 border-teal-300 text-teal-950 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs">
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-xl bg-teal-600/15 flex items-center justify-center text-teal-800 font-extrabold text-sm shrink-0 border border-teal-300">
+              2
+            </div>
+            <div>
+              <div className="text-sm font-extrabold text-teal-950 flex items-center gap-1.5">
+                <span>Langkah 2: Presensi Santri Kelas</span>
+                <span className="text-[10px] bg-teal-200 text-teal-900 px-2 py-0.5 rounded-full font-black uppercase">Alur Terpadu</span>
+              </div>
+              <div className="text-xs text-teal-800/90 mt-0.5">
+                Kelas dan mata pelajaran sudah otomatis terpilih dari jadwal Anda. Silakan tandai kehadiran santri, lalu klik <strong>Simpan Presensi</strong> untuk dipandu langsung ke Langkah 3 (Jurnal KBM).
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Step 1: Pilih Kelas & Tanggal */}
       <div
@@ -1066,5 +1124,20 @@ export default function PresensiSantriPage() {
       )}
 
     </div>
+  );
+}
+
+export default function PresensiSantriPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="p-16 text-center text-slate-500 font-bold flex flex-col items-center justify-center gap-2">
+          <Loader2 className="animate-spin text-[#550000]" size={28} />
+          <span>Memuat data presensi santri...</span>
+        </div>
+      }
+    >
+      <PresensiSantriInner />
+    </Suspense>
   );
 }

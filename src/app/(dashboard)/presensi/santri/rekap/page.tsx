@@ -94,21 +94,37 @@ export default function RekapPresensiSantriPage() {
   const getStatus = (santriId: string, day: number): string | null => {
     if (!rekapData || 'summary' in rekapData) return null;
     const dateStr = `${tahun}-${String(bulan).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
-    const found = rekapData.presensi.find(
+    const studentRecords = rekapData.presensi.filter(
       (p) => p.santri_id === santriId && p.tanggal === dateStr
     );
-    return found ? found.status : null;
+    if (studentRecords.length === 0) return null;
+
+    // Prioritas status harian yang adil & baku:
+    // Jika ada sakit/izin resmi dari klinik/asrama -> sakit/izin
+    // Jika ada alpha di seluruh jam -> alpha
+    // Jika ada yang hadir -> hadir
+    const hasSakit = studentRecords.some((p) => p.status === "sakit");
+    if (hasSakit) return "sakit";
+    const hasIzin = studentRecords.some((p) => p.status === "izin");
+    if (hasIzin) return "izin";
+    const hasAlpha = studentRecords.some((p) => p.status === "alpha" || p.status === "alfa");
+    const allAlpha = studentRecords.every((p) => p.status === "alpha" || p.status === "alfa");
+    if (allAlpha || (hasAlpha && !studentRecords.some((p) => p.status === "hadir"))) {
+      return "alpha";
+    }
+    return "hadir";
   };
 
   const getSummary = (santriId: string) => {
     const s = { H: 0, S: 0, I: 0, A: 0 };
     if (!rekapData || 'summary' in rekapData) return s;
-    rekapData.presensi
-      .filter((p) => p.santri_id === santriId)
-      .forEach((p) => {
-        const key = STATUS_COLORS[p.status]?.short as keyof typeof s;
-        if (key) s[key]++;
-      });
+    for (let d = 1; d <= daysInMonth; d++) {
+      const st = getStatus(santriId, d);
+      if (st === "hadir") s.H++;
+      else if (st === "sakit") s.S++;
+      else if (st === "izin") s.I++;
+      else if (st === "alpha") s.A++;
+    }
     return s;
   };
 

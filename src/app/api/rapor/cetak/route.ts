@@ -391,7 +391,7 @@ export async function GET(req: NextRequest) {
     const bahasa = formatMapel("bahasa");
     const umum = formatMapel("umum");
 
-    // 8A. Ketidakhadiran akademik (KBM kelas, satuan: jam pelajaran)
+    // 8A. Ketidakhadiran akademik (KBM kelas — Sistem Dinamis Berkeadilan: Hari & JP)
     // TODO: batasi rentang tanggal sesuai semester/PTS/PAS. Saat ini seluruh catatan santri dihitung.
     let presensiKbm: { tanggal: Date; status: string | null; jam_ke: string | null }[] = [];
     try {
@@ -403,24 +403,100 @@ export async function GET(req: NextRequest) {
       console.warn("Gagal fetch presensiSiswa:", e);
     }
 
-    const akad = { sakit: 0, izin: 0, alpha: 0, sakit_kali: 0, izin_kali: 0, alpha_kali: 0 };
+    // Hitung rata-rata JP per hari kelas ini secara dinamis dari jadwal_pelajaran
+    let avgJpPerHari = 8; // Default standar nasional
+    try {
+      if (santri?.kelas_id) {
+        const jadwalKelas = await prisma.jadwalPelajaran.findMany({
+          where: { kelas_id: santri.kelas_id },
+          select: { hari: true, jam_ke: true },
+        });
+        if (jadwalKelas.length > 0) {
+          const perHariCount: Record<string, number> = {};
+          jadwalKelas.forEach((j) => {
+            perHariCount[j.hari] = (perHariCount[j.hari] || 0) + 1;
+          });
+          const counts = Object.values(perHariCount);
+          if (counts.length > 0) {
+            avgJpPerHari = Math.max(1, Math.round(counts.reduce((a, b) => a + b, 0) / counts.length));
+          }
+        }
+      }
+    } catch (e) {
+      console.warn("Gagal hitung avgJpPerHari dari jadwal:", e);
+    }
+
+    // Hitung sakit & izin unik per hari kalender, dan akumulasi alpha berkeadilan
+    const datesSakit = new Set<string>();
+    const datesIzin = new Set<string>();
+    let totalJpSakit = 0;
+    let totalJpIzin = 0;
+    let totalJpAlpha = 0;
+
+    // Kelompokkan alpha per tanggal untuk cek full-day bolos vs bolos parsial (cabut jam tertentu)
+    const alphaPerTanggal: Record<string, number> = {};
+
     presensiKbm.forEach((p) => {
       const jp = parseJamPelajaranCount(p.jam_ke);
       const st = (p.status || "").toLowerCase().trim();
-      if (st === "sakit") { akad.sakit += jp; akad.sakit_kali++; }
-      else if (st === "izin") { akad.izin += jp; akad.izin_kali++; }
-      else if (st === "alpha" || st === "alfa") { akad.alpha += jp; akad.alpha_kali++; }
+      const dStr = p.tanggal.toISOString().split("T")[0];
+
+      if (st === "sakit") {
+        datesSakit.add(dStr);
+        totalJpSakit += jp;
+      } else if (st === "izin") {
+        datesIzin.add(dStr);
+        totalJpIzin += jp;
+      } else if (st === "alpha" || st === "alfa") {
+        totalJpAlpha += jp;
+        alphaPerTanggal[dStr] = (alphaPerTanggal[dStr] || 0) + jp;
+      }
     });
 
+    // Perhitungan Hari Alpha:
+    // 1. Hari di mana santri alpha penuh (jam alpha >= beban jam per hari)
+    // 2. Akumulasi jam bolos parsial dikonversi ke ekuivalen hari (floor(sisa_jp / avgJpPerHari))
+    let fullDayAlphaCount = 0;
+    let partialAlphaJp = 0;
+
+    Object.entries(alphaPerTanggal).forEach(([dStr, aJp]) => {
+      if (aJp >= avgJpPerHari) {
+        fullDayAlphaCount++;
+      } else {
+        partialAlphaJp += aJp;
+      }
+    });
+
+    const convertedAlphaDays = Math.floor(partialAlphaJp / avgJpPerHari);
+    const totalAlphaHari = fullDayAlphaCount + convertedAlphaDays;
+    const sisaAlphaJp = partialAlphaJp % avgJpPerHari;
+
     const absen_akademik = {
-      sakit: akad.sakit,
-      izin: akad.izin,
-      alpha: akad.alpha,
-      total: akad.sakit + akad.izin + akad.alpha,
-      sakit_kali: akad.sakit_kali,
-      izin_kali: akad.izin_kali,
-      alpha_kali: akad.alpha_kali,
-      total_kali: akad.sakit_kali + akad.izin_kali + akad.alpha_kali,
+      // Satuan Hari Utama (Standar Resmi Rapor)
+      sakit: datesSakit.size,
+      izin: datesIzin.size,
+      alpha: totalAlphaHari,
+      total: datesSakit.size + datesIzin.size + totalAlphaHari,
+
+      // Satuan Hari Eksplisit
+      sakit_hari: datesSakit.size,
+      izin_hari: datesIzin.size,
+      alpha_hari: totalAlphaHari,
+      total_hari: datesSakit.size + datesIzin.size + totalAlphaHari,
+
+      // Satuan JP (Untuk Dual Display & Rekap Detail)
+      sakit_jp: totalJpSakit,
+      izin_jp: totalJpIzin,
+      alpha_jp: totalJpAlpha,
+      total_jp: totalJpSakit + totalJpIzin + totalJpAlpha,
+      alpha_sisa_jp: sisaAlphaJp,
+      avg_jp_per_hari: avgJpPerHari,
+
+      // Legacy compatibility
+      sakit_kali: datesSakit.size,
+      izin_kali: datesIzin.size,
+      alpha_kali: totalAlphaHari,
+      total_kali: datesSakit.size + datesIzin.size + totalAlphaHari,
     };
 
     // 8B. Ketidakhadiran kepengasuhan (halaqoh Al-Qur'an, satuan: sesi)

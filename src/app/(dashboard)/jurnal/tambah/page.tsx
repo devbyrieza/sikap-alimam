@@ -19,6 +19,7 @@ import {
   Info,
 } from "lucide-react";
 import Link from "next/link";
+import TeacherCheckInButton from "@/components/TeacherCheckInButton";
 import {
   formatTanggalLongID,
   getJakartaTodayISO,
@@ -108,6 +109,11 @@ function TambahJurnalInner() {
   const [catatan, setCatatan] = useState("");
   const [isDraftRestored, setIsDraftRestored] = useState(false);
   const [namaMapelCustom, setNamaMapelCustom] = useState("");
+
+  // Status Alur 3 Langkah KBM (Check-In Guru -> Presensi Santri -> Jurnal KBM)
+  const [teacherCheckedIn, setTeacherCheckedIn] = useState<boolean | null>(null);
+  const [santriPresensiDone, setSantriPresensiDone] = useState<boolean | null>(null);
+  const [loadingSantriPresensi, setLoadingSantriPresensi] = useState(false);
 
   // Track apakah initial hydration sudah selesai sebelum menjalankan auto-reset filter
   const hydratedRef = useRef(false);
@@ -574,6 +580,35 @@ function TambahJurnalInner() {
     }
   }, [loadingMaster, mapelList, mapelId, kelasId]);
 
+  // Pantau status presensi guru hari ini
+  useEffect(() => {
+    fetch("/api/presensi/asatidz/self")
+      .then((r) => r.json())
+      .then((d) => setTeacherCheckedIn(d?.checkedIn ?? false))
+      .catch(() => setTeacherCheckedIn(null));
+  }, []);
+
+  // Pantau apakah santri sudah diabsen di kelas, tanggal, dan jam ini
+  useEffect(() => {
+    if (kelasId && tanggal) {
+      setLoadingSantriPresensi(true);
+      const q = new URLSearchParams({ kelas_id: kelasId, tanggal });
+      if (mapelId) q.append("mapel_id", mapelId);
+      if (jamKe.length > 0) q.append("jam_ke", jamKe[0]);
+      fetch(`/api/presensi/santri?${q.toString()}`)
+        .then((r) => r.json())
+        .then((d) => {
+          const rows = Array.isArray(d?.data) ? d.data : [];
+          const hasPresensi = rows.some((s: any) => s.status !== null && s.status !== undefined);
+          setSantriPresensiDone(hasPresensi);
+        })
+        .catch(() => setSantriPresensiDone(null))
+        .finally(() => setLoadingSantriPresensi(false));
+    } else {
+      setSantriPresensiDone(null);
+    }
+  }, [kelasId, tanggal, mapelId, jamKe]);
+
   const handleTextareaResize = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     e.target.style.height = "auto";
     e.target.style.height = `${e.target.scrollHeight}px`;
@@ -724,6 +759,104 @@ function TambahJurnalInner() {
           </div>
         </div>
       )}
+
+      {/* Alur KBM Terpadu (3 Langkah) */}
+      <div className="rounded-[14px] border border-[#e2e8f0] bg-white p-4 shadow-sm">
+        <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-3">
+          <div className="flex items-center gap-2">
+            <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[#550000]/10 text-xs font-bold text-[#550000]">
+              3
+            </span>
+            <span className="text-xs font-bold uppercase tracking-wider text-slate-700">
+              Alur Masuk Kelas: Langkah 3 — Pengisian Jurnal KBM
+            </span>
+          </div>
+          <div className="flex items-center gap-2 text-[11px] font-medium">
+            <span
+              className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 ${
+                teacherCheckedIn
+                  ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
+                  : "bg-amber-50 text-amber-700 border border-amber-200"
+              }`}
+            >
+              {teacherCheckedIn ? "✓ 1. Guru Hadir" : "⏳ 1. Belum Presensi"}
+            </span>
+            <span className="text-slate-300">➔</span>
+            <span
+              className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 ${
+                santriPresensiDone
+                  ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
+                  : !kelasId
+                  ? "bg-slate-50 text-slate-500 border border-slate-200"
+                  : "bg-blue-50 text-blue-700 border border-blue-200"
+              }`}
+            >
+              {santriPresensiDone
+                ? "✓ 2. Santri Diabsen"
+                : !kelasId
+                ? "2. Pilih Kelas"
+                : "⏳ 2. Santri Belum Diabsen"}
+            </span>
+            <span className="text-slate-300">➔</span>
+            <span className="inline-flex items-center gap-1 rounded-full bg-[#550000]/10 px-2.5 py-0.5 font-bold text-[#550000] border border-[#550000]/20">
+              📝 3. Isi Jurnal KBM
+            </span>
+          </div>
+        </div>
+
+        {/* Warning Langkah 1 jika Guru belum check-in */}
+        {teacherCheckedIn === false && (
+          <div className="mt-3 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-amber-200 bg-amber-50/80 p-3 text-xs">
+            <div className="flex items-start gap-2.5">
+              <AlertTriangle size={18} className="mt-0.5 shrink-0 text-amber-600" />
+              <div>
+                <span className="font-bold text-amber-900">Perhatian: Anda Belum Melakukan Presensi Guru Hari Ini</span>
+                <p className="mt-0.5 text-amber-800">
+                  Untuk kedisiplinan dan akuntabilitas jam mengajar, silakan lakukan check-in kehadiran terlebih dahulu.
+                </p>
+              </div>
+            </div>
+            <TeacherCheckInButton
+              label="Check-In Sekarang"
+              className="!py-1.5 !px-3 !text-xs shrink-0"
+              onSuccess={() => setTeacherCheckedIn(true)}
+            />
+          </div>
+        )}
+
+        {/* Warning Langkah 2 jika Santri belum diabsen untuk kelas ini */}
+        {kelasId && santriPresensiDone === false && (
+          <div className="mt-3 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-blue-200 bg-blue-50/80 p-3 text-xs">
+            <div className="flex items-start gap-2.5">
+              <Info size={18} className="mt-0.5 shrink-0 text-blue-600" />
+              <div>
+                <span className="font-bold text-blue-900">Langkah 2: Presensi Santri Belum Diisi</span>
+                <p className="mt-0.5 text-blue-800">
+                  Presensi santri di kelas dan jam ini belum tercatat. Sangat dianjurkan mengabsen santri terlebih dahulu agar sinkron dengan jurnal.
+                </p>
+              </div>
+            </div>
+            <Link
+              href={`/presensi/santri?kelas_id=${kelasId}&mapel_id=${mapelId}&jam_ke=${encodeURIComponent(
+                jamKe.join(",")
+              )}&from_workflow=true`}
+              className="inline-flex items-center gap-1.5 rounded-lg bg-blue-600 px-3 py-1.5 text-xs font-bold text-white shadow hover:bg-blue-700 transition shrink-0"
+            >
+              <span>2. Buka Presensi Santri ➔</span>
+            </Link>
+          </div>
+        )}
+
+        {/* Indikator Langkah 1 & 2 Lengkap */}
+        {teacherCheckedIn === true && (santriPresensiDone === true || !kelasId) && (
+          <div className="mt-3 flex items-center gap-2 rounded-xl border border-emerald-200 bg-emerald-50/60 p-2.5 text-xs text-emerald-800">
+            <Check size={16} className="shrink-0 text-emerald-600" />
+            <span>
+              <strong>Alur Sesuai:</strong> Presensi asatidz & santri telah tercatat. Silakan lengkapi materi pembelajaran dan aktivitas KBM di bawah ini.
+            </span>
+          </div>
+        )}
+      </div>
 
       {/* Banner Draf Dipulihkan */}
       {isDraftRestored && (

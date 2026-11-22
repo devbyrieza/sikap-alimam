@@ -1469,26 +1469,38 @@ export default function RaporOfficialSheet({ data, showPrintToolbar = false }: R
                 <tbody>
                   <tr style={{ backgroundColor: "white" }}>
                     <td style={{ border: "1px solid #94a3b8", padding: "3.5px 8px" }}>1. Sakit</td>
-                    <td className="border-divider-mid" style={{ border: "1px solid #94a3b8", borderRight: "2px solid #000000", padding: "3.5px 8px", textAlign: "center", fontWeight: "bold", fontSize: "11px" }}>{absenAkad.sakit_kali || 0} Kali</td>
-                    <td style={{ border: "1px solid #94a3b8", borderLeft: "2px solid #000000", padding: "3.5px 8px", textAlign: "center", fontWeight: "bold", fontSize: "12px" }} dir="rtl">{toArabicNum(absenAkad.sakit_kali || 0)} مرات</td>
+                    <td className="border-divider-mid" style={{ border: "1px solid #94a3b8", borderRight: "2px solid #000000", padding: "3.5px 8px", textAlign: "center", fontWeight: "bold", fontSize: "11px" }}>
+                      {absenAkad.sakit_hari ?? absenAkad.sakit ?? 0} Hari{absenAkad.sakit_jp ? ` (${absenAkad.sakit_jp} JP)` : ""}
+                    </td>
+                    <td style={{ border: "1px solid #94a3b8", borderLeft: "2px solid #000000", padding: "3.5px 8px", textAlign: "center", fontWeight: "bold", fontSize: "12px" }} dir="rtl">{toArabicNum(absenAkad.sakit_hari ?? absenAkad.sakit ?? 0)} يوم</td>
                     <td style={{ border: "1px solid #94a3b8", padding: "3.5px 8px", textAlign: "right", fontFamily: "'Traditional Arabic', serif", fontSize: "12.5px" }} dir="rtl">١. المرض</td>
                   </tr>
                   <tr style={{ backgroundColor: "#fafafa" }}>
                     <td style={{ border: "1px solid #94a3b8", padding: "3.5px 8px" }}>2. Izin</td>
-                    <td className="border-divider-mid" style={{ border: "1px solid #94a3b8", borderRight: "2px solid #000000", padding: "3.5px 8px", textAlign: "center", fontWeight: "bold", fontSize: "11px" }}>{absenAkad.izin_kali || 0} Kali</td>
-                    <td style={{ border: "1px solid #94a3b8", borderLeft: "2px solid #000000", padding: "3.5px 8px", textAlign: "center", fontWeight: "bold", fontSize: "12px" }} dir="rtl">{toArabicNum(absenAkad.izin_kali || 0)} مرات</td>
+                    <td className="border-divider-mid" style={{ border: "1px solid #94a3b8", borderRight: "2px solid #000000", padding: "3.5px 8px", textAlign: "center", fontWeight: "bold", fontSize: "11px" }}>
+                      {absenAkad.izin_hari ?? absenAkad.izin ?? 0} Hari{absenAkad.izin_jp ? ` (${absenAkad.izin_jp} JP)` : ""}
+                    </td>
+                    <td style={{ border: "1px solid #94a3b8", borderLeft: "2px solid #000000", padding: "3.5px 8px", textAlign: "center", fontWeight: "bold", fontSize: "12px" }} dir="rtl">{toArabicNum(absenAkad.izin_hari ?? absenAkad.izin ?? 0)} يوم</td>
                     <td style={{ border: "1px solid #94a3b8", padding: "3.5px 8px", textAlign: "right", fontFamily: "'Traditional Arabic', serif", fontSize: "12.5px" }} dir="rtl">٢. الإذن</td>
                   </tr>
                   <tr style={{ backgroundColor: "white" }}>
                     <td style={{ border: "1px solid #94a3b8", padding: "3.5px 8px" }}>3. Alpha / Tanpa Keterangan</td>
-                    <td className="border-divider-mid" style={{ border: "1px solid #94a3b8", borderRight: "2px solid #000000", padding: "3.5px 8px", textAlign: "center", fontWeight: "bold", fontSize: "11px" }}>{absenAkad.alpha_kali || 0} Kali</td>
-                    <td style={{ border: "1px solid #94a3b8", borderLeft: "2px solid #000000", padding: "3.5px 8px", textAlign: "center", fontWeight: "bold", fontSize: "12px" }} dir="rtl">{toArabicNum(absenAkad.alpha_kali || 0)} مرات</td>
+                    <td className="border-divider-mid" style={{ border: "1px solid #94a3b8", borderRight: "2px solid #000000", padding: "3.5px 8px", textAlign: "center", fontWeight: "bold", fontSize: "11px" }}>
+                      {(absenAkad.alpha_hari ?? absenAkad.alpha ?? 0) > 0
+                        ? `${absenAkad.alpha_hari ?? absenAkad.alpha ?? 0} Hari (${absenAkad.alpha_jp || 0} JP)`
+                        : (absenAkad.alpha_jp || 0) > 0
+                          ? `0 Hari (${absenAkad.alpha_jp} JP)`
+                          : `0 Hari`}
+                    </td>
+                    <td style={{ border: "1px solid #94a3b8", borderLeft: "2px solid #000000", padding: "3.5px 8px", textAlign: "center", fontWeight: "bold", fontSize: "12px" }} dir="rtl">{toArabicNum(absenAkad.alpha_hari ?? absenAkad.alpha ?? 0)} يوم</td>
                     <td style={{ border: "1px solid #94a3b8", padding: "3.5px 8px", textAlign: "right", fontFamily: "'Traditional Arabic', serif", fontSize: "13px" }} dir="rtl">٣. الغياب</td>
                   </tr>
                   <tr style={{ backgroundColor: "#f8fafc" }}>
                     <td style={{ border: "1px solid #94a3b8", padding: "3.5px 8px", fontWeight: "bold" }}>Total Ketidakhadiran Kelas</td>
-                    <td className="border-divider-mid" style={{ border: "1px solid #94a3b8", borderRight: "2px solid #000000", padding: "3.5px 8px", textAlign: "center", fontWeight: "bold", fontSize: "11.5px" }}>{absenAkad.total_kali || 0} Kali</td>
-                    <td style={{ border: "1px solid #94a3b8", borderLeft: "2px solid #000000", padding: "3.5px 8px", textAlign: "center", fontWeight: "bold", fontSize: "12px" }} dir="rtl">{toArabicNum(absenAkad.total_kali || 0)} مرات</td>
+                    <td className="border-divider-mid" style={{ border: "1px solid #94a3b8", borderRight: "2px solid #000000", padding: "3.5px 8px", textAlign: "center", fontWeight: "bold", fontSize: "11.5px" }}>
+                      {absenAkad.total_hari ?? absenAkad.total ?? ((absenAkad.sakit_hari ?? absenAkad.sakit ?? 0) + (absenAkad.izin_hari ?? absenAkad.izin ?? 0) + (absenAkad.alpha_hari ?? absenAkad.alpha ?? 0))} Hari
+                    </td>
+                    <td style={{ border: "1px solid #94a3b8", borderLeft: "2px solid #000000", padding: "3.5px 8px", textAlign: "center", fontWeight: "bold", fontSize: "12px" }} dir="rtl">{toArabicNum(absenAkad.total_hari ?? absenAkad.total ?? 0)} يوم</td>
                     <td style={{ border: "1px solid #94a3b8", padding: "3.5px 8px", textAlign: "right", fontFamily: "'Traditional Arabic', serif", fontSize: "13px", fontWeight: "bold" }} dir="rtl">مجموع الغياب الدراسي</td>
                   </tr>
                 </tbody>

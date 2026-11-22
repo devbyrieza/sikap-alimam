@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "safelist": "node scripts/generate-safelist.js",
-    "build": "npx prisma generate && next build",
+    "build": "npx prisma@5 generate && next build",
     "start": "next start",
     "lint": "biome check",
     "format": "biome format --write",
@@ -41,6 +41,7 @@
     "@types/react-dom": "^19",
     "tailwindcss": "^4",
     "tsx": "^4.23.1",
-    "typescript": "^5"
+    "typescript": "^5",
+    "prisma": "^5.22.0"
   }
 }
