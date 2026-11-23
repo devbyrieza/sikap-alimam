@@ -15,13 +15,13 @@ export const ROLE_DESTINATIONS: Record<string, string> = {
   KEPALA_SEKOLAH: "/dashboard",
   KEPALA_KURIKULUM: "/jurnal",
   KADIV_KURIKULUM: "/jurnal",
-  KEPALA_PENGASUHAN: "/halaqoh",
-  KADIV_PENGASUHAN: "/halaqoh",
+  KEPALA_PENGASUHAN: "/pengasuhan",
+  KADIV_PENGASUHAN: "/pengasuhan",
   WALI_KELAS: "/wali-kelas",
   GURU: "/jurnal",
-  PENGASUH: "/ibadah",
+  PENGASUH: "/pengasuhan",
   PENGAMPU_HALAQOH: "/halaqoh",
-  MUSYRIF: "/halaqoh",
+  MUSYRIF: "/pengasuhan",
   WALI_SANTRI: "/wali",
 };
 
