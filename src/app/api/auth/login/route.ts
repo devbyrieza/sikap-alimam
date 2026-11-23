@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { createSession } from "@/lib/auth";
 import { getUserMultiRoles, ROLE_DESTINATIONS } from "@/lib/multiRole";
+import { isUsernameStandard, generateProfessionalUsername } from "@/lib/utils/username";
 import bcrypt from "bcryptjs";
 
 export async function POST(req: NextRequest) {
@@ -319,6 +320,25 @@ export async function POST(req: NextRequest) {
       user.plain_password === "Paas2026!" || 
       user.plain_password === "Puas2026!" || 
       user.plain_password === "Andalus2026!";
+
+    const isWaliSantri = user.role?.toUpperCase() === "WALI_SANTRI";
+    const usernameStandard = isUsernameStandard(user.username);
+
+    // Staf/Asatidz wajib setup akun jika belum punya username standar ATAU kata sandi masih default
+    if (!isWaliSantri && (!usernameStandard || isDefaultPassword)) {
+      return NextResponse.json({
+        success: true,
+        require_account_setup: true,
+        user_id: user.id,
+        nama: formattedNama,
+        current_username: user.username || "",
+        suggested_username: generateProfessionalUsername(user.nama),
+        needs_username: !usernameStandard,
+        needs_password: isDefaultPassword,
+        role: user.role,
+        availableRoles: multiRoles.length > 1 ? multiRoles : undefined,
+      });
+    }
 
     // Deteksi opsi peran ganda (Multi-Role) untuk akun civitas
     const multiRoles = await getUserMultiRoles(user.id);

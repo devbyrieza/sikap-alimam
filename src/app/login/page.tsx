@@ -32,6 +32,15 @@ export default function LoginPage() {
   const [requireRoleSelection, setRequireRoleSelection] = useState(false);
   const [availableRoles, setAvailableRoles] = useState<any[]>([]);
 
+  // Account setup state (mandatory setup for non-standard username / default password)
+  const [accountSetupData, setAccountSetupData] = useState<any>(null);
+  const [setupUsername, setSetupUsername] = useState("");
+  const [setupPassword, setSetupPassword] = useState("");
+  const [setupConfirmPassword, setSetupConfirmPassword] = useState("");
+  const [showSetupPassword, setShowSetupPassword] = useState(false);
+  const [submittingSetup, setSubmittingSetup] = useState(false);
+  const [setupError, setSetupError] = useState("");
+
   const [showForgotModal, setShowForgotModal] = useState(false);
   const [forgotInput, setForgotInput] = useState("");
   const [forgotLoading, setForgotLoading] = useState(false);
@@ -41,7 +50,7 @@ export default function LoginPage() {
   } | null>(null);
 
   useEffect(() => {
-    if (showForgotModal || requireRoleSelection) {
+    if (showForgotModal || requireRoleSelection || accountSetupData) {
       document.body.style.overflow = "hidden";
     } else {
       document.body.style.overflow = "unset";
@@ -49,7 +58,7 @@ export default function LoginPage() {
     return () => {
       document.body.style.overflow = "unset";
     };
-  }, [showForgotModal, requireRoleSelection]);
+  }, [showForgotModal, requireRoleSelection, accountSetupData]);
 
   async function handleForgotSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -90,6 +99,14 @@ export default function LoginPage() {
         setError(json.error || "Login gagal");
         return;
       }
+      if (json.require_account_setup) {
+        setAccountSetupData(json);
+        setSetupUsername(json.suggested_username || json.current_username || "");
+        setSetupPassword("");
+        setSetupConfirmPassword("");
+        setSetupError("");
+        return;
+      }
       if (json.requireRoleSelection) {
         setRequireRoleSelection(true);
         setAvailableRoles(json.availableRoles);
@@ -124,6 +141,59 @@ export default function LoginPage() {
       setError("Terjadi kesalahan. Coba lagi.");
     } finally {
       setLoading(false);
+    }
+  }
+
+  async function handleSaveAccountSetup(e: React.FormEvent) {
+    e.preventDefault();
+    if (!accountSetupData) return;
+    setSetupError("");
+
+    if (accountSetupData.needs_username && !setupUsername.trim()) {
+      setSetupError("Username wajib diisi");
+      return;
+    }
+
+    if (accountSetupData.needs_password) {
+      if (!setupPassword) {
+        setSetupError("Kata sandi baru wajib diisi");
+        return;
+      }
+      if (setupPassword !== setupConfirmPassword) {
+        setSetupError("Konfirmasi kata sandi tidak cocok");
+        return;
+      }
+      if (setupPassword.length < 8) {
+        setSetupError("Kata sandi baru minimal 8 karakter");
+        return;
+      }
+      if (!/[A-Z]/.test(setupPassword) || !/[a-z]/.test(setupPassword) || !/\d/.test(setupPassword) || !/[!@#$%^&*(),.?":{}|<>\-_=+]/.test(setupPassword)) {
+        setSetupError("Kata sandi harus mengandung kombinasi huruf besar, huruf kecil, angka, dan karakter khusus");
+        return;
+      }
+    }
+
+    setSubmittingSetup(true);
+    try {
+      const res = await fetch("/api/auth/setup-account", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          user_id: accountSetupData.user_id,
+          username: setupUsername.trim().toLowerCase(),
+          new_password: setupPassword || undefined,
+          chosen_role: accountSetupData.role,
+        }),
+      });
+
+      const resData = await res.json();
+      if (!res.ok) throw new Error(resData.error || "Gagal memperbarui kredensial akun");
+
+      router.push(resData.redirectTo || "/dashboard");
+      router.refresh();
+    } catch (err: any) {
+      setSetupError(err.message);
+      setSubmittingSetup(false);
     }
   }
 
@@ -885,6 +955,262 @@ export default function LoginPage() {
             >
               Batal
             </button>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL: Mandatory Account Setup */}
+      {accountSetupData && (
+        <div
+          onWheel={(e) => e.stopPropagation()}
+          style={{
+            position: "fixed",
+            inset: 0,
+            background: "rgba(15,23,42,0.75)",
+            backdropFilter: "blur(6px)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            zIndex: 60,
+            padding: "16px",
+          }}
+        >
+          <div
+            style={{
+              background: "#ffffff",
+              borderRadius: "24px",
+              padding: "32px",
+              maxWidth: "420px",
+              width: "100%",
+              boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.25)",
+              border: "1px solid #f1f5f9",
+            }}
+          >
+            <form onSubmit={handleSaveAccountSetup} style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+              <div style={{ textAlign: "center" }}>
+                <div
+                  style={{
+                    width: 52,
+                    height: 52,
+                    borderRadius: "16px",
+                    background: "#fef2f2",
+                    border: "1px solid #fecaca",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    margin: "0 auto 12px",
+                    color: "#550000",
+                  }}
+                >
+                  <ShieldCheck style={{ width: 28, height: 28 }} />
+                </div>
+                <h3 style={{ fontSize: "18px", fontWeight: 900, color: "#0f172a", margin: 0 }}>
+                  Lengkapi & Amankan Akun
+                </h3>
+                <p style={{ fontSize: "12px", color: "#64748b", marginTop: "6px", lineHeight: "1.5" }}>
+                  Ahlan wa Sahlan, <strong>{accountSetupData.nama}</strong>. Sesuai standar keamanan pesantren, silakan tetapkan Username standar dan amankan kata sandi Anda.
+                </p>
+              </div>
+
+              {setupError && (
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "8px",
+                    padding: "12px",
+                    borderRadius: "12px",
+                    background: "#fef2f2",
+                    border: "1px solid #fee2e2",
+                    color: "#dc2626",
+                    fontSize: "12px",
+                    fontWeight: 700,
+                  }}
+                >
+                  <AlertTriangle style={{ width: 16, height: 16, flexShrink: 0 }} />
+                  <span>{setupError}</span>
+                </div>
+              )}
+
+              {/* Input Username */}
+              <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                  <label style={{ fontSize: "11px", fontWeight: 800, color: "#334155", textTransform: "uppercase", letterSpacing: "0.05em" }}>
+                    Username Standar <span style={{ color: "#ef4444" }}>*</span>
+                  </label>
+                  <span style={{ fontSize: "10px", fontWeight: 700, color: "#550000" }}>
+                    namadepan.namabelakang
+                  </span>
+                </div>
+                <div style={{ position: "relative" }}>
+                  <User style={{ position: "absolute", left: "14px", top: "50%", transform: "translateY(-50%)", width: 18, height: 18, color: "#94a3b8" }} />
+                  <input
+                    type="text"
+                    required
+                    value={setupUsername}
+                    onChange={(e) => setSetupUsername(e.target.value.toLowerCase().replace(/\s+/g, "."))}
+                    placeholder="contoh: ahmad.zakaria"
+                    disabled={submittingSetup}
+                    style={{
+                      width: "100%",
+                      height: "46px",
+                      paddingLeft: "42px",
+                      paddingRight: "14px",
+                      borderRadius: "14px",
+                      border: "1.5px solid #cbd5e1",
+                      fontSize: "13px",
+                      fontWeight: 700,
+                      color: "#1e293b",
+                      outline: "none",
+                      fontFamily: "inherit",
+                    }}
+                  />
+                </div>
+                <span style={{ fontSize: "10.5px", color: "#64748b" }}>
+                  4-30 huruf kecil, angka, titik (.) atau underscore (_). Tanpa spasi & gelar.
+                </span>
+              </div>
+
+              {/* Input Password Baru jika needs_password */}
+              {accountSetupData.needs_password && (
+                <>
+                  <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+                    <label style={{ fontSize: "11px", fontWeight: 800, color: "#334155", textTransform: "uppercase", letterSpacing: "0.05em" }}>
+                      Kata Sandi Baru yang Kuat <span style={{ color: "#ef4444" }}>*</span>
+                    </label>
+                    <div style={{ position: "relative" }}>
+                      <Lock style={{ position: "absolute", left: "14px", top: "50%", transform: "translateY(-50%)", width: 18, height: 18, color: "#94a3b8" }} />
+                      <input
+                        type={showSetupPassword ? "text" : "password"}
+                        required
+                        value={setupPassword}
+                        onChange={(e) => setSetupPassword(e.target.value)}
+                        placeholder="Minimal 8 karakter unik"
+                        disabled={submittingSetup}
+                        style={{
+                          width: "100%",
+                          height: "46px",
+                          paddingLeft: "42px",
+                          paddingRight: "42px",
+                          borderRadius: "14px",
+                          border: "1.5px solid #cbd5e1",
+                          fontSize: "13px",
+                          fontWeight: 700,
+                          color: "#1e293b",
+                          outline: "none",
+                          fontFamily: "inherit",
+                        }}
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowSetupPassword(!showSetupPassword)}
+                        style={{
+                          position: "absolute",
+                          right: "12px",
+                          top: "50%",
+                          transform: "translateY(-50%)",
+                          background: "none",
+                          border: "none",
+                          cursor: "pointer",
+                          color: "#94a3b8",
+                          padding: 4,
+                        }}
+                      >
+                        {showSetupPassword ? <EyeOff style={{ width: 18, height: 18 }} /> : <Eye style={{ width: 18, height: 18 }} />}
+                      </button>
+                    </div>
+                    <span style={{ fontSize: "10.5px", color: "#64748b" }}>
+                      Kombinasi huruf besar, huruf kecil, angka, dan simbol.
+                    </span>
+                  </div>
+
+                  <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+                    <label style={{ fontSize: "11px", fontWeight: 800, color: "#334155", textTransform: "uppercase", letterSpacing: "0.05em" }}>
+                      Konfirmasi Kata Sandi Baru <span style={{ color: "#ef4444" }}>*</span>
+                    </label>
+                    <div style={{ position: "relative" }}>
+                      <Lock style={{ position: "absolute", left: "14px", top: "50%", transform: "translateY(-50%)", width: 18, height: 18, color: "#94a3b8" }} />
+                      <input
+                        type={showSetupPassword ? "text" : "password"}
+                        required
+                        value={setupConfirmPassword}
+                        onChange={(e) => setSetupConfirmPassword(e.target.value)}
+                        placeholder="Ulangi kata sandi baru"
+                        disabled={submittingSetup}
+                        style={{
+                          width: "100%",
+                          height: "46px",
+                          paddingLeft: "42px",
+                          paddingRight: "14px",
+                          borderRadius: "14px",
+                          border: "1.5px solid #cbd5e1",
+                          fontSize: "13px",
+                          fontWeight: 700,
+                          color: "#1e293b",
+                          outline: "none",
+                          fontFamily: "inherit",
+                        }}
+                      />
+                    </div>
+                  </div>
+                </>
+              )}
+
+              <button
+                type="submit"
+                disabled={submittingSetup}
+                style={{
+                  width: "100%",
+                  height: "46px",
+                  borderRadius: "14px",
+                  background: "#550000",
+                  color: "#ffffff",
+                  fontSize: "13px",
+                  fontWeight: 800,
+                  border: "none",
+                  cursor: "pointer",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: "8px",
+                  boxShadow: "0 4px 12px rgba(85,0,0,0.25)",
+                  marginTop: "8px",
+                  fontFamily: "inherit",
+                }}
+              >
+                {submittingSetup ? (
+                  <>
+                    <Loader2 style={{ width: 18, height: 18, animation: "spin 1s linear infinite" }} />
+                    <span>Menyimpan ke Database...</span>
+                  </>
+                ) : (
+                  <>
+                    <span>Simpan Kredensial & Masuk</span>
+                    <ArrowRight style={{ width: 18, height: 18 }} />
+                  </>
+                )}
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  setAccountSetupData(null);
+                  setSetupError("");
+                }}
+                style={{
+                  width: "100%",
+                  fontSize: "12px",
+                  fontWeight: 700,
+                  color: "#94a3b8",
+                  background: "none",
+                  border: "none",
+                  cursor: "pointer",
+                  fontFamily: "inherit",
+                }}
+              >
+                Batal / Gunakan Akun Lain
+              </button>
+            </form>
           </div>
         </div>
       )}

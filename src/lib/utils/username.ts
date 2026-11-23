@@ -1,7 +1,7 @@
 /**
  * Standarisasi Format & Generator Username Profesional
  * Format standar: namadepan.namabelakang (huruf kecil, tanpa spasi, tanpa gelar)
- * Contoh: "Imron Abdillah, S.Pd." -> "imron.abdillah"
+ * Contoh: "Ahmad Zakaria, S.Pd." -> "ahmad.zakaria"
  */
 
 export interface UsernameValidationResult {
@@ -95,8 +95,8 @@ export function normalizeUsernameInput(raw?: string | null): string {
 /**
  * Menghasilkan saran username profesional dari Nama Lengkap (menghapus gelar depan/belakang).
  * Contoh:
- * - "Imron Abdillah, S.Pd." -> "imron.abdillah"
- * - "Ust. H. Agus Cahyono, Lc., M.Pd." -> "agus.cahyono"
+ * - "Ahmad Zakaria, S.Pd." -> "ahmad.zakaria"
+ * - "Ust. Hasan Basri, M.Pd." -> "hasan.basri"
  * - "Ersana, S.Pd." -> "ersana"
  */
 export function generateProfessionalUsername(fullName?: string | null): string {
@@ -222,3 +222,16 @@ export function validateUsernameFormat(raw?: string | null): UsernameValidationR
 
   return { isValid: true, normalized };
 }
+
+/**
+ * Mengecek apakah username memenuhi standar wajib sistem pesantren:
+ * - Tidak boleh null/kosong
+ * - Panjang 4 s.d. 30 karakter
+ * - Memenuhi validateUsernameFormat
+ */
+export function isUsernameStandard(raw?: string | null): boolean {
+  if (!raw || !raw.trim()) return false;
+  const res = validateUsernameFormat(raw);
+  return Boolean(res.isValid && res.normalized && res.normalized.length >= 4);
+}
+
