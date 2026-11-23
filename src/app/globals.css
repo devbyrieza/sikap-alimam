@@ -33,6 +33,15 @@
   background: #94a3b8;
 }
 
+/* Utilitas sembunyikan scrollbar horizontal di mobile pill filters */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
 @theme {
   --color-primary: var(--primary);
   --color-primary-dark: var(--primary-dark);
@@ -133,6 +142,8 @@ body {
   .app-sidebar.open { transform: translateX(0); }
   .app-content {
     margin-left: 0;
+    width: 100%;
+    max-width: 100vw;
     padding-top: 56px; /* Offset for the mobile header */
   }
 }

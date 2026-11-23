@@ -102,20 +102,10 @@ function PresensiSantriInner() {
   const [namaMapelCustom, setNamaMapelCustom] = useState("");
 
   const selectedKelasInfo = master?.kelas.find(k => k.id === selectedKelas);
-  const isSpecialClass = selectedKelasInfo?.nama.toLowerCase().includes("11 ma") || selectedKelasInfo?.nama.toLowerCase().includes("12 ma");
-
-  // Force asatidz to Thoriq Ziyad if special class
-  useEffect(() => {
-    if (isSpecialClass && master) {
-      const thoriq = master.asatidzmMapel.find(am => {
-        const asatid = master.asatidzmMapel.find(a => a.pegawai_id === am.pegawai_id);
-        // Wait, asatidzmMapel doesn't have nama_lengkap, but the user profile might?
-        // Actually, we can't easily find Thoriq here unless we have asatidz list. But the user said:
-        // "pada pemilihan mapel maka Thoriq Ziyad menginput atau mengetik saja sendiri nama Mapel nya"
-        // This means we just need the mapel input custom. AsatidId is set by profile fetch for normal users, or we can just leave it as is if it's already Thoriq Ziyad.
-      });
-    }
-  }, [isSpecialClass, master]);
+  const isSpecialClass = Boolean(
+    selectedKelasInfo?.nama.toLowerCase().includes("11 ma") ||
+    selectedKelasInfo?.nama.toLowerCase().includes("12 ma")
+  );
   const [jamKe, setJamKe] = useState<string[]>([]);
   const [jamKhususMulai, setJamKhususMulai] = useState("");
   const [jamKhususSelesai, setJamKhususSelesai] = useState("");
@@ -196,7 +186,7 @@ function PresensiSantriInner() {
 
   // Tampilkan semua jenjang yang ada di master.kelas
   const availableJenjangs = useMemo(() => {
-    const defaultJenjangs = ["MTs", "IL", "MA"];
+    const defaultJenjangs = ["SMP IT", "IL", "SMA IT"];
     if (!master?.kelas) return defaultJenjangs;
     const uniqueJenjangs = Array.from(new Set(master.kelas.map(k => k.jenjang).filter(Boolean))) as string[];
     return uniqueJenjangs.length > 0 ? uniqueJenjangs : defaultJenjangs;
@@ -489,7 +479,7 @@ function PresensiSantriInner() {
 
   return (
     <div className="page-container" style={{ paddingBottom: 60 }}>
-      {/* ── Al-Imam Platinum Hero Banner ── */}
+      {/* ── Pesantren Al-Basyir Platinum Hero Banner ── */}
       <div className="hero-banner">
         {/* Decorative Elements */}
         <div style={{ position:"absolute", top:0, right:0, width:256, height:256, background:"rgba(221, 193, 146, 0.15)", borderRadius:"50%", filter:"blur(40px)", transform:"translate(30%, -50%)", pointerEvents:"none" }}></div>
@@ -497,11 +487,11 @@ function PresensiSantriInner() {
 
         <div style={{ position: "relative", zIndex: 1, flex: 1, minWidth: 0 }}>
           <div style={{ display:"flex", alignItems:"center", gap:6, background:"rgba(221, 193, 146, 0.18)", padding:"5px 12px", borderRadius:20, border:"1px solid rgba(221, 193, 146, 0.4)", width:"fit-content", marginBottom:8 }}>
-            <div style={{ width:7, height:7, borderRadius:"50%", background:"#ddc192", boxShadow:"0 0 6px rgba(221, 193, 146, 0.9)" }}></div>
-            <span style={{ fontSize:11, fontWeight:800, letterSpacing:"0.5px", color:"#fdf8f0", textTransform:"uppercase" }}>Presensi Santri</span>
+            <div style={{ width:7, height:7, borderRadius:"50%", background:"#D4AF37", boxShadow:"0 0 6px rgba(221, 193, 146, 0.9)" }}></div>
+            <span style={{ fontSize:11, fontWeight:800, letterSpacing:"0.5px", color:"#FDFCF7", textTransform:"uppercase" }}>Presensi Santri</span>
           </div>
           <h1 style={{ fontSize: "clamp(20px, 4vw, 30px)", fontWeight: 800, margin: 0, display: "flex", alignItems: "center", gap: "10px", color: "white" }}>
-            <ClipboardCheck size={26} color="#ddc192" /> Input Presensi Santri
+            <ClipboardCheck size={26} color="#D4AF37" /> Input Presensi Santri
           </h1>
           <p style={{ marginTop: "6px", color: "rgba(253, 248, 240, 0.9)", fontSize: "14px", margin: "6px 0 0 0" }}>
             Pencatatan absensi & kehadiran harian santri per kelas secara cepat
@@ -547,18 +537,18 @@ function PresensiSantriInner() {
           boxShadow: "0 2px 12px rgba(85,0,0,0.03)",
           border: "1px solid #ebdcc3" }}
       >
-        <div style={{ fontSize: "15px", fontWeight: "800", color: "#550000", display: "flex", alignItems: "center", gap: "8px" }}>
-          <Users size={18} color="#ddc192" />
+        <div style={{ fontSize: "15px", fontWeight: "800", color: "#0D7A5F", display: "flex", alignItems: "center", gap: "8px" }}>
+          <Users size={18} color="#D4AF37" />
           Pilih Kelas &amp; Tanggal Presensi
         </div>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "16px", width: "100%", alignItems: "flex-end" }}>
           
           {/* Guru Pengampu (Asatidz) */}
           <div className="flex flex-col gap-1.5 min-w-0 w-full">
-            <label style={{ fontSize: "13px", fontWeight: "700", color: "#550000" }}>Guru Pengampu <span style={{ color: "#ef4444" }}>*</span></label>
+            <label style={{ fontSize: "13px", fontWeight: "700", color: "#0D7A5F" }}>Guru Pengampu <span style={{ color: "#ef4444" }}>*</span></label>
             <select
               className="w-full min-w-0 box-border"
-              style={{ padding: "11px 14px", borderRadius: "12px", border: "1px solid #ebdcc3", background: "#fdf8f0", fontSize: "14px", outline: "none", fontWeight: 600 }}
+              style={{ padding: "11px 14px", borderRadius: "12px", border: "1px solid #ebdcc3", background: "#FDFCF7", fontSize: "14px", outline: "none", fontWeight: 600 }}
               value={asatidId}
               onChange={(e) => setAsatidId(e.target.value)}
             >
@@ -571,11 +561,11 @@ function PresensiSantriInner() {
 
           {/* Tanggal */}
           <div className="flex flex-col gap-1.5 min-w-0 w-full">
-            <label style={{ fontSize: "13px", fontWeight: "700", color: "#550000" }}>Tanggal <span style={{ color: "#ef4444" }}>*</span></label>
+            <label style={{ fontSize: "13px", fontWeight: "700", color: "#0D7A5F" }}>Tanggal <span style={{ color: "#ef4444" }}>*</span></label>
             <input
               type="date"
               className="w-full min-w-0 box-border"
-              style={{ padding: "11px 14px", borderRadius: "12px", border: "1px solid #ebdcc3", background: "#fdf8f0", fontSize: "14px", outline: "none", fontWeight: 600 }}
+              style={{ padding: "11px 14px", borderRadius: "12px", border: "1px solid #ebdcc3", background: "#FDFCF7", fontSize: "14px", outline: "none", fontWeight: 600 }}
               value={tanggal}
               onChange={(e) => setTanggal(e.target.value)}
             />
@@ -589,11 +579,11 @@ function PresensiSantriInner() {
 
           {/* Jenjang */}
           <div className="flex flex-col gap-1.5 min-w-0 w-full">
-            <label style={{ fontSize: "13px", fontWeight: "700", color: "#550000" }}>Jenjang <span style={{ color: "#ef4444" }}>*</span></label>
+            <label style={{ fontSize: "13px", fontWeight: "700", color: "#0D7A5F" }}>Jenjang <span style={{ color: "#ef4444" }}>*</span></label>
             {loadingMaster ? (
               <div
                 className="w-full box-border"
-                style={{ padding: "11px 14px", borderRadius: "12px", border: "1px solid #ebdcc3", background: "#fdf8f0", color: "#64748b", display: "flex", alignItems: "center", gap: 8, fontSize: "14px" }}
+                style={{ padding: "11px 14px", borderRadius: "12px", border: "1px solid #ebdcc3", background: "#FDFCF7", color: "#64748b", display: "flex", alignItems: "center", gap: 8, fontSize: "14px" }}
               >
                 <Loader2 size={16} className="animate-spin text-amber-700" />
                 ...
@@ -601,7 +591,7 @@ function PresensiSantriInner() {
             ) : (
               <select
                 className="w-full min-w-0 box-border"
-                style={{ padding: "11px 14px", borderRadius: "12px", border: "1px solid #ebdcc3", background: "#fdf8f0", fontSize: "14px", outline: "none", fontWeight: 600 }}
+                style={{ padding: "11px 14px", borderRadius: "12px", border: "1px solid #ebdcc3", background: "#FDFCF7", fontSize: "14px", outline: "none", fontWeight: 600 }}
                 value={selectedJenjang}
                 onChange={(e) => {
                   setSelectedJenjang(e.target.value);
@@ -620,11 +610,11 @@ function PresensiSantriInner() {
 
           {/* Kelas */}
           <div className="flex flex-col gap-1.5 min-w-0 w-full">
-            <label style={{ fontSize: "13px", fontWeight: "700", color: "#550000" }}>Kelas <span style={{ color: "#ef4444" }}>*</span></label>
+            <label style={{ fontSize: "13px", fontWeight: "700", color: "#0D7A5F" }}>Kelas <span style={{ color: "#ef4444" }}>*</span></label>
             {loadingMaster ? (
               <div
                 className="w-full box-border"
-                style={{ padding: "11px 14px", borderRadius: "12px", border: "1px solid #ebdcc3", background: "#fdf8f0", color: "#64748b", display: "flex", alignItems: "center", gap: 8, fontSize: "14px" }}
+                style={{ padding: "11px 14px", borderRadius: "12px", border: "1px solid #ebdcc3", background: "#FDFCF7", color: "#64748b", display: "flex", alignItems: "center", gap: 8, fontSize: "14px" }}
               >
                 <Loader2 size={16} className="animate-spin text-amber-700" />
                 ...
@@ -632,7 +622,7 @@ function PresensiSantriInner() {
             ) : (
               <select
                 className="w-full min-w-0 box-border"
-                style={{ padding: "11px 14px", borderRadius: "12px", border: "1px solid #ebdcc3", background: !selectedJenjang ? "#f1f5f9" : "#fdf8f0", fontSize: "14px", outline: "none", fontWeight: 600 }}
+                style={{ padding: "11px 14px", borderRadius: "12px", border: "1px solid #ebdcc3", background: !selectedJenjang ? "#f1f5f9" : "#FDFCF7", fontSize: "14px", outline: "none", fontWeight: 600 }}
                 value={selectedKelas}
                 onChange={(e) => {
                   setSelectedKelas(e.target.value);
@@ -655,13 +645,13 @@ function PresensiSantriInner() {
 
           {/* Mata Pelajaran */}
           <div className="flex flex-col gap-1.5 min-w-0 w-full">
-            <label style={{ fontSize: "13px", fontWeight: "700", color: "#550000" }}>Mata Pelajaran <span style={{ color: "#ef4444" }}>*</span></label>
+            <label style={{ fontSize: "13px", fontWeight: "700", color: "#0D7A5F" }}>Mata Pelajaran <span style={{ color: "#ef4444" }}>*</span></label>
             {isSpecialClass ? (
               <input
                 type="text"
                 placeholder="Ketik nama mata pelajaran..."
                 className="w-full min-w-0 box-border"
-                style={{ padding: "11px 14px", borderRadius: "12px", border: "1px solid #ebdcc3", background: "#fdf8f0", fontSize: "14px", outline: "none", fontWeight: 600 }}
+                style={{ padding: "11px 14px", borderRadius: "12px", border: "1px solid #ebdcc3", background: "#FDFCF7", fontSize: "14px", outline: "none", fontWeight: 600 }}
                 value={namaMapelCustom}
                 onChange={(e) => {
                   const val = e.target.value;
@@ -676,7 +666,7 @@ function PresensiSantriInner() {
             ) : (
               <select
                 className="w-full min-w-0 box-border"
-                style={{ padding: "11px 14px", borderRadius: "12px", border: "1px solid #ebdcc3", background: !selectedKelas ? "#f1f5f9" : "#fdf8f0", fontSize: "14px", outline: "none", fontWeight: 600 }}
+                style={{ padding: "11px 14px", borderRadius: "12px", border: "1px solid #ebdcc3", background: !selectedKelas ? "#f1f5f9" : "#FDFCF7", fontSize: "14px", outline: "none", fontWeight: 600 }}
                 value={mapelId}
                 onChange={(e) => {
                   const val = e.target.value;
@@ -703,11 +693,11 @@ function PresensiSantriInner() {
         </div>
 
         {/* Component Jam ke- (KBM Kelas) */}
-        <div style={{ padding: "16px", background: "#fdf8f0", borderRadius: "16px", border: "1px solid #ebdcc3", marginTop: "4px" }}>
+        <div style={{ padding: "16px", background: "#FDFCF7", borderRadius: "16px", border: "1px solid #ebdcc3", marginTop: "4px" }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: "12px", flexWrap: "wrap", gap: 8 }}>
             <div>
-              <label style={{ display: "flex", alignItems: "center", gap: "6px", fontSize: "13px", fontWeight: 700, color: "#550000", margin: 0, marginBottom: "4px" }}>
-                <Clock size={16} color="#ddc192" />
+              <label style={{ display: "flex", alignItems: "center", gap: "6px", fontSize: "13px", fontWeight: 700, color: "#0D7A5F", margin: 0, marginBottom: "4px" }}>
+                <Clock size={16} color="#D4AF37" />
                 Jam ke- (KBM Kelas) <span style={{ color: "#ef4444" }}>*</span>
               </label>
               <p style={{ fontSize: "11px", color: "#64748b", fontWeight: 500, margin: 0 }}>
@@ -809,7 +799,7 @@ function PresensiSantriInner() {
         <div className="w-full min-w-0" style={{ marginTop: "4px" }}>
           <button
             className="w-full box-border flex items-center justify-center gap-2"
-            style={{ background: "#550000", color: "white", padding: "12px 20px", borderRadius: "12px", border: "1px solid #550000", fontWeight: 700, cursor: "pointer", height: "46px", boxShadow: "0 2px 8px rgba(85,0,0,0.2)" }}
+            style={{ background: "#0D7A5F", color: "white", padding: "12px 20px", borderRadius: "12px", border: "1px solid #0D7A5F", fontWeight: 700, cursor: "pointer", height: "46px", boxShadow: "0 2px 8px rgba(85,0,0,0.2)" }}
             onClick={() => loadPresensi(true)}
 
             disabled={!selectedKelas || !tanggal || !mapelId || jamKe.length === 0 || loadingSantri}
@@ -821,7 +811,7 @@ function PresensiSantriInner() {
               </>
             ) : (
               <>
-                <ClipboardCheck size={18} color="#ddc192" />
+                <ClipboardCheck size={18} color="#D4AF37" />
                 Tampilkan Santri
               </>
             )}
@@ -838,8 +828,8 @@ function PresensiSantriInner() {
             style={{ background: "white", borderRadius: "20px", padding: "20px 24px", boxShadow: "0 2px 12px rgba(85,0,0,0.03)", border: "1px solid #ebdcc3", display: "flex", flexDirection: "column", gap: "14px" }}
           >
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 12 }}>
-              <div style={{ fontSize: 14, fontWeight: 800, color: "#550000", display: "flex", alignItems: "center", gap: 6 }}>
-                <BarChart3 size={18} color="#ddc192" />
+              <div style={{ fontSize: 14, fontWeight: 800, color: "#0D7A5F", display: "flex", alignItems: "center", gap: 6 }}>
+                <BarChart3 size={18} color="#D4AF37" />
                 <span>Kelas {kelasNama}</span>
                 <span style={{ color: "#64748b", fontWeight: 600 }}>• ({sudahDiabsen} dari {santri.length} santri)</span>
               </div>
@@ -860,12 +850,12 @@ function PresensiSantriInner() {
             </div>
 
             {/* Progress Bar */}
-            <div style={{ background: "#fdf8f0", border: "1px solid #ebdcc3", borderRadius: 99, height: 10, overflow: "hidden" }}>
+            <div style={{ background: "#FDFCF7", border: "1px solid #ebdcc3", borderRadius: 99, height: 10, overflow: "hidden" }}>
               <div
                 style={{
                   height: "100%",
                   width: `${progressPct}%`,
-                  background: "linear-gradient(90deg, #550000, #ddc192)",
+                  background: "linear-gradient(90deg, #0D7A5F, #D4AF37)",
                   borderRadius: 99,
                   transition: "width 0.4s ease" }}
               />
@@ -877,11 +867,11 @@ function PresensiSantriInner() {
             <button
               type="button"
               onClick={hadirSemua}
-              style={{ display: "inline-flex", alignItems: "center", gap: 8, padding: "8px 16px", borderRadius: "12px", background: "#fdf8f0", border: "1px solid #ebdcc3", color: "#550000", fontWeight: 800, fontSize: "13px", cursor: "pointer", transition: "all 0.2s" }}
+              style={{ display: "inline-flex", alignItems: "center", gap: 8, padding: "8px 16px", borderRadius: "12px", background: "#FDFCF7", border: "1px solid #ebdcc3", color: "#0D7A5F", fontWeight: 800, fontSize: "13px", cursor: "pointer", transition: "all 0.2s" }}
               onMouseEnter={(e) => { e.currentTarget.style.background = "#ebdcc3"; }}
-              onMouseLeave={(e) => { e.currentTarget.style.background = "#fdf8f0"; }}
+              onMouseLeave={(e) => { e.currentTarget.style.background = "#FDFCF7"; }}
             >
-              <CheckSquare size={16} color="#550000" />
+              <CheckSquare size={16} color="#0D7A5F" />
               Tandai Hadir Semua
             </button>
             <span style={{ fontSize: 13, color: "#64748b" }}>
@@ -935,7 +925,7 @@ function PresensiSantriInner() {
                         gap: 12,
                         minWidth: 0 }}
                     >
-                      <div style={{ width: 28, height: 28, borderRadius: "50%", background: "#fdf8f0", border: "1px solid #ebdcc3", color: "#550000", fontWeight: 800, fontSize: "12px", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                      <div style={{ width: 28, height: 28, borderRadius: "50%", background: "#FDFCF7", border: "1px solid #ebdcc3", color: "#0D7A5F", fontWeight: 800, fontSize: "12px", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
                         {idx + 1}
                       </div>
                       <div style={{ minWidth: 0 }}>
@@ -1002,10 +992,10 @@ function PresensiSantriInner() {
                               : "1px solid #ebdcc3",
                             background: isSelected
                               ? STATUS_BG[st]
-                              : "#fdf8f0",
+                              : "#FDFCF7",
                             color: isSelected
                               ? STATUS_COLOR[st]
-                              : "#550000",
+                              : "#0D7A5F",
                             fontWeight: isSelected ? 800 : 600,
                             fontSize: 13,
                             cursor: "pointer",
@@ -1033,7 +1023,7 @@ function PresensiSantriInner() {
                       </label>
                       <input
                         type="text"
-                        style={{ padding: "8px 12px", borderRadius: "10px", border: "1px solid #ebdcc3", background: "#fdf8f0", fontSize: "13px", width: "100%", outline: "none" }}
+                        style={{ padding: "8px 12px", borderRadius: "10px", border: "1px solid #ebdcc3", background: "#FDFCF7", fontSize: "13px", width: "100%", outline: "none" }}
                         placeholder={
                           currentStatus === "sakit"
                             ? "Contoh: Demam, istirahat di asrama/klinik..."
@@ -1061,7 +1051,7 @@ function PresensiSantriInner() {
             </Link>
             <button
               type="button"
-              style={{ background: "#550000", color: "white", padding: "11px 24px", borderRadius: "12px", border: "none", fontWeight: 800, cursor: "pointer", display: "inline-flex", alignItems: "center", gap: "8px", fontSize: "14px", boxShadow: "0 4px 14px rgba(85,0,0,0.2)" }}
+              style={{ background: "#0D7A5F", color: "white", padding: "11px 24px", borderRadius: "12px", border: "none", fontWeight: 800, cursor: "pointer", display: "inline-flex", alignItems: "center", gap: "8px", fontSize: "14px", boxShadow: "0 4px 14px rgba(85,0,0,0.2)" }}
               onClick={handleSimpan}
               disabled={saving}
             >
@@ -1072,7 +1062,7 @@ function PresensiSantriInner() {
                 </>
               ) : (
                 <>
-                  <Save size={18} color="#ddc192" />
+                  <Save size={18} color="#D4AF37" />
                   Simpan Presensi Santri
                 </>
               )}
@@ -1086,7 +1076,7 @@ function PresensiSantriInner() {
         <div
           style={{ background: "white", borderRadius: "20px", padding: "48px 24px", border: "1px solid #ebdcc3", textAlign: "center", color: "#64748b" }}
         >
-          <Loader2 size={32} className="animate-spin" style={{ margin: "0 auto 12px", display: "block", color: "#550000" }} />
+          <Loader2 size={32} className="animate-spin" style={{ margin: "0 auto 12px", display: "block", color: "#0D7A5F" }} />
           <p style={{ fontSize: 14, fontWeight: 600, margin: 0 }}>Memuat data santri...</p>
         </div>
       )}
@@ -1116,7 +1106,7 @@ function PresensiSantriInner() {
         <div
           style={{ background: "white", borderRadius: "20px", padding: "48px 24px", border: "1px dashed #ebdcc3", textAlign: "center", color: "#64748b" }}
         >
-          <Users size={40} style={{ opacity: 0.3, color: "#ddc192", margin: "0 auto 12px", display: "block" }} />
+          <Users size={40} style={{ opacity: 0.3, color: "#D4AF37", margin: "0 auto 12px", display: "block" }} />
           <p style={{ fontSize: 14, fontWeight: 700, margin: 0, color: "#1a1a1a" }}>
             Belum ada santri terdaftar di kelas ini.
           </p>
@@ -1132,7 +1122,7 @@ export default function PresensiSantriPage() {
     <Suspense
       fallback={
         <div className="p-16 text-center text-slate-500 font-bold flex flex-col items-center justify-center gap-2">
-          <Loader2 className="animate-spin text-[#550000]" size={28} />
+          <Loader2 className="animate-spin text-[#0D7A5F]" size={28} />
           <span>Memuat data presensi santri...</span>
         </div>
       }

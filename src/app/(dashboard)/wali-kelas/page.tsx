@@ -6,22 +6,13 @@ import { Users, FileText, BarChart3, Hammer } from "lucide-react";
 
 export default function WaliKelasHubPage() {
   return (
-    <div style={{ padding: "24px 28px", maxWidth: 1200, margin: "0 auto", display: "flex", flexDirection: "column", gap: 24 }}>
-      <div style={{
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "space-between",
-        background: "linear-gradient(135deg, #0f172a 0%, #1e293b 60%, #8b5cf6 100%)",
-        borderRadius: "24px",
-        padding: "32px 36px",
-        boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)",
-        color: "white"
-      }}>
+    <div className="p-3 sm:p-5 md:p-6 lg:p-7 max-w-7xl mx-auto flex flex-col gap-4 sm:gap-6 pb-20 w-full overflow-hidden box-border">
+      <div className="flex items-center justify-between bg-gradient-to-br from-slate-900 via-slate-800 to-purple-600 rounded-2xl sm:rounded-3xl p-4 sm:p-6 md:p-8 text-white shadow-lg w-full box-border">
         <div>
-          <h1 style={{ fontSize: "2rem", fontWeight: 700, margin: 0, display: "flex", alignItems: "center" }}>
-            <Users size={28} style={{ marginRight: 12 }} /> Hub Wali Kelas
+          <h1 className="text-xl sm:text-2xl md:text-3xl font-black m-0 flex items-center gap-3">
+            <Users size={28} /> Hub Wali Kelas
           </h1>
-          <p style={{ margin: "8px 0 0 0", opacity: 0.9, fontSize: "1.1rem" }}>
+          <p className="m-0 mt-1.5 opacity-90 text-xs sm:text-sm">
             Pusat kontrol data akademik untuk kelas yang Anda ampu
           </p>
         </div>

@@ -431,23 +431,9 @@ export default function KeuanganSPPPage() {
   };
 
   return (
-    <div style={{ padding: "24px 28px", maxWidth: 1200, margin: "0 auto", display: "flex", flexDirection: "column", gap: 24, paddingBottom: 80 }}>
+    <div className="p-3 sm:p-5 md:p-6 lg:p-7 max-w-7xl mx-auto flex flex-col gap-4 sm:gap-6 pb-20 w-full overflow-hidden box-border">
       {/* Header Banner - Luminous Cream & Warm Gold Platinum Standard */}
-      <div style={{
-        display: "flex",
-        justifyContent: "space-between",
-        alignItems: "center",
-        background: "linear-gradient(135deg, #fdfbf7 0%, #faf3e5 50%, #f4e7cd 100%)",
-        borderRadius: "24px",
-        padding: "32px 36px",
-        boxShadow: "0 14px 30px -10px rgba(184, 151, 88, 0.22), 0 4px 10px rgba(0, 0, 0, 0.03)",
-        border: "1.5px solid #ebdcc3",
-        color: "#1e293b",
-        flexWrap: "wrap",
-        gap: "24px",
-        position: "relative",
-        overflow: "hidden"
-      }}>
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-gradient-to-br from-[#fdfbf7] via-[#faf3e5] to-[#f4e7cd] rounded-2xl sm:rounded-3xl p-4 sm:p-6 md:p-8 shadow-[0_14px_30px_-10px_rgba(184,151,88,0.22),0_4px_10px_rgba(0,0,0,0.03)] border border-[#ebdcc3] text-[#1e293b] gap-4 sm:gap-6 relative overflow-hidden w-full box-border">
         {/* Subtle gold radial background glow */}
         <div style={{
           position: "absolute",
@@ -459,20 +445,20 @@ export default function KeuanganSPPPage() {
           pointerEvents: "none",
         }} />
 
-        <div style={{ display: "flex", flexDirection: "column", gap: "8px", position: "relative", zIndex: 10 }}>
-          <div style={{ display: "inline-flex", alignItems: "center", gap: "8px", padding: "4px 12px", borderRadius: "999px", background: "#550000", color: "#ffffff", fontSize: "12px", fontWeight: "bold", width: "fit-content", boxShadow: "0 2px 6px rgba(85,0,0,0.2)" }}>
-            <Sparkles className="w-3.5 h-3.5 text-[#ddc192]" /> Modul Admin Keuangan
+        <div className="flex flex-col gap-2 relative z-10 max-w-xl">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#0D7A5F] text-white text-xs font-bold w-fit shadow-sm">
+            <Sparkles className="w-3.5 h-3.5 text-[#D4AF37]" /> Modul Admin Keuangan
           </div>
-          <h1 style={{ fontSize: "28px", fontWeight: 900, margin: 0, color: "#550000", letterSpacing: "-0.02em" }}>
+          <h1 className="text-xl sm:text-2xl md:text-3xl font-black text-[#0D7A5F] tracking-tight m-0">
             Manajemen Pembayaran SPP Santri
           </h1>
-          <p style={{ color: "#6b5636", margin: 0, fontSize: "14px", maxWidth: "600px", lineHeight: "1.5" }}>
+          <p className="text-xs sm:text-sm text-[#6b5636] m-0 leading-relaxed">
             Pantau kepatuhan SPP bulanan (jatuh tempo tgl 10) &amp; kendalikan akses gembok portal wali santri secara real-time.
           </p>
         </div>
 
         {/* Month & Year Switcher Controls */}
-        <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: "8px", background: "rgba(255, 255, 255, 0.9)", backdropFilter: "blur(10px)", padding: "8px 10px", borderRadius: "18px", border: "1.5px solid #ebdcc3", boxShadow: "0 4px 12px rgba(0, 0, 0, 0.04)", position: "relative", zIndex: 10 }}>
+        <div className="flex items-center justify-between sm:justify-start gap-1.5 sm:gap-2 bg-white/90 backdrop-blur-md p-1.5 sm:p-2 rounded-2xl border border-[#ebdcc3] shadow-sm w-full sm:w-auto relative z-10 box-border">
           <button 
             onClick={() => {
               if (selectedBulan === 1) {
@@ -482,36 +468,37 @@ export default function KeuanganSPPPage() {
                 setSelectedBulan(selectedBulan - 1);
               }
             }}
-            style={{ padding: "8px", borderRadius: "12px", background: "#fdf8f0", color: "#550000", border: "1px solid #ebdcc3", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", transition: "all 0.15s" }}
+            className="p-2 rounded-xl bg-[#FDFCF7] text-[#0D7A5F] border border-[#ebdcc3] hover:bg-[#f6ecd9] transition-all flex items-center justify-center shrink-0 cursor-pointer"
             title="Bulan Sebelumnya"
-            className="hover:bg-[#f6ecd9]"
           >
-            <ChevronLeft style={{ width: "16px", height: "16px" }} />
+            <ChevronLeft className="w-4 h-4" />
           </button>
 
-          <select
-            value={selectedBulan}
-            onChange={(e) => setSelectedBulan(Number(e.target.value))}
-            style={{ background: "#ffffff", color: "#550000", fontWeight: "bold", fontSize: "14px", padding: "6px 10px", borderRadius: "10px", border: "1px solid #ebdcc3", outline: "none", cursor: "pointer", height: "34px", display: "flex", alignItems: "center" }}
-          >
-            {NAMA_BULAN.map((nama, idx) => (
-              <option key={idx} value={idx + 1} style={{ background: "#ffffff", color: "#1e293b" }}>
-                {nama}
-              </option>
-            ))}
-          </select>
+          <div className="flex items-center gap-1.5 grow sm:grow-0 justify-center">
+            <select
+              value={selectedBulan}
+              onChange={(e) => setSelectedBulan(Number(e.target.value))}
+              className="bg-white text-[#0D7A5F] font-bold text-xs sm:text-sm px-2 sm:px-3 py-1.5 rounded-xl border border-[#ebdcc3] outline-none cursor-pointer h-9"
+            >
+              {NAMA_BULAN.map((nama, idx) => (
+                <option key={idx} value={idx + 1} className="bg-white text-slate-800">
+                  {nama}
+                </option>
+              ))}
+            </select>
 
-          <select
-            value={selectedTahun}
-            onChange={(e) => setSelectedTahun(Number(e.target.value))}
-            style={{ background: "#ffffff", color: "#550000", fontWeight: "bold", fontSize: "14px", padding: "6px 10px", borderRadius: "10px", border: "1px solid #ebdcc3", outline: "none", cursor: "pointer", height: "34px", display: "flex", alignItems: "center" }}
-          >
-            {[2025, 2026, 2027].map((yr) => (
-              <option key={yr} value={yr} style={{ background: "#ffffff", color: "#1e293b" }}>
-                {yr}
-              </option>
-            ))}
-          </select>
+            <select
+              value={selectedTahun}
+              onChange={(e) => setSelectedTahun(Number(e.target.value))}
+              className="bg-white text-[#0D7A5F] font-bold text-xs sm:text-sm px-2 sm:px-3 py-1.5 rounded-xl border border-[#ebdcc3] outline-none cursor-pointer h-9"
+            >
+              {[2025, 2026, 2027].map((yr) => (
+                <option key={yr} value={yr} className="bg-white text-slate-800">
+                  {yr}
+                </option>
+              ))}
+            </select>
+          </div>
 
           <button 
             onClick={() => {
@@ -522,36 +509,24 @@ export default function KeuanganSPPPage() {
                 setSelectedBulan(selectedBulan + 1);
               }
             }}
-            style={{ padding: "8px", borderRadius: "12px", background: "#fdf8f0", color: "#550000", border: "1px solid #ebdcc3", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", transition: "all 0.15s" }}
+            className="p-2 rounded-xl bg-[#FDFCF7] text-[#0D7A5F] border border-[#ebdcc3] hover:bg-[#f6ecd9] transition-all flex items-center justify-center shrink-0 cursor-pointer"
             title="Bulan Berikutnya"
-            className="hover:bg-[#f6ecd9]"
           >
-            <ChevronRight style={{ width: "16px", height: "16px" }} />
+            <ChevronRight className="w-4 h-4" />
           </button>
 
           <button
             onClick={fetchData}
-            style={{ padding: "8px", borderRadius: "12px", background: "#550000", color: "#ffffff", border: "none", cursor: "pointer", marginLeft: "4px", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 2px 6px rgba(85,0,0,0.25)", transition: "all 0.15s" }}
+            className="p-2 rounded-xl bg-[#0D7A5F] text-white hover:bg-[#059669] transition-all flex items-center justify-center shrink-0 shadow-sm cursor-pointer"
             title="Segarkan Data"
-            className="hover:bg-[#7a0000]"
           >
-            <RefreshCw className={loading ? "animate-spin" : ""} style={{ width: "16px", height: "16px" }} />
+            <RefreshCw className={`w-4 h-4 ${loading ? "animate-spin" : ""}`} />
           </button>
         </div>
       </div>
 
       {/* Kartu Panduan Kendali Akses & Verifikasi SPP - Clean Platinum Ivory & Gold */}
-      <div style={{
-        background: "rgba(255, 255, 255, 0.95)",
-        backdropFilter: "blur(12px)",
-        borderRadius: "24px",
-        padding: "26px 30px",
-        color: "#1e293b",
-        boxShadow: "0 10px 25px -5px rgba(85, 0, 0, 0.04), 0 2px 6px rgba(0, 0, 0, 0.02)",
-        border: "1.5px solid #ebdcc3",
-        position: "relative",
-        overflow: "hidden"
-      }}>
+      <div className="bg-white/95 backdrop-blur-md rounded-2xl sm:rounded-3xl p-4 sm:p-6 shadow-[0_10px_25px_-5px_rgba(85,0,0,0.04)] border border-[#ebdcc3] relative overflow-hidden w-full box-border">
         {/* Subtle gold accent light */}
         <div style={{
           position: "absolute",
@@ -563,39 +538,39 @@ export default function KeuanganSPPPage() {
           pointerEvents: "none",
         }} />
 
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: "20px", position: "relative", zIndex: 10 }}>
-          <div style={{ display: "flex", alignItems: "flex-start", gap: "14px", maxWidth: "680px" }}>
-            <div style={{ padding: "12px", borderRadius: "16px", background: "#fdf5f5", border: "1px solid #fae4e4", color: "#550000", flexShrink: 0 }}>
-              <ShieldCheck style={{ width: "24px", height: "24px" }} />
+        <div className="flex flex-col lg:flex-row justify-between items-start gap-4 sm:gap-6 relative z-10 w-full">
+          <div className="flex items-start gap-3 sm:gap-3.5 max-w-2xl w-full">
+            <div className="p-2.5 sm:p-3 rounded-2xl bg-emerald-50 border border-emerald-100 text-[#0D7A5F] shrink-0">
+              <ShieldCheck className="w-5 h-5 sm:w-6 sm:h-6" />
             </div>
-            <div>
-              <div style={{ display: "inline-flex", alignItems: "center", gap: "6px", padding: "3px 10px", borderRadius: "999px", background: "#fdf8f0", color: "#8b6b28", fontSize: "11px", fontWeight: "bold", border: "1px solid #ebdcc3", marginBottom: "6px" }}>
-                <span>Wewenang Admin Keuangan Al-Imam</span>
+            <div className="grow min-w-0">
+              <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#FDFCF7] text-[#8b6b28] text-[10px] sm:text-xs font-bold border border-[#ebdcc3] mb-1.5">
+                <span>Wewenang Admin Keuangan Pesantren Al-Basyir</span>
               </div>
-              <h3 style={{ fontSize: "19px", fontWeight: 900, margin: 0, color: "#1e293b", letterSpacing: "-0.01em" }}>
+              <h3 className="text-base sm:text-lg font-black text-slate-800 m-0 tracking-tight">
                 Kendali Akses Portal Wali Santri &amp; Verifikasi Pembayaran
               </h3>
-              <p style={{ fontSize: "12px", color: "#64748b", margin: "6px 0 0 0", lineHeight: "1.5" }}>
-                Gunakan saklar <strong style={{ color: "#059669" }}>[ON / OFF]</strong> di kolom Akses Portal untuk membuka (Dispensasi) atau mengunci portal wali santri secara instan tanpa menunggu pelunasan. Bukti transfer yang diunggah wali santri akan masuk ke antrean verifikasi untuk disetujui dalam 1-klik.
+              <p className="text-xs sm:text-sm text-slate-500 mt-1 mb-0 leading-relaxed">
+                Gunakan saklar <strong className="text-emerald-600">[ON / OFF]</strong> di kolom Akses Portal untuk membuka (Dispensasi) atau mengunci portal wali santri secara instan tanpa menunggu pelunasan. Bukti transfer yang diunggah wali santri akan masuk ke antrean verifikasi untuk disetujui dalam 1-klik.
               </p>
             </div>
           </div>
 
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: "10px", width: "100%", maxWidth: "420px" }}>
-            <div style={{ background: "#fdfaf5", border: "1px solid #ebdcc3", borderRadius: "16px", padding: "14px" }}>
-              <div style={{ display: "flex", alignItems: "center", gap: "6px", fontWeight: "bold", color: "#550000", fontSize: "12px", marginBottom: "4px" }}>
-                <Unlock style={{ width: "14px", height: "14px" }} /> Saklar ON / OFF
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 w-full lg:max-w-md shrink-0">
+            <div className="bg-[#fdfaf5] border border-[#ebdcc3] rounded-2xl p-3 sm:p-3.5">
+              <div className="flex items-center gap-1.5 font-bold text-[#0D7A5F] text-xs mb-1">
+                <Unlock className="w-3.5 h-3.5" /> Saklar ON / OFF
               </div>
-              <p style={{ margin: 0, fontSize: "11px", color: "#475569", lineHeight: "1.4" }}>
+              <p className="m-0 text-[11px] sm:text-xs text-slate-600 leading-snug">
                 Klik tombol switch di kolom <strong>Akses Portal</strong> untuk membuka (ON) atau mengunci (OFF) manual.
               </p>
             </div>
-            <div style={{ background: "#fdfaf5", border: "1px solid #ebdcc3", borderRadius: "16px", padding: "14px" }}>
-              <div style={{ display: "flex", alignItems: "center", gap: "6px", fontWeight: "bold", color: "#550000", fontSize: "12px", marginBottom: "4px" }}>
-                <Clock style={{ width: "14px", height: "14px" }} /> Verifikasi Bukti
+            <div className="bg-[#fdfaf5] border border-[#ebdcc3] rounded-2xl p-3 sm:p-3.5">
+              <div className="flex items-center gap-1.5 font-bold text-[#0D7A5F] text-xs mb-1">
+                <Clock className="w-3.5 h-3.5" /> Verifikasi Bukti
               </div>
-              <p style={{ margin: 0, fontSize: "11px", color: "#475569", lineHeight: "1.4" }}>
-                Wali upload bukti transfer &rarr; periksa struk &rarr; klik <strong style={{ color: "#059669" }}>Setujui &amp; Buka</strong> untuk membuka portal.
+              <p className="m-0 text-[11px] sm:text-xs text-slate-600 leading-snug">
+                Wali upload bukti transfer &rarr; periksa struk &rarr; klik <strong className="text-emerald-600">Setujui &amp; Buka</strong> untuk membuka portal.
               </p>
             </div>
           </div>
@@ -604,37 +579,36 @@ export default function KeuanganSPPPage() {
 
       {/* Antrean Konfirmasi Pembayaran Menunggu Verifikasi */}
       {pendingList.length > 0 ? (
-        <div style={{ background: "linear-gradient(135deg, #fffbeb 0%, #fef3c7 50%, #fff7ed 100%)", border: "2px solid #fcd34d", borderRadius: "24px", padding: "24px", boxShadow: "0 10px 25px -5px rgba(245, 158, 11, 0.15)", display: "flex", flexDirection: "column", gap: "16px" }}>
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "12px", borderBottom: "1px solid #fde68a", paddingBottom: "14px" }}>
-            <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-              <div style={{ padding: "10px", borderRadius: "14px", background: "#f59e0b", color: "white", boxShadow: "0 4px 6px -1px rgba(245, 158, 11, 0.3)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                <Clock className="animate-spin" style={{ width: "20px", height: "20px" }} />
+        <div className="bg-gradient-to-br from-amber-50 via-amber-50/80 to-orange-50 border-2 border-amber-300 rounded-2xl sm:rounded-3xl p-4 sm:p-6 shadow-sm flex flex-col gap-4 w-full box-border">
+          <div className="flex items-center justify-between flex-wrap gap-3 border-b border-amber-200 pb-3 sm:pb-4">
+            <div className="flex items-center gap-3 min-w-0">
+              <div className="p-2 sm:p-2.5 rounded-xl bg-amber-500 text-white shadow-sm shrink-0 flex items-center justify-center">
+                <Clock className="w-5 h-5 animate-spin" />
               </div>
-              <div>
-                <div style={{ display: "flex", alignItems: "center", gap: "8px", flexWrap: "wrap" }}>
-                  <h3 style={{ fontSize: "16px", fontWeight: 900, color: "#78350f", margin: 0 }}>
+              <div className="min-w-0">
+                <div className="flex items-center gap-2 flex-wrap">
+                  <h3 className="text-sm sm:text-base font-black text-amber-950 m-0">
                     {pendingList.length} Konfirmasi Pembayaran Menunggu Verifikasi
                   </h3>
-                  <span style={{ padding: "2px 8px", borderRadius: "999px", background: "#fef08a", color: "#854d0e", fontWeight: 900, fontSize: "10px", textTransform: "uppercase", letterSpacing: "0.05em", border: "1px solid #fde047" }}>
+                  <span className="px-2 py-0.5 rounded-full bg-yellow-200 text-yellow-900 font-black text-[10px] uppercase tracking-wider border border-yellow-300">
                     Perlu Tindakan
                   </span>
                 </div>
-                <p style={{ fontSize: "12px", color: "#92400e", margin: "4px 0 0 0", lineHeight: "1.4" }}>
+                <p className="text-xs text-amber-900 mt-1 mb-0 leading-relaxed">
                   Wali santri telah mengirim bukti transfer / melunasi SPP via portal. Verifikasi penerimaan dana lalu klik tombol <strong>[Setujui &amp; Buka Akses]</strong> untuk membuka akses portal secara permanen.
                 </p>
               </div>
             </div>
             <button
               onClick={fetchData}
-              style={{ padding: "8px 14px", borderRadius: "12px", background: "#fef3c7", border: "1px solid #fcd34d", color: "#92400e", fontSize: "12px", fontWeight: "bold", cursor: "pointer", display: "inline-flex", alignItems: "center", gap: "6px" }}
-              className="hover:bg-amber-200 transition-colors"
+              className="px-3 py-1.5 rounded-xl bg-amber-100 border border-amber-300 text-amber-900 text-xs font-bold hover:bg-amber-200 transition-colors flex items-center gap-1.5 cursor-pointer"
             >
-              <RefreshCw className={loading ? "animate-spin" : ""} style={{ width: "13px", height: "13px" }} />
+              <RefreshCw className={`w-3.5 h-3.5 ${loading ? "animate-spin" : ""}`} />
               <span>Segarkan Antrean</span>
             </button>
           </div>
 
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: "16px" }}>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 w-full">
             {pendingList.map((item) => {
               let proofUrl: string | null = null;
               let noteText = item.catatan || "";
@@ -728,50 +702,48 @@ export default function KeuanganSPPPage() {
           </div>
         </div>
       ) : (
-        <div style={{ background: "linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%)", border: "1px solid #a7f3d0", borderRadius: "20px", padding: "16px 22px", display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "12px", boxShadow: "0 1px 3px rgba(0,0,0,0.04)" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-            <div style={{ padding: "8px", borderRadius: "12px", background: "#10b981", color: "white", display: "flex", alignItems: "center", justifyContent: "center" }}>
-              <CheckCircle2 style={{ width: "18px", height: "18px" }} />
+        <div className="bg-gradient-to-r from-emerald-50 to-teal-50 border border-emerald-200 rounded-2xl p-4 sm:p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-sm w-full box-border">
+          <div className="flex items-center gap-3">
+            <div className="p-2 sm:p-2.5 rounded-xl bg-emerald-500 text-white flex items-center justify-center shrink-0">
+              <CheckCircle2 className="w-5 h-5" />
             </div>
             <div>
-              <div style={{ fontWeight: 800, fontSize: "13px", color: "#065f46" }}>
+              <div className="font-extrabold text-xs sm:text-sm text-emerald-900">
                 Antrean Verifikasi Kosong (0 Menunggu)
               </div>
-              <div style={{ fontSize: "11px", color: "#047857", marginTop: "2px" }}>
+              <div className="text-[11px] sm:text-xs text-emerald-700 mt-0.5">
                 Semua bukti transfer wali santri telah diproses. Pengajuan konfirmasi baru yang diunggah wali santri via portal akan langsung muncul di sini.
               </div>
             </div>
           </div>
           <button
             onClick={fetchData}
-            style={{ padding: "6px 14px", borderRadius: "10px", background: "white", border: "1px solid #a7f3d0", color: "#065f46", fontSize: "11px", fontWeight: "bold", cursor: "pointer", display: "inline-flex", alignItems: "center", gap: "5px" }}
-            className="hover:bg-emerald-50 transition-colors"
+            className="px-3.5 py-1.5 rounded-xl bg-white border border-emerald-300 text-emerald-800 text-xs font-bold hover:bg-emerald-50 transition-colors flex items-center gap-1.5 cursor-pointer shrink-0"
           >
-            <RefreshCw className={loading ? "animate-spin" : ""} style={{ width: "12px", height: "12px" }} />
+            <RefreshCw className={`w-3.5 h-3.5 ${loading ? "animate-spin" : ""}`} />
             <span>Cek Pengajuan Baru</span>
           </button>
         </div>
       )}
 
       {/* Date 1-10 Rule Alert Card */}
-      <div style={{ background: "linear-gradient(to right, #fffbeb, #fef3c7)", border: "1px solid #fde68a", borderRadius: "24px", padding: "20px", display: "flex", alignItems: "center", justifyContent: "space-between", gap: "16px", flexWrap: "wrap", boxShadow: "0 1px 2px 0 rgba(0, 0, 0, 0.05)" }}>
-        <div style={{ display: "flex", alignItems: "flex-start", gap: "14px" }}>
-          <div style={{ padding: "10px", borderRadius: "12px", background: "#f59e0b", color: "white", boxShadow: "0 4px 6px -1px rgba(245, 158, 11, 0.2)", flexShrink: 0 }}>
+      <div className="bg-gradient-to-r from-amber-50 to-amber-100 border border-amber-200 rounded-2xl sm:rounded-3xl p-3.5 sm:p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4 w-full shadow-sm box-border">
+        <div className="flex items-start gap-3 min-w-0">
+          <div className="p-2 sm:p-2.5 rounded-xl bg-amber-500 text-white shrink-0 shadow-sm flex items-center justify-center">
             <AlertTriangle className="w-5 h-5" />
           </div>
-          <div>
-            <h4 style={{ fontSize: "14px", fontWeight: "bold", color: "#451a03", margin: 0, display: "flex", alignItems: "center", gap: "8px" }}>
+          <div className="min-w-0">
+            <h4 className="text-xs sm:text-sm font-bold text-amber-950 m-0">
               Kebijakan Jatuh Tempo SPP: Tanggal 1 s/d 10 Setiap Bulan
             </h4>
-            <p style={{ fontSize: "12px", color: "#92400e", margin: "4px 0 0 0", lineHeight: "1.5" }}>
-              Santri yang <strong style={{ fontWeight: 800 }}>belum lunas setelah tanggal 10</strong> otomatis <span style={{ fontWeight: "bold", color: "#be123c", textDecoration: "underline", textDecorationColor: "#fb7185" }}>terkunci akses portal rapor & nilainya</span>. 
-              Admin Keuangan dapat membuka kunci kapan saja dengan menekan tombol <strong style={{ fontWeight: 800 }}>[Tandai Lunas]</strong> di bawah.
+            <p className="text-[11px] sm:text-xs text-amber-800 m-1 sm:mt-1 mb-0 leading-relaxed">
+              Santri yang <strong className="font-extrabold">belum lunas setelah tanggal 10</strong> otomatis <span className="font-bold text-rose-700 underline decoration-rose-400">terkunci akses portal rapor &amp; nilainya</span>. Admin Keuangan dapat membuka kunci kapan saja dengan menekan tombol <strong className="font-extrabold">[Tandai Lunas]</strong> di bawah.
             </p>
           </div>
         </div>
-        <div style={{ background: "rgba(255,255,255,0.9)", backdropFilter: "blur(4px)", border: "1px solid #fde68a", borderRadius: "12px", padding: "8px 16px", textAlign: "right", flexShrink: 0 }}>
-          <div style={{ fontSize: "11px", fontWeight: "bold", color: "#92400e", textTransform: "uppercase", letterSpacing: "0.05em" }}>Status Tanggal Hari Ini</div>
-          <div style={{ fontSize: "14px", fontWeight: "900", color: "#451a03", marginTop: "2px" }}>
+        <div className="bg-white/90 backdrop-blur-sm border border-amber-200 rounded-xl px-3 py-2 text-left sm:text-right shrink-0 w-full sm:w-auto">
+          <div className="text-[10px] font-bold text-amber-800 uppercase tracking-wider">Status Tanggal Hari Ini</div>
+          <div className="text-xs sm:text-sm font-black text-amber-950 mt-0.5">
             Tgl {todayDate} {NAMA_BULAN[now.getMonth()]} {now.getFullYear()} {isCurrentMonth && (todayDate <= 10 ? "(Masa Pembayaran)" : "(Lewat Batas)")}
           </div>
         </div>
@@ -779,95 +751,95 @@ export default function KeuanganSPPPage() {
 
       {/* Summary Stat Cards */}
       {summary && (
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: "24px" }}>
-          <div style={{ background: "white", borderRadius: "24px", padding: "20px", border: "1px solid #e2e8f0", boxShadow: "0 4px 6px -1px rgba(0,0,0,0.05)", display: "flex", flexDirection: "column", gap: "8px" }}>
-            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-              <span style={{ fontSize: "12px", fontWeight: "bold", color: "#64748b", textTransform: "uppercase", letterSpacing: "0.05em" }}>Total Santri</span>
-              <div style={{ padding: "8px", borderRadius: "12px", background: "#f1f5f9", color: "#334155" }}>
-                <Users style={{ width: "16px", height: "16px" }} />
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2.5 sm:gap-4 w-full">
+          <div className="bg-white rounded-2xl sm:rounded-3xl p-3.5 sm:p-5 border border-slate-200 shadow-sm flex flex-col justify-between gap-2">
+            <div className="flex items-center justify-between">
+              <span className="text-[10px] sm:text-xs font-bold text-slate-500 uppercase tracking-wider">Total Santri</span>
+              <div className="p-1.5 sm:p-2 rounded-xl bg-slate-100 text-slate-700">
+                <Users className="w-4 h-4" />
               </div>
             </div>
-            <div style={{ fontSize: "24px", fontWeight: 900, color: "#1e293b" }}>{summary.total_santri}</div>
-            <div style={{ fontSize: "12px", color: "#64748b" }}>Santri aktif terdaftar</div>
+            <div className="text-xl sm:text-2xl font-black text-slate-800">{summary.total_santri}</div>
+            <div className="text-[11px] sm:text-xs text-slate-500">Santri aktif terdaftar</div>
           </div>
 
-          <div style={{ background: "white", borderRadius: "24px", padding: "20px", border: "1px solid #a7f3d0", boxShadow: "0 4px 6px -1px rgba(0,0,0,0.05)", display: "flex", flexDirection: "column", gap: "8px" }}>
-            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-              <span style={{ fontSize: "12px", fontWeight: "bold", color: "#047857", textTransform: "uppercase", letterSpacing: "0.05em" }}>Sudah Lunas</span>
-              <div style={{ padding: "8px", borderRadius: "12px", background: "#ecfdf5", color: "#059669" }}>
-                <CheckCircle2 style={{ width: "16px", height: "16px" }} />
+          <div className="bg-white rounded-2xl sm:rounded-3xl p-3.5 sm:p-5 border border-emerald-200 shadow-sm flex flex-col justify-between gap-2">
+            <div className="flex items-center justify-between">
+              <span className="text-[10px] sm:text-xs font-bold text-emerald-700 uppercase tracking-wider">Sudah Lunas</span>
+              <div className="p-1.5 sm:p-2 rounded-xl bg-emerald-50 text-emerald-600">
+                <CheckCircle2 className="w-4 h-4" />
               </div>
             </div>
-            <div style={{ fontSize: "24px", fontWeight: 900, color: "#047857", display: "flex", alignItems: "baseline", gap: "8px" }}>
+            <div className="text-xl sm:text-2xl font-black text-emerald-700 flex items-baseline gap-1.5">
               {summary.total_lunas} 
-              <span style={{ fontSize: "12px", fontWeight: 600, color: "#059669" }}>({summary.persentase}%)</span>
+              <span className="text-xs font-bold text-emerald-600">({summary.persentase}%)</span>
             </div>
-            <div style={{ fontSize: "12px", color: "#059669", fontWeight: 500 }}>{formatRupiah(summary.total_terkumpul)}</div>
+            <div className="text-[11px] sm:text-xs text-emerald-600 font-semibold truncate">{formatRupiah(summary.total_terkumpul)}</div>
           </div>
 
-          <div style={{ background: "white", borderRadius: "24px", padding: "20px", border: "1px solid #fecdd3", boxShadow: "0 4px 6px -1px rgba(0,0,0,0.05)", display: "flex", flexDirection: "column", gap: "8px" }}>
-            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-              <span style={{ fontSize: "12px", fontWeight: "bold", color: "#be123c", textTransform: "uppercase", letterSpacing: "0.05em" }}>Terkunci / Menunggak</span>
-              <div style={{ padding: "8px", borderRadius: "12px", background: "#fff1f2", color: "#e11d48" }}>
-                <Lock style={{ width: "16px", height: "16px" }} />
+          <div className="bg-white rounded-2xl sm:rounded-3xl p-3.5 sm:p-5 border border-rose-200 shadow-sm flex flex-col justify-between gap-2">
+            <div className="flex items-center justify-between">
+              <span className="text-[10px] sm:text-xs font-bold text-rose-700 uppercase tracking-wider">Terkunci / Nunggak</span>
+              <div className="p-1.5 sm:p-2 rounded-xl bg-rose-50 text-rose-600">
+                <Lock className="w-4 h-4" />
               </div>
             </div>
-            <div style={{ fontSize: "24px", fontWeight: 900, color: "#be123c", display: "flex", alignItems: "baseline", gap: "8px" }}>
+            <div className="text-xl sm:text-2xl font-black text-rose-700 flex items-baseline gap-1.5">
               {summary.total_terkunci}
-              <span style={{ fontSize: "12px", fontWeight: 600, color: "#e11d48" }}>Santri</span>
+              <span className="text-xs font-bold text-rose-600">Santri</span>
             </div>
-            <div style={{ fontSize: "12px", color: "#e11d48", fontWeight: 500 }}>{formatRupiah(summary.total_tunggakan)} tunggakan</div>
+            <div className="text-[11px] sm:text-xs text-rose-600 font-semibold truncate">{formatRupiah(summary.total_tunggakan)}</div>
           </div>
 
-          <div style={{ background: "white", borderRadius: "24px", padding: "20px", border: "1px solid #fed7aa", boxShadow: "0 4px 6px -1px rgba(0,0,0,0.05)", display: "flex", flexDirection: "column", gap: "8px" }}>
-            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-              <span style={{ fontSize: "12px", fontWeight: "bold", color: "#c2410c", textTransform: "uppercase", letterSpacing: "0.05em" }}>Dispensasi Buka Manual</span>
-              <div style={{ padding: "8px", borderRadius: "12px", background: "#fff7ed", color: "#ea580c" }}>
-                <Unlock style={{ width: "16px", height: "16px" }} />
+          <div className="bg-white rounded-2xl sm:rounded-3xl p-3.5 sm:p-5 border border-amber-200 shadow-sm flex flex-col justify-between gap-2">
+            <div className="flex items-center justify-between">
+              <span className="text-[10px] sm:text-xs font-bold text-orange-700 uppercase tracking-wider">Dispensasi Manual</span>
+              <div className="p-1.5 sm:p-2 rounded-xl bg-orange-50 text-orange-600">
+                <Unlock className="w-4 h-4" />
               </div>
             </div>
-            <div style={{ fontSize: "24px", fontWeight: 900, color: "#c2410c", display: "flex", alignItems: "baseline", gap: "8px" }}>
+            <div className="text-xl sm:text-2xl font-black text-orange-700 flex items-baseline gap-1.5">
               {summary.total_dispensasi || 0}
-              <span style={{ fontSize: "12px", fontWeight: 600, color: "#ea580c" }}>Santri</span>
+              <span className="text-xs font-bold text-orange-600">Santri</span>
             </div>
-            <div style={{ fontSize: "12px", color: "#ea580c", fontWeight: 500 }}>Akses dibuka oleh Admin</div>
+            <div className="text-[11px] sm:text-xs text-orange-600 font-semibold truncate">Akses dibuka Admin</div>
           </div>
 
-          <div style={{ background: "white", borderRadius: "24px", padding: "20px", border: "1px solid #bfdbfe", boxShadow: "0 4px 6px -1px rgba(0,0,0,0.05)", display: "flex", flexDirection: "column", gap: "8px" }}>
-            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-              <span style={{ fontSize: "12px", fontWeight: "bold", color: "#1d4ed8", textTransform: "uppercase", letterSpacing: "0.05em" }}>Target Bulan Ini</span>
-              <div style={{ padding: "8px", borderRadius: "12px", background: "#eff6ff", color: "#2563eb" }}>
-                <TrendingUp style={{ width: "16px", height: "16px" }} />
+          <div className="col-span-2 sm:col-span-1 bg-white rounded-2xl sm:rounded-3xl p-3.5 sm:p-5 border border-blue-200 shadow-sm flex flex-col justify-between gap-2">
+            <div className="flex items-center justify-between">
+              <span className="text-[10px] sm:text-xs font-bold text-blue-700 uppercase tracking-wider">Target Bulan Ini</span>
+              <div className="p-1.5 sm:p-2 rounded-xl bg-blue-50 text-blue-600">
+                <TrendingUp className="w-4 h-4" />
               </div>
             </div>
-            <div style={{ fontSize: "20px", fontWeight: 900, color: "#1e3a8a", marginTop: "4px" }}>
+            <div className="text-lg sm:text-xl font-black text-blue-900 truncate">
               {NAMA_BULAN[selectedBulan - 1]} {selectedTahun}
             </div>
-            <div style={{ fontSize: "12px", color: "#2563eb", fontWeight: 500 }}>Jatuh tempo: 10 {NAMA_BULAN[selectedBulan - 1]}</div>
+            <div className="text-[11px] sm:text-xs text-blue-600 font-semibold truncate">Jatuh tempo: 10 {NAMA_BULAN[selectedBulan - 1]}</div>
           </div>
         </div>
       )}
 
       {/* Filter & Search Bar */}
-      <div style={{ background: "white", borderRadius: "24px", padding: "20px", boxShadow: "0 1px 3px 0 rgba(0,0,0,0.1)", border: "1px solid #f1f5f9", display: "flex", flexWrap: "wrap", gap: "16px", alignItems: "center", justifyContent: "space-between" }}>
-        <div style={{ position: "relative", width: "100%", maxWidth: "320px" }}>
-          <Search style={{ width: "16px", height: "16px", position: "absolute", left: "12px", top: "50%", transform: "translateY(-50%)", color: "#94a3b8" }} />
+      <div className="bg-white rounded-2xl sm:rounded-3xl p-3.5 sm:p-5 shadow-sm border border-slate-100 flex flex-col md:flex-row gap-3 sm:gap-4 items-stretch md:items-center justify-between w-full box-border">
+        <div className="relative w-full md:max-w-xs shrink-0">
+          <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
           <input
             type="text"
             placeholder="Cari santri / NIS..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && fetchData()}
-            style={{ width: "100%", padding: "10px 16px 10px 36px", background: "#f8fafc", border: "1px solid #e2e8f0", borderRadius: "12px", fontSize: "12px", fontWeight: 500, outline: "none", boxSizing: "border-box" }}
+            className="w-full pl-9 pr-4 py-2 sm:py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm font-medium outline-none focus:ring-2 focus:ring-emerald-500/20 box-border"
           />
         </div>
 
-        <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: "12px", width: "100%", maxWidth: "fit-content" }}>
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3 w-full md:w-auto overflow-hidden">
           {/* Filter Kelas */}
           <select
             value={selectedKelas}
             onChange={(e) => setSelectedKelas(e.target.value)}
-            style={{ padding: "10px 16px", background: "#f8fafc", border: "1px solid #e2e8f0", borderRadius: "12px", fontSize: "12px", fontWeight: "bold", color: "#334155", outline: "none", cursor: "pointer" }}
+            className="px-3.5 py-2 sm:py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm font-bold text-slate-700 outline-none cursor-pointer shrink-0"
           >
             <option value="ALL">Semua Kelas</option>
             {kelasList.map((k) => (
@@ -877,52 +849,57 @@ export default function KeuanganSPPPage() {
             ))}
           </select>
 
-          {/* Filter Status */}
-          <div style={{ display: "inline-flex", background: "#f1f5f9", padding: "4px", borderRadius: "16px", border: "1px solid #e2e8f0", fontSize: "12px", flexWrap: "wrap", gap: "4px" }}>
+          {/* Filter Status (Scrollable on mobile) */}
+          <div className="flex overflow-x-auto no-scrollbar gap-1.5 p-1 bg-slate-100 rounded-xl sm:rounded-2xl border border-slate-200 w-full sm:w-auto shrink-0 pb-1">
             <button
               onClick={() => setStatusFilter("ALL")}
-              style={{ padding: "8px 14px", borderRadius: "12px", fontWeight: "bold", border: "none", cursor: "pointer", transition: "all 0.2s", background: statusFilter === "ALL" ? "white" : "transparent", color: statusFilter === "ALL" ? "#0f172a" : "#475569", boxShadow: statusFilter === "ALL" ? "0 1px 2px rgba(0,0,0,0.05)" : "none" }}
+              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all whitespace-nowrap shrink-0 border-none cursor-pointer ${
+                statusFilter === "ALL" ? "bg-white text-slate-900 shadow-sm" : "bg-transparent text-slate-600 hover:text-slate-900"
+              }`}
             >
               Semua
             </button>
             <button
               onClick={() => setStatusFilter("MENUNGGU_VERIFIKASI")}
-              style={{
-                padding: "8px 14px",
-                borderRadius: "12px",
-                fontWeight: "bold",
-                border: "none",
-                cursor: "pointer",
-                transition: "all 0.2s",
-                background: statusFilter === "MENUNGGU_VERIFIKASI" ? "#d97706" : pendingList.length > 0 ? "#fef3c7" : "transparent",
-                color: statusFilter === "MENUNGGU_VERIFIKASI" ? "white" : pendingList.length > 0 ? "#92400e" : "#475569",
-                boxShadow: statusFilter === "MENUNGGU_VERIFIKASI" ? "0 1px 2px rgba(0,0,0,0.05)" : "none"
-              }}
-              className={pendingList.length > 0 && statusFilter !== "MENUNGGU_VERIFIKASI" ? "animate-pulse" : ""}
+              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all whitespace-nowrap shrink-0 border-none cursor-pointer ${
+                statusFilter === "MENUNGGU_VERIFIKASI"
+                  ? "bg-amber-600 text-white shadow-sm"
+                  : pendingList.length > 0
+                  ? "bg-amber-100 text-amber-900 animate-pulse"
+                  : "bg-transparent text-slate-600 hover:text-slate-900"
+              }`}
             >
-              ⏳ Menunggu Verifikasi ({summary?.total_pending_verifikasi || pendingList.length})
+              ⏳ Menunggu ({summary?.total_pending_verifikasi || pendingList.length})
             </button>
             <button
               onClick={() => setStatusFilter("LUNAS")}
-              style={{ padding: "8px 14px", borderRadius: "12px", fontWeight: "bold", border: "none", cursor: "pointer", transition: "all 0.2s", background: statusFilter === "LUNAS" ? "#059669" : "transparent", color: statusFilter === "LUNAS" ? "white" : "#475569", boxShadow: statusFilter === "LUNAS" ? "0 1px 2px rgba(0,0,0,0.05)" : "none" }}
+              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all whitespace-nowrap shrink-0 border-none cursor-pointer ${
+                statusFilter === "LUNAS" ? "bg-emerald-600 text-white shadow-sm" : "bg-transparent text-slate-600 hover:text-slate-900"
+              }`}
             >
               Lunas ({summary?.total_lunas || 0})
             </button>
             <button
               onClick={() => setStatusFilter("BELUM_LUNAS")}
-              style={{ padding: "8px 14px", borderRadius: "12px", fontWeight: "bold", border: "none", cursor: "pointer", transition: "all 0.2s", background: statusFilter === "BELUM_LUNAS" ? "#d97706" : "transparent", color: statusFilter === "BELUM_LUNAS" ? "white" : "#475569", boxShadow: statusFilter === "BELUM_LUNAS" ? "0 1px 2px rgba(0,0,0,0.05)" : "none" }}
+              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all whitespace-nowrap shrink-0 border-none cursor-pointer ${
+                statusFilter === "BELUM_LUNAS" ? "bg-amber-600 text-white shadow-sm" : "bg-transparent text-slate-600 hover:text-slate-900"
+              }`}
             >
               Belum Lunas ({summary?.total_belum_lunas || 0})
             </button>
             <button
               onClick={() => setStatusFilter("TERKUNCI")}
-              style={{ padding: "8px 14px", borderRadius: "12px", fontWeight: "bold", border: "none", cursor: "pointer", transition: "all 0.2s", background: statusFilter === "TERKUNCI" ? "#e11d48" : "transparent", color: statusFilter === "TERKUNCI" ? "white" : "#475569", boxShadow: statusFilter === "TERKUNCI" ? "0 1px 2px rgba(0,0,0,0.05)" : "none" }}
+              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all whitespace-nowrap shrink-0 border-none cursor-pointer ${
+                statusFilter === "TERKUNCI" ? "bg-rose-600 text-white shadow-sm" : "bg-transparent text-slate-600 hover:text-slate-900"
+              }`}
             >
               Terkunci ({summary?.total_terkunci || 0})
             </button>
             <button
               onClick={() => setStatusFilter("DISPENSASI")}
-              style={{ padding: "8px 14px", borderRadius: "12px", fontWeight: "bold", border: "none", cursor: "pointer", transition: "all 0.2s", background: statusFilter === "DISPENSASI" ? "#ea580c" : "transparent", color: statusFilter === "DISPENSASI" ? "white" : "#475569", boxShadow: statusFilter === "DISPENSASI" ? "0 1px 2px rgba(0,0,0,0.05)" : "none" }}
+              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all whitespace-nowrap shrink-0 border-none cursor-pointer ${
+                statusFilter === "DISPENSASI" ? "bg-orange-600 text-white shadow-sm" : "bg-transparent text-slate-600 hover:text-slate-900"
+              }`}
             >
               Dispensasi ({summary?.total_dispensasi || 0})
             </button>
@@ -930,8 +907,196 @@ export default function KeuanganSPPPage() {
         </div>
       </div>
 
-      {/* Main Table */}
-      <div style={{ background: "white", borderRadius: "24px", border: "1px solid #f1f5f9", boxShadow: "0 1px 3px 0 rgba(0,0,0,0.1)", overflow: "hidden" }}>
+      {/* Mobile Card View (Khusus Layar HP / Layar Sempit < 768px) */}
+      <div className="block md:hidden flex flex-col gap-3 w-full">
+        {loading ? (
+          <div className="bg-white rounded-2xl p-8 text-center text-slate-400 border border-slate-100 shadow-sm">
+            <RefreshCw className="w-5 h-5 animate-spin mx-auto text-emerald-600 mb-2" />
+            <span className="text-xs">Memuat data status SPP santri...</span>
+          </div>
+        ) : santriList.length === 0 ? (
+          <div className="bg-white rounded-2xl p-8 text-center text-slate-400 border border-slate-100 shadow-sm text-xs">
+            Tidak ada data santri yang cocok dengan filter.
+          </div>
+        ) : (
+          santriList.map((item, idx) => {
+            const isLunas = item.spp.status === "lunas";
+            const isMenunggu = (item.spp.status as any) === "menunggu_verifikasi";
+            const isTerkunci = item.spp.lock_status === "TERKUNCI" && !isMenunggu;
+            const isTenggang = item.spp.lock_status === "TENGGANG";
+            const isPortalOpen = item.is_unlocked_manual || (!item.is_locked_manual && (isLunas || isMenunggu || isTenggang));
+
+            return (
+              <div key={item.id} className="bg-white rounded-2xl p-4 border border-slate-100 shadow-sm flex flex-col gap-3">
+                {/* Header: No, Name, NIS, Class & Edit */}
+                <div className="flex items-start justify-between gap-2 border-b border-slate-100 pb-2.5">
+                  <div className="min-w-0">
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-[11px] font-bold text-slate-400">#{idx + 1}</span>
+                      <h4 className="font-extrabold text-slate-800 text-sm truncate m-0">{item.nama_lengkap}</h4>
+                    </div>
+                    <div className="text-[11px] text-slate-400 font-mono mt-0.5">NIS: {item.nis || "-"}</div>
+                  </div>
+                  <div className="flex items-center gap-1.5 shrink-0">
+                    <span className="px-2 py-0.5 rounded-lg bg-slate-100 text-slate-700 font-bold text-[10px]">
+                      {item.kelas_nama}
+                    </span>
+                    <button
+                      onClick={() => openEditModal(item)}
+                      className="p-1.5 rounded-lg bg-slate-100 text-slate-600 hover:bg-slate-200 transition-colors border-none cursor-pointer"
+                      title="Edit Rincian"
+                    >
+                      <Edit className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                </div>
+
+                {/* Row 1: Nominal & Status Pembayaran */}
+                <div className="flex items-center justify-between gap-2 bg-slate-50/70 rounded-xl p-2.5">
+                  <div>
+                    <div className="text-[10px] text-slate-400 font-medium uppercase tracking-wider">Tagihan SPP</div>
+                    <div className="text-xs font-black text-slate-800 mt-0.5">{formatRupiah(item.spp.nominal)}</div>
+                  </div>
+                  <div className="text-right">
+                    {isLunas ? (
+                      <div className="flex items-center gap-1.5">
+                        <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800 font-black text-[10px] border border-emerald-200">
+                          <CheckCircle2 className="w-3 h-3 text-emerald-600" /> LUNAS
+                        </span>
+                        <button
+                          onClick={() => handleToggleStatus(item)}
+                          disabled={updatingId === item.id}
+                          className="text-[10px] text-slate-400 underline hover:text-rose-600 bg-transparent border-none cursor-pointer"
+                        >
+                          Batal
+                        </button>
+                      </div>
+                    ) : isMenunggu ? (
+                      <div className="flex items-center gap-1.5">
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 font-black text-[10px] border border-amber-200 animate-pulse">
+                          <Clock className="w-3 h-3 text-amber-600" /> Verifikasi
+                        </span>
+                        <button
+                          onClick={() => {
+                            const p = pendingList.find((x) => x.santri_id === item.id && x.bulan === selectedBulan && x.tahun === selectedTahun);
+                            if (p) handleVerifyPending(p);
+                            else handleToggleStatus(item);
+                          }}
+                          disabled={updatingId === item.id || verifyingId !== null}
+                          className="px-2 py-1 rounded-lg bg-emerald-600 text-white font-bold text-[10px] hover:bg-emerald-700 flex items-center gap-1 border-none cursor-pointer"
+                        >
+                          <CheckCircle2 className="w-3 h-3" /> Setujui
+                        </button>
+                      </div>
+                    ) : (
+                      <div className="flex items-center gap-1.5">
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 font-bold text-[10px] border border-amber-200">
+                          Belum Bayar
+                        </span>
+                        <button
+                          onClick={() => handleToggleStatus(item)}
+                          disabled={updatingId === item.id}
+                          className="px-2.5 py-1 rounded-lg bg-emerald-600 text-white font-bold text-[10px] hover:bg-emerald-700 flex items-center gap-1 shadow-sm border-none cursor-pointer"
+                        >
+                          <CheckCircle2 className="w-3 h-3" /> Lunaskan
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Row 2: Portal Lock Switch (Finger-friendly for mobile) */}
+                <div className="flex items-center justify-between gap-2 border-t border-slate-100 pt-2.5">
+                  <div className="min-w-0">
+                    <div className="text-[10px] font-bold text-slate-500 uppercase tracking-wide">Akses Portal Wali</div>
+                    <div className="text-[11px] font-bold mt-0.5">
+                      {item.is_unlocked_manual ? (
+                        <span className="text-amber-700 flex items-center gap-1">
+                          <Sparkles className="w-3 h-3" /> Dispensasi Admin
+                          <button onClick={() => handleTogglePortalLock(item, "auto")} className="text-blue-600 underline ml-1 font-normal text-[10px] bg-transparent border-none cursor-pointer">(Reset)</button>
+                        </span>
+                      ) : item.is_locked_manual ? (
+                        <span className="text-rose-700 flex items-center gap-1">
+                          Manual Dikunci
+                          <button onClick={() => handleTogglePortalLock(item, "auto")} className="text-blue-600 underline ml-1 font-normal text-[10px] bg-transparent border-none cursor-pointer">(Reset)</button>
+                        </span>
+                      ) : isLunas ? (
+                        <span className="text-emerald-600 font-semibold">Otomatis Lunas</span>
+                      ) : isMenunggu ? (
+                        <span className="text-blue-600 font-semibold">Verifikasi Wali</span>
+                      ) : isTenggang ? (
+                        <span className="text-blue-600 font-semibold">Masa Tenggang (Tgl 1-10)</span>
+                      ) : (
+                        <span className="text-rose-600 font-semibold">Terkunci SPP</span>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Toggle Button */}
+                  {isPortalOpen ? (
+                    <button
+                      type="button"
+                      onClick={() => handleTogglePortalLock(item, "lock")}
+                      disabled={updatingId === item.id}
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-50 border-2 border-emerald-500 text-emerald-800 font-black text-xs hover:bg-emerald-100 active:scale-95 transition-all shadow-sm shrink-0 cursor-pointer"
+                    >
+                      {updatingId === item.id ? (
+                        <RefreshCw className="w-3 h-3 animate-spin" />
+                      ) : (
+                        <>
+                          <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping" />
+                          <span>ON (Terbuka)</span>
+                          <span className="w-4 h-4 rounded-full bg-emerald-500 flex items-center justify-center text-white">
+                            <Unlock className="w-2.5 h-2.5 text-white" />
+                          </span>
+                        </>
+                      )}
+                    </button>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={() => handleTogglePortalLock(item, "unlock")}
+                      disabled={updatingId === item.id}
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-rose-50 border-2 border-rose-500 text-rose-800 font-black text-xs hover:bg-rose-100 active:scale-95 transition-all shadow-sm shrink-0 cursor-pointer"
+                    >
+                      {updatingId === item.id ? (
+                        <RefreshCw className="w-3 h-3 animate-spin" />
+                      ) : (
+                        <>
+                          <span className="w-4 h-4 rounded-full bg-rose-500 flex items-center justify-center text-white">
+                            <Lock className="w-2.5 h-2.5 text-white" />
+                          </span>
+                          <span>OFF (Terkunci)</span>
+                          <span className="w-2 h-2 rounded-full bg-rose-500" />
+                        </>
+                      )}
+                    </button>
+                  )}
+                </div>
+
+                {/* Tunggakan Badge if any */}
+                {item.tunggakan_count && item.tunggakan_count > 0 ? (
+                  <div className="bg-rose-50 border border-rose-100 rounded-lg p-2 text-[10px] text-rose-800 font-semibold flex items-center gap-1.5">
+                    <AlertTriangle className="w-3 h-3 text-rose-600 shrink-0" />
+                    <span>Nunggak {item.tunggakan_count} bln: {item.tunggakan_bulan?.join(", ")}</span>
+                  </div>
+                ) : null}
+
+                {/* Tanggal Bayar if any */}
+                {item.spp.tanggal_bayar ? (
+                  <div className="text-[10px] text-slate-500 flex items-center justify-between border-t border-slate-50 pt-1.5">
+                    <span>Tgl Bayar: <strong className="text-slate-700">{item.spp.tanggal_bayar}</strong></span>
+                    <span className="uppercase font-semibold text-slate-400">{item.spp.metode_bayar}</span>
+                  </div>
+                ) : null}
+              </div>
+            );
+          })
+        )}
+      </div>
+
+      {/* Desktop Main Table (Khusus Layar Tablet & Desktop >= 768px) */}
+      <div className="hidden md:block bg-white rounded-2xl sm:rounded-3xl border border-slate-100 shadow-sm overflow-hidden">
         <div style={{ overflowX: "auto" }} className="custom-scrollbar">
           <div className="w-full overflow-x-auto">
 <table style={{ width: "100%", textAlign: "left", borderCollapse: "collapse", fontSize: "14px" }}>
@@ -1325,7 +1490,7 @@ export default function KeuanganSPPPage() {
                 <button
                   onClick={handleSaveDetail}
                   disabled={updatingId !== null}
-                  style={{ padding: "8px 16px", borderRadius: "12px", background: "#550000", color: "white", fontWeight: "bold", fontSize: "12px", border: "none", cursor: updatingId !== null ? "not-allowed" : "pointer", display: "flex", alignItems: "center", gap: "6px", boxShadow: "0 4px 6px -1px rgba(85, 0, 0, 0.25)", transition: "background-color 0.2s" }}
+                  style={{ padding: "8px 16px", borderRadius: "12px", background: "#0D7A5F", color: "white", fontWeight: "bold", fontSize: "12px", border: "none", cursor: updatingId !== null ? "not-allowed" : "pointer", display: "flex", alignItems: "center", gap: "6px", boxShadow: "0 4px 6px -1px rgba(85, 0, 0, 0.25)", transition: "background-color 0.2s" }}
                   className="hover:bg-emerald-700"
                 >
                   {updatingId ? <RefreshCw className="animate-spin" style={{ width: "14px", height: "14px" }} /> : <Save style={{ width: "14px", height: "14px" }} />}

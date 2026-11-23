@@ -38,11 +38,34 @@ export default function IbadahHarianPage() {
 
   // Load classes
   useEffect(() => {
-    // In a real app, fetch from API. Hardcoded for now.
-    setKelasList([
-      { id: "1", nama: "7A MTs" },
-      { id: "2", nama: "7B MTs" },
-    ]);
+    fetch("/api/master/kelas")
+      .then((res) => res.json())
+      .then((json) => {
+        if (json.success && Array.isArray(json.kelas) && json.kelas.length > 0) {
+          setKelasList(json.kelas.filter((k: any) => k.is_active));
+        } else {
+          setKelasList([
+            { id: "1", nama: "7 SMP IT" },
+            { id: "2", nama: "8 SMP IT" },
+            { id: "3", nama: "9 SMP IT" },
+            { id: "4", nama: "IL" },
+            { id: "5", nama: "10 SMA IT" },
+            { id: "6", nama: "11 SMA IT" },
+            { id: "7", nama: "12 SMA IT" },
+          ]);
+        }
+      })
+      .catch(() => {
+        setKelasList([
+          { id: "1", nama: "7 SMP IT" },
+          { id: "2", nama: "8 SMP IT" },
+          { id: "3", nama: "9 SMP IT" },
+          { id: "4", nama: "IL" },
+          { id: "5", nama: "10 SMA IT" },
+          { id: "6", nama: "11 SMA IT" },
+          { id: "7", nama: "12 SMA IT" },
+        ]);
+      });
   }, []);
 
   // Fetch data or load draft
@@ -157,35 +180,24 @@ export default function IbadahHarianPage() {
   ];
 
   return (
-    <div style={{ padding: "24px 28px", maxWidth: 1200, margin: "0 auto", display: "flex", flexDirection: "column", gap: 24 }}>
+    <div className="p-3 sm:p-5 md:p-6 lg:p-7 max-w-7xl mx-auto flex flex-col gap-4 sm:gap-6 pb-20 w-full overflow-hidden box-border">
       {/* Header Banner - SPMB Platinum Standard */}
-      <div style={{
-        display: "flex",
-        justifyContent: "space-between",
-        alignItems: "center",
-        background: "linear-gradient(135deg, #550000 0%, #7a0000 100%)",
-        borderRadius: "24px",
-        padding: "32px 36px",
-        boxShadow: "0 10px 30px rgba(85, 0, 0, 0.35)",
-        color: "white",
-        position: "relative",
-        overflow: "hidden"
-      }}>
+      <div className="flex justify-between items-center bg-gradient-to-br from-[#0D7A5F] to-[#059669] rounded-2xl sm:rounded-3xl p-4 sm:p-6 md:p-8 text-white relative overflow-hidden w-full box-border shadow-[0_10px_30px_rgba(85,0,0,0.35)]">
         <div style={{ position: "absolute", top: 0, right: 0, padding: "48px", opacity: 0.1 }}>
           <Check size={120} />
         </div>
         <div style={{ position: "relative", zIndex: 10 }}>
-          <h1 style={{ fontSize: "28px", fontWeight: "bold", margin: "0 0 8px 0" }}>
+          <h1 className="text-xl sm:text-2xl md:text-3xl font-black text-white tracking-tight m-0 mb-1">
             Bina Pribadi Islami (BPI)
           </h1>
-          <p style={{ color: "#cbd5e1", margin: 0 }}>
+          <p className="text-xs sm:text-sm text-emerald-100 m-0">
             Ceklist ibadah harian dan adab santri.
           </p>
         </div>
       </div>
 
       {/* Filter Card */}
-      <div style={{ background: "white", borderRadius: "24px", padding: "24px", boxShadow: "0 1px 3px 0 rgba(0,0,0,0.1)", border: "1px solid #f1f5f9", display: "flex", flexWrap: "wrap", gap: "16px", alignItems: "flex-end" }}>
+      <div className="bg-white rounded-2xl sm:rounded-3xl p-3.5 sm:p-6 shadow-sm border border-slate-100 flex flex-wrap gap-3 sm:gap-4 items-end w-full box-border">
         <div style={{ flex: 1, minWidth: "200px" }}>
           <label style={{ display: "block", fontSize: "14px", fontWeight: 500, color: "#475569", marginBottom: "4px" }}>
             Tanggal
@@ -328,7 +340,7 @@ export default function IbadahHarianPage() {
                 display: "flex",
                 alignItems: "center",
                 gap: "8px",
-                backgroundColor: saving || data.length === 0 ? "#94a3b8" : "#550000",
+                backgroundColor: saving || data.length === 0 ? "#94a3b8" : "#0D7A5F",
                 color: "white",
                 padding: "10px 18px",
                 borderRadius: "14px",

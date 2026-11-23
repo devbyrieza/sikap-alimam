@@ -79,7 +79,7 @@ export default async function PresensiAsatidz_Page() {
   }
 
   return (
-    <div style={{ padding: "24px 28px", maxWidth: 1200, margin: "0 auto", display: "flex", flexDirection: "column", gap: 24 }}>
+    <div className="p-3 sm:p-5 md:p-6 lg:p-7 max-w-7xl mx-auto flex flex-col gap-4 sm:gap-6 pb-20 w-full overflow-hidden box-border">
       <PresensiAsatidz
         presensiHariIni={presensi as PresensiItem[]}
         belumAbsen={belumAbsen}

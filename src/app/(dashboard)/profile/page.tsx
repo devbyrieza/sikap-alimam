@@ -77,33 +77,22 @@ export default function ProfilePage() {
   const p = profile?.pegawai;
 
   return (
-    <div style={{ padding: "24px 28px", maxWidth: 1200, margin: "0 auto", display: "flex", flexDirection: "column", gap: 24 }}>
-      <div style={{
-        display: "flex",
-        justifyContent: "space-between",
-        alignItems: "center",
-        background: "linear-gradient(135deg, #550000 0%, #7a0000 100%)",
-        borderRadius: "24px",
-        padding: "32px 36px",
-        boxShadow: "0 10px 25px -5px rgba(85, 0, 0, 0.35), 0 8px 10px -6px rgba(0, 0, 0, 0.1)",
-        color: "white",
-        flexWrap: "wrap",
-        gap: "24px"
-      }}>
+    <div className="p-3 sm:p-5 md:p-6 lg:p-7 max-w-7xl mx-auto flex flex-col gap-4 sm:gap-6 pb-20 w-full overflow-hidden box-border">
+      <div className="flex justify-between items-center bg-gradient-to-br from-[#0D7A5F] to-[#059669] rounded-2xl sm:rounded-3xl p-4 sm:p-6 md:p-8 shadow-[0_10px_25px_-5px_rgba(85,0,0,0.35)] text-white flex-wrap gap-4 w-full box-border">
         <div>
-          <h1 style={{ fontSize: "28px", fontWeight: "bold", margin: "0 0 8px 0" }}>Profil &amp; Pengaturan Akun</h1>
-          <p style={{ color: "rgba(255,255,255,0.8)", margin: 0, fontSize: "14px" }}>Kelola data kepegawaian, mapel mengajar, dan keamanan akun Anda</p>
+          <h1 className="text-xl sm:text-2xl md:text-3xl font-black text-white tracking-tight m-0 mb-1">Profil &amp; Pengaturan Akun</h1>
+          <p className="text-xs sm:text-sm text-emerald-100 m-0">Kelola data kepegawaian, mapel mengajar, dan keamanan akun Anda</p>
         </div>
       </div>
 
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: "24px", alignItems: "start" }}>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 items-start w-full">
         
         {/* ─── KARTU 1: DATA KEPEGAWAIAN & MAPEL (LEBAR 2 KOLOM) ─── */}
         <div style={{ gridColumn: "1 / -1", '@media (min-width: 1024px)': { gridColumn: "span 2" } } as React.CSSProperties} className="lg:col-span-2">
           <div style={{ background: "white", borderRadius: "24px", padding: "24px", boxShadow: "0 4px 6px -1px rgba(0,0,0,0.05)", border: "1px solid #f1f5f9", display: "flex", flexDirection: "column", gap: "20px" }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: "1px solid #f1f5f9", paddingBottom: "16px", flexWrap: "wrap", gap: "12px" }}>
               <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-                <div style={{ width: "44px", height: "44px", borderRadius: "16px", background: "#fff0f0", display: "flex", alignItems: "center", justifyContent: "center", color: "#7a0000" }}>
+                <div style={{ width: "44px", height: "44px", borderRadius: "16px", background: "#ecfdf5", display: "flex", alignItems: "center", justifyContent: "center", color: "#059669" }}>
                   <UserCheck style={{ width: "24px", height: "24px" }} />
                 </div>
                 <div>
@@ -115,7 +104,7 @@ export default function ProfilePage() {
               <button
                 type="button"
                 onClick={openEditProfileModal}
-                style={{ padding: "10px 18px", background: "#550000", color: "white", borderRadius: "14px", fontSize: "12px", fontWeight: "bold", border: "none", cursor: "pointer", display: "flex", alignItems: "center", gap: "6px", boxShadow: "0 4px 6px -1px rgba(85, 0, 0, 0.4)", transition: "all 0.2s" }}
+                style={{ padding: "10px 18px", background: "#0D7A5F", color: "white", borderRadius: "14px", fontSize: "12px", fontWeight: "bold", border: "none", cursor: "pointer", display: "flex", alignItems: "center", gap: "6px", boxShadow: "0 4px 6px -1px rgba(85, 0, 0, 0.4)", transition: "all 0.2s" }}
                 className="active:scale-95"
               >
                 <Edit3 style={{ width: "14px", height: "14px" }} />
@@ -125,7 +114,7 @@ export default function ProfilePage() {
 
             {loadingProfile ? (
               <div style={{ padding: "48px 0", textAlign: "center", color: "#94a3b8" }}>
-                <Loader2 style={{ width: "28px", height: "28px", margin: "0 auto 8px auto", color: "#7a0000" }} className="animate-spin" />
+                <Loader2 style={{ width: "28px", height: "28px", margin: "0 auto 8px auto", color: "#059669" }} className="animate-spin" />
                 <p style={{ fontSize: "12px", fontWeight: 600 }}>Memuat profil...</p>
               </div>
             ) : (
@@ -136,7 +125,7 @@ export default function ProfilePage() {
                     {p?.foto_url ? (
                       <img src={p.foto_url} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
                     ) : (
-                      <UserCheck style={{ width: "28px", height: "28px", color: "#7a0000" }} />
+                      <UserCheck style={{ width: "28px", height: "28px", color: "#059669" }} />
                     )}
                   </div>
                   <div style={{ flex: 1, minWidth: 0 }}>
@@ -145,8 +134,8 @@ export default function ProfilePage() {
                     </h3>
                     <p style={{ fontSize: "12px", color: "#64748b", fontWeight: 500, margin: "0 0 6px 0" }}>
                       {p
-                        ? `${p?.jabatan || "Pengajar"} · ${p?.unit_kerja || "Pesantren Al-Imam"}`
-                        : "Portal Resmi Wali Santri · Pesantren Al-Imam"}
+                        ? `${p?.jabatan || "Pengajar"} · ${p?.unit_kerja || "Pesantren Al-Basyir"}`
+                        : "Portal Resmi Wali Santri · Pesantren Al-Basyir"}
                     </p>
                     <div style={{ display: "flex", flexWrap: "wrap", gap: "4px" }}>
                       {p ? (
@@ -169,14 +158,14 @@ export default function ProfilePage() {
                   <div style={{ padding: "12px", background: "#f8fafc", borderRadius: "16px", border: "1px solid #f1f5f9" }}>
                     <span style={{ color: "#94a3b8", fontWeight: "bold", textTransform: "uppercase", fontSize: "10px", display: "block", marginBottom: "4px" }}>No. WhatsApp / HP</span>
                     <p style={{ fontWeight: "bold", color: "#1e293b", display: "flex", alignItems: "center", gap: "6px", fontFamily: "monospace", margin: 0 }}>
-                      <Phone style={{ width: "14px", height: "14px", color: "#7a0000" }} />
+                      <Phone style={{ width: "14px", height: "14px", color: "#059669" }} />
                       {p?.no_hp || "-"}
                     </p>
                   </div>
                   <div style={{ padding: "12px", background: "#f8fafc", borderRadius: "16px", border: "1px solid #f1f5f9" }}>
                     <span style={{ color: "#94a3b8", fontWeight: "bold", textTransform: "uppercase", fontSize: "10px", display: "block", marginBottom: "4px" }}>Email Akun</span>
                     <p style={{ fontWeight: "bold", color: "#1e293b", display: "flex", alignItems: "center", gap: "6px", margin: 0, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
-                      <Mail style={{ width: "14px", height: "14px", color: "#7a0000" }} />
+                      <Mail style={{ width: "14px", height: "14px", color: "#059669" }} />
                       {p?.email || profile?.user?.email || "-"}
                     </p>
                   </div>
@@ -215,7 +204,7 @@ export default function ProfilePage() {
         {/* ─── KARTU 2: GANTI PASSWORD ─── */}
         <div style={{ background: "white", borderRadius: "24px", padding: "24px", boxShadow: "0 4px 6px -1px rgba(0,0,0,0.05)", border: "1px solid #f1f5f9", display: "flex", flexDirection: "column", gap: "20px" }}>
           <div style={{ display: "flex", alignItems: "center", gap: "12px", borderBottom: "1px solid #f1f5f9", paddingBottom: "16px" }}>
-            <div style={{ width: "40px", height: "40px", borderRadius: "16px", background: "#fff0f0", display: "flex", alignItems: "center", justifyContent: "center", color: "#7a0000" }}>
+            <div style={{ width: "40px", height: "40px", borderRadius: "16px", background: "#ecfdf5", display: "flex", alignItems: "center", justifyContent: "center", color: "#059669" }}>
               <Lock style={{ width: "20px", height: "20px" }} />
             </div>
             <div>
@@ -275,7 +264,7 @@ export default function ProfilePage() {
             <button
               type="submit"
               disabled={loadingPassword}
-              style={{ width: "100%", padding: "10px", background: "#550000", color: "white", borderRadius: "14px", fontSize: "12px", fontWeight: "bold", border: "none", cursor: loadingPassword ? "not-allowed" : "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: "8px", boxShadow: "0 4px 6px -1px rgba(85, 0, 0, 0.4)", opacity: loadingPassword ? 0.5 : 1, marginTop: "8px", transition: "all 0.2s" }}
+              style={{ width: "100%", padding: "10px", background: "#0D7A5F", color: "white", borderRadius: "14px", fontSize: "12px", fontWeight: "bold", border: "none", cursor: loadingPassword ? "not-allowed" : "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: "8px", boxShadow: "0 4px 6px -1px rgba(85, 0, 0, 0.4)", opacity: loadingPassword ? 0.5 : 1, marginTop: "8px", transition: "all 0.2s" }}
               className="active:scale-95"
             >
               {loadingPassword ? <Loader2 style={{ width: "16px", height: "16px" }} className="animate-spin" /> : <Lock style={{ width: "16px", height: "16px" }} />}

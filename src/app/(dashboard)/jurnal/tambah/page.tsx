@@ -119,21 +119,10 @@ function TambahJurnalInner() {
   const hydratedRef = useRef(false);
 
   const selectedKelasInfo = master?.kelas.find((k) => k.id === kelasId);
-  const isSpecialClass =
+  const isSpecialClass = Boolean(
     selectedKelasInfo?.nama.toLowerCase().includes("11 ma") ||
-    selectedKelasInfo?.nama.toLowerCase().includes("12 ma");
-
-  // Force asatidz to Thoriq Ziyad for special MA class jika belum dipilih lewat URL prefill
-  useEffect(() => {
-    if (isSpecialClass && master && !urlPegawaiId) {
-      const thoriq = master.asatidz.find((a) =>
-        a.nama_lengkap.toLowerCase().includes("thoriq"),
-      );
-      if (thoriq && asatidId !== thoriq.id) {
-        setAsatidId(thoriq.id);
-      }
-    }
-  }, [isSpecialClass, master, asatidId, urlPegawaiId]);
+    selectedKelasInfo?.nama.toLowerCase().includes("12 ma")
+  );
 
   const getDraftKey = () => {
     const uid = currentUser?.id || asatidId;
@@ -307,14 +296,14 @@ function TambahJurnalInner() {
           }
           if (knama) {
             const cleanTarget = knama
-              .replace(/\s*(MTs|MA)$/i, "")
+              .replace(/\s*(MTs|MA|SMP IT|SMA IT)$/i, "")
               .trim()
               .toLowerCase();
             return allKelas.find(
               (k) =>
                 k.nama.trim().toLowerCase() === knama.trim().toLowerCase() ||
                 k.nama
-                  .replace(/\s*(MTs|MA)$/i, "")
+                  .replace(/\s*(MTs|MA|SMP IT|SMA IT)$/i, "")
                   .trim()
                   .toLowerCase() === cleanTarget,
             );
@@ -344,13 +333,13 @@ function TambahJurnalInner() {
             const cleanTarget = cleanMapelLabel(mnama).toLowerCase();
             const stdTarget = getStandardMapelName(
               cleanTarget,
-              kObj.jenjang === "MA",
+              kObj.jenjang === "SMA IT" || kObj.jenjang === "MA",
             ).toLowerCase();
             const matched = candidates.find((m) => {
               const cm = cleanMapelLabel(m.nama).toLowerCase();
               const sm = getStandardMapelName(
                 cm,
-                kObj.jenjang === "MA",
+                kObj.jenjang === "SMA IT" || kObj.jenjang === "MA",
               ).toLowerCase();
               return cm === cleanTarget || sm === stdTarget;
             });
@@ -478,7 +467,7 @@ function TambahJurnalInner() {
           icon: "error",
           title: "Gagal memuat data",
           text: "Tidak dapat mengambil data master. Coba refresh halaman.",
-          confirmButtonColor: "#550000",
+          confirmButtonColor: "#0D7A5F",
         });
       });
 
@@ -498,7 +487,7 @@ function TambahJurnalInner() {
   ]);
 
   const availableJenjangs = useMemo(() => {
-    const defaultJenjangs = ["MTs", "IL", "MA"];
+    const defaultJenjangs = ["SMP IT", "IL", "SMA IT"];
     if (!master?.kelas) return defaultJenjangs;
     const uniqueJenjangs = Array.from(
       new Set(master.kelas.map((k) => k.jenjang).filter(Boolean)),
@@ -629,7 +618,7 @@ function TambahJurnalInner() {
         icon: "warning",
         title: "Form Tidak Lengkap",
         text: "Mohon lengkapi semua field yang wajib diisi.",
-        confirmButtonColor: "#550000",
+        confirmButtonColor: "#0D7A5F",
       });
       return;
     }
@@ -684,7 +673,7 @@ function TambahJurnalInner() {
         icon: "success",
         title: "Jurnal Tersimpan!",
         text: "Jurnal mengajar berhasil ditambahkan dan langsung tersinkron ke laporan.",
-        confirmButtonColor: "#550000",
+        confirmButtonColor: "#0D7A5F",
         timer: 1800,
         timerProgressBar: true,
       });
@@ -697,7 +686,7 @@ function TambahJurnalInner() {
         icon: "error",
         title: "Gagal Menyimpan",
         text: message,
-        confirmButtonColor: "#550000",
+        confirmButtonColor: "#0D7A5F",
       });
     } finally {
       setSubmitting(false);
@@ -707,7 +696,7 @@ function TambahJurnalInner() {
   return (
     <div className="mx-auto flex w-full max-w-4xl flex-col gap-5 p-4 md:p-6">
       {/* Header Card */}
-      <div className="flex flex-wrap items-center justify-between gap-4 rounded-[12px] border border-[#e7e2da] bg-[#550000] p-5 text-white shadow-xs md:p-6">
+      <div className="flex flex-wrap items-center justify-between gap-4 rounded-[12px] border border-[#e7e2da] bg-[#0D7A5F] p-5 text-white shadow-xs md:p-6">
         <div className="flex items-center gap-3.5">
           <Link
             href="/jurnal"
@@ -718,7 +707,7 @@ function TambahJurnalInner() {
           </Link>
           <div>
             <h1 className="flex items-center gap-2 text-xl font-bold tracking-[-0.02em] text-white md:text-2xl">
-              <BookMarked size={22} className="text-[#ddc192]" /> Tambah Jurnal Mengajar
+              <BookMarked size={22} className="text-[#D4AF37]" /> Tambah Jurnal Mengajar
             </h1>
             <p className="mt-0.5 text-xs text-white/85 md:text-sm">
               Catat kegiatan belajar mengajar sesuai jadwal KBM harian
@@ -750,9 +739,9 @@ function TambahJurnalInner() {
       {/* Banner Prefill dari Jadwal / Monitoring */}
       {prefillBanner && (
         <div className="flex items-start gap-3 rounded-[12px] border border-[#e7e2da] bg-[#faf6ee] p-4 text-xs text-[#1a1a1a]">
-          <Info size={16} className="mt-0.5 shrink-0 text-[#550000]" />
+          <Info size={16} className="mt-0.5 shrink-0 text-[#0D7A5F]" />
           <div>
-            <div className="font-semibold text-[#550000]">
+            <div className="font-semibold text-[#0D7A5F]">
               Formulir Diisi Otomatis dari Jadwal Mengajar
             </div>
             <div className="mt-0.5 text-[#44403c]">{prefillBanner}</div>
@@ -764,7 +753,7 @@ function TambahJurnalInner() {
       <div className="rounded-[14px] border border-[#e2e8f0] bg-white p-4 shadow-sm">
         <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-3">
           <div className="flex items-center gap-2">
-            <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[#550000]/10 text-xs font-bold text-[#550000]">
+            <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[#0D7A5F]/10 text-xs font-bold text-[#0D7A5F]">
               3
             </span>
             <span className="text-xs font-bold uppercase tracking-wider text-slate-700">
@@ -798,7 +787,7 @@ function TambahJurnalInner() {
                 : "⏳ 2. Santri Belum Diabsen"}
             </span>
             <span className="text-slate-300">➔</span>
-            <span className="inline-flex items-center gap-1 rounded-full bg-[#550000]/10 px-2.5 py-0.5 font-bold text-[#550000] border border-[#550000]/20">
+            <span className="inline-flex items-center gap-1 rounded-full bg-[#0D7A5F]/10 px-2.5 py-0.5 font-bold text-[#0D7A5F] border border-[#0D7A5F]/20">
               📝 3. Isi Jurnal KBM
             </span>
           </div>
@@ -884,7 +873,7 @@ function TambahJurnalInner() {
 
       {loadingMaster ? (
         <div className="flex min-h-[200px] items-center justify-center gap-2.5 rounded-[12px] border border-[#e7e2da] bg-white text-sm text-[#44403c] shadow-xs">
-          <Loader2 size={20} className="animate-spin text-[#550000]" />
+          <Loader2 size={20} className="animate-spin text-[#0D7A5F]" />
           Memuat data master dan jam pelajaran...
         </div>
       ) : (
@@ -892,7 +881,7 @@ function TambahJurnalInner() {
           {/* Card 1: Informasi Mengajar */}
           <div className="flex flex-col gap-5 rounded-[12px] border border-[#e7e2da] bg-white p-5 shadow-xs">
             <div className="flex items-center gap-2 border-b border-[#f0ece4] pb-3.5 text-base font-semibold text-[#1a1a1a]">
-              <BookOpen size={18} className="text-[#550000]" />
+              <BookOpen size={18} className="text-[#0D7A5F]" />
               Informasi Mengajar
             </div>
 
@@ -906,10 +895,10 @@ function TambahJurnalInner() {
                 value={tanggal}
                 onChange={(e) => setTanggal(e.target.value)}
                 required
-                className="w-full max-w-[260px] rounded-[10px] border border-[#e7e2da] bg-[#fcfaf8] px-3.5 py-2.5 text-sm text-[#1a1a1a] outline-none focus:border-[#550000] focus:bg-white"
+                className="w-full max-w-[260px] rounded-[10px] border border-[#e7e2da] bg-[#fcfaf8] px-3.5 py-2.5 text-sm text-[#1a1a1a] outline-none focus:border-[#0D7A5F] focus:bg-white"
               />
               {tanggal && (
-                <div className="mt-2 flex items-center gap-1.5 text-xs font-semibold text-[#550000]">
+                <div className="mt-2 flex items-center gap-1.5 text-xs font-semibold text-[#0D7A5F]">
                   <Calendar size={14} /> {formatTanggalLongID(tanggal)}
                 </div>
               )}
@@ -925,7 +914,7 @@ function TambahJurnalInner() {
                   value={asatidId}
                   onChange={(e) => setAsatidId(e.target.value)}
                   required
-                  className="w-full rounded-[10px] border border-[#e7e2da] bg-white px-3.5 py-2.5 text-sm text-[#1a1a1a] outline-none focus:border-[#550000]"
+                  className="w-full rounded-[10px] border border-[#e7e2da] bg-white px-3.5 py-2.5 text-sm text-[#1a1a1a] outline-none focus:border-[#0D7A5F]"
                 >
                   <option value="">-- Pilih Guru --</option>
                   {master?.asatidz.map((a) => (
@@ -971,12 +960,12 @@ function TambahJurnalInner() {
                         }}
                         className={`relative flex min-w-[74px] cursor-pointer flex-col items-center justify-center rounded-[10px] border px-3 py-2 text-center transition-colors duration-150 ${
                           isSelected
-                            ? "border-[#550000] bg-[#fdf5f5] text-[#550000]"
+                            ? "border-[#0D7A5F] bg-[#f0fdf4] text-[#0D7A5F]"
                             : "border-[#e7e2da] bg-white text-[#44403c] hover:bg-[#faf6ee]"
                         }`}
                       >
                         {isSelected && j !== "Khusus" && (
-                          <span className="absolute -right-1.5 -top-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-[#550000] text-white">
+                          <span className="absolute -right-1.5 -top-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-[#0D7A5F] text-white">
                             <Check size={10} strokeWidth={3} />
                           </span>
                         )}
@@ -1046,7 +1035,7 @@ function TambahJurnalInner() {
                     setMapelId("");
                     setNamaMapelCustom("");
                   }}
-                  className="w-full rounded-[10px] border border-[#e7e2da] bg-white px-3.5 py-2.5 text-sm text-[#1a1a1a] outline-none focus:border-[#550000]"
+                  className="w-full rounded-[10px] border border-[#e7e2da] bg-white px-3.5 py-2.5 text-sm text-[#1a1a1a] outline-none focus:border-[#0D7A5F]"
                 >
                   {availableJenjangs.length > 1 && (
                     <option value="">— Pilih Jenjang —</option>
@@ -1073,7 +1062,7 @@ function TambahJurnalInner() {
                   }}
                   required
                   disabled={!jenjangFilter || filteredKelasList.length === 0}
-                  className="w-full rounded-[10px] border border-[#e7e2da] bg-white px-3.5 py-2.5 text-sm text-[#1a1a1a] outline-none focus:border-[#550000] disabled:bg-slate-100"
+                  className="w-full rounded-[10px] border border-[#e7e2da] bg-white px-3.5 py-2.5 text-sm text-[#1a1a1a] outline-none focus:border-[#0D7A5F] disabled:bg-slate-100"
                 >
                   <option value="">
                     {jenjangFilter
@@ -1100,7 +1089,7 @@ function TambahJurnalInner() {
                     value={namaMapelCustom}
                     onChange={(e) => setNamaMapelCustom(e.target.value)}
                     required
-                    className="w-full rounded-[10px] border border-[#e7e2da] bg-white px-3.5 py-2.5 text-sm text-[#1a1a1a] outline-none focus:border-[#550000]"
+                    className="w-full rounded-[10px] border border-[#e7e2da] bg-white px-3.5 py-2.5 text-sm text-[#1a1a1a] outline-none focus:border-[#0D7A5F]"
                   />
                 ) : (
                   <select
@@ -1108,7 +1097,7 @@ function TambahJurnalInner() {
                     onChange={(e) => setMapelId(e.target.value)}
                     required
                     disabled={!kelasId}
-                    className="w-full rounded-[10px] border border-[#e7e2da] bg-white px-3.5 py-2.5 text-sm text-[#1a1a1a] outline-none focus:border-[#550000] disabled:bg-slate-100"
+                    className="w-full rounded-[10px] border border-[#e7e2da] bg-white px-3.5 py-2.5 text-sm text-[#1a1a1a] outline-none focus:border-[#0D7A5F] disabled:bg-slate-100"
                   >
                     <option value="">
                       {kelasId
@@ -1161,7 +1150,7 @@ function TambahJurnalInner() {
             <>
               <div className="flex flex-col gap-4 rounded-[12px] border border-[#e7e2da] bg-white p-5 shadow-xs">
                 <div className="flex items-center gap-2 border-b border-[#f0ece4] pb-3.5 text-base font-semibold text-[#1a1a1a]">
-                  <FileText size={18} className="text-[#550000]" /> Isi Jurnal
+                  <FileText size={18} className="text-[#0D7A5F]" /> Isi Jurnal
                 </div>
 
                 <div>
@@ -1177,7 +1166,7 @@ function TambahJurnalInner() {
                       handleTextareaResize(e);
                     }}
                     required
-                    className="min-h-[80px] w-full resize-none rounded-[10px] border border-[#e7e2da] bg-white px-3.5 py-2.5 text-sm text-[#1a1a1a] outline-none focus:border-[#550000]"
+                    className="min-h-[80px] w-full resize-none rounded-[10px] border border-[#e7e2da] bg-white px-3.5 py-2.5 text-sm text-[#1a1a1a] outline-none focus:border-[#0D7A5F]"
                   />
                 </div>
 
@@ -1194,7 +1183,7 @@ function TambahJurnalInner() {
                       handleTextareaResize(e);
                     }}
                     required
-                    className="min-h-[60px] w-full resize-none rounded-[10px] border border-[#e7e2da] bg-white px-3.5 py-2.5 text-sm text-[#1a1a1a] outline-none focus:border-[#550000]"
+                    className="min-h-[60px] w-full resize-none rounded-[10px] border border-[#e7e2da] bg-white px-3.5 py-2.5 text-sm text-[#1a1a1a] outline-none focus:border-[#0D7A5F]"
                   />
                 </div>
 
@@ -1212,7 +1201,7 @@ function TambahJurnalInner() {
                       handleTextareaResize(e);
                     }}
                     required
-                    className="min-h-[80px] w-full resize-none rounded-[10px] border border-[#e7e2da] bg-white px-3.5 py-2.5 text-sm text-[#1a1a1a] outline-none focus:border-[#550000]"
+                    className="min-h-[80px] w-full resize-none rounded-[10px] border border-[#e7e2da] bg-white px-3.5 py-2.5 text-sm text-[#1a1a1a] outline-none focus:border-[#0D7A5F]"
                   />
                 </div>
 
@@ -1229,7 +1218,7 @@ function TambahJurnalInner() {
                       handleTextareaResize(e);
                     }}
                     required
-                    className="min-h-[100px] w-full resize-none rounded-[10px] border border-[#e7e2da] bg-white px-3.5 py-2.5 text-sm text-[#1a1a1a] outline-none focus:border-[#550000]"
+                    className="min-h-[100px] w-full resize-none rounded-[10px] border border-[#e7e2da] bg-white px-3.5 py-2.5 text-sm text-[#1a1a1a] outline-none focus:border-[#0D7A5F]"
                   />
                 </div>
 
@@ -1245,7 +1234,7 @@ function TambahJurnalInner() {
                       setCatatan(e.target.value);
                       handleTextareaResize(e);
                     }}
-                    className="min-h-[80px] w-full resize-none rounded-[10px] border border-[#e7e2da] bg-white px-3.5 py-2.5 text-sm text-[#1a1a1a] outline-none focus:border-[#550000]"
+                    className="min-h-[80px] w-full resize-none rounded-[10px] border border-[#e7e2da] bg-white px-3.5 py-2.5 text-sm text-[#1a1a1a] outline-none focus:border-[#0D7A5F]"
                   />
                 </div>
               </div>
@@ -1266,7 +1255,7 @@ function TambahJurnalInner() {
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="inline-flex cursor-pointer items-center gap-2 rounded-[10px] bg-[#550000] px-6 py-2.5 text-sm font-semibold text-white transition-colors duration-150 hover:bg-[#380000] active:scale-[0.98] disabled:opacity-60"
+                  className="inline-flex cursor-pointer items-center gap-2 rounded-[10px] bg-[#0D7A5F] px-6 py-2.5 text-sm font-semibold text-white transition-colors duration-150 hover:bg-[#064e3b] active:scale-[0.98] disabled:opacity-60"
                 >
                   {submitting ? (
                     <>
@@ -1294,7 +1283,7 @@ export default function TambahJurnalPage() {
     <Suspense
       fallback={
         <div className="mx-auto flex min-h-[260px] max-w-4xl items-center justify-center gap-2.5 p-6 text-sm text-[#44403c]">
-          <Loader2 size={20} className="animate-spin text-[#550000]" />
+          <Loader2 size={20} className="animate-spin text-[#0D7A5F]" />
           Memuat formulir jurnal mengajar...
         </div>
       }
