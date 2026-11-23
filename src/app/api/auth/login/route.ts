@@ -26,12 +26,30 @@ export async function POST(req: NextRequest) {
       phoneVariations.push("+62" + cleanPhone.substring(1));
     }
 
+    const idLower = identifier.toLowerCase().trim();
+    let candidateIdentifiers = [identifier];
+    if (idLower === "mudir" || idLower === "pimpinan") {
+      candidateIdentifiers.push("wahabrajasam", "wahab@pesantren-alimam.com");
+    } else if (idLower === "kurikulum") {
+      candidateIdentifiers.push("kurikulum", "kurikulum@pesantren-alimam.com");
+    } else if (idLower === "pengasuh" || idLower === "pengasuhan" || idLower === "asrama") {
+      candidateIdentifiers.push("pengasuhan", "pengasuhan@pesantren-alimam.com");
+    } else if (idLower === "tahfidz" || idLower === "halaqoh") {
+      candidateIdentifiers.push("musyrif", "musyrif@pesantren-alimam.com");
+    } else if (idLower === "walikelas") {
+      candidateIdentifiers.push("walikelas.mts", "walikelas.ma");
+    } else if (idLower === "gurumapel" || idLower === "guru") {
+      candidateIdentifiers.push("imam.wahyudi", "ramdan", "ade.supiana");
+    } else if (idLower === "walisantri" || idLower === "wali") {
+      candidateIdentifiers.push("2602070005");
+    }
+
     // 1. Cari via User table (email, username, atau nomor HP)
     let user = await prisma.user.findFirst({
       where: {
         OR: [
-          { email: { equals: identifier, mode: "insensitive" } },
-          { username: { equals: identifier, mode: "insensitive" } },
+          { email: { in: candidateIdentifiers, mode: "insensitive" } },
+          { username: { in: candidateIdentifiers, mode: "insensitive" } },
           { phone: { in: phoneVariations } },
         ] },
       include: { pegawai: { select: { id: true, nama_lengkap: true, nama_panggilan: true } } } });
