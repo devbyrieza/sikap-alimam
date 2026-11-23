@@ -10,6 +10,7 @@ import {
   BookHeart,
   BookMarked,
   BookOpen,
+  Building2,
   ChevronDown,
   ChevronRight,
   ClipboardCheck,
@@ -132,6 +133,15 @@ const NAV: NavItem[] = [
     icon: HeartHandshake,
     roles: [
       "pengasuh", "musyrif", "kepala_pengasuhan", "kadiv_pengasuhan", "kepala_asrama", "kadiv_asrama",
+      "kepala_kedisiplinan", "kadiv_kedisiplinan", "wali_kelas", "admin_super", "mudir",
+    ],
+  },
+  {
+    href: "/pengasuhan",
+    label: "Rapor Pengasuhan",
+    icon: Building2,
+    roles: [
+      "musyrif", "pengasuh", "kepala_pengasuhan", "kadiv_pengasuhan", "kepala_asrama", "kadiv_asrama",
       "kepala_kedisiplinan", "kadiv_kedisiplinan", "wali_kelas", "admin_super", "mudir",
     ],
   },

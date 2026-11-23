@@ -4,6 +4,7 @@ import { getStandardMapelName } from "@/lib/mapel";
 import { getOfficialNis } from "@/lib/officialSantri";
 import { getSession } from "@/lib/auth";
 import { cekStatusSpp } from "@/lib/keuangan";
+import { getPengasuhanBySantri } from "@/lib/pengasuhanData";
 
 export const dynamic = "force-dynamic";
 
@@ -575,6 +576,13 @@ export async function GET(req: NextRequest) {
     const headNama = normalizeImron(defaultHead);
     const pengampuHalaqoh = santri.halaqoh_anggota?.[0]?.kelompok?.pegawai?.nama_lengkap || "-";
 
+    const pengasuhan = getPengasuhanBySantri(
+      santri.id,
+      santri.nama_lengkap,
+      kelas.nama,
+      santri.jenis_kelamin || "L"
+    );
+
     return NextResponse.json({
       santri: {
         id: santri.id,
@@ -602,6 +610,7 @@ export async function GET(req: NextRequest) {
       absen_akademik,
       absen_halaqoh,
       kepribadian,
+      pengasuhan,
     });
   } catch (error) {
     console.error("Error generating cetak rapor:", error);

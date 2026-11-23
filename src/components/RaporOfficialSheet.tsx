@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef, useCallback } from "react";
 import { Printer, Smartphone, ZoomIn, ZoomOut, RotateCcw, Download, HelpCircle, X, CheckCircle2, Loader2 } from "lucide-react";
 import { getOfficialNis } from "@/lib/officialSantri";
 import { surahData, calculateHalaman, searchSurah } from "@/lib/quran-madinah";
+import { getPengasuhanBySantri, RaporPengasuhanData } from "@/lib/pengasuhanData";
 
 interface RaporOfficialSheetProps {
   data: any;
@@ -90,7 +91,12 @@ export default function RaporOfficialSheet({ data, showPrintToolbar = false }: R
     );
   }
 
-  const { santri, nilai_akademik, kedisiplinan, absen, absen_akademik, absen_halaqoh, ujian_tahfidz } = data;
+  const { santri, nilai_akademik, kedisiplinan, absen, absen_akademik, absen_halaqoh, ujian_tahfidz, pengasuhan: propPengasuhan } = data;
+  const pengasuhanData: RaporPengasuhanData = propPengasuhan || getPengasuhanBySantri(
+    santri?.id || "",
+    santri?.nama || "",
+    santri?.kelas || ""
+  );
   const absenAkad = absen_akademik || { sakit: 0, izin: 0, alpha: 0, total: 0 };
   const absenHalaq = absen_halaqoh || absen || { sakit: 0, izin: 0, alpha: 0, total: 0 };
   const paperSize = "A4";
@@ -320,6 +326,7 @@ export default function RaporOfficialSheet({ data, showPrintToolbar = false }: R
 
       const page1El = document.getElementById("rapor-page-1");
       const page2El = document.getElementById("rapor-page-2");
+      const page3El = document.getElementById("rapor-page-3");
 
       if (!page1El || !page2El) {
         console.warn("Elemen halaman rapor tidak ditemukan, beralih ke dialog cetak.");
@@ -439,10 +446,44 @@ export default function RaporOfficialSheet({ data, showPrintToolbar = false }: R
         scrollY: 0,
       });
 
+      offscreen.removeChild(clone2);
+
+      // Render Halaman 3 (Rapor Pengasuhan & Karakter Asrama)
+      let canvas3 = null;
+      if (page3El) {
+        setDownloadProgress("Memproses Halaman 3 (Pengasuhan & Asrama)...");
+        const clone3 = prepareClone(page3El);
+        offscreen.appendChild(clone3);
+
+        const imgs3 = Array.from(clone3.querySelectorAll("img"));
+        await Promise.all(
+          imgs3.map((img) => {
+            if (img.complete) return Promise.resolve();
+            return new Promise((resolve) => {
+              img.onload = resolve;
+              img.onerror = resolve;
+            });
+          })
+        );
+
+        canvas3 = await html2canvas(clone3, {
+          scale: 2,
+          useCORS: true,
+          allowTaint: false,
+          backgroundColor: "#ffffff",
+          logging: false,
+          windowWidth: 794,
+          scrollX: 0,
+          scrollY: 0,
+        });
+
+        offscreen.removeChild(clone3);
+      }
+
       // Bersihkan offscreen container
       document.body.removeChild(offscreen);
 
-      setDownloadProgress("Menyusun lembar PDF resmi A4...");
+      setDownloadProgress("Menyusun lembar PDF resmi 3 Bagian A4...");
 
       // Susun Dokumen jsPDF A4 Portrait
       const pdf = new jsPDF({
@@ -460,6 +501,13 @@ export default function RaporOfficialSheet({ data, showPrintToolbar = false }: R
       pdf.addPage("a4", "portrait");
       const imgData2 = canvas2.toDataURL("image/jpeg", 0.95);
       pdf.addImage(imgData2, "JPEG", 0, 0, 210, 297, undefined, "FAST");
+
+      // Tambahkan Halaman 3 (Pengasuhan) jika ada
+      if (canvas3) {
+        pdf.addPage("a4", "portrait");
+        const imgData3 = canvas3.toDataURL("image/jpeg", 0.95);
+        pdf.addImage(imgData3, "JPEG", 0, 0, 210, 297, undefined, "FAST");
+      }
 
       // Beri nama file yang rapi sesuai identitas santri
       const cleanSantriName = (santri?.nama || "Santri")
@@ -1637,7 +1685,7 @@ export default function RaporOfficialSheet({ data, showPrintToolbar = false }: R
             }}
           >
             <p style={{ margin: 0, flex: 1, color: "#111111", whiteSpace: "nowrap" }}>* Nilai di atas merupakan Hasil Evaluasi Belajar Penilaian Tengah Semester (PTS) Murni.</p>
-            <p style={{ margin: 0, fontWeight: "bold", whiteSpace: "nowrap", flexShrink: 0, color: "#111111" }}>Bagian 1: Rapor Akademik (Halaman 1 dari 2)</p>
+            <p style={{ margin: 0, fontWeight: "bold", whiteSpace: "nowrap", flexShrink: 0, color: "#111111" }}>Bagian 1: Rapor Akademik (Halaman 1 dari 3)</p>
           </div>
         </div>
       </div>
@@ -1704,13 +1752,13 @@ export default function RaporOfficialSheet({ data, showPrintToolbar = false }: R
                 return (
                   <>
                     <h1 className="text-2xl font-bold arabic-text" dir="rtl" style={{ fontFamily: "'Traditional Arabic', serif", fontSize: "18px", margin: "0 0 2px 0" }}>
-                      كشف تقويم رعاية الطلاب والقرآن الكريم منتصف الفصل {semesterArab}
+                      كشف تقويم القرآن الكريم وتلاوته منتصف الفصل {semesterArab}
                     </h1>
                     <h2 className="text-lg font-bold arabic-text" dir="rtl" style={{ fontFamily: "'Traditional Arabic', serif", fontSize: "13.5px", margin: "0 0 4px 0" }}>
                       {marhalah} بمعهد الإمام الإسلامي
                     </h2>
                     <h3 className="font-bold text-slate-800 tracking-wider uppercase" style={{ fontFamily: "Arial, Helvetica, sans-serif", fontSize: "10.5px", margin: "0 0 2px 0" }}>
-                      LAPORAN HASIL EVALUASI KEPENGASUHAN &amp; AL-QUR'AN (PTS)
+                      LAPORAN CAPAIAN TAHFIDZ &amp; TILAWAH AL-QUR'AN (PTS)
                     </h3>
                     <h4 className="font-bold text-slate-600 tracking-wide uppercase" style={{ fontFamily: "Arial, Helvetica, sans-serif", fontSize: "9.5px", margin: 0 }}>
                       RAPOR BAYANGAN • {indoMarhalah}
@@ -2152,15 +2200,15 @@ export default function RaporOfficialSheet({ data, showPrintToolbar = false }: R
                   </div>
                 </div>
 
-                {/* Kolom 2: Kepala Pengasuhan */}
+                {/* Kolom 2: Kepala Bagian Al-Qur'an */}
                 <div style={{ display: "flex", flexDirection: "column", justifyContent: "space-between", height: "140px", padding: "0 2px" }}>
                   <div>
                     <p style={{ margin: 0 }}>Mengetahui,</p>
-                    <p style={{ margin: "2px 0 0 0" }}>Kepala Pengasuhan</p>
+                    <p style={{ margin: "2px 0 0 0" }}>Kepala Bagian Al-Qur'an</p>
                   </div>
                   <div style={{ minHeight: "28px", display: "flex", alignItems: "flex-end", justifyContent: "center" }}>
                     <p style={{ fontWeight: "bold", margin: 0, fontSize: "10px", whiteSpace: "nowrap", letterSpacing: "-0.2px" }}>
-                      ({kepalaPengasuhanNama})
+                      ({santri?.kepala_tahfidz || "Ust. Abdul Muiz, Lc."})
                     </p>
                   </div>
                 </div>
@@ -2179,7 +2227,7 @@ export default function RaporOfficialSheet({ data, showPrintToolbar = false }: R
                 </div>
               </div>
 
-              {/* Sisi Kanan: QR Code Resmi Kepengasuhan */}
+              {/* Sisi Kanan: QR Code Resmi Capaian Tahfidz */}
               <div style={{ 
                 width: "90px", 
                 height: "140px",
@@ -2198,8 +2246,8 @@ export default function RaporOfficialSheet({ data, showPrintToolbar = false }: R
                 }}>
                   <img 
                     crossOrigin="anonymous"
-                    src={`https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=https://sikap.pesantren-alimam.com/verify/${santri?.id || "santri"}?doc=pengasuhan`}
-                    alt="QR Verifikasi Kepengasuhan"
+                    src={`https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=https://sikap.pesantren-alimam.com/verify/${santri?.id || "santri"}?doc=tahfidz`}
+                    alt="QR Verifikasi Tahfidz"
                     style={{ width: "78px", height: "78px", display: "block" }}
                   />
                 </div>
@@ -2234,7 +2282,438 @@ export default function RaporOfficialSheet({ data, showPrintToolbar = false }: R
             }}
           >
             <p style={{ margin: 0, flex: 1, color: "#111111", whiteSpace: "nowrap" }}>* Dokumen ini sah dan diterbitkan secara resmi oleh Pesantren Al-Imam Al-Islami (Managed by Al-Andalus IIBS).</p>
-            <p style={{ margin: 0, fontWeight: "bold", whiteSpace: "nowrap", flexShrink: 0, color: "#111111" }}>Bagian 2: Rapor Kepengasuhan (Halaman 2 dari 2)</p>
+            <p style={{ margin: 0, fontWeight: "bold", whiteSpace: "nowrap", flexShrink: 0, color: "#111111" }}>Bagian 2: Laporan Capaian Tahfidz &amp; Tilawah Al-Qur'an (Halaman 2 dari 3)</p>
+          </div>
+        </div>
+      </div>
+
+      {/* PEMISAH HALAMAN 2 KE 3 */}
+      <div className="page-break my-8 no-print border-b-2 border-dashed border-slate-300 w-[794px] mx-auto print:hidden max-w-full" />
+
+      {/* ========================================================================= */}
+      {/* HALAMAN 3: RAPOR PENGASUHAN DAN KARAKTER ASRAMA                           */}
+      {/* ========================================================================= */}
+      <div 
+        id="rapor-page-3"
+        className="rapor-page mx-auto bg-white p-[10mm] sm:p-[12mm] shadow-2xl rounded-3xl border border-slate-200/80 print:shadow-none print:border-none print:p-0 print:max-w-full relative" 
+        style={{ 
+          width: "794px",
+          minHeight: "297mm", 
+          position: "relative", 
+          fontFamily: "Arial, Helvetica, sans-serif",
+          boxSizing: "border-box"
+        }}
+      >
+        <div 
+          className="rapor-content-wrapper"
+          style={{ 
+            position: "relative", 
+            zIndex: 1, 
+            display: "flex", 
+            flexDirection: "column", 
+            justifyContent: "space-between", 
+            minHeight: "265mm",
+            height: "100%"
+          }}
+        >
+          <div>
+            {/* Kop Surat Resmi Halaman 3 */}
+            <div style={{ display: "flex", alignItems: "center", borderBottom: "3px solid #000000", paddingBottom: "4px", marginBottom: "6px", fontFamily: '"Times New Roman", Times, serif' }}>
+              <img crossOrigin="anonymous" src="/logo.png" alt="Logo Al-Imam" style={{ width: "56px", height: "56px", objectFit: "contain" }} />
+              <div style={{ flex: 1, textAlign: "center", fontFamily: '"Times New Roman", Times, serif' }}>
+                <h1 style={{ fontSize: "17.5px", fontWeight: "900", margin: 0, letterSpacing: "1px", color: "#000000", fontFamily: '"Times New Roman", Times, serif' }}>PESANTREN AL-IMAM AL-ISLAMI</h1>
+                <p style={{ margin: "1px 0 2px 0", fontSize: "10px", fontWeight: "bold", color: "#666", fontStyle: "italic", fontFamily: '"Times New Roman", Times, serif' }}>Managed by Al-Andalus International Islamic Boarding School</p>
+                <p style={{ margin: "1px 0 0 0", fontSize: "10.5px", fontWeight: "bold", color: "#333", fontFamily: '"Times New Roman", Times, serif' }}>Kaderisasi Ummat Hanif, Kontributif, dan Adaptif</p>
+                <p style={{ margin: "1px 0 0 0", fontSize: "7.5px", color: "#555", whiteSpace: "nowrap", letterSpacing: "-0.1px", fontFamily: '"Times New Roman", Times, serif' }}>Jl. Pelabuhan II, Gg. Cirengkol, Kampung Pupunjul, Desa Cikembar, Kec. Cikembar, Kab. Sukabumi, Jawa Barat 43157 | Website: pesantren-alimam.com</p>
+              </div>
+              <img crossOrigin="anonymous" src="/logo-andalus.png" alt="Logo Al-Andalus" style={{ width: "56px", height: "56px", objectFit: "contain" }} />
+            </div>
+
+            {/* Judul Halaman 3: Rapor Pengasuhan & Karakter Asrama */}
+            <div className="text-center" style={{ marginBottom: "6px" }}>
+              {(() => {
+                let marhalah = "للمرحلة المتوسطة";
+                let indoMarhalah = "TINGKAT MADRASAH TSANAWIYAH (MTs)";
+                
+                if (isMA) {
+                  marhalah = "للمرحلة الثانوية";
+                  indoMarhalah = "TINGKAT MADRASAH ALIYAH (MA)";
+                } else if (isIL) {
+                  marhalah = "لبرنامج الإعداد اللغوي";
+                  indoMarhalah = "PROGRAM I'DAD LUGHOWI (IL)";
+                }
+
+                const isGanjil = santri?.semester?.includes("Ganjil") || santri?.semester === "1" || !santri?.semester?.includes("Genap");
+                const semesterArab = isGanjil ? "الأول" : "الثاني";
+
+                return (
+                  <>
+                    <h1 className="text-2xl font-bold arabic-text" dir="rtl" style={{ fontFamily: "'Traditional Arabic', serif", fontSize: "18px", margin: "0 0 2px 0" }}>
+                      كشف تقويم رعاية الطلاب والسلوك في السكن منتصف الفصل {semesterArab}
+                    </h1>
+                    <h2 className="text-lg font-bold arabic-text" dir="rtl" style={{ fontFamily: "'Traditional Arabic', serif", fontSize: "13.5px", margin: "0 0 4px 0" }}>
+                      {marhalah} بمعهد الإمام الإسلامي
+                    </h2>
+                    <h3 className="font-bold text-slate-800 tracking-wider uppercase" style={{ fontFamily: "Arial, Helvetica, sans-serif", fontSize: "10.5px", margin: "0 0 2px 0" }}>
+                      LAPORAN EVALUASI PENGASUHAN DAN KARAKTER ASRAMA (PTS)
+                    </h3>
+                    <h4 className="font-bold text-slate-600 tracking-wide uppercase" style={{ fontFamily: "Arial, Helvetica, sans-serif", fontSize: "9.5px", margin: 0 }}>
+                      RAPOR BAYANGAN • {indoMarhalah}
+                    </h4>
+                  </>
+                );
+              })()}
+            </div>
+
+            {/* Biodata Santri & Domisili Asrama */}
+            <div style={{ display: "flex", justifyContent: "space-between", fontSize: "11px", marginBottom: "6px", fontWeight: "bold", fontFamily: "Arial, Helvetica, sans-serif" }}>
+              <div>
+                <table className="biodata-table" style={{ width: "100%", border: "none", borderCollapse: "separate" }}>
+                  <tbody>
+                    <tr style={{ border: "none" }}>
+                      <td style={{ width: 95, padding: "1.5px 0", border: "none" }}>Nama Santri</td>
+                      <td style={{ padding: "1.5px 6px", border: "none" }}>:</td>
+                      <td style={{ textTransform: "uppercase", padding: "1.5px 0", border: "none" }}>{santri?.nama}</td>
+                    </tr>
+                    <tr style={{ border: "none" }}>
+                      <td style={{ width: 95, padding: "1.5px 0", border: "none" }}>NIS / NISN</td>
+                      <td style={{ padding: "1.5px 6px", border: "none" }}>:</td>
+                      <td style={{ padding: "1.5px 0", border: "none", letterSpacing: "0.5px" }}>{displayNis}</td>
+                    </tr>
+                    <tr style={{ border: "none" }}>
+                      <td style={{ width: 95, padding: "1.5px 0", border: "none" }}>Kelas</td>
+                      <td style={{ padding: "1.5px 6px", border: "none" }}>:</td>
+                      <td style={{ padding: "1.5px 0", border: "none" }}>{(santri?.kelas || "").replace(/\s*(SMP IT|SMA IT|MTs|MA|SMP|SMA|SD|TK)\b/gi, "")}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <div>
+                <table className="biodata-table" style={{ width: "100%", border: "none", borderCollapse: "separate" }}>
+                  <tbody>
+                    <tr style={{ border: "none" }}>
+                      <td style={{ width: 110, padding: "1.5px 0", whiteSpace: "nowrap", border: "none" }}>Gedung &amp; Kamar</td>
+                      <td style={{ padding: "1.5px 6px", border: "none" }}>:</td>
+                      <td style={{ padding: "1.5px 0", border: "none" }}>{pengasuhanData.gedung} - Kamar {pengasuhanData.kamar} ({pengasuhanData.nama_kamar})</td>
+                    </tr>
+                    <tr style={{ border: "none" }}>
+                      <td style={{ width: 110, padding: "1.5px 0", whiteSpace: "nowrap", border: "none" }}>Musyrif Asrama</td>
+                      <td style={{ padding: "1.5px 6px", border: "none" }}>:</td>
+                      <td style={{ padding: "1.5px 0", border: "none" }}>{pengasuhanData.pengasuh_1}{pengasuhanData.pengasuh_2 ? ` & ${pengasuhanData.pengasuh_2}` : ""}</td>
+                    </tr>
+                    <tr style={{ border: "none" }}>
+                      <td style={{ width: 110, padding: "1.5px 0", whiteSpace: "nowrap", border: "none" }}>Tahun Pelajaran</td>
+                      <td style={{ padding: "1.5px 6px", border: "none" }}>:</td>
+                      <td style={{ padding: "1.5px 0", border: "none" }}>{santri?.tahun_ajaran || "2026/2027"}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            {/* TABEL EVALUASI 4 ASPEK PENGASUHAN */}
+            <div style={{ width: "100%", overflow: "visible", marginBottom: "7px" }}>
+              <table 
+                className="rapor-table" 
+                style={{ 
+                  width: "100%", 
+                  tableLayout: "fixed", 
+                  borderCollapse: "collapse", 
+                  border: "1px solid #94a3b8", 
+                  fontSize: "10.5px", 
+                  fontFamily: "Arial, Helvetica, sans-serif" 
+                }}
+              >
+                <colgroup>
+                  <col style={{ width: "5%" }} />
+                  <col style={{ width: "27%" }} />
+                  <col style={{ width: "42%" }} />
+                  <col style={{ width: "16%" }} />
+                  <col style={{ width: "10%" }} />
+                </colgroup>
+                <thead>
+                  <tr style={{ backgroundColor: "#f1f5f9" }}>
+                    <th colSpan={5} style={{ border: "1px solid #94a3b8", padding: "4px 8px", textAlign: "left", fontWeight: "bold", fontSize: "11.5px", color: "#000000" }}>
+                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                        <span>A. Evaluasi Aspek Karakter &amp; Kedisiplinan Asrama</span>
+                        <span style={{ fontFamily: "'Traditional Arabic', serif", fontSize: "13.5px" }} dir="rtl">أ. تقويم الجوانب التربوية والسلوكية في السكن</span>
+                      </div>
+                    </th>
+                  </tr>
+                  <tr style={{ backgroundColor: "#f8fafc", fontSize: "10px" }}>
+                    <th style={{ border: "1px solid #94a3b8", padding: "4px", textAlign: "center", color: "#000000" }}>No</th>
+                    <th style={{ border: "1px solid #94a3b8", padding: "4px 8px", textAlign: "left", color: "#000000" }}>Aspek Karakter</th>
+                    <th style={{ border: "1px solid #94a3b8", padding: "4px 8px", textAlign: "left", color: "#000000" }}>Deskripsi Capaian &amp; Indikator</th>
+                    <th style={{ border: "1px solid #94a3b8", padding: "4px 6px", textAlign: "center", color: "#000000" }}>Predikat</th>
+                    <th style={{ border: "1px solid #94a3b8", padding: "4px 6px", textAlign: "center", color: "#000000" }}>Skor</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {/* Row 1: Ibadah & Akhlaq */}
+                  <tr style={{ backgroundColor: "white" }}>
+                    <td style={{ border: "1px solid #94a3b8", padding: "4.5px 4px", textAlign: "center", verticalAlign: "top", fontWeight: "bold" }}>1</td>
+                    <td style={{ border: "1px solid #94a3b8", padding: "4.5px 8px", verticalAlign: "top" }}>
+                      <div style={{ fontWeight: "bold", color: "#0f172a" }}>Ibadah &amp; Akhlaq</div>
+                      <div style={{ fontFamily: "'Traditional Arabic', serif", fontSize: "12px", color: "#047857" }} dir="rtl">العبادة ومكارم الأخلاق</div>
+                      <div style={{ fontSize: "9px", color: "#64748b", marginTop: "2px", lineHeight: "1.25" }}>
+                        Shalat 5 waktu di masjid, shalat sunnah rawatib/dhuha, puasa sunnah, adab santun &amp; 5S.
+                      </div>
+                    </td>
+                    <td style={{ border: "1px solid #94a3b8", padding: "4.5px 8px", verticalAlign: "top", lineHeight: "1.35", color: "#334155" }}>
+                      {pengasuhanData.aspek.ibadah_akhlaq.deskripsi}
+                    </td>
+                    <td style={{ border: "1px solid #94a3b8", padding: "4.5px 6px", textAlign: "center", verticalAlign: "middle" }}>
+                      <div style={{ fontWeight: "bold", color: "#0f172a" }}>{pengasuhanData.aspek.ibadah_akhlaq.predikat}</div>
+                      <div style={{ fontFamily: "'Traditional Arabic', serif", fontSize: "12px", color: "#047857" }} dir="rtl">{pengasuhanData.aspek.ibadah_akhlaq.predikat_arab}</div>
+                    </td>
+                    <td style={{ border: "1px solid #94a3b8", padding: "4.5px 6px", textAlign: "center", verticalAlign: "middle", fontWeight: "bold", fontSize: "11px" }}>
+                      {pengasuhanData.aspek.ibadah_akhlaq.skor} <span style={{ fontSize: "9px", color: "#64748b", fontWeight: "normal" }}>/ 25</span>
+                    </td>
+                  </tr>
+
+                  {/* Row 2: Kemandirian */}
+                  <tr style={{ backgroundColor: "#fafafa" }}>
+                    <td style={{ border: "1px solid #94a3b8", padding: "4.5px 4px", textAlign: "center", verticalAlign: "top", fontWeight: "bold" }}>2</td>
+                    <td style={{ border: "1px solid #94a3b8", padding: "4.5px 8px", verticalAlign: "top" }}>
+                      <div style={{ fontWeight: "bold", color: "#0f172a" }}>Kemandirian &amp; Disiplin</div>
+                      <div style={{ fontFamily: "'Traditional Arabic', serif", fontSize: "12px", color: "#047857" }} dir="rtl">الاستقلالية والمواظبة</div>
+                      <div style={{ fontSize: "9px", color: "#64748b", marginTop: "2px", lineHeight: "1.25" }}>
+                        Bangun tidur tepat waktu, disiplin shalat/sekolah, piket kebersihan kamar, tertib jam tidur.
+                      </div>
+                    </td>
+                    <td style={{ border: "1px solid #94a3b8", padding: "4.5px 8px", verticalAlign: "top", lineHeight: "1.35", color: "#334155" }}>
+                      {pengasuhanData.aspek.kemandirian.deskripsi}
+                    </td>
+                    <td style={{ border: "1px solid #94a3b8", padding: "4.5px 6px", textAlign: "center", verticalAlign: "middle" }}>
+                      <div style={{ fontWeight: "bold", color: "#0f172a" }}>{pengasuhanData.aspek.kemandirian.predikat}</div>
+                      <div style={{ fontFamily: "'Traditional Arabic', serif", fontSize: "12px", color: "#047857" }} dir="rtl">{pengasuhanData.aspek.kemandirian.predikat_arab}</div>
+                    </td>
+                    <td style={{ border: "1px solid #94a3b8", padding: "4.5px 6px", textAlign: "center", verticalAlign: "middle", fontWeight: "bold", fontSize: "11px" }}>
+                      {pengasuhanData.aspek.kemandirian.skor} <span style={{ fontSize: "9px", color: "#64748b", fontWeight: "normal" }}>/ 25</span>
+                    </td>
+                  </tr>
+
+                  {/* Row 3: Penampilan & Kerapihan */}
+                  <tr style={{ backgroundColor: "white" }}>
+                    <td style={{ border: "1px solid #94a3b8", padding: "4.5px 4px", textAlign: "center", verticalAlign: "top", fontWeight: "bold" }}>3</td>
+                    <td style={{ border: "1px solid #94a3b8", padding: "4.5px 8px", verticalAlign: "top" }}>
+                      <div style={{ fontWeight: "bold", color: "#0f172a" }}>Penampilan &amp; Kerapihan</div>
+                      <div style={{ fontFamily: "'Traditional Arabic', serif", fontSize: "12px", color: "#047857" }} dir="rtl">المظهر والنظافة والترتيب</div>
+                      <div style={{ fontSize: "9px", color: "#64748b", marginTop: "2px", lineHeight: "1.25" }}>
+                        Pakaian syar'i &amp; rapi, kerapihan lemari/ranjang/kasur, kebersihan diri (rambut &amp; kuku).
+                      </div>
+                    </td>
+                    <td style={{ border: "1px solid #94a3b8", padding: "4.5px 8px", verticalAlign: "top", lineHeight: "1.35", color: "#334155" }}>
+                      {pengasuhanData.aspek.penampilan_kerapihan.deskripsi}
+                    </td>
+                    <td style={{ border: "1px solid #94a3b8", padding: "4.5px 6px", textAlign: "center", verticalAlign: "middle" }}>
+                      <div style={{ fontWeight: "bold", color: "#0f172a" }}>{pengasuhanData.aspek.penampilan_kerapihan.predikat}</div>
+                      <div style={{ fontFamily: "'Traditional Arabic', serif", fontSize: "12px", color: "#047857" }} dir="rtl">{pengasuhanData.aspek.penampilan_kerapihan.predikat_arab}</div>
+                    </td>
+                    <td style={{ border: "1px solid #94a3b8", padding: "4.5px 6px", textAlign: "center", verticalAlign: "middle", fontWeight: "bold", fontSize: "11px" }}>
+                      {pengasuhanData.aspek.penampilan_kerapihan.skor} <span style={{ fontSize: "9px", color: "#64748b", fontWeight: "normal" }}>/ 25</span>
+                    </td>
+                  </tr>
+
+                  {/* Row 4: Kedisiplinan & Pelanggaran */}
+                  <tr style={{ backgroundColor: "#fafafa" }}>
+                    <td style={{ border: "1px solid #94a3b8", padding: "4.5px 4px", textAlign: "center", verticalAlign: "top", fontWeight: "bold" }}>4</td>
+                    <td style={{ border: "1px solid #94a3b8", padding: "4.5px 8px", verticalAlign: "top" }}>
+                      <div style={{ fontWeight: "bold", color: "#0f172a" }}>Kepatuhan &amp; Kedisiplinan</div>
+                      <div style={{ fontFamily: "'Traditional Arabic', serif", fontSize: "12px", color: "#047857" }} dir="rtl">الانضباط والالتزام باللوائح</div>
+                      <div style={{ fontSize: "9px", color: "#475569", marginTop: "2px", lineHeight: "1.25" }}>
+                        Rekap Pelanggaran: Berat: <strong>{pengasuhanData.aspek.kedisiplinan.berat}</strong>, Sedang: <strong>{pengasuhanData.aspek.kedisiplinan.sedang}</strong>, Ringan: <strong>{pengasuhanData.aspek.kedisiplinan.ringan}</strong>
+                      </div>
+                    </td>
+                    <td style={{ border: "1px solid #94a3b8", padding: "4.5px 8px", verticalAlign: "top", lineHeight: "1.35", color: "#334155" }}>
+                      {pengasuhanData.aspek.kedisiplinan.tindak_lanjut || "Tertib mengikuti aturan kepengasuhan dan tata tertib asrama tanpa catatan pelanggaran."}
+                    </td>
+                    <td style={{ border: "1px solid #94a3b8", padding: "4.5px 6px", textAlign: "center", verticalAlign: "middle" }}>
+                      <div style={{ fontWeight: "bold", color: "#0f172a" }}>{pengasuhanData.aspek.kedisiplinan.predikat}</div>
+                      <div style={{ fontFamily: "'Traditional Arabic', serif", fontSize: "12px", color: "#047857" }} dir="rtl">{pengasuhanData.aspek.kedisiplinan.predikat_arab}</div>
+                    </td>
+                    <td style={{ border: "1px solid #94a3b8", padding: "4.5px 6px", textAlign: "center", verticalAlign: "middle", fontWeight: "bold", fontSize: "11px" }}>
+                      {pengasuhanData.aspek.kedisiplinan.skor} <span style={{ fontSize: "9px", color: "#64748b", fontWeight: "normal" }}>/ 25</span>
+                    </td>
+                  </tr>
+
+                  {/* Row Total & Nilai Akhir */}
+                  <tr style={{ backgroundColor: "#f1f5f9", fontWeight: "bold" }}>
+                    <td colSpan={3} style={{ border: "1px solid #94a3b8", padding: "6px 10px", textAlign: "right", fontSize: "11px", color: "#0f172a" }}>
+                      TOTAL NILAI &amp; PREDIKAT UMUM PENGASUHAN :
+                    </td>
+                    <td style={{ border: "1px solid #94a3b8", padding: "6px 8px", textAlign: "center" }}>
+                      <div style={{ fontSize: "13px", color: "#047857" }}>{pengasuhanData.nilai_huruf} ({pengasuhanData.predikat_umum})</div>
+                      <div style={{ fontFamily: "'Traditional Arabic', serif", fontSize: "12.5px", color: "#047857" }} dir="rtl">{pengasuhanData.predikat_umum_arab}</div>
+                    </td>
+                    <td style={{ border: "1px solid #94a3b8", padding: "6px 8px", textAlign: "center", fontSize: "13px", color: "#047857" }}>
+                      {pengasuhanData.total_skor} <span style={{ fontSize: "9.5px", color: "#64748b", fontWeight: "normal" }}>/ 100</span>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            {/* B. NASIHAT & MOTIVASI PENGASUH ASRAMA */}
+            <div style={{ width: "100%", overflow: "visible", marginBottom: "7px" }}>
+              <table className="rapor-table" style={{ width: "100%", tableLayout: "fixed", borderCollapse: "collapse", border: "1px solid #94a3b8", fontSize: "10.5px", fontFamily: "Arial, Helvetica, sans-serif" }}>
+                <thead>
+                  <tr style={{ backgroundColor: "#f1f5f9" }}>
+                    <th style={{ border: "1px solid #94a3b8", padding: "4px 8px", textAlign: "left", fontSize: "11px", color: "#000000" }}>
+                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                        <span>B. Nasihat, Arahan &amp; Motivasi Musyrif Asrama</span>
+                        <span style={{ fontFamily: "'Traditional Arabic', serif", fontSize: "13px" }} dir="rtl">ب. التوجيه والنصيحة من مشرف السكن</span>
+                      </div>
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr style={{ backgroundColor: "white" }}>
+                    <td style={{ border: "1px solid #94a3b8", padding: "6px 10px", verticalAlign: "top", color: "#333", lineHeight: "1.4", textAlign: "justify" }}>
+                      <p style={{ margin: "0 0 4px 0", fontSize: "10.5px", color: "#1e293b", fontStyle: "italic" }}>
+                        "{pengasuhanData.nasihat_pengasuh}"
+                      </p>
+                      {pengasuhanData.kutipan_mutiara && (
+                        <div style={{ marginTop: "4px", paddingTop: "4px", borderTop: "1px dashed #e2e8f0", fontSize: "9.5px", color: "#047857", fontWeight: "bold" }}>
+                          {pengasuhanData.kutipan_mutiara}
+                        </div>
+                      )}
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            {/* AREA TANDA TANGAN (3 Kolom) + QR CODE RESMI PENGASUHAN */}
+            <div 
+              style={{ 
+                display: "flex", 
+                justifyContent: "space-between", 
+                alignItems: "stretch",
+                width: "100%",
+                boxSizing: "border-box",
+                marginTop: "8px", 
+                fontFamily: "Arial, Helvetica, sans-serif" 
+              }}
+            >
+              <div style={{ 
+                display: "grid", 
+                gridTemplateColumns: "1fr 1.05fr 1.55fr", 
+                textAlign: "center", 
+                fontSize: "10.5px", 
+                gap: "6px",
+                flex: 1,
+                marginRight: "16px",
+                minWidth: 0
+              }}>
+                {/* Kolom 1: Orang Tua */}
+                <div style={{ display: "flex", flexDirection: "column", justifyContent: "space-between", height: "140px", padding: "0 2px" }}>
+                  <div>
+                    <p style={{ margin: 0 }}>Mengetahui,</p>
+                    <p style={{ margin: "2px 0 0 0" }}>Orang Tua / Wali</p>
+                  </div>
+                  <div style={{ minHeight: "28px", display: "flex", alignItems: "flex-end", justifyContent: "center" }}>
+                    <p style={{ 
+                      fontWeight: "bold", 
+                      margin: 0, 
+                      fontSize: "10px", 
+                      whiteSpace: "nowrap",
+                      display: "inline-flex",
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                      width: "100%",
+                      maxWidth: "130px"
+                    }}>
+                      <span>(</span>
+                      <span style={{ display: "inline-block", flex: 1, minWidth: "100px" }}>&nbsp;</span>
+                      <span>)</span>
+                    </p>
+                  </div>
+                </div>
+
+                {/* Kolom 2: Kepala Pengasuhan */}
+                <div style={{ display: "flex", flexDirection: "column", justifyContent: "space-between", height: "140px", padding: "0 2px" }}>
+                  <div>
+                    <p style={{ margin: 0 }}>Mengetahui,</p>
+                    <p style={{ margin: "2px 0 0 0" }}>Kepala Bidang Pengasuhan</p>
+                  </div>
+                  <div style={{ minHeight: "28px", display: "flex", alignItems: "flex-end", justifyContent: "center" }}>
+                    <p style={{ fontWeight: "bold", margin: 0, fontSize: "10px", whiteSpace: "nowrap", letterSpacing: "-0.2px" }}>
+                      ({kepalaPengasuhanNama})
+                    </p>
+                  </div>
+                </div>
+
+                {/* Kolom 3: Musyrif Asrama */}
+                <div style={{ display: "flex", flexDirection: "column", justifyContent: "space-between", height: "140px", padding: "0 2px" }}>
+                  <div>
+                    <p style={{ margin: 0 }}>Sukabumi, 11 Oktober 2026</p>
+                    <p style={{ margin: "2px 0 0 0" }}>Musyrif Pembina Asrama</p>
+                  </div>
+                  <div style={{ minHeight: "28px", display: "flex", alignItems: "flex-end", justifyContent: "center" }}>
+                    <p style={{ fontWeight: "bold", margin: 0, fontSize: "10px", whiteSpace: "nowrap", letterSpacing: "-0.2px" }}>
+                      ({pengasuhanData.pengasuh_1 || "Ust. Luqmanul Hakim, S.Pd.I."})
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Sisi Kanan: QR Code Resmi Pengasuhan */}
+              <div style={{ 
+                width: "90px", 
+                height: "140px",
+                flexShrink: 0, 
+                display: "flex", 
+                flexDirection: "column", 
+                alignItems: "center", 
+                justifyContent: "flex-end",
+                textAlign: "center"
+              }}>
+                <div style={{ 
+                  padding: "5px", 
+                  backgroundColor: "white", 
+                  border: "1px solid #94a3b8", 
+                  display: "inline-block" 
+                }}>
+                  <img 
+                    crossOrigin="anonymous"
+                    src={`https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=https://sikap.pesantren-alimam.com/verify/${santri?.id || "santri"}?doc=pengasuhan`}
+                    alt="QR Verifikasi Pengasuhan"
+                    style={{ width: "78px", height: "78px", display: "block" }}
+                  />
+                </div>
+                <p style={{ 
+                  margin: "4px 0 0 0", 
+                  fontSize: "7px", 
+                  fontWeight: "bold", 
+                  letterSpacing: "0.2px", 
+                  color: "#000000",
+                  whiteSpace: "nowrap"
+                }}>
+                  Scan Verifikasi Dokumen
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Catatan Kaki Halaman 3 */}
+          <div 
+            className="rapor-footer" 
+            style={{ 
+              marginTop: "8px", 
+              paddingTop: "4px", 
+              fontSize: "9px", 
+              fontStyle: "italic", 
+              borderTop: "1px dashed #cbd5e1",
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              width: "100%",
+              boxSizing: "border-box"
+            }}
+          >
+            <p style={{ margin: 0, flex: 1, color: "#111111", whiteSpace: "nowrap" }}>* Dokumen ini sah dan diterbitkan secara resmi oleh Pesantren Al-Imam Al-Islami (Managed by Al-Andalus IIBS).</p>
+            <p style={{ margin: 0, fontWeight: "bold", whiteSpace: "nowrap", flexShrink: 0, color: "#111111" }}>Bagian 3: Rapor Pengasuhan &amp; Karakter Asrama (Halaman 3 dari 3)</p>
           </div>
         </div>
       </div>
