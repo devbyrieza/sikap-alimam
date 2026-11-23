@@ -324,6 +324,9 @@ export async function POST(req: NextRequest) {
     const isWaliSantri = user.role?.toUpperCase() === "WALI_SANTRI";
     const usernameStandard = isUsernameStandard(user.username);
 
+    // Deteksi opsi peran ganda (Multi-Role) untuk akun civitas
+    const multiRoles = isWaliSantri ? [] : await getUserMultiRoles(user.id);
+
     // Staf/Asatidz wajib setup akun jika belum punya username standar ATAU kata sandi masih default
     if (!isWaliSantri && (!usernameStandard || isDefaultPassword)) {
       return NextResponse.json({
@@ -339,9 +342,6 @@ export async function POST(req: NextRequest) {
         availableRoles: multiRoles.length > 1 ? multiRoles : undefined,
       });
     }
-
-    // Deteksi opsi peran ganda (Multi-Role) untuk akun civitas
-    const multiRoles = await getUserMultiRoles(user.id);
 
     // Jika pengguna memiliki lebih dari satu peran dan belum memilih saat login:
     if (multiRoles.length > 1 && !selectedRole) {
