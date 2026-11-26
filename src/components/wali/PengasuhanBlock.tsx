@@ -70,6 +70,18 @@ export default function PengasuhanBlock({
               </div>
             )}
           </div>
+
+          <div className="pt-3 border-t border-slate-100 flex flex-wrap items-center gap-3 text-[10px] font-bold text-slate-400">
+            <span className="inline-flex items-center gap-1.5">
+              <span className="inline-block h-2 w-2 rounded-full bg-emerald-500" /> Sangat Baik
+            </span>
+            <span className="inline-flex items-center gap-1.5">
+              <span className="inline-block h-2 w-2 rounded-full bg-sky-500" /> Baik
+            </span>
+            <span className="inline-flex items-center gap-1.5">
+              <span className="inline-block h-2 w-2 rounded-full bg-rose-500" /> Kurang
+            </span>
+          </div>
         </div>
       )}
     </section>

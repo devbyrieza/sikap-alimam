@@ -287,6 +287,20 @@ export default function KbmPenugasanBlock({
           </div>
         )}
 
+        {ujianNilai.length > 0 && (
+          <div className="flex flex-wrap items-center gap-3 text-[10px] font-bold text-slate-400 px-1">
+            <span className="inline-flex items-center gap-1.5">
+              <span className="inline-block h-2 w-2 rounded-full bg-emerald-500" /> Di atas standar (&gt;75)
+            </span>
+            <span className="inline-flex items-center gap-1.5">
+              <span className="inline-block h-2 w-2 rounded-full bg-amber-500" /> Pas standar (=75)
+            </span>
+            <span className="inline-flex items-center gap-1.5">
+              <span className="inline-block h-2 w-2 rounded-full bg-rose-500" /> Di bawah standar (&lt;75)
+            </span>
+          </div>
+        )}
+
         {/* Ekskul & Sikap/Kedisiplinan (dari Wali Kelas) */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div className="rounded-2xl border border-slate-200/80 bg-slate-50/60 p-3.5">
