@@ -151,6 +151,10 @@ export default function KbmPenugasanBlock({
             </div>
           </div>
         </div>
+        <p className="mt-2.5 text-[11px] text-slate-500 leading-relaxed">
+          <strong className="text-slate-700">Keterangan:</strong> Perhitungan kehadiran menggunakan satuan{" "}
+          <strong className="text-slate-700">JPL (Jam Pelajaran)</strong>, bukan per hari (misal: 2 JPL berarti tidak mengikuti 2 jam pelajaran).
+        </p>
       </div>
 
       {/* 4b. Jurnal Mengajar per Mapel */}
