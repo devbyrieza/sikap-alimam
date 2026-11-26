@@ -12,6 +12,7 @@ import {
   Lock,
 } from "lucide-react";
 import type { WaliDashboardData } from "./types";
+import { getMapelKkm, getScoreTier } from "@/lib/kkm";
 
 interface JurnalItem {
   id: string;
@@ -23,10 +24,11 @@ interface JurnalItem {
   mapel: string;
 }
 
-function scoreBadgeTone(n: number | null) {
-  if (n === null || n === undefined) return "bg-slate-100 text-slate-400";
-  if (n > 75) return "bg-emerald-100 text-emerald-800";
-  if (Math.abs(n - 75) < 0.01) return "bg-amber-100 text-amber-800";
+function scoreBadgeTone(n: number | null, mapelNama: string) {
+  const tier = getScoreTier(n, mapelNama);
+  if (tier === "kosong") return "bg-slate-100 text-slate-400";
+  if (tier === "atas") return "bg-emerald-100 text-emerald-800";
+  if (tier === "pas") return "bg-amber-100 text-amber-800";
   return "bg-rose-100 text-rose-800";
 }
 
@@ -260,6 +262,7 @@ export default function KbmPenugasanBlock({
               <thead className="bg-slate-50 text-[10px] font-extrabold uppercase tracking-wider text-slate-500">
                 <tr>
                   <th className="px-3 py-2.5">Mata Pelajaran</th>
+                  <th className="px-2 py-2.5 text-center">KKM</th>
                   <th className="px-2.5 py-2.5 text-center">Harian</th>
                   <th className="px-2.5 py-2.5 text-center">PTS</th>
                   <th className="px-2.5 py-2.5 text-center">PAS</th>
@@ -270,6 +273,9 @@ export default function KbmPenugasanBlock({
                 {ujianNilai.map((row) => (
                   <tr key={row.mapelId} className="hover:bg-slate-50/50">
                     <td className="px-3 py-2 font-bold text-slate-800">{row.mapelNama}</td>
+                    <td className="px-2 py-2 text-center text-[11px] font-bold text-slate-400">
+                      {getMapelKkm(row.mapelNama)}
+                    </td>
                     <td className="px-2.5 py-2 text-center text-slate-600">
                       {row.harian ?? "—"}
                     </td>
@@ -278,7 +284,8 @@ export default function KbmPenugasanBlock({
                     <td className="px-3 py-2 text-center">
                       <span
                         className={`inline-block rounded-lg px-2 py-0.5 font-extrabold ${scoreBadgeTone(
-                          row.nilaiAkhir
+                          row.nilaiAkhir,
+                          row.mapelNama
                         )}`}
                       >
                         {row.nilaiAkhir ?? "—"}
@@ -294,13 +301,16 @@ export default function KbmPenugasanBlock({
         {ujianNilai.length > 0 && (
           <div className="flex flex-wrap items-center gap-3 text-[10px] font-bold text-slate-400 px-1">
             <span className="inline-flex items-center gap-1.5">
-              <span className="inline-block h-2 w-2 rounded-full bg-emerald-500" /> Di atas standar (&gt;75)
+              <span className="inline-block h-2 w-2 rounded-full bg-emerald-500" /> Di atas KKM
             </span>
             <span className="inline-flex items-center gap-1.5">
-              <span className="inline-block h-2 w-2 rounded-full bg-amber-500" /> Pas standar (=75)
+              <span className="inline-block h-2 w-2 rounded-full bg-amber-500" /> Pas KKM
             </span>
             <span className="inline-flex items-center gap-1.5">
-              <span className="inline-block h-2 w-2 rounded-full bg-rose-500" /> Di bawah standar (&lt;75)
+              <span className="inline-block h-2 w-2 rounded-full bg-rose-500" /> Di bawah KKM
+            </span>
+            <span className="text-slate-400/90">
+              · KKM Diniyyah: 85 · Mapel Umum: 80
             </span>
           </div>
         )}
