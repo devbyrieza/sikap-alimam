@@ -387,7 +387,7 @@ export default function KbmPenugasanBlock({
               )}&tahun_ajaran=${encodeURIComponent(tahunAjaran)}&mode=pts`}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center justify-center gap-2 rounded-2xl bg-emerald-700 hover:bg-emerald-800 px-4 py-3 text-xs font-extrabold text-white shadow-sm transition-colors"
+              className="inline-flex items-center justify-center gap-2 rounded-2xl bg-primary hover:bg-primary/90 px-4 py-3 text-xs font-extrabold text-white shadow-sm transition-colors"
             >
               <Printer size={16} />
               Rapor Tengah Semester
@@ -411,7 +411,7 @@ export default function KbmPenugasanBlock({
               )}&tahun_ajaran=${encodeURIComponent(tahunAjaran)}&mode=pas`}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center justify-center gap-2 rounded-2xl bg-emerald-700 hover:bg-emerald-800 px-4 py-3 text-xs font-extrabold text-white shadow-sm transition-colors"
+              className="inline-flex items-center justify-center gap-2 rounded-2xl bg-primary hover:bg-primary/90 px-4 py-3 text-xs font-extrabold text-white shadow-sm transition-colors"
             >
               <Printer size={16} />
               Rapor Akhir Semester
