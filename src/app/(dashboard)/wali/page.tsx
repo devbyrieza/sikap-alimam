@@ -40,21 +40,31 @@ export default function WaliDashboard() {
   const [showSppModal, setShowSppModal] = useState(false);
 
   const loadChildren = useCallback(async () => {
-    const res = await fetch("/api/wali/anak");
-    const json = await res.json();
-    if (json?.success && Array.isArray(json.data)) {
-      const mapped = json.data.map((c: any) => ({
-        id: c.id,
-        nama: c.nama,
-        kelas: c.kelas,
-      }));
-      setChildrenList(mapped);
-      if (mapped.length > 0 && !selectedSantriId) {
-        setSelectedSantriId(mapped[0].id);
+    try {
+      const res = await fetch("/api/wali/anak");
+      const json = await res.json();
+      if (json?.success && Array.isArray(json.data)) {
+        const mapped = json.data.map((c: any) => ({
+          id: c.id,
+          nama: c.nama,
+          kelas: c.kelas,
+        }));
+        setChildrenList(mapped);
+        if (mapped.length > 0 && !selectedSantriId) {
+          setSelectedSantriId(mapped[0].id);
+        } else if (mapped.length === 0) {
+          setDashboard(null);
+          setLoading(false);
+        }
+        return mapped;
       }
-      return mapped;
+      setLoading(false);
+      return [];
+    } catch (err: any) {
+      setError(err?.message || "Gagal memuat data ananda");
+      setLoading(false);
+      return [];
     }
-    return [];
   }, [selectedSantriId]);
 
   const loadDashboard = useCallback(
