@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
@@ -788,7 +788,7 @@ export default function WaliTahfidzPage() {
                 <BookOpen size={48} className="mx-auto mb-3 opacity-30 text-emerald-500" />
                 <h4 className="font-bold text-slate-700 text-base">Belum Ada Riwayat Setoran Harian</h4>
                 <p className="mt-1 text-xs text-slate-500 max-w-md mx-auto">
-                  Catatan setoran rutin santri (tahsin, ziyadah hafalan baru, dan muroja&apos;ah) pada halaqoh ba&apos;da Shubuh &amp; Maghrib akan tampil di sini setelah diinput oleh musyrif pengampu halaqoh.
+                  Catatan setoran rutin santri (tahsin, ziyadah halaqoh baru, dan muroja&apos;ah) pada halaqoh ba&apos;da Shubuh &amp; Maghrib akan tampil di sini setelah diinput oleh musyrif pengampu halaqoh.
                 </p>
                 {waMusyrif && (
                   <div className="mt-5">

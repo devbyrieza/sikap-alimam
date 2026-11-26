@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import {
@@ -36,8 +36,8 @@ const KEHADIRAN_OPT = [
 
 const JENIS_META: Record<string, { title: string; sub: string; icon: React.ReactNode }> = {
   tahsin:   { title: "Tahsin",           sub: "Penguatan bacaan & talaqqi", icon: <Award size={18} /> },
-  ziyadah:  { title: "Setoran ziyadah",  sub: "Setoran hafalan baru",       icon: <BookOpen size={18} /> },
-  murojaah: { title: "Setoran murojaah", sub: "Pengulangan hafalan",        icon: <RotateCcw size={18} /> },
+  ziyadah:  { title: "Setoran ziyadah",  sub: "Setoran halaqoh baru",       icon: <BookOpen size={18} /> },
+  murojaah: { title: "Setoran murojaah", sub: "Pengulangan halaqoh",        icon: <RotateCcw size={18} /> },
 };
 
 const SESI_LABEL: Record<string, string> = {

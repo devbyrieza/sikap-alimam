@@ -79,9 +79,16 @@ model Pegawai {
   ibadah_adab       IbadahAdabSantri[]
   jadwal            JadwalPelajaran[]
   kelas_wali        Kelas[]           @relation("WaliKelas")
-  halaqoh_kelompok  HalaqohKelompok[]
-  catatan_halaqoh   CatatanHalaqoh[]
-  ujian_tahfidz     UjianTahfidz[]
+  halaqoh_kelompok     HalaqohKelompok[]
+  catatan_halaqoh      CatatanHalaqoh[]
+  ujian_tahfidz        UjianTahfidz[]
+  santri_binaan        SantriAktif[]        @relation("SantriMusyrif")
+  keaktifan_arab       KeaktifanArabSantri[]
+  pelanggaran_input    PelanggaranSantri[]
+  ekskul_input         EkskulSantri[]
+  penilaian_wali_kelas PenilaianWaliKelas[]
+  pengasuhan_input     PengasuhanSantri[]
+  kesehatan_input      KesehatanSantri[]
 
   @@map("pegawai")
 }
@@ -146,7 +153,11 @@ model SantriAktif {
   nama_lengkap     String
   kelas_id         String    @db.Uuid
   jenis_kelamin    String?
+  tempat_lahir     String?
   tanggal_lahir    DateTime? @db.Date
+  kamar_aktif      String?
+  musyrif_id       String?   @db.Uuid
+  target_juz       Float     @default(3)
   foto_url         String?
   is_active        Boolean   @default(true)
   status_kesiswaan String    @default("aktif") // aktif | mengundurkan_diri | dikeluarkan | mutasi | lulus
@@ -156,16 +167,25 @@ model SantriAktif {
   catatan_keluar   String?
   created_at       DateTime  @default(now()) @db.Timestamptz(6)
 
-  kelas             Kelas            @relation(fields: [kelas_id], references: [id])
-  presensi          PresensiSiswa[]
-  nilai             NilaiSantri[]
-  capaian_tahfidz   CapaianTahfidz[]
-  orang_tua         OrangTuaSantri[]
-  ibadah_adab       IbadahAdabSantri[]
-  pembayaran_spp    PembayaranSPP[]
-  halaqoh_anggota   HalaqohAnggota[]
-  catatan_halaqoh   CatatanHalaqoh[]
-  ujian_tahfidz     UjianTahfidz[]
+  kelas                Kelas                       @relation(fields: [kelas_id], references: [id])
+  musyrif              Pegawai?                    @relation("SantriMusyrif", fields: [musyrif_id], references: [id])
+  presensi             PresensiSiswa[]
+  nilai                NilaiSantri[]
+  capaian_tahfidz      CapaianTahfidz[]
+  orang_tua            OrangTuaSantri[]
+  ibadah_adab          IbadahAdabSantri[]
+  pembayaran_spp       PembayaranSPP[]
+  halaqoh_anggota      HalaqohAnggota[]
+  catatan_halaqoh      CatatanHalaqoh[]
+  ujian_tahfidz        UjianTahfidz[]
+  keaktifan_arab       KeaktifanArabSantri[]
+  pelanggaran          PelanggaranSantri[]
+  ekskul               EkskulSantri[]
+  penilaian_wali_kelas PenilaianWaliKelas[]
+  pengasuhan           PengasuhanSantri[]
+  kesehatan            KesehatanSantri[]
+  riwayat_kelas        RiwayatKelasSantri[]
+  pengecualian_naik    PengecualianKenaikanKelas[]
 
   @@map("santri_aktif")
 }
@@ -1389,4 +1409,171 @@ model KalenderAkademik {
 
   @@index([tanggal_mulai, tanggal_selesai])
   @@map("kalender_akademik")
+}
+
+// ─── KEAKTIFAN BERBAHASA ARAB ─────────────────────────────────────────────────
+
+model KeaktifanArabSantri {
+  id           String   @id @default(uuid()) @db.Uuid
+  santri_id    String   @db.Uuid
+  pegawai_id   String?  @db.Uuid
+  semester     String   // "Ganjil" | "Genap"
+  tahun_ajaran String   // "2026/2027"
+  predikat     String   // "Baik" | "Cukup" | "Kurang"
+  catatan      String?
+  tanggal      DateTime @default(now()) @db.Date
+  created_at   DateTime @default(now()) @db.Timestamptz(6)
+  updated_at   DateTime @default(now()) @updatedAt @db.Timestamptz(6)
+
+  santri  SantriAktif @relation(fields: [santri_id], references: [id], onDelete: Cascade)
+  pegawai Pegawai?    @relation(fields: [pegawai_id], references: [id])
+
+  @@unique([santri_id, semester, tahun_ajaran])
+  @@map("keaktifan_arab_santri")
+}
+
+// ─── RIWAYAT PELANGGARAN SANTRI ───────────────────────────────────────────────
+
+model PelanggaranSantri {
+  id          String   @id @default(uuid()) @db.Uuid
+  santri_id   String   @db.Uuid
+  pegawai_id  String?  @db.Uuid
+  tanggal     DateTime @db.Date
+  pelanggaran String
+  sanksi      String
+  kategori    String   @default("ringan") // ringan | sedang | berat
+  created_at  DateTime @default(now()) @db.Timestamptz(6)
+
+  santri  SantriAktif @relation(fields: [santri_id], references: [id], onDelete: Cascade)
+  pegawai Pegawai?    @relation(fields: [pegawai_id], references: [id])
+
+  @@index([santri_id, tanggal])
+  @@map("pelanggaran_santri")
+}
+
+// ─── EKSKUL & PENILAIAN WALI KELAS (SIKAP & KEDISIPLINAN) ─────────────────────
+
+model EkskulSantri {
+  id           String   @id @default(uuid()) @db.Uuid
+  santri_id    String   @db.Uuid
+  pegawai_id   String?  @db.Uuid
+  semester     String   // "Ganjil" | "Genap"
+  tahun_ajaran String
+  nama_ekskul  String
+  nilai        String   // e.g. "90" atau "Sangat Baik"
+  nilai_angka  Float?
+  keterangan   String?
+  created_at   DateTime @default(now()) @db.Timestamptz(6)
+  updated_at   DateTime @default(now()) @updatedAt @db.Timestamptz(6)
+
+  santri  SantriAktif @relation(fields: [santri_id], references: [id], onDelete: Cascade)
+  pegawai Pegawai?    @relation(fields: [pegawai_id], references: [id])
+
+  @@unique([santri_id, semester, tahun_ajaran, nama_ekskul])
+  @@map("ekskul_santri")
+}
+
+model PenilaianWaliKelas {
+  id                  String   @id @default(uuid()) @db.Uuid
+  santri_id           String   @db.Uuid
+  pegawai_id          String?  @db.Uuid
+  semester            String   // "Ganjil" | "Genap"
+  tahun_ajaran        String
+  nilai_sikap         String   // "Sangat Baik" | "Baik" | "Cukup" | "Kurang"
+  skor_sikap          Float?
+  nilai_kedisiplinan  String   // "Sangat Baik" | "Baik" | "Cukup" | "Kurang"
+  skor_kedisiplinan   Float?
+  catatan_wali_kelas  String?
+  created_at          DateTime @default(now()) @db.Timestamptz(6)
+  updated_at          DateTime @default(now()) @updatedAt @db.Timestamptz(6)
+
+  santri  SantriAktif @relation(fields: [santri_id], references: [id], onDelete: Cascade)
+  pegawai Pegawai?    @relation(fields: [pegawai_id], references: [id])
+
+  @@unique([santri_id, semester, tahun_ajaran])
+  @@map("penilaian_wali_kelas")
+}
+
+// ─── PENGASUHAN SANTRI (PERSISTED) ────────────────────────────────────────────
+
+model PengasuhanSantri {
+  id                     String   @id @default(uuid()) @db.Uuid
+  santri_id              String   @db.Uuid
+  pegawai_id             String?  @db.Uuid
+  semester               String   // "Ganjil" | "Genap"
+  tahun_ajaran           String
+  tanggal                DateTime @default(now()) @db.Date
+  kebersihan_diri_kamar  String   // "Sangat Baik" | "Baik" | "Kurang"
+  kerapian_diri_barang   String   // "Sangat Baik" | "Baik" | "Kurang"
+  kemandirian            String   // "Sangat Baik" | "Baik" | "Kurang"
+  kepatuhan_kedisiplinan String   // "Sangat Baik" | "Baik" | "Kurang"
+  ibadah_akhlak          String   // "Sangat Baik" | "Baik" | "Kurang"
+  mentoring_mulahadzoh   String   // "Sangat Baik" | "Baik" | "Kurang"
+  catatan_musyrif        String   // Wajib diawali "Selalu terlihat ...", "Terkadang ...", atau "Sering terlihat tidak ..."
+  created_at             DateTime @default(now()) @db.Timestamptz(6)
+  updated_at             DateTime @default(now()) @updatedAt @db.Timestamptz(6)
+
+  santri  SantriAktif @relation(fields: [santri_id], references: [id], onDelete: Cascade)
+  pegawai Pegawai?    @relation(fields: [pegawai_id], references: [id])
+
+  @@unique([santri_id, semester, tahun_ajaran])
+  @@map("pengasuhan_santri")
+}
+
+// ─── RIWAYAT KESEHATAN SANTRI ─────────────────────────────────────────────────
+
+model KesehatanSantri {
+  id                     String   @id @default(uuid()) @db.Uuid
+  santri_id              String   @db.Uuid
+  pegawai_id             String?  @db.Uuid
+  tanggal                DateTime @default(now()) @db.Date
+  tinggi_badan           Float?   // cm
+  berat_badan            Float?   // kg
+  riwayat_sakit          String?
+  penilaian_rambut       String?  // "Baik" | "Cukup" | "Kurang"
+  penilaian_kuku         String?  // "Baik" | "Cukup" | "Kurang"
+  penilaian_telinga      String?  // "Baik" | "Cukup" | "Kurang"
+  penilaian_gigi         String?  // "Baik" | "Cukup" | "Kurang"
+  // TODO: Konfirmasi Mudir untuk standar indikator kecukupan gizi & detail medis lanjutan
+  catatan_gizi_kesehatan String?
+  created_at             DateTime @default(now()) @db.Timestamptz(6)
+  updated_at             DateTime @default(now()) @updatedAt @db.Timestamptz(6)
+
+  santri  SantriAktif @relation(fields: [santri_id], references: [id], onDelete: Cascade)
+  pegawai Pegawai?    @relation(fields: [pegawai_id], references: [id])
+
+  @@index([santri_id, tanggal])
+  @@map("kesehatan_santri")
+}
+
+// ─── KENAIKAN KELAS OTOMATIS & RIWAYAT ────────────────────────────────────────
+
+model RiwayatKelasSantri {
+  id           String   @id @default(uuid()) @db.Uuid
+  santri_id    String   @db.Uuid
+  kelas_id     String   @db.Uuid
+  kelas_nama   String
+  tahun_ajaran String
+  status       String   @default("awal") // "awal" | "naik" | "tinggal" | "lulus"
+  catatan      String?
+  created_at   DateTime @default(now()) @db.Timestamptz(6)
+
+  santri SantriAktif @relation(fields: [santri_id], references: [id], onDelete: Cascade)
+
+  @@unique([santri_id, tahun_ajaran])
+  @@map("riwayat_kelas_santri")
+}
+
+model PengecualianKenaikanKelas {
+  id                String   @id @default(uuid()) @db.Uuid
+  santri_id         String   @db.Uuid
+  tahun_ajaran_asal String
+  alasan            String?
+  created_by        String?  @db.Uuid
+  created_at        DateTime @default(now()) @db.Timestamptz(6)
+
+  santri SantriAktif @relation(fields: [santri_id], references: [id], onDelete: Cascade)
+
+  @@unique([santri_id, tahun_ajaran_asal])
+  @@map("pengecualian_kenaikan_kelas")
 }

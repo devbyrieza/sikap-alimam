@@ -1,589 +1,727 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import { 
-  Building2, 
-  Home, 
-  UserCheck, 
-  Award, 
-  Save, 
-  Search, 
-  Filter, 
-  CheckCircle2, 
-  AlertCircle, 
-  BookOpen, 
-  HeartHandshake, 
-  Sparkles, 
-  ShieldCheck, 
-  X, 
-  Edit3, 
-  ChevronRight,
-  Printer
+import React, { useCallback, useEffect, useState } from "react";
+import {
+  HeartHandshake,
+  Languages,
+  ShieldAlert,
+  Stethoscope,
+  Search,
+  Save,
+  Plus,
+  Trash2,
+  X,
+  Loader2,
+  CheckCircle2,
+  AlertCircle,
 } from "lucide-react";
-import Link from "next/link";
-import { RaporPengasuhanData, hitungNilaiAkhir, getPredikatArab } from "@/lib/pengasuhanData";
+import {
+  PENGASUHAN_ASPEK,
+  PENGASUHAN_SKALA,
+  CATATAN_MUSYRIF_PREFIXES,
+} from "@/lib/pengasuhanRules";
+
+type ActiveTab = "pengasuhan" | "arab" | "pelanggaran" | "kesehatan";
 
 export default function PengasuhanPage() {
   const [santriList, setSantriList] = useState<any[]>([]);
+  const [musyrifList, setMusyrifList] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [searchQuery, setSearchQuery] = useState("");
+  const [search, setSearch] = useState("");
+  const [semester, setSemester] = useState("Ganjil");
+  const [tahunAjaran, setTahunAjaran] = useState("2026/2027");
+
   const [selectedSantri, setSelectedSantri] = useState<any | null>(null);
-  const [formData, setFormData] = useState<RaporPengasuhanData | null>(null);
-  const [loadingDetail, setLoadingDetail] = useState(false);
+  const [activeTab, setActiveTab] = useState<ActiveTab>("pengasuhan");
+  const [detailLoading, setDetailLoading] = useState(false);
   const [saving, setSaving] = useState(false);
-  const [notification, setNotification] = useState<{ type: "success" | "error"; message: string } | null>(null);
+  const [toast, setToast] = useState<{ type: "success" | "error"; msg: string } | null>(null);
 
-  useEffect(() => {
-    fetchSantri();
-  }, []);
+  // Pengasuhan state
+  const [kamarAktif, setKamarAktif] = useState("");
+  const [musyrifId, setMusyrifId] = useState("");
+  const [aspekScores, setAspekScores] = useState<Record<string, string>>({
+    kebersihan_diri_kamar: "Baik",
+    kerapian_diri_barang: "Baik",
+    kemandirian: "Baik",
+    kepatuhan_kedisiplinan: "Baik",
+    ibadah_akhlak: "Baik",
+    mentoring_mulahadzoh: "Baik",
+  });
+  const [catatanPrefix, setCatatanPrefix] = useState<string>(CATATAN_MUSYRIF_PREFIXES[0]);
+  const [catatanBody, setCatatanBody] = useState("");
 
-  const fetchSantri = async () => {
+  // Arab state
+  const [arabPredikat, setArabPredikat] = useState("Baik");
+  const [arabCatatan, setArabCatatan] = useState("");
+
+  // Pelanggaran state
+  const [pelanggaranList, setPelanggaranList] = useState<any[]>([]);
+  const [pelanggaranTanggal, setPelanggaranTanggal] = useState(
+    new Date().toISOString().slice(0, 10)
+  );
+  const [pelanggaranTeks, setPelanggaranTeks] = useState("");
+  const [pelanggaranSanksi, setPelanggaranSanksi] = useState("");
+  const [pelanggaranKategori, setPelanggaranKategori] = useState("ringan");
+
+  // Kesehatan state
+  const [tinggiBadan, setTinggiBadan] = useState("");
+  const [beratBadan, setBeratBadan] = useState("");
+  const [riwayatSakit, setRiwayatSakit] = useState("");
+  const [rambut, setRambut] = useState("Baik");
+  const [kuku, setKuku] = useState("Baik");
+  const [telinga, setTelinga] = useState("Baik");
+  const [gigi, setGigi] = useState("Baik");
+  const [catatanGizi, setCatatanGizi] = useState("");
+
+  const loadList = useCallback(async () => {
+    setLoading(true);
     try {
-      setLoading(true);
-      const res = await fetch("/api/pengasuhan");
+      const res = await fetch(
+        `/api/musyrif/input?semester=${encodeURIComponent(semester)}&tahun_ajaran=${encodeURIComponent(
+          tahunAjaran
+        )}`
+      );
       const json = await res.json();
       if (json.success) {
-        setSantriList(json.santri || []);
+        setSantriList(json.santriList || []);
+        setMusyrifList(json.musyrifList || []);
       }
-    } catch (err) {
-      console.error("Gagal load santri pengasuhan:", err);
+    } catch (e) {
+      console.error(e);
     } finally {
       setLoading(false);
     }
-  };
+  }, [semester, tahunAjaran]);
 
-  const handleOpenForm = async (santri: any) => {
-    setSelectedSantri(santri);
-    setLoadingDetail(true);
+  useEffect(() => {
+    loadList();
+  }, [loadList]);
+
+  const openSantri = async (s: any) => {
+    setSelectedSantri(s);
+    setActiveTab("pengasuhan");
+    setToast(null);
+    setDetailLoading(true);
     try {
-      const res = await fetch(`/api/pengasuhan?santri_id=${santri.id}`);
+      const res = await fetch(
+        `/api/musyrif/input?santri_id=${encodeURIComponent(s.id)}&semester=${encodeURIComponent(
+          semester
+        )}&tahun_ajaran=${encodeURIComponent(tahunAjaran)}`
+      );
       const json = await res.json();
       if (json.success && json.data) {
-        setFormData(json.data);
+        const d = json.data;
+        setKamarAktif(d.santri?.kamarAktif || "");
+        setMusyrifId(d.santri?.musyrifId || "");
+
+        if (d.pengasuhan) {
+          setAspekScores({
+            kebersihan_diri_kamar: d.pengasuhan.kebersihan_diri_kamar,
+            kerapian_diri_barang: d.pengasuhan.kerapian_diri_barang,
+            kemandirian: d.pengasuhan.kemandirian,
+            kepatuhan_kedisiplinan: d.pengasuhan.kepatuhan_kedisiplinan,
+            ibadah_akhlak: d.pengasuhan.ibadah_akhlak,
+            mentoring_mulahadzoh: d.pengasuhan.mentoring_mulahadzoh,
+          });
+          const full = d.pengasuhan.catatan_musyrif || "";
+          const matched = CATATAN_MUSYRIF_PREFIXES.find((p) => full.startsWith(p));
+          if (matched) {
+            setCatatanPrefix(matched);
+            setCatatanBody(full.slice(matched.length));
+          } else {
+            setCatatanPrefix(CATATAN_MUSYRIF_PREFIXES[0]);
+            setCatatanBody(full);
+          }
+        } else {
+          setCatatanPrefix(CATATAN_MUSYRIF_PREFIXES[0]);
+          setCatatanBody("");
+        }
+
+        setArabPredikat(d.keaktifanArab?.predikat || "Baik");
+        setArabCatatan(d.keaktifanArab?.catatan || "");
+        setPelanggaranList(d.pelanggaran || []);
+
+        const latestKes = d.kesehatan?.[0];
+        setTinggiBadan(latestKes?.tinggi_badan != null ? String(latestKes.tinggi_badan) : "");
+        setBeratBadan(latestKes?.berat_badan != null ? String(latestKes.berat_badan) : "");
+        setRiwayatSakit(latestKes?.riwayat_sakit || "");
+        setRambut(latestKes?.penilaian_rambut || "Baik");
+        setKuku(latestKes?.penilaian_kuku || "Baik");
+        setTelinga(latestKes?.penilaian_telinga || "Baik");
+        setGigi(latestKes?.penilaian_gigi || "Baik");
+        setCatatanGizi(latestKes?.catatan_gizi_kesehatan || "");
       }
-    } catch (err) {
-      console.error("Gagal load detail penilaian:", err);
     } finally {
-      setLoadingDetail(false);
+      setDetailLoading(false);
     }
   };
 
-  const handleScoreChange = (aspekKey: "ibadah_akhlaq" | "kemandirian" | "penampilan_kerapihan", predikat: "Sangat Baik" | "Baik" | "Cukup Baik" | "Kurang Baik") => {
-    if (!formData) return;
-
-    let skor = 21;
-    let tindak_lanjut = "Perlu ada peningkatan";
-
-    if (predikat === "Sangat Baik") {
-      skor = 24;
-      tindak_lanjut = "Pertahankan dan tingkatkan keteladanan";
-    } else if (predikat === "Baik") {
-      skor = 21;
-      tindak_lanjut = "Pertahankan dan perbanyak inisiatif positif";
-    } else if (predikat === "Cukup Baik") {
-      skor = 18;
-      tindak_lanjut = "Perlu beberapa perbaikan dan pembiasaan";
-    } else {
-      skor = 15;
-      tindak_lanjut = "Perlu perbaikan secara menyeluruh";
-    }
-
-    const updatedAspek = {
-      ...formData.aspek[aspekKey],
-      predikat,
-      predikat_arab: getPredikatArab(predikat),
-      tindak_lanjut,
-      skor,
-    };
-
-    const newFormData = {
-      ...formData,
-      aspek: {
-        ...formData.aspek,
-        [aspekKey]: updatedAspek,
-      },
-    };
-
-    const calc = hitungNilaiAkhir(
-      aspekKey === "ibadah_akhlaq" ? skor : newFormData.aspek.ibadah_akhlaq.skor,
-      aspekKey === "kemandirian" ? skor : newFormData.aspek.kemandirian.skor,
-      aspekKey === "penampilan_kerapihan" ? skor : newFormData.aspek.penampilan_kerapihan.skor,
-      newFormData.aspek.kedisiplinan.skor
-    );
-
-    setFormData({
-      ...newFormData,
-      total_skor: calc.total,
-      nilai_huruf: calc.nilai_huruf,
-      predikat_umum: calc.predikat_umum,
-      predikat_umum_arab: calc.predikat_umum_arab,
-    });
-  };
-
-  const handleSave = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!formData) return;
-
+  const postAction = async (payload: Record<string, any>) => {
+    if (!selectedSantri) return;
+    setSaving(true);
+    setToast(null);
     try {
-      setSaving(true);
-      const res = await fetch("/api/pengasuhan", {
+      const res = await fetch("/api/musyrif/input", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({
+          ...payload,
+          santri_id: selectedSantri.id,
+          semester,
+          tahun_ajaran: tahunAjaran,
+        }),
       });
       const json = await res.json();
-
-      if (json.success) {
-        setNotification({ type: "success", message: `Penilaian pengasuhan ${selectedSantri.nama} berhasil disimpan!` });
-        setTimeout(() => setNotification(null), 4000);
-        setSelectedSantri(null);
-        fetchSantri();
-      } else {
-        throw new Error(json.error || "Gagal menyimpan");
+      if (!res.ok || !json.success) {
+        throw new Error(json.error || "Gagal menyimpan data");
       }
+      setToast({ type: "success", msg: json.message || "Berhasil disimpan." });
+      loadList();
+      return json;
     } catch (err: any) {
-      setNotification({ type: "error", message: err.message || "Gagal menyimpan penilaian" });
+      setToast({ type: "error", msg: err?.message || "Gagal menyimpan data" });
+      return null;
     } finally {
       setSaving(false);
     }
   };
 
-  const filteredSantri = santriList.filter(
+  const filtered = santriList.filter(
     (s) =>
-      s.nama.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      s.nis.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      s.kamar.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      s.gedung.toLowerCase().includes(searchQuery.toLowerCase())
+      s.nama.toLowerCase().includes(search.toLowerCase()) ||
+      (s.kelas || "").toLowerCase().includes(search.toLowerCase())
   );
 
   return (
-    <div className="p-4 sm:p-6 lg:p-8 space-y-6 max-w-7xl mx-auto">
-      {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-6 rounded-3xl border border-slate-200/80 shadow-xs">
-        <div>
-          <div className="flex items-center gap-2 text-emerald-700 font-bold text-xs uppercase tracking-wider mb-1">
-            <Building2 className="w-4 h-4" /> Manajemen Pengasuhan & Asrama
-          </div>
-          <h1 className="text-2xl font-black text-slate-900 tracking-tight">
-            Penilaian Rapor Pengasuhan (Bagian 3)
-          </h1>
-          <p className="text-xs text-slate-500 font-medium mt-1">
-            Form penilaian karakter, ibadah, kemandirian, dan adab santri oleh Musyrif Asrama (Format Resmi Ulul Albaab).
-          </p>
-        </div>
-        <div className="flex items-center gap-3">
-          <div className="px-4 py-2 rounded-2xl bg-emerald-50 border border-emerald-100 flex items-center gap-2">
-            <Award className="w-5 h-5 text-emerald-600" />
-            <div>
-              <p className="text-[10px] uppercase font-bold text-emerald-600">Total Santri Terdaftar</p>
-              <p className="text-sm font-black text-emerald-950">{santriList.length} Santri</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {notification && (
-        <div
-          className={`p-4 rounded-2xl flex items-center gap-3 ${
-            notification.type === "success"
-              ? "bg-emerald-50 border border-emerald-200 text-emerald-800"
-              : "bg-red-50 border border-red-200 text-red-800"
-          }`}
-        >
-          {notification.type === "success" ? <CheckCircle2 className="w-5 h-5 shrink-0" /> : <AlertCircle className="w-5 h-5 shrink-0" />}
-          <span className="text-sm font-bold">{notification.message}</span>
-        </div>
-      )}
-
-      {/* Filter and Search */}
-      <div className="flex flex-col sm:flex-row gap-3 items-center justify-between">
-        <div className="relative w-full sm:w-96">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-          <input
-            type="text"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Cari santri, NIS, kamar, atau gedung..."
-            className="w-full h-11 pl-11 pr-4 rounded-xl border border-slate-200 bg-white text-xs font-bold text-slate-800 placeholder:text-slate-400 focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/10 shadow-xs"
-          />
-        </div>
-        <p className="text-xs text-slate-500 font-semibold">
-          Menampilkan <span className="font-bold text-slate-800">{filteredSantri.length}</span> santri
+    <div className="p-4 sm:p-6 max-w-7xl mx-auto space-y-5 pb-20">
+      <div className="rounded-3xl bg-gradient-to-br from-teal-900 via-teal-800 to-emerald-700 p-6 sm:p-8 text-white shadow-lg">
+        <h1 className="text-2xl sm:text-3xl font-black flex items-center gap-3">
+          <HeartHandshake size={28} /> Portal Musyrif, Pengasuhan & Kesehatan
+        </h1>
+        <p className="mt-1.5 text-xs sm:text-sm text-teal-100">
+          Input penilaian Pengasuhan (6 aspek & catatan musyrif), Keaktifan Bahasa Arab, Riwayat Pelanggaran, dan Kesehatan Santri.
         </p>
       </div>
 
-      {/* Santri Table */}
-      <div className="bg-white rounded-3xl border border-slate-200/80 shadow-xs overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs">
-            <thead className="bg-slate-50/80 border-b border-slate-200 text-[10px] font-black uppercase text-slate-500 tracking-wider">
-              <tr>
-                <th className="py-4 px-5">Santri</th>
-                <th className="py-4 px-4">Kelas</th>
-                <th className="py-4 px-4">Asrama & Kamar</th>
-                <th className="py-4 px-4 text-center">Nilai Angka</th>
-                <th className="py-4 px-4 text-center">Predikat Huruf</th>
-                <th className="py-4 px-5 text-right">Aksi</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-100 font-medium">
-              {loading ? (
-                <tr>
-                  <td colSpan={6} className="py-12 text-center text-slate-400 font-bold">
-                    Memuat data santri & asrama...
-                  </td>
-                </tr>
-              ) : filteredSantri.length === 0 ? (
-                <tr>
-                  <td colSpan={6} className="py-12 text-center text-slate-400 font-bold">
-                    Tidak ada santri yang sesuai pencarian.
-                  </td>
-                </tr>
-              ) : (
-                filteredSantri.map((s) => (
-                  <tr key={s.id} className="hover:bg-slate-50/60 transition-colors">
-                    <td className="py-3.5 px-5">
-                      <p className="font-bold text-slate-900 text-sm">{s.nama}</p>
-                      <p className="text-[10px] text-slate-400 font-mono">NIS: {s.nis}</p>
-                    </td>
-                    <td className="py-3.5 px-4 font-bold text-slate-700">{s.kelas}</td>
-                    <td className="py-3.5 px-4">
-                      <p className="font-bold text-emerald-800 flex items-center gap-1">
-                        <Home className="w-3 h-3 text-emerald-600" /> {s.kamar}
-                      </p>
-                      <p className="text-[10px] text-slate-400">{s.gedung}</p>
-                    </td>
-                    <td className="py-3.5 px-4 text-center">
-                      <span className="font-black text-slate-800 text-sm">{s.nilai_angka}</span>
-                      <span className="text-[10px] text-slate-400"> / 100</span>
-                    </td>
-                    <td className="py-3.5 px-4 text-center">
-                      <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-black bg-emerald-100 text-emerald-800">
-                        {s.nilai_huruf} ({s.predikat})
-                      </span>
-                    </td>
-                    <td className="py-3.5 px-5 text-right">
-                      <div className="flex items-center justify-end gap-2">
-                        <button
-                          type="button"
-                          onClick={() => handleOpenForm(s)}
-                          className="px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs flex items-center gap-1.5 shadow-xs transition-all cursor-pointer"
-                        >
-                          <Edit3 className="w-3.5 h-3.5" /> Nilai Sikap
-                        </button>
-                        <Link
-                          href={`/rapor/print/${s.id}`}
-                          target="_blank"
-                          className="px-2.5 py-1.5 rounded-xl border border-slate-200 hover:border-emerald-500 hover:text-emerald-700 text-slate-600 font-bold text-xs flex items-center gap-1 transition-all"
-                        >
-                          <Printer className="w-3.5 h-3.5" /> Rapor
-                        </Link>
-                      </div>
-                    </td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
+      {/* Filter */}
+      <div className="rounded-3xl border border-slate-200 bg-white p-4 shadow-sm flex flex-col sm:flex-row gap-3">
+        <div className="relative flex-1">
+          <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
+          <input
+            type="text"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Cari nama santri atau kelas..."
+            className="w-full rounded-xl border border-slate-200 bg-slate-50 pl-10 pr-4 py-2 text-xs font-semibold outline-none focus:border-teal-600 focus:bg-white"
+          />
         </div>
+        <select
+          value={semester}
+          onChange={(e) => setSemester(e.target.value)}
+          className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs font-bold"
+        >
+          <option value="Ganjil">Semester Ganjil</option>
+          <option value="Genap">Semester Genap</option>
+        </select>
+        <select
+          value={tahunAjaran}
+          onChange={(e) => setTahunAjaran(e.target.value)}
+          className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs font-bold"
+        >
+          <option value="2026/2027">2026/2027</option>
+          <option value="2027/2028">2027/2028</option>
+        </select>
       </div>
 
-      {/* Modal Dialog Form Input Pengasuhan */}
+      {/* Tabel Santri */}
+      <div className="rounded-3xl border border-slate-200 bg-white shadow-sm overflow-hidden">
+        {loading ? (
+          <div className="p-10 flex items-center justify-center gap-2 text-xs text-slate-500">
+            <Loader2 size={18} className="animate-spin" /> Memuat daftar santri...
+          </div>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-xs">
+              <thead className="bg-slate-50 text-[11px] font-extrabold uppercase tracking-wider text-slate-500 border-b border-slate-200">
+                <tr>
+                  <th className="px-4 py-3">Santri</th>
+                  <th className="px-4 py-3">Kamar & Musyrif</th>
+                  <th className="px-4 py-3 text-center">Pengasuhan</th>
+                  <th className="px-4 py-3 text-center">B. Arab</th>
+                  <th className="px-4 py-3 text-center">Pelanggaran</th>
+                  <th className="px-4 py-3 text-center">Kesehatan</th>
+                  <th className="px-4 py-3 text-right">Aksi</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100">
+                {filtered.map((s) => (
+                  <tr key={s.id} className="hover:bg-slate-50/70">
+                    <td className="px-4 py-3">
+                      <div className="font-extrabold text-slate-900">{s.nama}</div>
+                      <div className="text-[11px] text-slate-400">
+                        {s.kelas} · NIS {s.nis || "-"}
+                      </div>
+                    </td>
+                    <td className="px-4 py-3 text-slate-600">
+                      <div className="font-bold">{s.kamarAktif || "-"}</div>
+                      <div className="text-[11px] text-slate-400">{s.musyrifNama}</div>
+                    </td>
+                    <td className="px-4 py-3 text-center">
+                      <span
+                        className={`rounded-full px-2.5 py-0.5 text-[10px] font-bold ${
+                          s.hasPengasuhan
+                            ? "bg-emerald-100 text-emerald-800"
+                            : "bg-slate-100 text-slate-400"
+                        }`}
+                      >
+                        {s.hasPengasuhan ? "Sudah" : "Belum"}
+                      </span>
+                    </td>
+                    <td className="px-4 py-3 text-center font-bold">
+                      {s.arabPredikat || <span className="text-slate-300">-</span>}
+                    </td>
+                    <td className="px-4 py-3 text-center font-bold">{s.jumlahPelanggaran}</td>
+                    <td className="px-4 py-3 text-center">
+                      <span
+                        className={`rounded-full px-2.5 py-0.5 text-[10px] font-bold ${
+                          s.hasKesehatan
+                            ? "bg-cyan-100 text-cyan-800"
+                            : "bg-slate-100 text-slate-400"
+                        }`}
+                      >
+                        {s.hasKesehatan ? "Ada" : "Belum"}
+                      </span>
+                    </td>
+                    <td className="px-4 py-3 text-right">
+                      <button
+                        type="button"
+                        onClick={() => openSantri(s)}
+                        className="rounded-xl bg-teal-700 hover:bg-teal-800 px-3 py-1.5 text-[11px] font-bold text-white"
+                      >
+                        Kelola Data
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
+
+      {/* Modal Input Multi-Tab */}
       {selectedSantri && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-xs overflow-y-auto">
-          <div className="bg-white rounded-3xl shadow-2xl border border-slate-200 w-full max-w-4xl max-h-[90vh] flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-150">
-            {/* Modal Header */}
-            <div className="p-6 bg-gradient-to-r from-emerald-800 to-teal-900 text-white flex items-center justify-between shrink-0">
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4"
+          onClick={() => setSelectedSantri(null)}
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            className="w-full max-w-2xl rounded-3xl bg-white shadow-2xl overflow-hidden flex flex-col max-h-[92vh]"
+          >
+            <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between">
               <div>
-                <span className="px-2.5 py-0.5 rounded-md bg-white/20 text-white text-[10px] font-black uppercase tracking-wider">
-                  Evaluasi Rapor Asrama
-                </span>
-                <h3 className="text-lg font-black mt-1">{selectedSantri.nama}</h3>
-                <p className="text-xs text-white/80">
-                  NIS: {selectedSantri.nis} • Kelas: {selectedSantri.kelas} • Asrama: {formData?.gedung} ({formData?.nama_kamar})
+                <h2 className="text-base font-black text-slate-900">{selectedSantri.nama}</h2>
+                <p className="text-xs text-slate-500">
+                  {selectedSantri.kelas} · Semester {semester} ({tahunAjaran})
                 </p>
               </div>
               <button
                 type="button"
                 onClick={() => setSelectedSantri(null)}
-                className="w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition-colors cursor-pointer"
+                className="p-2 rounded-xl hover:bg-slate-100 text-slate-500"
               >
-                <X className="w-5 h-5" />
+                <X size={18} />
               </button>
             </div>
 
-            {/* Modal Body */}
-            <div className="p-6 overflow-y-auto space-y-6 flex-1 text-slate-800">
-              {loadingDetail || !formData ? (
-                <div className="py-16 text-center text-slate-400 font-bold">Memuat rincian penilaian...</div>
-              ) : (
-                <form onSubmit={handleSave} className="space-y-6">
-                  {/* Summary Bar */}
-                  <div className="p-4 rounded-2xl bg-emerald-50 border border-emerald-100 flex flex-wrap items-center justify-between gap-4">
-                    <div className="flex items-center gap-3">
-                      <div className="w-12 h-12 rounded-xl bg-emerald-600 text-white flex items-center justify-center font-black text-xl shadow-xs">
-                        {formData.nilai_huruf}
-                      </div>
-                      <div>
-                        <p className="text-[10px] font-bold text-emerald-700 uppercase">Nilai Akhir Rapor Asrama</p>
-                        <p className="text-sm font-black text-slate-900">
-                          Skor: {formData.total_skor} / 100 • Predikat: {formData.predikat_umum} ({formData.predikat_umum_arab})
-                        </p>
-                      </div>
-                    </div>
-                    <div className="text-right text-[11px] text-slate-500">
-                      <p>Pengasuh 1: <strong className="text-slate-800">{formData.pengasuh_1}</strong></p>
-                      <p>Pengasuh 2: <strong className="text-slate-800">{formData.pengasuh_2}</strong></p>
-                    </div>
-                  </div>
+            {/* Tabs */}
+            <div className="px-6 pt-3 border-b border-slate-100 flex flex-wrap gap-2">
+              {[
+                { id: "pengasuhan", label: "Pengasuhan", icon: HeartHandshake },
+                { id: "arab", label: "B. Arab", icon: Languages },
+                { id: "pelanggaran", label: "Pelanggaran", icon: ShieldAlert },
+                { id: "kesehatan", label: "Kesehatan", icon: Stethoscope },
+              ].map((t) => {
+                const Icon = t.icon;
+                const active = activeTab === t.id;
+                return (
+                  <button
+                    key={t.id}
+                    type="button"
+                    onClick={() => {
+                      setActiveTab(t.id as ActiveTab);
+                      setToast(null);
+                    }}
+                    className={`inline-flex items-center gap-1.5 px-3.5 py-2 rounded-t-xl text-xs font-extrabold border-b-2 transition-colors ${
+                      active
+                        ? "border-teal-700 text-teal-800 bg-teal-50/50"
+                        : "border-transparent text-slate-500 hover:text-slate-800"
+                    }`}
+                  >
+                    <Icon size={14} /> {t.label}
+                  </button>
+                );
+              })}
+            </div>
 
-                  {/* 1. Ibadah & Akhlaq */}
-                  <div className="p-5 rounded-2xl border border-slate-200/80 bg-slate-50/40 space-y-3">
-                    <div className="flex items-center justify-between">
-                      <h4 className="font-black text-slate-900 text-sm flex items-center gap-2">
-                        <HeartHandshake className="w-4 h-4 text-emerald-600" /> 1. Ibadah dan Akhlaq
-                      </h4>
-                      <div className="flex items-center gap-2">
-                        <span className="text-[11px] font-bold text-slate-500">Predikat:</span>
-                        <select
-                          value={formData.aspek.ibadah_akhlaq.predikat}
-                          onChange={(e) => handleScoreChange("ibadah_akhlaq", e.target.value as any)}
-                          className="h-8 px-2.5 rounded-lg border border-slate-300 bg-white text-xs font-bold text-slate-800 focus:outline-none focus:border-emerald-500"
-                        >
-                          <option value="Sangat Baik">Sangat Baik (24)</option>
-                          <option value="Baik">Baik (21)</option>
-                          <option value="Cukup Baik">Cukup Baik (18)</option>
-                          <option value="Kurang Baik">Kurang Baik (15)</option>
-                        </select>
-                      </div>
-                    </div>
-                    <p className="text-[11px] text-slate-500 italic">
-                      Indikator: {formData.aspek.ibadah_akhlaq.indikator}
-                    </p>
+            {toast && (
+              <div
+                className={`mx-6 mt-4 rounded-xl border px-3.5 py-2.5 text-xs font-bold flex items-center gap-2 ${
+                  toast.type === "success"
+                    ? "bg-emerald-50 border-emerald-200 text-emerald-800"
+                    : "bg-rose-50 border-rose-200 text-rose-800"
+                }`}
+              >
+                {toast.type === "success" ? <CheckCircle2 size={15} /> : <AlertCircle size={15} />}
+                {toast.msg}
+              </div>
+            )}
+
+            <div className="p-6 overflow-y-auto space-y-4 text-xs flex-1">
+              {detailLoading ? (
+                <div className="py-10 flex items-center justify-center gap-2 text-slate-500">
+                  <Loader2 size={18} className="animate-spin" /> Memuat detail santri...
+                </div>
+              ) : activeTab === "pengasuhan" ? (
+                <div className="space-y-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
-                      <label className="block text-[10px] font-black uppercase text-slate-500 mb-1">
-                        Deskripsi Naratif Pengasuh
-                      </label>
-                      <textarea
-                        rows={3}
-                        value={formData.aspek.ibadah_akhlaq.deskripsi}
-                        onChange={(e) =>
-                          setFormData({
-                            ...formData,
-                            aspek: {
-                              ...formData.aspek,
-                              ibadah_akhlaq: { ...formData.aspek.ibadah_akhlaq, deskripsi: e.target.value },
-                            },
-                          })
-                        }
-                        className="w-full p-3 rounded-xl border border-slate-200 bg-white text-xs text-slate-800 font-medium focus:outline-none focus:border-emerald-500"
-                      />
-                    </div>
-                  </div>
-
-                  {/* 2. Kemandirian */}
-                  <div className="p-5 rounded-2xl border border-slate-200/80 bg-slate-50/40 space-y-3">
-                    <div className="flex items-center justify-between">
-                      <h4 className="font-black text-slate-900 text-sm flex items-center gap-2">
-                        <Sparkles className="w-4 h-4 text-teal-600" /> 2. Kemandirian
-                      </h4>
-                      <div className="flex items-center gap-2">
-                        <span className="text-[11px] font-bold text-slate-500">Predikat:</span>
-                        <select
-                          value={formData.aspek.kemandirian.predikat}
-                          onChange={(e) => handleScoreChange("kemandirian", e.target.value as any)}
-                          className="h-8 px-2.5 rounded-lg border border-slate-300 bg-white text-xs font-bold text-slate-800 focus:outline-none focus:border-emerald-500"
-                        >
-                          <option value="Sangat Baik">Sangat Baik (24)</option>
-                          <option value="Baik">Baik (21)</option>
-                          <option value="Cukup Baik">Cukup Baik (18)</option>
-                          <option value="Kurang Baik">Kurang Baik (15)</option>
-                        </select>
-                      </div>
-                    </div>
-                    <p className="text-[11px] text-slate-500 italic">
-                      Indikator: {formData.aspek.kemandirian.indikator}
-                    </p>
-                    <div>
-                      <label className="block text-[10px] font-black uppercase text-slate-500 mb-1">
-                        Deskripsi Naratif Pengasuh
-                      </label>
-                      <textarea
-                        rows={3}
-                        value={formData.aspek.kemandirian.deskripsi}
-                        onChange={(e) =>
-                          setFormData({
-                            ...formData,
-                            aspek: {
-                              ...formData.aspek,
-                              kemandirian: { ...formData.aspek.kemandirian, deskripsi: e.target.value },
-                            },
-                          })
-                        }
-                        className="w-full p-3 rounded-xl border border-slate-200 bg-white text-xs text-slate-800 font-medium focus:outline-none focus:border-emerald-500"
-                      />
-                    </div>
-                  </div>
-
-                  {/* 3. Penampilan dan Kerapihan */}
-                  <div className="p-5 rounded-2xl border border-slate-200/80 bg-slate-50/40 space-y-3">
-                    <div className="flex items-center justify-between">
-                      <h4 className="font-black text-slate-900 text-sm flex items-center gap-2">
-                        <UserCheck className="w-4 h-4 text-emerald-600" /> 3. Penampilan dan Kerapihan
-                      </h4>
-                      <div className="flex items-center gap-2">
-                        <span className="text-[11px] font-bold text-slate-500">Predikat:</span>
-                        <select
-                          value={formData.aspek.penampilan_kerapihan.predikat}
-                          onChange={(e) => handleScoreChange("penampilan_kerapihan", e.target.value as any)}
-                          className="h-8 px-2.5 rounded-lg border border-slate-300 bg-white text-xs font-bold text-slate-800 focus:outline-none focus:border-emerald-500"
-                        >
-                          <option value="Sangat Baik">Sangat Baik (24)</option>
-                          <option value="Baik">Baik (21)</option>
-                          <option value="Cukup Baik">Cukup Baik (18)</option>
-                          <option value="Kurang Baik">Kurang Baik (15)</option>
-                        </select>
-                      </div>
-                    </div>
-                    <p className="text-[11px] text-slate-500 italic">
-                      Indikator: {formData.aspek.penampilan_kerapihan.indikator}
-                    </p>
-                    <div>
-                      <label className="block text-[10px] font-black uppercase text-slate-500 mb-1">
-                        Deskripsi Naratif Pengasuh
-                      </label>
-                      <textarea
-                        rows={3}
-                        value={formData.aspek.penampilan_kerapihan.deskripsi}
-                        onChange={(e) =>
-                          setFormData({
-                            ...formData,
-                            aspek: {
-                              ...formData.aspek,
-                              penampilan_kerapihan: { ...formData.aspek.penampilan_kerapihan, deskripsi: e.target.value },
-                            },
-                          })
-                        }
-                        className="w-full p-3 rounded-xl border border-slate-200 bg-white text-xs text-slate-800 font-medium focus:outline-none focus:border-emerald-500"
-                      />
-                    </div>
-                  </div>
-
-                  {/* 4. Kedisiplinan & Pelanggaran */}
-                  <div className="p-5 rounded-2xl border border-slate-200/80 bg-slate-50/40 space-y-3">
-                    <div className="flex items-center justify-between">
-                      <h4 className="font-black text-slate-900 text-sm flex items-center gap-2">
-                        <ShieldCheck className="w-4 h-4 text-indigo-600" /> 4. Kedisiplinan (Rekap Pelanggaran)
-                      </h4>
-                      <span className="text-xs font-bold px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800">
-                        {formData.aspek.kedisiplinan.predikat} (24)
-                      </span>
-                    </div>
-                    <div className="grid grid-cols-3 gap-3">
-                      <div className="p-3 bg-white rounded-xl border border-slate-200 text-center">
-                        <p className="text-[10px] font-bold text-slate-400 uppercase">Pelanggaran Berat</p>
-                        <input
-                          type="number"
-                          min={0}
-                          value={formData.aspek.kedisiplinan.berat}
-                          onChange={(e) =>
-                            setFormData({
-                              ...formData,
-                              aspek: {
-                                ...formData.aspek,
-                                kedisiplinan: { ...formData.aspek.kedisiplinan, berat: parseInt(e.target.value) || 0 },
-                              },
-                            })
-                          }
-                          className="w-16 text-center font-black text-lg text-slate-800 mt-1 border border-slate-200 rounded-lg"
-                        />
-                      </div>
-                      <div className="p-3 bg-white rounded-xl border border-slate-200 text-center">
-                        <p className="text-[10px] font-bold text-slate-400 uppercase">Pelanggaran Sedang</p>
-                        <input
-                          type="number"
-                          min={0}
-                          value={formData.aspek.kedisiplinan.sedang}
-                          onChange={(e) =>
-                            setFormData({
-                              ...formData,
-                              aspek: {
-                                ...formData.aspek,
-                                kedisiplinan: { ...formData.aspek.kedisiplinan, sedang: parseInt(e.target.value) || 0 },
-                              },
-                            })
-                          }
-                          className="w-16 text-center font-black text-lg text-slate-800 mt-1 border border-slate-200 rounded-lg"
-                        />
-                      </div>
-                      <div className="p-3 bg-white rounded-xl border border-slate-200 text-center">
-                        <p className="text-[10px] font-bold text-slate-400 uppercase">Pelanggaran Ringan</p>
-                        <input
-                          type="number"
-                          min={0}
-                          value={formData.aspek.kedisiplinan.ringan}
-                          onChange={(e) =>
-                            setFormData({
-                              ...formData,
-                              aspek: {
-                                ...formData.aspek,
-                                kedisiplinan: { ...formData.aspek.kedisiplinan, ringan: parseInt(e.target.value) || 0 },
-                              },
-                            })
-                          }
-                          className="w-16 text-center font-black text-lg text-slate-800 mt-1 border border-slate-200 rounded-lg"
-                        />
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* 5. Nasihat Khusus Pengasuh */}
-                  <div className="p-5 rounded-2xl border border-emerald-200 bg-emerald-50/30 space-y-3">
-                    <h4 className="font-black text-emerald-900 text-sm flex items-center gap-2">
-                      <BookOpen className="w-4 h-4 text-emerald-600" /> 5. Nasihat & Motivasi Pengasuh
-                    </h4>
-                    <p className="text-[11px] text-slate-500">
-                      Tuliskan nasihat personal pengasuh kepada santri, doa, dan kutipan ayat/hadits/kata bijak.
-                    </p>
-                    <textarea
-                      rows={3}
-                      value={formData.nasihat_pengasuh}
-                      onChange={(e) => setFormData({ ...formData, nasihat_pengasuh: e.target.value })}
-                      placeholder="Tuliskan nasihat atau doa untuk santri..."
-                      className="w-full p-3 rounded-xl border border-slate-200 bg-white text-xs text-slate-800 font-medium focus:outline-none focus:border-emerald-500"
-                    />
-                    <div>
-                      <label className="block text-[10px] font-black uppercase text-slate-500 mb-1">
-                        Kutipan Ayat / Hadits / Mutiara Bijak
-                      </label>
+                      <label className="font-bold text-slate-700 block mb-1">Kamar Aktif</label>
                       <input
                         type="text"
-                        value={formData.kutipan_mutiara}
-                        onChange={(e) => setFormData({ ...formData, kutipan_mutiara: e.target.value })}
-                        className="w-full h-10 px-3 rounded-xl border border-slate-200 bg-white text-xs text-slate-800 font-medium focus:outline-none focus:border-emerald-500"
+                        value={kamarAktif}
+                        onChange={(e) => setKamarAktif(e.target.value)}
+                        placeholder="Contoh: Kamar Abu Bakar 02"
+                        className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2"
                       />
+                    </div>
+                    <div>
+                      <label className="font-bold text-slate-700 block mb-1">Musyrif Aktif</label>
+                      <select
+                        value={musyrifId}
+                        onChange={(e) => setMusyrifId(e.target.value)}
+                        className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 font-semibold"
+                      >
+                        <option value="">-- Pilih Musyrif --</option>
+                        {musyrifList.map((m) => (
+                          <option key={m.id} value={m.id}>
+                            {m.nama_lengkap}
+                          </option>
+                        ))}
+                      </select>
                     </div>
                   </div>
 
-                  {/* Modal Footer Buttons */}
-                  <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-200">
+                  <div className="space-y-2.5">
+                    {PENGASUHAN_ASPEK.map((aspek) => (
+                      <div
+                        key={aspek.key}
+                        className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 rounded-2xl border border-slate-100 bg-slate-50/70 p-3"
+                      >
+                        <span className="font-bold text-slate-800">{aspek.label}</span>
+                        <div className="flex gap-1.5 shrink-0">
+                          {PENGASUHAN_SKALA.map((sk) => (
+                            <button
+                              key={sk}
+                              type="button"
+                              onClick={() =>
+                                setAspekScores((prev) => ({ ...prev, [aspek.key]: sk }))
+                              }
+                              className={`rounded-lg px-2.5 py-1 text-[11px] font-bold border transition-colors ${
+                                aspekScores[aspek.key] === sk
+                                  ? "bg-teal-700 text-white border-teal-700"
+                                  : "bg-white text-slate-600 border-slate-200 hover:bg-slate-100"
+                              }`}
+                            >
+                              {sk}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className="rounded-2xl border border-teal-200 bg-teal-50/40 p-3.5 space-y-2">
+                    <label className="font-extrabold text-teal-900 block">
+                      Catatan Tambahan Musyrif/Pengasuh (Wajib)
+                    </label>
+                    <div className="flex flex-col sm:flex-row gap-2">
+                      <select
+                        value={catatanPrefix}
+                        onChange={(e) => setCatatanPrefix(e.target.value)}
+                        className="rounded-xl border border-teal-200 bg-white px-3 py-2 font-bold text-teal-900"
+                      >
+                        {CATATAN_MUSYRIF_PREFIXES.map((p) => (
+                          <option key={p} value={p}>
+                            {p}...
+                          </option>
+                        ))}
+                      </select>
+                      <input
+                        type="text"
+                        value={catatanBody}
+                        onChange={(e) => setCatatanBody(e.target.value)}
+                        placeholder="Lanjutan catatan (mis. menjaga kebersihan lemari dan shalat berjamaah)"
+                        className="flex-1 rounded-xl border border-teal-200 bg-white px-3 py-2"
+                      />
+                    </div>
+                    <p className="text-[11px] text-teal-700">
+                      Tersimpan sebagai: &ldquo;{catatanPrefix}
+                      {catatanBody || "..."}&rdquo;
+                    </p>
+                  </div>
+
+                  <button
+                    type="button"
+                    disabled={saving}
+                    onClick={() =>
+                      postAction({
+                        action: "pengasuhan",
+                        ...aspekScores,
+                        catatan_musyrif: `${catatanPrefix}${catatanBody}`,
+                        kamar_aktif: kamarAktif,
+                        musyrif_id: musyrifId,
+                      })
+                    }
+                    className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-teal-700 hover:bg-teal-800 px-4 py-2.5 text-xs font-extrabold text-white disabled:opacity-50"
+                  >
+                    {saving ? <Loader2 size={14} className="animate-spin" /> : <Save size={14} />}
+                    Simpan Penilaian Pengasuhan
+                  </button>
+                </div>
+              ) : activeTab === "arab" ? (
+                <div className="space-y-4">
+                  <div>
+                    <label className="font-bold text-slate-700 block mb-2">
+                      Predikat Keaktifan Berbahasa Arab
+                    </label>
+                    <div className="grid grid-cols-3 gap-2">
+                      {["Baik", "Cukup", "Kurang"].map((p) => (
+                        <button
+                          key={p}
+                          type="button"
+                          onClick={() => setArabPredikat(p)}
+                          className={`rounded-xl border py-2.5 font-extrabold transition-colors ${
+                            arabPredikat === p
+                              ? "bg-sky-700 text-white border-sky-700"
+                              : "bg-slate-50 text-slate-700 border-slate-200"
+                          }`}
+                        >
+                          {p}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                  <div>
+                    <label className="font-bold text-slate-700 block mb-1">
+                      Catatan Tambahan (Opsional)
+                    </label>
+                    <textarea
+                      rows={3}
+                      value={arabCatatan}
+                      onChange={(e) => setArabCatatan(e.target.value)}
+                      placeholder="Catatan keaktifan muhadatsah harian santri..."
+                      className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2"
+                    />
+                  </div>
+                  <button
+                    type="button"
+                    disabled={saving}
+                    onClick={() =>
+                      postAction({
+                        action: "arab",
+                        predikat: arabPredikat,
+                        catatan: arabCatatan,
+                      })
+                    }
+                    className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-sky-700 hover:bg-sky-800 px-4 py-2.5 text-xs font-extrabold text-white disabled:opacity-50"
+                  >
+                    <Save size={14} /> Simpan Keaktifan Bahasa Arab
+                  </button>
+                </div>
+              ) : activeTab === "pelanggaran" ? (
+                <div className="space-y-4">
+                  <div className="rounded-2xl border border-rose-200 bg-rose-50/40 p-4 space-y-3">
+                    <div className="font-extrabold text-rose-900">Tambah Catatan Pelanggaran</div>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                      <input
+                        type="date"
+                        value={pelanggaranTanggal}
+                        onChange={(e) => setPelanggaranTanggal(e.target.value)}
+                        className="rounded-xl border border-slate-200 bg-white px-3 py-2"
+                      />
+                      <select
+                        value={pelanggaranKategori}
+                        onChange={(e) => setPelanggaranKategori(e.target.value)}
+                        className="rounded-xl border border-slate-200 bg-white px-3 py-2 font-bold"
+                      >
+                        <option value="ringan">Ringan</option>
+                        <option value="sedang">Sedang</option>
+                        <option value="berat">Berat</option>
+                      </select>
+                    </div>
+                    <input
+                      type="text"
+                      value={pelanggaranTeks}
+                      onChange={(e) => setPelanggaranTeks(e.target.value)}
+                      placeholder="Pelanggaran (mis. Keluar pondok tanpa izin)"
+                      className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2"
+                    />
+                    <input
+                      type="text"
+                      value={pelanggaranSanksi}
+                      onChange={(e) => setPelanggaranSanksi(e.target.value)}
+                      placeholder="Sanksi yang diberikan (mis. Pengurangan jatah penjengukan)"
+                      className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2"
+                    />
                     <button
                       type="button"
-                      onClick={() => setSelectedSantri(null)}
                       disabled={saving}
-                      className="px-5 py-2.5 rounded-xl border border-slate-200 text-slate-600 font-bold text-xs hover:bg-slate-50 cursor-pointer"
+                      onClick={async () => {
+                        const res = await postAction({
+                          action: "pelanggaran",
+                          tanggal: pelanggaranTanggal,
+                          pelanggaran: pelanggaranTeks,
+                          sanksi: pelanggaranSanksi,
+                          kategori: pelanggaranKategori,
+                        });
+                        if (res?.data) {
+                          setPelanggaranList((prev) => [res.data, ...prev]);
+                          setPelanggaranTeks("");
+                          setPelanggaranSanksi("");
+                        }
+                      }}
+                      className="inline-flex items-center gap-1.5 rounded-xl bg-rose-700 hover:bg-rose-800 px-4 py-2 font-extrabold text-white"
                     >
-                      Batal
-                    </button>
-                    <button
-                      type="submit"
-                      disabled={saving}
-                      className="px-6 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs flex items-center gap-2 shadow-md cursor-pointer transition-all disabled:opacity-50"
-                    >
-                      <Save className="w-4 h-4" /> {saving ? "Menyimpan..." : "Simpan Penilaian"}
+                      <Plus size={14} /> Tambah Pelanggaran
                     </button>
                   </div>
-                </form>
+
+                  <div className="space-y-2">
+                    {pelanggaranList.map((p) => (
+                      <div
+                        key={p.id}
+                        className="flex items-start justify-between gap-3 rounded-2xl border border-slate-200 p-3"
+                      >
+                        <div>
+                          <div className="text-[10px] font-bold text-slate-400">
+                            {new Date(p.tanggal).toLocaleDateString("id-ID")} · {p.kategori}
+                          </div>
+                          <div className="font-bold text-slate-900">{p.pelanggaran}</div>
+                          <div className="text-slate-600">Sanksi: {p.sanksi}</div>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={async () => {
+                            const res = await postAction({ action: "hapus_pelanggaran", id: p.id });
+                            if (res) {
+                              setPelanggaranList((prev) => prev.filter((item) => item.id !== p.id));
+                            }
+                          }}
+                          className="p-1.5 rounded-lg text-rose-600 hover:bg-rose-50"
+                        >
+                          <Trash2 size={14} />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label className="font-bold text-slate-700 block mb-1">
+                        Tinggi Badan (cm)
+                      </label>
+                      <input
+                        type="number"
+                        step="0.1"
+                        value={tinggiBadan}
+                        onChange={(e) => setTinggiBadan(e.target.value)}
+                        placeholder="158"
+                        className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2"
+                      />
+                    </div>
+                    <div>
+                      <label className="font-bold text-slate-700 block mb-1">
+                        Berat Badan (kg)
+                      </label>
+                      <input
+                        type="number"
+                        step="0.1"
+                        value={beratBadan}
+                        onChange={(e) => setBeratBadan(e.target.value)}
+                        placeholder="48"
+                        className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2"
+                      />
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+                    {[
+                      { label: "Rambut", val: rambut, set: setRambut },
+                      { label: "Kuku", val: kuku, set: setKuku },
+                      { label: "Telinga", val: telinga, set: setTelinga },
+                      { label: "Gigi", val: gigi, set: setGigi },
+                    ].map((h) => (
+                      <div key={h.label}>
+                        <label className="font-bold text-slate-700 block mb-1">{h.label}</label>
+                        <select
+                          value={h.val}
+                          onChange={(e) => h.set(e.target.value)}
+                          className="w-full rounded-xl border border-slate-200 bg-slate-50 px-2.5 py-2 font-bold"
+                        >
+                          <option value="Baik">Baik</option>
+                          <option value="Cukup">Cukup</option>
+                          <option value="Kurang">Kurang</option>
+                        </select>
+                      </div>
+                    ))}
+                  </div>
+                  <div>
+                    <label className="font-bold text-slate-700 block mb-1">Riwayat Sakit</label>
+                    <input
+                      type="text"
+                      value={riwayatSakit}
+                      onChange={(e) => setRiwayatSakit(e.target.value)}
+                      placeholder="Contoh: Demam ringan (sembuh) atau Tidak ada"
+                      className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2"
+                    />
+                  </div>
+                  <div>
+                    <label className="font-bold text-slate-700 block mb-1">
+                      Catatan Kesehatan & Kecukupan Gizi
+                    </label>
+                    <textarea
+                      rows={2}
+                      value={catatanGizi}
+                      onChange={(e) => setCatatanGizi(e.target.value)}
+                      placeholder="Catatan kondisi gizi & kesehatan (TODO: konfirmasi Mudir untuk indikator baku)"
+                      className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2"
+                    />
+                  </div>
+                  <button
+                    type="button"
+                    disabled={saving}
+                    onClick={() =>
+                      postAction({
+                        action: "kesehatan",
+                        tinggi_badan: tinggiBadan,
+                        berat_badan: beratBadan,
+                        riwayat_sakit: riwayatSakit,
+                        penilaian_rambut: rambut,
+                        penilaian_kuku: kuku,
+                        penilaian_telinga: telinga,
+                        penilaian_gigi: gigi,
+                        catatan_gizi_kesehatan: catatanGizi,
+                      })
+                    }
+                    className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-cyan-700 hover:bg-cyan-800 px-4 py-2.5 text-xs font-extrabold text-white disabled:opacity-50"
+                  >
+                    <Save size={14} /> Simpan Data Kesehatan
+                  </button>
+                </div>
               )}
             </div>
           </div>

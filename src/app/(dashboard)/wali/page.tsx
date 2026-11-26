@@ -1,570 +1,326 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
+import Link from "next/link";
 import {
   AlertCircle,
-  BookOpen,
-  CalendarCheck,
-  CheckCircle2,
-  ChevronRight,
   Clock,
   CreditCard,
-  Download,
-  FileText,
   GraduationCap,
   Lock,
-  MessageCircle,
-  Phone,
-  Printer,
   RefreshCw,
   ShieldCheck,
-  Sparkles,
-  Upload,
   Users,
 } from "lucide-react";
-import type { LucideIcon } from "lucide-react";
-import { getOfficialNis } from "@/lib/officialSantri";
 import ModalKonfirmasiSPP from "@/components/ModalKonfirmasiSPP";
+import BiodataBlock from "@/components/wali/BiodataBlock";
+import KeaktifanArabBlock from "@/components/wali/KeaktifanArabBlock";
+import PelanggaranBlock from "@/components/wali/PelanggaranBlock";
+import KbmPenugasanBlock from "@/components/wali/KbmPenugasanBlock";
+import PengasuhanBlock from "@/components/wali/PengasuhanBlock";
+import HalaqohBlock from "@/components/wali/HalaqohBlock";
+import KesehatanBlock from "@/components/wali/KesehatanBlock";
+import type { WaliDashboardData } from "@/components/wali/types";
 
-/* ─────────────────────────── Konfigurasi ─────────────────────────── */
-
-const SCHOOL_NAME = "Pesantren Al-Imam Al-Islami";
-const SEMESTER_LABEL = "Semester Ganjil 2026/2027";
-
-// Satu sumber untuk kontak Finance (sebelumnya tertulis di tiga tempat berbeda)
-const FINANCE_PHONE_DISPLAY = "085111403331";
-const FINANCE_WA = "6285111403331";
-
-// Data contoh hanya tampil saat pengembangan, atau bila NEXT_PUBLIC_WALI_DEMO=true.
-// Di produksi, wali yang belum punya data ananda melihat tampilan kosong, bukan nama santri contoh.
-const SHOW_DEMO =
-  process.env.NODE_ENV !== "production" ||
-  process.env.NEXT_PUBLIC_WALI_DEMO === "true";
-
-/* ─────────────────────────── Tipe ─────────────────────────── */
-
-interface WaliKelas {
-  nama: string;
-  nama_panggilan?: string;
-  no_hp?: string;
-}
-
-interface Spp {
-  status?: string;
-  tunggakanCount?: number;
-  tunggakanBulan?: string[];
-  totalTunggakanNominal?: number;
-  isUnlockedManual?: boolean;
-}
-
-interface Anak {
+interface ChildOption {
   id: string;
   nama: string;
-  nis: string;
   kelas: string;
-  jenjang: string;
-  wali_kelas?: WaliKelas | null;
-  foto_url?: string; // sengaja tidak dipakai: avatar memakai inisial
-  lunas: boolean;
-  spp?: Spp;
 }
-
-type SppState = "locked" | "verifying" | "paid" | "due";
-
-const DEMO_ANAK: Anak[] = [
-  {
-    id: "demo-santri-1",
-    nama: "Abdul Aziz Ali",
-    nis: "202407001",
-    kelas: "7 MTs",
-    jenjang: "MTs",
-    wali_kelas: {
-      nama: "Ustadz Ahmad Fauzan, Lc.",
-      nama_panggilan: "Fauzan",
-      no_hp: "081234567890",
-    },
-    lunas: true,
-  },
-];
-
-const FEATURES: { icon: LucideIcon; label: string; href: (id: string) => string; accent?: boolean }[] = [
-  { icon: CalendarCheck, label: "Presensi & Absensi Harian", href: (id) => `/wali/akademik?santri_id=${id}` },
-  { icon: BookOpen, label: "Nilai PTS Murni & Jurnal", href: (id) => `/wali/akademik?santri_id=${id}` },
-  { icon: CreditCard, label: "Riwayat SPP 12 Bulan", href: (id) => `/wali/spp?santri_id=${id}` },
-  { icon: Sparkles, label: "Halaqoh & Tahfidz Al-Qur'an", href: (id) => `/wali/tahfidz?santri_id=${id}`, accent: true },
-];
-
-/* ─────────────────────────── Helper ─────────────────────────── */
-
-/** Ubah nomor HP lokal (08…, +62…, 8…) ke format wa.me (62…). */
-function toWaNumber(raw?: string): string {
-  const digits = (raw ?? "").replace(/\D/g, "");
-  if (!digits) return "";
-  if (digits.startsWith("62")) return digits;
-  if (digits.startsWith("0")) return `62${digits.slice(1)}`;
-  if (digits.startsWith("8")) return `62${digits}`;
-  return digits;
-}
-
-/** Urutan prioritas sama dengan sebelumnya: terkunci → diverifikasi → lunas → ada tagihan. */
-function getSppState(anak: Anak): SppState {
-  const verifying = anak.spp?.status === "menunggu_verifikasi";
-  if (!anak.lunas && !verifying && !anak.spp?.isUnlockedManual) return "locked";
-  if (verifying) return "verifying";
-  if (anak.lunas) return "paid";
-  return "due";
-}
-
-const focusRing =
-  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2";
-
-/* ─────────────────────────── Komponen kecil ─────────────────────────── */
-
-function SppBadge({ state, months }: { state: SppState; months: number }) {
-  const base =
-    "inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-[11px] font-bold leading-tight";
-
-  if (state === "locked") {
-    return (
-      <span className={`${base} border-rose-300 bg-rose-100 text-rose-800`}>
-        <Lock size={12} className="shrink-0 text-rose-600" aria-hidden="true" />
-        <span>Akses terkunci · Tagihan SPP ({months} bulan)</span>
-      </span>
-    );
-  }
-  if (state === "verifying") {
-    return (
-      <span className={`${base} border-amber-300 bg-amber-100 text-amber-900`}>
-        <Clock
-          size={12}
-          className="shrink-0 text-amber-600 motion-safe:animate-pulse"
-          aria-hidden="true"
-        />
-        <span>SPP sedang diverifikasi</span>
-      </span>
-    );
-  }
-  if (state === "paid") {
-    return (
-      <span className={`${base} border-emerald-200 bg-emerald-100 text-emerald-800`}>
-        <CheckCircle2 size={12} className="shrink-0" aria-hidden="true" />
-        <span>SPP lunas</span>
-      </span>
-    );
-  }
-  return (
-    <span className={`${base} border-rose-200 bg-rose-100 text-rose-800`}>
-      <AlertCircle size={12} className="shrink-0" aria-hidden="true" />
-      <span>Tagihan SPP ({months} bulan)</span>
-    </span>
-  );
-}
-
-function LoadingCard() {
-  return (
-    <div
-      role="status"
-      aria-live="polite"
-      className="rounded-3xl border border-slate-200/80 bg-white p-5 shadow-sm sm:p-8"
-    >
-      <span className="sr-only">Memuat data ananda…</span>
-      <div className="flex animate-pulse items-center gap-4 motion-reduce:animate-none sm:gap-5">
-        <div className="h-16 w-16 shrink-0 rounded-2xl bg-slate-200 sm:h-20 sm:w-20" />
-        <div className="flex-1 space-y-3">
-          <div className="h-3 w-40 max-w-full rounded-full bg-slate-200" />
-          <div className="h-5 w-3/4 rounded-full bg-slate-200" />
-          <div className="h-3 w-1/2 rounded-full bg-slate-200" />
-        </div>
-      </div>
-      <div className="mt-6 h-12 animate-pulse rounded-2xl bg-slate-100 motion-reduce:animate-none" />
-    </div>
-  );
-}
-
-function StateCard({
-  icon: Icon,
-  tone,
-  title,
-  children,
-  action,
-  role,
-}: {
-  icon: LucideIcon;
-  tone: "rose" | "slate";
-  title: string;
-  children: React.ReactNode;
-  action?: React.ReactNode;
-  role?: "alert";
-}) {
-  const iconTone =
-    tone === "rose" ? "bg-rose-50 text-rose-600" : "bg-slate-100 text-slate-500";
-  return (
-    <div
-      role={role}
-      className="rounded-3xl border border-slate-200/80 bg-white p-8 text-center shadow-sm sm:p-12"
-    >
-      <div className={`mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl ${iconTone}`}>
-        <Icon size={26} aria-hidden="true" />
-      </div>
-      <h2 className="text-lg font-black text-slate-800">{title}</h2>
-      <p className="mx-auto mt-1.5 max-w-sm text-sm leading-relaxed text-slate-500">{children}</p>
-      {action && <div className="mt-5">{action}</div>}
-    </div>
-  );
-}
-
-/* ─────────────────────────── Halaman ─────────────────────────── */
 
 export default function WaliDashboard() {
-  const [anakList, setAnakList] = useState<Anak[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(false);
-  const [selectedKonfirmasiAnak, setSelectedKonfirmasiAnak] = useState<Anak | null>(null);
+  const [childrenList, setChildrenList] = useState<ChildOption[]>([]);
+  const [selectedSantriId, setSelectedSantriId] = useState<string>("");
+  const [semester, setSemester] = useState<string>("Ganjil");
+  const [tahunAjaran, setTahunAjaran] = useState<string>("2026/2027");
 
-  const load = useCallback(async (signal?: AbortSignal) => {
-    setLoading(true);
-    setError(false);
-    try {
-      const res = await fetch("/api/wali/anak", { signal });
-      const json = await res.json();
-      if (json?.success && Array.isArray(json.data) && json.data.length > 0) {
-        setAnakList(json.data);
-      } else {
-        setAnakList(SHOW_DEMO ? DEMO_ANAK : []);
+  const [dashboard, setDashboard] = useState<WaliDashboardData | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [showSppModal, setShowSppModal] = useState(false);
+
+  const loadChildren = useCallback(async () => {
+    const res = await fetch("/api/wali/anak");
+    const json = await res.json();
+    if (json?.success && Array.isArray(json.data)) {
+      const mapped = json.data.map((c: any) => ({
+        id: c.id,
+        nama: c.nama,
+        kelas: c.kelas,
+      }));
+      setChildrenList(mapped);
+      if (mapped.length > 0 && !selectedSantriId) {
+        setSelectedSantriId(mapped[0].id);
       }
-    } catch (err) {
-      if ((err as Error).name === "AbortError") return;
-      console.error("Failed to load children:", err);
-      if (SHOW_DEMO) setAnakList(DEMO_ANAK);
-      else setError(true);
-    } finally {
-      if (!signal?.aborted) setLoading(false);
+      return mapped;
     }
-  }, []);
+    return [];
+  }, [selectedSantriId]);
+
+  const loadDashboard = useCallback(
+    async (santriId?: string) => {
+      setLoading(true);
+      setError(null);
+      try {
+        let targetId = santriId || selectedSantriId;
+        if (!targetId) {
+          const list = await loadChildren();
+          targetId = list[0]?.id || "";
+        }
+        if (!targetId) {
+          setDashboard(null);
+          setLoading(false);
+          return;
+        }
+        const res = await fetch(
+          `/api/wali/dashboard?santri_id=${encodeURIComponent(
+            targetId
+          )}&semester=${encodeURIComponent(semester)}&tahun_ajaran=${encodeURIComponent(
+            tahunAjaran
+          )}`
+        );
+        const json = await res.json();
+        if (!res.ok || !json.success) {
+          throw new Error(json.error || "Gagal memuat data ananda");
+        }
+        setDashboard(json);
+      } catch (err: any) {
+        setError(err?.message || "Gagal memuat data ananda");
+      } finally {
+        setLoading(false);
+      }
+    },
+    [selectedSantriId, semester, tahunAjaran, loadChildren]
+  );
 
   useEffect(() => {
-    const controller = new AbortController();
-    load(controller.signal);
-    return () => controller.abort();
-  }, [load]);
+    loadChildren();
+  }, [loadChildren]);
+
+  useEffect(() => {
+    if (selectedSantriId) {
+      loadDashboard(selectedSantriId);
+    }
+  }, [selectedSantriId, semester, tahunAjaran, loadDashboard]);
+
+  const namaSantri = dashboard?.biodata?.nama || "Ananda";
+  const isLocked = Boolean(dashboard?.locked);
+  const sppVerifying = dashboard?.spp?.status === "menunggu_verifikasi";
+  const tunggakanMonths = dashboard?.spp?.tunggakanCount || 1;
 
   return (
-    <div className="min-h-dvh bg-[#f8fafc] pb-12 sm:pb-16">
-      {/* ── Banner ── */}
+    <div className="min-h-dvh bg-[#f8fafc] pb-14">
+      {/* Header Utama dengan Nama Santri */}
       <header
-        className="relative overflow-hidden rounded-b-[2rem] px-5 pb-24 pt-10 text-white shadow-lg shadow-slate-900/10 sm:rounded-b-[2.5rem] sm:pb-28 sm:pt-14"
-        style={{ background: "linear-gradient(135deg, #550000 0%, #7a0000 50%, #450000 100%)" }}
+        className="relative overflow-hidden rounded-b-[2rem] px-5 pb-20 pt-8 text-white shadow-lg sm:px-8 sm:pt-10"
+        style={{ background: "linear-gradient(135deg, #550000 0%, #7a0000 55%, #450000 100%)" }}
       >
-        <div className="pointer-events-none absolute right-0 top-0 p-6 opacity-10 sm:p-8" aria-hidden="true">
-          <GraduationCap className="h-32 w-32 sm:h-44 sm:w-44 text-white" />
+        <div className="pointer-events-none absolute right-4 top-4 opacity-10" aria-hidden="true">
+          <GraduationCap className="h-32 w-32 text-white" />
         </div>
-        <div
-          className="pointer-events-none absolute -bottom-12 -left-12 h-64 w-64 rounded-full border border-white/10 bg-white/5"
-          aria-hidden="true"
-        />
 
-        <div className="relative z-10 mx-auto max-w-4xl text-center">
-          <div className="mb-4 inline-flex max-w-full items-center gap-2 rounded-full border border-white/20 bg-white/15 px-3.5 py-1.5 text-[11px] font-bold uppercase tracking-wider text-white shadow-sm backdrop-blur-sm sm:text-xs">
-            <ShieldCheck size={14} className="shrink-0 text-emerald-300" aria-hidden="true" />
-            <span className="truncate">Portal Resmi Wali Santri · {SEMESTER_LABEL}</span>
+        <div className="relative z-10 mx-auto max-w-7xl space-y-4">
+          <div className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/15 px-3.5 py-1 text-[11px] font-bold uppercase tracking-wider backdrop-blur-sm">
+            <ShieldCheck size={14} className="text-emerald-300" />
+            <span>Portal Resmi Wali Santri</span>
           </div>
-          <h1 className="mb-3 text-3xl font-black tracking-tight text-white sm:text-4xl md:text-5xl">
-            {SCHOOL_NAME}
-          </h1>
-          <p className="mx-auto max-w-2xl text-sm font-normal leading-relaxed text-rose-100/90 sm:text-base">
-            Akses terpadu perkembangan ananda: Lembar Rapor PTS Murni, Jurnal Harian Pengajar, Presensi
-            Kehadiran, Mutabaah Tahfidz, dan Riwayat SPP.
-          </p>
+
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+            <div>
+              <p className="text-xs sm:text-sm text-rose-100/90 font-medium">
+                Assalamu&apos;alaikum Abu / Ummu, berikut perkembangan Ananda:
+              </p>
+              <h1 className="mt-1 text-2xl sm:text-3xl md:text-4xl font-black tracking-tight text-white">
+                {loading && !dashboard ? "Memuat Data Ananda..." : namaSantri}
+              </h1>
+            </div>
+
+            <div className="flex flex-wrap items-center gap-2.5">
+              {childrenList.length > 1 && (
+                <select
+                  value={selectedSantriId}
+                  onChange={(e) => setSelectedSantriId(e.target.value)}
+                  className="rounded-xl border border-white/25 bg-white/15 px-3 py-2 text-xs font-bold text-white outline-none backdrop-blur-sm"
+                >
+                  {childrenList.map((c) => (
+                    <option key={c.id} value={c.id} className="text-slate-900">
+                      {c.nama} ({c.kelas})
+                    </option>
+                  ))}
+                </select>
+              )}
+
+              <select
+                value={semester}
+                onChange={(e) => setSemester(e.target.value)}
+                className="rounded-xl border border-white/25 bg-white/15 px-3 py-2 text-xs font-bold text-white outline-none backdrop-blur-sm"
+              >
+                <option value="Ganjil" className="text-slate-900">
+                  Semester Ganjil
+                </option>
+                <option value="Genap" className="text-slate-900">
+                  Semester Genap
+                </option>
+              </select>
+
+              <select
+                value={tahunAjaran}
+                onChange={(e) => setTahunAjaran(e.target.value)}
+                className="rounded-xl border border-white/25 bg-white/15 px-3 py-2 text-xs font-bold text-white outline-none backdrop-blur-sm"
+              >
+                <option value="2026/2027" className="text-slate-900">
+                  2026/2027
+                </option>
+                <option value="2027/2028" className="text-slate-900">
+                  2027/2028
+                </option>
+              </select>
+            </div>
+          </div>
         </div>
       </header>
 
-      {/* ── Konten ── */}
-      <main className="relative z-10 mx-auto -mt-14 max-w-4xl space-y-5 px-4 sm:space-y-6 sm:px-6">
+      {/* Konten Dashboard 7 Blok */}
+      <main className="relative z-10 mx-auto -mt-12 max-w-7xl space-y-5 px-4 sm:px-6">
         {loading ? (
-          <LoadingCard />
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
+            {[1, 2, 3].map((i) => (
+              <div
+                key={i}
+                className="h-56 animate-pulse rounded-3xl border border-slate-200/80 bg-white p-6"
+              />
+            ))}
+          </div>
         ) : error ? (
-          <StateCard
+          <div
             role="alert"
-            icon={AlertCircle}
-            tone="rose"
-            title="Data ananda belum bisa dimuat"
-            action={
-              <button
-                type="button"
-                onClick={() => load()}
-                className={`inline-flex min-h-[44px] items-center gap-2 rounded-2xl bg-[#550000] px-5 py-2.5 text-sm font-bold text-white shadow-sm transition-colors hover:bg-[#7a0000] active:scale-[0.98] ${focusRing}`}
-              >
-                <RefreshCw size={16} aria-hidden="true" />
-                <span>Coba lagi</span>
-              </button>
-            }
+            className="rounded-3xl border border-rose-200 bg-white p-8 text-center shadow-sm"
           >
-            Periksa koneksi internet Anda, lalu coba lagi.
-          </StateCard>
-        ) : anakList.length === 0 ? (
-          <StateCard icon={Users} tone="slate" title="Belum ada ananda yang terhubung">
-            Akun ini belum ditautkan ke data santri. Silakan hubungi wali kelas atau staf pesantren.
-          </StateCard>
+            <AlertCircle size={32} className="mx-auto text-rose-600 mb-3" />
+            <h2 className="text-base font-black text-slate-900">Data Ananda Belum Dapat Dimuat</h2>
+            <p className="mt-1 text-xs text-slate-500">{error}</p>
+            <button
+              type="button"
+              onClick={() => loadDashboard()}
+              className="mt-4 inline-flex items-center gap-2 rounded-xl bg-[#550000] px-4 py-2 text-xs font-bold text-white hover:bg-[#7a0000]"
+            >
+              <RefreshCw size={14} /> Coba Lagi
+            </button>
+          </div>
+        ) : !dashboard ? (
+          <div className="rounded-3xl border border-slate-200 bg-white p-10 text-center shadow-sm">
+            <Users size={32} className="mx-auto text-slate-400 mb-3" />
+            <h2 className="text-base font-black text-slate-800">
+              Belum Ada Ananda yang Terhubung
+            </h2>
+            <p className="mt-1 text-xs text-slate-500">
+              Mohon hubungi wali kelas atau staf tata usaha pesantren untuk menautkan akun Abu/Ummu dengan data Ananda.
+            </p>
+          </div>
         ) : (
-          anakList.map((anak) => {
-            const nisResmi = (anak?.nama ? getOfficialNis(anak.nama) : null) || anak.nis;
-            const waWali = toWaNumber(anak.wali_kelas?.no_hp);
-            const state = getSppState(anak);
-            const locked = state === "locked";
-            const months = anak.spp?.tunggakanCount || 1;
-
-            const raporLabel = locked
-              ? "Akses Terkunci"
-              : state === "verifying"
-                ? "Buka Rapor (Verifikasi SPP)"
-                : "Buka Rapor & Rekap";
-
-            return (
-              <article
-                key={anak.id}
-                className="overflow-hidden rounded-3xl border border-slate-200/80 bg-white shadow-sm hover:shadow-md transition-all duration-200 motion-reduce:transition-none"
-              >
-                {/* Bagian atas */}
-                <div className="flex flex-col gap-6 p-5 sm:p-8 md:flex-row md:items-start md:justify-between">
-                  {/* Kiri: avatar + identitas */}
-                  <div className="flex min-w-0 items-start gap-4 sm:gap-5">
-                    <div
-                      className="relative flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl text-2xl font-black text-white shadow-md ring-4 ring-slate-100 sm:h-20 sm:w-20 sm:text-3xl overflow-hidden"
-                      style={{ background: anak.foto_url ? "transparent" : "linear-gradient(135deg, #550000 0%, #7a0000 100%)" }}
-                      aria-hidden="true"
-                    >
-                      {anak.foto_url ? (
-                        <img
-                          src={anak.foto_url}
-                          alt={anak.nama}
-                          className="h-full w-full object-cover object-center"
-                        />
-                      ) : (
-                        (anak?.nama || "A").charAt(0).toUpperCase()
-                      )}
-                    </div>
-
-                    <div className="min-w-0">
-                      <div className="mb-2 flex flex-wrap items-center gap-2">
-                        <span className="rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-1 text-[11px] font-extrabold uppercase leading-tight text-emerald-700">
-                          Santri Aktif
-                        </span>
-                        <span className="rounded-full bg-slate-100 px-2.5 py-1 font-mono text-[11px] font-bold leading-tight text-slate-600">
-                          NIS: {nisResmi}
-                        </span>
-                        <SppBadge state={state} months={months} />
-                      </div>
-
-                      <h2 className="break-words text-xl font-black leading-snug text-slate-800 sm:text-2xl">
-                        {anak.nama}
-                      </h2>
-                      <p className="mt-0.5 text-xs font-medium text-slate-500 sm:text-sm">
-                        Kelas <strong className="text-slate-800">{anak.kelas}</strong> · Jenjang {anak.jenjang}
-                      </p>
-
-                      {anak.wali_kelas?.nama && (
-                        <div className="mt-3 inline-flex max-w-full flex-wrap items-center gap-x-2 gap-y-1.5 rounded-xl border border-slate-200/70 bg-slate-50 px-3 py-2 text-xs text-slate-600">
-                          <span className="font-medium text-slate-400">Wali Kelas:</span>
-                          <strong className="text-slate-700">{anak.wali_kelas.nama}</strong>
-                          {waWali && (
-                            <a
-                              href={`https://wa.me/${waWali}?text=${encodeURIComponent(
-                                `Assalamu'alaikum Ustadz ${anak.wali_kelas.nama_panggilan || anak.wali_kelas.nama}, saya orang tua dari ${anak.nama} (${anak.kelas}).`,
-                              )}`}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              aria-label={`Chat WhatsApp wali kelas ${anak.wali_kelas.nama} (buka di tab baru)`}
-                              className={`inline-flex min-h-[32px] items-center gap-1 rounded-lg bg-emerald-50 px-2.5 py-1 text-[11px] font-bold text-emerald-700 transition-colors hover:bg-emerald-100 ${focusRing}`}
-                            >
-                              <MessageCircle size={13} aria-hidden="true" />
-                              <span>Chat WA</span>
-                            </a>
-                          )}
-                        </div>
-                      )}
-                    </div>
+          <>
+            {/* Status Banner SPP */}
+            {isLocked ? (
+              <div className="rounded-3xl border border-rose-300 bg-rose-50 p-5 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div className="flex items-start gap-3">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-rose-100 text-rose-700">
+                    <Lock size={20} />
                   </div>
-
-                  {/* Kanan: aksi */}
-                  <div className="flex w-full shrink-0 flex-col gap-2.5 sm:flex-row md:w-auto md:flex-col lg:flex-row">
-                    <a
-                      href={locked ? `/wali/spp?santri_id=${anak.id}` : `/wali/rapor?santri_id=${anak.id}`}
-                      className={`inline-flex min-h-[48px] items-center justify-center gap-2 rounded-2xl px-5 py-3 text-sm font-bold text-white shadow-sm transition-all motion-safe:hover:scale-[1.02] active:scale-[0.98] ${focusRing} ${
-                        locked
-                          ? "bg-rose-600 hover:bg-rose-700 shadow-rose-900/20"
-                          : "bg-[#550000] hover:bg-[#7a0000]"
-                      }`}
-                    >
-                      {locked ? (
-                        <Lock size={16} aria-hidden="true" />
-                      ) : (
-                        <FileText size={16} aria-hidden="true" />
-                      )}
-                      <span>{locked ? "Akses Terkunci (Selesaikan SPP)" : raporLabel}</span>
-                      <ChevronRight size={16} aria-hidden="true" />
-                    </a>
-
-                    {!locked && (
-                      <a
-                        href={`/rapor/print/${anak.id}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className={`inline-flex min-h-[48px] items-center justify-center gap-2 rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-bold text-slate-700 shadow-sm transition-all hover:bg-slate-50 hover:text-[#550000] motion-safe:hover:scale-[1.02] active:scale-[0.98] ${focusRing}`}
-                      >
-                        <Download size={15} className="text-[#550000]" aria-hidden="true" />
-                        <span>Unduh / Cetak PDF</span>
-                        <span className="sr-only">(buka di tab baru)</span>
-                      </a>
-                    )}
+                  <div>
+                    <h2 className="text-sm font-black text-rose-950">
+                      Akses Informasi Akademik & Pengasuhan Terkunci
+                    </h2>
+                    <p className="text-xs text-rose-800 mt-0.5">
+                      Terdapat tunggakan SPP ({tunggakanMonths} bulan). Silakan selesaikan pembayaran atau kirim konfirmasi agar seluruh laporan Ananda terbuka kembali.
+                    </p>
                   </div>
                 </div>
-
-                {/* Pemberitahuan bila terkunci */}
-                {locked && (
-                  <div
-                    role="note"
-                    className="mx-5 mb-5 flex flex-col items-start justify-between gap-3 rounded-2xl border-2 border-rose-200 bg-gradient-to-r from-rose-50 via-rose-100/60 to-rose-50 p-4 text-xs sm:mx-8 sm:flex-row sm:items-center"
+                <div className="flex flex-wrap items-center gap-2 shrink-0">
+                  <button
+                    type="button"
+                    onClick={() => setShowSppModal(true)}
+                    className="rounded-xl bg-rose-700 hover:bg-rose-800 px-4 py-2.5 text-xs font-extrabold text-white shadow-sm"
                   >
-                    <div className="flex items-start gap-2.5 text-rose-900 sm:items-center">
-                      <AlertCircle size={18} className="mt-0.5 shrink-0 text-rose-600 sm:mt-0" aria-hidden="true" />
-                      <span className="leading-relaxed">
-                        Seluruh akses laporan ananda (Rapor, Akademik, dan Halaqoh Tahfidz) dinonaktifkan sementara karena ada tagihan SPP {months} bulan. Rekening BSI: <strong>4222224441</strong> a.n. PP Al Andalus Al Imam.{" "}
-                        <strong>Sudah transfer?</strong> Kirim bukti ke WA Finance: <strong>{FINANCE_PHONE_DISPLAY}</strong>.
-                      </span>
-                    </div>
-                    <div className="flex w-full sm:w-auto shrink-0 flex-wrap items-center gap-2">
-                      <button
-                        type="button"
-                        onClick={() => setSelectedKonfirmasiAnak(anak)}
-                        className={`inline-flex min-h-[44px] flex-1 sm:flex-initial items-center justify-center gap-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 px-4 py-2 font-bold text-white shadow-sm transition-all motion-safe:hover:scale-[1.02] active:scale-[0.98] ${focusRing}`}
-                      >
-                        <Upload size={14} aria-hidden="true" />
-                        <span>Upload Bukti SPP</span>
-                      </button>
-                      <a
-                        href={`https://wa.me/${FINANCE_WA}?text=${encodeURIComponent(
-                          `Assalamu'alaikum Admin Keuangan Pesantren Al-Imam Al-Islami, saya wali dari ananda ${anak.nama} (NIS: ${nisResmi}, Kelas: ${anak.kelas}). Saya telah melakukan pembayaran SPP dan melampirkan bukti transfer terlampir. Mohon dibukakan akses portal SIKAP ananda. Jazaakumullah khayran.`,
-                        )}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className={`inline-flex min-h-[44px] flex-1 sm:flex-initial items-center justify-center gap-1.5 rounded-xl border border-emerald-300 bg-white px-3.5 py-2 font-bold text-emerald-900 shadow-sm transition-all hover:bg-emerald-50 motion-safe:hover:scale-[1.02] ${focusRing}`}
-                      >
-                        <MessageCircle size={14} aria-hidden="true" />
-                        <span>WA Finance</span>
-                        <span className="sr-only">(buka di tab baru)</span>
-                      </a>
-                      <a
-                        href={`/wali/spp?santri_id=${anak.id}`}
-                        className={`inline-flex min-h-[44px] flex-1 sm:flex-initial items-center justify-center gap-1.5 rounded-xl bg-[#550000] hover:bg-[#7a0000] px-3.5 py-2 font-bold text-white shadow-sm transition-all motion-safe:hover:scale-[1.02] ${focusRing}`}
-                      >
-                        <CreditCard size={14} aria-hidden="true" />
-                        <span>Menu SPP</span>
-                      </a>
-                    </div>
-                  </div>
-                )}
-
-                {/* Ringkasan isi portal */}
-                <div className="grid grid-cols-1 gap-2 border-t border-slate-100 bg-slate-50/90 p-3.5 min-[420px]:grid-cols-2 sm:px-6 sm:py-3 lg:grid-cols-4">
-                  {locked ? (
-                    <>
-                      <a
-                        href={`/wali/akademik?santri_id=${anak.id}`}
-                        className="flex items-center gap-2 rounded-xl p-2 text-xs font-semibold text-rose-700 bg-rose-50/60 border border-rose-200/60 transition-all hover:bg-rose-100/60"
-                      >
-                        <Lock size={14} className="shrink-0 text-rose-600" aria-hidden="true" />
-                        <span>Presensi (Terkunci 🔒)</span>
-                      </a>
-                      <a
-                        href={`/wali/akademik?santri_id=${anak.id}`}
-                        className="flex items-center gap-2 rounded-xl p-2 text-xs font-semibold text-rose-700 bg-rose-50/60 border border-rose-200/60 transition-all hover:bg-rose-100/60"
-                      >
-                        <Lock size={14} className="shrink-0 text-rose-600" aria-hidden="true" />
-                        <span>Nilai &amp; Jurnal (Terkunci 🔒)</span>
-                      </a>
-                      <a
-                        href={`/wali/tahfidz?santri_id=${anak.id}`}
-                        className="flex items-center gap-2 rounded-xl p-2 text-xs font-semibold text-rose-700 bg-rose-50/60 border border-rose-200/60 transition-all hover:bg-rose-100/60"
-                      >
-                        <Lock size={14} className="shrink-0 text-rose-600" aria-hidden="true" />
-                        <span>Halaqoh Tahfidz (Terkunci 🔒)</span>
-                      </a>
-                      <a
-                        href={`/wali/spp?santri_id=${anak.id}`}
-                        className="flex items-center gap-2 rounded-xl p-2 text-xs font-bold text-white bg-emerald-600 shadow-sm transition-all hover:bg-emerald-700"
-                      >
-                        <CreditCard size={14} className="shrink-0 text-white" aria-hidden="true" />
-                        <span>Riwayat SPP (Bayar di Sini 💳)</span>
-                      </a>
-                    </>
-                  ) : (
-                    FEATURES.map(({ icon: Icon, label, href, accent }) => (
-                      <a
-                        key={label}
-                        href={href(anak.id)}
-                        className={`flex items-center gap-2 rounded-xl p-2 text-xs font-semibold transition-all hover:bg-white hover:shadow-sm ${
-                          accent ? "text-emerald-700 hover:text-emerald-800" : "text-slate-700 hover:text-[#550000]"
-                        }`}
-                      >
-                        <Icon
-                          size={15}
-                          className={`shrink-0 ${accent ? "text-emerald-600" : "text-[#550000]"}`}
-                          aria-hidden="true"
-                        />
-                        <span>{label}</span>
-                      </a>
-                    ))
-                  )}
+                    Konfirmasi Bayar SPP
+                  </button>
+                  <Link
+                    href={`/wali/spp?santri_id=${dashboard.biodata.id}`}
+                    className="rounded-xl border border-rose-300 bg-white px-4 py-2.5 text-xs font-bold text-rose-800 hover:bg-rose-100"
+                  >
+                    Riwayat SPP
+                  </Link>
                 </div>
-              </article>
-            );
-          })
+              </div>
+            ) : sppVerifying ? (
+              <div className="rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-xs font-bold text-amber-800 flex items-center gap-2">
+                <Clock size={15} /> Pembayaran SPP sedang diverifikasi oleh bagian keuangan. Akses sementara tetap terbuka.
+              </div>
+            ) : null}
+
+            {isLocked ? (
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
+                <BiodataBlock biodata={dashboard.biodata} />
+                <div className="lg:col-span-2 rounded-3xl border border-dashed border-rose-200 bg-white p-8 flex flex-col items-center justify-center text-center">
+                  <CreditCard size={30} className="text-rose-500 mb-2" />
+                  <p className="text-sm font-black text-slate-800">
+                    Detail Laporan Terkunci Sementara
+                  </p>
+                  <p className="text-xs text-slate-500 mt-1 max-w-md">
+                    Blok Keaktifan Berbahasa Arab, Riwayat Pelanggaran, KBM & Penugasan, Pengasuhan, Halaqoh, dan Riwayat Kesehatan akan tampil otomatis setelah status SPP terverifikasi.
+                  </p>
+                </div>
+              </div>
+            ) : (
+              /* Layout Grid 7 Blok:
+                 Mobile: stack 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7
+                 Desktop: Baris atas (1, 2, 3), Tengah/Kiri (4), Kanan (5, 6), Kiri bawah (7) */
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
+                <div className="lg:col-span-4">
+                  <BiodataBlock biodata={dashboard.biodata} />
+                </div>
+                <div className="lg:col-span-4">
+                  <KeaktifanArabBlock data={dashboard.keaktifanArab} />
+                </div>
+                <div className="lg:col-span-4">
+                  <PelanggaranBlock pelanggaran={dashboard.pelanggaran} />
+                </div>
+
+                <div className="lg:col-span-7 lg:row-start-2">
+                  <KbmPenugasanBlock
+                    santriId={dashboard.biodata.id}
+                    semester={dashboard.semester || semester}
+                    tahunAjaran={dashboard.tahunAjaran || tahunAjaran}
+                    kbm={dashboard.kbm}
+                  />
+                </div>
+                <div className="lg:col-span-5 lg:row-start-2">
+                  <PengasuhanBlock pengasuhan={dashboard.pengasuhan} />
+                </div>
+
+                <div className="lg:col-span-5 lg:col-start-8 lg:row-start-3">
+                  <HalaqohBlock halaqoh={dashboard.halaqoh} />
+                </div>
+                <div className="lg:col-span-7 lg:col-start-1 lg:row-start-3">
+                  <KesehatanBlock kesehatan={dashboard.kesehatan} />
+                </div>
+              </div>
+            )}
+          </>
         )}
-
-        {/* ── Informasi ── */}
-        <section aria-label="Informasi portal" className="grid grid-cols-1 gap-4 md:grid-cols-2">
-          <div className="flex items-start gap-4 rounded-3xl border border-slate-100 bg-white/90 p-5 shadow-md backdrop-blur sm:p-6">
-            <div className="shrink-0 rounded-2xl bg-rose-50 border border-rose-100 p-3 text-[#550000]">
-              <BookOpen size={22} aria-hidden="true" />
-            </div>
-            <div>
-              <h3 className="mb-1 text-sm font-bold text-slate-800">Mode Rapor PTS Murni Aktif</h3>
-              <p className="text-xs leading-relaxed text-slate-500">
-                Nilai yang ditampilkan pada lembar rapor resmi adalah Nilai Ujian PTS Murni Semester Ganjil
-                sesuai kebijakan akademik kurikulum pesantren.
-              </p>
-            </div>
-          </div>
-
-          <div className="flex items-start gap-4 rounded-3xl border border-slate-100 bg-white/90 p-5 shadow-md backdrop-blur sm:p-6">
-            <div className="shrink-0 rounded-2xl bg-emerald-50 p-3 text-emerald-700">
-              <Phone size={22} aria-hidden="true" />
-            </div>
-            <div>
-              <h3 className="mb-1 text-sm font-bold text-slate-800">Layanan Bantuan &amp; Kesantrian</h3>
-              <p className="text-xs leading-relaxed text-slate-500">
-                Apabila terdapat pertanyaan seputar perkembangan ananda, konsultasi tahfidz, atau administrasi
-                SPP, Anda dapat langsung menghubungi wali kelas atau staf pesantren.
-              </p>
-            </div>
-          </div>
-        </section>
       </main>
 
-      {/* Modal Konfirmasi SPP Terintegrasi */}
-      {selectedKonfirmasiAnak && (
+      {showSppModal && dashboard && (
         <ModalKonfirmasiSPP
-          isOpen={!!selectedKonfirmasiAnak}
-          onClose={() => setSelectedKonfirmasiAnak(null)}
-          santriId={selectedKonfirmasiAnak.id}
-          santriNama={selectedKonfirmasiAnak.nama}
-          santriNis={getOfficialNis(selectedKonfirmasiAnak.nama) || selectedKonfirmasiAnak.nis || "-"}
-          santriKelas={selectedKonfirmasiAnak.kelas}
-          tunggakanBulan={selectedKonfirmasiAnak.spp?.tunggakanBulan || []}
-          totalNominalTunggakan={selectedKonfirmasiAnak.spp?.totalTunggakanNominal}
+          isOpen={showSppModal}
+          santriId={dashboard.biodata.id}
+          santriNama={dashboard.biodata.nama}
+          santriNis={dashboard.biodata.nis}
+          santriKelas={dashboard.biodata.kelasAktif}
+          totalNominalTunggakan={dashboard.spp?.nominalTunggakan || tunggakanMonths * 1500000}
+          onClose={() => setShowSppModal(false)}
           onSuccess={() => {
-            setSelectedKonfirmasiAnak(null);
-            load();
+            setShowSppModal(false);
+            loadDashboard(dashboard.biodata.id);
           }}
         />
       )}

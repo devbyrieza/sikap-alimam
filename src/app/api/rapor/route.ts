@@ -4,6 +4,7 @@ import { cekStatusSpp } from "@/lib/keuangan";
 import { getOfficialNis } from "@/lib/officialSantri";
 import { getSession } from "@/lib/auth";
 import { getStandardMapelName } from "@/lib/mapel";
+import { getRaporButtonState } from "@/lib/raporStatus";
 
 export const dynamic = "force-dynamic";
 
@@ -40,6 +41,7 @@ export async function GET(req: NextRequest) {
   let santri_id = searchParams.get("santri_id");
   const rawSemester = searchParams.get("semester") || "Ganjil";
   const tahun_ajaran = searchParams.get("tahun_ajaran") || "2026/2027";
+  const mode = (searchParams.get("mode") || "").toLowerCase(); // "" | "pts" | "pas"
 
   try {
     // 1. Wajib login
@@ -167,6 +169,30 @@ export async function GET(req: NextRequest) {
       where: { santri: { kelas_id }, semester: { in: semesterVariants }, tahun_ajaran },
       include: { mapel: true },
     });
+
+    // Validasi server-side untuk tombol cetak rapor (PTS vs PAS)
+    const nilaiSantriIni = allNilaiRaw.filter((n) => n.santri_id === santri.id);
+    const raporButtons = getRaporButtonState(
+      nilaiSantriIni.map((n) => ({ jenis: n.jenis, nilai: n.nilai }))
+    );
+    if (mode === "pts" && !raporButtons.ptsEnabled) {
+      return NextResponse.json(
+        {
+          error:
+            "Rapor Tengah Semester sudah tidak aktif karena Nilai Akhir Semester telah tersedia.",
+        },
+        { status: 403 }
+      );
+    }
+    if (mode === "pas" && !raporButtons.pasEnabled) {
+      return NextResponse.json(
+        {
+          error:
+            "Rapor Akhir Semester belum tersedia karena Nilai Akhir Semester belum diinput.",
+        },
+        { status: 403 }
+      );
+    }
 
     // Kelompokkan sekali per santri agar tidak memindai seluruh nilai untuk tiap santri/mapel
     const rows = allNilaiRaw.map((n) => ({ ...n, std: getStandardMapelName(n.mapel.nama, isMA) }));
